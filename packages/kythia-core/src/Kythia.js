@@ -37,20 +37,20 @@ const {
     SlashCommandSubcommandBuilder,
     SlashCommandSubcommandGroupBuilder,
 } = require('discord.js');
-const ServerSetting = require('@coreModels/ServerSetting');
-const KythiaVoter = require('@coreModels/KythiaVoter');
-const KythiaModel = require('./database/KythiaModel');
+const ServerSetting = require('@models/ServerSetting');
+const KythiaVoter = require('@models/KythiaVoter');
+const KythiaModel = require('@database/KythiaModel');
 const { loadLocales } = require('@utils/translator');
-const { checkIsTeam } = require('./utils/discord');
-const KythiaORM = require('./database/KythiaORM');
+const { checkIsTeam } = require('@utils/discord');
+const KythiaORM = require('@database/KythiaORM');
 const KythiaManager = require('./KythiaManager');
-const { loadFonts } = require('./utils/fonts');
+const { loadFonts } = require('@utils/fonts');
 const KythiaClient = require('./KythiaClient');
-const convertColor = require('./utils/color');
+const convertColor = require('@utils/color');
 const AuditLogger = require('./KythiaAudit');
 const exitHook = require('async-exit-hook');
 const { t } = require('@utils/translator');
-const User = require('@coreModels/User');
+const User = require('@models/User');
 const client = require('./KythiaClient');
 const logger = require('@utils/logger');
 const Sentry = require('@sentry/node');
@@ -64,10 +64,11 @@ class Kythia {
      * REST API, and handler maps for buttons, modals, select menus, autocomplete, and command categories.
      * Also sets up a mapping for feature flags by category.
      */
-    constructor() {
+    constructor(options = {}) {
         this.client = KythiaClient();
         this.client.commands = new Collection();
         this.rest = new REST({ version: '10' }).setToken(kythia.bot.token);
+        this.addonsPath = options.addonsPath || path.join(process.cwd(), 'addons');
 
         this.buttonHandlers = new Map();
         this.modalHandlers = new Map();
@@ -241,6 +242,12 @@ class Kythia {
         };
     }
 
+
+    /**
+     * 🛎️ Initialize Interaction Handler
+     * Sets up the main Discord interaction handler for commands, autocomplete, buttons, and modals.
+     * Handles permission checks, feature flag checks, and error handling for all interaction types.
+     */
     /**
      * 🧩 Load Addons & Register Commands/Events
      * Loads all addons from the addons directory, registers their commands, events, and components.
@@ -250,7 +257,7 @@ class Kythia {
     async _loadAddons() {
         logger.info('🔌 Loading & Registering Kythia Addons...');
         const commandDataForDeployment = [];
-        const addonsDir = path.join(__dirname, '..', 'addons');
+        const addonsDir = this.addonsPath;
         if (!fs.existsSync(addonsDir)) return commandDataForDeployment;
 
         let addonFolders = fs.readdirSync(addonsDir, { withFileTypes: true }).filter((d) => d.isDirectory() && !d.name.startsWith('_'));
@@ -516,7 +523,7 @@ class Kythia {
                                     const commandName = commandBuilder.name;
 
                                     try {
-                                        const { getLocales } = require('@utils/translator');
+                                        const { getLocales } = require('./utils/translator');
                                         const allLocales = getLocales();
 
                                         let nameLocalizations = {};
@@ -737,7 +744,7 @@ class Kythia {
                                         if (commandModule.subcommand) continue;
 
                                         try {
-                                            const { getLocales } = require('@utils/translator');
+                                            const { getLocales } = require('./utils/translator');
                                             const allLocales = getLocales();
 
                                             let nameLocalizations = {};
@@ -1463,6 +1470,7 @@ class Kythia {
         });
     }
 
+
     /**
      * 🧮 Count the total number of executable commands, including subcommands.
      * @param {Array} commandJsonArray - Array of command data to be deployed.
@@ -1564,6 +1572,36 @@ class Kythia {
         };
 
         logger.info('✅ Global setInterval/clearInterval has been patched for tracking.');
+    }
+    /**
+     * Menghitung jumlah top-level command berdasarkan tipenya dari data JSON mentah.
+     * @param {Array} commandJsonArray - Array command data yang akan di-deploy.
+     * @returns {object} - Objek berisi jumlah { slash, user, message }.
+     * @private
+     */
+    _getCommandCounts(commandJsonArray) {
+        const counts = { slash: 0, user: 0, message: 0 };
+
+        if (!Array.isArray(commandJsonArray)) {
+            logger.warn('commandJsonArray is not iterable. Returning zero counts.');
+            return counts;
+        }
+
+        for (const cmd of commandJsonArray) {
+            switch (cmd?.type) {
+                case 1:
+                case undefined:
+                    counts.slash++;
+                    break;
+                case 2:
+                    counts.user++;
+                    break;
+                case 3:
+                    counts.message++;
+                    break;
+            }
+        }
+        return counts;
     }
 
     /**
@@ -1771,7 +1809,6 @@ class Kythia {
         this.kythiaManager = new KythiaManager(ServerSetting);
         this.container.kythiaManager = this.kythiaManager;
         try {
-            const shouldDeploy = process.argv.includes('--deploy');
             logger.info('▬▬▬▬▬▬▬▬▬▬▬[ Load Locales & Fonts ]▬▬▬▬▬▬▬▬▬▬▬');
             loadLocales();
             loadFonts();
@@ -1784,6 +1821,7 @@ class Kythia {
             this._initializeEventHandlers();
             this._initializeInteractionHandler();
             logger.info('▬▬▬▬▬▬▬▬▬▬▬▬▬[ Deploy Commands ]▬▬▬▬▬▬▬▬▬▬▬▬▬');
+            const shouldDeploy = process.argv.includes('--deploy');
             if (shouldDeploy) {
                 await this._deployCommands(allCommands);
             } else {

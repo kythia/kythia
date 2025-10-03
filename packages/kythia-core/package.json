@@ -1,0 +1,30 @@
+{
+    "name": "kythia-core",
+    "version": "1.0.0",
+    "main": "src/Kythia.js",
+    "dependencies": {
+        "@sentry/node": "^10.10.0",
+        "async-exit-hook": "^2.0.1",
+        "cli-color": "^2.0.4",
+        "discord.js": "^14.22.1",
+        "figlet": "^1.9.3",
+        "ioredis": "^5.7.0",
+        "luxon": "^3.7.2",
+        "mysql2": "^3.15.0",
+        "sequelize": "^6.37.7",
+        "winston": "^3.17.0",
+        "winston-daily-rotate-file": "^5.0.0"
+    },
+    "_moduleAliases": {
+        "@models": "src/models",
+        "@database": "src/database",
+        "@utils": "src/utils"
+    },
+    "jest": {
+        "moduleNameMapper": {
+            "^@models/(.*)$": "<rootDir>/src/models/$1",
+            "^@database/(.*)$": "<rootDir>/src/database/$1",
+            "^@utils/(.*)$": "<rootDir>/src/utils/$1"
+        }
+    }
+}

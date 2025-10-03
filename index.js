@@ -47,11 +47,11 @@ require('./kythia.config.js');
 
 require('module-alias/register');
 
-const Kythia = require('./src/Kythia');
-const kythiaClient = require('./src/KythiaClient');
+const path = require('path');
+const Kythia = require('kythia-core');
 
-const client = kythiaClient();
-
-const kythiaInstance = new Kythia(client);
+const kythiaInstance = new Kythia({
+    addonsPath: path.join(__dirname, 'addons'),
+});
 kythiaInstance.client.kythia = kythiaInstance;
 kythiaInstance.start();

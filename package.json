@@ -78,7 +78,8 @@
         "tmp": "^0.2.5",
         "winston": "^3.17.0",
         "winston-daily-rotate-file": "^5.0.0",
-        "youtube-transcript": "^1.2.1"
+        "youtube-transcript": "^1.2.1",
+        "kythia-core": "file:packages/kythia-core"
     },
     "devDependencies": {
         "@commitlint/cli": "^19.8.1",
@@ -97,21 +98,21 @@
     "_moduleAliases": {
         "@src": "src",
         "@addons": "addons",
-        "@utils": "src/utils",
+        "@utils": "packages/kythia-core/src/utils",
         "@coreHelpers": "addons/core/helpers",
-        "@coreModels": "addons/core/database/models",
+        "@coreModels": "packages/kythia-core/src/models",
         "@coreDatabase": "addons/core/database",
-        "@srcDatabase": "src/database"
+        "@srcDatabase": "packages/kythia-core/src/database"
     },
     "jest": {
         "moduleNameMapper": {
             "^@src/(.*)$": "<rootDir>/src/$1",
             "^@addons/(.*)$": "<rootDir>/addons/$1",
-            "^@utils/(.*)$": "<rootDir>/src/utils/$1",
+            "^@utils/(.*)$": "<rootDir>/packages/kythia-core/src/utils/$1",
             "^@coreHelpers/(.*)$": "<rootDir>/addons/core/helpers/$1",
-            "^@coreModels/(.*)$": "<rootDir>/addons/core/database/models/$1",
+            "^@coreModels/(.*)$": "<rootDir>/packages/kythia-core/src/models/$1",
             "^@coreDatabase/(.*)$": "<rootDir>/addons/core/database/$1",
-            "^@srcDatabase/(.*)$": "<rootDir>/src/database/$1"
+            "^@srcDatabase/(.*)$": "<rootDir>/packages/kythia-core/src/database/$1"
         }
     },
     "pkg": {

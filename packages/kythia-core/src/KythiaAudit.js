@@ -1,7 +1,7 @@
 // src/systems/AuditLogger.js
 const { Events, EmbedBuilder, AuditLogEvent, ChannelType } = require('discord.js');
-const ServerSetting = require('@coreModels/ServerSetting');
-const convertColor = require('./utils/color');
+const ServerSetting = require('@models/ServerSetting');
+const convertColor = require('@utils/color');
 
 // Kamus untuk mengubah angka AuditLogEvent menjadi nama (string)
 const auditLogEventNames = Object.fromEntries(Object.entries(AuditLogEvent).map(([key, value]) => [value, key]));
