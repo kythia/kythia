@@ -1,0 +1,341 @@
+<style>
+    .status-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .status-overall {
+        border-radius: 0.5rem;
+        padding: .5rem;
+    }
+
+    /* Warna untuk setiap status */
+    .status-operational {
+        background-color: rgba(40, 167, 69, 0.1);
+        border-left: 4px solid var(--ky-success);
+        color: var(--ky-success) !important;
+    }
+
+    .status-degraded {
+        background-color: rgba(255, 193, 7, 0.1);
+        border-left: 4px solid var(--ky-warning);
+        color: var(--ky-warning) !important;
+    }
+
+    .status-outage {
+        background-color: rgba(220, 53, 69, 0.1);
+        border-left: 4px solid var(--ky-danger);
+        color: var(--ky-danger) !important;
+    }
+
+    .status-maintenance {
+        background-color: rgba(0, 123, 255, 0.1);
+        border-left: 4px solid var(--ky-primary);
+        color: var(--ky-primary) !important;
+    }
+
+
+    .component-list .component {
+        /* background-color: #110f1a; */
+        /* border: 1px solid rgba(255, 255, 255, 0.1); */
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        transition: background-color 0.2s ease;
+    }
+
+    /* .component-list .component:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+    } */
+
+
+    /* Grafik Uptime Bar */
+    .uptime-graph {
+        display: flex;
+        gap: 2px;
+        height: 40px;
+        /* PERUBAHAN: Izinkan bar untuk 'turun baris' jika tidak muat */
+        flex-wrap: wrap;
+        overflow: hidden;
+    }
+
+    .uptime-bar {
+        /* Hapus flex-grow, biarkan lebarnya tetap */
+        /* flex-grow: 1; */
+
+        /* Beri lebar tetap, tapi bisa menyusut jika perlu */
+        flex-shrink: 1;
+        flex-basis: calc(100% / 96 - 2px);
+        /* Lebar ideal untuk 96 bar */
+        min-width: 12px;
+        /* Lebar minimum sebelum benar-benar 'turun baris' */
+
+        height: 100%;
+        /* Tinggi tetap 100% dari parent (.uptime-graph) */
+        background-color: var(--ky-success);
+        border-radius: 2px;
+        cursor: pointer;
+        transition: transform 0.1s ease;
+    }
+
+    /* @media (max-width: 768px) {
+        .uptime-graph {
+            height: 82px;
+        }
+
+        .uptime-bar {
+            flex-basis: calc(100% / 48 - 2px);
+        }
+    }
+    @media (max-width: 576px) {
+        .uptime-graph {
+            height: 124px;
+        }
+
+        .uptime-bar {
+            flex-basis: calc(100% / 32 - 2px);
+        }
+    } */
+
+
+    .uptime-bar {
+        flex-grow: 1;
+        background-color: var(--ky-success);
+        /* Default operational */
+        border-radius: 2px;
+        cursor: pointer;
+    }
+
+    .uptime-bar.degraded {
+        background-color: var(--ky-warning);
+    }
+
+    .uptime-bar.outage {
+        background-color: var(--ky-danger);
+    }
+
+    .uptime-bar.no_data {
+        background-color: var(--ky-secondary);
+    }
+
+    /* .uptime-bar:hover {
+        transform: scaleY(1.1);
+    } */
+
+
+    /* Riwayat Insiden */
+    .incident-history .incident {
+        padding-left: 1.5rem;
+        border-left: 2px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+    }
+
+    .incident-history .incident::before {
+        content: '';
+        position: absolute;
+        left: -7px;
+        /* (12px width / 2) + 1px border */
+        top: 5px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background-color: #0D0B14;
+        border: 2px solid;
+    }
+
+    .incident.resolved::before {
+        border-color: #28a745;
+    }
+
+    .incident.monitoring::before {
+        border-color: #ffc107;
+    }
+
+    .incident.investigating::before {
+        border-color: #dc3545;
+    }
+</style>
+
+<section class="hero text-center py-5" style="margin-top: 160px;">
+    <div class="container" style="padding-top: 50px; padding-bottom: 30px;">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bolder  mb-3">
+                    <img src="/assets/img/logo/logo.png" alt="logo" width="60"> <span class="hero-title">Kythia</span> Status
+                </h1>
+                <p class="lead  mb-4" style="max-width: 700px; margin: 0 auto;">
+                    Monitor the health and performance of your Kythia server. Stay informed about system
+                    status, components, and incidents.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="overall-status-section" class="mb-5" style="margin-top: 160px;"></section>
+
+<section class="component-list">
+    <div class="container">
+        <h3 class=" fw-semibold mb-4">System Components</h3>
+        <div id="components-container" class="d-grid gap-4">
+        </div>
+
+    </div>
+</section>
+
+<section class="incident-history mt-5 pt-5 border-top border-white/10">
+    <div class="container">
+        <h3 class=" fw-semibold mb-4">Past Incidents</h3>
+        <div id="incidents-container" class="d-grid gap-5">
+        </div>
+
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // ================================================================= //
+        // --- FUNGSI RENDER ---
+        // (Satu perubahan kecil di renderComponents untuk memperbaiki tooltip)
+        // ================================================================= //
+
+        function renderOverallStatus(status) {
+            const container = document.getElementById('overall-status-section');
+            let statusClass, iconClass, text;
+
+            switch (status) {
+                case 'degraded':
+                    statusClass = 'status-degraded';
+                    iconClass = 'fa-solid fa-circle-exclamation';
+                    text = 'Degraded Performance';
+                    break;
+                case 'outage':
+                    statusClass = 'status-outage';
+                    iconClass = 'fa-solid fa-circle-minus';
+                    text = 'Partial System Outage';
+                    break;
+                default:
+                    statusClass = 'status-operational';
+                    iconClass = 'fa-solid fa-circle-check';
+                    text = 'All Systems Operational';
+            }
+
+            container.innerHTML = `
+            <div class="container">
+                <div class="status-overall ${statusClass}">
+                    <h2 class="fs-4 m-0" style="color: inherit;"><i class="${iconClass} me-2"></i>${text}</h2>
+                </div>
+            </div>
+            `;
+        }
+
+        function renderComponents(components) {
+            const container = document.getElementById('components-container');
+            container.innerHTML = components.map(component => {
+                const bars = component.bars || [];
+                const now = new Date();
+                const interval = 15 * 60 * 1000; // Interval tetap 15 menit
+
+                return `
+                <div class="card mb-4 component glass-effect">
+                    <div class="card-body">
+                        <h5 class="card-title">${component.name}</h5>
+                        <div class="uptime-graph flex-wrap mb-2">
+                            ${bars.map((bar, index) => {
+                    // Logika tooltip tetap sama
+                    const barEndTime = new Date(now.getTime() - ((95 - index) * interval));
+                    const barStartTime = new Date(barEndTime.getTime() - interval);
+                    const timeFormat = { hour: '2-digit', minute: '2-digit', hour12: false };
+                    const startTimeString = barStartTime.toLocaleTimeString('id-ID', timeFormat);
+                    const endTimeString = barEndTime.toLocaleTimeString('id-ID', timeFormat);
+                    let statusText = 'Operational';
+                    if (bar.status === 'degraded') statusText = 'Degraded Performance';
+                    else if (bar.status === 'outage') statusText = 'Outage';
+                    else if (bar.status === 'no_data') statusText = 'No Data Recorded';
+
+                    return `
+                                <div class="uptime-bar ${bar.status}" 
+                                     data-bs-toggle="tooltip" 
+                                     data-bs-placement="top" 
+                                     title="${startTimeString} - ${endTimeString}: ${statusText}">
+                                </div>
+                                `;
+                }).join('')}
+                        </div>
+
+                        <div class="d-flex justify-content-between small">
+                            <span>24 hours ago</span>
+                            <span>${component.uptimePercent}% Uptime (Last 90d)</span>
+                            <span>Now</span>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+        function renderIncidents(incidents) {
+            const container = document.getElementById('incidents-container');
+            if (!incidents || incidents.length === 0) {
+                container.innerHTML = '<p class="">No incidents reported in the last 90 days.</p>';
+                return;
+            }
+            container.innerHTML = incidents.map(incident => `
+                            <div class="incident-group">
+                                <h5 class=" mb-3">${incident.date}</h5>
+                                <div class="incident ${incident.status}">
+                                    <h4 class=" fw-semibold mb-2">${incident.title}</h4>
+                                    ${incident.updates.map(update => `
+                                        <div class="update mb-3">
+                                            <p class=" mb-1">${update.text}</p>
+                                            <small class="">${update.timestamp}</small>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('');
+        }
+
+
+        // ================================================================= //
+        // --- LOGIKA UTAMA ---
+        // ================================================================= //
+
+        /**
+         * Fungsi utama untuk mengambil data dari API dan memperbarui halaman.
+         */
+        async function fetchDataAndUpdate() {
+            try {
+                // Tampilkan loading spinner atau state sementara (opsional)
+                document.getElementById('components-container').innerHTML = '<p class="">Loading status...</p>';
+
+                const response = await fetch('/api/status');
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok (${response.status})`);
+                }
+                const data = await response.json();
+
+                // Panggil fungsi render dengan data baru dari API
+                renderOverallStatus(data.overallStatus);
+                renderComponents(data.components);
+                renderIncidents(data.incidents);
+
+                // Inisialisasi ulang Tooltip Bootstrap
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+
+            } catch (error) {
+                console.error('Failed to fetch status data:', error);
+                // Tampilkan pesan error di halaman
+                renderOverallStatus('outage'); // Tampilkan status error besar
+                document.getElementById('components-container').innerHTML = `<p class="text-danger">Could not load component status. Please try again later.</p>`;
+                document.getElementById('incidents-container').innerHTML = '';
+            }
+        }
+
+        // --- PERBAIKAN #2: Hapus panggilan ke initializePage() dan data dummy ---
+        // Panggil fetchDataAndUpdate() langsung saat halaman dimuat
+        fetchDataAndUpdate();
+
+        // Atur agar data diperbarui setiap 60 detik (60000 milidetik)
+        setInterval(fetchDataAndUpdate, 60000);
+    });
+</script>

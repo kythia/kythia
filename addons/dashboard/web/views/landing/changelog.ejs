@@ -1,0 +1,65 @@
+<section class="hero text-center py-5" style="margin-top: 160px;">
+    <div class="container" style="padding-top: 50px; padding-bottom: 30px;">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bolder mb-3">
+                    <img src="/assets/img/logo/logo.png" alt="logo" width="60"> <span class="hero-title">Kythia</span> Changelog
+                </h1>
+                <p class="lead mb-4" style="max-width: 700px; margin: 0 auto;">
+                    Stay up to date with the latest features, improvements, and bug fixes for Kythia!
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-4" style="margin-top: 160px;">
+    <div class="container">
+        <h2 class="fw-bold display-6 mb-4 text-center">Latest Updates</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="accordion" id="changelogAccordion">
+
+                    <% if (changelogs && changelogs.length> 0) { %>
+                        <% changelogs.forEach((entry, index)=> { %>
+                            <div class="accordion-item glass-effect mb-3">
+                                <h2 class="accordion-header" id="heading-<%= index %>">
+                                    <button class="accordion-button glass-effect <%= index > 0 ? 'collapsed' : '' %>"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<%= index %>"
+                                        aria-expanded="<%= index === 0 ? 'true' : 'false' %>"
+                                        aria-controls="collapse-<%= index %>">
+                                        <span class="fw-bold">v<%= entry.version %></span> &nbsp; <%= entry.date %>
+                                    </button>
+                                </h2>
+                                <div id="collapse-<%= index %>"
+                                    class="accordion-collapse collapse <%= index === 0 ? 'show' : '' %>"
+                                    aria-labelledby="heading-<%= index %>" data-bs-parent="#changelogAccordion">
+                                    <div class="accordion-body pt-3">
+                                        <%- entry.html %>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <div class="alert alert-warning text-center">
+                                        No changelog entries found.
+                                    </div>
+                                    <% } %>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container text-center">
+        <h2 class="fw-bold display-6 mb-3">Have Feedback or Suggestions?</h2>
+        <p class="fs-5 text-light opacity-75 mb-4">We love hearing from our users! Join our Discord to share
+            your ideas or report issues.</p>
+        <a href="https://dsc.gg/kythia" class="btn btn-primary btn-lg" target="_blank">
+            <i class="fa-brands fa-discord me-2"></i> Join Kythia Community
+        </a>
+    </div>
+</section>

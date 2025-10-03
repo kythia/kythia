@@ -1,0 +1,9 @@
+{
+    "name": "AI",
+    "featureName": "Ai",
+    "featureFlag": "aiOn",
+    "version": "1.0.0-rc1",
+    "description": "Harness the power of Google's Gemini AI to bring intelligent conversations to your server! Get smart responses, translations, creative writing assistance, and engaging AI interactions that make your Discord community more dynamic and helpful.",
+    "author": "kenndeclouv",
+    "kythia": "HV6NmJEN5korRt4ulmwFqkFN5WNE1gB+pGW/rPfc0jgqpNCUgJHEhMjG9BSSxuvhORYTf9tbMl09HYcKeZRDUhNDUyZSUB3prWOVdNKnqWsRV9oBx6aWNQeDM4ZvNJpEwHukry711qkAUvKpjd+ZmCRMjSi65FB7FxqzE8LK8nXFsvSEDBr0OeC8Xr2lx2GfIAXScpygoD6kucSx7lLo5xflPmPoc86kgruJwo2XpOXXOPy2QORUpsbpexdZt2SWNr/Qr5lYtnJ7aZTr6vCFK0gVNldShVNXr/YZq3s1th9aMJsnywDPNopHeAwHHRvKq0gRXrAstaer/wx+nAWjug=="
+}

@@ -1,0 +1,35 @@
+<%- include('partials/header', { title: 'Feature Toggles - ' + guild.name, guild: guild, page: 'features' }) %>
+    <%- include('partials/sidebar') %>
+        <main class="content">
+            <div class="container-fluid">
+                <h3 class="fw-bold text-white mb-4">Aktivasi Fitur</h3>
+                <% if (query.success==='true' ) { %>
+                    <div class="alert alert-success">Pengaturan berhasil disimpan!</div>
+                    <% } %>
+
+                        <form action="/dashboard/<%= guild.id %>/features" method="POST">
+                            <div class="card glass-effect mb-4" style="border-radius: 1rem;">
+                                <div class="card-body p-4">
+                                    <div class="row g-4">
+                                        <% Object.keys(settings.dataValues).filter(k=>
+                                            k.endsWith('On')).sort().forEach(key => { %>
+                                            <div class="col-md-4 col-sm-6">
+                                                <div class="form-check form-switch fs-6">
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                        id="<%= key %>" name="<%= key %>" <%=settings[key] ? 'checked'
+                                                        : '' %>>
+                                                    <label class="form-check-label text-white" for="<%= key %>">
+                                                        <%= key.replace('On', '' ) %>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <% }) %>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary px-4">Simpan Perubahan</button>
+                            </div>
+                        </form>
+            </div>
+            <%- include('partials/footer') %>

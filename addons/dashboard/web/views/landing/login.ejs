@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Bot Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0D0B14;
+            --primary-color: #C875F9;
+            --secondary-color: #6A57E3;
+            --text-color: #D8D3F8;
+            --text-muted: #8B81B8;
+            --card-bg: rgba(23, 21, 36, 0.7);
+            --border-color: rgba(140, 101, 255, 0.15);
+            --glow-color: rgba(200, 117, 249, 0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(68, 7, 148, 0.3), transparent 40%),
+                radial-gradient(circle at 85% 70%, rgba(13, 110, 253, 0.2), transparent 40%);
+            background-attachment: fixed;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .glass-effect {
+            background: rgba(23, 23, 31, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 450px;
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card glass-effect p-4 p-sm-5 text-center">
+        <!-- <i class="bi bi-robot display-1 text-primary mb-3"></i> -->
+        <img src="/assets/img/logo/logo.png" alt="" class="mb-3" style="width: 120px; height: 120px;">
+        <h2 class="fw-bold text-white">Kythia Dashboard</h2>
+        <p class="text-muted mb-4">
+            Kelola semua fitur bot canggih Anda dengan mudah melalui panel web yang modern dan intuitif.
+        </p>
+        <div class="d-grid">
+            <a href="/auth/discord" class="btn btn-primary btn-lg fw-semibold">
+                <i class="bi bi-discord me-2"></i> Login dengan Discord
+            </a>
+        </div>
+        <p class="small text-muted mt-4">Dengan login, Anda menyetujui Ketentuan Layanan kami.</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

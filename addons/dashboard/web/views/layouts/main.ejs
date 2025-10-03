@@ -1,0 +1,204 @@
+<!doctype html>
+
+
+
+
+<html lang="en" class=" layout-navbar-fixed layout-wide " dir="ltr" data-skin="default" data-assets-path="/assets/"
+    data-template="front-pages" data-bs-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+
+    <title>
+        <%= title %> | Kythia
+    </title>
+
+
+
+    <!-- Canonical SEO for Kythia Bot Dashboard -->
+    <meta name="description"
+        content="Kythia is a powerful Discord bot dashboard for managing your server with ease. Control AI, moderation, and more from a modern web interface.">
+
+    <meta name="author" content="kenndeclouv">
+    <meta name="keywords"
+        content="Kythia, Discord bot, dashboard, AI bot, moderation, server management, web dashboard, responsive, Kythia bot dashboard">
+    <meta property="og:title" content="Kythia Discord Bot Dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kythia.my.id/">
+    <meta property="og:image" content="https://kythia.my.id/assets/img/logo/kythia-og-image.png">
+    <meta property="og:description"
+        content="Manage your Discord server with Kythia's advanced dashboard. AI features, moderation, and more in one place.">
+    <meta property="og:site_name" content="Kythia">
+    <link rel="canonical" href="https://kythia.my.id/">
+
+
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/fontawesome.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/thin.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/solid.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/regular.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/light.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/brands.css">
+
+
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.ico">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!-- <link rel="stylesheet" href="/assets/vendor/fonts/iconify-icons.css"> -->
+
+    <!-- Core CSS -->
+    <!-- build:css assets/vendor/css/theme.css  -->
+
+
+    <link rel="stylesheet" href="/assets/vendor/libs/pickr/pickr-themes.css">
+
+    <link rel="stylesheet" href="/assets/vendor/css/core.css">
+    <link rel="stylesheet" href="/assets/css/demo.css">
+
+
+    <link rel="stylesheet" href="/assets/vendor/css/pages/front-page.css">
+
+    <!-- Vendors CSS -->
+
+    <!-- endbuild -->
+
+    <link rel="stylesheet" href="/assets/vendor/libs/nouislider/nouislider.css">
+    <link rel="stylesheet" href="/assets/vendor/libs/swiper/swiper.css">
+
+    <!-- Page CSS -->
+
+    <link rel="stylesheet" href="/assets/vendor/css/pages/front-page-landing.css">
+
+    <!-- Helpers -->
+    <script src="/assets/vendor/js/helpers.js"></script>
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+
+    <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
+    <script src="/assets/vendor/js/template-customizer.js"></script>
+
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+
+    <script src="/assets/js/front-config.js"></script>
+    <style>
+        @keyframes shiftFog {
+            0% {
+                background-position: 0% 0%;
+            }
+
+            50% {
+                background-position: 100% 100%;
+            }
+
+            100% {
+                background-position: 0% 0%;
+            }
+        }
+
+        /* 2. Ganti style body Anda dengan ini */
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* background-color: #0d0d0e !important; */
+            /* background-size: 200% 200%; */
+            background-image: radial-gradient(circle at 25% 25%,
+                    rgba(255, 129, 173, 0.12),
+                    transparent 35%);
+
+            background-attachment: fixed;
+            /* animation: shiftFog 30s ease-in-out infinite; */
+        }
+    </style>
+    <!-- <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(106, 87, 227, 0.2), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(200, 117, 249, 0.15), transparent 50%);
+            background-attachment: fixed;
+        }
+    </style> -->
+</head>
+
+<body>
+    <script src="/assets/vendor/js/dropdown-hover.js"></script>
+    <%- include('../partials/navbar') %>
+        <!-- Navbar: End -->
+
+
+        <!-- Sections:Start -->
+
+        <div data-bs-spy="scroll" class="scrollspy-example">
+            <% if (locals.viewName) { %>
+
+                <%- include(`../landing/${viewName}`) %>
+
+                    <% } else { %>
+                        <p>Konten tidak ditemukan.</p>
+                        <% } %>
+        </div>
+
+        <!-- / Sections:End -->
+
+
+
+        <!-- Footer: Start -->
+        <%- include('../partials/footer') %>
+            <!-- Footer: End -->
+
+
+
+
+
+
+
+
+            <!-- Core JS -->
+            <!-- build:js assets/vendor/js/theme.js  -->
+
+
+            <!-- <script src="/assets/vendor/libs/popper/popper.js"></script> -->
+            <script src="/assets/vendor/js/bootstrap.js"></script>
+            <!-- <script src="/assets/vendor/libs/%40algolia/autocomplete-js.js"></script> -->
+
+
+
+            <script src="/assets/vendor/libs/pickr/pickr.js"></script>
+
+
+
+            <!-- endbuild -->
+
+            <!-- Vendors JS -->
+            <script src="/assets/vendor/libs/nouislider/nouislider.js"></script>
+            <script src="/assets/vendor/libs/swiper/swiper.js"></script>
+
+            <!-- Main JS -->
+
+            <script src="/assets/js/front-main.js"></script>
+
+
+            <!-- Page JS -->
+            <script>
+                console.log(`%c
+██╗  ██╗██╗   ██╗████████╗██╗  ██╗██╗ █████╗ 
+██║ ██╔╝╚██╗ ██╔╝╚══██╔══╝██║  ██║██║██╔══██╗
+█████╔╝  ╚████╔╝    ██║   ███████║██║███████║
+██╔═██╗   ╚██╔╝     ██║   ██╔══██║██║██╔══██║
+██║  ██╗   ██║      ██║   ██║  ██║██║██║  ██║
+╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚═╝  ╚═╝╚═╝╚═╝  ╚═╝
+`, 'color: #00c3ff; font-weight: bold; font-size: 16px; text-shadow: 2px 2px 0 #0e1a2b, 4px 4px 0 #2092ec;');
+            </script>
+
+</body>
+
+</html>
+
+<!-- beautify ignore:end -->

@@ -1,0 +1,74 @@
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?size=128" alt="User Avatar"
+            class="rounded-circle" width="64" height="64">
+        <div>
+            <h4 class="mb-0 fw-bold ">Hello, <%= user.username %>!</h4>
+            <div class="text-muted">Choose a server to start configuring.</div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <% if (guilds && guilds.length> 0) { %>
+            <% guilds.forEach(guild=> { %>
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                    <% if (guild.hasBot) { %>
+                        <div class="card text-center h-100 glass-effect text-decoration-none border-0"
+                            style="border-radius: 1rem;">
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center p-4">
+                                <% if (guild.icon) { %>
+                                    <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.png?size=128"
+                                        class="rounded-circle mb-3" alt="Server Icon" width="80" height="80">
+                                    <% } else { %>
+                                        <div class="mb-3 d-flex justify-content-center align-items-center bg-primary bg-opacity-25 rounded-circle"
+                                            style="width:80px;height:80px;">
+                                            <span class=" fw-bold fs-2">
+                                                <%= guild.name.charAt(0) %>
+                                            </span>
+                                        </div>
+                                        <% } %>
+                                            <p class="fw-semibold  text-truncate mb-0" title="<%= guild.name %>">
+                                                <%= guild.name %>
+                                            </p>
+                                            <a href="/dashboard/<%= guild.id %>" class="btn btn-primary mt-2">Manage Server</a>
+                            </div>
+                        </div>
+                        <% } else { %>
+                            <div class="card text-center h-100 glass-effect border-0" style="border-radius: 1rem;">
+                                <div class="card-body d-flex flex-column justify-content-center align-items-center p-4">
+                                    <% if (guild.icon) { %>
+                                        <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.png?size=128"
+                                            class="rounded-circle mb-3" alt="Server Icon" width="80" height="80">
+                                        <% } else { %>
+                                            <div class="mb-3 d-flex justify-content-center align-items-center bg-primary bg-opacity-25 rounded-circle"
+                                                style="width:80px;height:80px;">
+                                                <span class=" fw-bold fs-2">
+                                                    <%= guild.name.charAt(0) %>
+                                                </span>
+                                            </div>
+                                            <% } %>
+                                                <p class="fw-semibold  text-truncate mb-2" title="<%= guild.name %>">
+                                                    <%= guild.name %>
+                                                </p>
+                                                <a href="https://discord.com/oauth2/authorize?client_id=<%= botClientId %>&scope=bot+applications.commands&permissions=<%= botPermissions %>&guild_id=<%= guild.id %>&disable_guild_select=true"
+                                                    class="btn btn-info mt-2 " target="_blank">Invite Bot</a>
+                                </div>
+                            </div>
+                            <% } %>
+                </div>
+                <% }); %>
+                    <% } else { %>
+                        <div class="col-12">
+                            <div class="card glass-effect">
+                                <div class="card-body text-center p-5">
+                                    <p>You don't have any server that can be managed.</p>
+                                    <p class="text-muted small">Make sure you have the "Manage Server"
+                                        in the destination server.</p>
+                                    <a href="/auth/discord" class="btn btn-primary mt-2">Refresh / Try
+                                        Again</a>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+    </div>
+</div>

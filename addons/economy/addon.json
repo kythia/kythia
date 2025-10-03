@@ -1,0 +1,9 @@
+{
+    "name": "Economy",
+    "featureName": "Economy",
+    "featureFlag": "economyOn",
+    "version": "1.0.0-rc1",
+    "description": "Build a thriving virtual economy! Members can earn coins, claim daily rewards, work jobs, gamble, shop for items, and trade with others. Create an engaging economic ecosystem that keeps your community active and invested.",
+    "author": "kenndeclouv",
+    "kythia": "bRET81gwmuoGrIYxaRf8xlRMyM5J3DKvFt2K5XYe3kG6sV2lOKNSGBrrmf2WR47QORFdFIRaVLzWBvolCEe7nd4AOfGlmzhW/FTfilSKX++A9xEcoOyyZetJpQUR/50LmRpK1tefxUxaqzePF5a21AYOjzzLwGaTDTnhottdNiSe/gietIY/kBPFJAHudGNvVd2QOZHC+D6qIKGoPDOUJg6l+tzuDrmYPJTsx6C29usRUrjJWjsXStoc/bYd27aIRdIs135Gr3u14syVzerVI3wQBVhWdX69DjhG59ffn29sU056vKqReHvYDvW6blg4NbKZtptftbScgwFFMvoMoQ=="
+}

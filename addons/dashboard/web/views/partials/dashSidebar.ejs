@@ -1,0 +1,164 @@
+<aside id="layout-menu" class="layout-menu menu-vertical menu glass-effect rounded-0">
+    <div class="app-brand demo px-5">
+        <a href="/dashboard/servers" class="app-brand-link">
+            <span class="app-brand-logo demo">
+                <span class="text-primary">
+                    <img src="/assets/img/logo/logo.png" alt="kythia logo" width="40">
+                </span>
+            </span>
+            <span class="app-brand-text demo menu-text fw-bold ms-2">Kythia</span>
+        </a>
+
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto glass-effect">
+            <i class="icon-base bx bx-chevron-left"></i>
+        </a>
+    </div>
+    <div class="menu-inner-shadow"></div>
+    <ul class="menu-inner py-1">
+        <!-- Dashboards -->
+        <!-- <li class="menu-header small">
+            <span class="menu-header-text" data-i18n="Apps & Pages">Apps &amp; Pages</span>
+        </li> -->
+        <!-- <li class="menu-item">
+            <a href="/dashboard" class="menu-link">
+                <i class="menu-icon icon-base bx bx-envelope"></i>
+                <div data-i18n="Email">Email</div>
+            </a>
+        </li> -->
+        
+        <!-- <li class="menu-item">
+            <div class="server-list w-100 px-3 py-2">
+                <ul class="list-unstyled mb-0">
+                    <% 
+                        // Sederhanakan: asumsikan guild dan guilds sudah tersedia di EJS
+                        var selectedServer = null;
+                        if (guild && Array.isArray(guilds)) {
+                            selectedServer = guilds.find(s => s.id == guild);
+                        }
+                        guilds.forEach(function(server) { 
+                    %>
+                        <li class="mb-2">
+                            <a class="btn w-100 text-start glass-effect d-flex align-items-center<%= selectedServer && selectedServer.id === server.id ? ' btn-primary active' : ' btn-outline-primary' %>" 
+                               href="/dashboard/server/<%= server.id %>">
+                                <img src="https://cdn.discordapp.com/icons/<%= server.id %>/<%= server.icon %>.png?size=32" 
+                                     alt="<%= server.name %>" 
+                                     class="rounded-circle me-2" 
+                                     width="24" height="24" 
+                                     style="object-fit:cover;">
+                                <span><%= server.name %></span>
+                            </a>
+                        </li>
+                    <% }); %>
+                </ul>
+            </div>
+        </li> -->
+        
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon icon-base fa-regular fa-server"></i>
+                <div>Servers</div>
+                <!-- <div class="badge text-bg-danger rounded-pill ms-auto"><%= guilds && Array.isArray(guilds) ? guilds.length : 0 %></div> -->
+            </a>
+            <ul class="menu-sub">
+                <% 
+                    // guilds: array of server user can manage
+                    // Each server: { id, name, icon, hasBot }
+                    var selectedServer = null;
+                    if (guild && Array.isArray(guilds)) {
+                        selectedServer = guilds.find(s => s.id == guild.id || s.id == guild);
+                    }
+                    if (Array.isArray(guilds) && guilds.length > 0) {
+                        guilds.forEach(function(server) { 
+                %>
+                    <li class="menu-item<%= selectedServer && selectedServer.id === server.id ? ' active' : '' %>">
+                        <% if (server.hasBot) { %>
+                            <a href="/dashboard/<%= server.id %>" class="menu-link d-flex align-items-center">
+                                <img src="https://cdn.discordapp.com/icons/<%= server.id %>/<%= server.icon %>.png?size=32" 
+                                     alt="<%= server.name %>" 
+                                     class="rounded-circle me-2" 
+                                     width="24" height="24" 
+                                     style="object-fit:cover;">
+                                <span><%= server.name %></span>
+                            </a>
+                        <% } else { %>
+                            <a href="https://discord.com/oauth2/authorize?client_id=<%= botClientId %>&scope=bot+applications.commands&permissions=<%= botPermissions %>&guild_id=<%= server.id %>&disable_guild_select=true" 
+                               class="menu-link d-flex align-items-center text-warning" target="_blank" rel="noopener">
+                                <img src="https://cdn.discordapp.com/icons/<%= server.id %>/<%= server.icon %>.png?size=32" 
+                                     alt="<%= server.name %>" 
+                                     class="rounded-circle me-2" 
+                                     width="24" height="24" 
+                                     style="object-fit:cover;">
+                                <span><%= server.name %></span>
+                                <!-- <span class="badge bg-warning text-dark ms-2">Invite Bot</span> -->
+                            </a>
+                        <% } %>
+                    </li>
+                <% 
+                        });
+                    } else { 
+                %>
+                    <li class="menu-item">
+                        <span class="menu-link text-muted">No servers found</span>
+                    </li>
+                <% } %>
+            </ul>
+        </li>
+        <%
+            if (guildId) { %>
+        <li class="menu-header small">
+            <span class="menu-header-text">Menus</span>
+        </li>
+        <li class="menu-item <%= currentPage == '/dashboard' ? 'active' : ''  %>">
+            <a href="/dashboard/<%= guildId %>" class="menu-link">
+                <i class="menu-icon icon-base fa-solid fa-chart-line"></i>
+                <div>Dashboard</div>
+            </a>
+        </li>
+
+        <li class="menu-item mt-2 <%= currentPage == '/dashboard/settings' ? 'active' : ''  %>">
+            <a href="/dashboard/<%= guildId %>/settings" class="menu-link <%= currentPage == '/dashboard/settings' ? 'active' : ''  %>">
+                <i class="menu-icon icon-base fa-regular fa-gears"></i>
+                <div>Settings</div>
+            </a>
+        </li>
+        <% } %>
+        
+        <!-- <li class="menu-item active open">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon icon-base bx bx-home-smile"></i>
+                <div data-i18n="Dashboards">Dashboards</div>
+                <div class="badge text-bg-danger rounded-pill ms-auto">5</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item active">
+                    <a href="dashboards-analytics.html" class="menu-link">
+                        <div data-i18n="Analytics">Analytics</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="dashboards-crm.html" class="menu-link">
+                        <div data-i18n="CRM">CRM</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="app-ecommerce-dashboard.html" class="menu-link">
+                        <div data-i18n="eCommerce">eCommerce</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="app-logistics-dashboard.html" class="menu-link">
+                        <div data-i18n="Logistics">Logistics</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="app-academy-dashboard.html" class="menu-link">
+                        <div data-i18n="Academy">Academy</div>
+                    </a>
+                </li>
+            </ul>
+        </li> -->
+
+    </ul>
+
+
+</aside>

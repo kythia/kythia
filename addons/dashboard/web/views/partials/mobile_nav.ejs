@@ -1,0 +1,109 @@
+
+<nav class="navbar navbar-expand-lg navbar-dark navbar-glass sticky-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4" href="/">
+            <img src="/assets/img/logo/logo.png" alt="Kythia Logo" style="width: 45px; height: 45px;">
+            Kythia
+        </a>
+
+        <div class="d-lg-none ms-auto">
+            <% if (user) { %>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
+                    <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?size=64" alt="User Avatar" width="32" height="32" class="rounded-circle">
+                </button>
+            <% } else { %>
+                <a href="/auth/discord" class="btn btn-primary btn-sm">Login</a>
+            <% } %>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link <%= (currentPage === '/') ? 'active' : '' %>" href="/">Beranda</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <%= (currentPage === '/commands') ? 'active' : '' %>" href="/commands">Commands</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <%= (currentPage === '/premium') ? 'active' : '' %>" href="/premium">Premium</a>
+                </li>
+            </ul>
+
+            <% if (user) { %>
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?size=64" alt="User Avatar" width="32" height="32" class="rounded-circle me-2">
+                        <strong><%= user.username %></strong>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/servers">Pilih Server</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/auth/logout">Sign out</a></li>
+                    </ul>
+                </div>
+            <% } else { %>
+                <a href="/auth/discord" class="btn btn-primary d-none d-lg-block">
+                    <i class="bi bi-discord me-2"></i>Login
+                </a>
+            <% } %>
+        </div>
+    </div>
+</nav>
+
+<% if (user) { %>
+<div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+    <div class="offcanvas-header border-bottom border-secondary-subtle">
+        <div id="mobileMenuLabel" class="offcanvas-title d-flex align-items-center gap-2">
+            <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?size=64" alt="User Avatar" width="32" height="32" class="rounded-circle">
+            <span class="fw-bold"><%= user.username %></span>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link link-light <%= (currentPage === '/') ? 'active fw-bold' : '' %>" href="/">
+                    <i class="bi bi-house-fill me-2"></i>Beranda
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link-light <%= (currentPage === '/commands') ? 'active fw-bold' : '' %>" href="/commands">
+                    <i class="bi bi-terminal-fill me-2"></i>Commands
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link-light <%= (currentPage === '/premium') ? 'active fw-bold' : '' %>" href="/premium">
+                    <i class="bi bi-gem me-2"></i>Premium
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link-light <%= (currentPage === '/servers') ? 'active fw-bold' : '' %>" href="/servers">
+                    <i class="bi bi-hdd-stack-fill me-2"></i>Pilih Server
+                </a>
+            </li>
+            
+            <% if (guild) { %>
+                <hr class="my-3">
+                <h6 class="px-3 text-white-50">Mengelola: <%= guild.name %></h6>
+                <li class="nav-item">
+                    <a class="nav-link link-light <%= (page === 'dashboard') ? 'active fw-bold' : '' %>" href="/dashboard/<%= guild.id %>">
+                        <i class="bi bi-grid-fill me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link-light <%= (page === 'settings') ? 'active fw-bold' : '' %>" href="/dashboard/<%= guild.id %>/settings">
+                        <i class="bi bi-gear-fill me-2"></i>Settings
+                    </a>
+                </li>
+                <% } %>
+            
+            <hr class="my-3">
+            <li class="nav-item">
+                <a class="nav-link link-light" href="/auth/logout">
+                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<% } %>

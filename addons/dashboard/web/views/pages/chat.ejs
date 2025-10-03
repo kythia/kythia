@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Chat Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/fontawesome.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/thin.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/solid.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/regular.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/light.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/brands.css">
+    <!-- <link rel="stylesheet" href="/css/style.css"> -->
+
+    <style>
+        :root {
+            /* Mengambil variabel dari style.css jika tersedia */
+            --bg-color: #0D0B14;
+            --primary-color: #E99AB5;
+            --secondary-color: #A8D8DD;
+            --primary-color-rgb: 233, 154, 181;
+            --card-bg: rgba(23, 21, 36, 0.7);
+            --border-color: rgba(140, 101, 255, 0.15);
+            --server-list-bg: var(--card-bg);
+        }
+
+        body {
+            font-family: "Noto Sans", sans-serif;
+            background-color: var(--bg-color);
+            /* background-image: radial-gradient(circle at 10% 20%, rgba(var(--primary-color-rgb), 0.2), transparent 40%), radial-gradient(circle at 90% 80%, rgba(var(--secondary-color-rgb), 0.2), transparent 50%); */
+            /* background: #290127;
+            background: linear-gradient(90deg, #170017 30%, rgba(89, 6, 92, 1) 100%); */
+            background: #170017;
+            background: linear-gradient(90deg, rgba(23, 0, 23, 1) 0%, rgba(74, 5, 77, 1) 84%, rgba(89, 6, 92, 1) 90%);
+            background-attachment: fixed;
+            overflow: hidden;
+        }
+
+        .discord-title {
+            /* background: linear-gradient(to right, var(--primary-color), var(--secondary-color)); */
+            /* background: var(--server-list-bg); */
+            backdrop-filter: blur(10px);
+            /* border-right: 1px solid var(--border-color); */
+            padding: 8px;
+            /* margin-left: 72px; */
+            width: 100vw;
+            height: 32px;
+            font-size: 14px;
+            text-align: center;
+            color: white;
+            /* border-bottom: 1px solid var(--border-color); */
+        }
+
+        .discord-layout {
+            display: flex;
+            height: calc(100vh - 32px);
+        }
+
+        .server-list {
+            /* background: var(--server-list-bg); */
+            backdrop-filter: blur(10px);
+            /* border-right: 1px solid var(--border-color); */
+            padding: 8px;
+            width: 72px;
+            scrollbar-width: none;
+            margin-top: -32px;
+            padding-top: 32px;
+            flex-shrink: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .server-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--card-bg);
+            border-radius: 25%;
+            margin: 0 auto 16px auto;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            object-fit: cover;
+            border: 2px solid transparent;
+        }
+
+        .server-icon:hover {
+            border-radius: 15px;
+            border-color: var(--secondary-color);
+        }
+
+        .server-icon.active {
+            border-radius: 15px;
+            border-color: var(--primary-color);
+        }
+
+        .channel-list {
+            background-color: rgba(23, 21, 36, 0.7);
+            color: white;
+            width: 240px;
+            min-width: 290px;
+            max-width: 400px;
+            flex-shrink: 0;
+            padding: 8px;
+            scrollbar-width: none;
+            overflow-y: auto;
+            resize: horizontal;
+            /* border-right: 1px solid var(--border-color); */
+            border-left: 1px solid var(--border-color);
+            border-top: 1px solid var(--border-color);
+            border-radius: 15px 0 0 0;
+        }
+
+        .category-name {
+            color: #a9a9a9;
+            font-size: 12px;
+            /* font-weight: bold; */
+            margin-top: 15px;
+            margin-bottom: 5px;
+            padding: 0 10px;
+        }
+
+        .channel-item {
+            padding: 8px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #adb5bd;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .channel-item:hover {
+            background-color: rgba(var(--primary-color-rgb), 0.15);
+            color: white;
+        }
+
+        .channel-item.active {
+            background-color: var(--primary-color);
+            color: #0D0B14;
+        }
+
+        .channel-item.active .text-muted {
+            color: rgba(13, 11, 20, 0.7) !important;
+        }
+
+        .chat-view {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: transparent;
+        }
+
+        .chat-header {
+            padding: 12px 16px;
+            height: 48px;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(13, 11, 20, 0.6);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chat-header-title {
+            font-size: 18px;
+            /* font-weight: bold; */
+            color: white;
+        }
+
+        .message-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 16px;
+        }
+
+        .message-content .author {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .message-content .timestamp {
+            font-size: 0.75rem;
+            color: #72767d;
+            margin-left: 8px;
+        }
+
+        .message-content p {
+            margin: 0;
+            line-height: 1.375rem;
+            white-space: pre-wrap;
+            color: #dcddde;
+        }
+
+        .chat-input-area {
+            padding: 16px;
+            flex-shrink: 0;
+        }
+
+        #chat-input-form input {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: white;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        #chat-input-form input:focus {
+            background-color: #1e1c2c;
+            border-color: var(--primary-color);
+            box-shadow: none;
+        }
+
+        /* --- STYLE BARU UNTUK EMBED --- */
+        .embed-wrapper {
+            display: flex;
+            margin-top: 8px;
+        }
+
+        .embed-color-pill {
+            background-color: var(--primary-color);
+            width: 4px;
+            flex-shrink: 0;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .embed-main {
+            background-color: #2b2d31;
+            color: white;
+            padding: 12px;
+            border-radius: 0 4px 4px 0;
+            max-width: 500px;
+        }
+
+        .embed-author {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .embed-author img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .embed-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .embed-description {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            margin-bottom: 12px;
+        }
+
+        .embed-fields {
+            display: grid;
+            gap: 8px;
+        }
+
+        .embed-field .name {
+            font-weight: bold;
+            font-size: 0.875rem;
+            margin-bottom: 2px;
+        }
+
+        .embed-field .value {
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+        }
+
+        .embed-image {
+            max-width: 100%;
+            border-radius: 4px;
+            margin-top: 12px;
+        }
+
+        .embed-footer {
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #a3a6aa;
+            margin-top: 8px;
+        }
+
+        .embed-footer img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(var(--primary-color-rgb), 0.5);
+            border-radius: 4px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                background-color: rgba(var(--primary-color-rgb), 0.2);
+                opacity: 0.5;
+            }
+
+            to {
+                background-color: transparent;
+                opacity: 1;
+            }
+        }
+
+        .message.new {
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .mention {
+            background-color: rgba(var(--primary-color-rgb), 0.2);
+            color: var(--primary-color);
+            padding: 1px 4px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        code {
+            background-color: #15141c;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+        }
+
+        pre.discord-codeblock {
+            background-color: #15141c;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 10px;
+            position: relative;
+            white-space: pre-wrap;
+            /* Agar tidak overflow */
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #2b2d31;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0.3;
+            transition: opacity 0.2s;
+        }
+
+        pre:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .spoiler {
+            background-color: #202225;
+            color: transparent;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .spoiler:hover {
+            background-color: #292b2f;
+        }
+
+        .spoiler.revealed {
+            background-color: transparent;
+            color: inherit;
+        }
+
+        .emoji {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="discord-title">Kythia</div>
+    <div class="discord-layout">
+        <div class="server-list" id="server-list">
+            <% guilds.forEach(guild=> { %>
+                <img src="<%= guild.icon %>" class="server-icon" title="<%= guild.name %>"
+                    onclick="selectServer('<%= guild.id %>', this)">
+                <% }); %>
+        </div>
+
+        <div class="channel-list" id="channel-list">
+            <h5 id="server-name-display" class="p-2">PILIH SERVER</h5>
+            <div id="channels">
+                <p class="text-light small p-2">Pilih server di sebelah kiri untuk melihat kanal.</p>
+            </div>
+        </div>
+
+        <div class="chat-view">
+            <div class="chat-header" id="chat-header">
+                <span id="chat-header-title" class="text-muted">Selamat Datang!</span>
+                <div class="d-flex align-items-center">
+                    <label for="message-limit" class="form-label me-2 mb-0 small text-white-50">Limit:</label>
+                    <input type="number" id="message-limit" class="form-control form-control-sm"
+                        style="width: 80px; background-color: var(--card-bg); color: white; border-color: var(--border-color);"
+                        value="50">
+                </div>
+            </div>
+            <div class="message-container" id="message-container">
+                <div class="text-center text-white-50 mt-5">
+                    <h4>Pilih kanal untuk melihat percakapan.</h4>
+                </div>
+            </div>
+            <div class="chat-input-area" id="chat-input-area" style="display: none;">
+                <form id="chat-input-form">
+                    <input type="text" id="message-input" placeholder="Ketik pesan..." autocomplete="off">
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let activeGuildId = null, activeChannelId = null;
+        const channelsContainer = document.getElementById('channels');
+        const messageContainer = document.getElementById('message-container');
+        const serverNameDisplay = document.getElementById('server-name-display');
+        const chatHeaderTitle = document.getElementById('chat-header-title');
+        const chatInputArea = document.getElementById('chat-input-area');
+        const chatInputForm = document.getElementById('chat-input-form');
+        const messageInput = document.getElementById('message-input');
+        const socket = io();
+
+        // 1. DENGARKAN PESAN BARU DARI WEBSOCKET
+        socket.on('newMessage', (msg) => {
+            if (msg.channelId === activeChannelId) {
+                appendMessage(msg, true);
+            }
+        });
+
+        // 2. SEMUA FUNGSI UTAMA ANDA
+        async function selectServer(guildId, element) {
+            if (guildId === activeGuildId) return;
+            activeGuildId = guildId;
+            activeChannelId = null; // Reset channel aktif
+            chatInputArea.style.display = 'none';
+
+            document.querySelectorAll('.server-icon').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            serverNameDisplay.textContent = element.title.toUpperCase();
+            channelsContainer.innerHTML = '<p class="text-muted small p-2">Memuat kanal...</p>';
+
+            const response = await fetch(`/api/guilds/${guildId}/channels`);
+            const categories = await response.json();
+            renderChannels(categories);
+        }
+
+        async function selectChannel(channelId, channelName, element) {
+            if (channelId === activeChannelId) return;
+            activeChannelId = channelId;
+            chatInputArea.style.display = 'block';
+
+            document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            chatHeaderTitle.innerHTML = `<i class="fa-regular fa-hashtag me-2"></i> ${channelName}`;
+            messageContainer.innerHTML = '<p class="text-center text-muted mt-5">Memuat pesan...</p>';
+            await fetchMessages(channelId);
+        }
+
+        async function fetchMessages(channelId) {
+            const limit = document.getElementById('message-limit').value || 50;
+            const response = await fetch(`/api/channels/${channelId}/messages?limit=${limit}`);
+            const data = await response.json();
+
+            messageContainer.innerHTML = '';
+            if (!response.ok || data.length === 0) {
+                messageContainer.innerHTML = `<p class="text-center text-muted mt-5">${data.message || 'Tidak ada pesan.'}</p>`;
+                return;
+            }
+
+            // KODE DIPERBAIKI: Hanya panggil appendMessage, tidak ada duplikasi
+            data.forEach(msg => {
+                appendMessage(msg, false); // Cukup panggil ini
+            });
+
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // 3. FUNGSI-FUNGSI PEMBANTU (HELPER)
+
+        function renderChannels(categories) {
+            channelsContainer.innerHTML = '';
+            if (categories.length === 0) {
+                channelsContainer.innerHTML = '<p class="text-muted small p-2">Tidak ada kanal.</p>';
+                return;
+            }
+            categories.forEach(category => {
+                const categoryEl = document.createElement('div');
+                categoryEl.className = 'category-name';
+                categoryEl.textContent = category.name;
+                channelsContainer.appendChild(categoryEl);
+
+                category.channels.forEach(channel => {
+                    const channelEl = document.createElement('div');
+                    channelEl.className = 'channel-item';
+                    channelEl.innerHTML = `<i class="fa-regular fa-hashtag me-2 text-light"></i> ${channel.name}`;
+                    channelEl.onclick = () => selectChannel(channel.id, channel.name, channelEl);
+                    channelsContainer.appendChild(channelEl);
+                });
+            });
+        }
+
+        function appendMessage(msg, isNew) {
+            const messageEl = document.createElement('div');
+            messageEl.className = 'message';
+            if (isNew) messageEl.classList.add('new');
+
+            const attachmentsHTML = (msg.attachments || []).map(url => `<a href="${url}" target="_blank"><img src="${url}" class="attachment"></a>`).join('');
+
+            // Sempurnakan embed: parse markdown Discord-like
+            const embedsHTML = (msg.embeds || []).map(embed => {
+                const color = embed.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
+                const authorHTML = embed.author ? `<div class="embed-author">${embed.author.iconURL ? `<img src="${embed.author.iconURL}">` : ''}${embed.authorname}</div>` : '';
+                const titleHTML = embed.title ? `<div class="embed-title">${embed.title}</div>` : '';
+                const descHTML = embed.description ? `<div class="embed-description">${embed.description}</div>` : '';
+                const fieldsHTML = (embed.fields || []).map(f => `<div class="embed-field"><div class="name">${f.name}</div><div class="value">${f.value}</div></div>`).join('');
+                const imageHTML = embed.image ? `<img src="${embed.image}" class="embed-image">` : '';
+                const footerHTML = embed.footer ? `<div class="embed-footer">${embed.footer.iconURL ? `<img src="${embed.footer.iconURL}">` : ''}${embed.footer.text}</div>` : '';
+
+                return `<div class="embed-wrapper">
+                            <div class="embed-color-pill" style="background-color:${color};"></div>
+                            <div class="embed-main">
+                                ${authorHTML}
+                                ${titleHTML}
+                                ${descHTML}
+                                ${fieldsHTML ? `<div class="embed-fields">${fieldsHTML}</div>` : ''}
+                                ${imageHTML}
+                                ${footerHTML}
+                            </div>
+                        </div>`;
+            }).join('');
+
+            messageEl.innerHTML = `
+                <img src="${msg.author.avatar}" alt="avatar" class="message-avatar">
+                <div class="message-content">
+                    <div><span class="author">${msg.author.username}</span><span class="timestamp">${msg.timestamp}</span></div>
+                    ${msg.content ? `<p>${msg.content}</p>` : ''}
+                    ${embedsHTML}
+                    ${attachmentsHTML}
+                </div>`;
+
+            messageContainer.appendChild(messageEl);
+
+            const shouldScroll = messageContainer.scrollTop + messageContainer.clientHeight >= messageContainer.scrollHeight - 100;
+            if (shouldScroll || isNew) {
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
+        }
+
+        // function escapeHtml(text) {
+        //     return text ? String(text).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[m]) : '';
+        // }
+
+        function copyCodeBlock(btn) {
+            const code = btn.parentElement.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.innerText = "Copied!";
+                setTimeout(() => btn.innerText = "Copy", 1200);
+            });
+        }
+        chatInputForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Mencegah halaman refresh
+            const messageText = messageInput.value.trim();
+            if (!messageText || !activeChannelId) return;
+
+            // Simpan info bot dari EJS ke variabel JS
+            const botUser = {
+                username: '<%= botUser.username %>',
+                avatar: '<%= botUser.avatar %>'
+            };
+
+            // Buat "pesan palsu" untuk ditampilkan langsung (Optimistic UI)
+            // const optimisticMessage = {
+            //     content: messageText,
+            //     author: botUser, // Gunakan data bot sebagai author
+            //     timestamp: new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }),
+            //     attachments: [],
+            //     embeds: []
+            // };
+            // appendMessage(optimisticMessage, true); // Tampilkan langsung
+            messageInput.value = ''; // Langsung kosongkan input
+
+            // Kirim pesan ke server di latar belakang
+            try {
+                const response = await fetch(`/api/channels/${activeChannelId}/messages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: messageText })
+                });
+
+                if (!response.ok) {
+                    // Jika gagal, tampilkan error dan mungkin hapus pesan "optimistic" tadi
+                    const errorData = await response.json();
+                    alert(`Gagal mengirim pesan: ${errorData.message}`);
+                    // (Opsi: tambahkan logika untuk menghapus pesan yang gagal dikirim dari UI)
+                }
+                // Jika berhasil, tidak perlu melakukan apa-apa karena pesan sudah ditampilkan
+            } catch (error) {
+                alert('Error koneksi saat mengirim pesan.');
+            } finally {
+                messageInput.focus();
+            }
+        });
+    </script>
+</body>
+
+</html>
+<!-- <!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Chat Viewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- DISCORD UI POLISH v2.0 --- */
+        :root {
+            --bg-color: #0D0B14;
+            --primary-color: #E99AB5;
+            --secondary-color: #A8D8DD;
+            --primary-color-rgb: 233, 154, 181;
+            --card-bg: rgba(23, 21, 36, 0.7);
+            --border-color: rgba(140, 101, 255, 0.15);
+            --text-muted: #72767d;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 10% 20%, rgba(var(--primary-color-rgb), 0.2), transparent 40%), radial-gradient(circle at 90% 80%, rgba(var(--secondary-color-rgb), 0.2), transparent 50%);
+            background-attachment: fixed;
+            overflow: hidden;
+        }
+
+        .discord-layout {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Kolom 1: Server List */
+        .server-list {
+            background: rgba(13, 11, 20, 0.6);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border-color);
+            padding: 12px 0;
+            width: 72px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .server-icon-wrapper {
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .server-pill {
+            position: absolute;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 8px;
+            background-color: white;
+            border-radius: 0 4px 4px 0;
+            transition: height 0.2s ease;
+        }
+
+        .server-icon {
+            width: 48px;
+            height: 48px;
+            background-color: var(--card-bg);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            object-fit: cover;
+        }
+
+        .server-icon-wrapper:hover .server-pill {
+            height: 20px;
+        }
+
+        .server-icon-wrapper.active .server-pill {
+            height: 40px;
+        }
+
+        .server-icon-wrapper.active .server-icon,
+        .server-icon:hover {
+            border-radius: 15px;
+        }
+
+        /* Kolom 2: Channel List */
+        .channel-list {
+            background-color: rgba(23, 21, 36, 0.7);
+            width: 240px;
+            flex-shrink: 0;
+            padding: 10px;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .category-name {
+            color: #8e9297;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            padding: 0 10px;
+        }
+
+        .channel-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #8e9297;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .channel-item:hover {
+            background-color: rgba(var(--primary-color-rgb), 0.1);
+            color: #dcddde;
+        }
+
+        .channel-item.active {
+            background-color: rgba(var(--primary-color-rgb), 0.2);
+            color: white;
+        }
+
+        /* Kolom 3: Chat View */
+        .chat-view {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: transparent;
+        }
+
+        .chat-header {
+            padding: 12px 16px;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(13, 11, 20, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chat-header-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .message-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0 16px;
+        }
+
+        /* Pemisah Tanggal BARU */
+        .message-separator {
+            position: relative;
+            margin: 16px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .message-separator span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-color);
+            padding: 0 10px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Grup Pesan BARU */
+        .message-group {
+            margin-top: 1.25rem;
+            display: flex;
+        }
+
+        .message-group.compact {
+            margin-top: 2px;
+            padding-left: 64px;
+            /* Avatar width + margin */
+        }
+
+        .message-group .timestamp {
+            display: none;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: 16px;
+        }
+
+        .message-group.compact:hover .timestamp {
+            display: inline;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 16px;
+        }
+
+        .message-content .author {
+            font-weight: 500;
+            font-size: 16px;
+            color: var(--primary-color);
+        }
+
+        .message-content .timestamp-visible {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-left: 8px;
+        }
+
+        .message-text {
+            margin: 0;
+            line-height: 1.375rem;
+            color: #dcddde;
+            font-size: 16px;
+        }
+
+        /* Input Area */
+        .chat-input-area {
+            padding: 0 16px 24px 16px;
+            flex-shrink: 0;
+        }
+
+        #chat-input-form input {
+            background-color: rgba(23, 21, 36, 0.9);
+            border: 1px solid var(--border-color);
+            color: white;
+            border-radius: 8px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        #chat-input-form input::placeholder {
+            color: #72767d;
+        }
+
+        #chat-input-form input:focus {
+            background-color: #1e1c2c;
+            border-color: var(--primary-color);
+            box-shadow: none;
+        }
+
+        /* Embed Style (Tetap sama, sudah bagus) */
+        .embed-wrapper {
+            display: flex;
+            margin-top: 4px;
+        }
+
+        .embed-color-pill {
+            background-color: var(--primary-color);
+            width: 4px;
+            flex-shrink: 0;
+            border-radius: 3px;
+        }
+
+        .embed-main {
+            background-color: rgba(13, 11, 20, 0.5);
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            max-width: 500px;
+        }
+
+        .embed-title {
+            font-weight: 600;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="discord-layout">
+        <div class="server-list" id="server-list">
+            <% guilds.forEach(guild=> { %>
+                <div class="server-icon-wrapper" onclick="selectServer('<%= guild.id %>', this)">
+                    <div class="server-pill"></div>
+                    <img src="<%= guild.icon %>" class="server-icon" title="<%= guild.name %>">
+                </div>
+                <% }); %>
+        </div>
+        <div class="channel-list" id="channel-list">
+        </div>
+        <div class="chat-view">
+            <div class="chat-header" id="chat-header"> </div>
+            <div class="message-container" id="message-container"> </div>
+            <div class="chat-input-area" id="chat-input-area" style="display: none;">
+                <form id="chat-input-form">
+                    <input type="text" id="message-input" autocomplete="off">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // --- State Variables ---
+        let activeGuildId = null, activeChannelId = null;
+        let lastMessageAuthorId = null, lastMessageDate = null;
+
+        // --- DOM Elements ---
+        const serverList = document.getElementById('server-list');
+        const channelsContainer = document.getElementById('channels');
+        const messageContainer = document.getElementById('message-container');
+        const chatHeader = document.getElementById('chat-header');
+        const chatInputArea = document.getElementById('chat-input-area');
+        const chatInputForm = document.getElementById('chat-input-form');
+        const messageInput = document.getElementById('message-input');
+
+        // --- WebSocket Logic ---
+        const socket = io();
+        socket.on('newMessage', (msg) => {
+            if (msg.channelId === activeChannelId) {
+                renderMessages([msg], false); // Render pesan baru
+            }
+        });
+
+        // --- Core Functions ---
+        function selectServer(guildId, element) {
+            if (guildId === activeGuildId) return;
+            activeGuildId = guildId;
+            activeChannelId = null;
+
+            // Defensive: check if these elements exist before using them
+            if (chatInputArea) chatInputArea.style.display = 'none';
+            if (messageContainer) messageContainer.innerHTML = '';
+            if (chatHeader) chatHeader.innerHTML = '';
+
+            document.querySelectorAll('.server-icon-wrapper').forEach(el => el.classList.remove('active'));
+            if (element) element.classList.add('active');
+
+            if (channelsContainer) {
+                channelsContainer.innerHTML = '<p class="text-muted small p-2">Memuat kanal...</p>';
+            }
+            fetch(`/api/guilds/${guildId}/channels`)
+                .then(res => res.json())
+                .then(renderChannels);
+        }
+
+        function selectChannel(channelId, channelName, element) {
+            if (channelId === activeChannelId) return;
+            activeChannelId = channelId;
+
+            // Defensive: check if these elements exist before using them
+            if (chatInputArea) chatInputArea.style.display = 'block';
+            if (messageInput) messageInput.placeholder = `Kirim pesan ke #${channelName}`;
+
+            document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
+            if (element) element.classList.add('active');
+
+            if (chatHeader) {
+                chatHeader.innerHTML = `<div class="chat-header-title"><i class="fa-regular fa-hashtag me-2 text-light"></i>${channelName}</div>`;
+            }
+            if (messageContainer) {
+                messageContainer.innerHTML = '<p class="text-center text-muted mt-5">Memuat pesan...</p>';
+            }
+
+            fetch(`/api/channels/${channelId}/messages?limit=50`)
+                .then(res => res.json())
+                .then(messages => {
+                    if (messageContainer) {
+                        messageContainer.innerHTML = '';
+                        renderMessages(messages, true); // Render pesan awal
+                    }
+                });
+        }
+
+        // --- THE MAGIC: NEW RENDER FUNCTION ---
+        function renderMessages(messages, isPrepending) {
+            if (isPrepending) { // Jika ini render awal, reset state
+                lastMessageAuthorId = null;
+                lastMessageDate = null;
+            }
+
+            messages.forEach(msg => {
+                const msgDate = new Date(msg.timestamp).toDateString();
+                // 1. Cek apakah perlu pemisah tanggal
+                if (msgDate !== lastMessageDate) {
+                    const separatorEl = document.createElement('div');
+                    separatorEl.className = 'message-separator';
+                    separatorEl.innerHTML = `<span>${new Date(msg.timestamp).toLocaleDateString('id-ID', { month: 'long', day: 'numeric', year: 'numeric' })}</span>`;
+                    messageContainer.appendChild(separatorEl);
+                }
+
+                // 2. Cek apakah pesan ini bisa digabung (compact)
+                const isCompact = msg.author.id === lastMessageAuthorId && msgDate === lastMessageDate;
+
+                const groupEl = document.createElement('div');
+                groupEl.className = 'message-group' + (isCompact ? ' compact' : '');
+
+                let embedsHTML = (msg.embeds || []).map(renderEmbed).join('');
+                let attachmentsHTML = (msg.attachments || []).map(url => `<a href="${url}" target="_blank"><img src="${url}" style="max-width:400px; border-radius:5px; margin-top:5px;"></a>`).join('');
+
+                groupEl.innerHTML = isCompact ? `
+                <span class="timestamp">${new Date(msg.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</span>
+                <div class="message-text">${escapeHtml(msg.content)}</div>
+                ${embedsHTML}${attachmentsHTML}
+            ` : `
+                <img src="${msg.author.avatar}" alt="avatar" class="message-avatar">
+                <div class="message-content">
+                    <div>
+                        <span class="author">${escapeHtml(msg.author.username)}</span>
+                        <span class="timestamp-visible">${new Date(msg.timestamp).toLocaleString('id-ID')}</span>
+                    </div>
+                    <div class="message-text">${escapeHtml(msg.content)}</div>
+                    ${embedsHTML}${attachmentsHTML}
+                </div>
+            `;
+                messageContainer.appendChild(groupEl);
+
+                // 3. Update state untuk pesan selanjutnya
+                lastMessageAuthorId = msg.author.id;
+                lastMessageDate = msgDate;
+            });
+
+            // Auto-scroll ke bawah
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // --- Helper Functions ---
+        function renderChannels(categories) {
+            // Make sure channelsContainer exists before using it
+            if (!channelsContainer) {
+                console.error('channelsContainer is null');
+                return;
+            }
+            channelsContainer.innerHTML = '';
+            if (!Array.isArray(categories) || categories.length === 0) {
+                channelsContainer.innerHTML = '<p class="text-muted small p-2">Tidak ada kanal.</p>';
+                return;
+            }
+            categories.forEach(category => {
+                // Add category name
+                const categoryNameEl = document.createElement('div');
+                categoryNameEl.className = 'category-name';
+                categoryNameEl.textContent = category.name;
+                channelsContainer.appendChild(categoryNameEl);
+
+                // Add channels
+                (category.channels || []).forEach(channel => {
+                    const channelEl = document.createElement('div');
+                    channelEl.className = 'channel-item';
+                    channelEl.innerHTML = `<i class="fa-regular fa-hashtag me-1 text-muted"></i> ${channel.name}`;
+                    channelEl.onclick = () => selectChannel(channel.id, channel.name, channelEl);
+                    channelsContainer.appendChild(channelEl);
+                });
+            });
+        }
+
+        function renderEmbed(embed) {
+            const color = embed.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
+            const authorHTML = embed.author ? `<div class="embed-author">${embed.author.iconURL ? `<img src="${embed.author.iconURL}">` : ''}${escapeHtml(embed.author.name)}</div>` : '';
+            const titleHTML = embed.title ? `<div class="embed-title">${escapeHtml(embed.title)}</div>` : '';
+            // ... (etc. for all embed parts)
+            return `<div class="embed-wrapper"><div class="embed-color-pill" style="background-color:${color};"></div><div class="embed-main">${authorHTML}${titleHTML}</div></div>`;
+        }
+
+        chatInputForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageText = messageInput.value.trim();
+            if (!messageText || !activeChannelId) return;
+
+            // Optimistic UI: Tampilkan langsung, tapi tanpa ID author agar tidak mengganggu grouping
+            renderMessages([{
+                content: messageText, author: { id: 'optimistic-send', username: 'Me', avatar: '' },
+                timestamp: new Date().toISOString(), embeds: [], attachments: []
+            }], false);
+
+            const textToSend = messageInput.value;
+            messageInput.value = '';
+
+            try {
+                await fetch(`/api/channels/${activeChannelId}/messages`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: textToSend })
+                });
+            } catch (error) { console.error('Gagal kirim pesan:', error); }
+        });
+
+        function escapeHtml(text) { return text ? String(text).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[m]) : ''; }
+    </script>
+</body>
+
+</html> -->

@@ -1,0 +1,123 @@
+<nav class="layout-navbar shadow-none py-0" style="z-index: 1080;">
+    <div class="container">
+        <div class="navbar navbar-expand-lg px-3 px-md-8 py-3 glass-effect mt-4">
+            <!-- Menu logo wrapper: Start -->
+            <div class="navbar-brand app-brand demo d-flex py-0 me-4 me-xl-8">
+                <!-- Mobile menu toggle: Start-->
+                <button class="navbar-toggler border-0 px-0 me-4" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="icon-base bx bx-menu icon-lg align-middle text-heading fw-medium"></i>
+                </button>
+                <!-- Mobile menu toggle: End-->
+                <a href="/" class="app-brand-link">
+                    <span class="app-brand-logo demo">
+                        <span class="text-primary">
+
+                            <img src="/assets/img/logo/logo.png" alt="" width="40">
+                        </span>
+                    </span>
+                    <span class="app-brand-text fs-4 menu-text fw-bold ms-2 ps-1">Kythia</span>
+                </a>
+            </div>
+            <!-- Menu logo wrapper: End -->
+            <!-- Menu wrapper: Start -->
+            <div class="collapse navbar-collapse landing-nav-menu mt-4 mt-lg-0" id="navbarSupportedContent">
+                <button class="navbar-toggler border-0 text-heading position-absolute end-0 top-0 scaleX-n1-rtl p-2"
+                    type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="icon-base bx bx-x icon-lg"></i>
+                </button>
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link <%= (currentPage == '/commands') ? 'text-primary' : 'opacity-50' %>"
+                            href="/commands">Commands</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <%= (currentPage == '/partner') ? 'text-primary' : 'opacity-50' %>"
+                            href="/partner">Partner</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <%= (currentPage == '/changelog') ? 'text-primary' : 'opacity-50' %>"
+                            href="/changelog">Changelog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <%= (currentPage == '/status') ? 'text-primary' : 'opacity-50' %>"
+                            href="<%= kythia.settings.statusPage %>">Status</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="landing-menu-overlay d-lg-none"></div>
+            <!-- Menu wrapper: End -->
+            <!-- Toolbar: Start -->
+            <ul class="navbar-nav flex-row align-items-center ms-auto">
+
+                <!-- Style Switcher -->
+                <!-- <li class="nav-item dropdown-style-switcher dropdown me-2 me-xl-0 d-none d-lg-block">
+                    <a class="nav-link dropdown-toggle hide-arrow" id="nav-theme" href="javascript:void(0);"
+                        data-bs-toggle="dropdown">
+                        <i class="icon-base bx bx-sun icon-lg theme-icon-active"></i>
+                        <span class="d-none ms-2" id="nav-theme-text">Toggle theme</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-theme-text">
+                        <li>
+                            <button type="button" class="dropdown-item align-items-center active"
+                                data-bs-theme-value="light" aria-pressed="false">
+                                <span><i class="icon-base fa-solid fa-sun icon-md me-3" data-icon="sun"></i>Light</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" class="dropdown-item align-items-center" data-bs-theme-value="dark"
+                                aria-pressed="true">
+                                <span><i class="icon-base fa-solid fa-moon icon-md me-3" data-icon="moon"></i>Dark</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" class="dropdown-item align-items-center" data-bs-theme-value="system"
+                                aria-pressed="false">
+                                <span><i class="icon-base fa-solid fa-gears icon-md me-3"
+                                        data-icon="desktop"></i>System</span>
+                            </button>
+                        </li>
+                    </ul>
+                </li> -->
+                <!-- / Style Switcher-->
+
+                <!-- navbar button: Start -->
+                <li>
+                    <% if (user) { %>
+                        <div class="dropdown ms-auto">
+                            <a href="#"
+                                class="d-flex align-items-center text-decoration-none dropdown-toggle custom-dropdown-toggle"
+                                data-bs-toggle="dropdown" aria-expanded="false" style="background: none; border: none;">
+                                <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?size=64"
+                                    alt="" width="32" height="32" class="rounded-circle me-2">
+                                <strong>
+                                    <%= user.username %>
+                                </strong>
+                            </a>
+                            <ul class="dropdown-menu glass-effect mt-5 text-small ">
+                                <li>
+                                    <a class="dropdown-item custom-dropdown-item"
+                                        href="/dashboard/servers">Dashboard</a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider custom-dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item custom-dropdown-item" href="/auth/logout">Sign out</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <% } else { %>
+                            <a href="/auth/discord" class="btn btn-primary ms-auto">
+                                <i class="fa-brands fa-discord me-2"></i>Login
+                            </a>
+                            <% } %>
+                </li>
+                <!-- navbar button: End -->
+            </ul>
+            <!-- Toolbar: End -->
+        </div>
+    </div>
+</nav>

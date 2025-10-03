@@ -1,0 +1,601 @@
+{
+    "meta": {
+        "key": "gaming",
+        "display": "Gaming Community Enhanced",
+        "description": "Comprehensive gaming community with LFG, tournaments, rank systems, events, and detailed moderation",
+        "defaultLocale": "en"
+    },
+    "roles": [
+        { "name": "Server Owner", "color": 15844367, "hoist": true, "mentionable": false, "perms": ["Administrator"] },
+        {
+            "name": "Admin",
+            "color": 15158332,
+            "hoist": true,
+            "mentionable": true,
+            "perms": ["ManageGuild", "ManageChannels", "ManageMessages", "KickMembers", "BanMembers", "ViewAuditLog"]
+        },
+        {
+            "name": "Moderator",
+            "color": 3447003,
+            "hoist": true,
+            "mentionable": true,
+            "perms": ["ManageMessages", "MuteMembers", "DeafenMembers", "MoveMembers", "ManageNicknames"]
+        },
+        { "name": "Event Manager", "color": 16753920, "hoist": true, "mentionable": true, "perms": ["ManageMessages", "ManageEvents"] },
+        { "name": "Content Creator", "color": 10181046, "hoist": true, "mentionable": true, "perms": ["AttachFiles", "EmbedLinks"] },
+        { "name": "Tournament Organizer", "color": 11342935, "hoist": true, "mentionable": true, "perms": ["ManageMessages"] },
+        { "name": "LFG Leader", "color": 3066993, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "LFG Member", "color": 3066993, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Champion", "color": 16763904, "hoist": true, "mentionable": true, "perms": [] },
+        { "name": "Diamond", "color": 11027200, "hoist": true, "mentionable": true, "perms": [] },
+        { "name": "Platinum", "color": 6323595, "hoist": true, "mentionable": true, "perms": [] },
+        { "name": "Gold", "color": 12745742, "hoist": true, "mentionable": true, "perms": [] },
+        { "name": "Silver", "color": 8421504, "hoist": true, "mentionable": true, "perms": [] },
+        { "name": "Bronze", "color": 10038562, "hoist": true, "mentionable": true, "perms": [] },
+        { "name": "Unranked", "color": 10066329, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Streamer", "color": 15105570, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "YouTuber", "color": 15105570, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Artist", "color": 10181046, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Music Producer", "color": 10181046, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Event Participant", "color": 3447003, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "VIP", "color": 10181046, "hoist": true, "mentionable": true, "perms": [] },
+        { "name": "Supporter", "color": 3066993, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Bot", "color": 9807270, "hoist": false, "mentionable": false, "perms": ["ManageMessages", "EmbedLinks", "AttachFiles"] },
+        { "name": "Muted", "color": 10038562, "hoist": false, "mentionable": false, "perms": [] },
+        { "name": "Banned", "color": 10038562, "hoist": false, "mentionable": false, "perms": [] }
+    ],
+    "categories": [
+        {
+            "name": "📢 INFORMATION",
+            "channels": [
+                {
+                    "name": "👋┃welcome",
+                    "type": "text",
+                    "topic": "Server information, rules, and role selection",
+                    "pin": [
+                        {
+                            "title": "👋 Welcome Gamers!",
+                            "description": "Welcome to our gaming community! We're excited to have you here. Please read the rules and get your roles to fully enjoy the server.",
+                            "color": 3447003,
+                            "thumbnail": { "url": "https://i.imgur.com/gaming-welcome.png" },
+                            "fields": [
+                                {
+                                    "name": "📜 Server Rules",
+                                    "value": "• Be respectful to all members\n• No spam, NSFW, or harassment\n• Use appropriate channels for content\n• Follow Discord's Terms of Service"
+                                },
+                                {
+                                    "name": "🎮 Getting Started",
+                                    "value": "• Read #rules for detailed guidelines\n• Get your roles in #role-selection\n• Introduce yourself in #introductions\n• Check #announcements for updates"
+                                },
+                                {
+                                    "name": "🎯 What We Offer",
+                                    "value": "• LFG for various games\n• Tournaments and events\n• Ranked role system\n• Community showcases\n• Voice channels for gaming"
+                                }
+                            ],
+                            "footer": { "text": "Have fun and game on! 🎮" }
+                        }
+                    ]
+                },
+                {
+                    "name": "📜┃rules",
+                    "type": "text",
+                    "topic": "Detailed server rules and guidelines",
+                    "pin": [
+                        {
+                            "title": "📜 Server Rules & Guidelines",
+                            "description": "Please read and follow these rules to maintain a positive gaming environment for everyone.",
+                            "color": 15158332,
+                            "fields": [
+                                {
+                                    "name": "🤝 General Behavior",
+                                    "value": "• **Be Respectful:** Treat all members with kindness and respect\n• **No Harassment:** Bullying, trolling, or harassment will not be tolerated\n• **No Spam:** Avoid excessive messages, emojis, or mentions\n• **Stay On Topic:** Use channels for their intended purpose"
+                                },
+                                {
+                                    "name": "🎮 Gaming Rules",
+                                    "value": "• **Fair Play:** No cheating, exploiting, or unfair advantages\n• **Sportsmanship:** Be a good winner and loser\n• **Teamwork:** Work together and help new players\n• **Respect Opponents:** Trash talk is fine, but keep it friendly"
+                                },
+                                {
+                                    "name": "📝 Content Guidelines",
+                                    "value": "• **No NSFW:** Keep content appropriate for all ages\n• **No Self-Promotion:** Use #self-promotion for your content\n• **Respect Copyright:** Don't share copyrighted material\n• **Quality Content:** Share meaningful and relevant content"
+                                },
+                                {
+                                    "name": "🔇 Voice Chat Rules",
+                                    "value": "• **No Background Noise:** Use push-to-talk when possible\n• **Respect Others:** Don't interrupt or talk over others\n• **Appropriate Language:** Keep language clean and friendly\n• **No Music Bots:** Use music channels for music"
+                                },
+                                {
+                                    "name": "⚖️ Enforcement",
+                                    "value": "• **Warnings:** First offense usually results in a warning\n• **Timeouts:** Temporary restrictions for repeated offenses\n• **Bans:** Permanent removal for severe violations\n• **Appeals:** Contact staff if you believe you were treated unfairly"
+                                }
+                            ],
+                            "footer": { "text": "Rules are subject to change. Check back regularly!" }
+                        }
+                    ],
+                    "perms": [
+                        { "roles": ["@everyone"], "allow": ["ViewChannel", "ReadMessageHistory"], "deny": ["SendMessages"] },
+                        { "roles": ["Admin", "Moderator"], "allow": ["SendMessages"] }
+                    ]
+                },
+                {
+                    "name": "📢┃announcements",
+                    "type": "text",
+                    "topic": "Tournament updates, patch notes, server events, and important news",
+                    "pin": [
+                        {
+                            "title": "📢 Important Announcements",
+                            "description": "Stay updated with the latest server news, tournaments, events, and game updates.",
+                            "color": 15158332,
+                            "fields": [
+                                {
+                                    "name": "🎮 Upcoming Events",
+                                    "value": "Check here for tournaments, community events, and special activities"
+                                },
+                                { "name": "🔄 Game Updates", "value": "Patch notes, new features, and game-related news" },
+                                { "name": "🏆 Tournament Results", "value": "Winners, highlights, and tournament summaries" }
+                            ]
+                        }
+                    ],
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["SendMessages"] },
+                        { "roles": ["Admin", "Event Manager", "Tournament Organizer"], "allow": ["SendMessages"] }
+                    ]
+                },
+                {
+                    "name": "🎯┃role-selection",
+                    "type": "text",
+                    "topic": "Get your roles and customize your experience",
+                    "pin": [
+                        {
+                            "title": "🎯 Role Selection",
+                            "description": "Choose your roles to customize your server experience and get access to relevant channels!",
+                            "color": 15105570,
+                            "fields": [
+                                { "name": "🎮 Gaming Roles", "value": "React to get access to game-specific channels and LFG groups" },
+                                { "name": "🏆 Rank Roles", "value": "Get your rank role based on your skill level in various games" },
+                                { "name": "🎨 Content Creator Roles", "value": "Streamer, YouTuber, Artist, or Music Producer roles" },
+                                { "name": "📢 Notification Roles", "value": "Get pinged for events, tournaments, and important updates" },
+                                { "name": "🎪 Event Roles", "value": "Participate in community events and special activities" }
+                            ],
+                            "footer": { "text": "React with the emojis below to get your roles!" }
+                        }
+                    ],
+                    "perms": [{ "roles": ["@everyone"], "deny": ["SendMessages"] }]
+                },
+                {
+                    "name": "👋┃introductions",
+                    "type": "text",
+                    "topic": "Introduce yourself to the community",
+                    "pin": [
+                        {
+                            "title": "👋 Introduce Yourself!",
+                            "description": "Welcome to our community! Tell us about yourself and your gaming interests.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "📝 Introduction Format",
+                                    "value": "• **Name/Alias:** What should we call you?\n• **Favorite Games:** What games do you play?\n• **Platform:** PC, Console, Mobile?\n• **Interests:** What brings you here?\n• **Fun Fact:** Something interesting about you!"
+                                },
+                                {
+                                    "name": "🎮 Gaming Interests",
+                                    "value": "Share your favorite genres, games, and what you're looking forward to playing"
+                                },
+                                { "name": "🤝 Community", "value": "Let us know how we can help you get involved in our community" }
+                            ]
+                        }
+                    ],
+                    "rateLimitPerUser": 10
+                }
+            ]
+        },
+        {
+            "name": "🎮 MATCHMAKING & LFG",
+            "channels": [
+                {
+                    "name": "🔍┃lfg-text",
+                    "type": "text",
+                    "topic": "Looking for group - find teammates and gaming partners",
+                    "pin": [
+                        {
+                            "title": "🔍 Looking for Group (LFG)",
+                            "description": "Find teammates, gaming partners, and groups for various games. Use the format below for better visibility.",
+                            "color": 3066993,
+                            "fields": [
+                                {
+                                    "name": "📝 LFG Format",
+                                    "value": "**Game:** [Game Name]\n**Platform:** [PC/Console/Mobile]\n**Mode:** [Ranked/Casual/Custom]\n**Players Needed:** [Number]\n**Skill Level:** [Beginner/Intermediate/Advanced]\n**Time:** [When you want to play]\n**Region:** [Your region/timezone]"
+                                },
+                                {
+                                    "name": "🎯 Tips",
+                                    "value": "• Be specific about what you're looking for\n• Include your timezone and availability\n• Mention your skill level honestly\n• Be patient - good teammates are worth waiting for!"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🎮┃lfg-voice-1",
+                    "type": "voice",
+                    "topic": "General LFG voice channel for team coordination"
+                },
+                {
+                    "name": "🎮┃lfg-voice-2",
+                    "type": "voice",
+                    "topic": "Secondary LFG voice channel for larger groups"
+                },
+                {
+                    "name": "⚔️┃scrims",
+                    "type": "forum",
+                    "topic": "Find scrims, practice matches, and competitive games",
+                    "forumTags": ["5v5", "10-man", "ranked", "casual", "practice", "tournament", "custom"],
+                    "pin": [
+                        {
+                            "title": "⚔️ Scrims & Practice Matches",
+                            "description": "Organize scrims, practice matches, and competitive games with other teams.",
+                            "color": 11342935,
+                            "fields": [
+                                { "name": "🏷️ Post Tags", "value": "Use appropriate tags to categorize your scrim request" },
+                                {
+                                    "name": "📋 Scrim Format",
+                                    "value": "**Team Name:** [Your team name]\n**Game:** [Game name]\n**Format:** [5v5, 10-man, etc.]\n**Skill Level:** [Your team's level]\n**Time:** [When you want to play]\n**Map Pool:** [Preferred maps]\n**Rules:** [Any special rules]"
+                                },
+                                {
+                                    "name": "🤝 Etiquette",
+                                    "value": "• Be respectful to opposing teams\n• Show up on time for scheduled matches\n• Communicate clearly about any changes\n• Have fun and learn from each match!"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🏆┃ranked-lfg",
+                    "type": "text",
+                    "topic": "Find teammates for ranked/competitive matches",
+                    "pin": [
+                        {
+                            "title": "🏆 Ranked LFG",
+                            "description": "Find teammates for ranked and competitive matches. Make sure to include your current rank!",
+                            "color": 16763904,
+                            "fields": [
+                                { "name": "📊 Rank Information", "value": "Include your current rank, peak rank, and preferred roles" },
+                                { "name": "🎯 Goals", "value": "Are you looking to climb, maintain, or just have fun in ranked?" },
+                                { "name": "⏰ Availability", "value": "When are you typically available for ranked games?" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "💬 COMMUNITY",
+            "channels": [
+                {
+                    "name": "💬┃general-chat",
+                    "type": "text",
+                    "topic": "Main community chat for general discussions",
+                    "rateLimitPerUser": 2
+                },
+                {
+                    "name": "🎮┃game-discussion",
+                    "type": "text",
+                    "topic": "Discuss games, strategies, tips, and tricks",
+                    "pin": [
+                        {
+                            "title": "🎮 Game Discussion",
+                            "description": "Share strategies, tips, tricks, and discuss your favorite games with the community.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "💡 What to Share",
+                                    "value": "• Game strategies and tips\n• New discoveries and techniques\n• Patch analysis and meta discussions\n• Questions about gameplay"
+                                },
+                                {
+                                    "name": "🎯 Guidelines",
+                                    "value": "• Keep discussions constructive\n• Be open to different playstyles\n• Help newer players learn\n• Respect different skill levels"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "📸┃clips-highlights",
+                    "type": "text",
+                    "topic": "Share your best clips, highlights, and epic moments",
+                    "pin": [
+                        {
+                            "title": "📸 Clips & Highlights",
+                            "description": "Share your best gaming moments, epic plays, and funny clips with the community!",
+                            "color": 10181046,
+                            "fields": [
+                                {
+                                    "name": "📹 What to Share",
+                                    "value": "• Epic plays and clutches\n• Funny moments and fails\n• Tournament highlights\n• Creative content"
+                                },
+                                {
+                                    "name": "📝 Guidelines",
+                                    "value": "• Keep clips appropriate for all ages\n• Add context to your clips\n• Credit others if featuring their content\n• Use spoiler tags for recent game content"
+                                }
+                            ]
+                        }
+                    ],
+                    "rateLimitPerUser": 5
+                },
+                {
+                    "name": "🎨┃artwork",
+                    "type": "text",
+                    "topic": "Share gaming artwork, fan art, and creative content",
+                    "pin": [
+                        {
+                            "title": "🎨 Gaming Artwork",
+                            "description": "Showcase your gaming-related artwork, fan art, and creative projects!",
+                            "color": 10181046,
+                            "fields": [
+                                {
+                                    "name": "🎨 What to Share",
+                                    "value": "• Fan art of your favorite games\n• Original gaming artwork\n• Digital art and illustrations\n• Creative gaming content"
+                                },
+                                {
+                                    "name": "📝 Guidelines",
+                                    "value": "• Credit the original game/character\n• Keep content appropriate\n• Be respectful of others' work\n• Encourage and support fellow artists"
+                                }
+                            ]
+                        }
+                    ],
+                    "rateLimitPerUser": 10
+                },
+                {
+                    "name": "💰┃trading",
+                    "type": "text",
+                    "topic": "Trade in-game items, accounts, and gaming merchandise",
+                    "pin": [
+                        {
+                            "title": "💰 Trading & Marketplace",
+                            "description": "Trade in-game items, accounts, and gaming merchandise safely within our community.",
+                            "color": 16763904,
+                            "fields": [
+                                {
+                                    "name": "⚠️ Safety First",
+                                    "value": "• Use trusted middlemen for high-value trades\n• Never share personal information\n• Screenshot all trade agreements\n• Report suspicious activity to staff"
+                                },
+                                {
+                                    "name": "📝 Trade Format",
+                                    "value": "**Trading:** [What you have]\n**Want:** [What you want]\n**Platform:** [PC/Console/Mobile]\n**Contact:** [How to reach you]"
+                                },
+                                {
+                                    "name": "🚫 Prohibited",
+                                    "value": "• Real money transactions (use official platforms)\n• Account sharing or selling\n• Scamming or fraudulent trades\n• Trading outside of Discord"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🎵┃music",
+                    "type": "text",
+                    "topic": "Share gaming music, soundtracks, and music discussions",
+                    "pin": [
+                        {
+                            "title": "🎵 Gaming Music",
+                            "description": "Share your favorite gaming soundtracks, music, and discuss gaming audio!",
+                            "color": 10181046,
+                            "fields": [
+                                {
+                                    "name": "🎶 What to Share",
+                                    "value": "• Game soundtracks and OSTs\n• Gaming music covers\n• Original gaming music\n• Music discussion and recommendations"
+                                },
+                                {
+                                    "name": "📝 Guidelines",
+                                    "value": "• Respect copyright and fair use\n• Credit original composers when possible\n• Keep music appropriate for all ages\n• Support independent gaming musicians"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "🏆 TOURNAMENTS & EVENTS",
+            "channels": [
+                {
+                    "name": "🏆┃tournaments",
+                    "type": "text",
+                    "topic": "Tournament information, brackets, and results",
+                    "pin": [
+                        {
+                            "title": "🏆 Tournaments & Competitions",
+                            "description": "Participate in community tournaments and competitive events!",
+                            "color": 16763904,
+                            "fields": [
+                                {
+                                    "name": "📅 Upcoming Tournaments",
+                                    "value": "Check here for upcoming tournaments and registration details"
+                                },
+                                {
+                                    "name": "🏅 Tournament Types",
+                                    "value": "• Weekly community tournaments\n• Seasonal championships\n• Special event competitions\n• Custom game tournaments"
+                                },
+                                {
+                                    "name": "🎁 Prizes",
+                                    "value": "• Discord Nitro subscriptions\n• Gaming merchandise\n• Special roles and recognition\n• Community bragging rights!"
+                                }
+                            ]
+                        }
+                    ],
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["SendMessages"] },
+                        { "roles": ["Tournament Organizer", "Event Manager", "Admin"], "allow": ["SendMessages"] }
+                    ]
+                },
+                {
+                    "name": "📅┃events",
+                    "type": "text",
+                    "topic": "Community events, meetups, and special activities",
+                    "pin": [
+                        {
+                            "title": "📅 Community Events",
+                            "description": "Join our community events, meetups, and special activities!",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "🎪 Event Types",
+                                    "value": "• Community game nights\n• Movie watch parties\n• Q&A sessions with developers\n• Charity gaming marathons"
+                                },
+                                {
+                                    "name": "📝 How to Participate",
+                                    "value": "• Check this channel regularly for updates\n• React to event announcements to RSVP\n• Join voice channels during events\n• Have fun and meet new people!"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🎉┃giveaways",
+                    "type": "text",
+                    "topic": "Giveaways, contests, and community rewards",
+                    "pin": [
+                        {
+                            "title": "🎉 Giveaways & Contests",
+                            "description": "Participate in giveaways, contests, and win amazing prizes!",
+                            "color": 15105570,
+                            "fields": [
+                                {
+                                    "name": "🎁 Prize Types",
+                                    "value": "• Game codes and DLC\n• Discord Nitro subscriptions\n• Gaming merchandise\n• Special server roles"
+                                },
+                                {
+                                    "name": "📋 How to Enter",
+                                    "value": "• Follow the instructions in each giveaway\n• Meet the requirements (usually just being active)\n• React to enter when the giveaway is live\n• Good luck!"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "📊┃leaderboards",
+                    "type": "text",
+                    "topic": "Community leaderboards and rankings",
+                    "pin": [
+                        {
+                            "title": "📊 Community Leaderboards",
+                            "description": "See how you rank against other community members in various games and activities!",
+                            "color": 16763904,
+                            "fields": [
+                                {
+                                    "name": "🏆 Categories",
+                                    "value": "• Tournament wins\n• Community participation\n• Content creation\n• Helpful contributions"
+                                },
+                                {
+                                    "name": "📈 How Rankings Work",
+                                    "value": "• Points are awarded for various activities\n• Rankings update weekly\n• Special recognition for top performers\n• Seasonal resets for fairness"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "🎤 VOICE CHANNELS",
+            "channels": [
+                {
+                    "name": "🎮┃general-1",
+                    "type": "voice",
+                    "topic": "Main voice channel for general gaming and chat"
+                },
+                {
+                    "name": "🎮┃general-2",
+                    "type": "voice",
+                    "topic": "Secondary voice channel for larger groups"
+                },
+                {
+                    "name": "🏆┃ranked-gaming",
+                    "type": "voice",
+                    "topic": "Voice channel for ranked and competitive matches"
+                },
+                {
+                    "name": "🎯┃practice-room",
+                    "type": "voice",
+                    "topic": "Practice and training sessions"
+                },
+                {
+                    "name": "🎪┃events",
+                    "type": "voice",
+                    "topic": "Voice channel for community events and tournaments"
+                },
+                {
+                    "name": "🎵┃music",
+                    "type": "voice",
+                    "topic": "Music listening and chill gaming"
+                },
+                {
+                    "name": "😴┃afk",
+                    "type": "voice",
+                    "topic": "AFK channel - you'll be moved here when inactive"
+                }
+            ]
+        },
+        {
+            "name": "🛡️ STAFF & MODERATION",
+            "channels": [
+                {
+                    "name": "🛡️┃mod-chat",
+                    "type": "text",
+                    "topic": "Moderation discussions, reports, and staff coordination",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        { "roles": ["Moderator", "Admin", "Server Owner"], "allow": ["ViewChannel", "SendMessages", "ReadMessageHistory"] }
+                    ]
+                },
+                {
+                    "name": "📋┃reports",
+                    "type": "text",
+                    "topic": "Report rule violations, harassment, and other issues",
+                    "pin": [
+                        {
+                            "title": "📋 How to Report",
+                            "description": "Report rule violations, harassment, or other issues to our moderation team.",
+                            "color": 15158332,
+                            "fields": [
+                                {
+                                    "name": "📝 Report Format",
+                                    "value": "**User:** @username or User ID\n**Rule Violation:** Which rule was broken\n**Evidence:** Screenshots or message links\n**Description:** What happened\n**Additional Info:** Any other relevant details"
+                                },
+                                {
+                                    "name": "⚠️ What to Report",
+                                    "value": "• Harassment or bullying\n• Spam or excessive messages\n• NSFW content\n• Scamming or fraudulent activity\n• Other rule violations"
+                                },
+                                {
+                                    "name": "🚫 False Reports",
+                                    "value": "False or malicious reports may result in warnings or restrictions."
+                                }
+                            ]
+                        }
+                    ],
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["SendMessages"] },
+                        { "roles": ["Moderator", "Admin", "Server Owner"], "allow": ["SendMessages"] }
+                    ]
+                },
+                {
+                    "name": "📊┃logs",
+                    "type": "text",
+                    "topic": "Bot logs, moderation actions, and system monitoring",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        {
+                            "roles": ["Moderator", "Admin", "Server Owner", "Bot"],
+                            "allow": ["ViewChannel", "SendMessages", "ReadMessageHistory", "AttachFiles", "EmbedLinks"]
+                        }
+                    ]
+                },
+                {
+                    "name": "🔧┃bot-commands",
+                    "type": "text",
+                    "topic": "Bot command testing and configuration",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        { "roles": ["Moderator", "Admin", "Server Owner", "Bot"], "allow": ["ViewChannel", "SendMessages"] }
+                    ]
+                }
+            ]
+        }
+    ]
+}

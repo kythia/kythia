@@ -1,0 +1,62 @@
+/**
+ * namespace: addons/core/commands/moderation/snipe.js
+ * type: Command
+ */
+// commands/moderation/snipe.js
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { checkPermission, embedFooter } = require("@utils/discord");
+const SnipeModel = require("@coreModels/Snipe"); // Pastikan path model benar
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName("snipe")
+    .setDescription("Shows the most recent deleted message in this channel."),
+  adminOnly: true,
+  guildOnly: true,
+  async execute(interaction) {
+    if (!interaction.guild) {
+      return interaction.reply({
+        content: "🚫 | This command can't use here😭",
+        ephemeral: true,
+      });
+    }
+    await interaction.deferReply({ ephemeral: true });
+    if (!(await checkPermission(interaction.member))) {
+      return interaction.editReply({
+        content: "❌ Kamu tidak punya izin untuk menggunakan perintah ini.",
+        ephemeral: true,
+      });
+    }
+
+    // Ambil snipe dari database model Snipe
+    const channelId = interaction.channel.id;
+    const guildId = interaction.guild.id;
+
+    // Cari pesan terakhir yang dihapus di channel ini
+    const lastDeletedMessage = await SnipeModel.findOne({
+      where: { guildId, channelId },
+      order: [["createdAt", "DESC"]],
+    });
+
+    if (!lastDeletedMessage) {
+      return interaction.editReply({ content: "Tidak ada pesan yang dihapus untuk diambil di channel ini." });
+    }
+
+    const snipeEmbed = new EmbedBuilder()
+      .setColor("Red")
+      .setAuthor({
+        name: lastDeletedMessage.authorTag || "Unknown User",
+        iconURL: lastDeletedMessage.authorAvatar || interaction.client.user.displayAvatarURL(),
+      })
+      .setDescription(lastDeletedMessage.content || "*No content*")
+      .setTimestamp(lastDeletedMessage.messageCreatedAt || Date.now())
+      .setFooter(await embedFooter(interaction));
+
+    // Attachments (if any)
+    if (lastDeletedMessage.attachmentUrl) {
+      snipeEmbed.setImage(lastDeletedMessage.attachmentUrl);
+    }
+
+    return interaction.editReply({ embeds: [snipeEmbed] });
+  },
+};

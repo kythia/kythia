@@ -1,0 +1,107 @@
+<div class="container-xxl flex-grow-1 container-p-y">
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <% if (guild.icon) { %>
+      <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.png?size=128" class="rounded-circle"
+        alt="Server Icon" width="64" height="64">
+      <% } else { %>
+        <div class="d-flex justify-content-center align-items-center bg-primary bg-opacity-25 rounded-circle"
+          style="width:64px;height:64px;">
+          <span class=" fw-bold fs-4">
+            <%= guild.name.charAt(0) %>
+          </span>
+        </div>
+        <% } %>
+          <div>
+            <h4 class="mb-0 fw-bold ">
+              <%= guild.name %>
+            </h4>
+            <div class="text-muted">Summary of server activities.</div>
+          </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6 col-xl-3">
+      <div class="card glass-effect" style="border-radius: 1rem;">
+        <div class="card-body d-flex align-items-center gap-3">
+          <i class="bi bi-people-fill fs-1 text-primary"></i>
+          <div>
+            <p class="text-secondary mb-0">Total Members</p>
+            <h4 class="fw-bold  mb-0">
+              <%= stats.memberCount %>
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card glass-effect" style="border-radius: 1rem;">
+        <div class="card-body d-flex align-items-center gap-3">
+          <i class="bi bi-people-fill fs-1 text-primary"></i>
+          <div>
+            <p class="text-secondary mb-0">Total Channels</p>
+            <h4 class="fw-bold  mb-0">
+              <%= stats.channelCount %>
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card glass-effect" style="border-radius: 1rem;">
+        <div class="card-body d-flex align-items-center gap-3">
+          <i class="bi bi-people-fill fs-1 text-primary"></i>
+          <div>
+            <p class="text-secondary mb-0">Total Roles</p>
+            <h4 class="fw-bold  mb-0">
+              <%= stats.roleCount %>
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card glass-effect mt-4" style="border-radius: 1rem;">
+    <div class="card-body p-4">
+      <h5 class="card-title fw-bold mb-3 ">Latest Auto Moderation Logs</h5>
+
+      <% if (logs && logs.length> 0) { %>
+        <div class="table-responsive">
+          <table class="w-100 table-borderless table-hover align-middle" style="background-color: transparent;">
+            <thead>
+              <tr class="small">
+                <th>AKSI</th>
+                <th>TARGET</th>
+                <th>MODERATOR</th>
+                <th>REASON</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% logs.forEach(log=> { %>
+                <tr>
+                  <td><span class="badge text-bg-danger fw-semibold">
+                      <%= log.action %>
+                    </span></td>
+                  <td class="">
+                    <%= log.target %>
+                  </td>
+                  <td class="">
+                    <%= log.moderator %>
+                  </td>
+                  <td class="small">
+                    <%= log.reason %>
+                  </td>
+                </tr>
+                <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <% } else { %>
+          <div class="text-center p-5">
+            <i class="bi bi-journal-x fs-1"></i>
+            <p class="mt-3 mb-0 -50">No activity data available.</p>
+          </div>
+          <% } %>
+    </div>
+  </div>
+</div>

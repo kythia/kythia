@@ -1,0 +1,9 @@
+{
+    "name": "Dashboard",
+    "featureName": "Dashboard",
+    "featureFlag": "dashboardOn",
+    "version": "1.0.0",
+    "description": "Take control with a sleek web dashboard! Monitor server statistics, manage settings, view analytics, and configure your bot from anywhere with an intuitive web interface that puts power at your fingertips.",
+    "author": "kenndeclouv",
+    "kythia": "HeR982cXWFLj44QDwIInklpeTSR5WySyDpSq/NAGIse6piC9PEWtN1sMHHnnJ0ilw3XeyuEpQcvAl3vT66noQjHeYjVpyR8N8O1h0Omn2crJ//eB66ynONsAs4C5moOopSgRMzkzAQCwB63PegshWXfkUo06tKa7vPeGzOtym2VH9ca8UN0z6f8Dy1Y5tDD50QQO+xceu9zWZyOSGosR80zXEp6nkRZZCakTFjSKAlEfo5zzZ0qskJHTFvolCbKDWF4Wizu7WNtv6c5bZB7l2IHTKY5/h+QbPvos1aww1rITLOlsB8EDOhaaelhFBYOjPFqMBqPSdCj4XdcKyBxRwA=="
+}

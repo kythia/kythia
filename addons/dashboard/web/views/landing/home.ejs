@@ -1,0 +1,467 @@
+<section id="hero-animation">
+    <!-- <div class="particle-container" style="width: 100vw; height: 100vh; z-index: 999; position: absolute;">
+    </div> -->
+    <div id="landingHero" class="section-py landing-hero position-relative">
+        <!-- <img src="/assets/img/front-pages/backgrounds/hero-bg.png" alt="hero background"
+            class="position-absolute top-0 start-50 translate-middle-x object-fit-cover w-100 h-100" data-speed="1"> -->
+        <div class="container-sm py-5">
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    <!-- <div class=""> -->
+                    <h1 class=" fw-extrabold" style="font-size: calc(1.5rem + 2vw); max-width: 650px;">A <span
+                            class="hero-title" style="font-size: calc(1.5rem + 2vw);">Very Cute</span>
+                        companion for your Discord
+                    </h1>
+                    <h2 class="hero-sub-title h6 mb-6" style="max-width: 500px;">
+                        AI, Auto Moderation, Music, Economy, Welcome Messages. Kythia is
+                        ready to make your server more lively and secure.
+                    </h2>
+                    <a href="https://discord.com/oauth2/authorize?client_id=<%= botClientId %>&scope=bot+applications.commands&permissions=<%= botPermissions %>"
+                        class="btn btn-primary btn-lg">
+                        <div class="fa-brands fa-discord"></div>&nbsp; Add Bot
+                    </a>
+                    <% if (user) { %>
+                    <a href="/dashboard/servers" class="btn btn-info btn-lg">
+                        <div class="fa-solid fa-gear"></div>&nbsp; Manage Server
+                    </a>
+                    <% } else { %>
+                        <a href="/auth/discord" class="btn btn-info btn-lg">
+                            <div class="fa-solid fa-gear"></div>&nbsp; Manage Server
+                        </a>
+                    <% } %>
+                    <!-- <div class="landing-hero-btn d-inline-block position-relative">
+                        <span class="hero-btn-item position-absolute d-none d-md-flex fw-medium">Join community <img
+                                src="/assets/img/front-pages/icons/Join-community-arrow.png" alt="Join community arrow"
+                                class="scaleX-n1-rtl"></span>
+                        <a href="#landingPricing" class="btn btn-primary btn-lg">Get early access</a>
+                    </div> -->
+                    <!-- </div> -->
+
+                </div>
+                <div class="col-4 d-none d-lg-block">
+                    <img src="/assets/img/logo/logo.png" alt="Hero Image" class="img-fluid"
+                        style="filter: drop-shadow(0 0 10px rgba(var(--ky-primary-rgb), 0.7));">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="landing-hero-blank"></div> -->
+</section>
+<section id="trusted-stats" style="padding: 3rem 0 0 0; position: relative; overflow-x: hidden;">
+    <div class="container">
+        <div class="row justify-content-center align-items-center mb-4">
+            <div class="col-auto">
+                <div class="d-flex align-items-center gap-4 px-5 py-4 rounded-pill bg-primary">
+                    <i class="fa-solid fa-shield-check fa-2x text-white"></i>
+                    <div class="text-start">
+                        <div class="fw-bold text-white" style="font-size: calc(1.1rem + 1vw);">
+                            Trusted by
+                            <span class="counter" data-target="<%= totalServers %>">
+                                <%= totalServers %>
+                            </span>
+                            servers
+                            <span class="fw-normal text-white-50">&amp;</span>
+                            <span class="counter" data-target="<%= totalMembers %>">
+                                <%= totalMembers %>
+                            </span>
+                            members
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center g-5 py-4">
+            <div class="col-lg-6">
+                <h2 class="fw-bold  display-5">Stunning Welcome Messages</h2>
+                <p class=" fs-5 mt-3 mb-4">
+                    Greet every new member with fully customizable welcome cards. Change background images,
+                    colors, text, and even add buttons.
+                </p>
+                <a href="#" class="btn btn-primary">Learn More</a>
+            </div>
+            <div class="col-lg-6">
+                <div class="card glass-effect">
+                    <div class="card-body shadow-xl">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <img src="/assets/img/logo/logo.png" class="rounded-circle"
+                                style="width: 45px; height: 45px;" alt="Bot Avatar">
+                            <div>
+                                <span class=" fw-semibold">Kythia</span><span class="badge bot-tag ms-1"><i
+                                        class="fa-solid fa-check"></i> BOT</span>
+                            </div>
+                        </div>
+                        <div class="content">
+                            <h3 class="fs-5 ">Welcome to the Server!</h3>
+                            <p class="mb-0">Hope you enjoy your stay, <span class="user">@kenndeclouv</span>!
+                                you're our 1000th member!</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New content: Advanced Moderation Tools -->
+        <div class="row align-items-center g-5 py-4">
+            <div class="col-lg-6 order-lg-2">
+                <h2 class="fw-bold display-5">Advanced Moderation Tools</h2>
+                <p class=" fs-5 mt-3 mb-4">
+                    Keep your community safe and friendly with Kythia's powerful moderation features. From
+                    auto-moderation to manual controls, you have everything you need to manage your server
+                    efficiently.
+                </p>
+                <ul class="list-unstyled  mb-4">
+                    <li><i class="fa-solid fa-shield-check me-2 text-primary"></i> Auto-moderation for spam,
+                        links, and bad words</li>
+                    <li><i class="fa-solid fa-ban me-2 text-danger"></i> Quick ban, kick, and mute commands
+                    </li>
+                    <li><i class="fa-solid fa-scroll me-2 text-info"></i> Detailed mod logs and case
+                        tracking</li>
+                    <li><i class="fa-solid fa-bell-on me-2 text-warning"></i> Customizable alerts and
+                        punishments</li>
+                </ul>
+                <a href="/commands#moderation" class="btn btn-primary">Learn About Moderation</a>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <div class="card glass-effect">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <img src="/assets/img/logo/logo.png" class="rounded-circle"
+                                style="width: 45px; height: 45px;" alt="Bot Avatar">
+                            <div>
+                                <span class="fw-semibold">Kythia</span><span class="badge bot-tag ms-1"><i
+                                        class="fa-solid fa-check"></i> BOT</span>
+                            </div>
+                        </div>
+                        <div class="content">
+                            <p class="mb-2 "><span class="user">@kenndeclouv</span> muted <span
+                                    class="user">@Spammer</span> for 10 minutes. Reason: Spamming links.</p>
+                            <div class="bg-dark rounded p-4 text-center ">User Muted • Case #1234
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional content under Express Yourself with Roleplay -->
+        <div class="row align-items-center g-5 py-4">
+            <div class="col-lg-6">
+                <h3 class="fw-bold mb-3">More Than Just Hugs!</h3>
+                <p class=" fs-5 mb-4">
+                    Kythia's roleplay system lets you express a wide range of emotions and actions. From
+                    <span class="fw-semibold ">slap</span>, <span class="fw-semibold ">pat</span>,
+                    <span class="fw-semibold ">poke</span>,
+                    <span class="fw-semibold ">kiss</span>, <span class="fw-semibold ">cuddle</span>, and more, you can
+                    interact with your
+                    friends in fun and creative ways.
+                </p>
+                <ul class="list-unstyled  mb-4">
+                    <li><i class="fa-solid fa-heart me-2 text-danger"></i> Thousands of high-quality anime
+                        and meme GIFs</li>
+                    <li><i class="fa-solid fa-wand-magic-sparkles me-2 text-primary"></i> Customizable
+                        roleplay responses</li>
+                    <li><i class="fa-solid fa-users me-2 text-success"></i> Group roleplay support</li>
+                    <li><i class="fa-solid fa-face-laugh-squint me-2 text-warning"></i> Fun cooldowns and
+                        random events</li>
+                </ul>
+                <a href="/commands#roleplay" class="btn btn-primary">Explore Roleplay Commands</a>
+            </div>
+            <div class="col-lg-6">
+                <div class="card glass-effect">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <img src="/assets/img/logo/logo.png" class="rounded-circle"
+                                style="width: 45px; height: 45px;" alt="Bot Avatar">
+                            <div>
+                                <span class="fw-semibold">Kythia</span><span class="badge bot-tag ms-1"><i
+                                        class="fa-solid fa-check"></i> BOT</span>
+                            </div>
+                        </div>
+                        <div class="content">
+                            <p class="mb-2 "><span class="user">@Mimi</span> slaps <span class="user">@Bobo</span> with
+                                a
+                                giant fish! 🐟</p>
+                            <div class="bg-dark rounded p-5 text-center ">Slap GIF</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- End additional content -->
+
+
+        <!-- End new content -->
+    </div>
+</section>
+<section class="feature-section py-5" id="fitur">
+    <div class="container text-center">
+        <h2 class="fw-bold display-5">One Bot for All Needs</h2>
+        <p class="lead  mx-auto mb-5" style="max-width: 600px;">Kythia comes equipped with
+            various modules you can configure to suit your server's needs.</p>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-brain"></i></div>
+                    <h3 class="fs-4 ">AI</h3>
+                    <p class="">Use AI to chat with your friends, or even DM to Kythia!</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-music"></i></div>
+                    <h3 class="fs-4 ">Music</h3>
+                    <p class="">Play music from various sources with completely free autoplay and queue system!</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-shield-check"></i></div>
+                    <h3 class="fs-4 ">Auto Moderation</h3>
+                    <p class="">Keep your server safe automatically 24/7 with customizable settings.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-money-check-dollar"></i></div>
+                    <h3 class="fs-4 ">Economy</h3>
+                    <p class="">Interactive currency and economy system.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-trophy-star"></i></div>
+                    <h3 class="fs-4 ">Level System</h3>
+                    <p class="">Level up your server members with a robust leveling system.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-dice"></i></div>
+                    <h3 class="fs-4 ">Fun Entertainment</h3>
+                    <p class="">Various games and fun commands for members.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-tools"></i></div>
+                    <h3 class="fs-4 ">Utilities</h3>
+                    <p class="">Practical tools like polls, reminders, etc.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-gift"></i></div>
+                    <h3 class="fs-4 ">Giveaway</h3>
+                    <p class="">Easily run giveaways for your server members.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-ticket"></i></div>
+                    <h3 class="fs-4 ">Ticket</h3>
+                    <p class="">Manage support tickets for your server members.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-paw"></i></div>
+                    <h3 class="fs-4 ">Pet</h3>
+                    <p class="">Adopt a virtual pet for your server members.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-shop"></i></div>
+                    <h3 class="fs-4 ">Store</h3>
+                    <p class="">Easily manage and sell your own digital products.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-shield"></i></div>
+                    <h3 class="fs-4 ">Clan</h3>
+                    <p class="">Create and manage clans for your server members.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-panel-ews"></i></div>
+                    <h3 class="fs-4 ">Pterodactyl Integration</h3>
+                    <p class="">Powerful game server management made easy.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-sheet-plastic"></i></div>
+                    <h3 class="fs-4 ">Logs</h3>
+                    <p class="">Record all important activities on your server.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Why Kythia Section -->
+<section class="py-5">
+    <div class="container text-center">
+        <h2 class="fw-bold display-5">Why Choose Kythia?</h2>
+        <p class="lead  mx-auto mb-5" style="max-width: 700px;">
+            Compared to other Discord bots, Kythia offers more complete, flexible, and easy-to-use features.
+        </p>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-gauge-max"></i></div>
+                    <h3 class="fs-4 ">Fast & Stable</h3>
+                    <p class="">Kythia is built with modern infrastructure for maximum
+                        performance and minimal downtime.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-puzzle-piece-simple"></i></div>
+                    <h3 class="fs-4 ">Easy to Customize</h3>
+                    <p class="">Adjust settings to your server's needs without hassle.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card glass-effect p-4">
+                    <div class="feature-icon"><i class="fa-solid fa-users"></i></div>
+                    <h3 class="fs-4 ">Trusted by Many Communities</h3>
+                    <p class="">Already used in hundreds of servers with thousands of active
+                        users every day.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<!-- <section class="py-5">
+                <div class="container text-center">
+                    <h2 class="fw-bold display-5">What Do They Say?</h2>
+                    <p class="lead  mx-auto mb-5" style="max-width: 700px;">
+                        Our community loves Kythia. Here are some testimonials from loyal users.
+                    </p>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card feature-card p-4">
+                                <p class="">"Kythia makes our server more fun! The music system is
+                                    amazing!"
+                                </p>
+                                <h5 class="mt-3">- Music Server Admin</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card feature-card p-4">
+                                <p class="">"The moderation features saved our server from spammers. Highly
+                                    recommended!"</p>
+                                <h5 class="mt-3">- Gaming Community Moderator</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card feature-card p-4">
+                                <p class="">"Truly an all-in-one bot. No need to install many bots
+                                    anymore!"
+                                </p>
+                                <h5 class="mt-3">- Community Server Owner</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section> -->
+
+<!-- FAQ Section -->
+<!-- <section class="py-5">
+     -->
+
+<section class="py-5">
+    <div class="container">
+        <div class="rounded-4 glass-effect" style="padding: 2rem 4rem;">
+            <h2 class="display-4 fw-bold">Ready to Start Your Adventure?</h2>
+            <p class="fs-5 opacity-75">Add Kythia to your server now and feel the
+                difference.</p>
+            <a href="https://discord.com/oauth2/authorize?client_id=<%= botClientId %>&scope=bot+applications.commands&permissions=<%= botPermissions %>"
+                class="btn btn-info btn-lg" target="_blank">Add Kythia Now</a>
+        </div>
+    </div>
+</section>
+<!-- <section id="landingCTA" class="section-py landing-cta position-relative p-6 mt-5" style="background: linear-gradient(90deg, #f8fafc 0%, #e0e7ff 100%);">
+    <div class="container">
+        <div class="row align-items-center gy-12">
+            <div class="col-lg-6 text-start text-sm-center text-lg-start mx-auto">
+                <div class="card w-100 shadow-lg border-0" style="background: transparent;">
+                    <div class="card-body">
+                        <h3 class="cta-title text-primary fw-bold mb-1">Ready to start your adventure with Kythia?</h3>
+                        <h5 class="text-body mb-8">Add Kythia to your server now and feel the difference.</h5>
+                        <a href="https://discord.com/oauth2/authorize?client_id=<%= botClientId %>&scope=bot+applications.commands&permissions=<%= botPermissions %>"
+                            class="btn btn-lg btn-primary">Add Kythia Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> -->
+
+
+<div class="mt-5 d-flex justify-content-center gap-4">
+    <div class="text-center">
+        <div class="mb-1">
+            <i class="bi bi-people-fill fs-3 text-info"></i>
+        </div>
+        <div class="fs-3 fw-semibold ">
+            <%= totalVisitors.toLocaleString('id-ID') %>
+        </div>
+        <div class="text-secondary small">Total Visitors</div>
+    </div>
+    <div class="vr bg-secondary opacity-50" style="height: 48px;"></div>
+    <div class="text-center">
+        <div class="mb-1">
+            <i class="bi bi-calendar-day fs-3 text-warning"></i>
+        </div>
+        <div class="fs-3 fw-semibold ">
+            <%= todayVisitors.toLocaleString('id-ID') %>
+        </div>
+        <div class="text-secondary small">Visitors Today</div>
+    </div>
+</div>
+
+
+<script>
+    // Generate and append particle CSS dynamically with random left and delay
+    (function () {
+        const style = document.createElement('style');
+        let css = '';
+        const particleCount = 8;
+        const leftMin = 5, leftMax = 95; // percent
+        const delayMin = 0, delayMax = 3; // seconds
+
+        for (let i = 0; i < particleCount; i++) {
+            const left = (Math.random() * (leftMax - leftMin) + leftMin).toFixed(1) + '%';
+            const delay = (Math.random() * (delayMax - delayMin) + delayMin).toFixed(2) + 's';
+            css += `.particle:nth-child(${i + 1}){left:${left};animation-delay:${delay};}\n`;
+        }
+        style.textContent = css;
+        document.head.appendChild(style);
+
+        // Generate particles
+        const container = document.querySelector('.particle-container');
+        if (container) {
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                container.appendChild(particle);
+            }
+        }
+    })();
+</script>

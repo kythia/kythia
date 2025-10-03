@@ -1,0 +1,246 @@
+<!doctype html>
+
+
+
+
+<html lang="en" class=" layout-navbar-fixed layout-menu-fixed layout-compact " dir="ltr" data-skin="default"
+    data-assets-path="/assets/" data-template="vertical-menu-template" data-bs-theme="system">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+
+    <title>
+        <%= typeof title !=='undefined' ? title : 'Home' %> | Kythia's Dashboard
+    </title>
+
+    <!-- Canonical SEO for Kythia Bot Dashboard -->
+    <meta name="description"
+        content="Kythia is a powerful Discord bot dashboard for managing your server with ease. Control AI, moderation, and more from a modern web interface.">
+    <meta name="author" content="kenndeclouv">
+    <meta name="keywords"
+        content="Kythia, Discord bot, dashboard, AI bot, moderation, server management, web dashboard, responsive, Kythia bot dashboard">
+    <meta property="og:title" content="Kythia Discord Bot Dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kythia.my.id/">
+    <meta property="og:image" content="https://kythia.my.id/assets/img/logo/kythia-og-image.png">
+    <meta property="og:description"
+        content="Manage your Discord server with Kythia's advanced dashboard. AI features, moderation, and more in one place.">
+    <meta property="og:site_name" content="Kythia">
+    <link rel="canonical" href="https://kythia.my.id/">
+
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/fontawesome.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/thin.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/solid.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/regular.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/light.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.0.0/css/brands.css">
+
+
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.ico">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!-- <link rel="stylesheet" href="/assets/vendor/fonts/iconify-icons.css"> -->
+
+    <!-- Core CSS -->
+    <!-- build:css assets/vendor/css/theme.css  -->
+
+
+    <link rel="stylesheet" href="/assets/vendor/libs/pickr/pickr-themes.css">
+
+    <link rel="stylesheet" href="/assets/vendor/css/core.css">
+    <link rel="stylesheet" href="/assets/css/demo.css">
+
+
+    <!-- Vendors CSS -->
+
+    <link rel="stylesheet" href="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css">
+
+    <!-- endbuild -->
+
+    <link rel="stylesheet" href="/assets/vendor/libs/apex-charts/apex-charts.css">
+    <link rel="stylesheet" href="/assets/vendor/libs/select2/select2.css">
+    <link rel="stylesheet" href="/assets/vendor/libs/bootstrap-select/bootstrap-select.css">
+    <!-- Page CSS -->
+
+
+    <!-- Helpers -->
+    <script src="/assets/vendor/js/helpers.js"></script>
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+
+    <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
+    <script src="/assets/vendor/js/template-customizer.js"></script>
+
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+
+    <script src="/assets/js/config.js"></script>
+    <style>
+        @keyframes shiftFog {
+            0% {
+                background-position: 0% 0%;
+            }
+
+            50% {
+                background-position: 100% 100%;
+            }
+
+            100% {
+                background-position: 0% 0%;
+            }
+        }
+
+        /* 2. Ganti style body Anda dengan ini */
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* background-color: #0d0d0e !important; */
+            /* background-size: 200% 200%; */
+            background-image: radial-gradient(circle at 25% 25%,
+                    rgba(255, 129, 173, 0.12),
+                    transparent 35%);
+
+            background-attachment: fixed;
+            /* animation: shiftFog 30s ease-in-out infinite; */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar  ">
+        <div class="layout-container">
+
+
+
+
+
+
+            <!-- Menu -->
+
+            <%- include('../partials/dashSidebar') %>
+
+                <div class="menu-mobile-toggler d-xl-none rounded-1">
+                    <a href="javascript:void(0);"
+                        class="layout-menu-toggle menu-link text-large text-bg-secondary p-2 rounded-1">
+                        <i class="bx bx-menu icon-base"></i>
+                        <i class="bx bx-chevron-right icon-base"></i>
+                    </a>
+                </div>
+                <!-- / Menu -->
+
+
+
+                <!-- Layout container -->
+                <div class="layout-page">
+
+
+
+
+
+                    <!-- Navbar -->
+
+                    <%- include('../partials/dashNavbar') %>
+                        <!-- / Navbar -->
+
+
+                        <!-- Content wrapper -->
+                        <div class="content-wrapper">
+                            <!-- Content -->
+                            <% if (locals.viewName) { %>
+
+                                <%# Ini adalah triknya: include file berdasarkan nama variabel %>
+                                    <%- include(`../pages/${viewName}`) %>
+
+                                        <% } else { %>
+                                            <p>Konten tidak ditemukan.</p>
+                                            <% } %>
+                                                <!-- / Content -->
+
+
+
+
+                                                <!-- Footer -->
+                                                <%- include('../partials/dashFooter') %>
+                                                    <!-- / Footer -->
+
+
+                                                    <div class="content-backdrop fade"></div>
+                        </div>
+                        <!-- Content wrapper -->
+                </div>
+                <!-- / Layout page -->
+        </div>
+
+
+
+        <!-- Overlay -->
+        <div class="layout-overlay layout-menu-toggle"></div>
+
+
+        <!-- Drag Target Area To SlideIn Menu On Small Screens -->
+        <div class="drag-target"></div>
+
+    </div>
+    <!-- / Layout wrapper -->
+
+
+
+
+
+
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/theme.js  -->
+
+
+    <script src="/assets/vendor/libs/jquery/jquery.js"></script>
+
+    <script src="/assets/vendor/libs/popper/popper.js"></script>
+    <script src="/assets/vendor/js/bootstrap.js"></script>
+    <script src="/assets/vendor/libs/%40algolia/autocomplete-js.js"></script>
+
+
+
+    <script src="/assets/vendor/libs/pickr/pickr.js"></script>
+
+
+
+    <script src="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+
+    <script src="/assets/vendor/libs/hammer/hammer.js"></script>
+
+    <!-- <script src="/assets/vendor/libs/i18n/i18n.js"></script> -->
+
+
+    <script src="/assets/vendor/js/menu.js"></script>
+
+    <!-- endbuild -->
+    <script src="/assets/vendor/libs/select2/select2.js"></script>
+    <script src="/assets/vendor/libs/bootstrap-select/bootstrap-select.js"></script>
+
+    <!-- Vendors JS -->
+    <script src="/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+
+    <!-- Main JS -->
+
+    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/forms-selects.js"></script>
+
+
+    <!-- Page JS -->
+    <script src="/assets/js/dashboards-analytics.js"></script>
+
+</body>
+
+</html>
+
+<!-- beautify ignore:end -->

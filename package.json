@@ -1,0 +1,160 @@
+{
+    "name": "kythia",
+    "version": "0.9.9-beta",
+    "description": "Kythia Hye-Jin! Your sweet, cute, and beautiful companion! ",
+    "main": "index.js",
+    "author": "kenndeclouv",
+    "license": "EULA",
+    "scripts": {
+        "pm2:startup": "pm2 start index.js --name kythia-bot -- --deploy && pm2 save",
+        "pm2:start": "pm2 start index.js --name kythia-bot -- --deploy",
+        "pm2:restart": "pm2 restart kythia-bot",
+        "pm2:stop": "pm2 stop kythia-bot",
+        "pm2:delete": "pm2 delete kythia-bot",
+        "pm2:logs": "pm2 logs kythia-bot",
+
+        "start": "node index.js --deploy",
+        "deploy": "node deploy.js",
+
+        "flush": "node src/database/KythiaFlush.js",
+        "seed": "node src/database/KythiaSeeder.js",
+        "docs": "node docs/generate.js",
+        "build": "npm run upversion && npm run docs && node scripts/obfuscate.js",
+        "pkg": "pkg .",
+        "test": "jest",
+
+        "prepare": "husky",
+        "check:e": "node scripts/check_e.js",
+        "check:t": "node scripts/check_t.js",
+        "refactor:t": "node scripts/refactor_t.js",
+        "add:namespace": "node scripts/add_namespace.js",
+        "gen:todo": "node scripts/gen_todo.js",
+        "gen:structure": "node scripts/gen_structure.js",
+        "obfuscate": "node scripts/obfuscate.js",
+        "upversion": "node scripts/upversion.js",
+        "audit:permissions": "node scripts/audit_permissions.js",
+        "format": "prettier --write \"**/*.{js,json}\""
+    },
+    "dependencies": {
+        "@google/genai": "^1.20.0",
+        "@sentry/node": "^10.10.0",
+        "@sentry/profiling-node": "^10.12.0",
+        "async-exit-hook": "^2.0.1",
+        "async-mutex": "^0.5.0",
+        "axios": "^1.12.2",
+        "canvas": "^3.2.0",
+        "cheerio": "^1.1.2",
+        "cli-color": "^2.0.4",
+        "connect-session-sequelize": "^7.1.7",
+        "discord-html-transcripts": "^3.2.0",
+        "discord.js": "^14.22.1",
+        "dotenv": "^16.6.1",
+        "ejs": "^3.1.10",
+        "express": "^5.1.0",
+        "express-session": "^1.18.2",
+        "figlet": "^1.9.3",
+        "ioredis": "^5.7.0",
+        "javascript-obfuscator": "^4.1.1",
+        "json-stable-stringify": "^1.3.0",
+        "luxon": "^3.7.2",
+        "lyrics-finder": "^21.7.0",
+        "marked": "^4.3.0",
+        "module-alias": "^2.2.3",
+        "moment": "^2.30.1",
+        "ms": "^2.1.3",
+        "mysql2": "^3.15.0",
+        "nanoid": "^5.1.5",
+        "node-cron": "^4.2.1",
+        "node-fetch": "^2.7.0",
+        "passport": "^0.7.0",
+        "passport-discord": "^0.1.4",
+        "play-dl": "^1.9.7",
+        "poru": "^5.2.0",
+        "poru-applemusic": "github:parasop/poru-applemusic",
+        "poru-deezer": "github:parasop/poru-deezer",
+        "poru-spotify": "^2.0.2",
+        "sequelize": "^6.37.7",
+        "socket.io": "^4.8.1",
+        "tmp": "^0.2.5",
+        "winston": "^3.17.0",
+        "winston-daily-rotate-file": "^5.0.0",
+        "youtube-transcript": "^1.2.1"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^19.8.1",
+        "@commitlint/config-conventional": "^19.8.1",
+        "cross-env": "^10.0.0",
+        "esbuild": "^0.25.10",
+        "esbuild-plugin-path-alias": "^1.0.7",
+        "fs-extra": "^11.3.2",
+        "glob": "^11.0.3",
+        "husky": "^9.1.7",
+        "jest": "^30.1.3",
+        "nodemon": "^3.1.10",
+        "prettier": "^3.6.2",
+        "standard-version": "^9.5.0"
+    },
+    "_moduleAliases": {
+        "@src": "src",
+        "@addons": "addons",
+        "@utils": "src/utils",
+        "@coreHelpers": "addons/core/helpers",
+        "@coreModels": "addons/core/database/models",
+        "@coreDatabase": "addons/core/database",
+        "@srcDatabase": "src/database"
+    },
+    "jest": {
+        "moduleNameMapper": {
+            "^@src/(.*)$": "<rootDir>/src/$1",
+            "^@addons/(.*)$": "<rootDir>/addons/$1",
+            "^@utils/(.*)$": "<rootDir>/src/utils/$1",
+            "^@coreHelpers/(.*)$": "<rootDir>/addons/core/helpers/$1",
+            "^@coreModels/(.*)$": "<rootDir>/addons/core/database/models/$1",
+            "^@coreDatabase/(.*)$": "<rootDir>/addons/core/database/$1",
+            "^@srcDatabase/(.*)$": "<rootDir>/src/database/$1"
+        }
+    },
+    "pkg": {
+        "targets": [
+            "node18-win-x64"
+        ],
+        "outputPath": "build",
+        "scripts": [
+            "src/database/**/*.js",
+            "addons/**/database/models/**/*.js"
+        ],
+        "assets": [
+            "src/utils/lang/**/*"
+        ]
+    },
+    "keywords": [
+        "discord",
+        "bot",
+        "kythia",
+        "music",
+        "music bot",
+        "discord bot",
+        "discord.js",
+        "discord music bot",
+        "discord.js music bot",
+        "lavalink",
+        "lavalink bot",
+        "lavalink discord bot",
+        "lavalink music bot",
+        "lavalink discord.js",
+        "lavalink discord.js music bot",
+        "poru",
+        "poru bot",
+        "poru discord bot",
+        "poru discord.js",
+        "poru discord.js music bot"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kythia/kythia.git"
+    },
+    "bugs": {
+        "url": "https://github.com/kythia/kythia#issues"
+    },
+    "homepage": "https://github.com/kythia/kythia/#readme"
+}

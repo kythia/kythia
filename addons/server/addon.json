@@ -1,0 +1,9 @@
+{
+    "name": "Server",
+    "featureName": "Server",
+    "featureFlag": "serverOn",
+    "version": "1.0.0",
+    "description": "Master your Discord server management! Access advanced server configuration tools, automate setup processes, manage channels and roles efficiently, and maintain your community with professional-grade administrative features.",
+    "author": "kenndeclouv",
+    "kythia": "SgkBNedkhIb1NATzkfSUA/THyWeJkobrD5hXNHp3a+5qAEgSTlSCMvg8E1/SO2yuBjFTKohaXV50T9Sgmr3dp3EgFltZT3dTd35wZAmEgw66Rm4/FMN10SDwSnUPbwEOXFXm8J307agkObgfdXUszwu6qEPVhwXoVgBvtCQSzxRszXU5ZAKpzACAzreqk6hhUMz6zN/QcYDgOhE9cpxwp51jDaZQK3QJ6oCufXIURDL4ZKTrSm7gsQgpYYAOLJMc+yjI9luS/jAeVycMq8+eiozzuV7LEbwaGwwZ3N/zfj21uqc2SXTO0loYWENmf6U/n2yAg7NK+Z3SQsY/wYCGCA=="
+}

@@ -1,0 +1,9 @@
+{
+    "name": "Core",
+    "featureName": "Core",
+    "featureFlag": "coreOn",
+    "version": "1.0.0",
+    "description": "The foundation that powers everything! Essential bot functionalities including moderation tools, server management, utilities, and core systems that keep your Discord server running smoothly and efficiently.",
+    "author": "kenndeclouv",
+    "kythia": "NeUxOvD/7nnYyKdClcmXU8jsjOnnfUniGFJcAJh6ThyMiJ1foaiXOm+tsH1QLoqzkJO/R7jF9mFvyfxT1mSQgfk3GTFPC12TZuaOM9+53Pkwp95VrPCjPVvcpV1holtiDXyfumFxslpdmy1k+pP2D0qFd/MdrNhwciZfjR7lZ0Rvox79JC25+W3eKXPwkU+s6byQI4ZyfZBNnDlX5eagm79TnmWtjIG8jUXGRjOPm86cFQdeTsaU8aBgVX6sHpcxEDh+GWVGjPcfCOz0JfHrARvPYrVwdeg9G1alB6pwWYSlq2ermHd9TB0fWpvrYG+/e9q42mWXlZNrsaS4ob5wSA=="
+}
