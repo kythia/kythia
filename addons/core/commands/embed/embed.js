@@ -9,6 +9,7 @@ const { SlashCommandBuilder, ChannelType } = require('discord.js');
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits, InteractionContextType } = require('discord.js');
 const Embed = require('@coreModels/Embed'); // Sesuaikan path
 const { t } = require('@utils/translator');
+const logger = require('@src/utils/logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -145,7 +146,7 @@ module.exports = {
                                 buttons: buttonsData,
                             });
                         } catch (error) {
-                            console.error(error);
+                            logger.error(error);
                             return interaction.editReply({ content: await t(interaction, 'core_embed_embed_db_save_error') });
                         }
 
@@ -158,7 +159,7 @@ module.exports = {
                         try {
                             await newEmbed.save();
                         } catch (error) {
-                            console.error(error);
+                            logger.error(error);
                             return interaction.editReply({ content: await t(interaction, 'core_embed_embed_db_button_save_error') });
                         }
 
@@ -181,14 +182,14 @@ module.exports = {
                                 components: [actionRow],
                             });
                         } catch (error) {
-                            console.error(error);
+                            logger.error(error);
                             return interaction.editReply({ content: await t(interaction, 'core_embed_embed_send_error') });
                         }
 
                         try {
                             await newEmbed.update({ messageId: message.id });
                         } catch (error) {
-                            console.error(error);
+                            logger.error(error);
                         }
 
                         return interaction.editReply({
@@ -273,7 +274,7 @@ module.exports = {
                                     fields: fieldsData,
                                 });
                             } catch (error) {
-                                console.error(error);
+                                logger.error(error);
                                 return interaction.editReply({ content: await t(interaction, 'core_embed_embed_db_save_error') });
                             }
                         }
@@ -285,7 +286,7 @@ module.exports = {
                             try {
                                 await newEmbed.save();
                             } catch (error) {
-                                console.error(error);
+                                logger.error(error);
                                 return interaction.editReply({ content: await t(interaction, 'core_embed_embed_db_button_save_error') });
                             }
                         }
@@ -323,7 +324,7 @@ module.exports = {
                                 components: rows,
                             });
                         } catch (error) {
-                            console.error(error);
+                            logger.error(error);
                             return interaction.editReply({ content: await t(interaction, 'core_embed_embed_send_error') });
                         }
 
@@ -331,7 +332,7 @@ module.exports = {
                             try {
                                 await newEmbed.update({ messageId: message.id });
                             } catch (error) {
-                                console.error(error);
+                                logger.error(error);
                             }
                         }
 
@@ -369,13 +370,13 @@ module.exports = {
                                     }
                                 }
                             } catch (err) {
-                                console.error(`Gagal hapus pesan embed:`, err);
+                                logger.error(`Gagal hapus pesan embed:`, err);
                             }
 
                             try {
                                 await reactEmbed.destroy();
                             } catch (err) {
-                                console.error(`Gagal hapus data embed dari database:`, err);
+                                logger.error(`Gagal hapus data embed dari database:`, err);
                                 return interaction.editReply({ content: await t(interaction, 'core_embed_embed_delete_db_error') });
                             }
 
@@ -400,7 +401,7 @@ module.exports = {
                                     });
                                 }
                             } catch (err) {
-                                console.error(`Gagal hapus pesan embed di DM:`, err);
+                                logger.error(`Gagal hapus pesan embed di DM:`, err);
                                 return interaction.editReply({ content: await t(interaction, 'core_embed_embed_delete_dm_error') });
                             }
                         }

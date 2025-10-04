@@ -7,6 +7,7 @@
  * @version 0.9.9-beta
  */
 const ServerSetting = require('@coreModels/ServerSetting');
+const logger = require('./logger');
 
 /**
  * Gets settings for a specific addon from the main `ServerSetting` object.
@@ -55,7 +56,7 @@ async function setAddonSettings(guildId, addonName, newSettings) {
     // 5) Persist to database
     await settings.update({ addonSettings: allAddonSettings });
 
-    console.log(`Updated settings for addon '${addonName}' in guild '${guildId}'`);
+    logger.info(`Updated settings for addon '${addonName}' in guild '${guildId}'`);
     return settings;
 }
 

@@ -37,11 +37,11 @@ const {
     SlashCommandSubcommandBuilder,
     SlashCommandSubcommandGroupBuilder,
 } = require('discord.js');
+const { checkIsTeam, isOwner } = require('./utils/discord');
 const ServerSetting = require('@coreModels/ServerSetting');
 const KythiaVoter = require('@coreModels/KythiaVoter');
 const KythiaModel = require('./database/KythiaModel');
 const { loadLocales } = require('@utils/translator');
-const { checkIsTeam } = require('./utils/discord');
 const KythiaORM = require('./database/KythiaORM');
 const KythiaManager = require('./KythiaManager');
 const { loadFonts } = require('./utils/fonts');
@@ -1078,7 +1078,7 @@ class Kythia {
                         const category = this.commandCategoryMap.get(interaction.commandName);
                         const featureFlag = this.categoryToFeatureMap.get(category);
 
-                        if (featureFlag && interaction.user.id != kythia.owner.id) {
+                        if (featureFlag && !isOwner(interaction.user.id)) {
                             const settings = await ServerSetting.getCache({ guildId: interaction.guild.id });
 
                             if (!settings || !settings[featureFlag]) {
@@ -1092,10 +1092,10 @@ class Kythia {
                     if (command.guildOnly && !interaction.inGuild()) {
                         return interaction.reply({ content: await t(interaction, 'common_error_guild_only'), ephemeral: true });
                     }
-                    if (command.ownerOnly && interaction.user.id !== kythia.owner.id) {
+                    if (command.ownerOnly && !isOwner(interaction.user.id)) {
                         return interaction.reply({ content: await t(interaction, 'common_error_not_owner'), ephemeral: true });
                     }
-                    if (command.teamOnly && interaction.user.id !== kythia.owner.id) {
+                    if (command.teamOnly && !isOwner(interaction.user.id)) {
                         const isTeam = await checkIsTeam(interaction.user);
                         if (!isTeam) return interaction.reply({ content: await t(interaction, 'common_error_not_team'), ephemeral: true });
                     }
@@ -1115,7 +1115,7 @@ class Kythia {
                                 ephemeral: true,
                             });
                     }
-                    if (command.voteLocked && interaction.user.id !== kythia.owner.id) {
+                    if (command.voteLocked && !isOwner(interaction.user.id)) {
                         const voter = await KythiaVoter.getCache({ userId: interaction.user.id });
 
                         const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
@@ -1158,7 +1158,7 @@ class Kythia {
 
                     const cooldownDuration = command.cooldown ?? kythia.bot.globalCommandCooldown ?? 0;
 
-                    if (cooldownDuration > 0 && interaction.user.id !== kythia.owner.id) {
+                    if (cooldownDuration > 0 && !isOwner(interaction.user.id)) {
                         const { cooldowns } = this.client;
 
                         if (!cooldowns.has(command.name)) {
@@ -1220,9 +1220,9 @@ class Kythia {
                     const customIdPrefix = interaction.customId.includes('|')
                         ? interaction.customId.split('|')[0]
                         : interaction.customId.split(':')[0];
-                    console.log('Modal submit - customId:', interaction.customId, 'prefix:', customIdPrefix);
+                    logger.info('Modal submit - customId:', interaction.customId, 'prefix:', customIdPrefix);
                     const handler = this.modalHandlers.get(customIdPrefix);
-                    console.log('Modal handler found:', !!handler);
+                    logger.info('Modal handler found:', !!handler);
                     if (handler) await handler(interaction, this.container);
                 } else if (interaction.isUserContextMenuCommand() || interaction.isMessageContextMenuCommand()) {
                     const command = this.client.commands.get(interaction.commandName);
@@ -1231,10 +1231,10 @@ class Kythia {
                     if (command.guildOnly && !interaction.inGuild()) {
                         return interaction.reply({ content: await t(interaction, 'common_error_guild_only'), ephemeral: true });
                     }
-                    if (command.ownerOnly && interaction.user.id !== kythia.owner.id) {
+                    if (command.ownerOnly && !isOwner(interaction.user.id)) {
                         return interaction.reply({ content: await t(interaction, 'common_error_not_owner'), ephemeral: true });
                     }
-                    if (command.teamOnly && interaction.user.id !== kythia.owner.id) {
+                    if (command.teamOnly && !isOwner(interaction.user.id)) {
                         const isTeam = await checkIsTeam(interaction.user);
                         if (!isTeam) return interaction.reply({ content: await t(interaction, 'common_error_not_team'), ephemeral: true });
                     }
@@ -1254,11 +1254,11 @@ class Kythia {
                                 ephemeral: true,
                             });
                     }
-                    if (command.isInMainGuild && interaction.user.id !== kythia.owner.id) {
+                    if (command.isInMainGuild && !isOwner(interaction.user.id)) {
                         const mainGuild = this.client.guilds.cache.get(kythia.bot.mainGuildId);
                         if (!mainGuild) {
-                            console.error(
-                                `[isInMainGuild Check] Error: Bot is not a member of the main guild specified in config: ${kythia.bot.mainGuildId}`
+                            logger.error(
+                                `❌ [isInMainGuild Check] Error: Bot is not a member of the main guild specified in config: ${kythia.bot.mainGuildId}`
                             );
                         }
                         try {
@@ -1294,7 +1294,7 @@ class Kythia {
                             });
                         }
                     }
-                    if (command.voteLocked && interaction.user.id !== kythia.owner.id) {
+                    if (command.voteLocked && !isOwner(interaction.user.id)) {
                         const voter = await KythiaVoter.getCache({ userId: interaction.user.id });
 
                         const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
@@ -1354,6 +1354,7 @@ class Kythia {
                     });
                 }
 
+                const ownerFirstId = kythia.owner.ids.split(',')[0].trim();
                 const components = [
                     new ContainerBuilder()
                         .setAccentColor(convertColor('Red', { from: 'discord', to: 'decimal' }))
@@ -1368,7 +1369,7 @@ class Kythia {
                                 new ButtonBuilder()
                                     .setStyle(ButtonStyle.Link)
                                     .setLabel(await t(interaction, 'common_error_button_contact_owner'))
-                                    .setURL(`discord://-/users/${kythia.owner.id}`)
+                                    .setURL(`discord://-/users/${ownerFirstId}`)
                             )
                         ),
                 ];

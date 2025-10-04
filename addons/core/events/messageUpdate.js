@@ -6,6 +6,7 @@
  * @version 0.9.9-beta
  */
 
+const { isOwner } = require('@utils/discord');
 const automodSystem = require('../helpers/automod');
 
 module.exports = async (bot, message) => {
@@ -14,7 +15,7 @@ module.exports = async (bot, message) => {
         if (!message || !message.author || !message.guild) return;
         if (message.author.bot) return;
 
-        if (message.author.id !== kythia.owner.id) {
+        if (isOwner(message.author.id)) {
             try {
                 const isFlagged = await automodSystem(message, client);
                 if (isFlagged) return true;

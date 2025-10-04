@@ -23,11 +23,12 @@ const {
 const StickyMessage = require('@coreModels/StickyMessage');
 const { formatDuration } = require('@src/utils/time');
 const automodSystem = require('../helpers/automod');
-const { t } = require('@utils/translator');
-const AFK = require('@coreModels/UserAFK');
-const moment = require('moment');
 const convertColor = require('@src/utils/color');
+const { isOwner } = require('@utils/discord');
+const AFK = require('@coreModels/UserAFK');
+const { t } = require('@utils/translator');
 const logger = require('@utils/logger');
+const moment = require('moment');
 
 module.exports = async (bot, message) => {
     const client = bot.client;
@@ -56,7 +57,8 @@ module.exports = async (bot, message) => {
         const finalCommand = client.commands.get(finalCommandKey) || baseCommand;
 
         if (finalCommand.guildOnly && !message.guild) return;
-        if (finalCommand.ownerOnly && message.author.id !== kythia.owner.id) return;
+
+        if (finalCommand.ownerOnly && !isOwner(message.author.id)) return;
 
         if (finalCommand.permissions && message.member) {
             if (message.member.permissions.missing(finalCommand.permissions).length > 0) return;
@@ -95,7 +97,7 @@ module.exports = async (bot, message) => {
                 return message.reply({ components: [container], flags: MessageFlags.IsPersistent | MessageFlags.IsComponentsV2 });
             }
         }
-        if (finalCommand.voteLocked && message.author.id !== kythia.owner.id) {
+        if (finalCommand.voteLocked && !isOwner(message.author.id)) {
             const voter = await KythiaVoter.getCache({ userId: interaction.user.id });
 
             const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
@@ -127,7 +129,7 @@ module.exports = async (bot, message) => {
         }
 
         const cooldownDuration = finalCommand.cooldown ?? kythia.bot.globalCommandCooldown ?? 0;
-        if (cooldownDuration > 0 && message.author.id !== kythia.owner.id) {
+        if (cooldownDuration > 0 && !isOwner(message.author.id)) {
             const { cooldowns } = client;
             const cooldownKey = finalCommand.data?.name || finalCommandKey;
             if (!cooldowns.has(cooldownKey)) {
@@ -166,7 +168,7 @@ module.exports = async (bot, message) => {
     }
 
     if (message.guild) {
-        if (message.author.id != kythia.owner.id) {
+        if (!isOwner(message.author.id)) {
             const isFlagged = await automodSystem(message, client);
             if (isFlagged) return true;
         }

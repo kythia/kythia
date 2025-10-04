@@ -9,6 +9,7 @@ const { YoutubeTranscript } = require('youtube-transcript');
 const logger = require('@utils/logger');
 const { generateContent } = require('@addons/ai/helpers/gemini');
 const { PermissionFlagsBits } = require('discord.js');
+const { isOwner } = require('@utils/discord');
 
 /**
  * ⏱️ Formats a duration in milliseconds to a human-readable string (hh:mm:ss or mm:ss).
@@ -116,7 +117,7 @@ function hasControlPermission(interaction, player) {
     if (!player.currentTrack) return false; // Seharusnya tidak terjadi, tapi untuk jaga-jaga
 
     // 2. Owner bot selalu boleh
-    if (interaction.user.id === kythia.owner.id) return true;
+    if (isOwner(interaction.user.id)) return true;
 
     // 3. Admin server selalu boleh
     if (

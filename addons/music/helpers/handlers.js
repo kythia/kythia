@@ -7,7 +7,7 @@
  */
 
 const { generateLyricsWithTranscript, formatDuration } = require('.');
-const { embedFooter, checkIsPremium } = require('@utils/discord');
+const { embedFooter, checkIsPremium, isOwner } = require('@utils/discord');
 // const nanoid = require('nanoid');
 const {
     EmbedBuilder,
@@ -1061,7 +1061,7 @@ async function _handlePlaylistSave(interaction, player) {
     const playlistCount = await Playlist.countWithCache({ where: { userId } });
     let isPremium = await checkIsPremium(userId);
 
-    if (kythia.owner.id != interaction.user.id && playlistCount >= kythia.music.playlistLimit && !isPremium) {
+    if (!isOwner(interaction.user.id) && playlistCount >= kythia.music.playlistLimit && !isPremium) {
         const embed = new EmbedBuilder()
             .setColor('Red')
             .setFooter(await embedFooter(interaction))
@@ -1733,7 +1733,7 @@ async function _handlePlaylistImport(interaction) {
         // Check playlist limit
         const playlistCount = await Playlist.countWithCache({ userId: userId });
         const isPremium = await checkIsPremium(userId);
-        if (kythia.owner.id !== userId && playlistCount >= kythia.music.playlistLimit && !isPremium) {
+        if (!isOwner(userId) && playlistCount >= kythia.music.playlistLimit && !isPremium) {
             const embed = new EmbedBuilder()
                 .setColor('Red')
                 .setDescription(
@@ -1903,7 +1903,7 @@ async function _importFromSpotify(interaction, url) {
         // Cek limit playlist (hanya jika membuat playlist baru)
         const playlistCount = await Playlist.countWithCache({ userId: userId });
         const isPremium = await checkIsPremium(userId);
-        if (kythia.owner.id !== userId && playlistCount >= kythia.music.playlistLimit && !isPremium) {
+        if (!isOwner(userId) && playlistCount >= kythia.music.playlistLimit && !isPremium) {
             const embed = new EmbedBuilder()
                 .setColor('Red')
                 .setDescription(

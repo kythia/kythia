@@ -16,6 +16,7 @@ const {
     InteractionContextType,
 } = require('discord.js');
 const { t } = require('@utils/translator');
+const logger = require('@src/utils/logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -57,7 +58,7 @@ module.exports = {
                 .setDescription(await t(interaction, 'core_moderation_clear_embed_desc', { count: totalDeleted }));
             await interaction.editReply({ embeds: [embed] });
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             const embed = new EmbedBuilder().setColor('Red').setDescription(await t(interaction, 'core_moderation_clear_error'));
             return interaction.editReply({ embeds: [embed] });
         }
@@ -138,7 +139,7 @@ async function executeNukeChannel(interaction, btnInteraction, t, container) {
             .setDescription(await t(interaction, 'core_moderation_clear_success', { user: `${interaction.member}` }));
         await newChannel.send({ embeds: [embed] });
     } catch (err) {
-        console.error('Nuke error:', err);
+        logger.error('Nuke error:', err);
         const embed = new EmbedBuilder().setColor('Red').setDescription(await t(interaction, 'core_moderation_clear_error'));
         await interaction.followUp({ embeds: [embed], ephemeral: true });
     }
@@ -180,7 +181,7 @@ async function executeBulkDeleteAll(interaction, btnInteraction, t, container) {
         //   .setDescription(await t(interaction, "core_moderation_clear_done"));
         await interaction.editReply({ embeds: [doneEmbed], components: [] });
     } catch (err) {
-        console.error('Bulk delete all error:', err);
+        logger.error('Bulk delete all error:', err);
         const embed = new EmbedBuilder().setColor('Red').setDescription(await t(interaction, 'core_moderation_clear_error'));
         await interaction.followUp({ embeds: [embed], ephemeral: true });
     }

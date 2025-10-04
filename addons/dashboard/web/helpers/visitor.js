@@ -7,6 +7,7 @@
  */
 
 const Visitor = require('@addons/dashboard/database/models/Visitor');
+const logger = require('@src/utils/logger');
 const crypto = require('crypto');
 
 /**
@@ -61,7 +62,7 @@ const trackVisitor = async (req, res, next) => {
             // agar `loadVisitorCounts` selanjutnya mengambil data baru dari DB.
             await Visitor.clearCache({ queryType: 'count', where: { visitDate: today } });
             await Visitor.clearCache({ queryType: 'count' });
-            console.log(`✅ New unique visitor detected today. Count caches cleared.`);
+            logger.info(`✅ New unique visitor detected today. Count caches cleared.`);
         }
     } catch (error) {
         console.error('Failed to track visitor:', error);

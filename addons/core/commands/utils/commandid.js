@@ -17,9 +17,6 @@ module.exports = {
     ownerOnly: true,
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true });
-        if (interaction.user.id !== kythia.owner.id) {
-            return interaction.editReply({ content: await t(interaction, 'common_error_not_owner') });
-        }
 
         const input = interaction.options.getString('name');
         const parts = input.trim().split(/\s+/);

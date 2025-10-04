@@ -114,7 +114,6 @@ function generateCommandSchema(client) {
             });
         }
     });
-    // console.log(JSON.stringify(schemas, null, 2));
     return schemas;
 }
 

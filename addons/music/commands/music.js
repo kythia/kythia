@@ -311,6 +311,14 @@ module.exports = {
                         value: focusedValue,
                     },
                 ]);
+            } else if (focusedValue.toLowerCase().includes('youtube')) {
+                const truncatedUrl = focusedValue.length > 50 ? focusedValue.slice(0, 47) + '...' : focusedValue;
+                return interaction.respond([
+                    {
+                        name: `🎵 Play Youtube: ${truncatedUrl}`,
+                        value: focusedValue,
+                    },
+                ]);
             } else if (/^https?:\/\//.test(focusedValue)) {
                 const truncatedUrl = focusedValue.length > 60 ? focusedValue.slice(0, 57) + '...' : focusedValue;
                 return interaction.respond([

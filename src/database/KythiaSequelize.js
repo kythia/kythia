@@ -21,11 +21,6 @@ const clc = require('cli-color');
  *
  * @function
  * @returns {Sequelize} Sequelize instance connected to the configured database.
- * @example
- * const sequelize = require('./src/database/sequelize');
- * sequelize.authenticate()
- *   .then(() => console.log('Database connected!'))
- *   .catch(err => console.error('Unable to connect to the database:', err));
  */
 
 const { DB_DRIVER, DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_STORAGE_PATH, DB_SOCKET_PATH, DB_DIALECT_OPTIONS, DB_SSL } =
@@ -43,7 +38,7 @@ const config = {
         charset: 'utf8mb4',
         collate: 'utf8mb4_unicode_ci',
     },
-    timezone: kythia.db.timezone || '+07:00',
+    timezone: kythia.db.timezone || '+00:00',
 };
 
 switch (DB_DRIVER) {

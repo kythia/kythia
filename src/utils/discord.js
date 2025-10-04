@@ -11,10 +11,21 @@
  */
 const ServerSetting = require('@coreModels/ServerSetting');
 const KythiaUser = require('@coreModels/KythiaUser');
+const KythiaTeam = require('@coreModels/KythiaTeam');
 const { t } = require('@utils/translator');
 const logger = require('./logger');
 const axios = require('axios');
-const KythiaTeam = require('@coreModels/KythiaTeam');
+
+const isOwner = (userId) => {
+    let ownerIds = kythia.owner.ids;
+    if (typeof ownerIds === 'string') {
+        ownerIds = ownerIds.split(',').map((id) => id.trim());
+    }
+    if (Array.isArray(ownerIds) && ownerIds.includes(String(userId))) {
+        return true;
+    }
+    return false;
+};
 
 /**
  * Checks whether a user is part of the bot owner team.
@@ -23,7 +34,7 @@ const KythiaTeam = require('@coreModels/KythiaTeam');
  * @returns {Promise<boolean>} True if user is owner or in a team.
  */
 async function checkIsTeam(user) {
-    if (user.id === kythia.owner.id) return true;
+    if (isOwner(user.id)) return true;
 
     const teams = await KythiaTeam.getCache({ userId: user.id });
     if (teams.length > 0) return true;
@@ -65,7 +76,7 @@ const embedFooter = async (source) => {
  * @returns {Promise<boolean>} True if premium is active.
  */
 async function checkIsPremium(userId) {
-    if (userId == kythia.owner.id) return true;
+    if (isOwner(userId)) return true;
     const premium = await KythiaUser.getCache({ userId: userId });
     if (!premium) return false;
     if (premium.premiumExpiresAt && new Date() > premium.premiumExpiresAt) return false;
@@ -81,7 +92,7 @@ async function setVoiceChannelStatus(channel, status) {
     // Validate channel
     const botToken = kythia.bot.token;
     if (!channel || !channel.isVoiceBased()) {
-        console.error('❌ Invalid voice channel provided.');
+        logger.error('❌ Invalid voice channel provided.');
         return;
     }
 
@@ -92,9 +103,8 @@ async function setVoiceChannelStatus(channel, status) {
             { headers: { Authorization: `Bot ${botToken}` } }
         );
     } catch (e) {
-        // Improved error handling
-        console.error('❌ Failed to set voice channel status:', e.response?.data || e.message);
+        logger.error('❌ Failed to set voice channel status:', e.response?.data || e.message);
     }
 }
 
-module.exports = { checkIsTeam, embedFooter, checkIsPremium, setVoiceChannelStatus };
+module.exports = { isOwner, checkIsTeam, embedFooter, checkIsPremium, setVoiceChannelStatus };

@@ -6,8 +6,9 @@
  * @version 0.9.9-beta
  */
 
-const path = require('path');
 const { cleanupUserCache } = require('./helpers/index.js');
+const logger = require('@src/utils/logger.js');
+const path = require('path');
 
 const initialize = (bot) => {
     const summary = [];
@@ -18,7 +19,7 @@ const initialize = (bot) => {
         bot.registerButtonHandler('reactrole', reactRoleHandler.execute);
         summary.push("  └─ Button: 'reactrole'");
     } catch (error) {
-        console.error("Error registering button handler 'reactrole':", error);
+        logger.error("Error registering button handler 'reactrole':", error);
     }
 
     setInterval(() => cleanupUserCache(bot.userCache), 1000 * 60 * 60 * 1);

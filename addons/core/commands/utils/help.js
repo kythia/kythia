@@ -26,7 +26,6 @@ const path = require('path');
 const { t } = require('@utils/translator');
 const convertColor = require('@utils/color');
 
-// --- Logika-logika inti tidak diubah ---
 const EXCLUDED_ADDONS = [];
 const EXCLUDED_CORE_CATEGORIES = [];
 const CATEGORIES_PER_PAGE = 25;
@@ -35,20 +34,12 @@ module.exports = {
     data: new SlashCommandBuilder().setName('help').setDescription('💡 Displays a list of bot commands with complete details.'),
 
     async execute(interaction) {
-        // await interaction.deferReply({ ephemeral: false });
         const rootDir = path.join(__dirname, '..', '..', '..', '..');
         const addonsDir = path.join(rootDir, 'addons');
         const allCategories = [];
         const pages = {};
 
-        // --- LOAD Kythia config for addon/category filtering ---
         let kythiaConfig = kythia;
-        // try {
-        //   // Try to get kythia config from client, fallback to require if not present
-        //   kythiaConfig = interaction.client.kythia || require(path.join(rootDir, 'kythia.config.js'));
-        // } catch (e) {
-        //   kythiaConfig = {};
-        // }
         const configAddons = kythiaConfig?.addons || {};
 
         function isAddonActive(addonName) {
@@ -57,7 +48,6 @@ module.exports = {
             return true;
         }
         function isCoreCategoryActive(categoryName) {
-            // core category config: addons.core.categories.<categoryName>.active === false
             if (configAddons.core?.categories && typeof configAddons.core.categories === 'object') {
                 if (configAddons.core.categories[categoryName]?.active === false) return false;
             }
@@ -94,13 +84,11 @@ module.exports = {
             return total;
         }
 
-        // Improved smartSplit: ensures no chunk exceeds 4000 chars, and each chunk is <= 4000
         function smartSplit(content, maxLength = 3500) {
             const chunks = [];
             let currentChunk = '';
             const lines = content.split('\n');
             for (const line of lines) {
-                // If a single line is too long, forcibly split it
                 if (line.length + 1 > maxLength) {
                     if (currentChunk.length > 0) {
                         chunks.push(currentChunk);
@@ -135,7 +123,7 @@ module.exports = {
         for (const addon of addonFolders) {
             if (!addon.isDirectory() || EXCLUDED_ADDONS.includes(addon.name)) continue;
             const addonName = addon.name;
-            if (!isAddonActive(addonName)) continue; // <-- FILTER ADDON YANG DI-OFFKAN
+            if (!isAddonActive(addonName)) continue;
             if (addonName === 'core') {
                 const coreCommandsPath = path.join(addonsDir, 'core', 'commands');
                 if (fs.existsSync(coreCommandsPath)) {
@@ -143,11 +131,11 @@ module.exports = {
                     for (const categoryFolder of coreCategories) {
                         if (!categoryFolder.isDirectory() || EXCLUDED_CORE_CATEGORIES.includes(categoryFolder.name)) continue;
                         const categoryName = categoryFolder.name;
-                        if (!isCoreCategoryActive(categoryName)) continue; // <-- FILTER CORE CATEGORY YANG DI-OFFKAN
+                        if (!isCoreCategoryActive(categoryName)) continue;
                         allCategories.push({
                             label: categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
                             value: categoryName,
-                            description: await t(interaction, 'core_utils_help_category_desc', { category: categoryName }), // Documentation for ${categoryName}.
+                            description: await t(interaction, 'core_utils_help_category_desc', { category: categoryName }),
                         });
                         pages[categoryName] = getMarkdownContent(categoryName);
                     }
@@ -167,7 +155,6 @@ module.exports = {
         }
         allCategories.sort((a, b) => a.label.localeCompare(b.label));
 
-        // State untuk interaksi ini
         const state = {
             userId: interaction.user.id,
             totalCommands: countTotalCommands(interaction.client.commands),
@@ -178,42 +165,31 @@ module.exports = {
             docPage: 0,
         };
 
-        // --- MAIN RENDER FUNCTION ---
-        // GANTI FUNGSI LAMA DENGAN YANG INI
         const buildHelpReply = async (currentState) => {
             const { categoryPage, selectedCategory, docPage } = currentState;
 
             const container = new ContainerBuilder().setAccentColor(convertColor(kythia.bot.color, { from: 'hex', to: 'decimal' }));
 
-            // --- Bagian Tampilan Teks (Pengganti Embed Description) ---
             if (!selectedCategory) {
-                // Tampilan Home
                 const desc = await t(interaction, 'core_utils_help_main_embed_desc', {
                     username: interaction.client.user.username,
                     category_count: currentState.allCategories.length,
                     command_count: currentState.totalCommands,
                 });
-                // Konten home dijamin tidak akan kosong atau terlalu panjang
                 container.addTextDisplayComponents(new TextDisplayBuilder().setContent(desc));
             } else {
-                // Tampilan Dokumentasi Kategori
                 const categoryData = currentState.allCategories.find((c) => c.value === selectedCategory);
                 const docPages = currentState.pages[selectedCategory];
                 let docContent = docPages?.[docPage];
 
                 if (docContent === null) docContent = await t(interaction, 'core_utils_help_docs_unavailable');
                 if (!docContent) docContent = await t(interaction, 'core_utils_help_content_not_found');
+                let finalContent = docContent.trim();
 
-                let finalContent = docContent.trim(); // Gabungkan dan hapus spasi berlebih
-
-                // ✨ JARING PENGAMAN 1: Anti string kosong
-                // Jika konten akhirnya benar-benar kosong, isi dengan karakter spasi kosong (zero-width space)
                 if (finalContent.length === 0) {
                     finalContent = '\u200B';
                 }
 
-                // ✨ JARING PENGAMAN 2: Anti string kepanjangan
-                // Potong paksa jika konten melebihi batas, sebagai fallback terakhir
                 if (finalContent.length > 4000) {
                     finalContent = finalContent.slice(0, 3997) + '...';
                 }
@@ -221,7 +197,6 @@ module.exports = {
                 container.addTextDisplayComponents(new TextDisplayBuilder().setContent(finalContent));
             }
 
-            // --- Separator dan Komponen lainnya tetap sama ---
             container.addSeparatorComponents(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true));
 
             const start = categoryPage * CATEGORIES_PER_PAGE;
@@ -294,7 +269,6 @@ module.exports = {
             }
 
             container.addSeparatorComponents(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true));
-            // container.addMediaGalleryComponents(new MediaGalleryBuilder().addItems([new MediaGalleryItemBuilder().setURL(await t(interaction, 'core_utils_help_embed_image'))]));
             container.addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(
                     await t(interaction, 'common_container_footer', { username: interaction.client.user.username })
@@ -304,14 +278,12 @@ module.exports = {
             return { components: [container] };
         };
 
-        // Send initial reply
         const initialReply = await buildHelpReply(state);
-        const message = await interaction.editReply({
+        const message = await interaction.reply({
             ...initialReply,
             flags: MessageFlags.IsPersistent | MessageFlags.IsComponentsV2,
         });
 
-        // Collector for component interactions
         const collector = message.createMessageComponentCollector({ time: 300000 });
 
         collector.on('collect', async (i) => {
@@ -335,7 +307,6 @@ module.exports = {
                 state.docPage = 0;
             }
 
-            // Clamp values
             const totalCategoryPages = Math.ceil(state.allCategories.length / CATEGORIES_PER_PAGE);
             state.categoryPage = Math.max(0, Math.min(state.categoryPage, totalCategoryPages - 1));
             if (state.selectedCategory) {
@@ -348,22 +319,15 @@ module.exports = {
         });
 
         collector.on('end', async (collected, reason) => {
-            // Jika collector berhenti karena perintah shutdown global, JANGAN LAKUKAN APA-APA.
-            // Biarkan fungsi _shutdownCollectorsOnExit yang mengurus semuanya.
             if (reason === 'bot_shutdown') return;
 
-            // Jika berhenti karena alasan lain (biasanya timeout),
-            // kita nonaktifkan semua komponen sebagai gantinya menghapusnya.
-            // Ini UX yang lebih baik karena user tahu interaksinya sudah berakhir.
             try {
-                const finalReply = await buildHelpReply(state); // Dapatkan komponen dari state terakhir
+                const finalReply = await buildHelpReply(state);
 
-                // Loop melalui semua container dan action row untuk men-disable setiap komponen
                 if (finalReply.components) {
                     finalReply.components.forEach((container) => {
                         if (container.components) {
                             container.components.forEach((row) => {
-                                // Pastikan row.components adalah array sebelum di-map
                                 if (Array.isArray(row.components)) {
                                     row.components = row.components.map((comp) => comp.setDisabled(true));
                                 }
@@ -374,8 +338,6 @@ module.exports = {
 
                 await interaction.editReply(finalReply);
             } catch (error) {
-                // Jika karena suatu hal gagal (misal, pesan sudah dihapus),
-                // fallback ke menghapus komponen seperti biasa.
                 await interaction.editReply({ components: [] }).catch(() => {});
             }
         });

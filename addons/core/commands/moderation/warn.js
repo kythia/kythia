@@ -10,6 +10,7 @@ const User = require('@coreModels/User');
 const ServerSetting = require('@coreModels/ServerSetting');
 const { embedFooter } = require('@utils/discord');
 const { t } = require('@utils/translator');
+const logger = require('@src/utils/logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -57,7 +58,7 @@ module.exports = {
             userRecord.changed('warnings', true);
             await userRecord.saveAndUpdateCache('userId');
         } catch (err) {
-            console.error('Error while saving user record:', err);
+            logger.error('Error while saving user record:', err);
             return interaction.editReply({
                 content: await t(interaction, 'core_moderation_warn_db_save_failed'),
             });
@@ -71,10 +72,10 @@ module.exports = {
                     await member.timeout(86400000, await t(interaction, 'core_moderation_warn_timeout_reason'));
                     timeoutApplied = true;
                 } catch (err) {
-                    console.warn('Failed to timeout member after 3 warnings:', err.message);
+                    logger.warn('Failed to timeout member after 3 warnings:', err.message);
                 }
             } else {
-                console.warn('Bot does not have MODERATE_MEMBERS permission to timeout member.');
+                logger.warn('Bot does not have MODERATE_MEMBERS permission to timeout member.');
             }
         }
 
@@ -121,7 +122,7 @@ module.exports = {
                     await modLogChannel.send({ embeds: [timeoutEmbed] });
                 }
             } catch (err) {
-                console.warn('Failed to send log to modLogChannel:', err.message);
+                logger.warn('Failed to send log to modLogChannel:', err.message);
             }
         }
 

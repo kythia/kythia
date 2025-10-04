@@ -25,14 +25,12 @@ function setBotPresence(client) {
             logger.warn(`Invalid activityType '${kythia.bot.activityType}', defaulting to 'Playing'.`);
             activityType = ActivityType.Playing;
         }
-
         client.user.setPresence({
-            activities: [
-                {
-                    name: kythia.bot.activity || 'Kythia Bot',
-                    type: activityType,
-                },
-            ],
+            activities: [{
+                name: kythia.bot.activity,
+                type: activityType,
+                url: kythia.bot.streakUrl || null
+            }],
             status: kythia.bot.status || 'online',
         });
         logger.info('✅ Bot presence has been set.');

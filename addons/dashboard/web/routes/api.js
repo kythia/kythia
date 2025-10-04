@@ -323,7 +323,7 @@ router.post('/api/topgg-webhook', async (req, res) => {
                                 },
                                 {
                                     type: 10,
-                                    content: `-# © ${kythia.bot.name} by ${kythia.owner.name}`,
+                                    content: `-# © ${kythia.bot.name} by ${kythia.owner.names}`,
                                 },
                             ],
                         },

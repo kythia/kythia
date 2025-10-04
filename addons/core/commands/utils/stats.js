@@ -30,7 +30,7 @@ module.exports = {
             const cpu = os.cpus()[0].model;
             const botLatency = sent.createdTimestamp - interaction.createdTimestamp - 100;
             const apiLatency = Math.round(client.ws.ping);
-            const owner = `${kythia.owner.name} (${kythia.owner.id})`;
+            const owner = `${kythia.owner.names} (${kythia.owner.ids})`;
             const kythiaVersion = kythia.version;
 
             const desc = await t(interaction, 'core_utils_stats_embed_desc', {

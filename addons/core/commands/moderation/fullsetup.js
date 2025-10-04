@@ -6,6 +6,7 @@
  * @version 0.9.9-beta
  */
 
+const logger = require('@src/utils/logger');
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags, InteractionContextType } = require('discord.js');
 
 module.exports = {
@@ -153,7 +154,7 @@ module.exports = {
 
             await interaction.editReply({ content: '', embeds: [successEmbed] });
         } catch (error) {
-            console.error('Error during AutoMod setup:', error);
+            logger.error('Error during AutoMod setup:', error);
             const errorEmbed = new EmbedBuilder()
                 .setColor('Red')
                 .setTitle('❌ Gagal Total!')

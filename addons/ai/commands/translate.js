@@ -11,6 +11,7 @@ const { getAndUseNextAvailableToken } = require('../helpers/gemini');
 const { embedFooter } = require('@utils/discord');
 const { GoogleGenAI } = require('@google/genai');
 const { t } = require('@utils/translator');
+const logger = require('@src/utils/logger');
 
 module.exports = {
     slashCommand: new SlashCommandBuilder()
@@ -67,7 +68,7 @@ module.exports = {
                 embeds: [embed],
             });
         } catch (error) {
-            console.error('Error in /translate:', error);
+            logger.error('Error in /translate:', error);
             const embed = new EmbedBuilder()
                 .setColor('Red')
                 .setDescription(await t(interaction, 'ai_translate_error'))
