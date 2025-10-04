@@ -1081,7 +1081,7 @@ class Kythia {
                         if (featureFlag && !isOwner(interaction.user.id)) {
                             const settings = await ServerSetting.getCache({ guildId: interaction.guild.id });
 
-                            if (!settings || !settings[featureFlag]) {
+                            if (settings && settings.hasOwnProperty(featureFlag) && settings[featureFlag] === false) {
                                 const featureName = category.charAt(0).toUpperCase() + category.slice(1);
                                 const reply = await t(interaction, 'common_error_feature_disabled', { feature: featureName });
                                 return interaction.reply({ content: reply });

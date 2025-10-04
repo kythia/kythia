@@ -37,6 +37,21 @@ module.exports = async (bot, guild) => {
     const webhookClient = safeWebhookClient(kythia.api.webhookGuildInviteLeave);
 
     // Use t for all text
+    // Safely resolve the guild owner's username, fallback to 'Unknown' if not available
+    let ownerName = 'Unknown';
+    try {
+        // Try to fetch the owner if not cached
+        let owner = guild.members?.cache?.get(guild.ownerId);
+        if (!owner && typeof guild.fetchOwner === 'function') {
+            owner = await guild.fetchOwner();
+        }
+        if (owner && owner.user && owner.user.username) {
+            ownerName = owner.user.username;
+        }
+    } catch (e) {
+        // ignore, fallback to 'Unknown'
+    }
+
     const inviteEmbed = new EmbedBuilder()
         .setColor(kythia.bot.color)
         .setDescription(
@@ -45,7 +60,7 @@ module.exports = async (bot, guild) => {
                 guild: guild.name,
                 guildId: guild.id,
                 ownerId: guild.ownerId,
-                ownerName: guild.owner.user.username,
+                ownerName: ownerName,
                 memberCount: guild.memberCount ?? '?',
                 invite: guild.vanityURLCode
                     ? `https://discord.gg/${guild.vanityURLCode}`
