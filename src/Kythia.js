@@ -82,6 +82,7 @@ class Kythia {
             kythiaManager: this.kythiaManager,
             ServerSetting: ServerSetting,
             client: this.client,
+            sequelize: null,
             logger: logger,
             User: User,
             t: t,
@@ -1826,7 +1827,8 @@ class Kythia {
             loadLocales();
             loadFonts();
             logger.info('▬▬▬▬▬▬▬▬▬▬▬▬▬▬[ Load KythiaORM ]▬▬▬▬▬▬▬▬▬▬▬▬▬▬');
-            await KythiaORM();
+            const sequelize = await KythiaORM();
+            this.container.sequelize = sequelize;
             logger.info('▬▬▬▬▬▬▬▬▬▬▬▬▬▬[ Kythia Manager ]▬▬▬▬▬▬▬▬▬▬▬▬▬▬');
             await this.kythiaManager.warmCache();
             logger.info('▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬[ Kythia Addons ]▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬');

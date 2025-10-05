@@ -357,6 +357,8 @@ async function KythiaORM(client, options = { force: false }) {
         } else {
             logger.info('💾 All model schemas are up to date.');
         }
+
+        return sequelize;
     } catch (err) {
         // Custom error log for missing table description
         if (err && typeof err.message === 'string' && err.message.match(/^No description found for "?(.+?)"? table/i)) {

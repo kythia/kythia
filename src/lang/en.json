@@ -149,7 +149,7 @@
   "core_utils_spam_start": "🚀 Spamming {jumlah} messages with a delay of {delay} ms...",
   "core_utils_spam_done": "✅ Done! Sent {sent} messages.",
   "core_utils_stats_fetching": "Fetching statistics...",
-  "core_utils_stats_embed_desc": "## 📊 **{username} Statistics**\n\n> **Uptime:** `{uptime}`\n> **Memory Usage:** `{memory} MB`\n> **Servers:** `{guilds}`   |   **Users:** `{users}`\n> **Kythia Version:** `{kythiaVersion}`\n\n### ⚙️ **Technology**\n> **Node.js:** `{node}`   |   **discord.js:** `v{djs}`\n> **CPU:** `{cpu}`\n\n### 📶 **Connection**\n> **Bot Latency:** `{botLatency}ms`   |   **API Latency:** `{apiLatency}ms`\n\n### 👑 **Owner**\n> `{owner}`",
+  "core_utils_stats_embed_desc": "## 📊 **{username} Statistics**\n\n> **Uptime:** `{uptime}`\n> **Memory Usage:** `{memory} MB`\n> **Servers:** `{guilds}`   |   **Users:** `{users}`\n> **Kythia Version:** `{kythiaVersion}`\n> **Commit hash:** `{githubCommit}`\n\n### ⚙️ **Technology**\n> **Node.js:** `{node}`   |   **discord.js:** `v{djs}`\n> **CPU:** `{cpu}`\n\n### 📶 **Connection**\n> **Bot Latency:** `{botLatency}ms`   |   **API Latency:** `{apiLatency}ms`\n\n### 👑 **Owner**\n> `{owner}`",
   "core_utils_stats_error": "❌ An error occurred while fetching statistics. Please try again later.",
   "core_utils_userinfo_user_not_found": "❌ That user is not in this server!",
   "core_utils_userinfo_embed_title": "📊 User Info",
