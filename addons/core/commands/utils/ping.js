@@ -36,11 +36,9 @@ async function getLavalinkNodesPing(client) {
         try {
             const stats = node.stats || {};
             const isConnected = node.isConnected || false;
-            let ping = isConnected ? (stats.ping ?? -1) : -1; // Use 'let' because we might change it
+            let ping = isConnected ? (stats.ping ?? -1) : -1;
             const players = stats.players || 0;
 
-            // <--- INI DIA BAGIAN AJAIBNYA!
-            // If connected but ping is missing, ping it manually.
             if (isConnected && ping === -1) {
                 const host = node.options?.host;
                 const port = node.options?.port;
@@ -52,21 +50,16 @@ async function getLavalinkNodesPing(client) {
                         const url = `http${secure ? 's' : ''}://${host}:${port}/version`;
                         const startTime = Date.now();
 
-                        // Perform a lightweight fetch request to the /version endpoint
                         const res = await fetch(url, {
                             headers: { Authorization: password },
                         });
 
-                        // If successful, calculate the latency.
                         if (res.ok) {
                             ping = Date.now() - startTime;
                         }
-                    } catch (fetchError) {
-                        // If manual ping fails, keep ping as -1
-                    }
+                    } catch (fetchError) {}
                 }
             }
-            // <--- AKHIR BAGIAN AJAIB
 
             nodes.push({
                 name: name,
@@ -206,7 +199,7 @@ module.exports = {
 
         const collector = sent.createMessageComponentCollector({
             componentType: ComponentType.Button,
-            filter: (i) => i.customId === 'ping_refresh' && i.user.id === interaction.user.id,
+            filter: (i) => i.customId === 'ping_refresh',
         });
 
         collector.on('collect', async (i) => {
