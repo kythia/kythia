@@ -27,9 +27,11 @@ function loadKythiaConfig() {
         // Bot owner
         owner: {
             // Discord User ID of the bot owner (for owner-only commands)
-            id: '1158654757183959091',
+            // can be multiple, seperate with comma (eg: 1158654757183959091,1358351229771710565)
+            ids: '1158654757183959091',
             // Display name of the owner
-            name: 'kenndeclouv',
+            // can be multiple, seperate with comma (eg: kenndeclouv,kenoura_)
+            names: 'kenndeclouv',
         },
         /**
          * Sentry for error logging

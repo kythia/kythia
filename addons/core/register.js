@@ -9,6 +9,7 @@
 const { cleanupUserCache } = require('./helpers/index.js');
 const logger = require('@src/utils/logger.js');
 const path = require('path');
+const { userCache } = require('./helpers/automod.js');
 
 const initialize = (bot) => {
     const summary = [];
@@ -22,7 +23,7 @@ const initialize = (bot) => {
         logger.error("Error registering button handler 'reactrole':", error);
     }
 
-    setInterval(() => cleanupUserCache(bot.userCache), 1000 * 60 * 60 * 1);
+    setInterval(() => cleanupUserCache(userCache), 1000 * 60 * 60 * 1);
     summary.push('  └─ Interval: cleanup user cache (per hour)');
 
     return summary;

@@ -13,7 +13,6 @@ const { safeCommands } = require('../helpers/commandSchema');
 const ServerSetting = require('@coreModels/ServerSetting');
 const { ChannelType } = require('discord.js');
 const { t } = require('@utils/translator');
-const { Mutex } = require('async-mutex');
 const logger = require('@utils/logger');
 const fs = require('fs').promises;
 const path = require('path');
@@ -24,60 +23,6 @@ const UserFact = require('../database/models/UserFact');
 const GEMINI_MODEL = kythia.addons.ai.model;
 const CONTEXT_MESSAGES_TO_FETCH = kythia.addons.ai.getMessageHistoryLength;
 const conversationCache = new Map();
-const profileMutex = new Mutex();
-const tokenMutex = new Mutex();
-
-const userProfilePath = path.join(__dirname, '..', 'data', 'user_profiles.json');
-let userProfiles = {};
-let isProfilesInitialized = false;
-
-/**
- * 📂 initializeUserProfiles
- * Inisialisasi data profil user dari file JSON di disk.
- * Membuat folder jika belum ada, dan menghindari error jika file belum ada.
- */
-async function initializeUserProfiles() {
-    if (isProfilesInitialized) return;
-    try {
-        await fs.mkdir(path.dirname(userProfilePath), { recursive: true });
-        const data = await fs.readFile(userProfilePath, 'utf-8');
-        userProfiles = JSON.parse(data);
-        if (typeof userProfiles !== 'object' || userProfiles === null) userProfiles = {};
-    } catch (error) {
-        userProfiles = {};
-    }
-    isProfilesInitialized = true;
-}
-
-/**
- * 💾 saveProfilesImmediately
- * Menyimpan data userProfiles ke disk secara langsung (tanpa mutex).
- * Harus dipanggil dari fungsi yang sudah memegang mutex.
- */
-async function saveProfilesImmediately() {
-    try {
-        await fs.writeFile(userProfilePath, JSON.stringify(userProfiles, null, 2));
-    } catch (error) {
-        logger.error('❌ FAILED TO SAVE PROFILE TO DISK! ❌');
-        logger.error('Error:', error);
-    }
-}
-
-/**
- * 👤 getUserProfile
- * Mengambil atau membuat profil user baru jika belum ada.
- * @param {string} userId
- * @returns {object} profile
- */
-function getUserProfile(userId) {
-    if (!userProfiles[userId]) {
-        userProfiles[userId] = { facts: [], meta: {} };
-    } else {
-        if (!Array.isArray(userProfiles[userId].facts)) userProfiles[userId].facts = [];
-        if (typeof userProfiles[userId].meta !== 'object' || userProfiles[userId].meta === null) userProfiles[userId].meta = {};
-    }
-    return userProfiles[userId];
-}
 
 const factClassifiers = [
     { type: 'birthday', regex: /(lahir|birthday|ulang tahun|born|kelahiran|tanggal lahir|dob)/i },
@@ -124,7 +69,7 @@ function classifyFact(fact) {
 
 /**
  * 📝 appendUserFact
- * Menambahkan fakta baru ke profil user (dengan mutex).
+ * Menambahkan fakta baru ke profil user (langsung ke database).
  * @param {string} userId
  * @param {string} fact
  * @returns {'added' | 'duplicate' | 'error'}
@@ -205,7 +150,14 @@ async function getUserFactsString(userId) {
     return result.trim();
 }
 
-initializeUserProfiles();
+const tempDir = path.join(__dirname, '..', 'temp');
+(async () => {
+    try {
+        await fs.mkdir(tempDir, { recursive: true });
+    } catch (e) {
+        logger.error('❌ Failed to create temp folder:', e);
+    }
+})();
 
 /**
  * 🧠 Merangkum riwayat obrolan untuk mengekstrak & menyimpan fakta penting secara otomatis.
@@ -400,7 +352,6 @@ module.exports = async (bot, message) => {
     let typingInterval;
 
     if (isAiChannel || isDm || isMentioned) {
-        // --- MULAI PERUBAHAN DI SINI ---
         const totalTokens = (kythia.addons.ai.geminiApiKeys || '')
             .split(',')
             .map((k) => k.trim())
@@ -417,7 +368,6 @@ module.exports = async (bot, message) => {
                 });
             }, 8000);
 
-            // Build context, system instruction, and media processing
             const userDisplayName = message.member?.displayName || message.author.username;
             const userTag = message.author.tag || `${message.author.username}#${message.author.discriminator}`;
             const userFactsString = await getUserFactsString(message.author.id);
@@ -462,7 +412,8 @@ module.exports = async (bot, message) => {
                             const buffer = Buffer.from(await fetchRes.arrayBuffer());
                             const tmp = require('tmp');
                             const { promises: fsp } = require('fs');
-                            const tmpobj = tmp.fileSync({ postfix: path.extname(attachment.name || '.mp4') });
+
+                            const tmpobj = tmp.fileSync({ postfix: path.extname(attachment.name || '.mp4'), dir: tempDir });
                             await fsp.writeFile(tmpobj.name, buffer);
 
                             let uploadedFile;
@@ -657,7 +608,6 @@ module.exports = async (bot, message) => {
                 }
             }
 
-            // --- INI LOOP UTAMANYA ---
             for (let attempt = 0; attempt < totalTokens; attempt++) {
                 logger.info(`🧠 AI attempt ${attempt + 1}/${totalTokens}...`);
 
@@ -694,7 +644,6 @@ module.exports = async (bot, message) => {
                 } catch (err) {
                     if (err.message && (err.message.includes('429') || err.toString().includes('RESOURCE_EXHAUSTED'))) {
                         logger.warn(`Token index ${tokenIdx} hit 429 limit. Retrying with next token...`);
-                        // continue to next attempt
                     } else {
                         logger.error('❌ AI Message Error (non-429):', err);
                         await message.channel.send(await t(message, 'ai_events_messageCreate_error')).catch(() => {});
@@ -704,7 +653,6 @@ module.exports = async (bot, message) => {
                 }
             }
 
-            // --- Setelah Loop Selesai ---
             if (typingInterval) clearInterval(typingInterval);
 
             if (success && finalResponse) {
@@ -733,7 +681,6 @@ module.exports = async (bot, message) => {
                     try {
                         const executionResult = await command.execute(fakeInteraction, client.container);
 
-                        // Use the same token for follow-up
                         const genAI = new GoogleGenAI({ apiKey: kythia.addons.ai.geminiApiKeys.split(',')[0] });
                         const followUpResponse = await genAI.models.generateContent({
                             model: GEMINI_MODEL,

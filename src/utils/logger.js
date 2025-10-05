@@ -39,7 +39,7 @@ const levelColors = {
 const messageColors = {
     error: clc.redBright,
     warn: clc.yellowBright,
-    info: clc.cyanBright,
+    info: clc.white,
     debug: clc.magentaBright,
     silly: clc.blueBright,
     verbose: clc.greenBright,

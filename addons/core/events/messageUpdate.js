@@ -7,7 +7,7 @@
  */
 
 const { isOwner } = require('@utils/discord');
-const automodSystem = require('../helpers/automod');
+const { automodSystem } = require('../helpers/automod');
 
 module.exports = async (bot, message) => {
     try {

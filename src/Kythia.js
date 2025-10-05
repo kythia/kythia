@@ -1728,34 +1728,83 @@ class Kythia {
         }
     }
     /**
-     * 🏁 Start the Kythia
+     * 🌸 Start the Kythia
      * Loads locales, synchronizes the database, loads all addons, initializes interaction handlers,
      * deploys commands, and logs in the Discord client.
      * Handles startup errors and exits on failure.
      */
     async start() {
         const version = require('../package.json').version;
-        await figlet.text(
-            'KYTHIA',
-            {
+        const clc = require('cli-color');
+        const figletText = (text, opts) =>
+            new Promise((resolve, reject) => {
+                figlet.text(text, opts, (err, data) => {
+                    if (err) reject(err);
+                    else resolve(data);
+                });
+            });
+
+        try {
+            // Render figlet text (no border)
+            const data = await figletText('KYTHIA', {
                 font: 'ANSI Shadow',
                 horizontalLayout: 'full',
                 verticalLayout: 'full',
-            },
-            async (err, data) => {
-                const clc = require('cli-color');
-                await console.log(clc.cyanBright(data));
-                await console.log(
-                    clc.cyan(
-                        'Created by kenndeclouv\n' +
-                            '\n' +
-                            'Discord Support: https://dsc.gg/kythia\n' +
-                            'Official Documentation: https://kythia.my.id/commands\n\n' +
-                            `Kythia version: ${version}\n`
-                    )
-                );
-            }
-        );
+            });
+
+            // Info lines (inside border)
+            const infoLines = [
+                clc.cyan('Created by kenndeclouv'),
+                clc.cyan('Discord Support: ') + clc.underline('https://dsc.gg/kythia'),
+                clc.cyan('Official Documentation: ') + clc.underline('https://kythia.my.id/commands'),
+                '',
+                clc.cyanBright(`Kythia version: ${version}`),
+                '',
+                clc.yellowBright('Respect my work by not removing the credit'),
+            ];
+
+            // Calculate border width based on the longest info line
+            const rawInfoLines = infoLines.map((line) => clc.strip(line));
+            const infoMaxLen = Math.max(...rawInfoLines.map((l) => l.length));
+            const pad = 8;
+            const borderWidth = infoMaxLen + pad * 2;
+            const borderChar = clc.cyanBright('═');
+            const sideChar = clc.cyanBright('║');
+            const topBorder = clc.cyanBright('╔' + borderChar.repeat(borderWidth) + '╗');
+            const bottomBorder = clc.cyanBright('╚' + borderChar.repeat(borderWidth) + '╝');
+            const emptyLine = sideChar + ' '.repeat(borderWidth) + sideChar;
+
+            // Center figlet lines inside the border
+            const figletLines = data.split('\n');
+            const centeredFigletInBorder = figletLines
+                .map((line) => {
+                    const rawLen = clc.strip(line).length;
+                    const spaces = ' '.repeat(Math.max(0, Math.floor((borderWidth - rawLen) / 2)));
+                    return sideChar + spaces + clc.cyanBright(line) + ' '.repeat(borderWidth - spaces.length - rawLen) + sideChar;
+                })
+                .join('\n');
+
+            // Center info lines inside the border
+            const centeredInfo = infoLines
+                .map((line, idx) => {
+                    const raw = rawInfoLines[idx];
+                    const spaces = ' '.repeat(Math.floor((borderWidth - raw.length) / 2));
+                    return sideChar + spaces + line + ' '.repeat(borderWidth - spaces.length - raw.length) + sideChar;
+                })
+                .join('\n');
+
+            // Print border with figlet centered inside, then info box
+            console.log('\n' + topBorder);
+            console.log(emptyLine);
+            console.log(centeredFigletInBorder);
+            console.log(emptyLine);
+            console.log(centeredInfo);
+            console.log(emptyLine);
+            console.log(bottomBorder + '\n');
+        } catch (err) {
+            logger.error('❌ Failed to render figlet banner:', err);
+        }
+
         logger.info('🚀 Starting kythia...');
         if (kythia.sentry.dsn) {
             Sentry.init({
@@ -1792,11 +1841,11 @@ class Kythia {
             }
             this._initializeGlobalIntervalTracker();
             this._shutdownCollectorsOnExit();
-            logger.info('▬▬▬▬▬▬▬▬▬▬▬▬▬▬[ Systems Initializing ]▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬');
+            logger.info('▬▬▬▬▬▬▬▬▬▬▬[ Systems Initializing ]▬▬▬▬▬▬▬▬▬▬▬▬');
             const auditLogger = new AuditLogger(this);
             auditLogger.initialize();
             this.client.once('clientReady', async () => {
-                logger.info(`✅ Logged in as ${this.client.user.tag}`);
+                logger.info(`🌸 Logged in as ${this.client.user.tag}`);
 
                 logger.info(`🚀 Executing ${this.readyHooks.length} ready hooks...`);
                 for (const hook of this.readyHooks) {

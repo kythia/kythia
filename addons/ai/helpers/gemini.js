@@ -17,9 +17,22 @@ const GEMINI_API_KEYS = (kythia.addons.ai.geminiApiKeys || '')
     .map((t) => t.trim())
     .filter(Boolean);
 const GEMINI_TOKEN_COUNT = GEMINI_API_KEYS.length;
-const aiUsageFilePath = path.join(__dirname, '..', 'data', 'ai_usage.json');
+const tempDirPath = path.join(__dirname, '..', 'temp');
+const aiUsageFilePath = path.join(tempDirPath, 'ai_usage.json');
 const PER_MINUTE_AI_LIMIT = kythia.addons.ai.perMinuteAiLimit;
 const tokenMutex = new Mutex();
+
+/**
+ * 🗂️ ensureTempDir
+ * Pastikan folder temp ada, buat jika belum ada.
+ */
+async function ensureTempDir() {
+    try {
+        await fs.mkdir(tempDirPath, { recursive: true });
+    } catch (e) {
+        // Ignore if already exists or error
+    }
+}
 
 /**
  * 📊 loadUsageData
@@ -27,6 +40,7 @@ const tokenMutex = new Mutex();
  * @returns {Promise<Array<{minute: string, count: number}>>}
  */
 async function loadUsageData() {
+    await ensureTempDir();
     try {
         const raw = await fs.readFile(aiUsageFilePath, 'utf-8');
         let data = JSON.parse(raw);
@@ -58,6 +72,7 @@ async function loadUsageData() {
  * @param {Array} data
  */
 async function saveUsageData(data) {
+    await ensureTempDir();
     await fs.writeFile(aiUsageFilePath, JSON.stringify(data, null, 2));
 }
 
@@ -69,7 +84,8 @@ async function saveUsageData(data) {
  * @returns {Promise<object>}
  */
 async function getUsageMeta(file, key) {
-    const metaPath = path.join(__dirname, '..', 'data', file);
+    const metaPath = path.join(tempDirPath, file);
+    await ensureTempDir();
     try {
         const data = await fs.readFile(metaPath, 'utf-8');
         return JSON.parse(data);
@@ -87,7 +103,8 @@ async function getUsageMeta(file, key) {
  * @param {object} meta
  */
 async function setUsageMeta(file, meta) {
-    const metaPath = path.join(__dirname, '..', 'data', file);
+    const metaPath = path.join(tempDirPath, file);
+    await ensureTempDir();
     await fs.writeFile(metaPath, JSON.stringify(meta, null, 2));
 }
 
@@ -111,7 +128,7 @@ async function getAndUseNextAvailableToken() {
                 await saveUsageData(usageData);
                 meta.lastIndex = (idx + 1) % GEMINI_TOKEN_COUNT;
                 await setUsageMeta('ai_usage_meta.json', meta);
-                logger.info(`🎉 AI Token ${idx}`);
+                logger.debug(`🎉 AI Token ${idx}`);
                 return idx;
             }
         }

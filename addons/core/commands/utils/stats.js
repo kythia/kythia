@@ -16,8 +16,6 @@ module.exports = {
     data: new SlashCommandBuilder().setName('stats').setDescription(`📊 Displays ${kythia.bot.name} statistics.`),
     async execute(interaction) {
         try {
-            const sent = await interaction.reply({ content: await t(interaction, 'core_utils_stats_fetching'), fetchReply: true });
-
             const { client } = interaction;
 
             const username = interaction.client.user.username;
@@ -54,11 +52,11 @@ module.exports = {
                 .setThumbnail(client.user.displayAvatarURL())
                 .setFooter(await embedFooter(interaction));
 
-            await interaction.editReply({ content: null, embeds: [embed], ephemeral: true });
+            await interaction.reply({ content: null, embeds: [embed], ephemeral: true });
         } catch (error) {
             console.error('Error during stats command execution:', error);
             // Optionally, you can add error reporting here if needed
-            await interaction.editReply({ content: await t(interaction, 'core_utils_stats_error'), embeds: [], ephemeral: true });
+            await interaction.reply({ content: await t(interaction, 'core_utils_stats_error'), embeds: [], ephemeral: true });
         }
     },
 };

@@ -823,7 +823,7 @@ function canDeleteMessage(message) {
     return true;
 }
 
-module.exports = async function automodSystem(message) {
+async function automodSystem(message) {
     if (message.author.bot || !message.guild) return;
 
     const { guild, author: user, member } = message;
@@ -1272,3 +1272,8 @@ function cleanupCaches() {
 
 // Jalankan pembersihan setiap satu jam
 setInterval(cleanupCaches, 60 * 60 * 1000);
+
+module.exports = {
+    automodSystem,
+    userCache,
+};

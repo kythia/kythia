@@ -32,7 +32,7 @@ const config = {
     password: DB_PASSWORD,
     dialect: DB_DRIVER,
     logging: (sql) => {
-        logger.info(clc.magenta(sql));
+        logger.debug(sql);
     },
     define: {
         charset: 'utf8mb4',

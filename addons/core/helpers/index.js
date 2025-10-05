@@ -113,7 +113,7 @@ async function roleUnprefix(guild, interaction) {
  */
 async function cleanupUserCache(userCache) {
     if (!userCache || typeof userCache.entries !== 'function') {
-        const warnMsg = 'User cache is invalid or not iterable.';
+        const warnMsg = '⚠️ User cache is invalid or not iterable.';
         logger.warn(warnMsg);
         return;
     }
@@ -133,7 +133,7 @@ async function cleanupUserCache(userCache) {
             userCache.delete(key);
         }
     }
-    const logMsg = '[CACHE CLEANUP] userCache cleaned';
+    const logMsg = '🧹 [CACHE CLEANUP] userCache cleaned';
     logger.info(logMsg);
 }
 
