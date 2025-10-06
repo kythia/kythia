@@ -48,7 +48,6 @@ const { loadFonts } = require('./utils/fonts');
 const KythiaClient = require('./KythiaClient');
 const convertColor = require('./utils/color');
 const AuditLogger = require('./KythiaAudit');
-const exitHook = require('async-exit-hook');
 const { t } = require('@utils/translator');
 const User = require('@coreModels/User');
 const client = require('./KythiaClient');
@@ -95,6 +94,8 @@ class Kythia {
         this.readyHooks = [];
 
         this.eventHandlers = new Map();
+
+        this.client.kythia = this;
     }
 
     /**
@@ -1547,6 +1548,7 @@ class Kythia {
      */
     _initializeGlobalIntervalTracker() {
         if (!this._activeIntervals) this._activeIntervals = new Set();
+        if (this._intervalPatched) return; // Prevent double patching
 
         const botInstance = this;
         const originalSetInterval = global.setInterval;
@@ -1554,121 +1556,168 @@ class Kythia {
 
         global.setInterval = function (...args) {
             const intervalId = originalSetInterval.apply(this, args);
-
             botInstance._activeIntervals.add(intervalId);
             return intervalId;
         };
 
         global.clearInterval = function (intervalId) {
             originalClearInterval.apply(this, [intervalId]);
-
             botInstance._activeIntervals.delete(intervalId);
         };
 
+        this._intervalPatched = true;
         logger.info('✅ Global setInterval/clearInterval has been patched for tracking.');
     }
 
     /**
-     * 🛑 [FINAL ARCHITECTURE v5] Manages ALL graceful shutdown procedures.
-     * This version patches the core message sending/editing methods to automatically
-     * track ANY message with components, regardless of how its interactions are handled.
+     * 🛑 [FINAL ATTEMPT] Manages graceful shutdown.
+     * This function's ONLY job is to clean up. It DOES NOT exit the process.
      */
-    _shutdownCollectorsOnExit() {
-        if (!this._messagesWithActiveCollectors) this._messagesWithActiveCollectors = new Set();
+    async gracefulShutdown() {
+        if (this._isShuttingDown) return;
+        this._isShuttingDown = true;
 
-        if (!this._collectorPatched) {
-            const origCreateCollector = require('discord.js').Message.prototype.createMessageComponentCollector;
-            const botInstance = this;
+        const shardId = this.client.shard ? `SHARD #${this.client.shard.ids.join(',')}` : 'MAIN';
+        logger.info(`🛑 [${shardId}] Graceful shutdown initiated...`);
 
-            require('discord.js').Message.prototype.createMessageComponentCollector = function (...args) {
-                const collector = origCreateCollector.apply(this, args);
-                const message = this;
+        try {
+            // Step 1: Clear Intervals
+            if (this._activeIntervals && this._activeIntervals.size > 0) {
+                this._activeIntervals.forEach(clearInterval);
+                this._activeIntervals.clear();
+            }
+            logger.info(`[${shardId}] Intervals cleared.`);
 
-                if (botInstance._messagesWithActiveCollectors) {
-                    botInstance._messagesWithActiveCollectors.add(message);
-                }
+            // Step 2: Disable Components
+            if (this._messagesWithActiveCollectors && this._messagesWithActiveCollectors.size > 0) {
+                const {
+                    ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder, UserSelectMenuBuilder,
+                    RoleSelectMenuBuilder, MentionableSelectMenuBuilder, ChannelSelectMenuBuilder, ComponentType
+                } = require('discord.js');
 
-                collector.once('end', () => {
-                    if (botInstance._messagesWithActiveCollectors) {
-                        botInstance._messagesWithActiveCollectors.delete(message);
-                    }
-                });
-
-                return collector;
-            };
-            this._collectorPatched = true;
-            logger.info('✅ Corrected collector-based component tracking has been patched.');
-        }
-
-        if (!this._cleanupAttached) {
-            const cleanupAndFlush = async (callback) => {
-                logger.info('🛑 Graceful shutdown initiated...');
-
-                if (this._activeIntervals && this._activeIntervals.size > 0) {
-                    logger.info(`🛑 Halting ${this._activeIntervals.size} active global intervals...`);
-                    for (const intervalId of this._activeIntervals) {
-                        clearInterval(intervalId);
-                    }
-                }
-
-                const messagesToProcess = this._messagesWithActiveCollectors;
-
-                if (messagesToProcess && messagesToProcess.size > 0) {
-                    logger.info(`🛑 Disabling components on up to ${messagesToProcess.size} messages.`);
-                    const editPromises = [];
-
-                    function disableRecursively(components) {
-                        return components.map((comp) => {
-                            if (comp.components && Array.isArray(comp.components)) {
-                                comp.components = disableRecursively(comp.components);
+                const disableComponentsInRows = (rows) => {
+                    return rows.map(row => {
+                        const newRow = new ActionRowBuilder();
+                        // row could be a builder or a raw object
+                        const rowData = typeof row.toJSON === 'function' ? row.toJSON() : row;
+                        if (!rowData || !Array.isArray(rowData.components)) return row;
+                        rowData.components.forEach(comp => {
+                            let newComp;
+                            switch (comp.type) {
+                                case ComponentType.Button:
+                                    newComp = ButtonBuilder.from(comp).setDisabled(true);
+                                    break;
+                                case ComponentType.StringSelect:
+                                    newComp = StringSelectMenuBuilder.from(comp).setDisabled(true);
+                                    break;
+                                case ComponentType.UserSelect:
+                                    newComp = UserSelectMenuBuilder.from(comp).setDisabled(true);
+                                    break;
+                                case ComponentType.RoleSelect:
+                                    newComp = RoleSelectMenuBuilder.from(comp).setDisabled(true);
+                                    break;
+                                case ComponentType.MentionableSelect:
+                                    newComp = MentionableSelectMenuBuilder.from(comp).setDisabled(true);
+                                    break;
+                                case ComponentType.ChannelSelect:
+                                    newComp = ChannelSelectMenuBuilder.from(comp).setDisabled(true);
+                                    break;
+                                default:
+                                    newComp = comp; // Komponen yang tidak bisa di-disable (e.g. TextInput) biarkan saja
                             }
-
-                            if (comp.type === 2 || comp.type === 3 || comp.type >= 5) {
-                                return { ...comp, disabled: true };
-                            }
-                            return comp;
+                            newRow.addComponents(newComp);
                         });
-                    }
+                        return newRow;
+                    });
+                };
 
-                    for (const msg of messagesToProcess) {
-                        if (!msg.editable || !msg.components || msg.components.length === 0) continue;
-                        try {
-                            const rawComponents = msg.components.map((c) => c.toJSON());
-                            const disabledComponents = disableRecursively(rawComponents);
-                            editPromises.push(msg.edit({ components: disabledComponents }).catch(() => {}));
-                        } catch (e) {
-                            /* Abaikan */
-                        }
+                const editPromises = [];
+                for (const msg of this._messagesWithActiveCollectors) {
+                    if (msg.editable && msg.components?.length > 0) {
+                        const disabledComponents = disableComponentsInRows(msg.components);
+                        editPromises.push(msg.edit({ components: disabledComponents }).catch(() => {}));
                     }
-                    await Promise.allSettled(editPromises);
                 }
-                logger.info('✅ Component cleanup complete.');
+                await Promise.allSettled(editPromises);
+                logger.info(`✅ [${shardId}] Component disable process finished.`);
+            }
 
-                logger.info('🚰 Flushing remaining logs...');
-                logger.on('finish', () => {
-                    console.log('⏳ Logger has flushed. Kythia is now safely shutting down.');
-                    if (callback) callback();
-                });
-                logger.end();
-                setTimeout(() => {
-                    console.log('⏳ Logger flush timeout. Forcing exit.');
-                    if (callback) callback();
-                }, 4000);
-            };
+            // Beri jeda sedikit
+            await new Promise(resolve => setTimeout(resolve, 250));
 
-            exitHook(cleanupAndFlush);
-            process.on('unhandledRejection', (error) => {
-                logger.error('‼️ UNHANDLED PROMISE REJECTION:', error);
-            });
-            process.on('uncaughtException', (error) => {
-                logger.error('‼️ UNCAUGHT EXCEPTION! Bot will shutdown.', error);
-                process.exit(1);
-            });
+            // Step 3: Clean up music players (Poru)
+            if (this.client.poru && this.client.poru.players && this.client.poru.players.size > 0) {
+                logger.info(`🎵 [${shardId}] Destroying ${this.client.poru.players.size} music players...`);
+                const destroyPromises = [...this.client.poru.players.values()].map(
+                    (p) => p.destroy().catch(() => {}) // Ignore destroy errors
+                );
+                await Promise.allSettled(destroyPromises);
+                logger.info(`✅ [${shardId}] Music players destroyed`);
+            }
 
-            this._cleanupAttached = true;
-            logger.info('🛡️  Graceful shutdown and error handlers are now active.');
+            // Step 4: Close database connection (Sequelize)
+            if (this.container.sequelize) {
+                logger.info(`🗃️ [${shardId}] Closing database connection...`);
+                try {
+                    await this.container.sequelize.close();
+                    logger.info(`✅ [${shardId}] Database connection closed`);
+                } catch (e) {
+                    logger.warn(`⚠️ [${shardId}] Error closing database:`, e.message);
+                }
+            }
+
+            // Step 5: Destroy Discord client
+            logger.info(`🔌 [${shardId}] Destroying client connection...`);
+            try {
+                await this.client.destroy();
+                logger.info(`✅ [${shardId}] Client destroyed`);
+            } catch (e) {
+                logger.warn(`⚠️ [${shardId}] Error destroying client:`, e.message);
+            }
+
+            logger.info(`✅ [${shardId}] All connections gracefully closed.`);
+        } catch (e) {
+            logger.error(`❌ [${shardId}] Error during graceful shutdown sequence:`, e);
         }
     }
+
+    _shutdownCollectorsOnExit() {
+        if (this._collectorPatched) return;
+        const { Message } = require('discord.js');
+
+        if (!this._messagesWithActiveCollectors) {
+            this._messagesWithActiveCollectors = new Set();
+        }
+
+        const origCreateCollector = Message.prototype.createMessageComponentCollector;
+        const botInstance = this;
+
+        Message.prototype.createMessageComponentCollector = function (...args) {
+            const collector = origCreateCollector.apply(this, args);
+
+            // Track this message for cleanup
+            botInstance._messagesWithActiveCollectors.add(this);
+            logger.info(`[COLLECTOR] Tracking message ${this.id} with ${this.components?.length || 0} component rows`);
+
+            // Remove from tracking when collector ends
+            collector.once('end', () => {
+                botInstance._messagesWithActiveCollectors.delete(this);
+                logger.info(`[COLLECTOR] Removed message ${this.id} from tracking (collector ended)`);
+            });
+
+            // Also remove on error
+            collector.once('error', () => {
+                botInstance._messagesWithActiveCollectors.delete(this);
+                logger.info(`[COLLECTOR] Removed message ${this.id} from tracking (collector error)`);
+            });
+
+            return collector;
+        };
+
+        this._collectorPatched = true;
+        logger.info('✅ Message component collector patching applied');
+    }
+
     /**
      * Menghitung jumlah top-level command berdasarkan tipenya dari data JSON mentah.
      * @param {Array} commandJsonArray - Array command data yang akan di-deploy.
@@ -1835,14 +1884,69 @@ class Kythia {
             const allCommands = await this._loadAddons();
             this._initializeEventHandlers();
             this._initializeInteractionHandler();
+
+            // Initialize tracking systems BEFORE any other operations
+            this._initializeGlobalIntervalTracker();
+            this._shutdownCollectorsOnExit();
+
             logger.info('▬▬▬▬▬▬▬▬▬▬▬▬▬[ Deploy Commands ]▬▬▬▬▬▬▬▬▬▬▬▬▬');
             if (shouldDeploy) {
                 await this._deployCommands(allCommands);
             } else {
                 logger.info('⏭️  Skipping command deployment. Use --deploy flag to force update.');
             }
-            this._initializeGlobalIntervalTracker();
-            this._shutdownCollectorsOnExit();
+
+            // --- PUSAT KENDALI SHUTDOWN YANG BARU ---
+            if (!this._cleanupAttached) {
+                this._cleanupAttached = true;
+                logger.info('🛡️ Attaching final shutdown handlers...');
+
+                const createShutdownHandler = (exitCode) => async (error) => {
+                    if (this._isShuttingDown) return;
+                    if (error instanceof Error) {
+                        logger.error('‼️ Uncaught Exception or Unhandled Rejection:', error);
+                    }
+                    await this.gracefulShutdown();
+                    process.exit(exitCode);
+                };
+
+                // Untuk sharded: dengarkan pesan dari manager
+                if (process.send) {
+                    // --- INI PERUBAHAN UTAMANYA ---
+                    // Abaikan sinyal SIGINT dari OS, karena kita akan diurus oleh manager.
+                    process.on('SIGINT', () => {
+                        const shardId = this.client.shard ? `SHARD #${this.client.shard.ids.join(',')}` : 'MAIN';
+                        logger.warn(`[${shardId}] Received direct SIGINT. Ignoring, waiting for manager's command.`);
+                    });
+                    // --------------------------------
+
+                    process.on('message', async (message) => {
+                        if (message && message.type === 'gracefulShutdown') {
+                            if (this._isShuttingDown) {
+                                logger.warn(
+                                    `[${this.client.shard ? `SHARD #${this.client.shard.ids.join(',')}` : 'MAIN'}] Already shutting down, ignoring duplicate signal`
+                                );
+                                return;
+                            }
+                            logger.info(
+                                `[${this.client.shard ? `SHARD #${this.client.shard.ids.join(',')}` : 'MAIN'}] Received graceful shutdown signal from manager`
+                            );
+                            await this.gracefulShutdown();
+                            // Use exit code 0 for graceful shutdown (won't trigger respawn)
+                            process.exit(0);
+                        }
+                    });
+                }
+                // Untuk non-sharded: dengarkan sinyal OS secara manual
+                else {
+                    process.on('SIGINT', createShutdownHandler(0));
+                    process.on('SIGTERM', createShutdownHandler(0));
+                }
+
+                process.on('uncaughtException', createShutdownHandler(1));
+                process.on('unhandledRejection', createShutdownHandler(1));
+            }
+
             logger.info('▬▬▬▬▬▬▬▬▬▬▬[ Systems Initializing ]▬▬▬▬▬▬▬▬▬▬▬▬');
             const auditLogger = new AuditLogger(this);
             auditLogger.initialize();

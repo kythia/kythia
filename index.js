@@ -44,14 +44,9 @@
 
 require('dotenv').config();
 require('./kythia.config.js');
-
 require('module-alias/register');
 
 const Kythia = require('./src/Kythia');
-const kythiaClient = require('./src/KythiaClient');
 
-const client = kythiaClient();
-
-const kythiaInstance = new Kythia(client);
-kythiaInstance.client.kythia = kythiaInstance;
+const kythiaInstance = new Kythia();
 kythiaInstance.start();
