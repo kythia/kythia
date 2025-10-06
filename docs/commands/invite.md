@@ -2,7 +2,7 @@
 
 ### 💾 `/invites`
 
-**Description:** Kelola undangan dan hadiah
+**Description:** Manage invites and rewards
 
 ### 💻 Usage
 
@@ -15,38 +15,38 @@
 ### 🔧 Subcommands
 
 **`/invites user [<user>]`**
-> Periksa undangan pengguna
+> Check user invites
 
 **Options for this subcommand:**
 - **`user`**
-  - **Description:** Pengguna
+  - **Description:** User
   - **Type:** User
 **`/invites add <user> <number>`**
-> Tambahkan undangan ke pengguna
+> Add invites to a user
 
 **Options for this subcommand:**
 - **`user*`**
-  - **Description:** Pengguna
+  - **Description:** User
   - **Type:** User
 - **`number*`**
-  - **Description:** Jumlah
+  - **Description:** Amount
   - **Type:** Integer
 **`/invites remove <user> <number>`**
-> Hapus undangan dari pengguna
+> Remove invites from a user
 
 **Options for this subcommand:**
 - **`user*`**
-  - **Description:** Pengguna
+  - **Description:** User
   - **Type:** User
 - **`number*`**
-  - **Description:** Jumlah
+  - **Description:** Amount
   - **Type:** Integer
 **`/invites leaderboard`**
-> Lihat papan peringkat pengundang teratas
+> View top inviters leaderboard
 
 
 **`/invites reset`**
-> Reset undangan server ini
+> Reset all invites for this server
 
 
 

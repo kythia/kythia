@@ -15,6 +15,7 @@
 `/set automod badwords-whitelist-list`
 `/set automod exception-channel-list`
 `/set automod whitelist-list`
+`/set stats category <category>`
 `/set stats add <format> [channel]`
 `/set stats edit <stats> [channel] [format]`
 `/set stats enable <stats>`
@@ -46,31 +47,39 @@
 `/set minecraft ip-channel <channel>`
 `/set minecraft port-channel <channel>`
 `/set minecraft status-channel <channel>`
-`/set language <lang>`
+`/set language set <lang>`
 `/set testimony testimony-channel <channel>`
 `/set testimony feedback-channel <channel>`
 `/set testimony count-channel <channel>`
 `/set testimony count-format <format>`
 `/set testimony reset-count`
 `/set testimony count <count>`
+`/set ai add-channel <channel>`
+`/set ai remove-channel <channel>`
+`/set ai list`
+`/set clan category <category>`
+`/set clan forum <forum>`
+`/set channels announcement <channel>`
+`/set channels invite <channel>`
+`/set streak-settings minimum <minimum>`
+`/set streak-settings emoji <emoji>`
+`/set raw set <field> <value>`
 `/set streak rolereward <action> <streak> <role>`
 `/set view`
 `/set features anti-invites <status>`
 `/set features anti-links <status>`
 `/set features anti-spam <status>`
 `/set features anti-badwords <status>`
+`/set features anti-mention <status>`
 `/set features server-stats <status>`
 `/set features leveling <status>`
-`/set features economy <status>`
+`/set features adventure <status>`
 `/set features welcome-in <status>`
 `/set features welcome-out <status>`
 `/set features minecraft-stats <status>`
 `/set features streak <status>`
-`/set features pet <status>`
-`/set features clan <status>`
-`/set features adventure <status>`
-`/set features nsfw <status>`
-`/set features checklist <status>`
+`/set features invites <status>`
+`/set features role-prefix <status>`
 
 ### 🔧 Subcommands
 
@@ -141,6 +150,13 @@
 > View whitelist
 
 
+**`/set stats category <category>`**
+> 📈 Set category for server stats channels
+
+**Options for this subcommand:**
+- **`category*`**
+  - **Description:** Category channel
+  - **Type:** Channel
 **`/set stats add <format> [<channel>]`**
 > 📈 Add a new stat for a specific channel
 
@@ -375,7 +391,7 @@
 - **`channel*`**
   - **Description:** Channel for Minecraft status
   - **Type:** Channel
-**`/set language <lang>`**
+**`/set language set <lang>`**
 > 🌐 Set bot language
 
 **Options for this subcommand:**
@@ -421,6 +437,76 @@
 - **`count*`**
   - **Description:** New testimony count
   - **Type:** Integer
+**`/set ai add-channel <channel>`**
+> 🤖 Allow a channel to use AI
+
+**Options for this subcommand:**
+- **`channel*`**
+  - **Description:** Channel
+  - **Type:** Channel
+**`/set ai remove-channel <channel>`**
+> 🤖 Disallow a channel from using AI
+
+**Options for this subcommand:**
+- **`channel*`**
+  - **Description:** Channel
+  - **Type:** Channel
+**`/set ai list`**
+> 🤖 List AI-enabled channels
+
+
+**`/set clan category <category>`**
+> 🛡️ Set clan category id
+
+**Options for this subcommand:**
+- **`category*`**
+  - **Description:** Category channel
+  - **Type:** Channel
+**`/set clan forum <forum>`**
+> 🛡️ Set clan forum id
+
+**Options for this subcommand:**
+- **`forum*`**
+  - **Description:** Forum channel
+  - **Type:** Channel
+**`/set channels announcement <channel>`**
+> 📢 Set announcement channel
+
+**Options for this subcommand:**
+- **`channel*`**
+  - **Description:** Channel
+  - **Type:** Channel
+**`/set channels invite <channel>`**
+> 📢 Set invite log channel
+
+**Options for this subcommand:**
+- **`channel*`**
+  - **Description:** Channel
+  - **Type:** Channel
+**`/set streak-settings minimum <minimum>`**
+> 🔥 Set minimum streak
+
+**Options for this subcommand:**
+- **`minimum*`**
+  - **Description:** Minimum streak
+  - **Type:** Integer
+**`/set streak-settings emoji <emoji>`**
+> 🔥 Set streak emoji
+
+**Options for this subcommand:**
+- **`emoji*`**
+  - **Description:** Emoji
+  - **Type:** Text
+**`/set raw set <field> <value>`**
+> 🧰 Set any field (admin only)
+
+**Options for this subcommand:**
+- **`field*`**
+  - **Description:** Field name
+  - **Type:** Text
+- **`value*`**
+  - **Description:** Value
+  - **Type:** Text
 **`/set streak rolereward <action> <streak> <role>`**
 > 🔥 Set role reward for a specific streak
 
@@ -471,6 +557,14 @@
   - **Description:** Select status
   - **Type:** Text
   - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
+**`/set features anti-mention <status>`**
+> Enable or disable the Anti-Mention feature
+
+**Options for this subcommand:**
+- **`status*`**
+  - **Description:** Select status
+  - **Type:** Text
+  - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
 **`/set features server-stats <status>`**
 > Enable or disable the Server Stats feature
 
@@ -487,8 +581,8 @@
   - **Description:** Select status
   - **Type:** Text
   - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
-**`/set features economy <status>`**
-> Enable or disable the Economy feature
+**`/set features adventure <status>`**
+> Enable or disable the Adventure feature
 
 **Options for this subcommand:**
 - **`status*`**
@@ -527,40 +621,16 @@
   - **Description:** Select status
   - **Type:** Text
   - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
-**`/set features pet <status>`**
-> Enable or disable the Pet feature
+**`/set features invites <status>`**
+> Enable or disable the Invites feature
 
 **Options for this subcommand:**
 - **`status*`**
   - **Description:** Select status
   - **Type:** Text
   - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
-**`/set features clan <status>`**
-> Enable or disable the Clan feature
-
-**Options for this subcommand:**
-- **`status*`**
-  - **Description:** Select status
-  - **Type:** Text
-  - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
-**`/set features adventure <status>`**
-> Enable or disable the Adventure feature
-
-**Options for this subcommand:**
-- **`status*`**
-  - **Description:** Select status
-  - **Type:** Text
-  - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
-**`/set features nsfw <status>`**
-> Enable or disable the NSFW feature
-
-**Options for this subcommand:**
-- **`status*`**
-  - **Description:** Select status
-  - **Type:** Text
-  - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
-**`/set features checklist <status>`**
-> Enable or disable the Checklist feature
+**`/set features role-prefix <status>`**
+> Enable or disable the Role Prefix feature
 
 **Options for this subcommand:**
 - **`status*`**

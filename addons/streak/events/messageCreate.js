@@ -7,6 +7,7 @@
  */
 
 const Streak = require('../database/models/Streak');
+const ServerSetting = require('@coreModels/ServerSetting');
 
 /**
  * Auto-claim streak on any message in a guild (except bots).
@@ -19,6 +20,9 @@ module.exports = async (bot, message) => {
 
     const userId = message.author.id;
     const guildId = message.guild.id;
+
+    const settings = ServerSetting.getCache({ guildId: guildId });
+    if (!settings || !settings.streakOn) return;
 
     // Get or create streak record for this user in this guild
     let streak = await Streak.getCache({ userId, guildId });

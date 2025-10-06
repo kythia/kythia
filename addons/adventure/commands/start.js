@@ -12,7 +12,16 @@ const { t } = require('@utils/translator');
 
 module.exports = {
     subcommand: true,
-    data: (subcommand) => subcommand.setName('start').setDescription('🛩️ Start your journey now!'),
+    data: (subcommand) =>
+        subcommand
+            .setName('start')
+            .setNameLocalizations({ id: 'mulai', fr: 'demarrer', ja: 'スタート' })
+            .setDescription('🛩️ Start your journey now!')
+            .setDescriptionLocalizations({
+                id: '🛩️ Mulai petualanganmu sekarang!',
+                fr: '🛩️ Commence ton aventure maintenant !',
+                ja: '🛩️ 今すぐ冒険を始めよう！',
+            }),
     guildOnly: true,
     async execute(interaction) {
         await interaction.deferReply();

@@ -13,7 +13,16 @@ const { t } = require('@utils/translator');
 
 module.exports = {
     subcommand: true,
-    data: (subcommand) => subcommand.setName('inventory').setDescription('🎒 Look at your inventory'),
+    data: (subcommand) =>
+        subcommand
+            .setName('inventory')
+            .setNameLocalizations({ id: 'inventaris', fr: 'inventaire', ja: 'インベントリ' })
+            .setDescription('🎒 Look at your inventory')
+            .setDescriptionLocalizations({
+                id: '🎒 Lihat inventaris yang kamu punya',
+                fr: '🎒 Ton inventaire',
+                ja: '🎒 所持品を確認しよう',
+            }),
     guildOnly: true,
     async execute(interaction) {
         await interaction.deferReply();

@@ -1,5 +1,7 @@
+const Streak = require('../database/models/Streak');
+
 async function getOrCreateStreak(userId, guildId) {
-    let userStreak = await Streak.findOne({ where: { userId, guildId } });
+    let userStreak = await Streak.getCache({ userId: userId, guildId: guildId });
     if (!userStreak) {
         userStreak = await Streak.create({
             userId,

@@ -14,7 +14,16 @@ const { t } = require('@utils/translator');
 
 module.exports = {
     subcommand: true,
-    data: (subcommand) => subcommand.setName('shop').setDescription('🛒 Buy items from the shop!'),
+    data: (subcommand) =>
+        subcommand
+            .setName('shop')
+            .setNameLocalizations({ id: 'toko', fr: 'boutique', ja: 'ショップ' })
+            .setDescription('🛒 Buy items from the shop!')
+            .setDescriptionLocalizations({
+                id: '🛒 Beli item di toko',
+                fr: '🛒 Achète des objets à la boutique !',
+                ja: '🛒 ショップでアイテムを買おう！',
+            }),
     guildOnly: true,
     async execute(interaction) {
         await interaction.deferReply();

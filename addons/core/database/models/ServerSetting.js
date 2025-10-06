@@ -40,24 +40,18 @@ class ServerSetting extends KythiaModel {
                 antiMentionOn: { type: DataTypes.BOOLEAN, defaultValue: true },
                 serverStatsOn: { type: DataTypes.BOOLEAN, defaultValue: false },
 
-                economyOn: { type: DataTypes.BOOLEAN, defaultValue: false },
-                // giveawayOn: { type: DataTypes.BOOLEAN, defaultValue: false },
-                // suggestionOn: { type: DataTypes.BOOLEAN, defaultValue: false },
-                // ticketOn: { type: DataTypes.BOOLEAN, defaultValue: false },
-                petOn: { type: DataTypes.BOOLEAN, defaultValue: false },
-                clanOn: { type: DataTypes.BOOLEAN, defaultValue: false },
                 adventureOn: { type: DataTypes.BOOLEAN, defaultValue: false },
                 levelingOn: { type: DataTypes.BOOLEAN, defaultValue: false },
+                
                 welcomeInOn: { type: DataTypes.BOOLEAN, defaultValue: false },
                 welcomeOutOn: { type: DataTypes.BOOLEAN, defaultValue: false },
+
                 minecraftStatsOn: { type: DataTypes.BOOLEAN, defaultValue: false },
-                nsfwOn: { type: DataTypes.BOOLEAN, defaultValue: false },
-                // checklistOn: { type: DataTypes.BOOLEAN, defaultValue: false },
+                streakOn: { type: DataTypes.BOOLEAN, defaultValue: false },
+
                 invitesOn: { type: DataTypes.BOOLEAN, defaultValue: false },
 
                 rolePrefixOn: { type: DataTypes.BOOLEAN, defaultValue: false },
-
-                testimonyOn: { type: DataTypes.BOOLEAN, defaultValue: false },
 
                 // LEVELING
                 levelingChannelId: { type: DataTypes.STRING },
@@ -104,9 +98,6 @@ class ServerSetting extends KythiaModel {
                 welcomeInBorderWidth: { type: DataTypes.INTEGER, defaultValue: 4 },
 
                 welcomeInExtraDraw: { type: DataTypes.STRING, defaultValue: 'classicCentered' },
-
-                clanCategoryId: { type: DataTypes.STRING, allowNull: true },
-                clanForumId: { type: DataTypes.STRING, allowNull: true },
 
                 // COOLDOWNS
                 dailyCooldown: { type: DataTypes.INTEGER, defaultValue: 86400 }, // 1 day

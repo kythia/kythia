@@ -69,23 +69,20 @@ const createToggleOption = () => {
 };
 
 const featureMap = {
-    // key: nama subcommand, value: [kolom_database, nama_fitur_untuk_user]
     'anti-invites': ['antiInviteOn', 'Anti-Invites'],
     'anti-links': ['antiLinkOn', 'Anti-Links'],
     'anti-spam': ['antiSpamOn', 'Anti-Spam'],
     'anti-badwords': ['antiBadwordOn', 'Anti-Badwords'],
+    'anti-mention': ['antiMentionOn', 'Anti-Mention'],
     'server-stats': ['serverStatsOn', 'Server Stats'],
     leveling: ['levelingOn', 'Leveling'],
-    economy: ['economyOn', 'Economy'],
+    adventure: ['adventureOn', 'Adventure'],
     'welcome-in': ['welcomeInOn', 'Welcome In'],
     'welcome-out': ['welcomeOutOn', 'Welcome Out'],
     'minecraft-stats': ['minecraftStatsOn', 'Minecraft Stats'],
     streak: ['streakOn', 'Streak'],
-    pet: ['petOn', 'Pet'],
-    clan: ['clanOn', 'Clan'],
-    adventure: ['adventureOn', 'Adventure'],
-    nsfw: ['nsfwOn', 'NSFW'],
-    checklist: ['checklistOn', 'Checklist'],
+    invites: ['invitesOn', 'Invites'],
+    'role-prefix': ['rolePrefixOn', 'Role Prefix'],
 };
 
 const toggleableFeatures = Object.keys(featureMap);
@@ -167,6 +164,12 @@ const command = new SlashCommandBuilder()
         group
             .setName('stats')
             .setDescription('📈 Server statistics settings')
+            .addSubcommand((sub) =>
+                sub
+                    .setName('category')
+                    .setDescription('📈 Set category for server stats channels')
+                    .addChannelOption((opt) => opt.setName('category').setDescription('Category channel').setRequired(true))
+            )
             .addSubcommand((sub) =>
                 sub
                     .setName('add')
@@ -413,18 +416,23 @@ const command = new SlashCommandBuilder()
             )
     )
     // LANGUAGE
-    .addSubcommand((sub) =>
-        sub
+    .addSubcommandGroup((group) =>
+        group
             .setName('language')
-            .setDescription('🌐 Set bot language')
-            .addStringOption((opt) =>
-                Array.isArray(availableLanguages) && availableLanguages.length > 0
-                    ? opt
-                          .setName('lang')
-                          .setDescription('Choose language')
-                          .setRequired(true)
-                          .addChoices(...availableLanguages)
-                    : opt.setName('lang').setDescription('Choose language').setRequired(true)
+            .setDescription('🌐 Language settings')
+            .addSubcommand((sub) =>
+                sub
+                    .setName('set')
+                    .setDescription('🌐 Set bot language')
+                    .addStringOption((opt) =>
+                        Array.isArray(availableLanguages) && availableLanguages.length > 0
+                            ? opt
+                                  .setName('lang')
+                                  .setDescription('Choose language')
+                                  .setRequired(true)
+                                  .addChoices(...availableLanguages)
+                            : opt.setName('lang').setDescription('Choose language').setRequired(true)
+                    )
             )
     )
     // TESTIMONY
@@ -467,6 +475,74 @@ const command = new SlashCommandBuilder()
                     .setName('count')
                     .setDescription('💬 Change testimony count')
                     .addIntegerOption((opt) => opt.setName('count').setDescription('New testimony count').setRequired(true))
+            )
+    )
+    // AI
+    .addSubcommandGroup((group) =>
+        group
+            .setName('ai')
+            .setDescription('🤖 AI settings')
+            .addSubcommand((sub) =>
+                sub
+                    .setName('add-channel')
+                    .setDescription('🤖 Allow a channel to use AI')
+                    .addChannelOption((opt) => opt.setName('channel').setDescription('Channel').setRequired(true))
+            )
+            .addSubcommand((sub) =>
+                sub
+                    .setName('remove-channel')
+                    .setDescription('🤖 Disallow a channel from using AI')
+                    .addChannelOption((opt) => opt.setName('channel').setDescription('Channel').setRequired(true))
+            )
+            .addSubcommand((sub) => sub.setName('list').setDescription('🤖 List AI-enabled channels'))
+    )
+    // OTHER CHANNELS
+    .addSubcommandGroup((group) =>
+        group
+            .setName('channels')
+            .setDescription('📢 Misc channels settings')
+            .addSubcommand((sub) =>
+                sub
+                    .setName('announcement')
+                    .setDescription('📢 Set announcement channel')
+                    .addChannelOption((opt) => opt.setName('channel').setDescription('Channel').setRequired(true))
+            )
+            .addSubcommand((sub) =>
+                sub
+                    .setName('invite')
+                    .setDescription('📢 Set invite log channel')
+                    .addChannelOption((opt) => opt.setName('channel').setDescription('Channel').setRequired(true))
+            )
+    )
+    // STREAK EXTRA
+    .addSubcommandGroup((group) =>
+        group
+            .setName('streak-settings')
+            .setDescription('🔥 Streak additional settings')
+            .addSubcommand((sub) =>
+                sub
+                    .setName('minimum')
+                    .setDescription('🔥 Set minimum streak')
+                    .addIntegerOption((opt) => opt.setName('minimum').setDescription('Minimum streak').setRequired(true))
+            )
+            .addSubcommand((sub) =>
+                sub
+                    .setName('emoji')
+                    .setDescription('🔥 Set streak emoji')
+                    .addStringOption((opt) => opt.setName('emoji').setDescription('Emoji').setRequired(true))
+            )
+    )
+    // RAW GENERIC SETTER
+    .addSubcommandGroup((group) =>
+        group
+            .setName('raw')
+            .setDescription('🧰 Advanced: set any ServerSetting field')
+            .addSubcommand((sub) =>
+                sub
+                    .setName('set')
+                    .setDescription('🧰 Set any field (admin only)')
+                    .addStringOption((opt) => opt.setName('field').setDescription('Field name').setRequired(true))
+                    .addStringOption((opt) => opt.setName('value').setDescription('Value').setRequired(true))
             )
     )
     // LEVELING
@@ -668,6 +744,21 @@ module.exports = {
         }
 
         switch (group) {
+            case 'stats': {
+                if (sub === 'category') {
+                    const cat = interaction.options.getChannel('category');
+                    if (!cat || cat.type !== ChannelType.GuildCategory) {
+                        return interaction.editReply({
+                            content: await t(interaction, 'core_setting_setting_stats_category_invalid'),
+                            ephemeral: true,
+                        });
+                    }
+                    serverSetting.serverStatsCategoryId = cat.id;
+                    await serverSetting.saveAndUpdateCache('guildId');
+                    embed.setDescription(await t(interaction, 'core_setting_setting_stats_category_set', { category: `<#${cat.id}>` }));
+                    return interaction.editReply({ embeds: [embed] });
+                }
+            }
             case 'automod': {
                 switch (sub) {
                     case 'whitelist': {
@@ -953,50 +1044,6 @@ module.exports = {
                     }
                 }
             }
-            // case "feature": {
-            //   // sub-nya sekarang cuma 'toggle'
-            //   const featureToToggle = interaction.options.getString("feature_name");
-            //   const status = interaction.options.getString("status");
-
-            //   const featureMap = {
-            //     "anti-invites": ["antiInviteOn", await t(interaction, "core_setting_setting_feature_anti_invites")],
-            //     "anti-links": ["antiLinkOn", await t(interaction, "core_setting_setting_feature_anti_links")],
-            //     "anti-spam": ["antiSpamOn", await t(interaction, "core_setting_setting_feature_anti_spam")],
-            //     "anti-badwords": ["antiBadwordOn", await t(interaction, "core_setting_setting_feature_anti_badwords")],
-            //     "server-stats": ["serverStatsOn", await t(interaction, "core_setting_setting_feature_server_stats")],
-            //     economy: ["economyOn", await t(interaction, "core_setting_setting_feature_economy")],
-            //     giveaway: ["giveawayOn", await t(interaction, "core_setting_setting_feature_giveaway")],
-            //     invites: ["invitesOn", await t(interaction, "core_setting_setting_feature_invites")],
-            //     suggestion: ["suggestionOn", await t(interaction, "core_setting_setting_feature_suggestion")],
-            //     ticket: ["ticketOn", await t(interaction, "core_setting_setting_feature_ticket")],
-            //     pet: ["petOn", await t(interaction, "core_setting_setting_feature_pet")],
-            //     clan: ["clanOn", await t(interaction, "core_setting_setting_feature_clan")],
-            //     adventure: ["adventureOn", await t(interaction, "core_setting_setting_feature_adventure")],
-            //     leveling: ["levelingOn", await t(interaction, "core_setting_setting_feature_leveling")],
-            //     "welcome-in": ["welcomeInOn", await t(interaction, "core_setting_setting_feature_welcome_in")],
-            //     "welcome-out": ["welcomeOutOn", await t(interaction, "core_setting_setting_feature_welcome_out")],
-            //     nsfw: ["nsfwOn", await t(interaction, "core_setting_setting_feature_nsfw")],
-            //     checklist: ["checklistOn", await t(interaction, "core_setting_setting_feature_checklist")],
-            //     "minecraft-stats": ["minecraftStatsOn", await t(interaction, "core_setting_setting_feature_minecraft_stats")],
-            //     testimony: ["testimonyOn", await t(interaction, "core_setting_setting_feature_testimony")],
-            //     music: ["musicOn", await t(interaction, "core_setting_setting_feature_music")],
-            //     streak: ["streakOn", await t(interaction, "core_setting_setting_feature_streak")],
-            //   };
-
-            //   const [settingKey, featureName] = featureMap[featureToToggle];
-            //   serverSetting[settingKey] = (status === "enable");
-            //   await serverSetting.saveAndUpdateCache("guildId");
-
-            //   embed.setDescription(
-            //     await t(interaction, "core_setting_setting_feature_toggle", {
-            //       feature: featureName,
-            //       status: status === "enable"
-            //         ? await t(interaction, "core_setting_setting_feature_enabled")
-            //         : await t(interaction, "core_setting_setting_feature_disabled")
-            //     })
-            //   );
-            //   return interaction.editReply({ embeds: [embed] });
-            // }
             case 'features': {
                 // 'sub' di sini adalah nama fiturnya (misal: "anti-invites")
                 // Cek apakah subcommand ini ada di featureMap kita
@@ -1364,17 +1411,23 @@ module.exports = {
                         );
                         return interaction.editReply({ embeds: [embed] });
                     }
+                    case 'players-channel': {
+                        serverSetting.minecraftPlayersChannelId = channel.id;
+                        await serverSetting.saveAndUpdateCache('guildId');
+                        embed.setDescription(
+                            await t(interaction, 'core_setting_setting_minecraft_players_channel_set', { channel: `<#${channel.id}>` })
+                        );
+                        return interaction.editReply({ embeds: [embed] });
+                    }
                 }
             }
             case 'language': {
-                switch (sub) {
-                    case 'set': {
-                        const lang = interaction.options.getString('lang');
-                        serverSetting.lang = lang;
-                        await serverSetting.saveAndUpdateCache('guildId');
-                        embed.setDescription(await t(interaction, 'core_setting_setting_language_set', { lang }));
-                        return interaction.editReply({ embeds: [embed] });
-                    }
+                if (sub === 'set') {
+                    const lang = interaction.options.getString('lang');
+                    serverSetting.lang = lang;
+                    await serverSetting.saveAndUpdateCache('guildId');
+                    embed.setDescription(await t(interaction, 'core_setting_setting_language_set', { lang }));
+                    return interaction.editReply({ embeds: [embed] });
                 }
             }
             case 'testimony': {
@@ -1501,6 +1554,104 @@ module.exports = {
                         await serverSetting.saveAndUpdateCache('guildId');
                         return interaction.editReply({ embeds: [embed] });
                     }
+                }
+            }
+            case 'streak-settings': {
+                if (sub === 'minimum') {
+                    const minimum = interaction.options.getInteger('minimum');
+                    serverSetting.streakMinimum = minimum;
+                    await serverSetting.saveAndUpdateCache('guildId');
+                    embed.setDescription(await t(interaction, 'core_setting_setting_streak_minimum_set', { minimum }));
+                    return interaction.editReply({ embeds: [embed] });
+                }
+                if (sub === 'emoji') {
+                    const emoji = interaction.options.getString('emoji');
+                    serverSetting.streakEmoji = emoji;
+                    await serverSetting.saveAndUpdateCache('guildId');
+                    embed.setDescription(await t(interaction, 'core_setting_setting_streak_emoji_set', { emoji }));
+                    return interaction.editReply({ embeds: [embed] });
+                }
+            }
+            case 'channels': {
+                if (sub === 'announcement') {
+                    serverSetting.announcementChannelId = channel.id;
+                    await serverSetting.saveAndUpdateCache('guildId');
+                    embed.setDescription(
+                        await t(interaction, 'core_setting_setting_announcement_channel_set', { channel: `<#${channel.id}>` })
+                    );
+                    return interaction.editReply({ embeds: [embed] });
+                }
+                if (sub === 'invite') {
+                    serverSetting.inviteChannelId = channel.id;
+                    await serverSetting.saveAndUpdateCache('guildId');
+                    embed.setDescription(await t(interaction, 'core_setting_setting_invite_channel_set', { channel: `<#${channel.id}>` }));
+                    return interaction.editReply({ embeds: [embed] });
+                }
+            }
+            case 'ai': {
+                if (sub === 'add-channel') {
+                    let aiChannelIds = ensureArray(serverSetting.aiChannelIds);
+                    if (!aiChannelIds.includes(channel.id)) aiChannelIds.push(channel.id);
+                    serverSetting.aiChannelIds = aiChannelIds;
+                    serverSetting.changed('aiChannelIds', true);
+                    await serverSetting.saveAndUpdateCache('guildId');
+                    embed.setDescription(await t(interaction, 'core_setting_setting_ai_channel_add', { channel: `<#${channel.id}>` }));
+                    return interaction.editReply({ embeds: [embed] });
+                }
+                if (sub === 'remove-channel') {
+                    let aiChannelIds = ensureArray(serverSetting.aiChannelIds);
+                    aiChannelIds = aiChannelIds.filter((id) => id !== channel.id);
+                    serverSetting.aiChannelIds = aiChannelIds;
+                    serverSetting.changed('aiChannelIds', true);
+                    await serverSetting.saveAndUpdateCache('guildId');
+                    embed.setDescription(await t(interaction, 'core_setting_setting_ai_channel_remove', { channel: `<#${channel.id}>` }));
+                    return interaction.editReply({ embeds: [embed] });
+                }
+                if (sub === 'list') {
+                    const aiChannelIds = ensureArray(serverSetting.aiChannelIds);
+                    if (aiChannelIds.length === 0) {
+                        embed.setDescription(await t(interaction, 'core_setting_setting_ai_channel_empty'));
+                        return interaction.editReply({ embeds: [embed] });
+                    }
+                    const list = aiChannelIds.map((id) => `<#${id}>`).join('\n');
+                    embed.setDescription(await t(interaction, 'core_setting_setting_ai_channel_list', { list }));
+                    return interaction.editReply({ embeds: [embed] });
+                }
+            }
+
+            case 'raw': {
+                if (sub === 'set') {
+                    const field = interaction.options.getString('field');
+                    const valueStr = interaction.options.getString('value');
+                    if (!Object.prototype.hasOwnProperty.call(serverSetting.dataValues, field)) {
+                        return interaction.editReply({
+                            content: await t(interaction, 'core_setting_setting_raw_field_invalid', { field }),
+                            ephemeral: true,
+                        });
+                    }
+                    const original = serverSetting.dataValues[field];
+                    let parsed = valueStr;
+                    try {
+                        if (typeof original === 'number') parsed = Number(valueStr);
+                        else if (typeof original === 'boolean')
+                            parsed = ['true', '1', 'yes', 'on', 'enable'].includes(valueStr.toLowerCase());
+                        else if (Array.isArray(original)) parsed = JSON.parse(valueStr);
+                        else if (original === null) {
+                            // try json then fallback string/number/bool
+                            try {
+                                parsed = JSON.parse(valueStr);
+                            } catch {
+                                parsed = valueStr;
+                            }
+                        }
+                    } catch (_) {
+                        parsed = valueStr;
+                    }
+                    serverSetting[field] = parsed;
+                    if (Array.isArray(parsed)) serverSetting.changed(field, true);
+                    await serverSetting.saveAndUpdateCache('guildId');
+                    embed.setDescription(await t(interaction, 'core_setting_setting_raw_set', { field, value: `\`${valueStr}\`` }));
+                    return interaction.editReply({ embeds: [embed] });
                 }
             }
             default: {

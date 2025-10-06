@@ -14,7 +14,16 @@ const { t } = require('@utils/translator');
 
 module.exports = {
     subcommand: true,
-    data: (subcommand) => subcommand.setName('battle').setDescription('⚔️ Fight a monster in the dungeon!'),
+    data: (subcommand) =>
+        subcommand
+            .setName('battle')
+            .setNameLocalizations({ id: 'bertarung', fr: 'combat', ja: 'たたかう' })
+            .setDescription('⚔️ Fight a monster in the dungeon!')
+            .setDescriptionLocalizations({
+                id: '⚔️ Bertarung melawan monster di dimensi lain!',
+                fr: '⚔️ Combats un monstre dans le donjon !',
+                ja: '⚔️ ダンジョンでモンスターと戦おう！',
+            }),
     guildOnly: true,
     // permissions: PermissionFlagsBits.ManageGuild,
     async execute(interaction, container) {

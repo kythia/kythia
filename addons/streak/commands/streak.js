@@ -43,23 +43,21 @@ module.exports = {
         const streakFreezeInitial = typeof serverSetting.streakFreezeInitial === 'number' ? serverSetting.streakFreezeInitial : 1;
 
         try {
-            // === SUBCOMMAND: CLAIM ===
             if (sub === 'claim') {
                 await interaction.deferReply();
 
                 const streak = await getOrCreateStreak(userId, guildId);
                 const today = getTodayDateString();
 
-                // Sudah claim hari ini?
                 if (streak.lastClaimTimestamp && streak.lastClaimTimestamp.toISOString().slice(0, 10) === today) {
                     const embed = new EmbedBuilder()
                         .setColor(kythia.bot.color)
                         .setDescription(
-                            `## ${await t(interaction, "streak_streak_claim_already_title")}\n` +
-                            await t(interaction, "streak_streak_claim_already_desc", {
-                                streak: streak.currentStreak,
-                                emoji: streakEmoji
-                            })
+                            `## ${await t(interaction, 'streak_streak_claim_already_title')}\n` +
+                                (await t(interaction, 'streak_streak_claim_already_desc', {
+                                    streak: streak.currentStreak,
+                                    emoji: streakEmoji,
+                                }))
                         )
                         .setThumbnail(interaction.user.displayAvatarURL());
                     return interaction.editReply({ embeds: [embed] });
@@ -69,24 +67,23 @@ module.exports = {
                 let message;
                 let lastClaimDateStr = streak.lastClaimTimestamp ? streak.lastClaimTimestamp.toISOString().slice(0, 10) : null;
 
-                // Cek apakah user skip kemarin, dan punya streak freeze
                 if (lastClaimDateStr !== yesterday && lastClaimDateStr !== today && streak.currentStreak > 0) {
                     if (streak.streakFreezes > 0) {
                         streak.streakFreezes -= 1;
                         streak.currentStreak += 1;
-                        message = await t(interaction, "streak_streak_claim_freeze_used", {
-                            streakFreezes: streak.streakFreezes
+                        message = await t(interaction, 'streak_streak_claim_freeze_used', {
+                            streakFreezes: streak.streakFreezes,
                         });
                     } else {
                         streak.currentStreak = 1;
-                        message = await t(interaction, "streak_streak_claim_new_streak");
+                        message = await t(interaction, 'streak_streak_claim_new_streak');
                     }
                 } else if (lastClaimDateStr === yesterday) {
                     streak.currentStreak += 1;
-                    message = await t(interaction, "streak_streak_claim_continue");
+                    message = await t(interaction, 'streak_streak_claim_continue');
                 } else {
                     streak.currentStreak = 1;
-                    message = await t(interaction, "streak_streak_claim_new_streak");
+                    message = await t(interaction, 'streak_streak_claim_new_streak');
                 }
 
                 if (streak.currentStreak > streak.highestStreak) {
@@ -97,7 +94,6 @@ module.exports = {
                 await streak.save();
                 await updateNickname(interaction.member, streak.currentStreak, streakEmoji, streakMinimum);
 
-                // Role reward
                 let rewardRolesGiven = [];
                 if (streakRoleReward.length > 0) {
                     rewardRolesGiven = await giveStreakRoleReward(interaction.member, streak.currentStreak, streakRoleReward);
@@ -109,81 +105,76 @@ module.exports = {
                         const role = interaction.guild.roles.cache.get(roleId);
                         return role ? `<@&${role.id}>` : `Role ID: ${roleId}`;
                     });
-                    rewardMsg = "\n\n" + await t(interaction, "streak_streak_claim_reward", { roles: roleMentions.join(', ') });
+                    rewardMsg = '\n\n' + (await t(interaction, 'streak_streak_claim_reward', { roles: roleMentions.join(', ') }));
                 }
 
                 const successEmbed = new EmbedBuilder()
                     .setColor(kythia.bot.color)
-                    .setDescription(
-                        `## ${await t(interaction, "streak_streak_claim_success_title")}\n` +
-                        message + rewardMsg
-                    )
+                    .setDescription(`## ${await t(interaction, 'streak_streak_claim_success_title')}\n` + message + rewardMsg)
                     .addFields(
                         {
-                            name: await t(interaction, "streak_streak_field_current", { emoji: streakEmoji }),
-                            value: `**${streak.currentStreak}** ${await t(interaction, "streak_streak_unit_day")}`,
-                            inline: true
+                            name: await t(interaction, 'streak_streak_field_current', { emoji: streakEmoji }),
+                            value: `**${streak.currentStreak}** ${await t(interaction, 'streak_streak_unit_day')}`,
+                            inline: true,
                         },
                         {
-                            name: await t(interaction, "streak_streak_field_highest"),
-                            value: `**${streak.highestStreak}** ${await t(interaction, "streak_streak_unit_day")}`,
-                            inline: true
+                            name: await t(interaction, 'streak_streak_field_highest'),
+                            value: `**${streak.highestStreak}** ${await t(interaction, 'streak_streak_unit_day')}`,
+                            inline: true,
                         },
                         {
-                            name: await t(interaction, "streak_streak_field_freeze"),
+                            name: await t(interaction, 'streak_streak_field_freeze'),
                             value: `**${streak.streakFreezes}**`,
-                            inline: true
+                            inline: true,
                         }
                     )
                     .setThumbnail(interaction.user.displayAvatarURL())
-                    .setFooter({ text: await t(interaction, "streak_streak_claim_footer") });
+                    .setFooter({ text: await t(interaction, 'streak_streak_claim_footer') });
 
                 return interaction.editReply({ embeds: [successEmbed], ephemeral: false });
             }
 
-            // === SUBCOMMAND: ME ===
             if (sub === 'me') {
                 await interaction.deferReply();
                 const streak = await getOrCreateStreak(userId, guildId);
                 const today = getTodayDateString();
                 const lastClaimDateStr = streak.lastClaimTimestamp ? streak.lastClaimTimestamp.toISOString().slice(0, 10) : null;
-                const status = lastClaimDateStr === today
-                    ? await t(interaction, "streak_streak_me_status_claimed")
-                    : await t(interaction, "streak_streak_me_status_not_claimed");
+                const status =
+                    lastClaimDateStr === today
+                        ? await t(interaction, 'streak_streak_me_status_claimed')
+                        : await t(interaction, 'streak_streak_me_status_not_claimed');
 
                 const embed = new EmbedBuilder()
                     .setColor(kythia.bot.color)
                     .setDescription(
-                        `## ${await t(interaction, "streak_streak_me_title", { username: interaction.user.username })}\n` +
-                        status
+                        `## ${await t(interaction, 'streak_streak_me_title', { username: interaction.user.username })}\n` + status
                     )
                     .addFields(
                         {
-                            name: await t(interaction, "streak_streak_field_current", { emoji: streakEmoji }),
-                            value: `**${streak.currentStreak}** ${await t(interaction, "streak_streak_unit_day")}`,
-                            inline: true
+                            name: await t(interaction, 'streak_streak_field_current', { emoji: streakEmoji }),
+                            value: `**${streak.currentStreak}** ${await t(interaction, 'streak_streak_unit_day')}`,
+                            inline: true,
                         },
                         {
-                            name: await t(interaction, "streak_streak_field_highest"),
-                            value: `**${streak.highestStreak}** ${await t(interaction, "streak_streak_unit_day")}`,
-                            inline: true
+                            name: await t(interaction, 'streak_streak_field_highest'),
+                            value: `**${streak.highestStreak}** ${await t(interaction, 'streak_streak_unit_day')}`,
+                            inline: true,
                         },
                         {
-                            name: await t(interaction, "streak_streak_field_freeze"),
+                            name: await t(interaction, 'streak_streak_field_freeze'),
                             value: `**${streak.streakFreezes ?? 0}**`,
-                            inline: true
+                            inline: true,
                         }
                     )
                     .setThumbnail(interaction.user.displayAvatarURL())
                     .setFooter({
-                        text: await t(interaction, "streak_streak_footer_requested_by", { username: interaction.user.username }),
-                        iconURL: interaction.user.displayAvatarURL()
+                        text: await t(interaction, 'streak_streak_footer_requested_by', { username: interaction.user.username }),
+                        iconURL: interaction.user.displayAvatarURL(),
                     });
 
                 return interaction.editReply({ embeds: [embed] });
             }
 
-            // === SUBCOMMAND: LEADERBOARD ===
             if (sub === 'leaderboard') {
                 await interaction.deferReply();
                 const topStreaks = await Streak.findAll({
@@ -199,13 +190,12 @@ module.exports = {
                     const embed = new EmbedBuilder()
                         .setColor(kythia.bot.color)
                         .setDescription(
-                            `## ${await t(interaction, "streak_streak_leaderboard_title")}\n` +
-                            await t(interaction, "streak_streak_leaderboard_empty")
+                            `## ${await t(interaction, 'streak_streak_leaderboard_title')}\n` +
+                                (await t(interaction, 'streak_streak_leaderboard_empty'))
                         );
                     return interaction.editReply({ embeds: [embed] });
                 }
 
-                // Fetch semua member sekaligus
                 const userIds = topStreaks.map((s) => s.userId);
                 let members;
                 try {
@@ -214,33 +204,33 @@ module.exports = {
                     members = new Map();
                 }
 
-                const leaderboardDesc = await Promise.all(topStreaks.map(async (streak, index) => {
-                    const member = members.get(streak.userId);
-                    const username = member ? member.displayName : await t(interaction, "streak_streak_leaderboard_unknown_user", { id: streak.userId.slice(0, 6) });
-                    const medal = ['🥇', '🥈', '🥉'][index] || `**${index + 1}.**`;
-                    return await t(interaction, "streak_streak_leaderboard_entry", {
-                        medal,
-                        username,
-                        emoji: streakEmoji,
-                        current: streak.currentStreak,
-                        highest: streak.highestStreak,
-                        freeze: streak.streakFreezes ?? 0
-                    });
-                }));
+                const leaderboardDesc = await Promise.all(
+                    topStreaks.map(async (streak, index) => {
+                        const member = members.get(streak.userId);
+                        const username = member
+                            ? member.displayName
+                            : await t(interaction, 'streak_streak_leaderboard_unknown_user', { id: streak.userId.slice(0, 6) });
+                        const medal = ['🥇', '🥈', '🥉'][index] || `**${index + 1}.**`;
+                        return await t(interaction, 'streak_streak_leaderboard_entry', {
+                            medal,
+                            username,
+                            emoji: streakEmoji,
+                            current: streak.currentStreak,
+                            highest: streak.highestStreak,
+                            freeze: streak.streakFreezes ?? 0,
+                        });
+                    })
+                );
 
                 const embed = new EmbedBuilder()
                     .setColor(kythia.bot.color)
-                    .setDescription(
-                        `## ${await t(interaction, "streak_streak_leaderboard_title")}\n` +
-                        leaderboardDesc.join('\n')
-                    )
-                    .setFooter({ text: await t(interaction, "streak_streak_leaderboard_footer", { server: interaction.guild.name }) })
+                    .setDescription(`## ${await t(interaction, 'streak_streak_leaderboard_title')}\n` + leaderboardDesc.join('\n'))
+                    .setFooter({ text: await t(interaction, 'streak_streak_leaderboard_footer', { server: interaction.guild.name }) })
                     .setTimestamp();
 
                 return interaction.editReply({ embeds: [embed] });
             }
 
-            // === SUBCOMMAND: RESET ===
             if (sub === 'reset') {
                 await interaction.deferReply({ ephemeral: true });
                 const streak = await getOrCreateStreak(userId, guildId);
@@ -249,48 +239,42 @@ module.exports = {
                     const embed = new EmbedBuilder()
                         .setColor(kythia.bot.color)
                         .setDescription(
-                            `## ${await t(interaction, "streak_streak_reset_title")}\n` +
-                            await t(interaction, "streak_streak_reset_already_zero")
+                            `## ${await t(interaction, 'streak_streak_reset_title')}\n` +
+                                (await t(interaction, 'streak_streak_reset_already_zero'))
                         );
                     return interaction.editReply({ embeds: [embed], ephemeral: true });
                 }
 
                 streak.currentStreak = 0;
                 streak.lastClaimTimestamp = null;
-                // streak.streakFreezes = streakFreezeInitial;
+
                 await streak.save();
                 await updateNickname(interaction.member, 0, streakEmoji, streakMinimum);
 
-                // Hapus semua role reward jika ada
                 if (streakRoleReward.length > 0 && interaction.member.manageable) {
                     for (const reward of streakRoleReward) {
                         try {
                             if (interaction.member.roles.cache.has(reward.role)) {
                                 await interaction.member.roles.remove(reward.role, 'Reset streak, hapus role reward');
                             }
-                        } catch (e) {
-                            // ignore
-                        }
+                        } catch (e) {}
                     }
                 }
 
                 const embed = new EmbedBuilder()
                     .setColor(kythia.bot.color)
                     .setDescription(
-                        `## ${await t(interaction, "streak_streak_reset_title")}\n` +
-                        await t(interaction, "streak_streak_reset_success")
+                        `## ${await t(interaction, 'streak_streak_reset_title')}\n` + (await t(interaction, 'streak_streak_reset_success'))
                     );
                 return interaction.editReply({ embeds: [embed], ephemeral: true });
             }
 
-            // === SUBCOMMAND: STATS ===
             if (sub === 'stats') {
                 await interaction.deferReply();
 
                 const total = await Streak.count({ where: { guildId } });
                 const maxStreak = (await Streak.max('highestStreak', { where: { guildId } })) || 0;
 
-                // Rata-rata streak saat ini
                 const avgStreak = await Streak.findAll({
                     where: { guildId },
                     attributes: [[Streak.sequelize.fn('AVG', Streak.sequelize.col('currentStreak')), 'avgStreak']],
@@ -298,7 +282,6 @@ module.exports = {
                 });
                 const avg = avgStreak[0] && avgStreak[0].avgStreak ? Number(avgStreak[0].avgStreak).toFixed(2) : '0';
 
-                // User aktif streak (currentStreak > 0)
                 const activeStreaks = await Streak.count({
                     where: {
                         guildId,
@@ -306,7 +289,6 @@ module.exports = {
                     },
                 });
 
-                // User dengan streak tertinggi
                 const topUser = await Streak.findOne({
                     where: { guildId },
                     order: [
@@ -319,19 +301,18 @@ module.exports = {
                 if (topUser) {
                     try {
                         const member = await interaction.guild.members.fetch(topUser.userId);
-                        topUserDisplay = await t(interaction, "streak_streak_stats_topuser", {
+                        topUserDisplay = await t(interaction, 'streak_streak_stats_topuser', {
                             username: member.displayName,
-                            highest: topUser.highestStreak
+                            highest: topUser.highestStreak,
                         });
                     } catch {
-                        topUserDisplay = await t(interaction, "streak_streak_stats_topuser_unknown", {
+                        topUserDisplay = await t(interaction, 'streak_streak_stats_topuser_unknown', {
                             id: topUser.userId.slice(0, 8),
-                            highest: topUser.highestStreak
+                            highest: topUser.highestStreak,
                         });
                     }
                 }
 
-                // Hari terakhir streak di-claim
                 const lastClaim = await Streak.findOne({
                     where: { guildId },
                     order: [['lastClaimTimestamp', 'DESC']],
@@ -342,53 +323,50 @@ module.exports = {
                     lastClaimInfo = `<t:${Math.floor(date.getTime() / 1000)}:F>`;
                 }
 
-                // Persentase user aktif streak
                 const activePercent = total > 0 ? ((activeStreaks / total) * 100).toFixed(1) : '0';
 
-                // Total streak freeze di server
                 const totalFreeze = (await Streak.sum('streakFreezes', { where: { guildId } })) || 0;
 
                 const embed = new EmbedBuilder()
                     .setColor(kythia.bot.color)
                     .setDescription(
-                        `## ${await t(interaction, "streak_streak_stats_title")}\n` +
-                        [
-                            await t(interaction, "streak_streak_stats_server", { server: interaction.guild.name }),
-                            await t(interaction, "streak_streak_stats_last_claim", { lastClaim: lastClaimInfo }),
-                            await t(interaction, "streak_streak_stats_topuser_field", { topUser: topUserDisplay }),
-                            await t(interaction, "streak_streak_stats_total_freeze", { totalFreeze }),
-                            `\u200B`,
-                        ].join('\n')
+                        `## ${await t(interaction, 'streak_streak_stats_title')}\n` +
+                            [
+                                await t(interaction, 'streak_streak_stats_server', { server: interaction.guild.name }),
+                                await t(interaction, 'streak_streak_stats_last_claim', { lastClaim: lastClaimInfo }),
+                                await t(interaction, 'streak_streak_stats_topuser_field', { topUser: topUserDisplay }),
+                                await t(interaction, 'streak_streak_stats_total_freeze', { totalFreeze }),
+                                `\u200B`,
+                            ].join('\n')
                     )
                     .addFields(
                         {
-                            name: await t(interaction, "streak_streak_stats_field_total"),
+                            name: await t(interaction, 'streak_streak_stats_field_total'),
                             value: `${total}`,
-                            inline: true
+                            inline: true,
                         },
                         {
-                            name: await t(interaction, "streak_streak_stats_field_active", { emoji: streakEmoji }),
+                            name: await t(interaction, 'streak_streak_stats_field_active', { emoji: streakEmoji }),
                             value: `${activeStreaks} (${activePercent}%)`,
-                            inline: true
+                            inline: true,
                         },
                         {
-                            name: await t(interaction, "streak_streak_stats_field_avg"),
+                            name: await t(interaction, 'streak_streak_stats_field_avg'),
                             value: `${avg}`,
-                            inline: true
+                            inline: true,
                         },
                         {
-                            name: await t(interaction, "streak_streak_stats_field_max"),
-                            value: `${maxStreak} ${await t(interaction, "streak_streak_unit_day")}`,
-                            inline: true
+                            name: await t(interaction, 'streak_streak_stats_field_max'),
+                            value: `${maxStreak} ${await t(interaction, 'streak_streak_unit_day')}`,
+                            inline: true,
                         }
                     )
-                    .setFooter({ text: await t(interaction, "streak_streak_stats_footer", { server: interaction.guild.name }) })
+                    .setFooter({ text: await t(interaction, 'streak_streak_stats_footer', { server: interaction.guild.name }) })
                     .setTimestamp();
 
                 return interaction.editReply({ embeds: [embed] });
             }
 
-            // === SUBCOMMAND: USER ===
             if (sub === 'user') {
                 await interaction.deferReply();
                 const target = interaction.options.getUser('target');
@@ -396,8 +374,8 @@ module.exports = {
                     const embed = new EmbedBuilder()
                         .setColor(kythia.bot.color)
                         .setDescription(
-                            `## ${await t(interaction, "streak_streak_user_title")}\n` +
-                            await t(interaction, "streak_streak_user_not_found")
+                            `## ${await t(interaction, 'streak_streak_user_title')}\n` +
+                                (await t(interaction, 'streak_streak_user_not_found'))
                         );
                     return interaction.editReply({ embeds: [embed], ephemeral: true });
                 }
@@ -405,9 +383,10 @@ module.exports = {
                 const streak = await getOrCreateStreak(targetId, guildId);
                 const today = getTodayDateString();
                 const lastClaimDateStr = streak.lastClaimTimestamp ? streak.lastClaimTimestamp.toISOString().slice(0, 10) : null;
-                const status = lastClaimDateStr === today
-                    ? await t(interaction, "streak_streak_me_status_claimed")
-                    : await t(interaction, "streak_streak_me_status_not_claimed");
+                const status =
+                    lastClaimDateStr === today
+                        ? await t(interaction, 'streak_streak_me_status_claimed')
+                        : await t(interaction, 'streak_streak_me_status_not_claimed');
 
                 let member;
                 try {
@@ -419,31 +398,28 @@ module.exports = {
 
                 const embed = new EmbedBuilder()
                     .setColor(kythia.bot.color)
-                    .setDescription(
-                        `## ${await t(interaction, "streak_streak_user_title_user", { username: displayName })}\n` +
-                        status
-                    )
+                    .setDescription(`## ${await t(interaction, 'streak_streak_user_title_user', { username: displayName })}\n` + status)
                     .addFields(
                         {
-                            name: await t(interaction, "streak_streak_field_current", { emoji: streakEmoji }),
-                            value: `**${streak.currentStreak}** ${await t(interaction, "streak_streak_unit_day")}`,
-                            inline: true
+                            name: await t(interaction, 'streak_streak_field_current', { emoji: streakEmoji }),
+                            value: `**${streak.currentStreak}** ${await t(interaction, 'streak_streak_unit_day')}`,
+                            inline: true,
                         },
                         {
-                            name: await t(interaction, "streak_streak_field_highest"),
-                            value: `**${streak.highestStreak}** ${await t(interaction, "streak_streak_unit_day")}`,
-                            inline: true
+                            name: await t(interaction, 'streak_streak_field_highest'),
+                            value: `**${streak.highestStreak}** ${await t(interaction, 'streak_streak_unit_day')}`,
+                            inline: true,
                         },
                         {
-                            name: await t(interaction, "streak_streak_field_freeze"),
+                            name: await t(interaction, 'streak_streak_field_freeze'),
                             value: `**${streak.streakFreezes ?? 0}**`,
-                            inline: true
+                            inline: true,
                         }
                     )
                     .setThumbnail(target.displayAvatarURL())
                     .setFooter({
-                        text: await t(interaction, "streak_streak_footer_requested_by", { username: interaction.user.username }),
-                        iconURL: interaction.user.displayAvatarURL()
+                        text: await t(interaction, 'streak_streak_footer_requested_by', { username: interaction.user.username }),
+                        iconURL: interaction.user.displayAvatarURL(),
                     });
 
                 return interaction.editReply({ embeds: [embed] });
@@ -453,8 +429,7 @@ module.exports = {
             const embed = new EmbedBuilder()
                 .setColor(kythia.bot.color)
                 .setDescription(
-                    `## ${await t(interaction, "streak_streak_error_title")}\n` +
-                    await t(interaction, "streak_streak_error_generic")
+                    `## ${await t(interaction, 'streak_streak_error_title')}\n` + (await t(interaction, 'streak_streak_error_generic'))
                 );
             if (interaction.deferred || interaction.replied) {
                 await interaction.followUp({ embeds: [embed], ephemeral: true });

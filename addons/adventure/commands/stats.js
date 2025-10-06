@@ -12,7 +12,16 @@ const { t } = require('@utils/translator');
 
 module.exports = {
     subcommand: true,
-    data: (subcommand) => subcommand.setName('stats').setDescription('📑 Look at your Adventure stats'),
+    data: (subcommand) =>
+        subcommand
+            .setName('stats')
+            .setNameLocalizations({ id: 'statistik', fr: 'statistiques', ja: 'ステータス' })
+            .setDescription('📑 Look at your Adventure stats')
+            .setDescriptionLocalizations({
+                id: '📑 Lihat Statistik petualanganmu',
+                fr: "📑 Tes statistiques d'aventure",
+                ja: '📑 冒険のステータスを確認しよう',
+            }),
     guildOnly: true,
     async execute(interaction) {
         await interaction.deferReply();
