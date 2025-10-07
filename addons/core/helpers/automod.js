@@ -3,13 +3,14 @@
  * @type: Module
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  */
 
 const { Collection, PermissionsBitField } = require('discord.js');
 const ServerSetting = require('@coreModels/ServerSetting');
 const { sendLogsWarning } = require('./system');
 const { t } = require('@utils/translator');
+const logger = require('@src/utils/logger');
 const userCache = new Collection();
 const SPAM_THRESHOLD = kythia.settings.spamThreshold || 5;
 const DUPLICATE_THRESHOLD = kythia.settings.duplicateThreshold || 3;
@@ -859,7 +860,7 @@ async function checkSpam(message, setting) {
 
     // LOGIKA BARU: Reset violations HANYA setelah periode damai yang panjang (24 jam)
     if (userData.violations > 0 && now - userData.lastPunishment > DUPLICATE_TIME_WINDOW) {
-        console.log(`🛡️ Reseting violation for user ${message.author.id}.`);
+        logger.info(`🛡️ Reseting violation for user ${message.author.id}.`);
         userData.violations = 0;
     }
 
@@ -912,7 +913,7 @@ async function checkSpam(message, setting) {
             if (canDeleteMessage(msg)) {
                 msg.delete().catch((err) => {
                     if (err.code !== 50013) {
-                        console.error('Failed to delete spam message:', err);
+                        logger.error('Failed to delete spam message:', err);
                     }
                 });
             }
@@ -929,7 +930,7 @@ async function checkSpam(message, setting) {
         if (message.guild.members.me.permissions.has(PermissionsBitField.Flags.ModerateMembers)) {
             message.member.timeout(timeoutDuration * 1000, reason).catch((err) => {
                 if (err.code !== 50013) {
-                    console.error('Failed to timeout member:', err);
+                    logger.error('Failed to timeout member:', err);
                 }
             });
         }
@@ -1028,7 +1029,7 @@ async function checkMentions(message, setting) {
         if (canDeleteMessage(message)) {
             message.delete().catch((err) => {
                 if (err.code !== 50013) {
-                    console.error('Failed to delete mention spam message:', err);
+                    logger.error('Failed to delete mention spam message:', err);
                 }
             });
         }
@@ -1229,7 +1230,7 @@ async function checkLinks(message, setting) {
         if (canDeleteMessage(message)) {
             return message.delete().catch((err) => {
                 if (err.code !== 50013) {
-                    console.error('Failed to delete invite message:', err);
+                    logger.error('Failed to delete invite message:', err);
                 }
             });
         }
@@ -1249,7 +1250,7 @@ async function checkLinks(message, setting) {
         if (canDeleteMessage(message)) {
             return message.delete().catch((err) => {
                 if (err.code !== 50013) {
-                    console.error('Failed to delete link message:', err);
+                    logger.error('Failed to delete link message:', err);
                 }
             });
         }
@@ -1267,7 +1268,7 @@ function cleanupCaches() {
             userCache.delete(key);
         }
     }
-    console.log(`[CACHE CLEANUP] User cache cleaned. Current size: ${userCache.size}`);
+    logger.info(`🧹 [CACHE CLEANUP] User cache cleaned. Current size: ${userCache.size}`);
 }
 
 // Jalankan pembersihan setiap satu jam

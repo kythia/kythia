@@ -10,48 +10,11 @@
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto glass-effect">
-            <i class="icon-base bx bx-chevron-left"></i>
+            <i class="icon-base fa-solid fa-chevron-left fa-sm"></i>
         </a>
     </div>
     <div class="menu-inner-shadow"></div>
     <ul class="menu-inner py-1">
-        <!-- Dashboards -->
-        <!-- <li class="menu-header small">
-            <span class="menu-header-text" data-i18n="Apps & Pages">Apps &amp; Pages</span>
-        </li> -->
-        <!-- <li class="menu-item">
-            <a href="/dashboard" class="menu-link">
-                <i class="menu-icon icon-base bx bx-envelope"></i>
-                <div data-i18n="Email">Email</div>
-            </a>
-        </li> -->
-        
-        <!-- <li class="menu-item">
-            <div class="server-list w-100 px-3 py-2">
-                <ul class="list-unstyled mb-0">
-                    <% 
-                        // Sederhanakan: asumsikan guild dan guilds sudah tersedia di EJS
-                        var selectedServer = null;
-                        if (guild && Array.isArray(guilds)) {
-                            selectedServer = guilds.find(s => s.id == guild);
-                        }
-                        guilds.forEach(function(server) { 
-                    %>
-                        <li class="mb-2">
-                            <a class="btn w-100 text-start glass-effect d-flex align-items-center<%= selectedServer && selectedServer.id === server.id ? ' btn-primary active' : ' btn-outline-primary' %>" 
-                               href="/dashboard/server/<%= server.id %>">
-                                <img src="https://cdn.discordapp.com/icons/<%= server.id %>/<%= server.icon %>.png?size=32" 
-                                     alt="<%= server.name %>" 
-                                     class="rounded-circle me-2" 
-                                     width="24" height="24" 
-                                     style="object-fit:cover;">
-                                <span><%= server.name %></span>
-                            </a>
-                        </li>
-                    <% }); %>
-                </ul>
-            </div>
-        </li> -->
         
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -61,8 +24,6 @@
             </a>
             <ul class="menu-sub">
                 <% 
-                    // guilds: array of server user can manage
-                    // Each server: { id, name, icon, hasBot }
                     var selectedServer = null;
                     if (guild && Array.isArray(guilds)) {
                         selectedServer = guilds.find(s => s.id == guild.id || s.id == guild);
@@ -115,50 +76,92 @@
             </a>
         </li>
 
-        <li class="menu-item mt-2 <%= currentPage == '/dashboard/settings' ? 'active' : ''  %>">
-            <a href="/dashboard/<%= guildId %>/settings" class="menu-link <%= currentPage == '/dashboard/settings' ? 'active' : ''  %>">
+        <li class="menu-item mt-2 <%= currentPage.startsWith('/dashboard/settings') ? 'active open' : '' %>">
+            <a href="javascript:void(0);" class="menu-link menu-toggle <%= currentPage.startsWith('/dashboard/settings') ? 'active' : '' %>">
                 <i class="menu-icon icon-base fa-regular fa-gears"></i>
                 <div>Settings</div>
             </a>
-        </li>
-        <% } %>
-        
-        <!-- <li class="menu-item active open">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon icon-base bx bx-home-smile"></i>
-                <div data-i18n="Dashboards">Dashboards</div>
-                <div class="badge text-bg-danger rounded-pill ms-auto">5</div>
-            </a>
             <ul class="menu-sub">
-                <li class="menu-item active">
-                    <a href="dashboards-analytics.html" class="menu-link">
-                        <div data-i18n="Analytics">Analytics</div>
+                <li class="menu-item <%= currentPage == '/dashboard/settings' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings" class="menu-link <%= currentPage == '/dashboard/settings' ? 'active' : '' %>">
+                        <i class="fa fa-cog me-2"></i>
+                        <div>Overview</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="dashboards-crm.html" class="menu-link">
-                        <div data-i18n="CRM">CRM</div>
+                <li class="menu-item <%= currentPage == '/dashboard/settings/features' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings/features" class="menu-link <%= currentPage == '/dashboard/settings/features' ? 'active' : '' %>">
+                        <i class="fa fa-toggle-on me-2"></i>
+                        <div>Feature Toggle</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="app-ecommerce-dashboard.html" class="menu-link">
-                        <div data-i18n="eCommerce">eCommerce</div>
+                <li class="menu-item <%= currentPage == '/dashboard/settings/automod' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings/automod" class="menu-link <%= currentPage == '/dashboard/settings/automod' ? 'active' : '' %>">
+                        <i class="fa fa-shield-alt me-2"></i>
+                        <div>Automod</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="app-logistics-dashboard.html" class="menu-link">
-                        <div data-i18n="Logistics">Logistics</div>
+                <li class="menu-item <%= currentPage == '/dashboard/settings/stats' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings/stats" class="menu-link <%= currentPage == '/dashboard/settings/stats' ? 'active' : '' %>">
+                        <i class="fa fa-chart-line me-2"></i>
+                        <div>Server Stats</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="app-academy-dashboard.html" class="menu-link">
-                        <div data-i18n="Academy">Academy</div>
+                <li class="menu-item <%= currentPage == '/dashboard/settings/welcome' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings/welcome" class="menu-link <%= currentPage == '/dashboard/settings/welcome' ? 'active' : '' %>">
+                        <i class="fa fa-hand-wave me-2"></i>
+                        <div>Welcome System</div>
+                    </a>
+                </li>
+                <li class="menu-item <%= currentPage == '/dashboard/settings/leveling' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings/leveling" class="menu-link <%= currentPage == '/dashboard/settings/leveling' ? 'active' : '' %>">
+                        <i class="fa fa-trophy me-2"></i>
+                        <div>Leveling System</div>
+                    </a>
+                </li>
+                <li class="menu-item <%= currentPage == '/dashboard/settings/minecraft' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings/minecraft" class="menu-link <%= currentPage == '/dashboard/settings/minecraft' ? 'active' : '' %>">
+                        <i class="fa fa-cube me-2"></i>
+                        <div>Minecraft</div>
+                    </a>
+                </li>
+                <li class="menu-item <%= currentPage == '/dashboard/settings/cooldown' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings/cooldown" class="menu-link <%= currentPage == '/dashboard/settings/cooldown' ? 'active' : '' %>">
+                        <i class="fa fa-clock me-2"></i>
+                        <div>Cooldowns</div>
+                    </a>
+                </li>
+                <li class="menu-item <%= currentPage == '/dashboard/settings/language' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings/language" class="menu-link <%= currentPage == '/dashboard/settings/language' ? 'active' : '' %>">
+                        <i class="fa fa-language me-2"></i>
+                        <div>Language</div>
+                    </a>
+                </li>
+                <li class="menu-item <%= currentPage == '/dashboard/settings/testimony' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings/testimony" class="menu-link <%= currentPage == '/dashboard/settings/testimony' ? 'active' : '' %>">
+                        <i class="fa fa-comment-dots me-2"></i>
+                        <div>Testimony</div>
+                    </a>
+                </li>
+                <li class="menu-item <%= currentPage == '/dashboard/settings/ai' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings/ai" class="menu-link <%= currentPage == '/dashboard/settings/ai' ? 'active' : '' %>">
+                        <i class="fa fa-robot me-2"></i>
+                        <div>AI Features</div>
+                    </a>
+                </li>
+                <li class="menu-item <%= currentPage == '/dashboard/settings/streak' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings/streak" class="menu-link <%= currentPage == '/dashboard/settings/streak' ? 'active' : '' %>">
+                        <i class="fa fa-fire me-2"></i>
+                        <div>Streak System</div>
+                    </a>
+                </li>
+                <li class="menu-item <%= currentPage == '/dashboard/settings/channels' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= guildId %>/settings/channels" class="menu-link <%= currentPage == '/dashboard/settings/channels' ? 'active' : '' %>">
+                        <i class="fa fa-hashtag me-2"></i>
+                        <div>Channels</div>
                     </a>
                 </li>
             </ul>
-        </li> -->
-
+        </li>
+        <% } %>
     </ul>
-
-
 </aside>

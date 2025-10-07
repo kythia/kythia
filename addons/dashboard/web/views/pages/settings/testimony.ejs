@@ -1,0 +1,281 @@
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings/testimony.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
+
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">💬 Testimony Settings</h2>
+                    <p class="text-muted mb-0">Configure user feedback and testimony collection system</p>
+                </div>
+                <div>
+                    <a href="/dashboard/<%= guildId %>/settings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Testimony settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving testimony settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/<%= guildId %>/settings/testimony">
+        <div class="row">
+            <!-- Channel Settings -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📢 Channel Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="testimonyChannelId" class="form-label">Testimony Channel</label>
+                            <select class="form-select" id="testimonyChannelId" name="testimonyChannelId">
+                                <option value="">Select a channel...</option>
+                                <% channels.text.forEach(channel => { %>
+                                    <option value="<%= channel.id %>" <%= settings.testimonyChannelId === channel.id ? 'selected' : '' %>>
+                                        #<%= channel.name %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Channel where testimonies will be sent</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="feedbackChannelId" class="form-label">Feedback Channel</label>
+                            <select class="form-select" id="feedbackChannelId" name="feedbackChannelId">
+                                <option value="">Select a channel...</option>
+                                <% channels.text.forEach(channel => { %>
+                                    <option value="<%= channel.id %>" <%= settings.feedbackChannelId === channel.id ? 'selected' : '' %>>
+                                        #<%= channel.name %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Channel for testimony feedback and responses</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="testimonyCountChannelId" class="form-label">Counter Channel</label>
+                            <select class="form-select" id="testimonyCountChannelId" name="testimonyCountChannelId">
+                                <option value="">Select a channel...</option>
+                                <% channels.text.forEach(channel => { %>
+                                    <option value="<%= channel.id %>" <%= settings.testimonyCountChannelId === channel.id ? 'selected' : '' %>>
+                                        #<%= channel.name %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Channel name will be updated with testimony count</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Counter Settings -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">🔢 Counter Settings</h5>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-3">
+                            <label for="testimonyCount" class="form-label">Current Count</label>
+                            <input type="number" class="form-control" id="testimonyCount" name="testimonyCount" 
+                                   value="<%= settings.testimonyCount || 0 %>" min="0">
+                            <div class="form-text">Current testimony count</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="testimonyCountFormat" class="form-label">Channel Name Format</label>
+                            <input type="text" class="form-control" id="testimonyCountFormat" name="testimonyCountFormat" 
+                                   value="<%= settings.testimonyCountFormat || '{count} Testimonies' %>" 
+                                   placeholder="e.g., {count} Testimonies">
+                            <div class="form-text">Use {count} for the number placeholder</div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-auto">
+                            <button type="button" class="btn btn-outline-warning btn-sm" onclick="resetCount()">
+                                <i class="fas fa-undo me-1"></i>Reset Count
+                            </button>
+                            <button type="button" class="btn btn-outline-info btn-sm" onclick="previewFormat()">
+                                <i class="fas fa-eye me-1"></i>Preview Format
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimony Statistics -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📊 Testimony Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h3 class="text-primary mb-1"><%= settings.testimonyCount || 0 %></h3>
+                                    <p class="text-muted mb-0">Total Testimonies</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h3 class="text-success mb-1">
+                                        <%= settings.testimonyChannelId ? 'Active' : 'Inactive' %>
+                                    </h3>
+                                    <p class="text-muted mb-0">Testimony Channel</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h3 class="text-info mb-1">
+                                        <%= settings.feedbackChannelId ? 'Active' : 'Inactive' %>
+                                    </h3>
+                                    <p class="text-muted mb-0">Feedback Channel</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h3 class="text-warning mb-1">
+                                        <%= settings.testimonyCountChannelId ? 'Active' : 'Inactive' %>
+                                    </h3>
+                                    <p class="text-muted mb-0">Counter Channel</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How It Works -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">ℹ️ How Testimony System Works</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">User Experience</h6>
+                                <ol>
+                                    <li>Users submit testimonies via commands</li>
+                                    <li>Testimonies are posted to the testimony channel</li>
+                                    <li>Counter channel name updates automatically</li>
+                                    <li>Feedback can be given in the feedback channel</li>
+                                </ol>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Admin Features</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>View all testimonies</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Respond to feedback</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Track testimony count</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Moderate content</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Format Examples -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📝 Format Examples</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6 class="text-muted mb-3">Basic Format</h6>
+                                <div class="glass-effect p-3 rounded">
+                                    <code>{count} Testimonies</code>
+                                    <br><small class="text-muted">Result: "5 Testimonies"</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="text-muted mb-3">With Emoji</h6>
+                                <div class="glass-effect p-3 rounded">
+                                    <code>💬 {count} Reviews</code>
+                                    <br><small class="text-muted">Result: "💬 5 Reviews"</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="text-muted mb-3">Custom Text</h6>
+                                <div class="glass-effect p-3 rounded">
+                                    <code>Total: {count} User Stories</code>
+                                    <br><small class="text-muted">Result: "Total: 5 User Stories"</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+function resetCount() {
+    if (confirm('Are you sure you want to reset the testimony count to 0?')) {
+        document.getElementById('testimonyCount').value = 0;
+    }
+}
+
+function previewFormat() {
+    const format = document.getElementById('testimonyCountFormat').value;
+    const count = document.getElementById('testimonyCount').value || 0;
+    const preview = format.replace(/{count}/gi, count);
+    alert(`Preview: "${preview}"`);
+}
+
+// Update preview when format or count changes
+document.addEventListener('DOMContentLoaded', function() {
+    const formatInput = document.getElementById('testimonyCountFormat');
+    const countInput = document.getElementById('testimonyCount');
+    
+    if (formatInput && countInput) {
+        const updatePreview = () => {
+            const format = formatInput.value;
+            const count = countInput.value || 0;
+            const preview = format.replace(/{count}/gi, count);
+            // You could add a live preview element here
+        };
+        
+        formatInput.addEventListener('input', updatePreview);
+        countInput.addEventListener('input', updatePreview);
+    }
+});
+</script>

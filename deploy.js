@@ -4,7 +4,7 @@
  * @file deploy.js
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  *
  * @description
  * Runs the command deployment pipeline for the bot. It loads all addons,

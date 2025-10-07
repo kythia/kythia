@@ -1,0 +1,370 @@
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings/automod.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
+
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">🛡️ Automod Settings</h2>
+                    <p class="text-muted mb-0">Configure anti-spam and moderation features</p>
+                </div>
+                <div>
+                    <a href="/dashboard/<%= guildId %>/settings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Automod settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving automod settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/<%= guildId %>/settings/automod">
+        <div class="row">
+            <!-- Feature Toggles -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">🔧 Feature Toggles</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="antiInviteOn" name="antiInviteOn" 
+                                   <%= settings.antiInviteOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="antiInviteOn">
+                                <strong>Anti-Invites</strong>
+                                <br><small class="text-muted">Block Discord invite links</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="antiLinkOn" name="antiLinkOn" 
+                                   <%= settings.antiLinkOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="antiLinkOn">
+                                <strong>Anti-Links</strong>
+                                <br><small class="text-muted">Block all external links</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="antiSpamOn" name="antiSpamOn" 
+                                   <%= settings.antiSpamOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="antiSpamOn">
+                                <strong>Anti-Spam</strong>
+                                <br><small class="text-muted">Detect and prevent spam messages</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="antiBadwordOn" name="antiBadwordOn" 
+                                   <%= settings.antiBadwordOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="antiBadwordOn">
+                                <strong>Anti-Badwords</strong>
+                                <br><small class="text-muted">Filter inappropriate language</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="antiMentionOn" name="antiMentionOn" 
+                                   <%= settings.antiMentionOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="antiMentionOn">
+                                <strong>Anti-Mention Spam</strong>
+                                <br><small class="text-muted">Prevent excessive mentions</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Channel Settings -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📢 Channel Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="modLogChannelId" class="form-label">Moderation Log Channel</label>
+                            <select class="form-select" id="modLogChannelId" name="modLogChannelId">
+                                <option value="">Select a channel...</option>
+                                <% channels.text.forEach(channel => { %>
+                                    <option value="<%= channel.id %>" <%= settings.modLogChannelId === channel.id ? 'selected' : '' %>>
+                                        #<%= channel.name %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Channel where moderation actions will be logged</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Whitelist Management -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">✅ Whitelist Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Whitelisted Users/Roles</label>
+                            <div id="whitelistContainer">
+                                <% if (settings.whitelist && settings.whitelist.length > 0) { %>
+                                    <% settings.whitelist.forEach(item => { %>
+                                        <div class="input-group mb-2">
+                                            <input type="text" class="form-control" name="whitelist[]" value="<%= item %>" readonly>
+                                            <button type="button" class="btn btn-outline-danger" onclick="removeWhitelistItem(this)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    <% }); %>
+                                <% } else { %>
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" name="whitelist[]" placeholder="User ID or Role ID">
+                                        <button type="button" class="btn btn-outline-danger" onclick="removeWhitelistItem(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addWhitelistItem()">
+                                <i class="fas fa-plus me-1"></i>Add Item
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bad Words Management -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">🚫 Bad Words Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Bad Words List</label>
+                            <div id="badwordsContainer">
+                                <% if (settings.badwords && settings.badwords.length > 0) { %>
+                                    <% settings.badwords.forEach(word => { %>
+                                        <div class="input-group mb-2">
+                                            <input type="text" class="form-control" name="badwords[]" value="<%= word %>">
+                                            <button type="button" class="btn btn-outline-danger" onclick="removeBadwordItem(this)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    <% }); %>
+                                <% } else { %>
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" name="badwords[]" placeholder="Enter bad word">
+                                        <button type="button" class="btn btn-outline-danger" onclick="removeBadwordItem(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addBadwordItem()">
+                                <i class="fas fa-plus me-1"></i>Add Word
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bad Word Whitelist -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">✅ Bad Word Whitelist</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Whitelisted Words</label>
+                            <div id="badwordWhitelistContainer">
+                                <% if (settings.badwordWhitelist && settings.badwordWhitelist.length > 0) { %>
+                                    <% settings.badwordWhitelist.forEach(word => { %>
+                                        <div class="input-group mb-2">
+                                            <input type="text" class="form-control" name="badwordWhitelist[]" value="<%= word %>">
+                                            <button type="button" class="btn btn-outline-danger" onclick="removeBadwordWhitelistItem(this)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    <% }); %>
+                                <% } else { %>
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" name="badwordWhitelist[]" placeholder="Enter whitelisted word">
+                                        <button type="button" class="btn btn-outline-danger" onclick="removeBadwordWhitelistItem(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addBadwordWhitelistItem()">
+                                <i class="fas fa-plus me-1"></i>Add Word
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exception Channels -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">🚫 Exception Channels</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Channels to Ignore</label>
+                            <div id="ignoredChannelsContainer">
+                                <% if (settings.ignoredChannels && settings.ignoredChannels.length > 0) { %>
+                                    <% settings.ignoredChannels.forEach(channelId => { %>
+                                        <div class="input-group mb-2">
+                                            <select class="form-select" name="ignoredChannels[]">
+                                                <option value="">Select a channel...</option>
+                                                <% channels.text.forEach(channel => { %>
+                                                    <option value="<%= channel.id %>" <%= channelId === channel.id ? 'selected' : '' %>>
+                                                        #<%= channel.name %>
+                                                    </option>
+                                                <% }); %>
+                                            </select>
+                                            <button type="button" class="btn btn-outline-danger" onclick="removeIgnoredChannelItem(this)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    <% }); %>
+                                <% } else { %>
+                                    <div class="input-group mb-2">
+                                        <select class="form-select" name="ignoredChannels[]">
+                                            <option value="">Select a channel...</option>
+                                            <% channels.text.forEach(channel => { %>
+                                                <option value="<%= channel.id %>">#<%= channel.name %></option>
+                                            <% }); %>
+                                        </select>
+                                        <button type="button" class="btn btn-outline-danger" onclick="removeIgnoredChannelItem(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addIgnoredChannelItem()">
+                                <i class="fas fa-plus me-1"></i>Add Channel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+// Whitelist management
+function addWhitelistItem() {
+    const container = document.getElementById('whitelistContainer');
+    const div = document.createElement('div');
+    div.className = 'input-group mb-2';
+    div.innerHTML = `
+        <input type="text" class="form-control" name="whitelist[]" placeholder="User ID or Role ID">
+        <button type="button" class="btn btn-outline-danger" onclick="removeWhitelistItem(this)">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+function removeWhitelistItem(button) {
+    button.parentElement.remove();
+}
+
+// Bad words management
+function addBadwordItem() {
+    const container = document.getElementById('badwordsContainer');
+    const div = document.createElement('div');
+    div.className = 'input-group mb-2';
+    div.innerHTML = `
+        <input type="text" class="form-control" name="badwords[]" placeholder="Enter bad word">
+        <button type="button" class="btn btn-outline-danger" onclick="removeBadwordItem(this)">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+function removeBadwordItem(button) {
+    button.parentElement.remove();
+}
+
+// Bad word whitelist management
+function addBadwordWhitelistItem() {
+    const container = document.getElementById('badwordWhitelistContainer');
+    const div = document.createElement('div');
+    div.className = 'input-group mb-2';
+    div.innerHTML = `
+        <input type="text" class="form-control" name="badwordWhitelist[]" placeholder="Enter whitelisted word">
+        <button type="button" class="btn btn-outline-danger" onclick="removeBadwordWhitelistItem(this)">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+function removeBadwordWhitelistItem(button) {
+    button.parentElement.remove();
+}
+
+// Ignored channels management
+function addIgnoredChannelItem() {
+    const container = document.getElementById('ignoredChannelsContainer');
+    const div = document.createElement('div');
+    div.className = 'input-group mb-2';
+    div.innerHTML = `
+        <select class="form-select" name="ignoredChannels[]">
+            <option value="">Select a channel...</option>
+            <% channels.text.forEach(channel => { %>
+                <option value="<%= channel.id %>">#<%= channel.name %></option>
+            <% }); %>
+        </select>
+        <button type="button" class="btn btn-outline-danger" onclick="removeIgnoredChannelItem(this)">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+function removeIgnoredChannelItem(button) {
+    button.parentElement.remove();
+}
+</script>

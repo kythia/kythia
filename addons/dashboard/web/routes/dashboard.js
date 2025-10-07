@@ -3,85 +3,15 @@
  * @type: Module
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  */
 
-const router = require('express').Router();
-const { PermissionsBitField } = require('discord.js');
+const { isAuthorized, checkServerAccess, renderDash } = require('../helpers');
 const ServerSetting = require('@coreModels/ServerSetting');
+const { PermissionsBitField } = require('discord.js');
 const ModLog = require('@coreModels/ModLog');
+const router = require('express').Router();
 const client = require('@src/KythiaClient');
-
-// =================================================================
-// MIDDLEWARE (PENTING)
-// =================================================================
-
-function isAuthorized(req, res, next) {
-    if (req.isAuthenticated()) return next();
-    res.redirect('/');
-}
-
-async function checkServerAccess(req, res, next) {
-    try {
-        const guildId = req.params.guildId;
-        const botClient = req.app.locals.bot;
-        const guild = botClient.guilds.cache.get(guildId);
-        if (!guild) {
-            return res.status(404).render('error', {
-                title: 'Server Tidak Ditemukan',
-                message: 'Bot tidak berada di server ini atau ID server tidak valid.',
-                page: '/',
-                currentPage: '',
-                user: req.user || null,
-                guild: null,
-            });
-        }
-        const member = await guild.members.fetch(req.user.id).catch(() => null);
-        if (!member || !member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
-            return res.status(403).render('error', {
-                title: 'Akses Ditolak',
-                message: 'Anda tidak memiliki izin "Manage Server" untuk mengakses halaman ini.',
-                page: '/',
-                currentPage: '',
-                user: req.user || null,
-                guild: null,
-            });
-        }
-        req.guild = guild;
-        req.settings = await ServerSetting.getCache({ guildId: guild.id });
-        return next();
-    } catch (error) {
-        console.error('Error di middleware checkServerAccess:', error);
-        return res.status(500).render('error', {
-            title: 'Kesalahan Internal',
-            message: 'Terjadi masalah saat memverifikasi akses server.',
-            page: '/',
-            currentPage: '',
-            user: req.user || null,
-            guild: null,
-        });
-    }
-}
-
-// Helper: boilerplate render untuk dashboard
-function renderDash(res, viewName, opts = {}) {
-    // Default values
-    const defaults = {
-        user: res.req.user,
-        guilds: res.locals.guilds,
-        botClientId: kythia.bot.clientId,
-        botPermissions: '8',
-        page: viewName === 'servers' ? '/' : viewName,
-        guild: null,
-        guildId: null,
-        currentPage: '',
-        stats: undefined,
-        logs: undefined,
-    };
-    // Gabungkan, opts bisa override defaults
-    const renderData = { ...defaults, ...opts, viewName };
-    res.render('layouts/dashMain', renderData);
-}
 
 // Global middleware to define `guilds` for all dashboard routes
 router.use('/dashboard', isAuthorized, (req, res, next) => {

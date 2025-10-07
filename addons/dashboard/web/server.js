@@ -3,7 +3,7 @@
  * @type: Module
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  */
 
 require('module-alias/register');
@@ -96,8 +96,6 @@ module.exports = (bot) => {
 
     // Gunakan Rute
     // Autoload all route files in the routes directory
-    // const fs = require('fs');
-    // const path = require('path');
     const walkSync = (dir, filelist = []) => {
         fs.readdirSync(dir).forEach((file) => {
             const fullPath = path.join(dir, file);
@@ -140,6 +138,10 @@ module.exports = (bot) => {
             logger.info(`  └─ / (from ${relativePath})`);
         }
     });
+
+    // Load settings routes specifically
+    app.use('/', require('./routes/settings'));
+    logger.info(`✅ Settings routes loaded`);
 
     // --- LOGIKA WEBSOCKET & REAL-TIME ---
 

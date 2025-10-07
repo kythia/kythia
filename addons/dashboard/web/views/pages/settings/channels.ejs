@@ -1,0 +1,238 @@
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings/channels.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
+
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">📢 Channel Settings</h2>
+                    <p class="text-muted mb-0">Configure announcement and invite log channels</p>
+                </div>
+                <div>
+                    <a href="/dashboard/<%= guildId %>/settings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Channel settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving channel settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/<%= guildId %>/settings/channels">
+        <div class="row">
+            <!-- Announcement Channel -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">📢 Announcement Channel</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="announcementChannelId" class="form-label">Announcement Channel</label>
+                            <select class="form-select" id="announcementChannelId" name="announcementChannelId">
+                                <option value="">Select a channel...</option>
+                                <% channels.text.forEach(channel => { %>
+                                    <option value="<%= channel.id %>" <%= settings.announcementChannelId === channel.id ? 'selected' : '' %>>
+                                        #<%= channel.name %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Channel for bot announcements and updates</div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> This channel will be used for important bot announcements, updates, and notifications.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invite Log Channel -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">📝 Invite Log Channel</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="inviteChannelId" class="form-label">Invite Log Channel</label>
+                            <select class="form-select" id="inviteChannelId" name="inviteChannelId">
+                                <option value="">Select a channel...</option>
+                                <% channels.text.forEach(channel => { %>
+                                    <option value="<%= channel.id %>" <%= settings.inviteChannelId === channel.id ? 'selected' : '' %>>
+                                        #<%= channel.name %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Channel for logging server invites and referrers</div>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Note:</strong> This channel will log all server invites, including who invited whom and when.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Channel Information -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">ℹ️ Channel Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Announcement Channel</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>Bot updates and notifications</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Feature announcements</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Maintenance notifications</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Important server updates</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Invite Log Channel</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>Track who invited whom</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Invite creation timestamps</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Member join tracking</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Referrer statistics</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Settings Summary -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">📊 Current Channel Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Announcement Channel</h6>
+                                <% if (settings.announcementChannelId) { %>
+                                    <% const announcementChannel = channels.text.find(c => c.id === settings.announcementChannelId); %>
+                                    <% if (announcementChannel) { %>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-hashtag text-primary me-2"></i>
+                                            <span class="fw-bold">#<%= announcementChannel.name %></span>
+                                            <span class="badge bg-success ms-2">Active</span>
+                                        </div>
+                                    <% } else { %>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                            <span class="text-muted">Channel not found</span>
+                                            <span class="badge bg-warning ms-2">Invalid</span>
+                                        </div>
+                                    <% } %>
+                                <% } else { %>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-times text-muted me-2"></i>
+                                        <span class="text-muted">Not configured</span>
+                                        <span class="badge bg-secondary ms-2">None</span>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Invite Log Channel</h6>
+                                <% if (settings.inviteChannelId) { %>
+                                    <% const inviteChannel = channels.text.find(c => c.id === settings.inviteChannelId); %>
+                                    <% if (inviteChannel) { %>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-hashtag text-primary me-2"></i>
+                                            <span class="fw-bold">#<%= inviteChannel.name %></span>
+                                            <span class="badge bg-success ms-2">Active</span>
+                                        </div>
+                                    <% } else { %>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                            <span class="text-muted">Channel not found</span>
+                                            <span class="badge bg-warning ms-2">Invalid</span>
+                                        </div>
+                                    <% } %>
+                                <% } else { %>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-times text-muted me-2"></i>
+                                        <span class="text-muted">Not configured</span>
+                                        <span class="badge bg-secondary ms-2">None</span>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Channel Requirements -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">⚠️ Channel Requirements</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Announcement Channel</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-info-circle text-info me-2"></i>Must be a text channel</li>
+                                    <li><i class="fas fa-info-circle text-info me-2"></i>Bot needs Send Messages permission</li>
+                                    <li><i class="fas fa-info-circle text-info me-2"></i>Bot needs Embed Links permission</li>
+                                    <li><i class="fas fa-info-circle text-info me-2"></i>Should be visible to all members</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Invite Log Channel</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-info-circle text-info me-2"></i>Must be a text channel</li>
+                                    <li><i class="fas fa-info-circle text-info me-2"></i>Bot needs Send Messages permission</li>
+                                    <li><i class="fas fa-info-circle text-info me-2"></i>Bot needs Embed Links permission</li>
+                                    <li><i class="fas fa-info-circle text-info me-2"></i>Should be visible to moderators</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

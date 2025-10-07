@@ -1,9 +1,11 @@
-const { ApplicationCommandOptionType, ApplicationCommandType } = require('discord.js');
+const { ApplicationCommandOptionType, ApplicationCommandType, PermissionsBitField } = require('discord.js');
+const ServerSetting = require('@coreModels/ServerSetting');
 const KythiaVoter = require('@coreModels/KythiaVoter');
 const { marked } = require('marked');
 const logger = require('@utils/logger');
 const path = require('path');
 const fs = require('fs');
+
 // Hybrid command loader for dashboard (supports both builder and hybrid style)
 function getOptionType(type) {
     switch (type) {
@@ -313,6 +315,86 @@ async function getCommandsData(client) {
     };
 }
 
+function isAuthorized(req, res, next) {
+    if (req.isAuthenticated()) return next();
+    res.redirect('/');
+}
+
+async function checkServerAccess(req, res, next) {
+    try {
+        const guildId = req.params.guildId;
+        const botClient = req.app.locals.bot;
+        const guild = botClient.guilds.cache.get(guildId);
+        if (!guild) {
+            return res.status(404).render('error', {
+                title: 'Server Tidak Ditemukan',
+                message: 'Bot tidak berada di server ini atau ID server tidak valid.',
+                page: '/',
+                currentPage: '',
+                user: req.user || null,
+                guild: null,
+            });
+        }
+        const member = await guild.members.fetch(req.user.id).catch(() => null);
+        if (!member || !member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
+            return res.status(403).render('error', {
+                title: 'Akses Ditolak',
+                message: 'Anda tidak memiliki izin "Manage Server" untuk mengakses halaman ini.',
+                page: '/',
+                currentPage: '',
+                user: req.user || null,
+                guild: null,
+            });
+        }
+        req.guild = guild;
+
+        // Defensive: always ensure req.settings is an object, never null
+        let settings = await ServerSetting.getCache({ guildId: guild.id });
+        if (!settings) {
+            await ServerSetting.create({ guildId: guild.id, guildName: guild.name });
+            settings = await ServerSetting.getCache({ guildId: guild.id });
+        }
+        // Fallback: if still null, assign empty object with safe defaults
+        if (!settings || typeof settings !== 'object') {
+            settings = {};
+        }
+        req.settings = settings;
+
+        return next();
+    } catch (error) {
+        console.error('Error di middleware checkServerAccess:', error);
+        // Defensive: always pass settings as an object to avoid view errors
+        return res.status(500).render('error', {
+            title: 'Kesalahan Internal',
+            message: 'Terjadi masalah saat memverifikasi akses server.',
+            page: '/',
+            currentPage: '',
+            user: req.user || null,
+            guild: null,
+            settings: {},
+        });
+    }
+}
+
+function renderDash(res, viewName, opts = {}) {
+    // Default values
+    const defaults = {
+        user: res.req.user,
+        guilds: res.locals.guilds,
+        botClientId: kythia.bot.clientId,
+        botPermissions: '8',
+        page: viewName === 'servers' ? '/' : viewName,
+        guild: null,
+        guildId: null,
+        currentPage: '',
+        stats: undefined,
+        logs: undefined,
+    };
+    // Gabungkan, opts bisa override defaults
+    const renderData = { ...defaults, ...opts, viewName };
+    res.render('layouts/dashMain', renderData);
+}
+
 module.exports = {
     getOptionType,
     formatChoices,
@@ -320,4 +402,7 @@ module.exports = {
     parseChangelog,
     buildCategoryMap,
     getCommandsData,
+    isAuthorized,
+    checkServerAccess,
+    renderDash,
 };

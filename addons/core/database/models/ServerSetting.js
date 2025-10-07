@@ -3,7 +3,7 @@
  * @type: Database Model
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  */
 
 const { DataTypes } = require('sequelize');
@@ -42,7 +42,7 @@ class ServerSetting extends KythiaModel {
 
                 adventureOn: { type: DataTypes.BOOLEAN, defaultValue: false },
                 levelingOn: { type: DataTypes.BOOLEAN, defaultValue: false },
-                
+
                 welcomeInOn: { type: DataTypes.BOOLEAN, defaultValue: false },
                 welcomeOutOn: { type: DataTypes.BOOLEAN, defaultValue: false },
 
@@ -98,6 +98,41 @@ class ServerSetting extends KythiaModel {
                 welcomeInBorderWidth: { type: DataTypes.INTEGER, defaultValue: 4 },
 
                 welcomeInExtraDraw: { type: DataTypes.STRING, defaultValue: 'classicCentered' },
+
+                // WELCOME OUT (mirror of WELCOME IN)
+                welcomeOutEmbedText: { type: DataTypes.TEXT, allowNull: true },
+                welcomeOutBannerWidth: { type: DataTypes.INTEGER, defaultValue: 800 },
+                welcomeOutBannerHeight: { type: DataTypes.INTEGER, defaultValue: 300 },
+                welcomeOutBackgroundUrl: { type: DataTypes.STRING, allowNull: true },
+                welcomeOutForegroundUrl: { type: DataTypes.STRING, allowNull: true },
+                welcomeOutOverlayColor: { type: DataTypes.STRING, defaultValue: 'rgba(0,0,0,0.4)' },
+
+                welcomeOutAvatarEnabled: { type: DataTypes.BOOLEAN, defaultValue: true },
+                welcomeOutAvatarSize: { type: DataTypes.INTEGER, defaultValue: 128 },
+                welcomeOutAvatarShape: { type: DataTypes.ENUM('circle', 'square'), defaultValue: 'circle' },
+                welcomeOutAvatarYOffset: { type: DataTypes.INTEGER, defaultValue: -20 },
+                welcomeOutAvatarBorderWidth: { type: DataTypes.INTEGER, defaultValue: 4 },
+                welcomeOutAvatarBorderColor: { type: DataTypes.STRING, defaultValue: '#FFFFFF' },
+
+                welcomeOutMainTextContent: { type: DataTypes.TEXT, defaultValue: 'Goodbye, {username}!' },
+                welcomeOutMainTextFont: { type: DataTypes.STRING, defaultValue: 'bold 42px Poppins-Bold' },
+                welcomeOutMainTextFontFamily: { type: DataTypes.STRING, defaultValue: 'Poppins-Bold' },
+                welcomeOutMainTextColor: { type: DataTypes.STRING, defaultValue: '#FFFFFF' },
+                welcomeOutMainTextYOffset: { type: DataTypes.INTEGER, defaultValue: -80 },
+
+                welcomeOutSubTextContent: { type: DataTypes.TEXT, defaultValue: 'We hope to see you again' },
+                welcomeOutSubTextFont: { type: DataTypes.STRING, defaultValue: '32px Poppins-Bold' },
+                welcomeOutSubTextFontFamily: { type: DataTypes.STRING, defaultValue: 'Poppins-Bold' },
+                welcomeOutSubTextColor: { type: DataTypes.STRING, defaultValue: '#FFFFFF' },
+                welcomeOutSubTextYOffset: { type: DataTypes.INTEGER, defaultValue: 100 },
+
+                welcomeOutShadowColor: { type: DataTypes.STRING, defaultValue: 'rgba(0,0,0,0.5)' },
+                welcomeOutShadowBlur: { type: DataTypes.INTEGER, defaultValue: 5 },
+
+                welcomeOutBorderColor: { type: DataTypes.STRING, defaultValue: '#FFFFFF' },
+                welcomeOutBorderWidth: { type: DataTypes.INTEGER, defaultValue: 4 },
+
+                welcomeOutExtraDraw: { type: DataTypes.STRING, defaultValue: 'classicCentered' },
 
                 // COOLDOWNS
                 dailyCooldown: { type: DataTypes.INTEGER, defaultValue: 86400 }, // 1 day

@@ -3,7 +3,7 @@
  * @type: Command
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  */
 const { EmbedBuilder, version, MessageFlags } = require('discord.js');
 const { SlashCommandBuilder } = require('discord.js');
@@ -49,7 +49,7 @@ module.exports = {
         const uptime = await formatDuration(client.uptime, interaction);
         const memory = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
         const guilds = client.guilds.cache.size;
-        const users = client.users.cache.size;
+        const users = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
         const node = process.version;
         const djs = version;
         const cpu = os.cpus()[0].model;

@@ -4,7 +4,7 @@
  * @file bot.js
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  *
  * @description
  * This is the worker entry point for the Kythia Discord bot. It sets up the environment,

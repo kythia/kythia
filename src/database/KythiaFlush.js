@@ -4,13 +4,16 @@
  * @file src/database/KythiaFlush.js
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  * 
  * @description
  * A simple utility script to connect to Redis and run FLUSHALL.
  * Perfect for clearing the cache during development after making
  * breaking changes to data structures.
  */
+require('dotenv').config();
+require('../../kythia.config.js');
+
 require('module-alias/register');
 
 const Redis = require('ioredis');

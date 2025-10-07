@@ -5,7 +5,7 @@
  * normalized to be deterministic across platforms.
  *
  * @copyright © 2025 kenndeclouv
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  */
 const fs = require('fs').promises;
 const path = require('path');

@@ -1,0 +1,354 @@
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings/stats.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
+
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">📊 Server Stats Settings</h2>
+                    <p class="text-muted mb-0">Configure dynamic server statistics channels</p>
+                </div>
+                <div>
+                    <a href="/dashboard/<%= guildId %>/settings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Server stats settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving server stats settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/<%= guildId %>/settings/stats">
+        <div class="row">
+            <!-- Feature Toggle -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">🔧 Feature Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="serverStatsOn" name="serverStatsOn" 
+                                   <%= settings.serverStatsOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="serverStatsOn">
+                                <strong>Enable Server Stats</strong>
+                                <br><small class="text-muted">Enable dynamic server statistics channels</small>
+                            </label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="serverStatsCategoryId" class="form-label">Stats Category</label>
+                            <select class="form-select" id="serverStatsCategoryId" name="serverStatsCategoryId">
+                                <option value="">Select a category...</option>
+                                <% channels.category.forEach(category => { %>
+                                    <option value="<%= category.id %>" <%= settings.serverStatsCategoryId === category.id ? 'selected' : '' %>>
+                                        📁 <%= category.name %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Category where stat channels will be created</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Available Placeholders -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">📝 Available Placeholders</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Member Count</h6>
+                                <ul class="list-unstyled small">
+                                    <li><code>{memberstotal}</code> - Total members</li>
+                                    <li><code>{online}</code> - Online members</li>
+                                    <li><code>{idle}</code> - Idle members</li>
+                                    <li><code>{dnd}</code> - Do Not Disturb</li>
+                                    <li><code>{offline}</code> - Offline members</li>
+                                    <li><code>{bots}</code> - Bot count</li>
+                                    <li><code>{humans}</code> - Human count</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Server Info</h6>
+                                <ul class="list-unstyled small">
+                                    <li><code>{channels}</code> - Total channels</li>
+                                    <li><code>{text_channels}</code> - Text channels</li>
+                                    <li><code>{voice_channels}</code> - Voice channels</li>
+                                    <li><code>{roles}</code> - Role count</li>
+                                    <li><code>{emojis}</code> - Emoji count</li>
+                                    <li><code>{boosts}</code> - Server boosts</li>
+                                    <li><code>{boost_level}</code> - Boost level</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Stats -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">📈 Current Statistics Channels</h5>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="addStatChannel()">
+                            <i class="fas fa-plus me-1"></i>Add Stat Channel
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="statsContainer">
+                            <% if (settings.serverStats && settings.serverStats.length > 0) { %>
+                                <% settings.serverStats.forEach((stat, index) => { %>
+                                    <div class="card mb-3 stat-channel-item">
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Channel</label>
+                                                    <select class="form-select" name="serverStats[<%= index %>][channelId]">
+                                                        <option value="">Select a channel...</option>
+                                                        <% channels.voice.forEach(channel => { %>
+                                                            <option value="<%= channel.id %>" <%= stat.channelId === channel.id ? 'selected' : '' %>>
+                                                                🔊 <%= channel.name %>
+                                                            </option>
+                                                        <% }); %>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Format</label>
+                                                    <input type="text" class="form-control" name="serverStats[<%= index %>][format]" 
+                                                           value="<%= stat.format %>" placeholder="e.g., {memberstotal} Members">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Status</label>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" 
+                                                               name="serverStats[<%= index %>][enabled]" 
+                                                               <%= stat.enabled ? 'checked' : '' %>>
+                                                        <label class="form-check-label">
+                                                            <%= stat.enabled ? 'Enabled' : 'Disabled' %>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button" class="btn btn-outline-danger" onclick="removeStatChannel(this)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="text-center py-4">
+                                    <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No statistics channels configured</h5>
+                                    <p class="text-muted">Add your first stat channel to get started!</p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Setup Templates -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">⚡ Quick Setup Templates</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <button type="button" class="btn btn-outline-primary w-100" onclick="addTemplate('memberstotal', 'Members: {memberstotal}')">
+                                    <i class="fas fa-users me-2"></i>Total Members
+                                </button>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <button type="button" class="btn btn-outline-primary w-100" onclick="addTemplate('online', 'Online: {online}')">
+                                    <i class="fas fa-circle text-success me-2"></i>Online Members
+                                </button>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <button type="button" class="btn btn-outline-primary w-100" onclick="addTemplate('channels', 'Channels: {channels}')">
+                                    <i class="fas fa-hashtag me-2"></i>Total Channels
+                                </button>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <button type="button" class="btn btn-outline-primary w-100" onclick="addTemplate('boosts', 'Boosts: {boosts}')">
+                                    <i class="fas fa-gem me-2"></i>Server Boosts
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Welcome Out Configuration -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card glass-effect">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">👋 Quick Welcome Out Settings</h5>
+                        <a class="btn btn-outline-secondary btn-sm" href="/dashboard/<%= guildId %>/settings/welcome">
+                            Go to full Welcome settings
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="welcomeOutOn" name="welcomeOutOn" <%= settings.welcomeOutOn ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="welcomeOutOn">Enable Welcome Out</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="welcomeOutChannelId" class="form-label">Welcome Out Channel</label>
+                                <select class="form-select" id="welcomeOutChannelId" name="welcomeOutChannelId">
+                                    <option value="">Select a channel...</option>
+                                    <% channels.text.forEach(channel => { %>
+                                        <option value="<%= channel.id %>" <%= settings.welcomeOutChannelId === channel.id ? 'selected' : '' %>>#<%= channel.name %></option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="welcomeOutBackgroundUrl" class="form-label">Background URL</label>
+                                <input type="url" class="form-control" id="welcomeOutBackgroundUrl" name="welcomeOutBackgroundUrl" value="<%= settings.welcomeOutBackgroundUrl || '' %>" placeholder="https://...">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="welcomeOutText" class="form-label">Goodbye Text</label>
+                                <input type="text" class="form-control" id="welcomeOutText" name="welcomeOutText" value="<%= settings.welcomeOutText || '' %>" placeholder="Goodbye {username}!">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+let statIndex = <%= settings.serverStats ? settings.serverStats.length : 0 %>;
+
+function addStatChannel() {
+    const container = document.getElementById('statsContainer');
+    const div = document.createElement('div');
+    div.className = 'card glass-effect mb-3 stat-channel-item';
+    div.innerHTML = `
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label">Channel</label>
+                    <select class="form-select" name="serverStats[${statIndex}][channelId]">
+                        <option value="">Select a channel...</option>
+                        <% channels.voice.forEach(channel => { %>
+                            <option value="<%= channel.id %>">🔊 <%= channel.name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Format</label>
+                    <input type="text" class="form-control" name="serverStats[${statIndex}][format]" 
+                           placeholder="e.g., {memberstotal} Members">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Status</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" 
+                               name="serverStats[${statIndex}][enabled]" checked>
+                        <label class="form-check-label">Enabled</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-danger" onclick="removeStatChannel(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(div);
+    statIndex++;
+}
+
+function removeStatChannel(button) {
+    button.closest('.stat-channel-item').remove();
+}
+
+function addTemplate(placeholder, format) {
+    const container = document.getElementById('statsContainer');
+    const div = document.createElement('div');
+    div.className = 'card glass-effect mb-3 stat-channel-item';
+    div.innerHTML = `
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label">Channel</label>
+                    <select class="form-select" name="serverStats[${statIndex}][channelId]">
+                        <option value="">Select a channel...</option>
+                        <% channels.voice.forEach(channel => { %>
+                            <option value="<%= channel.id %>">🔊 <%= channel.name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Format</label>
+                    <input type="text" class="form-control" name="serverStats[${statIndex}][format]" 
+                           value="${format}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Status</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" 
+                               name="serverStats[${statIndex}][enabled]" checked>
+                        <label class="form-check-label">Enabled</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-danger" onclick="removeStatChannel(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(div);
+    statIndex++;
+}
+</script>

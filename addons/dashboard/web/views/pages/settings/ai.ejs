@@ -1,0 +1,227 @@
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings/ai.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
+
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">🤖 AI Settings</h2>
+                    <p class="text-muted mb-0">Configure AI-powered features and channels</p>
+                </div>
+                <div>
+                    <a href="/dashboard/<%= guildId %>/settings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            AI settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving AI settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/<%= guildId %>/settings/ai">
+        <div class="row">
+            <!-- AI Channel Management -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">🤖 AI-Enabled Channels</h5>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="addAiChannel()">
+                            <i class="fas fa-plus me-1"></i>Add Channel
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="aiChannelsContainer">
+                            <% if (settings.aiChannelIds && settings.aiChannelIds.length > 0) { %>
+                                <% settings.aiChannelIds.forEach((channelId, index) => { %>
+                                    <div class="card glass-effect mb-3 ai-channel-item">
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-10">
+                                                    <label class="form-label">AI Channel</label>
+                                                    <select class="form-select" name="aiChannelIds[]">
+                                                        <option value="">Select a channel...</option>
+                                                        <% channels.text.forEach(channel => { %>
+                                                            <option value="<%= channel.id %>" <%= channelId === channel.id ? 'selected' : '' %>>
+                                                                #<%= channel.name %>
+                                                            </option>
+                                                        <% }); %>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button" class="btn btn-outline-danger mt-5" onclick="removeAiChannel(this)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="text-center py-4">
+                                    <i class="fas fa-robot fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No AI channels configured</h5>
+                                    <p class="text-muted">Add channels where AI features can be used!</p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Features Information -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">✨ AI Features</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="text-muted mb-3">Available AI Commands</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i><strong>/ai</strong> - Chat with AI assistant</li>
+                            <li><i class="fas fa-check text-success me-2"></i><strong>/translate</strong> - Translate text between languages</li>
+                            <li><i class="fas fa-check text-success me-2"></i><strong>Auto-responses</strong> - Context-aware replies</li>
+                            <li><i class="fas fa-check text-success me-2"></i><strong>Smart moderation</strong> - AI-powered content filtering</li>
+                        </ul>
+
+                        <h6 class="text-muted mb-3 mt-4">AI Capabilities</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-brain text-primary me-2"></i>Natural language processing</li>
+                            <li><i class="fas fa-language text-primary me-2"></i>Multi-language support</li>
+                            <li><i class="fas fa-lightbulb text-primary me-2"></i>Context understanding</li>
+                            <li><i class="fas fa-shield-alt text-primary me-2"></i>Content moderation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Guidelines -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📋 Usage Guidelines</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="text-muted mb-3">Best Practices</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-info-circle text-info me-2"></i>Use AI channels for productive conversations</li>
+                            <li><i class="fas fa-info-circle text-info me-2"></i>AI responses are context-aware</li>
+                            <li><i class="fas fa-info-circle text-info me-2"></i>Rate limit applies to prevent spam</li>
+                            <li><i class="fas fa-info-circle text-info me-2"></i>AI learns from server context</li>
+                        </ul>
+
+                        <h6 class="text-muted mb-3 mt-4">Limitations</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-exclamation-triangle text-warning me-2"></i>AI may not always be accurate</li>
+                            <li><i class="fas fa-exclamation-triangle text-warning me-2"></i>Content is filtered for appropriateness</li>
+                            <li><i class="fas fa-exclamation-triangle text-warning me-2"></i>Usage is tracked for optimization</li>
+                            <li><i class="fas fa-exclamation-triangle text-warning me-2"></i>Some features may have cooldowns</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Statistics -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📊 AI Usage Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h3 class="text-primary mb-1"><%= settings.aiChannelIds ? settings.aiChannelIds.length : 0 %></h3>
+                                    <p class="text-muted mb-0">AI-Enabled Channels</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h3 class="text-success mb-1">Active</h3>
+                                    <p class="text-muted mb-0">AI Status</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h3 class="text-info mb-1">24/7</h3>
+                                    <p class="text-muted mb-0">Availability</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h3 class="text-warning mb-1">Multi-lang</h3>
+                                    <p class="text-muted mb-0">Language Support</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+function addAiChannel() {
+    const container = document.getElementById('aiChannelsContainer');
+    const div = document.createElement('div');
+    div.className = 'card glass-effect mb-3 ai-channel-item';
+    div.innerHTML = `
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-10">
+                    <label class="form-label">AI Channel</label>
+                    <select class="form-select" name="aiChannelIds[]">
+                        <option value="">Select a channel...</option>
+                        <% channels.text.forEach(channel => { %>
+                            <option value="<%= channel.id %>">#<%= channel.name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-danger mt-5" onclick="removeAiChannel(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(div);
+}
+
+function removeAiChannel(button) {
+    button.closest('.ai-channel-item').remove();
+}
+</script>

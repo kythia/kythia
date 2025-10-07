@@ -1,0 +1,258 @@
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings/cooldown.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
+
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">⏳ Cooldown Settings</h2>
+                    <p class="text-muted mb-0">Configure cooldown timers for economy commands</p>
+                </div>
+                <div>
+                    <a href="/dashboard/<%= guildId %>/settings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Cooldown settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving cooldown settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/<%= guildId %>/settings/cooldown">
+        <div class="row">
+            <!-- Daily Commands -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📅 Daily Commands</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="dailyCooldown" class="form-label">Daily Command Cooldown</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="dailyCooldown" name="dailyCooldown" 
+                                       value="<%= (settings.dailyCooldown || 86400) / 3600 %>" min="1" max="168">
+                                <span class="input-group-text">hours</span>
+                            </div>
+                            <div class="form-text">Time between daily command uses (1-168 hours)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Economy Commands -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">💰 Economy Commands</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="begCooldown" class="form-label">Beg Command Cooldown</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="begCooldown" name="begCooldown" 
+                                       value="<%= (settings.begCooldown || 3600) / 60 %>" min="1" max="1440">
+                                <span class="input-group-text">minutes</span>
+                            </div>
+                            <div class="form-text">Time between beg command uses (1-1440 minutes)</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="workCooldown" class="form-label">Work Command Cooldown</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="workCooldown" name="workCooldown" 
+                                       value="<%= (settings.workCooldown || 28800) / 3600 %>" min="1" max="168">
+                                <span class="input-group-text">hours</span>
+                            </div>
+                            <div class="form-text">Time between work command uses (1-168 hours)</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="robCooldown" class="form-label">Rob Command Cooldown</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="robCooldown" name="robCooldown" 
+                                       value="<%= (settings.robCooldown || 7200) / 3600 %>" min="1" max="168">
+                                <span class="input-group-text">hours</span>
+                            </div>
+                            <div class="form-text">Time between rob command uses (1-168 hours)</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="hackCooldown" class="form-label">Hack Command Cooldown</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="hackCooldown" name="hackCooldown" 
+                                       value="<%= (settings.hackCooldown || 3600) / 3600 %>" min="1" max="168">
+                                <span class="input-group-text">hours</span>
+                            </div>
+                            <div class="form-text">Time between hack command uses (1-168 hours)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Commands -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">🎮 Game Commands</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="lootboxCooldown" class="form-label">Lootbox Command Cooldown</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="lootboxCooldown" name="lootboxCooldown" 
+                                       value="<%= (settings.lootboxCooldown || 14400) / 3600 %>" min="1" max="168">
+                                <span class="input-group-text">hours</span>
+                            </div>
+                            <div class="form-text">Time between lootbox command uses (1-168 hours)</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="petCooldown" class="form-label">Pet Command Cooldown</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="petCooldown" name="petCooldown" 
+                                       value="<%= (settings.petCooldown || 28800) / 3600 %>" min="1" max="168">
+                                <span class="input-group-text">hours</span>
+                            </div>
+                            <div class="form-text">Time between pet command uses (1-168 hours)</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="gachaCooldown" class="form-label">Gacha Command Cooldown</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="gachaCooldown" name="gachaCooldown" 
+                                       value="<%= (settings.gachaCooldown || 3600) / 3600 %>" min="1" max="168">
+                                <span class="input-group-text">hours</span>
+                            </div>
+                            <div class="form-text">Time between gacha command uses (1-168 hours)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cooldown Information -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">ℹ️ Cooldown Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="text-muted mb-3">How Cooldowns Work</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-info-circle text-info me-2"></i>Cooldowns prevent command spam</li>
+                            <li><i class="fas fa-info-circle text-info me-2"></i>Each user has individual cooldowns</li>
+                            <li><i class="fas fa-info-circle text-info me-2"></i>Cooldowns are server-specific</li>
+                            <li><i class="fas fa-info-circle text-info me-2"></i>Admins can bypass cooldowns</li>
+                        </ul>
+
+                        <h6 class="text-muted mb-3 mt-4">Recommended Settings</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Command</th>
+                                        <th>Recommended</th>
+                                        <th>Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Daily</td>
+                                        <td>24 hours</td>
+                                        <td>Once per day</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Beg</td>
+                                        <td>60 minutes</td>
+                                        <td>Prevent spam</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Work</td>
+                                        <td>8 hours</td>
+                                        <td>Realistic work schedule</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Rob</td>
+                                        <td>2 hours</td>
+                                        <td>High risk, high reward</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Settings Summary -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📊 Current Cooldown Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Daily Commands</h6>
+                                <ul class="list-unstyled">
+                                    <li><strong>Daily:</strong> <%= Math.floor((settings.dailyCooldown || 86400) / 3600) %> hours</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Economy Commands</h6>
+                                <ul class="list-unstyled">
+                                    <li><strong>Beg:</strong> <%= Math.floor((settings.begCooldown || 3600) / 60) %> minutes</li>
+                                    <li><strong>Work:</strong> <%= Math.floor((settings.workCooldown || 28800) / 3600) %> hours</li>
+                                    <li><strong>Rob:</strong> <%= Math.floor((settings.robCooldown || 7200) / 3600) %> hours</li>
+                                    <li><strong>Hack:</strong> <%= Math.floor((settings.hackCooldown || 3600) / 3600) %> hours</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Game Commands</h6>
+                                <ul class="list-unstyled">
+                                    <li><strong>Lootbox:</strong> <%= Math.floor((settings.lootboxCooldown || 14400) / 3600) %> hours</li>
+                                    <li><strong>Pet:</strong> <%= Math.floor((settings.petCooldown || 28800) / 3600) %> hours</li>
+                                    <li><strong>Gacha:</strong> <%= Math.floor((settings.gachaCooldown || 3600) / 3600) %> hours</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

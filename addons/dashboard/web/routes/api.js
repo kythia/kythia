@@ -3,153 +3,16 @@
  * @type: Module
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  */
 
 const router = require('express').Router();
 const { ChannelType, MessageFlags } = require('discord.js');
 const client = require('@src/KythiaClient');
 const parseDiscordMarkdown = require('../helpers/parser');
-const { getBotStatus, getLavalinkStatus } = require('../helpers/status');
-const { Op } = require('sequelize');
-const StatusHistory = require('@addons/dashboard/database/models/StatusHistory');
-const KythiaVoter = require('@addons/core/database/models/KythiaVoter');
+const KythiaVoter = require('@coreModels/KythiaVoter');
 const convertColor = require('@src/utils/color');
 const logger = require('@src/utils/logger');
-
-router.get('/api/status', async (req, res) => {
-    const client = req.app.get('botClient');
-
-    if (!client || !client.isReady()) {
-        return res.status(503).json({ error: 'Bot is not ready.' });
-    }
-
-    try {
-        // --- LANGKAH 1: SATU QUERY UNTUK MENGAMBIL SEMUA DATA HISTORIS ---
-        const ninetyDaysAgo = new Date(new Date().setDate(new Date().getDate() - 90));
-        const allRecords = await StatusHistory.getAllCache({
-            where: {
-                timestamp: { [Op.gte]: ninetyDaysAgo },
-            },
-            order: [['timestamp', 'ASC']],
-        });
-
-        // --- LANGKAH 2: KELOMPOKKAN DATA PER KOMPONEN UNTUK EFISIENSI ---
-        const recordsByComponent = { bot: [], lavalink: [], discord_api: [] };
-        for (const record of allRecords) {
-            if (record && record.component && recordsByComponent.hasOwnProperty(record.component)) {
-                recordsByComponent[record.component].push(record);
-            }
-        }
-
-        // --- LANGKAH 3: AMBIL STATUS REAL-TIME ---
-        // getLavalinkStatus() may return an array (for multiple nodes), so flatten
-        const [botStatus, lavalinkStatusRaw] = await Promise.all([getBotStatus(client), getLavalinkStatus()]);
-        // lavalinkStatusRaw could be array or object
-        const lavalinkStatuses = Array.isArray(lavalinkStatusRaw) ? lavalinkStatusRaw : [lavalinkStatusRaw];
-
-        // Compose all components (bot + all lavalink nodes)
-        // --- REWRITE: Assign display names for lavalink nodes as "Lavalink Node (1)", "Lavalink Node (2)", etc ---
-        let lavalinkDisplayNames = [];
-        if (lavalinkStatuses.length > 1) {
-            lavalinkDisplayNames = lavalinkStatuses.map((_, idx) => `Lavalink Node (${idx + 1})`);
-        } else if (lavalinkStatuses.length === 1) {
-            lavalinkDisplayNames = ['Lavalink Node (1)'];
-        }
-
-        const initialComponents = [
-            botStatus,
-            ...lavalinkStatuses.map((node, idx) => ({
-                ...node,
-                name: lavalinkDisplayNames[idx] || node.name, // fallback to original if something wrong
-            })),
-        ];
-
-        // --- LANGKAH 4: PROSES SETIAP KOMPONEN DENGAN LOGIKA "FILL FORWARD" ---
-        const finalComponents = initialComponents.map((component) => {
-            if (!component || !component.name) {
-                // Defensive: skip invalid component
-                return {
-                    name: component?.name || 'Unknown',
-                    status: 'no_data',
-                    bars: Array.from({ length: 96 }, () => ({ status: 'no_data' })),
-                    uptimePercent: '100.00',
-                };
-            }
-
-            // Robust componentId mapping
-            let componentId = component.name
-                .toLowerCase()
-                .replace(/ & /g, '_')
-                .replace(/ /g, '_')
-                .replace(/_node$/, '') // only remove trailing _node
-                .replace(/^lavalink_/, 'lavalink'); // normalize lavalink node names
-
-            // Special case for bot
-            if (componentId === 'kythia_bot') componentId = 'bot';
-
-            // If lavalink node, always use 'lavalink' as key
-            if (componentId.startsWith('lavalink')) componentId = 'lavalink';
-
-            const componentRecords = recordsByComponent[componentId] || [];
-
-            // A. Hitung persentase uptime 90 hari
-            const totalCount = componentRecords.length;
-            const operationalCount = componentRecords.filter((r) => r.status === 'operational').length;
-            const uptimePercent = totalCount > 0 ? ((operationalCount / totalCount) * 100).toFixed(2) : '100.00';
-
-            // B. Proses pembuatan 96 bar dengan logika "fill forward"
-            const bars = Array.from({ length: 96 });
-            const now = new Date();
-            const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-
-            const lastRecordBeforeWindow = componentRecords.filter((r) => new Date(r.timestamp) < twentyFourHoursAgo).pop();
-            let lastKnownStatus = lastRecordBeforeWindow ? lastRecordBeforeWindow.status : 'no_data';
-
-            const recentRecords = componentRecords.filter((r) => new Date(r.timestamp) >= twentyFourHoursAgo);
-            let recordPointer = 0;
-
-            for (let i = 0; i < 96; i++) {
-                const interval = 15 * 60 * 1000;
-                const barEndTime = twentyFourHoursAgo.getTime() + (i + 1) * interval;
-
-                // Maju terus dan perbarui status terakhir jika ada data di dalam interval bar ini
-                while (recordPointer < recentRecords.length && new Date(recentRecords[recordPointer].timestamp).getTime() < barEndTime) {
-                    const currentRecordStatus = recentRecords[recordPointer].status;
-                    // Prioritaskan status yang lebih buruk jika ada beberapa data dalam 1 interval
-                    if (currentRecordStatus === 'outage') {
-                        lastKnownStatus = 'outage';
-                    } else if (currentRecordStatus === 'degraded' && lastKnownStatus !== 'outage') {
-                        lastKnownStatus = 'degraded';
-                    } else if (currentRecordStatus === 'operational' && lastKnownStatus !== 'outage' && lastKnownStatus !== 'degraded') {
-                        lastKnownStatus = 'operational';
-                    }
-                    recordPointer++;
-                }
-                bars[i] = { status: lastKnownStatus };
-            }
-
-            return {
-                ...component,
-                bars,
-                uptimePercent,
-            };
-        });
-
-        let overallStatus = 'operational';
-        if (finalComponents.some((c) => c.status === 'outage')) overallStatus = 'outage';
-        else if (finalComponents.some((c) => c.status === 'degraded')) overallStatus = 'degraded';
-
-        res.json({
-            overallStatus,
-            components: finalComponents,
-            incidents: [],
-        });
-    } catch (error) {
-        console.error('Error building status API response:', error);
-        res.status(500).json({ error: 'Internal server error.' });
-    }
-});
 
 router.get('/api/guilds/:guildId/channels', async (req, res) => {
     try {

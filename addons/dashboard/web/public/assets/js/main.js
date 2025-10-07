@@ -3,7 +3,7 @@
  * @type: Module
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  */
 
 ((window.isRtl = window.Helpers.isRtl()), (window.isDarkStyle = window.Helpers.isDarkStyle()));

@@ -3,13 +3,13 @@
  * @type: Event Handler
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  */
 
 const InviteModel = require('../database/models/Invite');
 const { getGuildInviteCache, refreshGuildInvites } = require('../helpers');
 const ServerSetting = require('@coreModels/ServerSetting');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField } = require('discord.js');
 const { t } = require('@utils/translator');
 
 const FAKE_ACCOUNT_AGE_DAYS = 7;
@@ -23,6 +23,12 @@ module.exports = async (bot, member) => {
         const setting = await ServerSetting.getCache({ guildId: guild.id });
         inviteChannelId = setting?.inviteChannelId;
     } catch (e) {}
+
+    const me = guild.members.me || (await guild.members.fetchMe());
+    if (!me.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
+        console.warn(`[INVITE TRACKER] Missing 'Manage Guild' permission in ${guild.name}`);
+        throw new Error('Missing Permissions: MANAGE_GUILD');
+    }
 
     const cacheBefore = getGuildInviteCache(guild.id);
 
@@ -90,11 +96,15 @@ module.exports = async (bot, member) => {
             if (channel && channel.isTextBased && channel.viewable) {
                 let embedDesc = '';
                 let title = await t(guild, 'invite_events_guildMemberAdd_tracker_title');
-                let accountAgeStr = await t(guild, 'invite_events_guildMemberAdd_tracker_account_age', { days: Math.floor(accountAgeDays) });
+                let accountAgeStr = await t(guild, 'invite_events_guildMemberAdd_tracker_account_age', {
+                    days: Math.floor(accountAgeDays),
+                });
 
                 if (inviterId) {
                     // Normal invite
-                    let inviteTypeStr = isFake ? await t(guild, 'invite_events_guildMemberAdd_tracker_type_fake') : await t(guild, 'invite_events_guildMemberAdd_tracker_type_real');
+                    let inviteTypeStr = isFake
+                        ? await t(guild, 'invite_events_guildMemberAdd_tracker_type_fake')
+                        : await t(guild, 'invite_events_guildMemberAdd_tracker_type_real');
                     embedDesc =
                         `## ${title}\n` +
                         (await t(guild, 'invite_events_guildMemberAdd_tracker_joined_by', {
@@ -156,7 +166,8 @@ module.exports = async (bot, member) => {
                     const embed = new EmbedBuilder()
                         .setColor(0xed4245)
                         .setDescription(
-                            `## ${await t(guild, 'invite_events_guildMemberAdd_tracker_error_title')}\n` + (await t(guild, 'invite_events_guildMemberAdd_tracker_error_desc'))
+                            `## ${await t(guild, 'invite_events_guildMemberAdd_tracker_error_title')}\n` +
+                                (await t(guild, 'invite_events_guildMemberAdd_tracker_error_desc'))
                         )
                         .setTimestamp();
                     channel.send({ embeds: [embed] }).catch(() => {});

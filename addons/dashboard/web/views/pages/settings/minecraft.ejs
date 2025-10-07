@@ -1,0 +1,260 @@
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings/minecraft.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
+
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">🎮 Minecraft Settings</h2>
+                    <p class="text-muted mb-0">Configure Minecraft server integration and statistics</p>
+                </div>
+                <div>
+                    <a href="/dashboard/<%= guildId %>/settings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Minecraft settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving Minecraft settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/<%= guildId %>/settings/minecraft">
+        <div class="row">
+            <!-- Feature Toggle -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">🔧 Feature Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="minecraftStatsOn" name="minecraftStatsOn" 
+                                   <%= settings.minecraftStatsOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="minecraftStatsOn">
+                                <strong>Enable Minecraft Stats</strong>
+                                <br><small class="text-muted">Display Minecraft server statistics</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Server Information -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">🖥️ Server Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="minecraftIp" class="form-label">Server IP</label>
+                            <input type="text" class="form-control" id="minecraftIp" name="minecraftIp" 
+                                   value="<%= settings.minecraftIp || '' %>" 
+                                   placeholder="play.example.com">
+                            <div class="form-text">Minecraft server IP address or domain</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="minecraftPort" class="form-label">Server Port</label>
+                            <input type="number" class="form-control" id="minecraftPort" name="minecraftPort" 
+                                   value="<%= settings.minecraftPort || '' %>" 
+                                   placeholder="25565" min="1" max="65535">
+                            <div class="form-text">Minecraft server port (1-65535)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Channel Settings -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📢 Channel Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="minecraftIpChannelId" class="form-label">IP Display Channel</label>
+                                <select class="form-select" id="minecraftIpChannelId" name="minecraftIpChannelId">
+                                    <option value="">Select a channel...</option>
+                                    <% channels.text.forEach(channel => { %>
+                                        <option value="<%= channel.id %>" <%= settings.minecraftIpChannelId === channel.id ? 'selected' : '' %>>
+                                            #<%= channel.name %>
+                                        </option>
+                                    <% }); %>
+                                </select>
+                                <div class="form-text">Channel to display server IP</div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="minecraftPortChannelId" class="form-label">Port Display Channel</label>
+                                <select class="form-select" id="minecraftPortChannelId" name="minecraftPortChannelId">
+                                    <option value="">Select a channel...</option>
+                                    <% channels.text.forEach(channel => { %>
+                                        <option value="<%= channel.id %>" <%= settings.minecraftPortChannelId === channel.id ? 'selected' : '' %>>
+                                            #<%= channel.name %>
+                                        </option>
+                                    <% }); %>
+                                </select>
+                                <div class="form-text">Channel to display server port</div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="minecraftStatusChannelId" class="form-label">Status Channel</label>
+                                <select class="form-select" id="minecraftStatusChannelId" name="minecraftStatusChannelId">
+                                    <option value="">Select a channel...</option>
+                                    <% channels.text.forEach(channel => { %>
+                                        <option value="<%= channel.id %>" <%= settings.minecraftStatusChannelId === channel.id ? 'selected' : '' %>>
+                                            #<%= channel.name %>
+                                        </option>
+                                    <% }); %>
+                                </select>
+                                <div class="form-text">Channel to display server status</div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="minecraftPlayersChannelId" class="form-label">Players Channel</label>
+                                <select class="form-select" id="minecraftPlayersChannelId" name="minecraftPlayersChannelId">
+                                    <option value="">Select a channel...</option>
+                                    <% channels.text.forEach(channel => { %>
+                                        <option value="<%= channel.id %>" <%= settings.minecraftPlayersChannelId === channel.id ? 'selected' : '' %>>
+                                            #<%= channel.name %>
+                                        </option>
+                                    <% }); %>
+                                </select>
+                                <div class="form-text">Channel to display online players</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Server Status Preview -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📊 Server Status Preview</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="text-center p-3 glass-effect rounded">
+                                    <i class="fas fa-server fa-2x text-primary mb-2"></i>
+                                    <h6>Server IP</h6>
+                                    <p class="mb-0" id="ipPreview"><%= settings.minecraftIp || 'Not set' %></p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-3 glass-effect rounded">
+                                    <i class="fas fa-plug fa-2x text-info mb-2"></i>
+                                    <h6>Port</h6>
+                                    <p class="mb-0" id="portPreview"><%= settings.minecraftPort || 'Not set' %></p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-3 glass-effect rounded">
+                                    <i class="fas fa-circle text-success fa-2x mb-2"></i>
+                                    <h6>Status</h6>
+                                    <p class="mb-0">Online</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-3 glass-effect rounded">
+                                    <i class="fas fa-users fa-2x text-warning mb-2"></i>
+                                    <h6>Players</h6>
+                                    <p class="mb-0">0/20</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Integration Information -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">ℹ️ Integration Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">How It Works</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>Bot connects to your Minecraft server</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Displays real-time server information</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Updates channel names with statistics</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Shows online player count</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Requirements</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-info-circle text-info me-2"></i>Minecraft server must be online</li>
+                                    <li><i class="fas fa-info-circle text-info me-2"></i>Server must allow query connections</li>
+                                    <li><i class="fas fa-info-circle text-info me-2"></i>Bot needs internet access</li>
+                                    <li><i class="fas fa-info-circle text-info me-2"></i>Channels must be accessible to bot</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+// Update preview when inputs change
+document.addEventListener('DOMContentLoaded', function() {
+    const ipInput = document.getElementById('minecraftIp');
+    const portInput = document.getElementById('minecraftPort');
+    const ipPreview = document.getElementById('ipPreview');
+    const portPreview = document.getElementById('portPreview');
+    
+    if (ipInput) {
+        ipInput.addEventListener('input', function() {
+            ipPreview.textContent = this.value || 'Not set';
+        });
+    }
+    
+    if (portInput) {
+        portInput.addEventListener('input', function() {
+            portPreview.textContent = this.value || 'Not set';
+        });
+    }
+});
+</script>

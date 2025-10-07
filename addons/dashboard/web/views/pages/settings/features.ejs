@@ -1,0 +1,305 @@
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings/features.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
+
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">🔄 Feature Toggle</h2>
+                    <p class="text-muted mb-0">Enable or disable bot features for your server</p>
+                </div>
+                <div>
+                    <a href="/dashboard/<%= guildId %>/settings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Feature settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving feature settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/<%= guildId %>/settings/features">
+        <div class="row">
+            <!-- Moderation Features -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">🛡️ Moderation Features</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="antiInviteOn" name="antiInviteOn" 
+                                   <%= settings.antiInviteOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="antiInviteOn">
+                                <strong>Anti-Invites</strong>
+                                <br><small class="text-muted">Block Discord invite links</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="antiLinkOn" name="antiLinkOn" 
+                                   <%= settings.antiLinkOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="antiLinkOn">
+                                <strong>Anti-Links</strong>
+                                <br><small class="text-muted">Block all external links</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="antiSpamOn" name="antiSpamOn" 
+                                   <%= settings.antiSpamOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="antiSpamOn">
+                                <strong>Anti-Spam</strong>
+                                <br><small class="text-muted">Detect and prevent spam messages</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="antiBadwordOn" name="antiBadwordOn" 
+                                   <%= settings.antiBadwordOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="antiBadwordOn">
+                                <strong>Anti-Badwords</strong>
+                                <br><small class="text-muted">Filter inappropriate language</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="antiMentionOn" name="antiMentionOn" 
+                                   <%= settings.antiMentionOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="antiMentionOn">
+                                <strong>Anti-Mention Spam</strong>
+                                <br><small class="text-muted">Prevent excessive mentions</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Server Features -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">📊 Server Features</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="serverStatsOn" name="serverStatsOn" 
+                                   <%= settings.serverStatsOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="serverStatsOn">
+                                <strong>Server Stats</strong>
+                                <br><small class="text-muted">Dynamic member and server statistics</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="levelingOn" name="levelingOn" 
+                                   <%= settings.levelingOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="levelingOn">
+                                <strong>Leveling System</strong>
+                                <br><small class="text-muted">XP and level progression for members</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="welcomeInOn" name="welcomeInOn" 
+                                   <%= settings.welcomeInOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="welcomeInOn">
+                                <strong>Welcome In</strong>
+                                <br><small class="text-muted">Welcome messages for new members</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="welcomeOutOn" name="welcomeOutOn" 
+                                   <%= settings.welcomeOutOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="welcomeOutOn">
+                                <strong>Welcome Out</strong>
+                                <br><small class="text-muted">Farewell messages for leaving members</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Features -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">🎮 Game Features</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="adventureOn" name="adventureOn" 
+                                   <%= settings.adventureOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="adventureOn">
+                                <strong>Adventure System</strong>
+                                <br><small class="text-muted">RPG-style adventure commands</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="streakOn" name="streakOn" 
+                                   <%= settings.streakOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="streakOn">
+                                <strong>Streak System</strong>
+                                <br><small class="text-muted">Daily streak tracking and rewards</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="minecraftStatsOn" name="minecraftStatsOn" 
+                                   <%= settings.minecraftStatsOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="minecraftStatsOn">
+                                <strong>Minecraft Stats</strong>
+                                <br><small class="text-muted">Minecraft server integration</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Utility Features -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">🔧 Utility Features</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="invitesOn" name="invitesOn" 
+                                   <%= settings.invitesOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="invitesOn">
+                                <strong>Invite Tracking</strong>
+                                <br><small class="text-muted">Track server invites and referrers</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="rolePrefixOn" name="rolePrefixOn" 
+                                   <%= settings.rolePrefixOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="rolePrefixOn">
+                                <strong>Role Prefix</strong>
+                                <br><small class="text-muted">Display role prefixes in usernames</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Status Summary -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">📈 Feature Status Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-success mb-3">✅ Enabled Features</h6>
+                                <div id="enabledFeatures" class="d-flex flex-wrap gap-2">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">❌ Disabled Features</h6>
+                                <div id="disabledFeatures" class="d-flex flex-wrap gap-2">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+// Feature definitions
+const features = [
+    { id: 'antiInviteOn', name: 'Anti-Invites', category: 'Moderation' },
+    { id: 'antiLinkOn', name: 'Anti-Links', category: 'Moderation' },
+    { id: 'antiSpamOn', name: 'Anti-Spam', category: 'Moderation' },
+    { id: 'antiBadwordOn', name: 'Anti-Badwords', category: 'Moderation' },
+    { id: 'antiMentionOn', name: 'Anti-Mention Spam', category: 'Moderation' },
+    { id: 'serverStatsOn', name: 'Server Stats', category: 'Server' },
+    { id: 'levelingOn', name: 'Leveling System', category: 'Server' },
+    { id: 'welcomeInOn', name: 'Welcome In', category: 'Server' },
+    { id: 'welcomeOutOn', name: 'Welcome Out', category: 'Server' },
+    { id: 'adventureOn', name: 'Adventure System', category: 'Game' },
+    { id: 'streakOn', name: 'Streak System', category: 'Game' },
+    { id: 'minecraftStatsOn', name: 'Minecraft Stats', category: 'Game' },
+    { id: 'invitesOn', name: 'Invite Tracking', category: 'Utility' },
+    { id: 'rolePrefixOn', name: 'Role Prefix', category: 'Utility' }
+];
+
+// Update feature status summary
+function updateFeatureSummary() {
+    const enabledContainer = document.getElementById('enabledFeatures');
+    const disabledContainer = document.getElementById('disabledFeatures');
+    
+    enabledContainer.innerHTML = '';
+    disabledContainer.innerHTML = '';
+    
+    features.forEach(feature => {
+        const checkbox = document.getElementById(feature.id);
+        const isEnabled = checkbox && checkbox.checked;
+        
+        const badge = document.createElement('span');
+        badge.className = `badge ${isEnabled ? 'bg-success' : 'bg-secondary'}`;
+        badge.textContent = feature.name;
+        
+        if (isEnabled) {
+            enabledContainer.appendChild(badge);
+        } else {
+            disabledContainer.appendChild(badge);
+        }
+    });
+}
+
+// Add event listeners to all checkboxes
+document.addEventListener('DOMContentLoaded', function() {
+    features.forEach(feature => {
+        const checkbox = document.getElementById(feature.id);
+        if (checkbox) {
+            checkbox.addEventListener('change', updateFeatureSummary);
+        }
+    });
+    
+    // Initial update
+    updateFeatureSummary();
+});
+</script>

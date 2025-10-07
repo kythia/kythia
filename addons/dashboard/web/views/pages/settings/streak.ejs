@@ -1,0 +1,287 @@
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings/streak.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
+
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">🔥 Streak Settings</h2>
+                    <p class="text-muted mb-0">Configure daily streak tracking and rewards</p>
+                </div>
+                <div>
+                    <a href="/dashboard/<%= guildId %>/settings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Streak settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving streak settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/<%= guildId %>/settings/streak">
+        <div class="row">
+            <!-- Feature Toggle -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">🔧 Feature Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="streakOn" name="streakOn" 
+                                   <%= settings.streakOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="streakOn">
+                                <strong>Enable Streak System</strong>
+                                <br><small class="text-muted">Allow members to track daily streaks</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streak Configuration -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">⚙️ Streak Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="streakEmoji" class="form-label">Streak Emoji</label>
+                            <input type="text" class="form-control" id="streakEmoji" name="streakEmoji" 
+                                   value="<%= settings.streakEmoji || '🔥' %>" 
+                                   placeholder="🔥" maxlength="10">
+                            <div class="form-text">Emoji displayed for streaks</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="streakMinimum" class="form-label">Minimum Streak</label>
+                            <input type="number" class="form-control" id="streakMinimum" name="streakMinimum" 
+                                   value="<%= settings.streakMinimum || 3 %>" 
+                                   min="1" max="100">
+                            <div class="form-text">Minimum streak to be considered active (1-100)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role Rewards -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">🎁 Streak Role Rewards</h5>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="addStreakReward()">
+                            <i class="fas fa-plus me-1"></i>Add Reward
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="streakRewardsContainer">
+                            <% if (settings.streakRoleRewards && settings.streakRoleRewards.length > 0) { %>
+                                <% settings.streakRoleRewards.forEach((reward, index) => { %>
+                                    <div class="card mb-3 streak-reward-item">
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Streak Required</label>
+                                                    <input type="number" class="form-control" name="streakRoleRewards[<%= index %>][streak]" 
+                                                           value="<%= reward.streak %>" min="1" max="1000">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Role to Give</label>
+                                                    <select class="form-select" name="streakRoleRewards[<%= index %>][role]">
+                                                        <option value="">Select a role...</option>
+                                                        <% roles.forEach(role => { %>
+                                                            <option value="<%= role.id %>" <%= reward.role === role.id ? 'selected' : '' %>>
+                                                                <%= role.name %>
+                                                            </option>
+                                                        <% }); %>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button" class="btn btn-outline-danger" onclick="removeStreakReward(this)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="text-center py-4">
+                                    <i class="fas fa-fire fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No streak rewards configured</h5>
+                                    <p class="text-muted">Add role rewards for different streak milestones!</p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streak Information -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">ℹ️ How Streaks Work</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="text-muted mb-3">Streak System</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Members use daily commands to maintain streaks or just chat in server</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Missing a day resets the streak to 0</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Role rewards are given at milestone streaks</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Streaks are tracked per user</li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streak Statistics -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">📊 Streak Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <h3 class="text-primary mb-1"><%= settings.streakMinimum || 3 %></h3>
+                                    <p class="text-muted mb-0">Minimum Streak</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <h3 class="text-success mb-1"><%= settings.streakRoleRewards ? settings.streakRoleRewards.length : 0 %></h3>
+                                    <p class="text-muted mb-0">Role Rewards</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6 class="text-muted mb-3">Current Settings</h6>
+                                <ul class="list-unstyled small">
+                                    <li><strong>Emoji:</strong> <%= settings.streakEmoji || '🔥' %></li>
+                                    <li><strong>Minimum:</strong> <%= settings.streakMinimum || 3 %> days</li>
+                                    <li><strong>Status:</strong> <%= settings.streakOn ? 'Enabled' : 'Disabled' %></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streak Examples -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">💡 Streak Examples</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6 class="text-muted mb-3">Basic Streak</h6>
+                                <div class="glass-effect p-3 rounded">
+                                    <p class="mb-1"><strong>Day 1:</strong> 🔥 1 day streak</p>
+                                    <p class="mb-1"><strong>Day 2:</strong> 🔥 2 day streak</p>
+                                    <p class="mb-1"><strong>Day 3:</strong> 🔥 3 day streak</p>
+                                    <p class="mb-0"><strong>Missed:</strong> ❌ Streak reset</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="text-muted mb-3">Role Rewards</h6>
+                                <div class="glass-effect p-3 rounded">
+                                    <p class="mb-1"><strong>7 days:</strong> 🥉 Bronze role</p>
+                                    <p class="mb-1"><strong>30 days:</strong> 🥈 Silver role</p>
+                                    <p class="mb-1"><strong>100 days:</strong> 🥇 Gold role</p>
+                                    <p class="mb-0"><strong>365 days:</strong> 💎 Diamond role</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="text-muted mb-3">Leaderboard</h6>
+                                <div class="glass-effect p-3 rounded">
+                                    <p class="mb-1"><strong>1st:</strong> UserA - 150 days</p>
+                                    <p class="mb-1"><strong>2nd:</strong> UserB - 89 days</p>
+                                    <p class="mb-1"><strong>3rd:</strong> UserC - 45 days</p>
+                                    <p class="mb-0"><strong>You:</strong> 12 days</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+function addStreakReward() {
+    const container = document.getElementById('streakRewardsContainer');
+    const div = document.createElement('div');
+    div.className = 'card mb-3 streak-reward-item';
+    div.innerHTML = `
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label">Streak Required</label>
+                    <input type="number" class="form-control" name="streakRoleRewards[${Date.now()}][streak]" 
+                           min="1" max="1000" placeholder="e.g., 7">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Role to Give</label>
+                    <select class="form-select" name="streakRoleRewards[${Date.now()}][role]">
+                        <option value="">Select a role...</option>
+                        <% roles.forEach(role => { %>
+                            <option value="<%= role.id %>"><%= role.name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-danger" onclick="removeStreakReward(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(div);
+}
+
+function removeStreakReward(button) {
+    button.closest('.streak-reward-item').remove();
+}
+</script>

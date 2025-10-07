@@ -1,74 +1,372 @@
-<div class="container-xxl flex-grow-1 container-p-y">
-    <h3 class="fw-bold text-white mb-4">General Settings</h3>
-    <% if (query.success==='true' ) { %>
-        <div class="alert alert-success">Settings saved successfully!</div>
-        <% } else if (query.error==='true' ) { %>
-            <div class="alert alert-danger">Failed to save settings.</div>
-            <% } %>
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
 
-                <form action="/dashboard/<%= guild.id %>/settings" method="POST">
-                    <div class="card glass-effect mb-4">
-                        <div class="card-body p-4">
-                            <div class="row g-4">
-                                <!-- <div class="col-12 col-md-6">
-                                    <label for="lang" class="form-label">Bot Language</label>
-                                    <select class="form-select select2" id="lang" name="lang">
-                                        <option value="id" <%=settings.lang==='id' ? 'selected' : '' %>>Bahasa Indonesia
-                                        </option>
-                                        <option value="en" <%=settings.lang==='en' ? 'selected' : '' %>>English</option>
-                                    </select>
-                                </div> -->
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">⚙️ Settings</h2>
+                    <p class="text-muted mb-0">Configure your server settings</p>
+                </div>
+                <div>
+                    <span class="badge bg-primary fs-6">Server: <%= guild.name %></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                                <div class="col-12 col-md-6">
-                                    <label for="modLogChannelId" class="form-label">Channel Log Moderation</label>
-                                    <select class="form-select select2" id="modLogChannelId" name="modLogChannelId">
-                                        <option value="">Not Configured</option>
-                                        <% channels.text.forEach(channel=> { %>
-                                            <option value="<%= channel.id %>" <%=settings.modLogChannelId===channel.id
-                                                ? 'selected' : '' %>>
-                                                #<%= channel.name %>
-                                            </option>
-                                            <% }) %>
-                                    </select>
-                                </div>
-                                <!-- <div class="col-md-6">
-                                    <label for="select-admins" class="form-label">Bot Admins</label>
-                                    <div class="select2-primary">
-                                        <select id="select-admins" name="admins" class="w-100 select2 form-select"
-                                            multiple="">
-                                            <% roles.forEach(role=> { %>
-                                                <option value="<%= role.id %>" <%=Array.isArray(settings.admins) &&
-                                                    settings.admins.includes(role.id) ? 'selected' : '' %>>
-                                                    <%= role.name %>
-                                                </option>
-                                                <% }) %>
-                                        </select>
-                                    </div>
-                                    <small class="form-text text-white-50">Bot will not receive XP or
-                                        run automod in this channel.</small>
-                                </div> -->
-                                <div class="col-md-6">
-                                    <label for="select-ignore" class="form-label">Ignored Automod Channel</label>
-                                    <div class="select2-primary">
-                                        <select id="select-ignore" name="ignoredChannels"
-                                            class="w-100 select2 form-select" multiple="">
-                                            <% channels.text.forEach(channel=> { %>
-                                                <option value="<%= channel.id %>"
-                                                    <%=Array.isArray(settings.ignoredChannels) &&
-                                                    settings.ignoredChannels.includes(channel.id) ? 'selected' : '' %>>
-                                                    #<%= channel.name %>
-                                                </option>
-                                                <% }) %>
-                                        </select>
-                                    </div>
-                                    <small class="form-text text-white-50">Bot will not receive XP or
-                                        run automod in this channel.</small>
-                                </div>
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <!-- Settings Categories -->
+    <div class="row">
+
+        <!-- Feature Toggle -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 glass-effect">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg me-3">
+                            <div class="avatar-initial bg-warning rounded">
+                                <i class="fas fa-toggle-on"></i>
                             </div>
                         </div>
+                        <div>
+                            <h5 class="mb-0">Feature Toggle</h5>
+                            <p class="text-muted mb-0">Enable/disable features</p>
+                        </div>
                     </div>
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+                    <p class="text-muted mb-3">Quickly enable or disable bot features.</p>
+                    <a href="/dashboard/<%= guildId %>/settings/features" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Automod Settings -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 glass-effect">
+                <div class="card-body ">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg me-3">
+                            <div class="avatar-initial bg-danger rounded">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Automod</h5>
+                            <p class="text-muted mb-0">Anti-spam & moderation</p>
+                        </div>
                     </div>
-                </form>
+                    <p class="text-muted mb-3">Configure anti-spam, bad words, and moderation features.</p>
+                    <a href="/dashboard/<%= guildId %>/settings/automod" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Server Stats -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 glass-effect">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg me-3">
+                            <div class="avatar-initial bg-info rounded">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Server Stats</h5>
+                            <p class="text-muted mb-0">Dynamic counters</p>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">Set up dynamic member and server statistics channels.</p>
+                    <a href="/dashboard/<%= guildId %>/settings/stats" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome System -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 glass-effect">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg me-3">
+                            <div class="avatar-initial bg-success rounded">
+                                <i class="fas fa-hand-wave"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Welcome System</h5>
+                            <p class="text-muted mb-0">Member greetings</p>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">Configure welcome messages and member onboarding.</p>
+                    <a href="/dashboard/<%= guildId %>/settings/welcome" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leveling System -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 glass-effect">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg me-3">
+                            <div class="avatar-initial bg-warning rounded">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Leveling System</h5>
+                            <p class="text-muted mb-0">XP & rewards</p>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">Configure XP system, level rewards, and progression.</p>
+                    <a href="/dashboard/<%= guildId %>/settings/leveling" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Minecraft Integration -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 glass-effect">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg me-3">
+                            <div class="avatar-initial bg-secondary rounded">
+                                <i class="fas fa-cube"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Minecraft</h5>
+                            <p class="text-muted mb-0">Server integration</p>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">Connect your Minecraft server and display stats.</p>
+                    <a href="/dashboard/<%= guildId %>/settings/minecraft" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cooldowns -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 glass-effect">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg me-3">
+                            <div class="avatar-initial bg-dark rounded">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Cooldowns</h5>
+                            <p class="text-muted mb-0">Command timers</p>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">Set cooldown timers for economy commands.</p>
+                    <a href="/dashboard/<%= guildId %>/settings/cooldown" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Language -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 glass-effect">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg me-3">
+                            <div class="avatar-initial bg-primary rounded">
+                                <i class="fas fa-language"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Language</h5>
+                            <p class="text-muted mb-0">Bot language</p>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">Set the bot's language for this server.</p>
+                    <a href="/dashboard/<%= guildId %>/settings/language" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Testimony System -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 glass-effect">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg me-3">
+                            <div class="avatar-initial bg-info rounded">
+                                <i class="fas fa-comment-dots"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Testimony</h5>
+                            <p class="text-muted mb-0">User feedback</p>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">Configure testimony collection and feedback system.</p>
+                    <a href="/dashboard/<%= guildId %>/settings/testimony" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Features -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 glass-effect">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg me-3">
+                            <div class="avatar-initial bg-gradient-primary rounded">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">AI Features</h5>
+                            <p class="text-muted mb-0">AI integration</p>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">Configure AI-powered features and channels.</p>
+                    <a href="/dashboard/<%= guildId %>/settings/ai" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Streak System -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 glass-effect">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg me-3">
+                            <div class="avatar-initial bg-danger rounded">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Streak System</h5>
+                            <p class="text-muted mb-0">Daily streaks</p>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">Configure daily streak tracking and rewards.</p>
+                    <a href="/dashboard/<%= guildId %>/settings/streak" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Channel Settings -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 glass-effect">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg me-3">
+                            <div class="avatar-initial bg-success rounded">
+                                <i class="fas fa-hashtag"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Channels</h5>
+                            <p class="text-muted mb-0">Channel settings</p>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">Configure announcement and invite log channels.</p>
+                    <a href="/dashboard/<%= guildId %>/settings/channels" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Settings Summary -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card glass-effect">
+                <div class="card-header">
+                    <h5 class="mb-0">📊 Current Settings Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">Enabled Features</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                <% if (settings.antiSpamOn) { %>
+                                    <span class="badge bg-success">Anti-Spam</span>
+                                <% } %>
+                                <% if (settings.antiBadwordOn) { %>
+                                    <span class="badge bg-success">Anti-Badwords</span>
+                                <% } %>
+                                <% if (settings.antiMentionOn) { %>
+                                    <span class="badge bg-success">Anti-Mention</span>
+                                <% } %>
+                                <% if (settings.serverStatsOn) { %>
+                                    <span class="badge bg-success">Server Stats</span>
+                                <% } %>
+                                <% if (settings.levelingOn) { %>
+                                    <span class="badge bg-success">Leveling</span>
+                                <% } %>
+                                <% if (settings.welcomeInOn) { %>
+                                    <span class="badge bg-success">Welcome In</span>
+                                <% } %>
+                                <% if (settings.welcomeOutOn) { %>
+                                    <span class="badge bg-success">Welcome Out</span>
+                                <% } %>
+                                <% if (settings.streakOn) { %>
+                                    <span class="badge bg-success">Streak</span>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">Server Info</h6>
+                            <ul class="list-unstyled mb-0">
+                                <li><strong>Language:</strong> <%= settings.lang || 'en' %></li>
+                                <li><strong>Members:</strong> <%= guild.memberCount.toLocaleString() %></li>
+                                <li><strong>Channels:</strong> <%= guild.channels.cache.size %></li>
+                                <li><strong>Roles:</strong> <%= guild.roles.cache.size %></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

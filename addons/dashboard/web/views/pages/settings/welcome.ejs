@@ -1,0 +1,429 @@
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings/welcome.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
+
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">👋 Welcome Settings</h2>
+                    <p class="text-muted mb-0">Configure welcome messages and member onboarding</p>
+                </div>
+                <div>
+                    <a href="/dashboard/<%= guildId %>/settings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Welcome settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving welcome settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/<%= guildId %>/settings/welcome">
+        <div class="row">
+            <!-- Feature Toggles -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">🔧 Feature Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="welcomeInOn" name="welcomeInOn" 
+                                   <%= settings.welcomeInOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="welcomeInOn">
+                                <strong>Welcome In Messages</strong>
+                                <br><small class="text-muted">Send messages when members join</small>
+                            </label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="welcomeOutOn" name="welcomeOutOn" 
+                                   <%= settings.welcomeOutOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="welcomeOutOn">
+                                <strong>Welcome Out Messages</strong>
+                                <br><small class="text-muted">Send messages when members leave</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Channel Settings -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📢 Channel Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="welcomeInChannelId" class="form-label">Welcome In Channel</label>
+                            <select class="form-select" id="welcomeInChannelId" name="welcomeInChannelId">
+                                <option value="">Select a channel...</option>
+                                <% channels.text.forEach(channel => { %>
+                                    <option value="<%= channel.id %>" <%= settings.welcomeInChannelId === channel.id ? 'selected' : '' %>>
+                                        #<%= channel.name %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Channel for welcome in messages</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="welcomeOutChannelId" class="form-label">Welcome Out Channel</label>
+                            <select class="form-select" id="welcomeOutChannelId" name="welcomeOutChannelId">
+                                <option value="">Select a channel...</option>
+                                <% channels.text.forEach(channel => { %>
+                                    <option value="<%= channel.id %>" <%= settings.welcomeOutChannelId === channel.id ? 'selected' : '' %>>
+                                        #<%= channel.name %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Channel for welcome out messages</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="welcomeRoleId" class="form-label">Welcome Role</label>
+                            <select class="form-select" id="welcomeRoleId" name="welcomeRoleId">
+                                <option value="">Select a role...</option>
+                                <% roles.forEach(role => { %>
+                                    <option value="<%= role.id %>" <%= settings.welcomeRoleId === role.id ? 'selected' : '' %>>
+                                        <%= role.name %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Role to give to new members</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Welcome In Text -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📝 Welcome In Message</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="welcomeInText" class="form-label">Welcome In Text</label>
+                            <textarea class="form-control" id="welcomeInText" name="welcomeInText" rows="4" 
+                                      placeholder="Welcome {username}! You are the #{memberCount} member"><%= settings.welcomeInText || '' %></textarea>
+                            <div class="form-text">
+                                Available placeholders: <code>{username}</code>, <code>{memberCount}</code>, <code>{guild}</code>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="welcomeInBackgroundUrl" class="form-label">Background Image URL</label>
+                            <input type="url" class="form-control" id="welcomeInBackgroundUrl" name="welcomeInBackgroundUrl" 
+                                   value="<%= settings.welcomeInBackgroundUrl || '' %>" 
+                                   placeholder="https://example.com/image.jpg">
+                            <div class="form-text">URL for welcome in background image</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Welcome Out Text -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📝 Welcome Out Message</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="welcomeOutText" class="form-label">Welcome Out Text</label>
+                            <textarea class="form-control" id="welcomeOutText" name="welcomeOutText" rows="4" 
+                                      placeholder="Goodbye {username}! We'll miss you."><%= settings.welcomeOutText || '' %></textarea>
+                            <div class="form-text">
+                                Available placeholders: <code>{username}</code>, <code>{memberCount}</code>, <code>{guild}</code>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="welcomeOutBackgroundUrl" class="form-label">Background Image URL</label>
+                            <input type="url" class="form-control" id="welcomeOutBackgroundUrl" name="welcomeOutBackgroundUrl" 
+                                   value="<%= settings.welcomeOutBackgroundUrl || '' %>" 
+                                   placeholder="https://example.com/image.jpg">
+                            <div class="form-text">URL for welcome out background image</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Welcome In Settings -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">🎨 Advanced Welcome In Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Banner Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Banner Settings</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="welcomeInBannerWidth" class="form-label">Width (px)</label>
+                                        <input type="number" class="form-control" id="welcomeInBannerWidth" name="welcomeInBannerWidth" 
+                                               value="<%= settings.welcomeInBannerWidth || 800 %>">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="welcomeInBannerHeight" class="form-label">Height (px)</label>
+                                        <input type="number" class="form-control" id="welcomeInBannerHeight" name="welcomeInBannerHeight" 
+                                               value="<%= settings.welcomeInBannerHeight || 300 %>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Avatar Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Avatar Settings</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="welcomeInAvatarSize" class="form-label">Size (px)</label>
+                                        <input type="number" class="form-control" id="welcomeInAvatarSize" name="welcomeInAvatarSize" 
+                                               value="<%= settings.welcomeInAvatarSize || 128 %>">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="welcomeInAvatarShape" class="form-label">Shape</label>
+                                        <select class="form-select" id="welcomeInAvatarShape" name="welcomeInAvatarShape">
+                                            <option value="circle" <%= settings.welcomeInAvatarShape === 'circle' ? 'selected' : '' %>>Circle</option>
+                                            <option value="square" <%= settings.welcomeInAvatarShape === 'square' ? 'selected' : '' %>>Square</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <label for="welcomeInAvatarBorderWidth" class="form-label">Border Width</label>
+                                        <input type="number" class="form-control" id="welcomeInAvatarBorderWidth" name="welcomeInAvatarBorderWidth" value="<%= settings.welcomeInAvatarBorderWidth || 4 %>">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="welcomeInAvatarBorderColor" class="form-label">Border Color</label>
+                                        <input type="color" class="form-control form-control-color" id="welcomeInAvatarBorderColor" name="welcomeInAvatarBorderColor" value="<%= settings.welcomeInAvatarBorderColor || '#FFFFFF' %>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <!-- Text Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Main Text Settings</h6>
+                                <div class="mb-3">
+                                    <label for="welcomeInMainTextContent" class="form-label">Main Text</label>
+                                    <input type="text" class="form-control" id="welcomeInMainTextContent" name="welcomeInMainTextContent" 
+                                           value="<%= settings.welcomeInMainTextContent || 'WELCOME, {username}!' %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="welcomeInMainTextColor" class="form-label">Text Color</label>
+                                    <input type="color" class="form-control form-control-color" id="welcomeInMainTextColor" name="welcomeInMainTextColor" 
+                                           value="<%= settings.welcomeInMainTextColor || '#FFFFFF' %>">
+                                </div>
+                            </div>
+
+                            <!-- Sub Text Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Sub Text Settings</h6>
+                                <div class="mb-3">
+                                    <label for="welcomeInSubTextContent" class="form-label">Sub Text</label>
+                                    <input type="text" class="form-control" id="welcomeInSubTextContent" name="welcomeInSubTextContent" 
+                                           value="<%= settings.welcomeInSubTextContent || 'You are the #{memberCount} member' %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="welcomeInSubTextColor" class="form-label">Text Color</label>
+                                    <input type="color" class="form-control form-control-color" id="welcomeInSubTextColor" name="welcomeInSubTextColor" 
+                                           value="<%= settings.welcomeInSubTextColor || '#FFFFFF' %>">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <!-- Border Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Border Settings</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="welcomeInBorderWidth" class="form-label">Width (px)</label>
+                                        <input type="number" class="form-control" id="welcomeInBorderWidth" name="welcomeInBorderWidth" 
+                                               value="<%= settings.welcomeInBorderWidth || 4 %>">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="welcomeInBorderColor" class="form-label">Color</label>
+                                        <input type="color" class="form-control form-control-color" id="welcomeInBorderColor" name="welcomeInBorderColor" 
+                                               value="<%= settings.welcomeInBorderColor || '#FFFFFF' %>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Shadow Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Shadow Settings</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="welcomeInShadowBlur" class="form-label">Blur (px)</label>
+                                        <input type="number" class="form-control" id="welcomeInShadowBlur" name="welcomeInShadowBlur" 
+                                               value="<%= settings.welcomeInShadowBlur || 5 %>">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="welcomeInShadowColor" class="form-label">Color</label>
+                                        <input type="color" class="form-control form-control-color" id="welcomeInShadowColor" name="welcomeInShadowColor" 
+                                               value="<%= settings.welcomeInShadowColor || '#000000' %>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Welcome Out Settings -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">🎨 Advanced Welcome Out Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Banner Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Banner Settings</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="welcomeOutBannerWidth" class="form-label">Width (px)</label>
+                                        <input type="number" class="form-control" id="welcomeOutBannerWidth" name="welcomeOutBannerWidth" value="<%= settings.welcomeOutBannerWidth || 800 %>">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="welcomeOutBannerHeight" class="form-label">Height (px)</label>
+                                        <input type="number" class="form-control" id="welcomeOutBannerHeight" name="welcomeOutBannerHeight" value="<%= settings.welcomeOutBannerHeight || 300 %>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Avatar Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Avatar Settings</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="welcomeOutAvatarSize" class="form-label">Size (px)</label>
+                                        <input type="number" class="form-control" id="welcomeOutAvatarSize" name="welcomeOutAvatarSize" value="<%= settings.welcomeOutAvatarSize || 128 %>">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="welcomeOutAvatarShape" class="form-label">Shape</label>
+                                        <select class="form-select" id="welcomeOutAvatarShape" name="welcomeOutAvatarShape">
+                                            <option value="circle" <%= settings.welcomeOutAvatarShape === 'circle' ? 'selected' : '' %>>Circle</option>
+                                            <option value="square" <%= settings.welcomeOutAvatarShape === 'square' ? 'selected' : '' %>>Square</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <label for="welcomeOutAvatarBorderWidth" class="form-label">Border Width</label>
+                                        <input type="number" class="form-control" id="welcomeOutAvatarBorderWidth" name="welcomeOutAvatarBorderWidth" value="<%= settings.welcomeOutAvatarBorderWidth || 4 %>">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="welcomeOutAvatarBorderColor" class="form-label">Border Color</label>
+                                        <input type="color" class="form-control form-control-color" id="welcomeOutAvatarBorderColor" name="welcomeOutAvatarBorderColor" value="<%= settings.welcomeOutAvatarBorderColor || '#FFFFFF' %>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <!-- Text Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Main Text Settings</h6>
+                                <div class="mb-3">
+                                    <label for="welcomeOutMainTextContent" class="form-label">Main Text</label>
+                                    <input type="text" class="form-control" id="welcomeOutMainTextContent" name="welcomeOutMainTextContent" value="<%= settings.welcomeOutMainTextContent || 'Goodbye, {username}!' %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="welcomeOutMainTextColor" class="form-label">Text Color</label>
+                                    <input type="color" class="form-control form-control-color" id="welcomeOutMainTextColor" name="welcomeOutMainTextColor" value="<%= settings.welcomeOutMainTextColor || '#FFFFFF' %>">
+                                </div>
+                            </div>
+
+                            <!-- Sub Text Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Sub Text Settings</h6>
+                                <div class="mb-3">
+                                    <label for="welcomeOutSubTextContent" class="form-label">Sub Text</label>
+                                    <input type="text" class="form-control" id="welcomeOutSubTextContent" name="welcomeOutSubTextContent" value="<%= settings.welcomeOutSubTextContent || 'We hope to see you again' %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="welcomeOutSubTextColor" class="form-label">Text Color</label>
+                                    <input type="color" class="form-control form-control-color" id="welcomeOutSubTextColor" name="welcomeOutSubTextColor" value="<%= settings.welcomeOutSubTextColor || '#FFFFFF' %>">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <!-- Border Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Border Settings</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="welcomeOutBorderWidth" class="form-label">Width (px)</label>
+                                        <input type="number" class="form-control" id="welcomeOutBorderWidth" name="welcomeOutBorderWidth" value="<%= settings.welcomeOutBorderWidth || 4 %>">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="welcomeOutBorderColor" class="form-label">Color</label>
+                                        <input type="color" class="form-control form-control-color" id="welcomeOutBorderColor" name="welcomeOutBorderColor" value="<%= settings.welcomeOutBorderColor || '#FFFFFF' %>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Shadow Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Shadow Settings</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="welcomeOutShadowBlur" class="form-label">Blur (px)</label>
+                                        <input type="number" class="form-control" id="welcomeOutShadowBlur" name="welcomeOutShadowBlur" value="<%= settings.welcomeOutShadowBlur || 5 %>">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="welcomeOutShadowColor" class="form-label">Color</label>
+                                        <input type="color" class="form-control form-control-color" id="welcomeOutShadowColor" name="welcomeOutShadowColor" value="<%= settings.welcomeOutShadowColor || '#000000' %>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

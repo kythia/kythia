@@ -1,0 +1,256 @@
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings/language.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
+
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">🌐 Language Settings</h2>
+                    <p class="text-muted mb-0">Set the bot's language for this server</p>
+                </div>
+                <div>
+                    <a href="/dashboard/<%= guildId %>/settings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Language settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving language settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/<%= guildId %>/settings/language">
+        <div class="row">
+            <!-- Language Selection -->
+            <div class="col-lg-8 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">🌍 Select Language</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="lang" class="form-label">Bot Language</label>
+                            <select class="form-select" id="lang" name="lang" required>
+                                <option value="en" <%= settings.lang === 'en' ? 'selected' : '' %>>🇺🇸 English</option>
+                                <option value="id" <%= settings.lang === 'id' ? 'selected' : '' %>>🇮🇩 Indonesian</option>
+                                <option value="ja" <%= settings.lang === 'ja' ? 'selected' : '' %>>🇯🇵 Japanese</option>
+                                <option value="fr" <%= settings.lang === 'fr' ? 'selected' : '' %>>🇫🇷 French</option>
+                        
+                            </select>
+                            <div class="form-text">Choose the language for bot responses and messages</div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> Changing the language will affect all bot messages, command descriptions, and responses for this server.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Language Information -->
+            <div class="col-lg-4 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">ℹ️ Language Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="text-muted mb-3">Current Language</h6>
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-primary fs-6 me-2">
+                                <%= settings.lang ? settings.lang.toUpperCase() : 'EN' %>
+                            </span>
+                            <span id="currentLanguageName">
+                                <%= settings.lang === 'en' ? 'English' : 
+                                    settings.lang === 'id' ? 'Indonesian' :
+                                    settings.lang === 'es' ? 'Spanish' :
+                                    settings.lang === 'fr' ? 'French' :
+                                    settings.lang === 'de' ? 'German' :
+                                    settings.lang === 'pt' ? 'Portuguese' :
+                                    settings.lang === 'ru' ? 'Russian' :
+                                    settings.lang === 'ja' ? 'Japanese' :
+                                    settings.lang === 'ko' ? 'Korean' :
+                                    settings.lang === 'zh' ? 'Chinese' :
+                                    settings.lang === 'it' ? 'Italian' :
+                                    settings.lang === 'nl' ? 'Dutch' :
+                                    settings.lang === 'sv' ? 'Swedish' :
+                                    settings.lang === 'no' ? 'Norwegian' :
+                                    settings.lang === 'da' ? 'Danish' :
+                                    settings.lang === 'fi' ? 'Finnish' :
+                                    settings.lang === 'pl' ? 'Polish' :
+                                    settings.lang === 'tr' ? 'Turkish' :
+                                    settings.lang === 'ar' ? 'Arabic' :
+                                    settings.lang === 'hi' ? 'Hindi' :
+                                    settings.lang === 'th' ? 'Thai' :
+                                    settings.lang === 'vi' ? 'Vietnamese' : 'English' %>
+                            </span>
+                        </div>
+
+                        <h6 class="text-muted mb-3">What Changes?</h6>
+                        <ul class="list-unstyled small">
+                            <li><i class="fas fa-check text-success me-2"></i>Command descriptions</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Error messages</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Success messages</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Help text</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Bot responses</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Language Preview -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">👀 Language Preview</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">English (Default)</h6>
+                                <div class="bg-light p-3 rounded">
+                                    <p class="mb-1"><strong>Command:</strong> /help</p>
+                                    <p class="mb-1"><strong>Description:</strong> Shows all available commands</p>
+                                    <p class="mb-0"><strong>Response:</strong> Here are all available commands...</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Selected Language</h6>
+                                <div class="bg-light p-3 rounded" id="languagePreview">
+                                    <p class="mb-1"><strong>Command:</strong> /help</p>
+                                    <p class="mb-1"><strong>Description:</strong> Shows all available commands</p>
+                                    <p class="mb-0"><strong>Response:</strong> Here are all available commands...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Language Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+// Language data for preview
+const languageData = {
+    'en': {
+        command: '/help',
+        description: 'Shows all available commands',
+        response: 'Here are all available commands...'
+    },
+    'id': {
+        command: '/help',
+        description: 'Menampilkan semua perintah yang tersedia',
+        response: 'Berikut adalah semua perintah yang tersedia...'
+    },
+    'es': {
+        command: '/help',
+        description: 'Muestra todos los comandos disponibles',
+        response: 'Aquí están todos los comandos disponibles...'
+    },
+    'fr': {
+        command: '/help',
+        description: 'Affiche toutes les commandes disponibles',
+        response: 'Voici toutes les commandes disponibles...'
+    },
+    'de': {
+        command: '/help',
+        description: 'Zeigt alle verfügbaren Befehle an',
+        response: 'Hier sind alle verfügbaren Befehle...'
+    },
+    'pt': {
+        command: '/help',
+        description: 'Mostra todos os comandos disponíveis',
+        response: 'Aqui estão todos os comandos disponíveis...'
+    },
+    'ru': {
+        command: '/help',
+        description: 'Показывает все доступные команды',
+        response: 'Вот все доступные команды...'
+    },
+    'ja': {
+        command: '/help',
+        description: '利用可能なすべてのコマンドを表示',
+        response: '利用可能なすべてのコマンドはこちらです...'
+    },
+    'ko': {
+        command: '/help',
+        description: '사용 가능한 모든 명령어를 표시',
+        response: '사용 가능한 모든 명령어는 다음과 같습니다...'
+    },
+    'zh': {
+        command: '/help',
+        description: '显示所有可用命令',
+        response: '以下是所有可用命令...'
+    }
+};
+
+// Update language preview
+function updateLanguagePreview() {
+    const select = document.getElementById('lang');
+    const preview = document.getElementById('languagePreview');
+    const currentLanguageName = document.getElementById('currentLanguageName');
+    
+    const selectedLang = select.value;
+    const langData = languageData[selectedLang] || languageData['en'];
+    
+    preview.innerHTML = `
+        <p class="mb-1"><strong>Command:</strong> ${langData.command}</p>
+        <p class="mb-1"><strong>Description:</strong> ${langData.description}</p>
+        <p class="mb-0"><strong>Response:</strong> ${langData.response}</p>
+    `;
+    
+    // Update current language name
+    const languageNames = {
+        'en': 'English', 'id': 'Indonesian', 'es': 'Spanish', 'fr': 'French',
+        'de': 'German', 'pt': 'Portuguese', 'ru': 'Russian', 'ja': 'Japanese',
+        'ko': 'Korean', 'zh': 'Chinese', 'it': 'Italian', 'nl': 'Dutch',
+        'sv': 'Swedish', 'no': 'Norwegian', 'da': 'Danish', 'fi': 'Finnish',
+        'pl': 'Polish', 'tr': 'Turkish', 'ar': 'Arabic', 'hi': 'Hindi',
+        'th': 'Thai', 'vi': 'Vietnamese'
+    };
+    
+    currentLanguageName.textContent = languageNames[selectedLang] || 'English';
+}
+
+// Add event listener
+document.addEventListener('DOMContentLoaded', function() {
+    const select = document.getElementById('lang');
+    select.addEventListener('change', updateLanguagePreview);
+    
+    // Initial update
+    updateLanguagePreview();
+});
+</script>

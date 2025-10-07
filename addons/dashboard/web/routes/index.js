@@ -3,7 +3,7 @@
  * @type: Module
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta
+ * @version 0.9.9-beta-rc1
  */
 
 const { loadVisitorCounts, trackVisitor } = require('../helpers/visitor');
@@ -13,7 +13,6 @@ const logger = require('@utils/logger');
 const path = require('path');
 const fs = require('fs');
 
-// Main page (login page)
 router.get('/', trackVisitor, loadVisitorCounts, async (req, res) => {
     // Get bot client from app
     const client = req.app.get('botClient');
@@ -24,11 +23,14 @@ router.get('/', trackVisitor, loadVisitorCounts, async (req, res) => {
         totalServers = client.guilds.cache.size;
         // Count unique members across all servers
         const memberSet = new Set();
-        client.guilds.cache.forEach((guild) => {
-            guild.members?.cache?.forEach((member) => {
-                memberSet.add(member.user.id);
-            });
-        });
+        if (client && client.guilds && client.guilds.cache) {
+            totalServers = client.guilds.cache.size;
+
+            // --- INI DIA CARA YANG BENAR DAN EFISIEN ---
+            // Langsung jumlahkan memberCount dari setiap server.
+            // Cepat, akurat untuk metrik "jangkauan", dan hemat memori.
+            totalMembers = client.guilds.cache.reduce((acc, guild) => acc + (guild.memberCount || 0), 0);
+        }
         totalMembers = memberSet.size;
         // If cache is empty (e.g. bot just restarted), fallback to approximate
         if (totalMembers === 0) {

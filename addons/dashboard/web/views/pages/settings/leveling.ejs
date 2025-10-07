@@ -1,0 +1,245 @@
+<!--
+  @namespace: addons/dashboard/web/views/pages/settings/leveling.ejs
+  @type: View
+  @copyright © 2025 kenndeclouv
+  @assistant chaa & graa
+  @version 0.9.9-beta
+-->
+
+<div class="container-fluid mt-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">🏆 Leveling Settings</h2>
+                    <p class="text-muted mb-0">Configure XP system, level rewards, and progression</p>
+                </div>
+                <div>
+                    <a href="/dashboard/<%= guildId %>/settings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (query.success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Leveling settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    <% if (query.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Error saving leveling settings. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/<%= guildId %>/settings/leveling">
+        <div class="row">
+            <!-- Feature Toggle -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">🔧 Feature Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="levelingOn" name="levelingOn" 
+                                   <%= settings.levelingOn ? 'checked' : '' %>>
+                            <label class="form-check-label" for="levelingOn">
+                                <strong>Enable Leveling System</strong>
+                                <br><small class="text-muted">Allow members to gain XP and level up</small>
+                            </label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="levelingChannelId" class="form-label">Level Up Channel</label>
+                            <select class="form-select" id="levelingChannelId" name="levelingChannelId">
+                                <option value="">Select a channel...</option>
+                                <% channels.text.forEach(channel => { %>
+                                    <option value="<%= channel.id %>" <%= settings.levelingChannelId === channel.id ? 'selected' : '' %>>
+                                        #<%= channel.name %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Channel where level up messages will be sent</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- XP Settings -->
+            <div class="col-lg-6 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">⚡ XP Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="levelingXp" class="form-label">XP per Message</label>
+                            <input type="number" class="form-control" id="levelingXp" name="levelingXp" 
+                                   value="<%= settings.levelingXp || 60 %>" min="1" max="1000">
+                            <div class="form-text">XP gained per message (1-1000)</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="levelingCooldown" class="form-label">XP Cooldown (seconds)</label>
+                            <input type="number" class="form-control" id="levelingCooldown" name="levelingCooldown" 
+                                   value="<%= (settings.levelingCooldown || 300) / 1000 %>" min="1" max="3600">
+                            <div class="form-text">Time between XP gains (1-3600 seconds)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role Rewards -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">🎁 Role Rewards</h5>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="addRoleReward()">
+                            <i class="fas fa-plus me-1"></i>Add Reward
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="roleRewardsContainer">
+                            <% if (settings.roleRewards && settings.roleRewards.length > 0) { %>
+                                <% settings.roleRewards.forEach((reward, index) => { %>
+                                    <div class="card glass-effect mb-3 role-reward-item">
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Level Required</label>
+                                                    <input type="number" class="form-control" name="roleRewards[<%= index %>][level]" 
+                                                           value="<%= reward.level %>" min="1" max="1000">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Role to Give</label>
+                                                    <select class="form-select" name="roleRewards[<%= index %>][role]">
+                                                        <option value="">Select a role...</option>
+                                                        <% roles.forEach(role => { %>
+                                                            <option value="<%= role.id %>" <%= reward.role === role.id || reward.roleId === role.id ? 'selected' : '' %>>
+                                                                <%= role.name %>
+                                                            </option>
+                                                        <% }); %>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button" class="btn btn-outline-danger" onclick="removeRoleReward(this)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="text-center py-4">
+                                    <i class="fas fa-gift fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No role rewards configured</h5>
+                                    <p class="text-muted">Add role rewards to motivate your members!</p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leveling Information -->
+            <div class="col-12 mb-4">
+                <div class="card glass-effect">
+                    <div class="card-header">
+                        <h5 class="mb-0">📊 Leveling Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">How Leveling Works</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>Members gain XP by sending messages</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>XP is gained based on your "XP per Message" setting</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>There's a cooldown between XP gains</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Level up messages are sent to the specified channel</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">XP Formula</h6>
+                                <div class="bg-light p-3 rounded">
+                                    <code>XP Required = Level² × 100</code>
+                                    <br><small class="text-muted">Example: Level 5 = 5² × 100 = 2,500 XP</small>
+                                </div>
+                                <div class="mt-3">
+                                    <h6 class="text-muted">Quick Level Examples</h6>
+                                    <ul class="list-unstyled small">
+                                        <li>Level 1: 100 XP</li>
+                                        <li>Level 5: 2,500 XP</li>
+                                        <li>Level 10: 10,000 XP</li>
+                                        <li>Level 25: 62,500 XP</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+let rewardIndex = <%= settings.roleRewards ? settings.roleRewards.length : 0 %>;
+
+function addRoleReward() {
+    const container = document.getElementById('roleRewardsContainer');
+    const div = document.createElement('div');
+    div.className = 'card glass-effect mb-3 role-reward-item';
+    div.innerHTML = `
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label">Level Required</label>
+                    <input type="number" class="form-control" name="roleRewards[${rewardIndex}][level]" 
+                           min="1" max="1000" placeholder="e.g., 5">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Role to Give</label>
+                    <select class="form-select" name="roleRewards[${rewardIndex}][role]">
+                        <option value="">Select a role...</option>
+                        <% roles.forEach(role => { %>
+                            <option value="<%= role.id %>"><%= role.name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-danger" onclick="removeRoleReward(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(div);
+    rewardIndex++;
+}
+
+function removeRoleReward(button) {
+    button.closest('.role-reward-item').remove();
+}
+</script>
