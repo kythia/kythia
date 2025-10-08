@@ -355,24 +355,32 @@ async function checkServerAccess(req, res, next) {
             await ServerSetting.create({ guildId: guild.id, guildName: guild.name });
             settings = await ServerSetting.getCache({ guildId: guild.id });
         }
-        // Fallback: if still null, assign empty object with safe defaults
-        if (!settings || typeof settings !== 'object') {
+        if (settings && typeof settings.saveAndUpdateCache === 'function') {
+            const fieldsToEnsureArray = [
+                'whitelist',
+                'serverStats',
+                'roleRewards',
+                'aiChannelIds',
+                'badwords',
+                'badwordWhitelist',
+                'ignoredChannels',
+                'streakRoleRewards',
+            ];
+
+            for (const field of fieldsToEnsureArray) {
+                if (settings.hasOwnProperty(field)) {
+                    settings[field] = ensureArray(settings[field]);
+                }
+            }
+        } else {
+            // Jika settings masih bermasalah setelah semua usaha,
+            // log errornya agar kamu tahu, dan set ke objek kosong agar EJS tidak crash.
+            logger.error(`Failed to get a valid settings instance for guild ${guildId}`);
             settings = {};
         }
-        // Normalize known array-like fields to arrays to prevent EJS forEach errors
-        const normalized = {
-            ...settings,
-            whitelist: ensureArray(settings.whitelist),
-            serverStats: ensureArray(settings.serverStats),
-            roleRewards: ensureArray(settings.roleRewards),
-            aiChannelIds: ensureArray(settings.aiChannelIds),
-            badwords: ensureArray(settings.badwords),
-            badwordWhitelist: ensureArray(settings.badwordWhitelist),
-            ignoredChannels: ensureArray(settings.ignoredChannels),
-            streakRoleRewards: ensureArray(settings.streakRoleRewards),
-        };
-        req.settings = normalized;
 
+        // Teruskan objeknya, baik yang sudah dinormalisasi maupun objek kosong jika gagal
+        req.settings = settings;
         return next();
     } catch (error) {
         console.error('Error di middleware checkServerAccess:', error);

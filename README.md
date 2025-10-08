@@ -150,6 +150,233 @@ For a full list of commands and their detailed usage, please see the [Command Do
 
 ---
 
+## 🛠️ Kythia CLI
+
+Kythia comes with a powerful command-line interface (CLI) tool inspired by Laravel's Artisan. The CLI centralizes all project management scripts and makes it easy to perform common development tasks.
+
+### 📋 Available Commands
+
+#### **Bot Management**
+
+##### `start [--deploy|-d]`
+Starts the Kythia bot.
+```bash
+node kythia-cli.js start
+node kythia-cli.js start --deploy  # Start with slash command deployment
+```
+
+##### `deploy`
+Deploys slash commands to Discord.
+```bash
+node kythia-cli.js deploy
+```
+
+---
+
+#### **PM2 Process Management**
+
+##### `pm2 startup`
+Starts the bot with PM2 and saves the process list for automatic startup.
+```bash
+node kythia-cli.js pm2 startup
+```
+
+##### `pm2 start`
+Starts the bot with PM2.
+```bash
+node kythia-cli.js pm2 start
+```
+
+##### `pm2 restart`
+Restarts the bot process in PM2.
+```bash
+node kythia-cli.js pm2 restart
+```
+
+##### `pm2 stop`
+Stops the bot process in PM2.
+```bash
+node kythia-cli.js pm2 stop
+```
+
+##### `pm2 delete`
+Removes the bot process from PM2.
+```bash
+node kythia-cli.js pm2 delete
+```
+
+##### `pm2 logs`
+Shows PM2 logs for the bot.
+```bash
+node kythia-cli.js pm2 logs
+```
+
+---
+
+#### **Database Management**
+
+##### `db flush`
+Flushes the Redis database. **⚠️ USE WITH CAUTION!** This will delete all data.
+```bash
+node kythia-cli.js db flush
+```
+
+##### `db seed`
+Seeds the database with initial data.
+```bash
+node kythia-cli.js db seed
+```
+
+---
+
+#### **Documentation**
+
+##### `docs generate`
+Generates documentation for all commands.
+```bash
+node kythia-cli.js docs generate
+```
+
+---
+
+#### **Build & Deployment**
+
+##### `build build`
+Runs the full build process: upversion, documentation generation, and code obfuscation.
+```bash
+node kythia-cli.js build build
+```
+
+##### `build obfuscate`
+Obfuscates the code for production deployment.
+```bash
+node kythia-cli.js build obfuscate
+```
+
+##### `build upversion`
+Updates the version number across the project.
+```bash
+node kythia-cli.js build upversion
+```
+
+---
+
+#### **Testing**
+
+##### `test test`
+Runs the test suite using Jest.
+```bash
+node kythia-cli.js test test
+```
+
+---
+
+#### **Code Quality**
+
+##### `format format`
+Formats all JavaScript and JSON files using Prettier.
+```bash
+node kythia-cli.js format format
+```
+
+##### `husky prepare`
+Prepares Husky git hooks.
+```bash
+node kythia-cli.js husky prepare
+```
+
+---
+
+#### **Development Scripts**
+
+##### `check e`
+Runs the check_e.js script.
+```bash
+node kythia-cli.js check e
+```
+
+##### `check t`
+Runs the check_t.js script.
+```bash
+node kythia-cli.js check t
+```
+
+##### `refactor t`
+Runs the refactor_t.js script.
+```bash
+node kythia-cli.js refactor t
+```
+
+##### `add namespace`
+Adds namespace to files.
+```bash
+node kythia-cli.js add namespace
+```
+
+##### `gen structure`
+Generates project structure documentation.
+```bash
+node kythia-cli.js gen structure
+```
+
+##### `audit permissions`
+Audits command permissions across the project.
+```bash
+node kythia-cli.js audit permissions
+```
+
+---
+
+#### **Code Generation**
+
+##### `make:command <addon> <name>`
+Creates a new command file in the specified addon.
+
+**Arguments:**
+- `<addon>`: The name of the addon (e.g., `core`, `economy`, `music`)
+- `<name>`: The name of the new command (e.g., `my-command`)
+
+**Example:**
+```bash
+node kythia-cli.js make:command core test-command
+node kythia-cli.js make:command economy daily-reward
+```
+
+This will create a new command file with a template that includes:
+- Proper namespace annotation
+- SlashCommandBuilder setup
+- Basic execute function
+- Copyright and version information
+
+---
+
+### 💡 CLI Tips
+
+- **Help Command:** Use `--help` or `-h` with any command to see detailed usage information:
+  ```bash
+  node kythia-cli.js --help
+  node kythia-cli.js start --help
+  ```
+
+- **Quick Alias:** You can create a shell alias for easier access:
+  ```bash
+  # Add to your .bashrc or .zshrc
+  alias kythia="node kythia-cli.js"
+  
+  # Then use it like:
+  kythia start
+  kythia pm2 restart
+  ```
+
+- **NPM Scripts:** Many CLI commands are also available as npm scripts in `package.json`:
+  ```bash
+  npm start              # Same as: node kythia-cli.js start --deploy
+  npm run pm2:startup    # Same as: node kythia-cli.js pm2 startup
+  npm test               # Same as: node kythia-cli.js test test
+  ```
+
+---
+
 ## 🙌 Contributing
 
 Contributions to Kythia are managed by the internal development team. If you are a member of the team and would like to contribute, please follow the established development workflow.
