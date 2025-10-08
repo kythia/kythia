@@ -642,6 +642,22 @@ module.exports = {
             .setFooter(await embedFooter(interaction))
             .setTimestamp();
 
+        // Helper: Clean and parse JSON stringified values (for double/triple stringified arrays/objects)
+        function cleanAndParseJson(value) {
+            if (typeof value !== 'string') return value;
+            let tempValue = value;
+            try {
+                // Try to parse repeatedly until not a string or error
+                while (typeof tempValue === 'string') {
+                    tempValue = JSON.parse(tempValue);
+                }
+                return tempValue;
+            } catch (e) {
+                // If failed, return last valid value
+                return tempValue;
+            }
+        }
+
         if (sub === 'view') {
             if (!serverSetting || !serverSetting.dataValues) {
                 embed.setDescription(await t(interaction, 'core_setting_setting_no_config'));
@@ -656,7 +672,7 @@ module.exports = {
                     .replace(/\s([a-z])/g, (match, p1) => ` ${p1.toUpperCase()}`);
             }
             for (const [key, value] of Object.entries(settings)) {
-                if (['id', 'guildId'].includes(key) || value === null) continue;
+                if (['id', 'guildId'].includes(key)) continue;
                 const formattedKey = `\`${formatKey(key)}\``;
                 if (typeof value === 'boolean') {
                     let displayKey = formattedKey.replace(/\sOn`$/, '`');
@@ -680,7 +696,26 @@ module.exports = {
                     }
                 } else if (typeof value === 'string' || typeof value === 'number') {
                     let displayValue = value;
-                    if (
+                    const cleanedValue = cleanAndParseJson(value);
+
+                    // Special handling for some keys
+                    if (key === 'badwords' || key === 'whitelist' || key === 'ignoredChannels') {
+                        if (Array.isArray(cleanedValue) && cleanedValue.length > 0) {
+                            if (key === 'ignoredChannels') {
+                                displayValue = cleanedValue.map((id) => `<#${id}>`).join(', ');
+                            } else {
+                                displayValue = cleanedValue.map((item) => `\`${item}\``).join(', ');
+                            }
+                        } else {
+                            displayValue = `*${await t(interaction, 'core_setting_setting_empty')}*`;
+                        }
+                    } else if (key === 'serverStats') {
+                        if (Array.isArray(cleanedValue) && cleanedValue.length > 0) {
+                            displayValue = cleanedValue.map((stat) => `\n   └ ${stat.format} ➜ <#${stat.channelId}>`).join('');
+                        } else {
+                            displayValue = `*${await t(interaction, 'core_setting_setting_not_set')}*`;
+                        }
+                    } else if (
                         key.toLowerCase().includes('channelid') ||
                         key.toLowerCase().includes('forumid') ||
                         (key.toLowerCase().includes('categoryid') && value)
@@ -696,33 +731,132 @@ module.exports = {
                     kategori.lainnya.push(`⬛ ・${formattedKey}`);
                 }
             }
-            const descriptionBlocks = [];
+
+            // --- Pagination: Build all lines, then split into pages safely ---
+            const allLines = [];
+
+            // Boolean
             if (kategori.boolean.length) {
-                descriptionBlocks.push(
-                    `### ⭕ ${await t(interaction, 'core_setting_setting_section_boolean')}\n${kategori.boolean.join('\n')}`
-                );
+                allLines.push(`### ⭕ ${await t(interaction, 'core_setting_setting_section_boolean')}`);
+                allLines.push(...kategori.boolean);
+                allLines.push('');
             }
+            // Umum
             if (kategori.umum.length) {
-                descriptionBlocks.push(`### ⚙️ ${await t(interaction, 'core_setting_setting_section_umum')}\n${kategori.umum.join('\n')}`);
+                allLines.push(`### ⚙️ ${await t(interaction, 'core_setting_setting_section_umum')}`);
+                allLines.push(...kategori.umum);
+                allLines.push('');
             }
+            // Array
             if (kategori.array.length) {
-                descriptionBlocks.push(
-                    `### 🗃️ ${await t(interaction, 'core_setting_setting_section_array')}\n${kategori.array.join('\n\n')}`
-                );
+                allLines.push(`### 🗃️ ${await t(interaction, 'core_setting_setting_section_array')}`);
+                allLines.push(...kategori.array);
+                allLines.push('');
             }
+            // Lainnya
             if (kategori.lainnya.length) {
-                descriptionBlocks.push(
-                    `### ❓ ${await t(interaction, 'core_setting_setting_section_lainnya')}\n${kategori.lainnya.join('\n')}`
-                );
+                allLines.push(`### ❓ ${await t(interaction, 'core_setting_setting_section_lainnya')}`);
+                allLines.push(...kategori.lainnya);
+                allLines.push('');
             }
-            const finalDescription = descriptionBlocks.join('\n\n');
-            embed
-                .setTitle(await t(interaction, 'core_setting_setting_embed_title_view'))
-                .setColor(kythia.bot.color)
-                .setDescription(finalDescription || (await t(interaction, 'core_setting_setting_no_configured')))
-                .setTimestamp()
-                .setFooter(await embedFooter(interaction));
-            return interaction.editReply({ embeds: [embed] });
+
+            // Pagination: build pages line by line, never exceeding 4096 chars
+            const pages = [];
+            let currentPage = '';
+            const MAX_LENGTH = 4096;
+            for (const line of allLines) {
+                if (currentPage.length + line.length + 1 > MAX_LENGTH) {
+                    pages.push(currentPage);
+                    currentPage = '';
+                }
+                currentPage += line + '\n';
+            }
+            if (currentPage.length > 0) {
+                pages.push(currentPage);
+            }
+
+            // Store page state in memory for this interaction (ephemeral, not persistent)
+            // We'll use customId with page number for navigation
+            let page = 0;
+            const totalPages = pages.length;
+
+            // Helper to build embed for a page
+            const buildPageEmbed = async (pageIdx) => {
+                return new EmbedBuilder()
+                    .setTitle(await t(interaction, 'core_setting_setting_embed_title_view'))
+                    .setColor(kythia.bot.color)
+                    .setDescription(pages[pageIdx] || (await t(interaction, 'core_setting_setting_no_configured')))
+                    .setFooter({
+                        text: `${await t(interaction, 'common_embed_footer', { username: interaction.client.user.username })} • Page ${pageIdx + 1}/${totalPages}`,
+                    });
+            };
+
+            // If only one page, just send it
+            if (pages.length === 1) {
+                embed
+                    .setTitle(await t(interaction, 'core_setting_setting_embed_title_view'))
+                    .setColor(kythia.bot.color)
+                    .setDescription(pages[0] || (await t(interaction, 'core_setting_setting_no_configured')))
+                    .setFooter(await embedFooter(interaction));
+                return interaction.editReply({ embeds: [embed] });
+            }
+
+            // If multiple pages, send with navigation buttons
+            const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+            const prevBtn = new ButtonBuilder()
+                .setCustomId('setting_view_prev')
+                .setLabel('◀️')
+                .setStyle(ButtonStyle.Secondary)
+                .setDisabled(true);
+            const nextBtn = new ButtonBuilder()
+                .setCustomId('setting_view_next')
+                .setLabel('▶️')
+                .setStyle(ButtonStyle.Secondary)
+                .setDisabled(pages.length <= 1);
+
+            const row = new ActionRowBuilder().addComponents(prevBtn, nextBtn);
+
+            const msg = await interaction.editReply({
+                embeds: [await buildPageEmbed(page)],
+                components: [row],
+                fetchReply: true,
+            });
+
+            // Collector for navigation
+            const filter = (i) =>
+                i.user.id === interaction.user.id && (i.customId === 'setting_view_prev' || i.customId === 'setting_view_next');
+            const collector = msg.createMessageComponentCollector({ filter, time: 60_000 });
+
+            collector.on('collect', async (i) => {
+                if (i.customId === 'setting_view_prev') {
+                    page = Math.max(0, page - 1);
+                } else if (i.customId === 'setting_view_next') {
+                    page = Math.min(pages.length - 1, page + 1);
+                }
+                // Update buttons
+                prevBtn.setDisabled(page === 0);
+                nextBtn.setDisabled(page === pages.length - 1);
+
+                await i.update({
+                    embeds: [await buildPageEmbed(page)],
+                    components: [row],
+                });
+            });
+
+            collector.on('end', async () => {
+                // Disable buttons after timeout
+                prevBtn.setDisabled(true);
+                nextBtn.setDisabled(true);
+                try {
+                    await msg.edit({
+                        components: [row],
+                    });
+                } catch (e) {
+                    // Message might be deleted
+                }
+            });
+
+            return;
         }
 
         // --- INI LOGIKA BARUNYA ---
