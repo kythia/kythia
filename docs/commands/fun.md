@@ -15,22 +15,6 @@
   - **Type:** Text
 
 
-### 💾 `/guessnumber`
-
-**Description:** Guess the number the bot is thinking of 😋
-
-### 💻 Usage
-
-`/guessnumber <mode>`
-
-### ⚙️ Options
-
-- **`mode*`**
-  - **Description:** Choose difficulty level
-  - **Type:** Text
-  - **Choices:** `Easy (1 - 50)` (`easy`), `Medium (1 - 100)` (`medium`), `Hard (1 - 500)` (`hard`)
-
-
 ### 💾 `/tictactoe`
 
 **Description:** ⭕ Play Tic Tac Toe with a friend or bot.
@@ -60,14 +44,20 @@
 
 
 
-### 💾 `/guessbodypart`
+### 💾 `/guessnumber`
 
-**Description:** Guess the censored NSFW body part! 😋🥵
+**Description:** Guess the number the bot is thinking of 😋
 
 ### 💻 Usage
 
-`/guessbodypart`
+`/guessnumber <mode>`
 
+### ⚙️ Options
+
+- **`mode*`**
+  - **Description:** Choose difficulty level
+  - **Type:** Text
+  - **Choices:** `Easy (1 - 50)` (`easy`), `Medium (1 - 100)` (`medium`), `Hard (1 - 500)` (`hard`)
 
 
 ### 💾 `/uno`

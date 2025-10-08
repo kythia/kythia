@@ -183,7 +183,7 @@ function loadKythiaConfig() {
             dashboard: {
                 active: true,
                 // Dashboard base URL (for local dev, usually http://localhost:3000)
-                url: 'http://localhost:3000',
+                url: process.env.DASHBOARD_URL || 'http://localhost:3000',
                 // Dashboard port (default: 3000)
                 port: process.env.DASHBOARD_PORT || 3000,
                 // Session secret for dashboard authentication (keep this secret!)

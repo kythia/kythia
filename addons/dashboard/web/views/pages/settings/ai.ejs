@@ -53,8 +53,9 @@
                     </div>
                     <div class="card-body">
                         <div id="aiChannelsContainer">
-                            <% if (settings.aiChannelIds && settings.aiChannelIds.length > 0) { %>
-                                <% settings.aiChannelIds.forEach((channelId, index) => { %>
+                            <% const _aiChannelIds = Array.isArray(settings.aiChannelIds) ? settings.aiChannelIds : []; %>
+                            <% if (_aiChannelIds && _aiChannelIds.length > 0) { %>
+                                <% _aiChannelIds.forEach((channelId, index) => { %>
                                     <div class="card glass-effect mb-3 ai-channel-item">
                                         <div class="card-body">
                                             <div class="row align-items-center">

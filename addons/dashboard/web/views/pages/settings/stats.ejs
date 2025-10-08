@@ -122,8 +122,9 @@
                     </div>
                     <div class="card-body">
                         <div id="statsContainer">
-                            <% if (settings.serverStats && settings.serverStats.length > 0) { %>
-                                <% settings.serverStats.forEach((stat, index) => { %>
+                            <% const _serverStats = Array.isArray(settings.serverStats) ? settings.serverStats : (settings.serverStats && typeof settings.serverStats === 'object' ? Object.values(settings.serverStats) : []); %>
+                            <% if (_serverStats && _serverStats.length > 0) { %>
+                                <% _serverStats.forEach((stat, index) => { %>
                                     <div class="card mb-3 stat-channel-item">
                                         <div class="card-body">
                                             <div class="row align-items-center">
@@ -264,7 +265,7 @@
 </div>
 
 <script>
-let statIndex = <%= settings.serverStats ? settings.serverStats.length : 0 %>;
+let statIndex = <%= Array.isArray(settings.serverStats) ? settings.serverStats.length : (settings.serverStats && typeof settings.serverStats === 'object' ? Object.keys(settings.serverStats).length : 0) %>;
 
 function addStatChannel() {
     const container = document.getElementById('statsContainer');

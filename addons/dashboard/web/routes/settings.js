@@ -128,9 +128,28 @@ router.post('/dashboard/:guildId/settings/stats', isAuthorized, checkServerAcces
         if (body.serverStatsOn !== undefined) settings.serverStatsOn = body.serverStatsOn === 'on';
         if (body.serverStatsCategoryId) settings.serverStatsCategoryId = body.serverStatsCategoryId;
 
-        // Handle server stats array
+        // Handle server stats array (normalize object/string to array)
         if (body.serverStats) {
-            settings.serverStats = Array.isArray(body.serverStats) ? body.serverStats : JSON.parse(body.serverStats || '[]');
+            let rawStats = body.serverStats;
+            try {
+                if (typeof rawStats === 'string') {
+                    rawStats = JSON.parse(rawStats || '[]');
+                }
+            } catch (_) {
+                rawStats = [];
+            }
+
+            if (!Array.isArray(rawStats) && rawStats && typeof rawStats === 'object') {
+                rawStats = Object.values(rawStats);
+            }
+
+            settings.serverStats = Array.isArray(rawStats)
+                ? rawStats.filter(Boolean).map((item) => ({
+                      channelId: item.channelId || item.channel || '',
+                      format: item.format || '',
+                      enabled: item.enabled === true || item.enabled === 'on' || item.enabled === 'true',
+                  }))
+                : [];
         }
 
         // Quick Welcome Out passthrough from stats page
@@ -301,9 +320,27 @@ router.post('/dashboard/:guildId/settings/leveling', isAuthorized, checkServerAc
         if (body.levelingCooldown) settings.levelingCooldown = parseInt(body.levelingCooldown) * 1000;
         if (body.levelingXp) settings.levelingXp = parseInt(body.levelingXp);
 
-        // Handle role rewards
+        // Handle role rewards (normalize object/string to array)
         if (body.roleRewards) {
-            settings.roleRewards = Array.isArray(body.roleRewards) ? body.roleRewards : JSON.parse(body.roleRewards || '[]');
+            let rawRewards = body.roleRewards;
+            try {
+                if (typeof rawRewards === 'string') {
+                    rawRewards = JSON.parse(rawRewards || '[]');
+                }
+            } catch (_) {
+                rawRewards = [];
+            }
+
+            if (!Array.isArray(rawRewards) && rawRewards && typeof rawRewards === 'object') {
+                rawRewards = Object.values(rawRewards);
+            }
+
+            settings.roleRewards = Array.isArray(rawRewards)
+                ? rawRewards.filter(Boolean).map((item) => ({
+                      level: parseInt(item.level) || 1,
+                      role: item.role || item.roleId || '',
+                  }))
+                : [];
         }
 
         await settings.saveAndUpdateCache('guildId');

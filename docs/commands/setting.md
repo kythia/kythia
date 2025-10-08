@@ -57,8 +57,6 @@
 `/set ai add-channel <channel>`
 `/set ai remove-channel <channel>`
 `/set ai list`
-`/set clan category <category>`
-`/set clan forum <forum>`
 `/set channels announcement <channel>`
 `/set channels invite <channel>`
 `/set streak-settings minimum <minimum>`
@@ -455,20 +453,6 @@
 > 🤖 List AI-enabled channels
 
 
-**`/set clan category <category>`**
-> 🛡️ Set clan category id
-
-**Options for this subcommand:**
-- **`category*`**
-  - **Description:** Category channel
-  - **Type:** Channel
-**`/set clan forum <forum>`**
-> 🛡️ Set clan forum id
-
-**Options for this subcommand:**
-- **`forum*`**
-  - **Description:** Forum channel
-  - **Type:** Channel
 **`/set channels announcement <channel>`**
 > 📢 Set announcement channel
 

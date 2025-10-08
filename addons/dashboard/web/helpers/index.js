@@ -5,6 +5,7 @@ const { marked } = require('marked');
 const logger = require('@utils/logger');
 const path = require('path');
 const fs = require('fs');
+const { ensureArray } = require('./settings');
 
 // Hybrid command loader for dashboard (supports both builder and hybrid style)
 function getOptionType(type) {
@@ -358,7 +359,19 @@ async function checkServerAccess(req, res, next) {
         if (!settings || typeof settings !== 'object') {
             settings = {};
         }
-        req.settings = settings;
+        // Normalize known array-like fields to arrays to prevent EJS forEach errors
+        const normalized = {
+            ...settings,
+            whitelist: ensureArray(settings.whitelist),
+            serverStats: ensureArray(settings.serverStats),
+            roleRewards: ensureArray(settings.roleRewards),
+            aiChannelIds: ensureArray(settings.aiChannelIds),
+            badwords: ensureArray(settings.badwords),
+            badwordWhitelist: ensureArray(settings.badwordWhitelist),
+            ignoredChannels: ensureArray(settings.ignoredChannels),
+            streakRoleRewards: ensureArray(settings.streakRoleRewards),
+        };
+        req.settings = normalized;
 
         return next();
     } catch (error) {
@@ -390,8 +403,17 @@ function renderDash(res, viewName, opts = {}) {
         stats: undefined,
         logs: undefined,
     };
+    // Resolve pages directory and validate the view exists to avoid EJS include errors
+    const viewsRoot = path.join(__dirname, '..', 'views');
+    const pagesDir = path.join(viewsRoot, 'pages');
+    const candidate = typeof viewName === 'string' ? path.join(pagesDir, `${viewName}.ejs`) : null;
+    const viewExists = candidate ? fs.existsSync(candidate) : false;
+
+    // If the page doesn't exist, nullify viewName so layout can show fallback message
+    const safeViewName = viewExists ? viewName : null;
+
     // Gabungkan, opts bisa override defaults
-    const renderData = { ...defaults, ...opts, viewName };
+    const renderData = { ...defaults, ...opts, viewName: safeViewName, viewExists };
     res.render('layouts/dashMain', renderData);
 }
 

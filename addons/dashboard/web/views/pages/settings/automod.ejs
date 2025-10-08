@@ -130,8 +130,9 @@
                         <div class="mb-3">
                             <label class="form-label">Whitelisted Users/Roles</label>
                             <div id="whitelistContainer">
-                                <% if (settings.whitelist && settings.whitelist.length > 0) { %>
-                                    <% settings.whitelist.forEach(item => { %>
+                                <% const _whitelist = Array.isArray(settings.whitelist) ? settings.whitelist : []; %>
+                                <% if (_whitelist && _whitelist.length > 0) { %>
+                                    <% _whitelist.forEach(item => { %>
                                         <div class="input-group mb-2">
                                             <input type="text" class="form-control" name="whitelist[]" value="<%= item %>" readonly>
                                             <button type="button" class="btn btn-outline-danger" onclick="removeWhitelistItem(this)">
@@ -166,8 +167,9 @@
                         <div class="mb-3">
                             <label class="form-label">Bad Words List</label>
                             <div id="badwordsContainer">
-                                <% if (settings.badwords && settings.badwords.length > 0) { %>
-                                    <% settings.badwords.forEach(word => { %>
+                                <% const _badwords = Array.isArray(settings.badwords) ? settings.badwords : []; %>
+                                <% if (_badwords && _badwords.length > 0) { %>
+                                    <% _badwords.forEach(word => { %>
                                         <div class="input-group mb-2">
                                             <input type="text" class="form-control" name="badwords[]" value="<%= word %>">
                                             <button type="button" class="btn btn-outline-danger" onclick="removeBadwordItem(this)">
@@ -202,8 +204,9 @@
                         <div class="mb-3">
                             <label class="form-label">Whitelisted Words</label>
                             <div id="badwordWhitelistContainer">
-                                <% if (settings.badwordWhitelist && settings.badwordWhitelist.length > 0) { %>
-                                    <% settings.badwordWhitelist.forEach(word => { %>
+                                <% const _badwordWhitelist = Array.isArray(settings.badwordWhitelist) ? settings.badwordWhitelist : []; %>
+                                <% if (_badwordWhitelist && _badwordWhitelist.length > 0) { %>
+                                    <% _badwordWhitelist.forEach(word => { %>
                                         <div class="input-group mb-2">
                                             <input type="text" class="form-control" name="badwordWhitelist[]" value="<%= word %>">
                                             <button type="button" class="btn btn-outline-danger" onclick="removeBadwordWhitelistItem(this)">
@@ -238,8 +241,9 @@
                         <div class="mb-3">
                             <label class="form-label">Channels to Ignore</label>
                             <div id="ignoredChannelsContainer">
-                                <% if (settings.ignoredChannels && settings.ignoredChannels.length > 0) { %>
-                                    <% settings.ignoredChannels.forEach(channelId => { %>
+                                <% const _ignoredChannels = Array.isArray(settings.ignoredChannels) ? settings.ignoredChannels : []; %>
+                                <% if (_ignoredChannels && _ignoredChannels.length > 0) { %>
+                                    <% _ignoredChannels.forEach(channelId => { %>
                                         <div class="input-group mb-2">
                                             <select class="form-select" name="ignoredChannels[]">
                                                 <option value="">Select a channel...</option>

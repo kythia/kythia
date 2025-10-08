@@ -98,8 +98,9 @@
                     </div>
                     <div class="card-body">
                         <div id="streakRewardsContainer">
-                            <% if (settings.streakRoleRewards && settings.streakRoleRewards.length > 0) { %>
-                                <% settings.streakRoleRewards.forEach((reward, index) => { %>
+                            <% const _streakRoleRewards = Array.isArray(settings.streakRoleRewards) ? settings.streakRoleRewards : []; %>
+                            <% if (_streakRoleRewards && _streakRoleRewards.length > 0) { %>
+                                <% _streakRoleRewards.forEach((reward, index) => { %>
                                     <div class="card mb-3 streak-reward-item">
                                         <div class="card-body">
                                             <div class="row align-items-center">

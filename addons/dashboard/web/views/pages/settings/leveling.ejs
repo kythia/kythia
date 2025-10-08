@@ -109,8 +109,9 @@
                     </div>
                     <div class="card-body">
                         <div id="roleRewardsContainer">
-                            <% if (settings.roleRewards && settings.roleRewards.length > 0) { %>
-                                <% settings.roleRewards.forEach((reward, index) => { %>
+                            <% const _roleRewards = Array.isArray(settings.roleRewards) ? settings.roleRewards : (settings.roleRewards && typeof settings.roleRewards === 'object' ? Object.values(settings.roleRewards) : []); %>
+                            <% if (_roleRewards && _roleRewards.length > 0) { %>
+                                <% _roleRewards.forEach((reward, index) => { %>
                                     <div class="card glass-effect mb-3 role-reward-item">
                                         <div class="card-body">
                                             <div class="row align-items-center">
@@ -204,7 +205,7 @@
 </div>
 
 <script>
-let rewardIndex = <%= settings.roleRewards ? settings.roleRewards.length : 0 %>;
+let rewardIndex = <%= Array.isArray(settings.roleRewards) ? settings.roleRewards.length : (settings.roleRewards && typeof settings.roleRewards === 'object' ? Object.keys(settings.roleRewards).length : 0) %>;
 
 function addRoleReward() {
     const container = document.getElementById('roleRewardsContainer');

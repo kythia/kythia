@@ -5,35 +5,12 @@
     "main": "index.js",
     "author": "kenndeclouv",
     "license": "EULA",
+       "bin": {
+        "kythia": "./kythia-cli.js"
+    },
     "scripts": {
-        "pm2:startup": "pm2 start index.js --name kythia-bot -- --deploy && pm2 save",
-        "pm2:start": "pm2 start index.js --name kythia-bot -- --deploy",
-        "pm2:restart": "pm2 restart kythia-bot",
-        "pm2:stop": "pm2 stop kythia-bot",
-        "pm2:delete": "pm2 delete kythia-bot",
-        "pm2:logs": "pm2 logs kythia-bot",
-
-        "start": "node index.js --deploy",
-        "deploy": "node deploy.js",
-
-        "flush": "node src/database/KythiaFlush.js",
-        "seed": "node src/database/KythiaSeeder.js",
-        "docs": "node docs/generate.js",
-        "build": "npm run upversion && npm run docs && node scripts/obfuscate.js",
-        "pkg": "pkg .",
-        "test": "jest",
-
-        "prepare": "husky",
-        "check:e": "node scripts/check_e.js",
-        "check:t": "node scripts/check_t.js",
-        "refactor:t": "node scripts/refactor_t.js",
-        "add:namespace": "node scripts/add_namespace.js",
-        "gen:todo": "node scripts/gen_todo.js",
-        "gen:structure": "node scripts/gen_structure.js",
-        "obfuscate": "node scripts/obfuscate.js",
-        "upversion": "node scripts/upversion.js",
-        "audit:permissions": "node scripts/audit_permissions.js",
-        "format": "prettier --write \"**/*.{js,json}\""
+        "start": "node index.js",
+        "kythia": "node kythia-cli.js"
     },
     "dependencies": {
         "@google/genai": "^1.20.0",
@@ -113,19 +90,6 @@
             "^@coreDatabase/(.*)$": "<rootDir>/addons/core/database/$1",
             "^@srcDatabase/(.*)$": "<rootDir>/src/database/$1"
         }
-    },
-    "pkg": {
-        "targets": [
-            "node18-win-x64"
-        ],
-        "outputPath": "build",
-        "scripts": [
-            "src/database/**/*.js",
-            "addons/**/database/models/**/*.js"
-        ],
-        "assets": [
-            "src/utils/lang/**/*"
-        ]
     },
     "keywords": [
         "discord",
