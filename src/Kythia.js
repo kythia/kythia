@@ -1818,17 +1818,17 @@ class Kythia {
             logger.warn('🟠 Sentry DSN not found in config. Error tracking is INACTIVE.');
         }
         this._checkRequiredConfig();
-        KythiaModel.initialize(kythia.db.redis);
-        this.kythiaManager = new KythiaManager(ServerSetting);
-        this.container.kythiaManager = this.kythiaManager;
         try {
             const shouldDeploy = process.argv.includes('--deploy');
             logger.info('▬▬▬▬▬▬▬▬▬▬▬[ Load Locales & Fonts ]▬▬▬▬▬▬▬▬▬▬▬');
             loadLocales();
             loadFonts();
             logger.info('▬▬▬▬▬▬▬▬▬▬▬▬▬▬[ Load KythiaORM ]▬▬▬▬▬▬▬▬▬▬▬▬▬▬');
+            KythiaModel.initialize(kythia.db.redis);
             const sequelize = await KythiaORM();
             this.container.sequelize = sequelize;
+            this.kythiaManager = new KythiaManager(ServerSetting);
+            this.container.kythiaManager = this.kythiaManager;
             logger.info('▬▬▬▬▬▬▬▬▬▬▬▬▬▬[ Kythia Manager ]▬▬▬▬▬▬▬▬▬▬▬▬▬▬');
             await this.kythiaManager.warmCache();
             logger.info('▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬[ Kythia Addons ]▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬');

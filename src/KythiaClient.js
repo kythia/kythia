@@ -11,9 +11,12 @@ module.exports = function kythiaClient() {
             GatewayIntentBits.GuildInvites,
             GatewayIntentBits.GuildVoiceStates,
             GatewayIntentBits.AutoModerationExecution,
+            GatewayIntentBits.DirectMessages,
+            GatewayIntentBits.DirectMessageReactions,
+            GatewayIntentBits.DirectMessageTyping,
         ],
 
-        partials: [Partials.Message, Partials.Channel, Partials.Reaction],
+        partials: [Partials.Message, Partials.Channel, Partials.Reaction, Partials.User],
 
         makeCache: Options.cacheWithLimits({
             MessageManager: 25,
