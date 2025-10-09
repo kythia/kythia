@@ -5,7 +5,7 @@
  * Note: Non-Latin characters are left unchanged.
  *
  * @copyright © 2025 kenndeclouv
- * @version 0.9.9-beta-rc1
+ * @version 0.9.9-beta-rc.1
  */
 
 /**

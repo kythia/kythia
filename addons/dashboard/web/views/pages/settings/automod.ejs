@@ -106,7 +106,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="modLogChannelId" class="form-label">Moderation Log Channel</label>
-                            <select class="form-select" id="modLogChannelId" name="modLogChannelId">
+                            <select class="form-select select2 glass-effect" id="modLogChannelId" name="modLogChannelId">
                                 <option value="">Select a channel...</option>
                                 <% channels.text.forEach(channel => { %>
                                     <option value="<%= channel.id %>" <%= settings.modLogChannelId === channel.id ? 'selected' : '' %>>
@@ -130,6 +130,7 @@
                         <div class="mb-3">
                             <label class="form-label">Whitelisted Users/Roles</label>
                             <div id="whitelistContainer">
+                                <input type="hidden" name="whitelist" value="">
                                 <% const _whitelist = Array.isArray(settings.whitelist) ? settings.whitelist : []; %>
                                 <% if (_whitelist && _whitelist.length > 0) { %>
                                     <% _whitelist.forEach(item => { %>
@@ -167,6 +168,7 @@
                         <div class="mb-3">
                             <label class="form-label">Bad Words List</label>
                             <div id="badwordsContainer">
+                                <input type="hidden" name="badwords" value="">
                                 <% const _badwords = Array.isArray(settings.badwords) ? settings.badwords : []; %>
                                 <% if (_badwords && _badwords.length > 0) { %>
                                     <% _badwords.forEach(word => { %>
@@ -204,6 +206,7 @@
                         <div class="mb-3">
                             <label class="form-label">Whitelisted Words</label>
                             <div id="badwordWhitelistContainer">
+                                <input type="hidden" name="badwordWhitelist" value="">
                                 <% const _badwordWhitelist = Array.isArray(settings.badwordWhitelist) ? settings.badwordWhitelist : []; %>
                                 <% if (_badwordWhitelist && _badwordWhitelist.length > 0) { %>
                                     <% _badwordWhitelist.forEach(word => { %>
@@ -241,11 +244,12 @@
                         <div class="mb-3">
                             <label class="form-label">Channels to Ignore</label>
                             <div id="ignoredChannelsContainer">
+                                <input type="hidden" name="ignoredChannels" value="">
                                 <% const _ignoredChannels = Array.isArray(settings.ignoredChannels) ? settings.ignoredChannels : []; %>
                                 <% if (_ignoredChannels && _ignoredChannels.length > 0) { %>
                                     <% _ignoredChannels.forEach(channelId => { %>
                                         <div class="input-group mb-2">
-                                            <select class="form-select" name="ignoredChannels[]">
+                                            <select class="form-select select2" name="ignoredChannels[]">
                                                 <option value="">Select a channel...</option>
                                                 <% channels.text.forEach(channel => { %>
                                                     <option value="<%= channel.id %>" <%= channelId === channel.id ? 'selected' : '' %>>
@@ -294,6 +298,7 @@
     </form>
 </div>
 
+<!-- <script src="/assets/js/forms-selects.js"></script> -->
 <script>
 // Whitelist management
 function addWhitelistItem() {

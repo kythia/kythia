@@ -3,7 +3,7 @@
  * @type: Module
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta-rc1
+ * @version 0.9.9-beta-rc.1
  */
 
 const router = require('express').Router();
@@ -74,18 +74,26 @@ router.post('/dashboard/:guildId/settings/automod', isAuthorized, checkServerAcc
 
         if (body.modLogChannelId) settings.modLogChannelId = body.modLogChannelId;
 
-        // Handle arrays
-        if (body.whitelist) {
-            settings.whitelist = Array.isArray(body.whitelist) ? body.whitelist : [body.whitelist];
+        if (body.whitelist !== undefined) {
+            // 1. Pastikan selalu jadi array
+            const whitelistArray = Array.isArray(body.whitelist) ? body.whitelist : [body.whitelist];
+            // 2. Hapus semua string kosong hasil dari input hidden atau input kosong
+            settings.whitelist = whitelistArray.filter((item) => item && item.trim() !== '');
         }
-        if (body.badwords) {
-            settings.badwords = Array.isArray(body.badwords) ? body.badwords : [body.badwords];
+
+        if (body.badwords !== undefined) {
+            const badwordsArray = Array.isArray(body.badwords) ? body.badwords : [body.badwords];
+            settings.badwords = badwordsArray.filter((item) => item && item.trim() !== '');
         }
-        if (body.badwordWhitelist) {
-            settings.badwordWhitelist = Array.isArray(body.badwordWhitelist) ? body.badwordWhitelist : [body.badwordWhitelist];
+
+        if (body.badwordWhitelist !== undefined) {
+            const badwordWhitelistArray = Array.isArray(body.badwordWhitelist) ? body.badwordWhitelist : [body.badwordWhitelist];
+            settings.badwordWhitelist = badwordWhitelistArray.filter((item) => item && item.trim() !== '');
         }
-        if (body.ignoredChannels) {
-            settings.ignoredChannels = Array.isArray(body.ignoredChannels) ? body.ignoredChannels : [body.ignoredChannels];
+
+        if (body.ignoredChannels !== undefined) {
+            const ignoredChannelsArray = Array.isArray(body.ignoredChannels) ? body.ignoredChannels : [body.ignoredChannels];
+            settings.ignoredChannels = ignoredChannelsArray.filter((item) => item && item.trim() !== '');
         }
 
         await settings.saveAndUpdateCache('guildId');
@@ -129,7 +137,7 @@ router.post('/dashboard/:guildId/settings/stats', isAuthorized, checkServerAcces
         if (body.serverStatsCategoryId) settings.serverStatsCategoryId = body.serverStatsCategoryId;
 
         // Handle server stats array (normalize object/string to array)
-        if (body.serverStats) {
+        if (body.serverStats !== undefined) {
             let rawStats = body.serverStats;
             try {
                 if (typeof rawStats === 'string') {
@@ -533,8 +541,9 @@ router.post('/dashboard/:guildId/settings/ai', isAuthorized, checkServerAccess, 
         const body = req.body;
 
         // Handle AI channel IDs
-        if (body.aiChannelIds) {
-            settings.aiChannelIds = Array.isArray(body.aiChannelIds) ? body.aiChannelIds : [body.aiChannelIds];
+        if (body.aiChannelIds !== undefined) {
+            const aiChannelIdsArray = Array.isArray(body.aiChannelIds) ? body.aiChannelIds : [body.aiChannelIds];
+            settings.aiChannelIds = aiChannelIdsArray.filter((item) => item && item.trim() !== '');
         }
 
         await settings.saveAndUpdateCache('guildId');
@@ -575,10 +584,26 @@ router.post('/dashboard/:guildId/settings/streak', isAuthorized, checkServerAcce
         if (body.streakMinimum) settings.streakMinimum = parseInt(body.streakMinimum);
 
         // Handle streak role rewards
-        if (body.streakRoleRewards) {
-            settings.streakRoleRewards = Array.isArray(body.streakRoleRewards)
-                ? body.streakRoleRewards
-                : JSON.parse(body.streakRoleRewards || '[]');
+        if (body.streakRoleRewards !== undefined) {
+            let rawRewards = body.streakRoleRewards;
+            try {
+                if (typeof rawRewards === 'string') {
+                    rawRewards = JSON.parse(rawRewards || '[]');
+                }
+            } catch (_) {
+                rawRewards = [];
+            }
+
+            if (!Array.isArray(rawRewards) && rawRewards && typeof rawRewards === 'object') {
+                rawRewards = Object.values(rawRewards);
+            }
+
+            settings.streakRoleRewards = Array.isArray(rawRewards)
+                ? rawRewards.filter(Boolean).map((item) => ({
+                      streak: parseInt(item.streak) || 1,
+                      role: item.role || item.roleId || '',
+                  }))
+                : [];
         }
 
         await settings.saveAndUpdateCache('guildId');

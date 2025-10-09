@@ -43,31 +43,35 @@ function clearRequireCache(filePath) {
         delete require.cache[require.resolve(filePath)];
     } catch (e) {}
 }
-
-// Function to parse changelog content
+// Function to parse changelog content (THE DEFINITIVE FIX)
 function parseChangelog(markdownContent) {
     const changelogs = [];
-    // Split content by heading level 2 (##) which marks each version
-    const versions = markdownContent.split(/\n##\s/);
 
-    // Automatically detect if there is a main title at the start of the file
-    const startIndex = markdownContent.startsWith('##') ? 0 : 1;
+    // REGEX BARU UNTUK SPLIT:
+    // Potong teksnya setiap kali nemu baris baru yang DIIKUTI OLEH pola header versi.
+    // Pola header versi = ### [spasi] versi [spasi] (tanggal)
+    const versions = markdownContent.split(/\n(?=###\s[\w.-]+\s+\(\d{4}-\d{2}-\d{2}\))/);
+
+    const startIndex = versions[0].startsWith('###') ? 0 : 1;
 
     for (let i = startIndex; i < versions.length; i++) {
         const block = versions[i];
-        const lines = block.split('\n');
-        const headerLine = lines.shift();
+        if (!block.trim()) continue;
 
-        // Robust regex, tolerates extra spaces around the dash
-        const headerMatch = headerLine.match(/\[(.*?)\]\s*-\s*(\d{4}-\d{2}-\d{2})/);
+        const lines = block.split('\n');
+        // Buang '### ' dari baris header
+        const headerLine = lines.shift().replace(/^###\s*/, '').trim();
+
+        // Regex ini bisa kita pakai lagi karena headerLine sudah bersih
+        const headerMatch = headerLine.match(/^([\w.-]+)\s+\((\d{4}-\d{2}-\d{2})\)$/);
 
         if (headerMatch) {
             const version = headerMatch[1];
             const date = headerMatch[2];
-
             const contentMarkdown = lines.join('\n').trim();
+
             if (contentMarkdown) {
-                const contentHtml = marked(contentMarkdown);
+                const contentHtml = marked.parse(contentMarkdown);
                 changelogs.push({
                     version,
                     date,
@@ -76,8 +80,7 @@ function parseChangelog(markdownContent) {
             }
         }
     }
-    // REVERSE ARRAY ORDER BEFORE SENDING TO EJS
-    return changelogs.reverse();
+    return changelogs;
 }
 
 // =================================================================

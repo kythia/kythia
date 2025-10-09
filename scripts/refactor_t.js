@@ -4,7 +4,7 @@
  * @file scripts/refactor_t.js
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta-rc1
+ * @version 0.9.9-beta-rc.1
  *
  * @description
  * Scans all translation key usages in the project, corrects their namespace to match file location,

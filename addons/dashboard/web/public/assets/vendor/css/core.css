@@ -202,19 +202,19 @@
     }
 }
 
-/* ::-webkit-scrollbar {
+::-webkit-scrollbar {
     width: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-    border-radius: 10px;
+    /* border-radius: 10px; */
     background: var(--ky-primary);
 }
 
 ::-webkit-scrollbar-track {
     --ky-bg-label-tint-amount: 70%;
     background-color: color-mix(in sRGB, var(--ky-paper-bg) var(--ky-bg-label-tint-amount), var(--ky-primary)) !important;
-} */
+}
 
 body {
     margin: 0;

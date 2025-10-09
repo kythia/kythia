@@ -109,6 +109,7 @@
                     </div>
                     <div class="card-body">
                         <div id="roleRewardsContainer">
+                            <input type="hidden" name="roleRewards" value="">
                             <% const _roleRewards = Array.isArray(settings.roleRewards) ? settings.roleRewards : (settings.roleRewards && typeof settings.roleRewards === 'object' ? Object.values(settings.roleRewards) : []); %>
                             <% if (_roleRewards && _roleRewards.length > 0) { %>
                                 <% _roleRewards.forEach((reward, index) => { %>

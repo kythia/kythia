@@ -53,6 +53,7 @@
                     </div>
                     <div class="card-body">
                         <div id="aiChannelsContainer">
+                            <input type="hidden" name="aiChannelIds" value="">
                             <% const _aiChannelIds = Array.isArray(settings.aiChannelIds) ? settings.aiChannelIds : []; %>
                             <% if (_aiChannelIds && _aiChannelIds.length > 0) { %>
                                 <% _aiChannelIds.forEach((channelId, index) => { %>

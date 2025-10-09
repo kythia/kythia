@@ -6,7 +6,7 @@
  * @file kythia-cli.js
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta-rc1
+ * @version 0.9.9-beta-rc.1
  *
  * @description
  * Your personal command-line assistant for managing the Kythia project.
@@ -29,13 +29,13 @@ console.log('🌸 Kythia CLI 🌸\n');
  * @param {string} scriptPath - Path to the script to run.
  * @param {string} args - Additional arguments to pass to the script.
  */
-function runScript(scriptPath, args = '') {
+function runScript(action, args = '') {
     try {
-        console.log(`💻 Running script: ${scriptPath} ${args}`);
-        execSync(`node ${scriptPath} ${args}`, { stdio: 'inherit' });
+        console.log(`💻 Running script: ${action} ${args}`);
+        execSync(`${action} ${args}`, { stdio: 'inherit' });
         console.log(`✅ Script finished successfully.`);
     } catch (error) {
-        console.error(`❌ Error executing script ${scriptPath}:`);
+        console.error(`❌ Error executing script ${action}:`);
         process.exit(1);
     }
 }
@@ -233,7 +233,7 @@ y.command(
     },
     (argv) => {
         console.log('🚀 Starting Kythia bot ...');
-        const command = `node index.js ${argv.deploy ? '--deploy' : ''}`;
+        const command = argv.deploy ? 'node index.js' : 'node index.js --deploy';
         try {
             execSync(command, { stdio: 'inherit' });
             console.log('✅ Bot started successfully.');
@@ -315,7 +315,7 @@ y.command(
  * @type: Command
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta-rc1
+ * @version 0.9.9-beta-rc.1
  */
 const { SlashCommandBuilder } = require('discord.js');
 const { t } = require('@utils/translator');

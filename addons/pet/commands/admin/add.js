@@ -3,14 +3,13 @@
  * @type: Command
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta-rc1
+ * @version 0.9.9-beta-rc.1
  */
 const { EmbedBuilder } = require('discord.js');
 const { Pet } = require('../../database/models');
 const { t } = require('@utils/translator');
 
 module.exports = {
-    subcommand: true,
     data: (subcommand) =>
         subcommand
             .setName('add')
@@ -37,6 +36,8 @@ module.exports = {
                     .setRequired(true)
             )
             .addIntegerOption((option) => option.setName('bonus_value').setDescription('Bonus value').setRequired(true)),
+    subcommand: true,
+    teamOnly: true,
     async execute(interaction) {
         await interaction.deferReply();
 

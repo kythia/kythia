@@ -96,42 +96,94 @@ There are many Discord bots out there, but Kythia stands out from the crowd. Her
 
 Ready to bring Kythia to your server? Here's how to get her up and running.
 
-### ✅ Prerequisites
+### ⚙️ Prerequisites
 
-Before you begin, make sure you have the following installed:
+Before running this bot, please ensure you have the following installed:
 
-*   **Node.js:** (v22 LTS recommended)
-*   **npm:** (usually included with Node.js)
-*   **A database:** MySQL, PostgreSQL, or MSSQL
-*   **PM2 (optional):** For 24/7 hosting. Install with `npm install pm2 -g`.
+1. **Node.js** (Node 22 LTS recommended)
+2. **npm** (Usually included with Node.js)
+3. A Discord bot token from the [Discord Developer Portal](https://discord.com/developers/applications)
+4. **Database** such as MySQL, PostgreSQL, MSSQL installed
+5. Optional **PM2** for 24/7 hosting run `npm install pm2 -g`
 
-### 📝 Installation
+### 📖 Installation Guide
 
-1.  **Get the code:** Clone this repository to your local machine.
-2.  **Install dependencies:** Open a terminal in the project's root directory and run:
-    ```bash
-    npm install
-    ```
-3.  **Configure your bot:**
-    *   Rename `example.env` to `.env`.
-    *   Rename `example.kythia.config.js` to `kythia.config.js`.
-    *   Open both files and fill in the required values. The comments will guide you!
-4.  **Start the bot:**
-    *   For a quick test, run:
-        ```bash
-        npm start
-        ```
-    *   For 24/7 hosting, use PM2:
-        ```bash
-        npm run pm2:startup
-        ```
-5.  **Invite Kythia to your server:**
-    *   Go to the [Discord Developer Portal](https://discord.com/developers/applications).
-    *   Select your application, then go to **OAuth2 > URL Generator**.
-    *   Select the `bot` scope and `administrator` permissions.
-    *   Copy the generated URL and open it in your browser.
+#### 1. Prepare the Requirements
 
-That's it! Kythia should now be online and ready to go.
+Ensure you have the following software installed:
+
+1. **Node.js**
+
+   - Download and install [Node.js](https://nodejs.org/).
+   - Verify installation in your terminal:
+     ```bash
+     node -v
+     npm -v
+     ```
+     If both versions are displayed, installation was successful.
+
+2. **Discord Bot Token**
+   - Visit the [Discord Developer Portal](https://discord.com/developers/applications).
+   - Click **New Application**, name your bot, and create it.
+   - Navigate to the **Bot** tab, click **Add Bot**, and copy your bot token.
+
+#### 2. Install Dependencies
+
+1. Ensure you are in the project root directory.
+2. Install the required libraries:
+   ```bash
+   npm install
+   ```
+3. Wait until all dependencies are installed.
+
+#### 3. Configure Environment Variables
+
+1. Copy and rename `example.env` to `.env` file in the project root directory.
+2. Copy and rename `example.kythia.config.js` to `kythia.config.js`
+3. Configure Your Bot
+   Open the `.env` and `kythia.config.js` files. Both files contain detailed comments to guide you in filling out all the required values.
+
+#### 4. Start the Bot
+
+1. Ensure all configurations are correct.
+2. Choose how you want to run the bot:
+
+   - **For a quick test (in foreground):**
+
+     ```bash
+     npm start
+     ```
+
+     _(Press `ctrl + c` to stop the bot)_
+
+   - **For 24/7 Hosting (Recommended):**
+     ```bash
+     # Run this command ONLY ONCE for the very first time.
+     # It will start the bot and save it to PM2's process list.
+     npm run pm2:startup
+     ```
+     _(To manage the bot later, use commands like `npm run pm2:stop` or `npm run pm2:restart`)_
+
+3. If the bot starts successfully, you will see a message such as:
+   ```bash
+   ✅ Logged in as Kythia#9135
+   ```
+4. Check the terminal for any errors.
+5. If there are no errors, the bot is running and ready for use.
+6. If errors occur, review the relevant files for troubleshooting.
+
+#### 5. Invite the Bot to Your Server
+
+1. Return to the [Discord Developer Portal](https://discord.com/developers/applications).
+2. Select your application, then go to the **OAuth2** > **URL Generator** tab.
+3. Select the `bot` scope and add the necessary permissions (e.g., `Manage Roles`, `Send Messages`) but `administrator` recommended.
+4. Copy the generated URL and open it in your browser to invite the bot to your server.
+
+#### 6. Test the Bot
+
+1. Open your Discord server where the bot has been invited.
+2. Type `/ping`, `/help` or `/about` to check the bot's response.
+3. Enjoy using Kythia!
 
 ---
 
@@ -161,14 +213,14 @@ Kythia comes with a powerful command-line interface (CLI) tool inspired by Larav
 ##### `start [--deploy|-d]`
 Starts the Kythia bot.
 ```bash
-node kythia-cli.js start
-node kythia-cli.js start --deploy  # Start with slash command deployment
+npx kythia start
+npx kythia start --deploy  # Start with slash command deployment
 ```
 
 ##### `deploy`
 Deploys slash commands to Discord.
 ```bash
-node kythia-cli.js deploy
+npx kythia deploy
 ```
 
 ---
@@ -178,37 +230,37 @@ node kythia-cli.js deploy
 ##### `pm2 startup`
 Starts the bot with PM2 and saves the process list for automatic startup.
 ```bash
-node kythia-cli.js pm2 startup
+npx kythia pm2 startup
 ```
 
 ##### `pm2 start`
 Starts the bot with PM2.
 ```bash
-node kythia-cli.js pm2 start
+npx kythia pm2 start
 ```
 
 ##### `pm2 restart`
 Restarts the bot process in PM2.
 ```bash
-node kythia-cli.js pm2 restart
+npx kythia pm2 restart
 ```
 
 ##### `pm2 stop`
 Stops the bot process in PM2.
 ```bash
-node kythia-cli.js pm2 stop
+npx kythia pm2 stop
 ```
 
 ##### `pm2 delete`
 Removes the bot process from PM2.
 ```bash
-node kythia-cli.js pm2 delete
+npx kythia pm2 delete
 ```
 
 ##### `pm2 logs`
 Shows PM2 logs for the bot.
 ```bash
-node kythia-cli.js pm2 logs
+npx kythia pm2 logs
 ```
 
 ---
@@ -218,13 +270,13 @@ node kythia-cli.js pm2 logs
 ##### `db flush`
 Flushes the Redis database. **⚠️ USE WITH CAUTION!** This will delete all data.
 ```bash
-node kythia-cli.js db flush
+npx kythia db flush
 ```
 
 ##### `db seed`
 Seeds the database with initial data.
 ```bash
-node kythia-cli.js db seed
+npx kythia db seed
 ```
 
 ---
@@ -234,7 +286,7 @@ node kythia-cli.js db seed
 ##### `docs generate`
 Generates documentation for all commands.
 ```bash
-node kythia-cli.js docs generate
+npx kythia docs generate
 ```
 
 ---
@@ -244,19 +296,19 @@ node kythia-cli.js docs generate
 ##### `build build`
 Runs the full build process: upversion, documentation generation, and code obfuscation.
 ```bash
-node kythia-cli.js build build
+npx kythia build build
 ```
 
 ##### `build obfuscate`
 Obfuscates the code for production deployment.
 ```bash
-node kythia-cli.js build obfuscate
+npx kythia build obfuscate
 ```
 
 ##### `build upversion`
 Updates the version number across the project.
 ```bash
-node kythia-cli.js build upversion
+npx kythia build upversion
 ```
 
 ---
@@ -266,7 +318,7 @@ node kythia-cli.js build upversion
 ##### `test test`
 Runs the test suite using Jest.
 ```bash
-node kythia-cli.js test test
+npx kythia test test
 ```
 
 ---
@@ -276,13 +328,13 @@ node kythia-cli.js test test
 ##### `format format`
 Formats all JavaScript and JSON files using Prettier.
 ```bash
-node kythia-cli.js format format
+npx kythia format format
 ```
 
 ##### `husky prepare`
 Prepares Husky git hooks.
 ```bash
-node kythia-cli.js husky prepare
+npx kythia husky prepare
 ```
 
 ---
@@ -292,37 +344,37 @@ node kythia-cli.js husky prepare
 ##### `check e`
 Runs the check_e.js script.
 ```bash
-node kythia-cli.js check e
+npx kythia check e
 ```
 
 ##### `check t`
 Runs the check_t.js script.
 ```bash
-node kythia-cli.js check t
+npx kythia check t
 ```
 
 ##### `refactor t`
 Runs the refactor_t.js script.
 ```bash
-node kythia-cli.js refactor t
+npx kythia refactor t
 ```
 
 ##### `add namespace`
 Adds namespace to files.
 ```bash
-node kythia-cli.js add namespace
+npx kythia add namespace
 ```
 
 ##### `gen structure`
 Generates project structure documentation.
 ```bash
-node kythia-cli.js gen structure
+npx kythia gen structure
 ```
 
 ##### `audit permissions`
 Audits command permissions across the project.
 ```bash
-node kythia-cli.js audit permissions
+npx kythia audit permissions
 ```
 
 ---
@@ -338,8 +390,8 @@ Creates a new command file in the specified addon.
 
 **Example:**
 ```bash
-node kythia-cli.js make:command core test-command
-node kythia-cli.js make:command economy daily-reward
+npx kythia make:command core test-command
+npx kythia make:command economy daily-reward
 ```
 
 This will create a new command file with a template that includes:
@@ -354,27 +406,10 @@ This will create a new command file with a template that includes:
 
 - **Help Command:** Use `--help` or `-h` with any command to see detailed usage information:
   ```bash
-  node kythia-cli.js --help
-  node kythia-cli.js start --help
+  npx kythia --help
+  npx kythia start --help
   ```
-
-- **Quick Alias:** You can create a shell alias for easier access:
-  ```bash
-  # Add to your .bashrc or .zshrc
-  alias kythia="node kythia-cli.js"
   
-  # Then use it like:
-  kythia start
-  kythia pm2 restart
-  ```
-
-- **NPM Scripts:** Many CLI commands are also available as npm scripts in `package.json`:
-  ```bash
-  npm start              # Same as: node kythia-cli.js start --deploy
-  npm run pm2:startup    # Same as: node kythia-cli.js pm2 startup
-  npm test               # Same as: node kythia-cli.js test test
-  ```
-
 ---
 
 ## 🙌 Contributing

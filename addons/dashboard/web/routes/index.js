@@ -3,7 +3,7 @@
  * @type: Module
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta-rc1
+ * @version 0.9.9-beta-rc.1
  */
 
 const { loadVisitorCounts, trackVisitor } = require('../helpers/visitor');
@@ -125,7 +125,9 @@ router.get('/commands', trackVisitor, loadVisitorCounts, async (req, res) => {
 
 router.get('/changelog', trackVisitor, loadVisitorCounts, (req, res) => {
     try {
-        const changelogMd = fs.readFileSync(path.join(__dirname, '..', '..', '..', '../changelog.md'), 'utf-8');
+        // Use absolute path to ensure correct file resolution regardless of working directory
+        const changelogPath = path.resolve(__dirname, '../../../../changelog.md');
+        const changelogMd = fs.readFileSync(changelogPath, 'utf-8');
         const parsedChangelogs = parseChangelog(changelogMd); // Call parser
 
         res.render('layouts/main', {

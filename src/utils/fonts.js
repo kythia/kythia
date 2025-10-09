@@ -4,7 +4,7 @@
  * Scans the core fonts directory and registers each `.ttf`/`.otf` font family name
  * based on the filename (without extension).
  * @copyright © 2025 kenndeclouv
- * @version 0.9.9-beta-rc1
+ * @version 0.9.9-beta-rc.1
  */
 const { registerFont } = require('canvas');
 const logger = require('@utils/logger');

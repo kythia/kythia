@@ -29,7 +29,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### 0.9.9-beta-rc.1 (2025-10-09)
 
-This changelog outlines the new features and commands available in Kythia version 0.9.9-beta-rc.1.
 
 ### ✨ Added 
 

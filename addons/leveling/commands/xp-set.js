@@ -3,7 +3,7 @@
  * @type: Command
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 0.9.9-beta-rc1
+ * @version 0.9.9-beta-rc.1
  */
 const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const User = require('@coreModels/User');

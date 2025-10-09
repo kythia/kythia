@@ -98,6 +98,7 @@
                     </div>
                     <div class="card-body">
                         <div id="streakRewardsContainer">
+                            <input type="hidden" name="streakRoleRewards" value="">
                             <% const _streakRoleRewards = Array.isArray(settings.streakRoleRewards) ? settings.streakRoleRewards : []; %>
                             <% if (_streakRoleRewards && _streakRoleRewards.length > 0) { %>
                                 <% _streakRoleRewards.forEach((reward, index) => { %>

@@ -122,6 +122,7 @@
                     </div>
                     <div class="card-body">
                         <div id="statsContainer">
+                            <input type="hidden" name="serverStats" value="">
                             <% const _serverStats = Array.isArray(settings.serverStats) ? settings.serverStats : (settings.serverStats && typeof settings.serverStats === 'object' ? Object.values(settings.serverStats) : []); %>
                             <% if (_serverStats && _serverStats.length > 0) { %>
                                 <% _serverStats.forEach((stat, index) => { %>

@@ -7,7 +7,7 @@
  * Note: relies on global `kythia` for owner and token references.
  *
  * @copyright © 2025 kenndeclouv
- * @version 0.9.9-beta-rc1
+ * @version 0.9.9-beta-rc.1
  */
 const ServerSetting = require('@coreModels/ServerSetting');
 const KythiaUser = require('@coreModels/KythiaUser');

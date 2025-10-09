@@ -4,7 +4,7 @@
  * This module provides helpers to safely access a specific addon's settings and to merge updates
  * without clobbering existing values.
  * @copyright © 2025 kenndeclouv
- * @version 0.9.9-beta-rc1
+ * @version 0.9.9-beta-rc.1
  */
 const ServerSetting = require('@coreModels/ServerSetting');
 const logger = require('./logger');
