@@ -47,7 +47,7 @@ router.get('/dashboard/servers', (req, res) => {
 router.get('/dashboard/:guildId', isAuthorized, checkServerAccess, async (req, res) => {
     let recentLogs = [];
     try {
-        const logsFromDb = await ModLog.findAll({
+        const logsFromDb = await ModLog.getAllCache({
             where: { guildId: req.params.guildId },
             order: [['createdAt', 'DESC']],
             limit: 5,
@@ -128,38 +128,38 @@ router.post('/dashboard/:guildId/settings', isAuthorized, checkServerAccess, asy
     }
 });
 
-router.get('/dashboard/:guildId/features', isAuthorized, checkServerAccess, (req, res) => {
-    renderDash(res, 'features', {
-        guild: req.guild,
-        settings: req.settings,
-        page: 'features',
-        query: req.query,
-        currentPage: '',
-    });
-});
+// router.get('/dashboard/:guildId/features', isAuthorized, checkServerAccess, (req, res) => {
+//     renderDash(res, 'features', {
+//         guild: req.guild,
+//         settings: req.settings,
+//         page: 'features',
+//         query: req.query,
+//         currentPage: '',
+//     });
+// });
 
-router.post('/dashboard/:guildId/features', isAuthorized, checkServerAccess, async (req, res) => {
-    try {
-        const settings = req.settings;
-        const guild = req.guild;
-        const body = req.body;
-        const featureKeys = Object.keys(ServerSetting.getAttributes()).filter((k) => k.endsWith('On'));
-        for (const key of featureKeys) {
-            settings[key] = body[key] === 'on';
-        }
-        await settings.save();
-        res.redirect(`/dashboard/${guild.id}/features?success=true`);
-    } catch (error) {
-        console.error('Error saat menyimpan fitur:', error);
-        renderDash(res, 'error', {
-            title: 'Gagal Menyimpan',
-            message: 'Terjadi kesalahan saat mencoba menyimpan pengaturan fitur.',
-            page: 'features',
-            currentPage: '',
-            guild: req.guild || null,
-        });
-    }
-});
+// router.post('/dashboard/:guildId/features', isAuthorized, checkServerAccess, async (req, res) => {
+//     try {
+//         const settings = req.settings;
+//         const guild = req.guild;
+//         const body = req.body;
+//         const featureKeys = Object.keys(ServerSetting.getAttributes()).filter((k) => k.endsWith('On'));
+//         for (const key of featureKeys) {
+//             settings[key] = body[key] === 'on';
+//         }
+//         await settings.save();
+//         res.redirect(`/dashboard/${guild.id}/features?success=true`);
+//     } catch (error) {
+//         console.error('Error saat menyimpan fitur:', error);
+//         renderDash(res, 'error', {
+//             title: 'Gagal Menyimpan',
+//             message: 'Terjadi kesalahan saat mencoba menyimpan pengaturan fitur.',
+//             page: 'features',
+//             currentPage: '',
+//             guild: req.guild || null,
+//         });
+//     }
+// });
 
 router.get('/dashboard/:guildId/welcomer', isAuthorized, checkServerAccess, (req, res) => {
     const channels = {

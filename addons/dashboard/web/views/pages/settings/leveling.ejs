@@ -91,7 +91,7 @@
                         <div class="mb-3">
                             <label for="levelingCooldown" class="form-label">XP Cooldown (seconds)</label>
                             <input type="number" class="form-control" id="levelingCooldown" name="levelingCooldown" 
-                                   value="<%= (settings.levelingCooldown || 300) / 1000 %>" min="1" max="3600">
+                                   value="<%= (settings.levelingCooldown || 300) / 1000 %>" min="0" max="3600">
                             <div class="form-text">Time between XP gains (1-3600 seconds)</div>
                         </div>
                     </div>

@@ -10,7 +10,7 @@ const router = require('express').Router();
 const { isAuthorized, checkServerAccess, renderDash } = require('../helpers');
 
 // =================================================================
-// SETTINGS ROUTES
+// GET ROUTES
 // =================================================================
 
 // Main settings overview
@@ -36,10 +36,6 @@ router.get('/dashboard/:guildId/settings', isAuthorized, checkServerAccess, (req
     });
 });
 
-// =================================================================
-// AUTOMOD SETTINGS
-// =================================================================
-
 router.get('/dashboard/:guildId/settings/automod', isAuthorized, checkServerAccess, (req, res) => {
     const guild = req.guild;
     const channels = {
@@ -59,54 +55,6 @@ router.get('/dashboard/:guildId/settings/automod', isAuthorized, checkServerAcce
         query: req.query,
     });
 });
-
-router.post('/dashboard/:guildId/settings/automod', isAuthorized, checkServerAccess, async (req, res) => {
-    try {
-        const settings = req.settings;
-        const body = req.body;
-
-        // Update automod settings
-        if (body.antiInviteOn !== undefined) settings.antiInviteOn = body.antiInviteOn === 'on';
-        if (body.antiLinkOn !== undefined) settings.antiLinkOn = body.antiLinkOn === 'on';
-        if (body.antiSpamOn !== undefined) settings.antiSpamOn = body.antiSpamOn === 'on';
-        if (body.antiBadwordOn !== undefined) settings.antiBadwordOn = body.antiBadwordOn === 'on';
-        if (body.antiMentionOn !== undefined) settings.antiMentionOn = body.antiMentionOn === 'on';
-
-        if (body.modLogChannelId) settings.modLogChannelId = body.modLogChannelId;
-
-        if (body.whitelist !== undefined) {
-            // 1. Pastikan selalu jadi array
-            const whitelistArray = Array.isArray(body.whitelist) ? body.whitelist : [body.whitelist];
-            // 2. Hapus semua string kosong hasil dari input hidden atau input kosong
-            settings.whitelist = whitelistArray.filter((item) => item && item.trim() !== '');
-        }
-
-        if (body.badwords !== undefined) {
-            const badwordsArray = Array.isArray(body.badwords) ? body.badwords : [body.badwords];
-            settings.badwords = badwordsArray.filter((item) => item && item.trim() !== '');
-        }
-
-        if (body.badwordWhitelist !== undefined) {
-            const badwordWhitelistArray = Array.isArray(body.badwordWhitelist) ? body.badwordWhitelist : [body.badwordWhitelist];
-            settings.badwordWhitelist = badwordWhitelistArray.filter((item) => item && item.trim() !== '');
-        }
-
-        if (body.ignoredChannels !== undefined) {
-            const ignoredChannelsArray = Array.isArray(body.ignoredChannels) ? body.ignoredChannels : [body.ignoredChannels];
-            settings.ignoredChannels = ignoredChannelsArray.filter((item) => item && item.trim() !== '');
-        }
-
-        await settings.saveAndUpdateCache('guildId');
-        res.redirect(`/dashboard/${req.guild.id}/settings/automod?success=true`);
-    } catch (error) {
-        console.error('Error saving automod settings:', error);
-        res.redirect(`/dashboard/${req.guild.id}/settings/automod?error=true`);
-    }
-});
-
-// =================================================================
-// SERVER STATS SETTINGS
-// =================================================================
 
 router.get('/dashboard/:guildId/settings/stats', isAuthorized, checkServerAccess, (req, res) => {
     const guild = req.guild;
@@ -128,56 +76,6 @@ router.get('/dashboard/:guildId/settings/stats', isAuthorized, checkServerAccess
     });
 });
 
-router.post('/dashboard/:guildId/settings/stats', isAuthorized, checkServerAccess, async (req, res) => {
-    try {
-        const settings = req.settings;
-        const body = req.body;
-
-        if (body.serverStatsOn !== undefined) settings.serverStatsOn = body.serverStatsOn === 'on';
-        if (body.serverStatsCategoryId) settings.serverStatsCategoryId = body.serverStatsCategoryId;
-
-        // Handle server stats array (normalize object/string to array)
-        if (body.serverStats !== undefined) {
-            let rawStats = body.serverStats;
-            try {
-                if (typeof rawStats === 'string') {
-                    rawStats = JSON.parse(rawStats || '[]');
-                }
-            } catch (_) {
-                rawStats = [];
-            }
-
-            if (!Array.isArray(rawStats) && rawStats && typeof rawStats === 'object') {
-                rawStats = Object.values(rawStats);
-            }
-
-            settings.serverStats = Array.isArray(rawStats)
-                ? rawStats.filter(Boolean).map((item) => ({
-                      channelId: item.channelId || item.channel || '',
-                      format: item.format || '',
-                      enabled: item.enabled === true || item.enabled === 'on' || item.enabled === 'true',
-                  }))
-                : [];
-        }
-
-        // Quick Welcome Out passthrough from stats page
-        if (body.welcomeOutOn !== undefined) settings.welcomeOutOn = body.welcomeOutOn === 'on';
-        if (body.welcomeOutChannelId) settings.welcomeOutChannelId = body.welcomeOutChannelId;
-        if (body.welcomeOutBackgroundUrl) settings.welcomeOutBackgroundUrl = body.welcomeOutBackgroundUrl;
-        if (body.welcomeOutText) settings.welcomeOutText = body.welcomeOutText;
-
-        await settings.saveAndUpdateCache('guildId');
-        res.redirect(`/dashboard/${req.guild.id}/settings/stats?success=true`);
-    } catch (error) {
-        console.error('Error saving stats settings:', error);
-        res.redirect(`/dashboard/${req.guild.id}/settings/stats?error=true`);
-    }
-});
-
-// =================================================================
-// WELCOME SETTINGS
-// =================================================================
-
 router.get('/dashboard/:guildId/settings/welcome', isAuthorized, checkServerAccess, (req, res) => {
     const guild = req.guild;
     const channels = {
@@ -196,6 +94,240 @@ router.get('/dashboard/:guildId/settings/welcome', isAuthorized, checkServerAcce
         currentPage: '/dashboard/settings/welcome',
         query: req.query,
     });
+});
+
+router.get('/dashboard/:guildId/settings/leveling', isAuthorized, checkServerAccess, (req, res) => {
+    const guild = req.guild;
+    const channels = {
+        text: guild.channels.cache.filter((c) => c.type === 0).toJSON(),
+    };
+    const roles = guild.roles.cache.toJSON();
+
+    renderDash(res, 'settings/leveling', {
+        guild: guild,
+        guildId: guild.id,
+        settings: req.settings,
+        channels: channels,
+        roles: roles,
+        page: 'settings/leveling',
+        title: 'Leveling Settings',
+        currentPage: '/dashboard/settings/leveling',
+        query: req.query,
+    });
+});
+
+router.get('/dashboard/:guildId/settings/minecraft', isAuthorized, checkServerAccess, (req, res) => {
+    const guild = req.guild;
+    const channels = {
+        text: guild.channels.cache.filter((c) => c.type === 0).toJSON(),
+        voice: guild.channels.cache.filter((c) => c.type === 2).toJSON(),
+    };
+
+    renderDash(res, 'settings/minecraft', {
+        guild: guild,
+        guildId: guild.id,
+        settings: req.settings,
+        channels: channels,
+        page: 'settings/minecraft',
+        title: 'Minecraft Settings',
+        currentPage: '/dashboard/settings/minecraft',
+        query: req.query,
+    });
+});
+
+router.get('/dashboard/:guildId/settings/cooldown', isAuthorized, checkServerAccess, (req, res) => {
+    renderDash(res, 'settings/cooldown', {
+        guild: req.guild,
+        guildId: req.guild.id,
+        settings: req.settings,
+        page: 'settings/cooldown',
+        title: 'Cooldown Settings',
+        currentPage: '/dashboard/settings/cooldown',
+        query: req.query,
+    });
+});
+
+router.get('/dashboard/:guildId/settings/language', isAuthorized, checkServerAccess, (req, res) => {
+    renderDash(res, 'settings/language', {
+        guild: req.guild,
+        guildId: req.guild.id,
+        settings: req.settings,
+        page: 'settings/language',
+        title: 'Language Settings',
+        currentPage: '/dashboard/settings/language',
+        query: req.query,
+    });
+});
+
+router.get('/dashboard/:guildId/settings/testimony', isAuthorized, checkServerAccess, (req, res) => {
+    const guild = req.guild;
+    const channels = {
+        text: guild.channels.cache.filter((c) => c.type === 0).toJSON(),
+    };
+
+    renderDash(res, 'settings/testimony', {
+        guild: guild,
+        guildId: guild.id,
+        settings: req.settings,
+        channels: channels,
+        page: 'settings/testimony',
+        title: 'Testimony Settings',
+        currentPage: '/dashboard/settings/testimony',
+        query: req.query,
+    });
+});
+
+router.get('/dashboard/:guildId/settings/ai', isAuthorized, checkServerAccess, (req, res) => {
+    const guild = req.guild;
+    const channels = {
+        text: guild.channels.cache.filter((c) => c.type === 0).toJSON(),
+    };
+
+    renderDash(res, 'settings/ai', {
+        guild: guild,
+        guildId: guild.id,
+        settings: req.settings,
+        channels: channels,
+        page: 'settings/ai',
+        title: 'AI Settings',
+        currentPage: '/dashboard/settings/ai',
+        query: req.query,
+    });
+});
+
+router.get('/dashboard/:guildId/settings/streak', isAuthorized, checkServerAccess, (req, res) => {
+    const guild = req.guild;
+    const roles = guild.roles.cache.toJSON();
+
+    renderDash(res, 'settings/streak', {
+        guild: guild,
+        guildId: guild.id,
+        settings: req.settings,
+        roles: roles,
+        page: 'settings/streak',
+        title: 'Streak Settings',
+        currentPage: '/dashboard/settings/streak',
+        query: req.query,
+    });
+});
+
+router.get('/dashboard/:guildId/settings/channels', isAuthorized, checkServerAccess, (req, res) => {
+    const guild = req.guild;
+    const channels = {
+        text: guild.channels.cache.filter((c) => c.type === 0).toJSON(),
+    };
+
+    renderDash(res, 'settings/channels', {
+        guild: guild,
+        guildId: guild.id,
+        settings: req.settings,
+        channels: channels,
+        page: 'settings/channels',
+        title: 'Channel Settings',
+        currentPage: '/dashboard/settings/channels',
+        query: req.query,
+    });
+});
+
+router.get('/dashboard/:guildId/settings/features', isAuthorized, checkServerAccess, (req, res) => {
+    renderDash(res, 'settings/features', {
+        guild: req.guild,
+        guildId: req.guild.id,
+        settings: req.settings,
+        page: 'settings/features',
+        title: 'Feature Toggle',
+        currentPage: '/dashboard/settings/features',
+        query: req.query,
+    });
+});
+
+// =================================================================
+// POST ROUTES
+// =================================================================
+
+router.post('/dashboard/:guildId/settings/automod', isAuthorized, checkServerAccess, async (req, res) => {
+    try {
+        const settings = req.settings;
+        const body = req.body;
+
+        // Update automod toggles - always update, not only if (body.XXX)
+        settings.antiInviteOn = body.antiInviteOn === 'on';
+        settings.antiLinkOn = body.antiLinkOn === 'on';
+        settings.antiSpamOn = body.antiSpamOn === 'on';
+        settings.antiBadwordOn = body.antiBadwordOn === 'on';
+        settings.antiMentionOn = body.antiMentionOn === 'on';
+
+        if (body.modLogChannelId) settings.modLogChannelId = body.modLogChannelId;
+
+        if (body.whitelist !== undefined) {
+            const arr = Array.isArray(body.whitelist) ? body.whitelist : [body.whitelist];
+            settings.whitelist = arr.filter(item => item && item.trim() !== '');
+        }
+        if (body.badwords !== undefined) {
+            const arr = Array.isArray(body.badwords) ? body.badwords : [body.badwords];
+            settings.badwords = arr.filter(item => item && item.trim() !== '');
+        }
+        if (body.badwordWhitelist !== undefined) {
+            const arr = Array.isArray(body.badwordWhitelist) ? body.badwordWhitelist : [body.badwordWhitelist];
+            settings.badwordWhitelist = arr.filter(item => item && item.trim() !== '');
+        }
+        if (body.ignoredChannels !== undefined) {
+            const arr = Array.isArray(body.ignoredChannels) ? body.ignoredChannels : [body.ignoredChannels];
+            settings.ignoredChannels = arr.filter(item => item && item.trim() !== '');
+        }
+
+        await settings.saveAndUpdateCache('guildId');
+        res.redirect(`/dashboard/${req.guild.id}/settings/automod?success=true`);
+    } catch (error) {
+        console.error('Error saving automod settings:', error);
+        res.redirect(`/dashboard/${req.guild.id}/settings/automod?error=true`);
+    }
+});
+
+router.post('/dashboard/:guildId/settings/stats', isAuthorized, checkServerAccess, async (req, res) => {
+    try {
+        const settings = req.settings;
+        const body = req.body;
+
+        // Toggle for stats
+        settings.serverStatsOn = body.serverStatsOn === 'on';
+        if (body.serverStatsCategoryId) settings.serverStatsCategoryId = body.serverStatsCategoryId;
+
+        // Handle server stats array (normalize object/string to array)
+        if (body.serverStats !== undefined) {
+            let rawStats = body.serverStats;
+            try {
+                if (typeof rawStats === 'string') {
+                    rawStats = JSON.parse(rawStats || '[]');
+                }
+            } catch (_) {
+                rawStats = [];
+            }
+            if (!Array.isArray(rawStats) && rawStats && typeof rawStats === 'object') {
+                rawStats = Object.values(rawStats);
+            }
+
+            settings.serverStats = Array.isArray(rawStats)
+                ? rawStats.filter(Boolean).map((item) => ({
+                      channelId: item.channelId || item.channel || '',
+                      format: item.format || '',
+                      enabled: item.enabled === true || item.enabled === 'on' || item.enabled === 'true',
+                  }))
+                : [];
+        }
+
+        // Welcome out passthrough from stats page
+        settings.welcomeOutOn = body.welcomeOutOn === 'on';
+        if (body.welcomeOutChannelId) settings.welcomeOutChannelId = body.welcomeOutChannelId;
+        if (body.welcomeOutBackgroundUrl) settings.welcomeOutBackgroundUrl = body.welcomeOutBackgroundUrl;
+        if (body.welcomeOutText) settings.welcomeOutText = body.welcomeOutText;
+
+        await settings.saveAndUpdateCache('guildId');
+        res.redirect(`/dashboard/${req.guild.id}/settings/stats?success=true`);
+    } catch (error) {
+        console.error('Error saving stats settings:', error);
+        res.redirect(`/dashboard/${req.guild.id}/settings/stats?error=true`);
+    }
 });
 
 router.post('/dashboard/:guildId/settings/welcome', isAuthorized, checkServerAccess, async (req, res) => {
@@ -217,8 +349,8 @@ router.post('/dashboard/:guildId/settings/welcome', isAuthorized, checkServerAcc
         if (body.welcomeOutBackgroundUrl) settings.welcomeOutBackgroundUrl = body.welcomeOutBackgroundUrl;
 
         // Welcome features
-        if (body.welcomeInOn !== undefined) settings.welcomeInOn = body.welcomeInOn === 'on';
-        if (body.welcomeOutOn !== undefined) settings.welcomeOutOn = body.welcomeOutOn === 'on';
+        settings.welcomeInOn = body.welcomeInOn === 'on';
+        settings.welcomeOutOn = body.welcomeOutOn === 'on';
 
         // Advanced Welcome In
         if (body.welcomeInBannerWidth) settings.welcomeInBannerWidth = parseInt(body.welcomeInBannerWidth);
@@ -226,7 +358,7 @@ router.post('/dashboard/:guildId/settings/welcome', isAuthorized, checkServerAcc
         if (body.welcomeInForegroundUrl) settings.welcomeInForegroundUrl = body.welcomeInForegroundUrl;
         if (body.welcomeInOverlayColor) settings.welcomeInOverlayColor = body.welcomeInOverlayColor;
 
-        if (body.welcomeInAvatarEnabled !== undefined) settings.welcomeInAvatarEnabled = body.welcomeInAvatarEnabled === 'on';
+        settings.welcomeInAvatarEnabled = body.welcomeInAvatarEnabled === 'on';
         if (body.welcomeInAvatarSize) settings.welcomeInAvatarSize = parseInt(body.welcomeInAvatarSize);
         if (body.welcomeInAvatarShape) settings.welcomeInAvatarShape = body.welcomeInAvatarShape;
         if (body.welcomeInAvatarYOffset) settings.welcomeInAvatarYOffset = parseInt(body.welcomeInAvatarYOffset);
@@ -259,7 +391,7 @@ router.post('/dashboard/:guildId/settings/welcome', isAuthorized, checkServerAcc
         if (body.welcomeOutForegroundUrl) settings.welcomeOutForegroundUrl = body.welcomeOutForegroundUrl;
         if (body.welcomeOutOverlayColor) settings.welcomeOutOverlayColor = body.welcomeOutOverlayColor;
 
-        if (body.welcomeOutAvatarEnabled !== undefined) settings.welcomeOutAvatarEnabled = body.welcomeOutAvatarEnabled === 'on';
+        settings.welcomeOutAvatarEnabled = body.welcomeOutAvatarEnabled === 'on';
         if (body.welcomeOutAvatarSize) settings.welcomeOutAvatarSize = parseInt(body.welcomeOutAvatarSize);
         if (body.welcomeOutAvatarShape) settings.welcomeOutAvatarShape = body.welcomeOutAvatarShape;
         if (body.welcomeOutAvatarYOffset) settings.welcomeOutAvatarYOffset = parseInt(body.welcomeOutAvatarYOffset);
@@ -294,42 +426,18 @@ router.post('/dashboard/:guildId/settings/welcome', isAuthorized, checkServerAcc
     }
 });
 
-// =================================================================
-// LEVELING SETTINGS
-// =================================================================
-
-router.get('/dashboard/:guildId/settings/leveling', isAuthorized, checkServerAccess, (req, res) => {
-    const guild = req.guild;
-    const channels = {
-        text: guild.channels.cache.filter((c) => c.type === 0).toJSON(),
-    };
-    const roles = guild.roles.cache.toJSON();
-
-    renderDash(res, 'settings/leveling', {
-        guild: guild,
-        guildId: guild.id,
-        settings: req.settings,
-        channels: channels,
-        roles: roles,
-        page: 'settings/leveling',
-        title: 'Leveling Settings',
-        currentPage: '/dashboard/settings/leveling',
-        query: req.query,
-    });
-});
-
 router.post('/dashboard/:guildId/settings/leveling', isAuthorized, checkServerAccess, async (req, res) => {
     try {
         const settings = req.settings;
         const body = req.body;
 
-        if (body.levelingOn !== undefined) settings.levelingOn = body.levelingOn === 'on';
+        settings.levelingOn = body.levelingOn === 'on';
         if (body.levelingChannelId) settings.levelingChannelId = body.levelingChannelId;
         if (body.levelingCooldown) settings.levelingCooldown = parseInt(body.levelingCooldown) * 1000;
         if (body.levelingXp) settings.levelingXp = parseInt(body.levelingXp);
 
         // Handle role rewards (normalize object/string to array)
-        if (body.roleRewards) {
+        if (body.roleRewards !== undefined) {
             let rawRewards = body.roleRewards;
             try {
                 if (typeof rawRewards === 'string') {
@@ -359,35 +467,12 @@ router.post('/dashboard/:guildId/settings/leveling', isAuthorized, checkServerAc
     }
 });
 
-// =================================================================
-// MINECRAFT SETTINGS
-// =================================================================
-
-router.get('/dashboard/:guildId/settings/minecraft', isAuthorized, checkServerAccess, (req, res) => {
-    const guild = req.guild;
-    const channels = {
-        text: guild.channels.cache.filter((c) => c.type === 0).toJSON(),
-        voice: guild.channels.cache.filter((c) => c.type === 2).toJSON(),
-    };
-
-    renderDash(res, 'settings/minecraft', {
-        guild: guild,
-        guildId: guild.id,
-        settings: req.settings,
-        channels: channels,
-        page: 'settings/minecraft',
-        title: 'Minecraft Settings',
-        currentPage: '/dashboard/settings/minecraft',
-        query: req.query,
-    });
-});
-
 router.post('/dashboard/:guildId/settings/minecraft', isAuthorized, checkServerAccess, async (req, res) => {
     try {
         const settings = req.settings;
         const body = req.body;
 
-        if (body.minecraftStatsOn !== undefined) settings.minecraftStatsOn = body.minecraftStatsOn === 'on';
+        settings.minecraftStatsOn = body.minecraftStatsOn === 'on';
         if (body.minecraftIp) settings.minecraftIp = body.minecraftIp;
         if (body.minecraftPort) settings.minecraftPort = parseInt(body.minecraftPort);
         if (body.minecraftIpChannelId) settings.minecraftIpChannelId = body.minecraftIpChannelId;
@@ -401,22 +486,6 @@ router.post('/dashboard/:guildId/settings/minecraft', isAuthorized, checkServerA
         console.error('Error saving minecraft settings:', error);
         res.redirect(`/dashboard/${req.guild.id}/settings/minecraft?error=true`);
     }
-});
-
-// =================================================================
-// COOLDOWN SETTINGS
-// =================================================================
-
-router.get('/dashboard/:guildId/settings/cooldown', isAuthorized, checkServerAccess, (req, res) => {
-    renderDash(res, 'settings/cooldown', {
-        guild: req.guild,
-        guildId: req.guild.id,
-        settings: req.settings,
-        page: 'settings/cooldown',
-        title: 'Cooldown Settings',
-        currentPage: '/dashboard/settings/cooldown',
-        query: req.query,
-    });
 });
 
 router.post('/dashboard/:guildId/settings/cooldown', isAuthorized, checkServerAccess, async (req, res) => {
@@ -441,22 +510,6 @@ router.post('/dashboard/:guildId/settings/cooldown', isAuthorized, checkServerAc
     }
 });
 
-// =================================================================
-// LANGUAGE SETTINGS
-// =================================================================
-
-router.get('/dashboard/:guildId/settings/language', isAuthorized, checkServerAccess, (req, res) => {
-    renderDash(res, 'settings/language', {
-        guild: req.guild,
-        guildId: req.guild.id,
-        settings: req.settings,
-        page: 'settings/language',
-        title: 'Language Settings',
-        currentPage: '/dashboard/settings/language',
-        query: req.query,
-    });
-});
-
 router.post('/dashboard/:guildId/settings/language', isAuthorized, checkServerAccess, async (req, res) => {
     try {
         const settings = req.settings;
@@ -470,28 +523,6 @@ router.post('/dashboard/:guildId/settings/language', isAuthorized, checkServerAc
         console.error('Error saving language settings:', error);
         res.redirect(`/dashboard/${req.guild.id}/settings/language?error=true`);
     }
-});
-
-// =================================================================
-// TESTIMONY SETTINGS
-// =================================================================
-
-router.get('/dashboard/:guildId/settings/testimony', isAuthorized, checkServerAccess, (req, res) => {
-    const guild = req.guild;
-    const channels = {
-        text: guild.channels.cache.filter((c) => c.type === 0).toJSON(),
-    };
-
-    renderDash(res, 'settings/testimony', {
-        guild: guild,
-        guildId: guild.id,
-        settings: req.settings,
-        channels: channels,
-        page: 'settings/testimony',
-        title: 'Testimony Settings',
-        currentPage: '/dashboard/settings/testimony',
-        query: req.query,
-    });
 });
 
 router.post('/dashboard/:guildId/settings/testimony', isAuthorized, checkServerAccess, async (req, res) => {
@@ -513,28 +544,6 @@ router.post('/dashboard/:guildId/settings/testimony', isAuthorized, checkServerA
     }
 });
 
-// =================================================================
-// AI SETTINGS
-// =================================================================
-
-router.get('/dashboard/:guildId/settings/ai', isAuthorized, checkServerAccess, (req, res) => {
-    const guild = req.guild;
-    const channels = {
-        text: guild.channels.cache.filter((c) => c.type === 0).toJSON(),
-    };
-
-    renderDash(res, 'settings/ai', {
-        guild: guild,
-        guildId: guild.id,
-        settings: req.settings,
-        channels: channels,
-        page: 'settings/ai',
-        title: 'AI Settings',
-        currentPage: '/dashboard/settings/ai',
-        query: req.query,
-    });
-});
-
 router.post('/dashboard/:guildId/settings/ai', isAuthorized, checkServerAccess, async (req, res) => {
     try {
         const settings = req.settings;
@@ -554,32 +563,12 @@ router.post('/dashboard/:guildId/settings/ai', isAuthorized, checkServerAccess, 
     }
 });
 
-// =================================================================
-// STREAK SETTINGS
-// =================================================================
-
-router.get('/dashboard/:guildId/settings/streak', isAuthorized, checkServerAccess, (req, res) => {
-    const guild = req.guild;
-    const roles = guild.roles.cache.toJSON();
-
-    renderDash(res, 'settings/streak', {
-        guild: guild,
-        guildId: guild.id,
-        settings: req.settings,
-        roles: roles,
-        page: 'settings/streak',
-        title: 'Streak Settings',
-        currentPage: '/dashboard/settings/streak',
-        query: req.query,
-    });
-});
-
 router.post('/dashboard/:guildId/settings/streak', isAuthorized, checkServerAccess, async (req, res) => {
     try {
         const settings = req.settings;
         const body = req.body;
 
-        if (body.streakOn !== undefined) settings.streakOn = body.streakOn === 'on';
+        settings.streakOn = body.streakOn === 'on';
         if (body.streakEmoji) settings.streakEmoji = body.streakEmoji;
         if (body.streakMinimum) settings.streakMinimum = parseInt(body.streakMinimum);
 
@@ -614,28 +603,6 @@ router.post('/dashboard/:guildId/settings/streak', isAuthorized, checkServerAcce
     }
 });
 
-// =================================================================
-// CHANNELS SETTINGS
-// =================================================================
-
-router.get('/dashboard/:guildId/settings/channels', isAuthorized, checkServerAccess, (req, res) => {
-    const guild = req.guild;
-    const channels = {
-        text: guild.channels.cache.filter((c) => c.type === 0).toJSON(),
-    };
-
-    renderDash(res, 'settings/channels', {
-        guild: guild,
-        guildId: guild.id,
-        settings: req.settings,
-        channels: channels,
-        page: 'settings/channels',
-        title: 'Channel Settings',
-        currentPage: '/dashboard/settings/channels',
-        query: req.query,
-    });
-});
-
 router.post('/dashboard/:guildId/settings/channels', isAuthorized, checkServerAccess, async (req, res) => {
     try {
         const settings = req.settings;
@@ -652,28 +619,11 @@ router.post('/dashboard/:guildId/settings/channels', isAuthorized, checkServerAc
     }
 });
 
-// =================================================================
-// FEATURES TOGGLE
-// =================================================================
-
-router.get('/dashboard/:guildId/settings/features', isAuthorized, checkServerAccess, (req, res) => {
-    renderDash(res, 'settings/features', {
-        guild: req.guild,
-        guildId: req.guild.id,
-        settings: req.settings,
-        page: 'settings/features',
-        title: 'Feature Toggle',
-        currentPage: '/dashboard/settings/features',
-        query: req.query,
-    });
-});
-
 router.post('/dashboard/:guildId/settings/features', isAuthorized, checkServerAccess, async (req, res) => {
     try {
         const settings = req.settings;
         const body = req.body;
 
-        // Toggle all features
         const featureKeys = [
             'antiInviteOn',
             'antiLinkOn',
@@ -692,9 +642,7 @@ router.post('/dashboard/:guildId/settings/features', isAuthorized, checkServerAc
         ];
 
         for (const key of featureKeys) {
-            if (body[key] !== undefined) {
-                settings[key] = body[key] === 'on';
-            }
+            settings[key] = body[key] === 'on';
         }
 
         await settings.saveAndUpdateCache('guildId');
