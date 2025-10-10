@@ -1,0 +1,190 @@
+<%
+const images = [
+    "/assets/img/gallery/1.png", "/assets/img/gallery/2.png",
+    "/assets/img/gallery/3.png", "/assets/img/gallery/4.png",
+    "/assets/img/gallery/5.png", "/assets/img/gallery/6.png",
+    "/assets/img/gallery/7.png", "/assets/img/gallery/8.png",
+    "/assets/img/gallery/9.png", "/assets/img/gallery/10.png",
+    "/assets/img/gallery/11.png",
+];
+%>
+
+<style>
+    .gallery-random-container {
+        position: relative;
+        min-height: 180vh;
+        width: 100vw !important;
+        overflow: visible; 
+        padding-bottom: 100px;
+        touch-action: none; 
+    }
+
+    .gallery-floating-img {
+        position: absolute;
+        border-radius: 22px;
+        box-shadow: 0 4px 24px 0 rgba(64, 82, 108, .2),0 0 0 3px rgba(255,255,255,0.6);
+        object-fit: cover;
+        
+        transition: transform .25s cubic-bezier(.17,.67,.5,1.3), box-shadow .2s, filter .2s;
+        cursor: grab; 
+        border: 3px solid #fff;
+        background: #fff;
+        user-select: none;
+        z-index: 2;
+        filter: brightness(97%) saturate(110%);
+    }
+    .gallery-floating-img:hover {
+        
+        transform: scale(1.07);
+        box-shadow: 0 10px 32px 0 rgba(150, 130, 220, 0.18),0 0 0 5px #ddddff30;
+        filter: brightness(104%) saturate(120%);
+    }
+    
+    
+    .gallery-floating-img.dragging {
+        cursor: grabbing;
+        transform: scale(1.1); 
+        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        filter: brightness(110%);
+    }
+
+    
+    #shuffleButton {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    #shuffleButton:hover {
+        transform: translateX(-50%) scale(1.05);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 600px) {
+        #shuffleButton { font-size: 0.9rem; padding: 10px 20px; }
+    }
+</style>
+
+
+
+<div class="gallery-random-container" id="galleryRandom">
+    <section class="hero text-center py-5" style="margin-top: 160px;">
+        <div class="container" style="padding-top: 50px; padding-bottom: 30px;">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bolder mb-3">
+                        <img src="/assets/img/logo/logo.png" alt="logo" width="60" loading="lazy"> <span class="hero-title">Kythia's</span> Gallery
+                    </h1>
+                    <p class="lead mb-4" style="max-width: 700px; margin: 0 auto;">
+                        Drag, drop, and discover the fun! </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <% images.forEach((img, i) => { %>
+        <img src="<%= img %>" alt="Gallery image" class="gallery-floating-img" draggable="false">
+    <% }) %>
+    <button class="btn btn-primary" id="shuffleButton">Scremble It! 🎲</button>
+</div>
+
+
+<script>
+    (function () {
+        const container = document.getElementById('galleryRandom');
+        const imgs = container.querySelectorAll('.gallery-floating-img');
+        const shuffleButton = document.getElementById('shuffleButton');
+
+        // Variabel untuk ngatur z-index biar gambar yg diklik selalu di atas
+        let highestZIndex = 10;
+
+        // --- FUNGSI UNTUK ACAK POSISI GAMBAR (KODE KAMU) ---
+        function randomizeGalleryImages() {
+            const pW = container.offsetWidth;
+            // Kita buat tinggi playground lebih luas biar ada ruang gerak
+            const pH = Math.max(container.offsetHeight, window.innerHeight) * 1.2;
+
+            imgs.forEach(function(img, i) {
+                const mobile = window.innerWidth < 700;
+                const minSize = mobile ? 90 : 180;
+                const maxSize = mobile ? 140 : 280;
+                const w = Math.floor(Math.random() * (maxSize - minSize) + minSize);
+                const h = w + Math.floor(Math.random() * 20 - 10);
+
+                const padX = 30;
+                const padY = 150; // Padding atas lebih besar biar gak nutupin judul
+                const left = Math.floor(Math.random() * (pW - w - padX*2)) + padX;
+                const top  = Math.floor(Math.random() * (pH - h - padY*2)) + padY;
+                const rot = Math.random() * 18 - 9;
+
+                img.style.width = w + "px";
+                img.style.height = h + "px";
+                img.style.left = left + "px";
+                img.style.top = top + "px";
+                img.style.transform = `rotate(${rot.toFixed(2)}deg)`;
+                img.style.zIndex = Math.floor(Math.random() * 5) + 2;
+            });
+        }
+
+        // --- LOGIC BARU UNTUK DRAG AND DROP ---
+        imgs.forEach(img => {
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            function onDown(e) {
+                isDragging = true;
+                img.classList.add('dragging');
+                
+                // Bawa gambar ke paling depan
+                highestZIndex++;
+                img.style.zIndex = highestZIndex;
+
+                // Dapatkan posisi mouse relatif ke gambar
+                const rect = img.getBoundingClientRect();
+                // Cek apakah event dari mouse atau touch
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+
+                offsetX = clientX - rect.left;
+                offsetY = clientY - rect.top;
+
+                // Hentikan event listener lain biar ga aneh
+                e.preventDefault(); 
+            }
+
+            function onMove(e) {
+                if (!isDragging) return;
+
+                // Cek apakah event dari mouse atau touch
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+
+                // Hitung posisi baru dan pindahkan gambar
+                let newLeft = clientX - offsetX - container.getBoundingClientRect().left;
+                let newTop = clientY - offsetY - container.getBoundingClientRect().top;
+                
+                img.style.left = `${newLeft}px`;
+                img.style.top = `${newTop}px`;
+            }
+
+            function onUp() {
+                isDragging = false;
+                img.classList.remove('dragging');
+            }
+            
+            // Event listener untuk mouse
+            img.addEventListener('mousedown', onDown);
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+            
+            // Event listener tambahan untuk touch (mobile)
+            img.addEventListener('touchstart', onDown);
+            document.addEventListener('touchmove', onMove);
+            document.addEventListener('touchend', onUp);
+        });
+        
+        // --- EVENT LISTENERS ---
+        shuffleButton.addEventListener('click', randomizeGalleryImages);
+        window.addEventListener('DOMContentLoaded', randomizeGalleryImages);
+        window.addEventListener('resize', randomizeGalleryImages);
+    })();
+</script>

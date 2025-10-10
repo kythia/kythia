@@ -13,10 +13,10 @@ module.exports = {
         .setName('say')
         .setDescription('💬 Make the bot send a message')
         .addStringOption((option) => option.setName('message').setDescription('Message to send').setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .setContexts(InteractionContextType.Guild),
-    permissions: PermissionFlagsBits.SendMessages,
-    botPermissions: PermissionFlagsBits.SendMessages,
+    permissions: PermissionFlagsBits.ManageGuild,
+    botPermissions: PermissionFlagsBits.ManageGuild,
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true });
 

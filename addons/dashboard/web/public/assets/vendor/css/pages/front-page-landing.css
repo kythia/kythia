@@ -50,16 +50,16 @@
     background-clip: text;
     background-size: 200% auto;
     color: var(--ky-heading-color);
-    font-size: calc(1.3875rem + 1.65vw);
+    /* font-size: calc(1.3875rem + 1.65vw); */
     line-height: 1.2;
     -webkit-text-fill-color: rgba(0, 0, 0, 0)
 }
 
 @media(min-width: 1200px) {
     /* .landing-hero .hero-title { */
-    .hero-title {
+    /* .hero-title {
         font-size: 2.625rem
-    }
+    } */
 }
 
 .landing-hero .landing-hero-btn .hero-btn-item {

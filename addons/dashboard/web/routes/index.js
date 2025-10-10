@@ -191,4 +191,14 @@ router.get('/premium', trackVisitor, loadVisitorCounts, (req, res) => {
     });
 });
 
+router.get('/gallery', trackVisitor, loadVisitorCounts, (req, res) => {
+    res.render('layouts/main', {
+        viewName: 'gallery',
+        title: 'Gallery',
+        user: req.user,
+        currentPage: '/gallery',
+        page: '/',
+    });
+});
+
 module.exports = router;
