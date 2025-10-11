@@ -9,7 +9,7 @@
         "kythia": "./kythia-cli.js"
     },
     "scripts": {
-        "start": "node index.js",
+        "start": "node index.js --deploy",
         "kythia": "node kythia-cli.js"
     },
     "dependencies": {
