@@ -176,6 +176,7 @@ function loadKythiaConfig() {
             },
             core: {
                 active: true,
+                exchangerateApi: process.env.EXCHANGERATE_API,
             },
             /** -------------------------------------------------------------------
              * DASHBOARD ADDON

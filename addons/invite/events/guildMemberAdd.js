@@ -24,6 +24,8 @@ module.exports = async (bot, member) => {
         inviteChannelId = setting?.inviteChannelId;
     } catch (e) {}
 
+    if (!setting.inviteChannelId || !setting.invitesOn) return;
+
     const me = guild.members.me || (await guild.members.fetchMe());
     if (!me.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
         console.warn(`[INVITE TRACKER] Missing 'Manage Guild' permission in ${guild.name}`);
@@ -149,7 +151,7 @@ module.exports = async (bot, member) => {
                 }
 
                 const embed = new EmbedBuilder()
-                    .setColor(bot?.color || 0x2b2d31)
+                    .setColor(kythia?.bot?.color || 0x2b2d31)
                     .setAuthor({ name: member.user.tag, iconURL: member.user.displayAvatarURL() })
                     .setDescription(embedDesc)
                     .setTimestamp();

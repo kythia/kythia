@@ -7,8 +7,10 @@
  */
 
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { embedFooter } = require('@src/utils/discord');
 const { t } = require('@utils/translator');
-
+const { DateTime } = require('luxon');
+const fetch = require('node-fetch');
 // --- Helper conversion functions (detailed) ---
 const lengthUnits = {
     m: 1,
@@ -131,21 +133,27 @@ function convertVolume(value, from, to) {
 }
 
 // --- Currency conversion (API) ---
-const fetch = require('node-fetch');
 async function convertCurrency(amount, from, to) {
-    // Use exchangerate.host (free, no key)
-    const url = `https://api.exchangerate.host/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&amount=${amount}`;
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (!data.result) return null;
-    return data.result;
+    const accessKey = (kythia?.addons?.core?.exchangerateApi);
+    const url = `https://api.exchangerate.host/convert?access_key=${encodeURIComponent(accessKey)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&amount=${amount}`;
+    let res, data;
+    try {
+        res = await fetch(url);
+        if (!res.ok) return null;
+        data = await res.json();
+        // The valid response must have .result (a number) and optionally .success (true).
+        if (typeof data.result !== 'number') return null;
+        return data.result;
+    } catch (err) {
+        // Log error in case there is a bug
+        // eslint-disable-next-line no-console
+        console.error("Currency API error:", err);
+        return null;
+    }
 }
 
 // --- Timezone conversion ---
-const { DateTime } = require('luxon');
 function convertTimezone(time, from, to) {
-    // time: "10:00", from: "Asia/Jakarta", to: "America/New_York"
     // Accepts "10:00", "2024-06-01 10:00", etc.
     let dt = DateTime.fromFormat(time, 'HH:mm', { zone: from });
     if (!dt.isValid) dt = DateTime.fromISO(time, { zone: from });
@@ -418,7 +426,7 @@ module.exports = {
         ),
     async execute(interaction) {
         const sub = interaction.options.getSubcommand();
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply();
 
         if (sub === 'currency') {
             const amount = interaction.options.getNumber('amount');
@@ -426,10 +434,11 @@ module.exports = {
             const to = interaction.options.getString('to');
             try {
                 const result = await convertCurrency(amount, from, to);
+                // Removed: console.log(result); -- it won't be reached if there is an error
                 if (result == null) {
                     const embed = new EmbedBuilder()
                         .setDescription('## ' + (await t(interaction, 'core_utils_convert_currency_failed')))
-                        .setColor(0xe17055);
+                        .setColor("Red");
                     return interaction.editReply({ embeds: [embed] });
                 }
                 const embed = new EmbedBuilder()
@@ -444,12 +453,16 @@ module.exports = {
                                 to: to,
                             }))
                     )
-                    .setColor(0x00b894);
+                    .setColor(kythia.bot.color)
+                    .setFooter(await embedFooter(interaction));
                 return interaction.editReply({ embeds: [embed] });
             } catch (e) {
+                // Optional: log the error
+                // eslint-disable-next-line no-console
+                console.error("Currency convert error:", e);
                 const embed = new EmbedBuilder()
-                    .setDescription('## ' + (await t(interaction, 'core_utils_convert_currency_error')))
-                    .setColor(0xe17055);
+                    .setDescription(await t(interaction, 'core_utils_convert_currency_error'))
+                    .setColor("Red");
                 return interaction.editReply({ embeds: [embed] });
             }
         } else if (sub === 'timezone') {
@@ -460,7 +473,7 @@ module.exports = {
             if (!converted) {
                 const embed = new EmbedBuilder()
                     .setDescription('## ' + (await t(interaction, 'core_utils_convert_timezone_failed')))
-                    .setColor(0xe17055);
+                    .setColor("Red");
                 return interaction.editReply({ embeds: [embed] });
             }
             const embed = new EmbedBuilder()
@@ -475,7 +488,7 @@ module.exports = {
                             to: to,
                         }))
                 )
-                .setColor(0x0984e3);
+                .setColor(kythia.bot.color);
             return interaction.editReply({ embeds: [embed] });
         } else if (sub === 'length') {
             const value = interaction.options.getNumber('value');
@@ -485,7 +498,7 @@ module.exports = {
             if (result == null) {
                 const embed = new EmbedBuilder()
                     .setDescription('## ' + (await t(interaction, 'core_utils_convert_length_failed')))
-                    .setColor(0xe17055);
+                    .setColor("Red");
                 return interaction.editReply({ embeds: [embed] });
             }
             const embed = new EmbedBuilder()
@@ -500,7 +513,8 @@ module.exports = {
                             to: to,
                         }))
                 )
-                .setColor(0x6c5ce7);
+                .setColor(kythia.bot.color)
+                .setFooter(await embedFooter(interaction));
             return interaction.editReply({ embeds: [embed] });
         } else if (sub === 'mass') {
             const value = interaction.options.getNumber('value');
@@ -510,7 +524,7 @@ module.exports = {
             if (result == null) {
                 const embed = new EmbedBuilder()
                     .setDescription('## ' + (await t(interaction, 'core_utils_convert_mass_failed')))
-                    .setColor(0xe17055);
+                    .setColor("Red");
                 return interaction.editReply({ embeds: [embed] });
             }
             const embed = new EmbedBuilder()
@@ -525,7 +539,8 @@ module.exports = {
                             to: to,
                         }))
                 )
-                .setColor(0x00b894);
+                .setColor(kythia.bot.color)
+                .setFooter(await embedFooter(interaction));
             return interaction.editReply({ embeds: [embed] });
         } else if (sub === 'temperature') {
             const value = interaction.options.getNumber('value');
@@ -535,7 +550,7 @@ module.exports = {
             if (result == null) {
                 const embed = new EmbedBuilder()
                     .setDescription('## ' + (await t(interaction, 'core_utils_convert_temperature_failed')))
-                    .setColor(0xe17055);
+                    .setColor("Red");
                 return interaction.editReply({ embeds: [embed] });
             }
             const embed = new EmbedBuilder()
@@ -550,7 +565,8 @@ module.exports = {
                             to: to.toUpperCase(),
                         }))
                 )
-                .setColor(0xfdcb6e);
+                .setColor(kythia.bot.color)
+                .setFooter(await embedFooter(interaction));
             return interaction.editReply({ embeds: [embed] });
         } else if (sub === 'data') {
             const value = interaction.options.getNumber('value');
@@ -560,7 +576,7 @@ module.exports = {
             if (result == null) {
                 const embed = new EmbedBuilder()
                     .setDescription('## ' + (await t(interaction, 'core_utils_convert_data_failed')))
-                    .setColor(0xe17055);
+                    .setColor("Red");
                 return interaction.editReply({ embeds: [embed] });
             }
             const embed = new EmbedBuilder()
@@ -575,7 +591,8 @@ module.exports = {
                             to: to.toUpperCase(),
                         }))
                 )
-                .setColor(0x636e72);
+                .setColor(kythia.bot.color)
+                .setFooter(await embedFooter(interaction));
             return interaction.editReply({ embeds: [embed] });
         } else if (sub === 'area') {
             const value = interaction.options.getNumber('value');
@@ -583,12 +600,13 @@ module.exports = {
             const to = interaction.options.getString('to');
             const result = convertArea(value, from, to);
             if (result == null) {
-                const embed = new EmbedBuilder().setDescription('## Area conversion failed. Please check your units.').setColor(0xe17055);
+                const embed = new EmbedBuilder().setDescription('## Area conversion failed. Please check your units.').setColor("Red");
                 return interaction.editReply({ embeds: [embed] });
             }
             const embed = new EmbedBuilder()
                 .setDescription('## Area Conversion\n' + `${value} ${from} = ${result} ${to}`)
-                .setColor(0x00cec9);
+                .setColor(kythia.bot.color)
+                .setFooter(await embedFooter(interaction));
             return interaction.editReply({ embeds: [embed] });
         } else if (sub === 'volume') {
             const value = interaction.options.getNumber('value');
@@ -596,17 +614,18 @@ module.exports = {
             const to = interaction.options.getString('to');
             const result = convertVolume(value, from, to);
             if (result == null) {
-                const embed = new EmbedBuilder().setDescription('## Volume conversion failed. Please check your units.').setColor(0xe17055);
+                const embed = new EmbedBuilder().setDescription('## Volume conversion failed. Please check your units.').setColor("Red");
                 return interaction.editReply({ embeds: [embed] });
             }
             const embed = new EmbedBuilder()
                 .setDescription('## Volume Conversion\n' + `${value} ${from} = ${result} ${to}`)
-                .setColor(0x81ecec);
+                .setColor(kythia.bot.color)
+                .setFooter(await embedFooter(interaction));
             return interaction.editReply({ embeds: [embed] });
         } else {
             const embed = new EmbedBuilder()
                 .setDescription('## ' + (await t(interaction, 'core_utils_convert_unknown_subcommand')))
-                .setColor(0xe17055);
+                .setColor("Red");
             return interaction.editReply({ embeds: [embed] });
         }
     },

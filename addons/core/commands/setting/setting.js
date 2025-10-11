@@ -775,7 +775,6 @@ module.exports = {
                 pages.push(currentPage);
             }
 
-            // Store page state in memory for this interaction (ephemeral, not persistent)
             // We'll use customId with page number for navigation
             let page = 0;
             const totalPages = pages.length;
@@ -883,8 +882,7 @@ module.exports = {
                     const cat = interaction.options.getChannel('category');
                     if (!cat || cat.type !== ChannelType.GuildCategory) {
                         return interaction.editReply({
-                            content: await t(interaction, 'core_setting_setting_stats_category_invalid'),
-                            ephemeral: true,
+                            content: await t(interaction, 'core_setting_setting_stats_category_invalid')
                         });
                     }
                     serverSetting.serverStatsCategoryId = cat.id;
@@ -1245,8 +1243,7 @@ module.exports = {
                             return interaction.editReply({
                                 content: await t(interaction, 'core_setting_setting_stats_format_invalid', {
                                     placeholders: allowedPlaceholders.join(', '),
-                                }),
-                                ephemeral: true,
+                                })
                             });
                         }
                         if (!channel) {
@@ -1266,8 +1263,7 @@ module.exports = {
                         const already = serverSetting.serverStats?.find((s) => s.channelId === channel.id);
                         if (already) {
                             return interaction.editReply({
-                                content: await t(interaction, 'core_setting_setting_stats_already'),
-                                ephemeral: true,
+                                content: await t(interaction, 'core_setting_setting_stats_already')
                             });
                         }
                         serverSetting.serverStats ??= [];
@@ -1285,8 +1281,7 @@ module.exports = {
                         let stat = serverSetting.serverStats?.find((s) => s.channelId === statsId);
                         if (!stat)
                             return interaction.editReply({
-                                content: await t(interaction, 'core_setting_setting_stats_notfound'),
-                                ephemeral: true,
+                                content: await t(interaction, 'core_setting_setting_stats_notfound')
                             });
                         if (format) stat.format = format;
                         const hasAllowedPlaceholder = allowedPlaceholders.some((ph) => format.includes(ph));
@@ -1294,8 +1289,7 @@ module.exports = {
                             return interaction.editReply({
                                 content: await t(interaction, 'core_setting_setting_stats_format_invalid', {
                                     placeholders: allowedPlaceholders.join(', '),
-                                }),
-                                ephemeral: true,
+                                })
                             });
                         }
                         serverSetting.changed('serverStats', true);
@@ -1310,8 +1304,7 @@ module.exports = {
                         let stat = serverSetting.serverStats?.find((s) => s.channelId === statsId);
                         if (!stat)
                             return interaction.editReply({
-                                content: await t(interaction, 'core_setting_setting_stats_notfound'),
-                                ephemeral: true,
+                                content: await t(interaction, 'core_setting_setting_stats_notfound')
                             });
                         stat.enabled = true;
                         serverSetting.changed('serverStats', true);
@@ -1326,8 +1319,7 @@ module.exports = {
                         let stat = serverSetting.serverStats?.find((s) => s.channelId === statsId);
                         if (!stat)
                             return interaction.editReply({
-                                content: await t(interaction, 'core_setting_setting_stats_notfound'),
-                                ephemeral: true,
+                                content: await t(interaction, 'core_setting_setting_stats_notfound')
                             });
                         stat.enabled = false;
                         serverSetting.changed('serverStats', true);
@@ -1759,8 +1751,7 @@ module.exports = {
                     const valueStr = interaction.options.getString('value');
                     if (!Object.prototype.hasOwnProperty.call(serverSetting.dataValues, field)) {
                         return interaction.editReply({
-                            content: await t(interaction, 'core_setting_setting_raw_field_invalid', { field }),
-                            ephemeral: true,
+                            content: await t(interaction, 'core_setting_setting_raw_field_invalid', { field })
                         });
                     }
                     const original = serverSetting.dataValues[field];

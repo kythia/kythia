@@ -35,11 +35,8 @@ const isOwner = (userId) => {
  */
 async function checkIsTeam(user) {
     if (isOwner(user.id)) return true;
-
     const teams = await KythiaTeam.getCache({ userId: user.id });
-    if (teams.length > 0) return true;
-
-    return false;
+    return !!(teams && teams.length);
 }
 
 /**
@@ -92,7 +89,7 @@ async function setVoiceChannelStatus(channel, status) {
     // Validate channel
     const botToken = kythia.bot.token;
     if (!channel || !channel.isVoiceBased()) {
-        logger.error('❌ Invalid voice channel provided.');
+        logger.warn('❌ Invalid voice channel provided.');
         return;
     }
 
@@ -103,7 +100,7 @@ async function setVoiceChannelStatus(channel, status) {
             { headers: { Authorization: `Bot ${botToken}` } }
         );
     } catch (e) {
-        logger.error('❌ Failed to set voice channel status:', e.response?.data || e.message);
+        logger.warn('❌ Failed to set voice channel status:', e.response?.data || e.message);
     }
 }
 

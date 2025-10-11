@@ -25,8 +25,7 @@ class KythiaUser extends KythiaModel {
                 kythiaCoin: { type: DataTypes.INTEGER, defaultValue: 0 },
                 kythiaRuby: { type: DataTypes.INTEGER, defaultValue: 0 },
 
-                nsfwCount: { type: DataTypes.INTEGER, defaultValue: 0 },
-                nsfwFav: { type: DataTypes.JSON, defaultValue: [] },
+                
             },
             {
                 sequelize,

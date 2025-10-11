@@ -6,7 +6,8 @@
  * @version 0.9.9-beta-rc.1
  */
 
-const { embedFooter, checkCooldown } = require('@utils/discord');
+const { embedFooter } = require('@utils/discord');
+const { checkCooldown } = require('@utils/time');
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const User = require('@coreModels/User');
 const Inventory = require('@coreModels/Inventory');
