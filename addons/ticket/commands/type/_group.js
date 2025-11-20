@@ -6,9 +6,6 @@
  * @version 0.9.12-beta
  */
 module.exports = {
-	subcommand: true,
-	data: (subcommandGroup) =>
-		subcommandGroup
-			.setName("type")
-			.setDescription('Manage ticket types (e.g., "Report", "Ask")'),
+    subcommand: true,
+    data: (subcommandGroup) => subcommandGroup.setName('type').setDescription('Manage ticket types (e.g., "Report", "Ask")'),
 };

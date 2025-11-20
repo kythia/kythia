@@ -5,9 +5,9 @@
  * @assistant chaa & graa
  * @version 0.9.12-beta
  */
-const { generateContent } = require("@addons/ai/helpers/gemini");
-const { YoutubeTranscript } = require("youtube-transcript");
-const { PermissionFlagsBits } = require("discord.js");
+const { generateContent } = require('@addons/ai/helpers/gemini');
+const { YoutubeTranscript } = require('youtube-transcript');
+const { PermissionFlagsBits } = require('discord.js');
 
 /**
  * ⏱️ Formats a duration in milliseconds to a human-readable string (hh:mm:ss or mm:ss).
@@ -15,16 +15,16 @@ const { PermissionFlagsBits } = require("discord.js");
  * @returns {string} Formatted duration string.
  */
 function formatTrackDuration(ms) {
-	if (typeof ms !== "number" || Number.isNaN(ms) || ms < 0) return "0:00";
-	const totalSeconds = Math.floor(ms / 1000);
-	const hours = Math.floor(totalSeconds / 3600);
-	const minutes = Math.floor((totalSeconds % 3600) / 60);
-	const seconds = totalSeconds % 60;
-	if (hours > 0) {
-		return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-	} else {
-		return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-	}
+    if (typeof ms !== 'number' || isNaN(ms) || ms < 0) return '0:00';
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    if (hours > 0) {
+        return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
 }
 
 /**
@@ -33,26 +33,25 @@ function formatTrackDuration(ms) {
  * @returns {string} Progress bar string with current and total duration.
  */
 function createProgressBar(player) {
-	if (!player.currentTrack || !player.currentTrack.info.length) return "";
+    if (!player.currentTrack || !player.currentTrack.info.length) return '';
 
-	if (player.currentTrack.info.isStream)
-		return "`00:00|▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬🔴 LIVE`";
+    if (player.currentTrack.info.isStream) return '`00:00|▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬🔴 LIVE`';
 
-	const current = player.position;
+    const current = player.position;
 
-	const total = player.currentTrack.info.length;
-	const size = 25;
+    const total = player.currentTrack.info.length;
+    const size = 25;
 
-	let percent = Math.round((current / total) * size);
+    let percent = Math.round((current / total) * size);
 
-	if (percent < 0) percent = 0;
-	if (percent > size) percent = size;
+    if (percent < 0) percent = 0;
+    if (percent > size) percent = size;
 
-	const empty = size - percent;
-	const safeEmpty = empty < 0 ? 0 : empty;
+    const empty = size - percent;
+    const safeEmpty = empty < 0 ? 0 : empty;
 
-	const progress = `${"▬".repeat(percent)}🔵${"▬".repeat(safeEmpty)}`;
-	return `\`${formatTrackDuration(current)}|${progress}|${formatTrackDuration(total)}\``;
+    const progress = '▬'.repeat(percent) + '🔵' + '▬'.repeat(safeEmpty);
+    return `\`${formatTrackDuration(current)}|${progress}|${formatTrackDuration(total)}\``;
 }
 
 /**
@@ -62,42 +61,37 @@ function createProgressBar(player) {
  * @param {string} trackUri - The URI of the YouTube video.
  * @returns {Promise<string>} The generated lyrics.
  */
-async function generateLyricsWithTranscript(
-	container,
-	artist,
-	title,
-	trackUri,
-) {
-	const { logger } = container;
-	let transcriptText = null;
-	let transcript = null;
-	try {
-		transcript = await YoutubeTranscript.fetchTranscript(trackUri);
-		if (transcript && transcript.length > 0) {
-			transcriptText = transcript.map((line) => line.text).join(" ");
-		}
-	} catch (e) {
-		logger.warn(`Can't get transcript for ${trackUri}: ${e.message}`);
-	}
+async function generateLyricsWithTranscript(container, artist, title, trackUri) {
+    const { logger } = container;
+    let transcriptText = null;
+    let transcript = null;
+    try {
+        transcript = await YoutubeTranscript.fetchTranscript(trackUri);
+        if (transcript && transcript.length > 0) {
+            transcriptText = transcript.map((line) => line.text).join(' ');
+        }
+    } catch (e) {
+        logger.warn(`Can't get transcript for ${trackUri}: ${e.message}`);
+    }
 
-	if (!transcriptText) {
-		return null;
-	}
+    if (!transcriptText) {
+        return null;
+    }
 
-	const prompt = `You are an expert lyricist. Given the following information, generate the full lyrics of the song as accurately as possible, using the transcript as your main reference. 
+    const prompt = `You are an expert lyricist. Given the following information, generate the full lyrics of the song as accurately as possible, using the transcript as your main reference. 
         Artist: "${artist}"
         Title: "${title}"
         Transcript (reference): "${transcriptText}"
 
         Write the lyrics in a coherent, complete, and natural way, matching the style and tone of ${artist}.`;
 
-	try {
-		const aiLyrics = await generateContent(prompt);
-		return aiLyrics;
-	} catch (e) {
-		logger.error(`Error when generating lyrics with AI: ${e.stack}`);
-		return null;
-	}
+    try {
+        const aiLyrics = await generateContent(prompt);
+        return aiLyrics;
+    } catch (e) {
+        logger.error(`Error when generating lyrics with AI: ${e.stack}`);
+        return null;
+    }
 }
 
 /**
@@ -108,26 +102,26 @@ async function generateLyricsWithTranscript(
  * @returns {boolean}
  */
 function hasControlPermission(interaction, player) {
-	const { isOwner } = interaction.client.container.helpers.discord;
-	if (!player.currentTrack) return false;
+    const { isOwner } = interaction.client.container.helpers.discord;
+    if (!player.currentTrack) return false;
 
-	if (isOwner(interaction.user.id)) return true;
+    if (isOwner(interaction.user.id)) return true;
 
-	if (
-		interaction.member.permissions.has(PermissionFlagsBits.ManageGuild) ||
-		interaction.member.permissions.has(PermissionFlagsBits.Administrator)
-	)
-		return true;
+    if (
+        interaction.member.permissions.has(PermissionFlagsBits.ManageGuild) ||
+        interaction.member.permissions.has(PermissionFlagsBits.Administrator)
+    )
+        return true;
 
-	const requesterId = player.currentTrack.info.requester?.id;
-	if (interaction.user.id === requesterId) return true;
+    const requesterId = player.currentTrack.info.requester?.id;
+    if (interaction.user.id === requesterId) return true;
 
-	return false;
+    return false;
 }
 
 module.exports = {
-	formatTrackDuration,
-	createProgressBar,
-	generateLyricsWithTranscript,
-	hasControlPermission,
+    formatTrackDuration,
+    createProgressBar,
+    generateLyricsWithTranscript,
+    hasControlPermission,
 };

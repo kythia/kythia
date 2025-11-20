@@ -5,12 +5,12 @@
  * @assistant chaa & graa
  * @version 0.9.12-beta
  */
-const { SlashCommandBuilder, InteractionContextType } = require("discord.js");
+const { SlashCommandBuilder, InteractionContextType } = require('discord.js');
 
 module.exports = {
-	guildOnly: true,
-	data: new SlashCommandBuilder()
-		.setName("marry")
-		.setDescription("💍 Marriage system commands")
-		.setContexts(InteractionContextType.Guild),
+    guildOnly: true,
+    data: new SlashCommandBuilder()
+        .setName('marry')
+        .setDescription('💍 Marriage system commands')
+        .setContexts(InteractionContextType.Guild),
 };

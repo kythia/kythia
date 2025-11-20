@@ -6,19 +6,19 @@
  * @version 0.9.12-beta
  */
 
-const { refreshGuildInvites } = require("./helpers");
+const { refreshGuildInvites } = require('./helpers');
 
 const initialize = (bot) => {
-	const summary = [];
-	bot.addClientReadyHook(async (client) => {
-		for (const [, guild] of client.guilds.cache) {
-			await refreshGuildInvites(guild);
-		}
-	});
-	summary.push("  └─ ReadyHook: warm invite caches");
-	return summary;
+    const summary = [];
+    bot.addClientReadyHook(async (client) => {
+        for (const [, guild] of client.guilds.cache) {
+            await refreshGuildInvites(guild);
+        }
+    });
+    summary.push('  └─ ReadyHook: warm invite caches');
+    return summary;
 };
 
 module.exports = {
-	initialize,
+    initialize,
 };

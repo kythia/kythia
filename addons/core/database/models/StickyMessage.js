@@ -6,29 +6,29 @@
  * @version 0.9.12-beta
  */
 
-const { DataTypes } = require("sequelize");
+const { DataTypes } = require('sequelize');
 
-const { KythiaModel } = require("kythia-core");
+const { KythiaModel } = require('kythia-core');
 
 class StickyMessage extends KythiaModel {
-	static CACHE_KEYS = [["channelId"]];
-	static init(sequelize) {
-		KythiaModel.init(
-			{
-				channelId: { type: DataTypes.STRING, allowNull: false },
-				message: { type: DataTypes.STRING, allowNull: false },
-				messageId: { type: DataTypes.STRING, allowNull: true },
-			},
-			{
-				sequelize,
-				modelName: "StickyMessage",
-				tableName: "sticky_messages",
-				timestamps: false,
-			},
-		);
+    static CACHE_KEYS = [['channelId']];
+    static init(sequelize) {
+        super.init(
+            {
+                channelId: { type: DataTypes.STRING, allowNull: false },
+                message: { type: DataTypes.STRING, allowNull: false },
+                messageId: { type: DataTypes.STRING, allowNull: true },
+            },
+            {
+                sequelize,
+                modelName: 'StickyMessage',
+                tableName: 'sticky_messages',
+                timestamps: false,
+            }
+        );
 
-		return StickyMessage;
-	}
+        return this;
+    }
 }
 
 // StickyMessage.init(sequelize);

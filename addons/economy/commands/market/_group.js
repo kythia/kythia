@@ -7,9 +7,6 @@
  */
 
 module.exports = {
-	subcommand: true,
-	data: (group) =>
-		group
-			.setName("market")
-			.setDescription("📈 Interact with the Kythia Stock Exchange."),
+    subcommand: true,
+    data: (group) => group.setName('market').setDescription('📈 Interact with the Kythia Stock Exchange.'),
 };

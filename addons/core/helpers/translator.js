@@ -12,17 +12,14 @@
  * optional variables and fallback logic.
  * © 2025 kenndeclouv — v0.9.8-beta
  */
-const ServerSetting = require("@coreModels/ServerSetting");
-const { Collection } = require("discord.js");
-const logger = require("./logger");
-const path = require("node:path");
-const fs = require("node:fs");
+const ServerSetting = require('@coreModels/ServerSetting');
+const { Collection } = require('discord.js');
+const logger = require('./logger');
+const path = require('path');
+const fs = require('fs');
 
 // Defensive fallback to 'en' when `kythia.bot.language` is not defined
-let defaultLang =
-	typeof kythia !== "undefined" && kythia.bot && kythia.bot.language
-		? kythia.bot.language
-		: "en";
+let defaultLang = typeof kythia !== 'undefined' && kythia.bot && kythia.bot.language ? kythia.bot.language : 'en';
 
 const guildLanguageCache = new Collection();
 const locales = new Collection();
@@ -32,49 +29,45 @@ const locales = new Collection();
  * @returns {Collection<string, object>} Locales keyed by language code.
  */
 function getLocales() {
-	return locales;
+    return locales;
 }
 
 /**
  * Loads all JSON language files from `src/lang` into memory.
  */
 function loadLocales() {
-	const langDir = path.join(__dirname, "..", "lang");
+    const langDir = path.join(__dirname, '..', 'lang');
 
-	try {
-		if (!fs.existsSync(langDir)) {
-			throw new Error(`🌐 Language directory not found in: ${langDir}`);
-		}
+    try {
+        if (!fs.existsSync(langDir)) {
+            throw new Error(`🌐 Language directory not found in: ${langDir}`);
+        }
 
-		const langFiles = fs
-			.readdirSync(langDir)
-			.filter((file) => file.endsWith(".json"));
+        const langFiles = fs.readdirSync(langDir).filter((file) => file.endsWith('.json'));
 
-		// Load all available languages
-		for (const file of langFiles) {
-			const lang = file.replace(".json", "");
-			const filePath = path.join(langDir, file);
+        // Load all available languages
+        for (const file of langFiles) {
+            const lang = file.replace('.json', '');
+            const filePath = path.join(langDir, file);
 
-			const translations = JSON.parse(fs.readFileSync(filePath, "utf8"));
-			locales.set(lang, translations);
-			logger.info(`🌐 Loaded Language: ${lang}`);
-		}
+            const translations = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            locales.set(lang, translations);
+            logger.info(`🌐 Loaded Language: ${lang}`);
+        }
 
-		// Ensure defaultLang exists, otherwise use the first available language
-		if (!locales.has(defaultLang)) {
-			const availableLangs = Array.from(locales.keys());
-			if (availableLangs.length > 0) {
-				logger.warn(
-					`⚠️  Default language '${defaultLang}' not found. Using '${availableLangs[0]}' instead.`,
-				);
-				defaultLang = availableLangs[0];
-			} else {
-				throw new Error("❌ No language files found in lang directory.");
-			}
-		}
-	} catch (err) {
-		logger.error("❌ Error loading locales:", err);
-	}
+        // Ensure defaultLang exists, otherwise use the first available language
+        if (!locales.has(defaultLang)) {
+            const availableLangs = Array.from(locales.keys());
+            if (availableLangs.length > 0) {
+                logger.warn(`⚠️  Default language '${defaultLang}' not found. Using '${availableLangs[0]}' instead.`);
+                defaultLang = availableLangs[0];
+            } else {
+                throw new Error('❌ No language files found in lang directory.');
+            }
+        }
+    } catch (err) {
+        logger.error('❌ Error loading locales:', err);
+    }
 }
 
 /**
@@ -84,13 +77,8 @@ function loadLocales() {
  * @returns {*} The value at the path or undefined.
  */
 function getNestedValue(obj, pathExpr) {
-	if (!pathExpr) return undefined;
-	return pathExpr
-		.split(".")
-		.reduce(
-			(o, key) => (o && o[key] !== "undefined" ? o[key] : undefined),
-			obj,
-		);
+    if (!pathExpr) return undefined;
+    return pathExpr.split('.').reduce((o, key) => (o && o[key] !== 'undefined' ? o[key] : undefined), obj);
 }
 
 /**
@@ -104,55 +92,51 @@ function getNestedValue(obj, pathExpr) {
  * @returns {Promise<string>} Translated string or the key wrapped in brackets when missing.
  */
 async function t(interaction, key, variables = {}, forceLang = null) {
-	let lang = forceLang;
+    let lang = forceLang;
 
-	if (!lang && interaction && interaction.guildId) {
-		if (guildLanguageCache.has(interaction.guildId)) {
-			lang = guildLanguageCache.get(interaction.guildId);
-		} else {
-			try {
-				const setting = await ServerSetting.getCache({
-					guildId: interaction.guild.id,
-				});
-				lang = setting?.language ? setting.language : defaultLang;
-				guildLanguageCache.set(interaction.guildId, lang || defaultLang);
-			} catch (error) {
-				logger.error("Error getting language setting:", error);
-				lang = defaultLang;
-			}
-		}
-	} else if (!lang) {
-		lang = defaultLang;
-	}
+    if (!lang && interaction && interaction.guildId) {
+        if (guildLanguageCache.has(interaction.guildId)) {
+            lang = guildLanguageCache.get(interaction.guildId);
+        } else {
+            try {
+                const setting = await ServerSetting.getCache({ guildId: interaction.guild.id });
+                lang = setting && setting.language ? setting.language : defaultLang;
+                guildLanguageCache.set(interaction.guildId, lang || defaultLang);
+            } catch (error) {
+                logger.error('Error getting language setting:', error);
+                lang = defaultLang;
+            }
+        }
+    } else if (!lang) {
+        lang = defaultLang;
+    }
 
-	if (!lang) lang = defaultLang;
+    if (!lang) lang = defaultLang;
 
-	let primaryLangFile = locales.get(lang);
-	if (!primaryLangFile) {
-		logger.warn(
-			`⚠️  Language '${lang}' not found. Falling back to default language '${defaultLang}'.`,
-		);
-		lang = defaultLang;
-		primaryLangFile = locales.get(defaultLang);
-	}
-	const fallbackLangFile = locales.get(defaultLang);
+    let primaryLangFile = locales.get(lang);
+    if (!primaryLangFile) {
+        logger.warn(`⚠️  Language '${lang}' not found. Falling back to default language '${defaultLang}'.`);
+        lang = defaultLang;
+        primaryLangFile = locales.get(defaultLang);
+    }
+    const fallbackLangFile = locales.get(defaultLang);
 
-	// Resolve translation from primary or fallback
-	let translation = getNestedValue(primaryLangFile, key);
-	if (translation === undefined && fallbackLangFile) {
-		translation = getNestedValue(fallbackLangFile, key);
-	}
-	if (translation === undefined) {
-		logger.error(`Translation key not found: ${key} in any language.`);
-		return `[${key}]`;
-	}
+    // Resolve translation from primary or fallback
+    let translation = getNestedValue(primaryLangFile, key);
+    if (translation === undefined && fallbackLangFile) {
+        translation = getNestedValue(fallbackLangFile, key);
+    }
+    if (translation === undefined) {
+        logger.error(`Translation key not found: ${key} in any language.`);
+        return `[${key}]`;
+    }
 
-	for (const [variable, value] of Object.entries(variables)) {
-		const regex = new RegExp(`{${variable}}`, "g");
-		translation = translation.replace(regex, String(value));
-	}
+    for (const [variable, value] of Object.entries(variables)) {
+        const regex = new RegExp(`{${variable}}`, 'g');
+        translation = translation.replace(regex, String(value));
+    }
 
-	return translation;
+    return translation;
 }
 
 module.exports = { t, loadLocales, getLocales };

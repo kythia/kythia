@@ -5,10 +5,10 @@
  * @assistant chaa & graa
  * @version 0.9.12-beta
  */
-const { closeTicket } = require("../helpers");
+const { closeTicket } = require('../helpers');
 
 module.exports = {
-	execute: async (interaction, container) => {
-		await closeTicket(interaction, container);
-	},
+    execute: async (interaction, container) => {
+        await closeTicket(interaction, container);
+    },
 };

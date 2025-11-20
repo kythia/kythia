@@ -6,9 +6,6 @@
  * @version 0.9.12-beta
  */
 module.exports = {
-	subcommand: true,
-	data: (subcommandGroup) =>
-		subcommandGroup
-			.setName("dns")
-			.setDescription("Kelola DNS record untuk subdomain Pro-mu."),
+    subcommand: true,
+    data: (subcommandGroup) => subcommandGroup.setName('dns').setDescription('Kelola DNS record untuk subdomain Pro-mu.'),
 };

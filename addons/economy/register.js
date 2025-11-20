@@ -6,12 +6,12 @@
  * @version 0.9.12-beta
  */
 
-const { initializeOrderProcessing } = require("./helpers/orderProcessor");
+const { initializeOrderProcessing } = require('./helpers/orderProcessor');
 module.exports = {
-	async initialize(bot) {
-		const summery = [];
-		initializeOrderProcessing(bot);
-		summery.push("   └─ Task: Order processing");
-		return summery;
-	},
+    async initialize(bot) {
+        const summery = [];
+        initializeOrderProcessing(bot);
+        summery.push('   └─ Task: Order processing');
+        return summery;
+    },
 };

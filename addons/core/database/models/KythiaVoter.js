@@ -6,27 +6,27 @@
  * @version 0.9.12-beta
  */
 
-const { DataTypes } = require("sequelize");
+const { DataTypes } = require('sequelize');
 
-const { KythiaModel } = require("kythia-core");
+const { KythiaModel } = require('kythia-core');
 
 class KythiaVoter extends KythiaModel {
-	static init(sequelize) {
-		KythiaModel.init(
-			{
-				userId: { type: DataTypes.STRING, allowNull: false, primaryKey: true },
-				votedAt: { type: DataTypes.DATE, allowNull: false },
-			},
-			{
-				sequelize,
-				modelName: "KythiaVoter",
-				tableName: "kythia_voters",
-				timestamps: false,
-			},
-		);
+    static init(sequelize) {
+        super.init(
+            {
+                userId: { type: DataTypes.STRING, allowNull: false, primaryKey: true },
+                votedAt: { type: DataTypes.DATE, allowNull: false },
+            },
+            {
+                sequelize,
+                modelName: 'KythiaVoter',
+                tableName: 'kythia_voters',
+                timestamps: false,
+            }
+        );
 
-		return KythiaVoter;
-	}
+        return this;
+    }
 }
 
 // KythiaVoter.init(sequelize);

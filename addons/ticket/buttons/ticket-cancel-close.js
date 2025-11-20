@@ -6,7 +6,7 @@
  * @version 0.9.12-beta
  */
 module.exports = {
-	execute: async (interaction) => {
-		await interaction.message.delete().catch(() => {});
-	},
+    execute: async (interaction) => {
+        await interaction.message.delete().catch(() => {});
+    },
 };

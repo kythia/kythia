@@ -1,753 +1,502 @@
 {
-	"meta": {
-		"key": "company",
-		"display": "Company / Startup Enhanced",
-		"description": "Comprehensive corporate template with departments, standup, HR, executive areas, and detailed workflows",
-		"defaultLocale": "en"
-	},
-	"roles": [
-		{
-			"name": "CEO",
-			"color": 15844367,
-			"hoist": true,
-			"mentionable": false,
-			"perms": ["Administrator"]
-		},
-		{
-			"name": "CTO",
-			"color": 15158332,
-			"hoist": true,
-			"mentionable": true,
-			"perms": [
-				"ManageGuild",
-				"ManageChannels",
-				"ManageMessages",
-				"ViewAuditLog"
-			]
-		},
-		{
-			"name": "VP Engineering",
-			"color": 3447003,
-			"hoist": true,
-			"mentionable": true,
-			"perms": ["ManageMessages", "ManageRoles"]
-		},
-		{
-			"name": "VP Marketing",
-			"color": 10181046,
-			"hoist": true,
-			"mentionable": true,
-			"perms": ["ManageMessages"]
-		},
-		{
-			"name": "VP Sales",
-			"color": 11342935,
-			"hoist": true,
-			"mentionable": true,
-			"perms": ["ManageMessages"]
-		},
-		{
-			"name": "HR Director",
-			"color": 16753920,
-			"hoist": true,
-			"mentionable": true,
-			"perms": ["ManageMessages"]
-		},
-		{
-			"name": "Engineering Lead",
-			"color": 3066993,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Senior Developer",
-			"color": 3066993,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Developer",
-			"color": 3066993,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Design Lead",
-			"color": 10181046,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Designer",
-			"color": 10181046,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Marketing Lead",
-			"color": 3447003,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Marketing Specialist",
-			"color": 3447003,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Sales Lead",
-			"color": 11342935,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Sales Rep",
-			"color": 11342935,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Finance Team",
-			"color": 10038562,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Operations",
-			"color": 8359053,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Intern",
-			"color": 8421504,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Contractor",
-			"color": 8421504,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Bot",
-			"color": 9807270,
-			"hoist": false,
-			"mentionable": false,
-			"perms": ["ManageMessages", "EmbedLinks", "AttachFiles"]
-		}
-	],
-	"categories": [
-		{
-			"name": "📢 ANNOUNCEMENTS",
-			"channels": [
-				{
-					"name": "📋┃company-handbook",
-					"type": "text",
-					"topic": "Company policies, handbook, and procedures",
-					"rateLimitPerUser": 10,
-					"pin": [
-						{
-							"title": "📋 Company Handbook & Policies",
-							"description": "Welcome to our company! Please familiarize yourself with our policies and procedures.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "📖 Core Values",
-									"value": "• **Innovation:** We embrace new ideas and creative solutions\n• **Collaboration:** We work together to achieve common goals\n• **Integrity:** We maintain the highest ethical standards\n• **Excellence:** We strive for quality in everything we do"
-								},
-								{
-									"name": "⏰ Working Hours",
-									"value": "• **Core Hours:** 9:00 AM - 5:00 PM (Flexible)\n• **Meetings:** Scheduled during business hours\n• **Time Off:** Request through HR system"
-								},
-								{
-									"name": "📞 Emergency Contacts",
-									"value": "• **IT Support:** #it-support\n• **HR Issues:** #hr-support\n• **Security:** Contact security team immediately"
-								}
-							],
-							"footer": { "text": "Last updated: {date}" }
-						}
-					],
-					"perms": [
-						{
-							"roles": ["@everyone"],
-							"allow": ["ViewChannel", "ReadMessageHistory"],
-							"deny": ["SendMessages"]
-						},
-						{
-							"roles": ["CEO", "CTO", "HR Director"],
-							"allow": ["SendMessages"]
-						}
-					]
-				},
-				{
-					"name": "📢┃announcements",
-					"type": "text",
-					"topic": "Company-wide updates, news, and important information",
-					"pin": [
-						{
-							"title": "📢 Important Announcements",
-							"description": "Stay updated with the latest company news, policy changes, and important updates.",
-							"color": 15158332,
-							"footer": { "text": "Check this channel regularly for updates" }
-						}
-					]
-				},
-				{
-					"name": "🎉┃celebrations",
-					"type": "text",
-					"topic": "Birthdays, anniversaries, achievements, and team celebrations"
-				}
-			]
-		},
-		{
-			"name": "🏢 DEPARTMENTS",
-			"channels": [
-				{
-					"name": "💻┃engineering",
-					"type": "text",
-					"topic": "Engineering updates, technical discussions, and code reviews",
-					"pin": [
-						{
-							"title": "💻 Engineering Department",
-							"description": "Welcome to the Engineering team! This is our space for technical discussions, code reviews, and project updates.",
-							"color": 3066993,
-							"fields": [
-								{
-									"name": "📅 Weekly Standups",
-									"value": "Every Monday at 9:00 AM in #daily-standup"
-								},
-								{
-									"name": "🔧 Code Review Process",
-									"value": "All PRs must be reviewed by at least 2 team members"
-								},
-								{
-									"name": "📚 Resources",
-									"value": "Check #engineering-resources for documentation and guides"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🎨┃design",
-					"type": "text",
-					"topic": "Design system, UI/UX discussions, and creative projects",
-					"pin": [
-						{
-							"title": "🎨 Design Department",
-							"description": "Design team workspace for creative collaboration and project discussions.",
-							"color": 10181046,
-							"fields": [
-								{
-									"name": "🎯 Design Reviews",
-									"value": "Weekly design reviews every Friday at 2:00 PM"
-								},
-								{
-									"name": "📐 Design System",
-									"value": "Access our design system in #design-resources"
-								},
-								{
-									"name": "🖼️ Portfolio Sharing",
-									"value": "Share your work and get feedback from the team"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "📈┃marketing",
-					"type": "text",
-					"topic": "Campaigns, content strategy, and marketing initiatives",
-					"pin": [
-						{
-							"title": "📈 Marketing Department",
-							"description": "Marketing team hub for campaigns, content strategy, and brand initiatives.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "📊 Campaign Planning",
-									"value": "Weekly campaign planning every Tuesday at 10:00 AM"
-								},
-								{
-									"name": "📝 Content Calendar",
-									"value": "Check #content-calendar for upcoming content"
-								},
-								{
-									"name": "📱 Social Media",
-									"value": "Coordinate social media efforts in #social-media"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "💰┃sales",
-					"type": "text",
-					"topic": "Sales targets, client updates, and revenue discussions",
-					"pin": [
-						{
-							"title": "💰 Sales Department",
-							"description": "Sales team workspace for client management and revenue discussions.",
-							"color": 11342935,
-							"fields": [
-								{
-									"name": "🎯 Sales Targets",
-									"value": "Monthly targets and progress tracking"
-								},
-								{
-									"name": "👥 Client Management",
-									"value": "Client updates and relationship management"
-								},
-								{
-									"name": "📊 Revenue Reports",
-									"value": "Weekly revenue reports every Friday"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "👥┃hr",
-					"type": "text",
-					"topic": "HR announcements, policies, and employee resources",
-					"pin": [
-						{
-							"title": "👥 Human Resources",
-							"description": "HR department for employee support, policies, and resources.",
-							"color": 16753920,
-							"fields": [
-								{
-									"name": "📋 Employee Resources",
-									"value": "Access forms, policies, and employee handbook"
-								},
-								{
-									"name": "🏥 Benefits Information",
-									"value": "Health insurance, PTO, and other benefits"
-								},
-								{
-									"name": "📞 HR Support",
-									"value": "Contact HR team for any questions or concerns"
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "🚀 PROJECTS & PRODUCTIVITY",
-			"channels": [
-				{
-					"name": "📅┃daily-standup",
-					"type": "text",
-					"topic": "Daily standup logs and team updates (automated by bot)",
-					"rateLimitPerUser": 15,
-					"pin": [
-						{
-							"title": "📅 Daily Standup Guidelines",
-							"description": "Share your daily updates following this format:",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "📝 Format",
-									"value": "**Yesterday:** What did you accomplish?\n**Today:** What are you working on?\n**Blockers:** Any obstacles or help needed?"
-								},
-								{
-									"name": "⏰ Schedule",
-									"value": "Daily at 9:00 AM (or post when you start your day)"
-								},
-								{
-									"name": "🎯 Purpose",
-									"value": "Keep the team aligned and identify any blockers early"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🐛┃bug-reports",
-					"type": "forum",
-					"topic": "Internal bug tracking and issue management",
-					"forumTags": [
-						"frontend",
-						"backend",
-						"infrastructure",
-						"operations",
-						"critical",
-						"medium",
-						"low"
-					],
-					"pin": [
-						{
-							"title": "🐛 Bug Report Guidelines",
-							"description": "Report bugs using the following format for efficient tracking and resolution.",
-							"color": 15158332,
-							"fields": [
-								{
-									"name": "📝 Bug Report Format",
-									"value": "**Title:** Brief description\n**Severity:** Critical/High/Medium/Low\n**Environment:** Dev/Staging/Production\n**Steps to Reproduce:**\n1. Step one\n2. Step two\n**Expected vs Actual:**\n**Screenshots/Logs:**"
-								},
-								{
-									"name": "🏷️ Tags",
-									"value": "Use appropriate tags for categorization and priority"
-								},
-								{
-									"name": "👥 Assignment",
-									"value": "Tag relevant team members for faster resolution"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "💡┃feature-requests",
-					"type": "forum",
-					"topic": "Feature requests, specifications, and product ideas",
-					"forumTags": [
-						"product",
-						"ui-ux",
-						"technical",
-						"integration",
-						"performance"
-					],
-					"pin": [
-						{
-							"title": "💡 Feature Request Process",
-							"description": "Submit feature requests with proper documentation for product team review.",
-							"color": 10181046,
-							"fields": [
-								{
-									"name": "📋 Request Format",
-									"value": "**Title:** Feature name\n**Problem:** What problem does this solve?\n**Solution:** Proposed solution\n**Impact:** Expected impact and benefits\n**Effort:** Estimated development effort"
-								},
-								{
-									"name": "📊 Review Process",
-									"value": "1. Initial review by product team\n2. Technical feasibility assessment\n3. Priority assignment\n4. Development planning"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "📊┃project-status",
-					"type": "text",
-					"topic": "Current project status updates and milestone tracking",
-					"pin": [
-						{
-							"title": "📊 Project Status Dashboard",
-							"description": "Track current projects, milestones, and deliverables across all departments.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "🔄 Update Frequency",
-									"value": "Weekly updates every Friday"
-								},
-								{
-									"name": "📈 Metrics",
-									"value": "Track progress, blockers, and resource needs"
-								},
-								{
-									"name": "🎯 Milestones",
-									"value": "Upcoming deadlines and key deliverables"
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "🤝 MEETINGS & COLLABORATION",
-			"channels": [
-				{
-					"name": "🏢┃meeting-room-1",
-					"type": "voice",
-					"topic": "General meeting room for team discussions"
-				},
-				{
-					"name": "🏢┃meeting-room-2",
-					"type": "voice",
-					"topic": "Secondary meeting room for larger groups"
-				},
-				{
-					"name": "🎤┃town-hall",
-					"type": "voice",
-					"topic": "All-hands meetings and company-wide announcements"
-				},
-				{
-					"name": "💻┃pair-programming",
-					"type": "voice",
-					"topic": "Collaborative coding sessions"
-				},
-				{
-					"name": "🎨┃design-review",
-					"type": "voice",
-					"topic": "Design reviews and creative collaboration"
-				},
-				{
-					"name": "📞┃client-calls",
-					"type": "voice",
-					"topic": "Client meetings and sales calls"
-				}
-			]
-		},
-		{
-			"name": "🔒 CONFIDENTIAL & ADMIN",
-			"channels": [
-				{
-					"name": "👑┃executive-chat",
-					"type": "text",
-					"topic": "Private executive discussions and strategic planning",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": [
-								"CEO",
-								"CTO",
-								"VP Engineering",
-								"VP Marketing",
-								"VP Sales",
-								"HR Director"
-							],
-							"allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"]
-						}
-					]
-				},
-				{
-					"name": "👑┃exec-voice",
-					"type": "voice",
-					"topic": "Executive voice channel for private meetings",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": [
-								"CEO",
-								"CTO",
-								"VP Engineering",
-								"VP Marketing",
-								"VP Sales",
-								"HR Director"
-							],
-							"allow": ["ViewChannel", "Connect", "Speak", "Stream"]
-						}
-					]
-				},
-				{
-					"name": "💰┃finance",
-					"type": "text",
-					"topic": "Financial discussions, budgets, and sensitive financial information",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": ["Finance Team", "CEO", "CTO", "HR Director"],
-							"allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"]
-						}
-					]
-				},
-				{
-					"name": "👥┃hr-confidential",
-					"type": "text",
-					"topic": "Confidential HR matters and employee issues",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": ["HR Director", "CEO"],
-							"allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"]
-						}
-					]
-				},
-				{
-					"name": "⚖️┃legal",
-					"type": "text",
-					"topic": "Legal matters, contracts, and compliance discussions",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": ["CEO", "CTO", "HR Director"],
-							"allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"]
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "📚 RESOURCES & LEARNING",
-			"channels": [
-				{
-					"name": "📖┃engineering-resources",
-					"type": "text",
-					"topic": "Technical documentation, guides, and engineering resources",
-					"pin": [
-						{
-							"title": "📖 Engineering Resources",
-							"description": "Centralized repository for all engineering documentation and resources.",
-							"color": 3066993,
-							"fields": [
-								{
-									"name": "📚 Documentation",
-									"value": "• API Documentation\n• Code Style Guides\n• Architecture Decisions\n• Deployment Guides"
-								},
-								{
-									"name": "🛠️ Tools",
-									"value": "• Development Environment Setup\n• Testing Frameworks\n• CI/CD Pipelines\n• Monitoring Tools"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🎨┃design-resources",
-					"type": "text",
-					"topic": "Design system, brand guidelines, and creative resources",
-					"pin": [
-						{
-							"title": "🎨 Design Resources",
-							"description": "Design system, brand guidelines, and creative resources for the team.",
-							"color": 10181046,
-							"fields": [
-								{
-									"name": "🎨 Design System",
-									"value": "• Color Palette\n• Typography\n• Component Library\n• Icon Set"
-								},
-								{
-									"name": "📐 Guidelines",
-									"value": "• Brand Guidelines\n• Logo Usage\n• Image Standards\n• Accessibility Guidelines"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "📚┃learning",
-					"type": "text",
-					"topic": "Learning resources, courses, and skill development",
-					"pin": [
-						{
-							"title": "📚 Learning & Development",
-							"description": "Resources for continuous learning and professional development.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "🎓 Courses",
-									"value": "• Online Learning Platforms\n• Internal Training\n• Conference Recordings\n• Workshop Materials"
-								},
-								{
-									"name": "📖 Books",
-									"value": "• Recommended Reading\n• Book Club Discussions\n• Technical Books\n• Leadership Resources"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "📅┃content-calendar",
-					"type": "text",
-					"topic": "Content calendar for marketing and social media",
-					"pin": [
-						{
-							"title": "📅 Content Calendar",
-							"description": "Marketing content calendar and social media planning.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "📝 Content Types",
-									"value": "• Blog Posts\n• Social Media\n• Email Campaigns\n• Video Content"
-								},
-								{
-									"name": "📊 Planning",
-									"value": "• Monthly Themes\n• Campaign Schedules\n• Content Approval Process\n• Performance Tracking"
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "🔧 SUPPORT & MAINTENANCE",
-			"channels": [
-				{
-					"name": "🛠️┃it-support",
-					"type": "text",
-					"topic": "IT support and technical assistance",
-					"pin": [
-						{
-							"title": "🛠️ IT Support",
-							"description": "Get help with technical issues, software, and hardware problems.",
-							"color": 15158332,
-							"fields": [
-								{
-									"name": "📞 Contact Methods",
-									"value": "• This channel for non-urgent issues\n• Email: it-support@company.com\n• Phone: Ext. 1234 for urgent issues"
-								},
-								{
-									"name": "🔧 Common Issues",
-									"value": "• Password resets\n• Software installation\n• Hardware problems\n• Network connectivity"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "📊┃system-logs",
-					"type": "text",
-					"topic": "Bot/system logs and monitoring",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": [
-								"CEO",
-								"CTO",
-								"VP Engineering",
-								"Engineering Lead",
-								"Bot"
-							],
-							"allow": [
-								"ViewChannel",
-								"SendMessages",
-								"ReadMessageHistory",
-								"AttachFiles",
-								"EmbedLinks"
-							]
-						}
-					]
-				},
-				{
-					"name": "🚨┃alerts",
-					"type": "text",
-					"topic": "System alerts and critical notifications",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": [
-								"CEO",
-								"CTO",
-								"VP Engineering",
-								"Engineering Lead",
-								"Operations",
-								"Bot"
-							],
-							"allow": ["ViewChannel", "SendMessages", "ReadMessageHistory"]
-						}
-					]
-				}
-			]
-		}
-	]
+    "meta": {
+        "key": "company",
+        "display": "Company / Startup Enhanced",
+        "description": "Comprehensive corporate template with departments, standup, HR, executive areas, and detailed workflows",
+        "defaultLocale": "en"
+    },
+    "roles": [
+        { "name": "CEO", "color": 15844367, "hoist": true, "mentionable": false, "perms": ["Administrator"] },
+        {
+            "name": "CTO",
+            "color": 15158332,
+            "hoist": true,
+            "mentionable": true,
+            "perms": ["ManageGuild", "ManageChannels", "ManageMessages", "ViewAuditLog"]
+        },
+        { "name": "VP Engineering", "color": 3447003, "hoist": true, "mentionable": true, "perms": ["ManageMessages", "ManageRoles"] },
+        { "name": "VP Marketing", "color": 10181046, "hoist": true, "mentionable": true, "perms": ["ManageMessages"] },
+        { "name": "VP Sales", "color": 11342935, "hoist": true, "mentionable": true, "perms": ["ManageMessages"] },
+        { "name": "HR Director", "color": 16753920, "hoist": true, "mentionable": true, "perms": ["ManageMessages"] },
+        { "name": "Engineering Lead", "color": 3066993, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Senior Developer", "color": 3066993, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Developer", "color": 3066993, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Design Lead", "color": 10181046, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Designer", "color": 10181046, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Marketing Lead", "color": 3447003, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Marketing Specialist", "color": 3447003, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Sales Lead", "color": 11342935, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Sales Rep", "color": 11342935, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Finance Team", "color": 10038562, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Operations", "color": 8359053, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Intern", "color": 8421504, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Contractor", "color": 8421504, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Bot", "color": 9807270, "hoist": false, "mentionable": false, "perms": ["ManageMessages", "EmbedLinks", "AttachFiles"] }
+    ],
+    "categories": [
+        {
+            "name": "📢 ANNOUNCEMENTS",
+            "channels": [
+                {
+                    "name": "📋┃company-handbook",
+                    "type": "text",
+                    "topic": "Company policies, handbook, and procedures",
+                    "rateLimitPerUser": 10,
+                    "pin": [
+                        {
+                            "title": "📋 Company Handbook & Policies",
+                            "description": "Welcome to our company! Please familiarize yourself with our policies and procedures.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "📖 Core Values",
+                                    "value": "• **Innovation:** We embrace new ideas and creative solutions\n• **Collaboration:** We work together to achieve common goals\n• **Integrity:** We maintain the highest ethical standards\n• **Excellence:** We strive for quality in everything we do"
+                                },
+                                {
+                                    "name": "⏰ Working Hours",
+                                    "value": "• **Core Hours:** 9:00 AM - 5:00 PM (Flexible)\n• **Meetings:** Scheduled during business hours\n• **Time Off:** Request through HR system"
+                                },
+                                {
+                                    "name": "📞 Emergency Contacts",
+                                    "value": "• **IT Support:** #it-support\n• **HR Issues:** #hr-support\n• **Security:** Contact security team immediately"
+                                }
+                            ],
+                            "footer": { "text": "Last updated: {date}" }
+                        }
+                    ],
+                    "perms": [
+                        { "roles": ["@everyone"], "allow": ["ViewChannel", "ReadMessageHistory"], "deny": ["SendMessages"] },
+                        { "roles": ["CEO", "CTO", "HR Director"], "allow": ["SendMessages"] }
+                    ]
+                },
+                {
+                    "name": "📢┃announcements",
+                    "type": "text",
+                    "topic": "Company-wide updates, news, and important information",
+                    "pin": [
+                        {
+                            "title": "📢 Important Announcements",
+                            "description": "Stay updated with the latest company news, policy changes, and important updates.",
+                            "color": 15158332,
+                            "footer": { "text": "Check this channel regularly for updates" }
+                        }
+                    ]
+                },
+                {
+                    "name": "🎉┃celebrations",
+                    "type": "text",
+                    "topic": "Birthdays, anniversaries, achievements, and team celebrations"
+                }
+            ]
+        },
+        {
+            "name": "🏢 DEPARTMENTS",
+            "channels": [
+                {
+                    "name": "💻┃engineering",
+                    "type": "text",
+                    "topic": "Engineering updates, technical discussions, and code reviews",
+                    "pin": [
+                        {
+                            "title": "💻 Engineering Department",
+                            "description": "Welcome to the Engineering team! This is our space for technical discussions, code reviews, and project updates.",
+                            "color": 3066993,
+                            "fields": [
+                                { "name": "📅 Weekly Standups", "value": "Every Monday at 9:00 AM in #daily-standup" },
+                                { "name": "🔧 Code Review Process", "value": "All PRs must be reviewed by at least 2 team members" },
+                                { "name": "📚 Resources", "value": "Check #engineering-resources for documentation and guides" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🎨┃design",
+                    "type": "text",
+                    "topic": "Design system, UI/UX discussions, and creative projects",
+                    "pin": [
+                        {
+                            "title": "🎨 Design Department",
+                            "description": "Design team workspace for creative collaboration and project discussions.",
+                            "color": 10181046,
+                            "fields": [
+                                { "name": "🎯 Design Reviews", "value": "Weekly design reviews every Friday at 2:00 PM" },
+                                { "name": "📐 Design System", "value": "Access our design system in #design-resources" },
+                                { "name": "🖼️ Portfolio Sharing", "value": "Share your work and get feedback from the team" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "📈┃marketing",
+                    "type": "text",
+                    "topic": "Campaigns, content strategy, and marketing initiatives",
+                    "pin": [
+                        {
+                            "title": "📈 Marketing Department",
+                            "description": "Marketing team hub for campaigns, content strategy, and brand initiatives.",
+                            "color": 3447003,
+                            "fields": [
+                                { "name": "📊 Campaign Planning", "value": "Weekly campaign planning every Tuesday at 10:00 AM" },
+                                { "name": "📝 Content Calendar", "value": "Check #content-calendar for upcoming content" },
+                                { "name": "📱 Social Media", "value": "Coordinate social media efforts in #social-media" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "💰┃sales",
+                    "type": "text",
+                    "topic": "Sales targets, client updates, and revenue discussions",
+                    "pin": [
+                        {
+                            "title": "💰 Sales Department",
+                            "description": "Sales team workspace for client management and revenue discussions.",
+                            "color": 11342935,
+                            "fields": [
+                                { "name": "🎯 Sales Targets", "value": "Monthly targets and progress tracking" },
+                                { "name": "👥 Client Management", "value": "Client updates and relationship management" },
+                                { "name": "📊 Revenue Reports", "value": "Weekly revenue reports every Friday" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "👥┃hr",
+                    "type": "text",
+                    "topic": "HR announcements, policies, and employee resources",
+                    "pin": [
+                        {
+                            "title": "👥 Human Resources",
+                            "description": "HR department for employee support, policies, and resources.",
+                            "color": 16753920,
+                            "fields": [
+                                { "name": "📋 Employee Resources", "value": "Access forms, policies, and employee handbook" },
+                                { "name": "🏥 Benefits Information", "value": "Health insurance, PTO, and other benefits" },
+                                { "name": "📞 HR Support", "value": "Contact HR team for any questions or concerns" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "🚀 PROJECTS & PRODUCTIVITY",
+            "channels": [
+                {
+                    "name": "📅┃daily-standup",
+                    "type": "text",
+                    "topic": "Daily standup logs and team updates (automated by bot)",
+                    "rateLimitPerUser": 15,
+                    "pin": [
+                        {
+                            "title": "📅 Daily Standup Guidelines",
+                            "description": "Share your daily updates following this format:",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "📝 Format",
+                                    "value": "**Yesterday:** What did you accomplish?\n**Today:** What are you working on?\n**Blockers:** Any obstacles or help needed?"
+                                },
+                                { "name": "⏰ Schedule", "value": "Daily at 9:00 AM (or post when you start your day)" },
+                                { "name": "🎯 Purpose", "value": "Keep the team aligned and identify any blockers early" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🐛┃bug-reports",
+                    "type": "forum",
+                    "topic": "Internal bug tracking and issue management",
+                    "forumTags": ["frontend", "backend", "infrastructure", "operations", "critical", "medium", "low"],
+                    "pin": [
+                        {
+                            "title": "🐛 Bug Report Guidelines",
+                            "description": "Report bugs using the following format for efficient tracking and resolution.",
+                            "color": 15158332,
+                            "fields": [
+                                {
+                                    "name": "📝 Bug Report Format",
+                                    "value": "**Title:** Brief description\n**Severity:** Critical/High/Medium/Low\n**Environment:** Dev/Staging/Production\n**Steps to Reproduce:**\n1. Step one\n2. Step two\n**Expected vs Actual:**\n**Screenshots/Logs:**"
+                                },
+                                { "name": "🏷️ Tags", "value": "Use appropriate tags for categorization and priority" },
+                                { "name": "👥 Assignment", "value": "Tag relevant team members for faster resolution" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "💡┃feature-requests",
+                    "type": "forum",
+                    "topic": "Feature requests, specifications, and product ideas",
+                    "forumTags": ["product", "ui-ux", "technical", "integration", "performance"],
+                    "pin": [
+                        {
+                            "title": "💡 Feature Request Process",
+                            "description": "Submit feature requests with proper documentation for product team review.",
+                            "color": 10181046,
+                            "fields": [
+                                {
+                                    "name": "📋 Request Format",
+                                    "value": "**Title:** Feature name\n**Problem:** What problem does this solve?\n**Solution:** Proposed solution\n**Impact:** Expected impact and benefits\n**Effort:** Estimated development effort"
+                                },
+                                {
+                                    "name": "📊 Review Process",
+                                    "value": "1. Initial review by product team\n2. Technical feasibility assessment\n3. Priority assignment\n4. Development planning"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "📊┃project-status",
+                    "type": "text",
+                    "topic": "Current project status updates and milestone tracking",
+                    "pin": [
+                        {
+                            "title": "📊 Project Status Dashboard",
+                            "description": "Track current projects, milestones, and deliverables across all departments.",
+                            "color": 3447003,
+                            "fields": [
+                                { "name": "🔄 Update Frequency", "value": "Weekly updates every Friday" },
+                                { "name": "📈 Metrics", "value": "Track progress, blockers, and resource needs" },
+                                { "name": "🎯 Milestones", "value": "Upcoming deadlines and key deliverables" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "🤝 MEETINGS & COLLABORATION",
+            "channels": [
+                {
+                    "name": "🏢┃meeting-room-1",
+                    "type": "voice",
+                    "topic": "General meeting room for team discussions"
+                },
+                {
+                    "name": "🏢┃meeting-room-2",
+                    "type": "voice",
+                    "topic": "Secondary meeting room for larger groups"
+                },
+                {
+                    "name": "🎤┃town-hall",
+                    "type": "voice",
+                    "topic": "All-hands meetings and company-wide announcements"
+                },
+                {
+                    "name": "💻┃pair-programming",
+                    "type": "voice",
+                    "topic": "Collaborative coding sessions"
+                },
+                {
+                    "name": "🎨┃design-review",
+                    "type": "voice",
+                    "topic": "Design reviews and creative collaboration"
+                },
+                {
+                    "name": "📞┃client-calls",
+                    "type": "voice",
+                    "topic": "Client meetings and sales calls"
+                }
+            ]
+        },
+        {
+            "name": "🔒 CONFIDENTIAL & ADMIN",
+            "channels": [
+                {
+                    "name": "👑┃executive-chat",
+                    "type": "text",
+                    "topic": "Private executive discussions and strategic planning",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        {
+                            "roles": ["CEO", "CTO", "VP Engineering", "VP Marketing", "VP Sales", "HR Director"],
+                            "allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"]
+                        }
+                    ]
+                },
+                {
+                    "name": "👑┃exec-voice",
+                    "type": "voice",
+                    "topic": "Executive voice channel for private meetings",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        {
+                            "roles": ["CEO", "CTO", "VP Engineering", "VP Marketing", "VP Sales", "HR Director"],
+                            "allow": ["ViewChannel", "Connect", "Speak", "Stream"]
+                        }
+                    ]
+                },
+                {
+                    "name": "💰┃finance",
+                    "type": "text",
+                    "topic": "Financial discussions, budgets, and sensitive financial information",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        {
+                            "roles": ["Finance Team", "CEO", "CTO", "HR Director"],
+                            "allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"]
+                        }
+                    ]
+                },
+                {
+                    "name": "👥┃hr-confidential",
+                    "type": "text",
+                    "topic": "Confidential HR matters and employee issues",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        { "roles": ["HR Director", "CEO"], "allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"] }
+                    ]
+                },
+                {
+                    "name": "⚖️┃legal",
+                    "type": "text",
+                    "topic": "Legal matters, contracts, and compliance discussions",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        { "roles": ["CEO", "CTO", "HR Director"], "allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"] }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "📚 RESOURCES & LEARNING",
+            "channels": [
+                {
+                    "name": "📖┃engineering-resources",
+                    "type": "text",
+                    "topic": "Technical documentation, guides, and engineering resources",
+                    "pin": [
+                        {
+                            "title": "📖 Engineering Resources",
+                            "description": "Centralized repository for all engineering documentation and resources.",
+                            "color": 3066993,
+                            "fields": [
+                                {
+                                    "name": "📚 Documentation",
+                                    "value": "• API Documentation\n• Code Style Guides\n• Architecture Decisions\n• Deployment Guides"
+                                },
+                                {
+                                    "name": "🛠️ Tools",
+                                    "value": "• Development Environment Setup\n• Testing Frameworks\n• CI/CD Pipelines\n• Monitoring Tools"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🎨┃design-resources",
+                    "type": "text",
+                    "topic": "Design system, brand guidelines, and creative resources",
+                    "pin": [
+                        {
+                            "title": "🎨 Design Resources",
+                            "description": "Design system, brand guidelines, and creative resources for the team.",
+                            "color": 10181046,
+                            "fields": [
+                                { "name": "🎨 Design System", "value": "• Color Palette\n• Typography\n• Component Library\n• Icon Set" },
+                                {
+                                    "name": "📐 Guidelines",
+                                    "value": "• Brand Guidelines\n• Logo Usage\n• Image Standards\n• Accessibility Guidelines"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "📚┃learning",
+                    "type": "text",
+                    "topic": "Learning resources, courses, and skill development",
+                    "pin": [
+                        {
+                            "title": "📚 Learning & Development",
+                            "description": "Resources for continuous learning and professional development.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "🎓 Courses",
+                                    "value": "• Online Learning Platforms\n• Internal Training\n• Conference Recordings\n• Workshop Materials"
+                                },
+                                {
+                                    "name": "📖 Books",
+                                    "value": "• Recommended Reading\n• Book Club Discussions\n• Technical Books\n• Leadership Resources"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "📅┃content-calendar",
+                    "type": "text",
+                    "topic": "Content calendar for marketing and social media",
+                    "pin": [
+                        {
+                            "title": "📅 Content Calendar",
+                            "description": "Marketing content calendar and social media planning.",
+                            "color": 3447003,
+                            "fields": [
+                                { "name": "📝 Content Types", "value": "• Blog Posts\n• Social Media\n• Email Campaigns\n• Video Content" },
+                                {
+                                    "name": "📊 Planning",
+                                    "value": "• Monthly Themes\n• Campaign Schedules\n• Content Approval Process\n• Performance Tracking"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "🔧 SUPPORT & MAINTENANCE",
+            "channels": [
+                {
+                    "name": "🛠️┃it-support",
+                    "type": "text",
+                    "topic": "IT support and technical assistance",
+                    "pin": [
+                        {
+                            "title": "🛠️ IT Support",
+                            "description": "Get help with technical issues, software, and hardware problems.",
+                            "color": 15158332,
+                            "fields": [
+                                {
+                                    "name": "📞 Contact Methods",
+                                    "value": "• This channel for non-urgent issues\n• Email: it-support@company.com\n• Phone: Ext. 1234 for urgent issues"
+                                },
+                                {
+                                    "name": "🔧 Common Issues",
+                                    "value": "• Password resets\n• Software installation\n• Hardware problems\n• Network connectivity"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "📊┃system-logs",
+                    "type": "text",
+                    "topic": "Bot/system logs and monitoring",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        {
+                            "roles": ["CEO", "CTO", "VP Engineering", "Engineering Lead", "Bot"],
+                            "allow": ["ViewChannel", "SendMessages", "ReadMessageHistory", "AttachFiles", "EmbedLinks"]
+                        }
+                    ]
+                },
+                {
+                    "name": "🚨┃alerts",
+                    "type": "text",
+                    "topic": "System alerts and critical notifications",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        {
+                            "roles": ["CEO", "CTO", "VP Engineering", "Engineering Lead", "Operations", "Bot"],
+                            "allow": ["ViewChannel", "SendMessages", "ReadMessageHistory"]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
 }

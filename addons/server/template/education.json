@@ -1,840 +1,689 @@
 {
-	"meta": {
-		"key": "education",
-		"display": "Educational Institution",
-		"description": "Complete educational server template with courses, study groups, resources, and academic support",
-		"defaultLocale": "en"
-	},
-	"roles": [
-		{
-			"name": "Principal",
-			"color": 15844367,
-			"hoist": true,
-			"mentionable": false,
-			"perms": ["Administrator"]
-		},
-		{
-			"name": "Vice Principal",
-			"color": 15158332,
-			"hoist": true,
-			"mentionable": true,
-			"perms": [
-				"ManageGuild",
-				"ManageChannels",
-				"ManageMessages",
-				"ViewAuditLog"
-			]
-		},
-		{
-			"name": "Department Head",
-			"color": 3447003,
-			"hoist": true,
-			"mentionable": true,
-			"perms": ["ManageMessages", "ManageRoles"]
-		},
-		{
-			"name": "Professor",
-			"color": 10181046,
-			"hoist": true,
-			"mentionable": true,
-			"perms": ["ManageMessages"]
-		},
-		{
-			"name": "Instructor",
-			"color": 11342935,
-			"hoist": true,
-			"mentionable": true,
-			"perms": ["ManageMessages"]
-		},
-		{
-			"name": "Teaching Assistant",
-			"color": 16753920,
-			"hoist": true,
-			"mentionable": true,
-			"perms": ["ManageMessages"]
-		},
-		{
-			"name": "Senior Student",
-			"color": 3066993,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Student",
-			"color": 3447003,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Freshman",
-			"color": 12745742,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Sophomore",
-			"color": 6323595,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Junior",
-			"color": 11027200,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Senior",
-			"color": 16763904,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Graduate Student",
-			"color": 10181046,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Alumni",
-			"color": 8359053,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Parent",
-			"color": 10038562,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Guest Lecturer",
-			"color": 15105570,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Research Assistant",
-			"color": 10181046,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Study Group Leader",
-			"color": 3066993,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Bot",
-			"color": 9807270,
-			"hoist": false,
-			"mentionable": false,
-			"perms": ["ManageMessages", "EmbedLinks", "AttachFiles"]
-		}
-	],
-	"categories": [
-		{
-			"name": "📢 ANNOUNCEMENTS",
-			"channels": [
-				{
-					"name": "📋┃academic-calendar",
-					"type": "text",
-					"topic": "Important dates, deadlines, and academic calendar",
-					"pin": [
-						{
-							"title": "📋 Academic Calendar",
-							"description": "Stay updated with important academic dates, deadlines, and events.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "📅 Key Dates",
-									"value": "• Semester start/end dates\n• Exam periods\n• Holiday breaks\n• Registration deadlines"
-								},
-								{
-									"name": "⏰ Deadlines",
-									"value": "• Assignment due dates\n• Project submissions\n• Scholarship applications\n• Graduation requirements"
-								}
-							]
-						}
-					],
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["SendMessages"] },
-						{
-							"roles": ["Principal", "Vice Principal", "Department Head"],
-							"allow": ["SendMessages"]
-						}
-					]
-				},
-				{
-					"name": "📢┃announcements",
-					"type": "text",
-					"topic": "General announcements and important updates",
-					"pin": [
-						{
-							"title": "📢 Important Announcements",
-							"description": "Stay informed about important updates, policy changes, and campus news.",
-							"color": 15158332,
-							"footer": { "text": "Check this channel regularly for updates" }
-						}
-					]
-				},
-				{
-					"name": "🎓┃graduation",
-					"type": "text",
-					"topic": "Graduation ceremonies, requirements, and celebrations",
-					"pin": [
-						{
-							"title": "🎓 Graduation Information",
-							"description": "Everything you need to know about graduation requirements and ceremonies.",
-							"color": 16763904,
-							"fields": [
-								{
-									"name": "📋 Requirements",
-									"value": "• Credit requirements\n• GPA requirements\n• Capstone project completion\n• Application deadlines"
-								},
-								{
-									"name": "🎉 Ceremony Details",
-									"value": "• Date and time\n• Venue information\n• Guest tickets\n• Dress code"
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "📚 ACADEMIC DEPARTMENTS",
-			"channels": [
-				{
-					"name": "💻┃computer-science",
-					"type": "text",
-					"topic": "Computer Science department discussions and resources",
-					"pin": [
-						{
-							"title": "💻 Computer Science Department",
-							"description": "Welcome to the Computer Science department! Find resources, assignments, and connect with fellow students.",
-							"color": 3066993,
-							"fields": [
-								{
-									"name": "📚 Resources",
-									"value": "• Programming tutorials\n• Algorithm references\n• Project guidelines\n• Career opportunities"
-								},
-								{
-									"name": "👥 Faculty",
-									"value": "• Professor office hours\n• TA contact information\n• Research opportunities\n• Mentorship programs"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🔬┃science",
-					"type": "text",
-					"topic": "Science department - Biology, Chemistry, Physics",
-					"pin": [
-						{
-							"title": "🔬 Science Department",
-							"description": "Science department hub for Biology, Chemistry, Physics, and other science disciplines.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "🧪 Lab Resources",
-									"value": "• Lab safety guidelines\n• Equipment tutorials\n• Experiment protocols\n• Lab report templates"
-								},
-								{
-									"name": "📊 Research",
-									"value": "• Research opportunities\n• Faculty research areas\n• Student research projects\n• Conference presentations"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "📖┃humanities",
-					"type": "text",
-					"topic": "Humanities department - Literature, History, Philosophy",
-					"pin": [
-						{
-							"title": "📖 Humanities Department",
-							"description": "Humanities department for Literature, History, Philosophy, and related fields.",
-							"color": 10181046,
-							"fields": [
-								{
-									"name": "📚 Study Resources",
-									"value": "• Reading lists\n• Essay writing guides\n• Citation formats\n• Research databases"
-								},
-								{
-									"name": "🎭 Activities",
-									"value": "• Book clubs\n• Writing workshops\n• Debate societies\n• Cultural events"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "📊┃business",
-					"type": "text",
-					"topic": "Business and Economics department",
-					"pin": [
-						{
-							"title": "📊 Business Department",
-							"description": "Business and Economics department for management, finance, and economics studies.",
-							"color": 11342935,
-							"fields": [
-								{
-									"name": "💼 Career Prep",
-									"value": "• Internship opportunities\n• Resume building\n• Interview preparation\n• Networking events"
-								},
-								{
-									"name": "📈 Case Studies",
-									"value": "• Real-world examples\n• Industry analysis\n• Market research\n• Business simulations"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🎨┃arts",
-					"type": "text",
-					"topic": "Arts department - Visual Arts, Music, Theater",
-					"pin": [
-						{
-							"title": "🎨 Arts Department",
-							"description": "Arts department for Visual Arts, Music, Theater, and creative disciplines.",
-							"color": 10181046,
-							"fields": [
-								{
-									"name": "🎭 Creative Projects",
-									"value": "• Portfolio development\n• Exhibition opportunities\n• Performance schedules\n• Art supplies"
-								},
-								{
-									"name": "🎵 Resources",
-									"value": "• Studio access\n• Equipment rental\n• Software licenses\n• Technique tutorials"
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "📖 COURSES & CLASSES",
-			"channels": [
-				{
-					"name": "📚┃course-catalog",
-					"type": "text",
-					"topic": "Available courses, prerequisites, and course descriptions",
-					"pin": [
-						{
-							"title": "📚 Course Catalog",
-							"description": "Browse available courses, check prerequisites, and plan your academic schedule.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "🔍 How to Search",
-									"value": "• Use course codes (e.g., CS101, MATH201)\n• Filter by department or level\n• Check prerequisites and requirements\n• View course schedules"
-								},
-								{
-									"name": "📋 Registration",
-									"value": "• Registration periods\n• Waitlist procedures\n• Course conflicts\n• Drop/add policies"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "📝┃assignments",
-					"type": "text",
-					"topic": "Assignment announcements, due dates, and submission guidelines",
-					"pin": [
-						{
-							"title": "📝 Assignment Center",
-							"description": "Find assignment details, due dates, and submission guidelines for all courses.",
-							"color": 15158332,
-							"fields": [
-								{
-									"name": "📅 Due Dates",
-									"value": "• Weekly assignment schedule\n• Project deadlines\n• Exam dates\n• Extension policies"
-								},
-								{
-									"name": "📤 Submission",
-									"value": "• Online submission portals\n• File format requirements\n• Late submission policies\n• Plagiarism guidelines"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "📊┃grades",
-					"type": "text",
-					"topic": "Grade announcements and academic progress tracking",
-					"pin": [
-						{
-							"title": "📊 Grade Center",
-							"description": "Track your academic progress and view grade announcements.",
-							"color": 16763904,
-							"fields": [
-								{
-									"name": "📈 Grade Tracking",
-									"value": "• Current GPA calculation\n• Grade breakdowns\n• Missing assignments\n• Improvement opportunities"
-								},
-								{
-									"name": "📋 Policies",
-									"value": "• Grade appeal process\n• Extra credit opportunities\n• Retake policies\n• Academic probation"
-								}
-							]
-						}
-					],
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["SendMessages"] },
-						{
-							"roles": [
-								"Professor",
-								"Instructor",
-								"Teaching Assistant",
-								"Principal",
-								"Vice Principal"
-							],
-							"allow": ["SendMessages"]
-						}
-					]
-				},
-				{
-					"name": "📚┃textbooks",
-					"type": "text",
-					"topic": "Required textbooks, digital resources, and study materials",
-					"pin": [
-						{
-							"title": "📚 Textbook & Resources",
-							"description": "Find required textbooks, digital resources, and study materials for your courses.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "📖 Required Texts",
-									"value": "• Course-specific textbooks\n• Digital access codes\n• Library reserves\n• Online resources"
-								},
-								{
-									"name": "💰 Cost Saving",
-									"value": "• Used book exchanges\n• Digital alternatives\n• Library copies\n• Group purchases"
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "👥 STUDY GROUPS & COLLABORATION",
-			"channels": [
-				{
-					"name": "👥┃study-groups",
-					"type": "text",
-					"topic": "Find or create study groups for various subjects",
-					"pin": [
-						{
-							"title": "👥 Study Groups",
-							"description": "Find study partners, create study groups, and collaborate on academic work.",
-							"color": 3066993,
-							"fields": [
-								{
-									"name": "🔍 Finding Groups",
-									"value": "• Search by subject or course\n• Join existing groups\n• Create new study groups\n• Set meeting schedules"
-								},
-								{
-									"name": "📝 Group Guidelines",
-									"value": "• Regular meeting times\n• Study goals and objectives\n• Resource sharing\n• Accountability partners"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🤝┃peer-tutoring",
-					"type": "text",
-					"topic": "Peer tutoring services and academic support",
-					"pin": [
-						{
-							"title": "🤝 Peer Tutoring",
-							"description": "Get help from fellow students or offer your expertise to help others.",
-							"color": 10181046,
-							"fields": [
-								{
-									"name": "🎓 Tutoring Services",
-									"value": "• Subject-specific help\n• Study strategies\n• Assignment assistance\n• Exam preparation"
-								},
-								{
-									"name": "👨‍🏫 Become a Tutor",
-									"value": "• Share your expertise\n• Help fellow students\n• Build teaching experience\n• Earn recognition"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "💬┃academic-discussion",
-					"type": "text",
-					"topic": "General academic discussions and questions",
-					"pin": [
-						{
-							"title": "💬 Academic Discussion",
-							"description": "Engage in academic discussions, ask questions, and share knowledge with the community.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "💡 Discussion Topics",
-									"value": "• Course content questions\n• Study strategies\n• Academic challenges\n• Research ideas"
-								},
-								{
-									"name": "📚 Guidelines",
-									"value": "• Be respectful and constructive\n• Provide helpful answers\n• Cite sources when appropriate\n• Encourage learning"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🔬┃research",
-					"type": "text",
-					"topic": "Research opportunities, projects, and collaboration",
-					"pin": [
-						{
-							"title": "🔬 Research Opportunities",
-							"description": "Find research opportunities, collaborate on projects, and share research findings.",
-							"color": 10181046,
-							"fields": [
-								{
-									"name": "🔍 Research Areas",
-									"value": "• Faculty research projects\n• Student research initiatives\n• Interdisciplinary collaboration\n• Conference presentations"
-								},
-								{
-									"name": "📊 Resources",
-									"value": "• Research databases\n• Methodology guides\n• Funding opportunities\n• Publication support"
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "🎓 STUDENT SUPPORT",
-			"channels": [
-				{
-					"name": "🎯┃academic-advising",
-					"type": "text",
-					"topic": "Academic advising, course planning, and degree requirements",
-					"pin": [
-						{
-							"title": "🎯 Academic Advising",
-							"description": "Get guidance on course selection, degree planning, and academic goals.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "📋 Services",
-									"value": "• Course selection guidance\n• Degree requirement tracking\n• Academic goal planning\n• Career pathway advice"
-								},
-								{
-									"name": "📅 Appointments",
-									"value": "• Schedule advising sessions\n• Drop-in hours\n• Online consultations\n• Group advising sessions"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "💼┃career-services",
-					"type": "text",
-					"topic": "Career counseling, job opportunities, and professional development",
-					"pin": [
-						{
-							"title": "💼 Career Services",
-							"description": "Access career counseling, job opportunities, and professional development resources.",
-							"color": 11342935,
-							"fields": [
-								{
-									"name": "🎯 Services",
-									"value": "• Resume and cover letter help\n• Interview preparation\n• Job search strategies\n• Networking opportunities"
-								},
-								{
-									"name": "💼 Opportunities",
-									"value": "• Internship postings\n• Job fairs\n• Alumni connections\n• Industry partnerships"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🏥┃counseling",
-					"type": "text",
-					"topic": "Mental health support, counseling services, and wellness resources",
-					"pin": [
-						{
-							"title": "🏥 Counseling & Wellness",
-							"description": "Access mental health support, counseling services, and wellness resources.",
-							"color": 15158332,
-							"fields": [
-								{
-									"name": "💚 Support Services",
-									"value": "• Individual counseling\n• Group therapy sessions\n• Crisis intervention\n• Wellness workshops"
-								},
-								{
-									"name": "📞 Emergency Resources",
-									"value": "• 24/7 crisis hotline\n• Emergency counseling\n• Campus security\n• Medical services"
-								}
-							]
-						}
-					],
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["SendMessages"] },
-						{
-							"roles": [
-								"Professor",
-								"Instructor",
-								"Teaching Assistant",
-								"Principal",
-								"Vice Principal",
-								"Department Head"
-							],
-							"allow": ["SendMessages"]
-						}
-					]
-				},
-				{
-					"name": "♿┃accessibility",
-					"type": "text",
-					"topic": "Accessibility services, accommodations, and support",
-					"pin": [
-						{
-							"title": "♿ Accessibility Services",
-							"description": "Access accommodations, support services, and resources for students with disabilities.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "🔧 Accommodations",
-									"value": "• Testing accommodations\n• Note-taking services\n• Assistive technology\n• Classroom modifications"
-								},
-								{
-									"name": "📋 Request Process",
-									"value": "• Documentation requirements\n• Application procedures\n• Review timeline\n• Appeal process"
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "🏛️ CAMPUS LIFE",
-			"channels": [
-				{
-					"name": "🎉┃events",
-					"type": "text",
-					"topic": "Campus events, activities, and social gatherings",
-					"pin": [
-						{
-							"title": "🎉 Campus Events",
-							"description": "Stay updated with campus events, activities, and social gatherings.",
-							"color": 15105570,
-							"fields": [
-								{
-									"name": "📅 Event Types",
-									"value": "• Academic conferences\n• Social gatherings\n• Cultural celebrations\n• Sports events"
-								},
-								{
-									"name": "🎫 Registration",
-									"value": "• Event registration\n• Ticket information\n• RSVP requirements\n• Event updates"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🏛️┃clubs-organizations",
-					"type": "text",
-					"topic": "Student clubs, organizations, and extracurricular activities",
-					"pin": [
-						{
-							"title": "🏛️ Clubs & Organizations",
-							"description": "Join student clubs, organizations, and extracurricular activities.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "🎯 Club Categories",
-									"value": "• Academic clubs\n• Cultural organizations\n• Sports clubs\n• Special interest groups"
-								},
-								{
-									"name": "📝 How to Join",
-									"value": "• Browse available clubs\n• Attend club meetings\n• Contact club officers\n• Start your own club"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🏆┃achievements",
-					"type": "text",
-					"topic": "Student achievements, awards, and recognition",
-					"pin": [
-						{
-							"title": "🏆 Student Achievements",
-							"description": "Celebrate student achievements, awards, and academic recognition.",
-							"color": 16763904,
-							"fields": [
-								{
-									"name": "🎓 Recognition Types",
-									"value": "• Academic honors\n• Research awards\n• Leadership recognition\n• Community service"
-								},
-								{
-									"name": "📢 How to Share",
-									"value": "• Submit achievement details\n• Include supporting documentation\n• Celebrate with the community\n• Inspire others"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🍕┃campus-dining",
-					"type": "text",
-					"topic": "Dining hall information, meal plans, and food services",
-					"pin": [
-						{
-							"title": "🍕 Campus Dining",
-							"description": "Information about dining halls, meal plans, and campus food services.",
-							"color": 16753920,
-							"fields": [
-								{
-									"name": "🍽️ Dining Options",
-									"value": "• Dining hall hours\n• Menu options\n• Special dietary needs\n• Meal plan information"
-								},
-								{
-									"name": "💳 Payment",
-									"value": "• Meal plan usage\n• Payment methods\n• Guest meals\n• Refund policies"
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "🎤 VOICE CHANNELS",
-			"channels": [
-				{
-					"name": "📚┃study-room-1",
-					"type": "voice",
-					"topic": "Quiet study room for individual or small group study"
-				},
-				{
-					"name": "📚┃study-room-2",
-					"type": "voice",
-					"topic": "Secondary study room for larger study groups"
-				},
-				{
-					"name": "👥┃group-study",
-					"type": "voice",
-					"topic": "Collaborative study sessions and group work"
-				},
-				{
-					"name": "🎓┃office-hours",
-					"type": "voice",
-					"topic": "Virtual office hours with professors and TAs"
-				},
-				{
-					"name": "💬┃general-chat",
-					"type": "voice",
-					"topic": "General voice chat for casual conversations"
-				},
-				{
-					"name": "🎉┃events",
-					"type": "voice",
-					"topic": "Voice channel for campus events and activities"
-				}
-			]
-		},
-		{
-			"name": "🛡️ ADMINISTRATION",
-			"channels": [
-				{
-					"name": "👑┃administration",
-					"type": "text",
-					"topic": "Administrative discussions and policy updates",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": ["Principal", "Vice Principal", "Department Head"],
-							"allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"]
-						}
-					]
-				},
-				{
-					"name": "👨‍🏫┃faculty-lounge",
-					"type": "text",
-					"topic": "Faculty discussions, meetings, and collaboration",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": [
-								"Professor",
-								"Instructor",
-								"Teaching Assistant",
-								"Principal",
-								"Vice Principal",
-								"Department Head"
-							],
-							"allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"]
-						}
-					]
-				},
-				{
-					"name": "📊┃academic-records",
-					"type": "text",
-					"topic": "Student records, transcripts, and academic data",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": [
-								"Principal",
-								"Vice Principal",
-								"Department Head",
-								"Professor",
-								"Instructor"
-							],
-							"allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"]
-						}
-					]
-				},
-				{
-					"name": "🔧┃system-logs",
-					"type": "text",
-					"topic": "System logs, bot activity, and technical monitoring",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": ["Principal", "Vice Principal", "Bot"],
-							"allow": [
-								"ViewChannel",
-								"SendMessages",
-								"ReadMessageHistory",
-								"AttachFiles",
-								"EmbedLinks"
-							]
-						}
-					]
-				}
-			]
-		}
-	]
+    "meta": {
+        "key": "education",
+        "display": "Educational Institution",
+        "description": "Complete educational server template with courses, study groups, resources, and academic support",
+        "defaultLocale": "en"
+    },
+    "roles": [
+        { "name": "Principal", "color": 15844367, "hoist": true, "mentionable": false, "perms": ["Administrator"] },
+        {
+            "name": "Vice Principal",
+            "color": 15158332,
+            "hoist": true,
+            "mentionable": true,
+            "perms": ["ManageGuild", "ManageChannels", "ManageMessages", "ViewAuditLog"]
+        },
+        { "name": "Department Head", "color": 3447003, "hoist": true, "mentionable": true, "perms": ["ManageMessages", "ManageRoles"] },
+        { "name": "Professor", "color": 10181046, "hoist": true, "mentionable": true, "perms": ["ManageMessages"] },
+        { "name": "Instructor", "color": 11342935, "hoist": true, "mentionable": true, "perms": ["ManageMessages"] },
+        { "name": "Teaching Assistant", "color": 16753920, "hoist": true, "mentionable": true, "perms": ["ManageMessages"] },
+        { "name": "Senior Student", "color": 3066993, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Student", "color": 3447003, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Freshman", "color": 12745742, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Sophomore", "color": 6323595, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Junior", "color": 11027200, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Senior", "color": 16763904, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Graduate Student", "color": 10181046, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Alumni", "color": 8359053, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Parent", "color": 10038562, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Guest Lecturer", "color": 15105570, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Research Assistant", "color": 10181046, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Study Group Leader", "color": 3066993, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Bot", "color": 9807270, "hoist": false, "mentionable": false, "perms": ["ManageMessages", "EmbedLinks", "AttachFiles"] }
+    ],
+    "categories": [
+        {
+            "name": "📢 ANNOUNCEMENTS",
+            "channels": [
+                {
+                    "name": "📋┃academic-calendar",
+                    "type": "text",
+                    "topic": "Important dates, deadlines, and academic calendar",
+                    "pin": [
+                        {
+                            "title": "📋 Academic Calendar",
+                            "description": "Stay updated with important academic dates, deadlines, and events.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "📅 Key Dates",
+                                    "value": "• Semester start/end dates\n• Exam periods\n• Holiday breaks\n• Registration deadlines"
+                                },
+                                {
+                                    "name": "⏰ Deadlines",
+                                    "value": "• Assignment due dates\n• Project submissions\n• Scholarship applications\n• Graduation requirements"
+                                }
+                            ]
+                        }
+                    ],
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["SendMessages"] },
+                        { "roles": ["Principal", "Vice Principal", "Department Head"], "allow": ["SendMessages"] }
+                    ]
+                },
+                {
+                    "name": "📢┃announcements",
+                    "type": "text",
+                    "topic": "General announcements and important updates",
+                    "pin": [
+                        {
+                            "title": "📢 Important Announcements",
+                            "description": "Stay informed about important updates, policy changes, and campus news.",
+                            "color": 15158332,
+                            "footer": { "text": "Check this channel regularly for updates" }
+                        }
+                    ]
+                },
+                {
+                    "name": "🎓┃graduation",
+                    "type": "text",
+                    "topic": "Graduation ceremonies, requirements, and celebrations",
+                    "pin": [
+                        {
+                            "title": "🎓 Graduation Information",
+                            "description": "Everything you need to know about graduation requirements and ceremonies.",
+                            "color": 16763904,
+                            "fields": [
+                                {
+                                    "name": "📋 Requirements",
+                                    "value": "• Credit requirements\n• GPA requirements\n• Capstone project completion\n• Application deadlines"
+                                },
+                                {
+                                    "name": "🎉 Ceremony Details",
+                                    "value": "• Date and time\n• Venue information\n• Guest tickets\n• Dress code"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "📚 ACADEMIC DEPARTMENTS",
+            "channels": [
+                {
+                    "name": "💻┃computer-science",
+                    "type": "text",
+                    "topic": "Computer Science department discussions and resources",
+                    "pin": [
+                        {
+                            "title": "💻 Computer Science Department",
+                            "description": "Welcome to the Computer Science department! Find resources, assignments, and connect with fellow students.",
+                            "color": 3066993,
+                            "fields": [
+                                {
+                                    "name": "📚 Resources",
+                                    "value": "• Programming tutorials\n• Algorithm references\n• Project guidelines\n• Career opportunities"
+                                },
+                                {
+                                    "name": "👥 Faculty",
+                                    "value": "• Professor office hours\n• TA contact information\n• Research opportunities\n• Mentorship programs"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🔬┃science",
+                    "type": "text",
+                    "topic": "Science department - Biology, Chemistry, Physics",
+                    "pin": [
+                        {
+                            "title": "🔬 Science Department",
+                            "description": "Science department hub for Biology, Chemistry, Physics, and other science disciplines.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "🧪 Lab Resources",
+                                    "value": "• Lab safety guidelines\n• Equipment tutorials\n• Experiment protocols\n• Lab report templates"
+                                },
+                                {
+                                    "name": "📊 Research",
+                                    "value": "• Research opportunities\n• Faculty research areas\n• Student research projects\n• Conference presentations"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "📖┃humanities",
+                    "type": "text",
+                    "topic": "Humanities department - Literature, History, Philosophy",
+                    "pin": [
+                        {
+                            "title": "📖 Humanities Department",
+                            "description": "Humanities department for Literature, History, Philosophy, and related fields.",
+                            "color": 10181046,
+                            "fields": [
+                                {
+                                    "name": "📚 Study Resources",
+                                    "value": "• Reading lists\n• Essay writing guides\n• Citation formats\n• Research databases"
+                                },
+                                {
+                                    "name": "🎭 Activities",
+                                    "value": "• Book clubs\n• Writing workshops\n• Debate societies\n• Cultural events"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "📊┃business",
+                    "type": "text",
+                    "topic": "Business and Economics department",
+                    "pin": [
+                        {
+                            "title": "📊 Business Department",
+                            "description": "Business and Economics department for management, finance, and economics studies.",
+                            "color": 11342935,
+                            "fields": [
+                                {
+                                    "name": "💼 Career Prep",
+                                    "value": "• Internship opportunities\n• Resume building\n• Interview preparation\n• Networking events"
+                                },
+                                {
+                                    "name": "📈 Case Studies",
+                                    "value": "• Real-world examples\n• Industry analysis\n• Market research\n• Business simulations"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🎨┃arts",
+                    "type": "text",
+                    "topic": "Arts department - Visual Arts, Music, Theater",
+                    "pin": [
+                        {
+                            "title": "🎨 Arts Department",
+                            "description": "Arts department for Visual Arts, Music, Theater, and creative disciplines.",
+                            "color": 10181046,
+                            "fields": [
+                                {
+                                    "name": "🎭 Creative Projects",
+                                    "value": "• Portfolio development\n• Exhibition opportunities\n• Performance schedules\n• Art supplies"
+                                },
+                                {
+                                    "name": "🎵 Resources",
+                                    "value": "• Studio access\n• Equipment rental\n• Software licenses\n• Technique tutorials"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "📖 COURSES & CLASSES",
+            "channels": [
+                {
+                    "name": "📚┃course-catalog",
+                    "type": "text",
+                    "topic": "Available courses, prerequisites, and course descriptions",
+                    "pin": [
+                        {
+                            "title": "📚 Course Catalog",
+                            "description": "Browse available courses, check prerequisites, and plan your academic schedule.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "🔍 How to Search",
+                                    "value": "• Use course codes (e.g., CS101, MATH201)\n• Filter by department or level\n• Check prerequisites and requirements\n• View course schedules"
+                                },
+                                {
+                                    "name": "📋 Registration",
+                                    "value": "• Registration periods\n• Waitlist procedures\n• Course conflicts\n• Drop/add policies"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "📝┃assignments",
+                    "type": "text",
+                    "topic": "Assignment announcements, due dates, and submission guidelines",
+                    "pin": [
+                        {
+                            "title": "📝 Assignment Center",
+                            "description": "Find assignment details, due dates, and submission guidelines for all courses.",
+                            "color": 15158332,
+                            "fields": [
+                                {
+                                    "name": "📅 Due Dates",
+                                    "value": "• Weekly assignment schedule\n• Project deadlines\n• Exam dates\n• Extension policies"
+                                },
+                                {
+                                    "name": "📤 Submission",
+                                    "value": "• Online submission portals\n• File format requirements\n• Late submission policies\n• Plagiarism guidelines"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "📊┃grades",
+                    "type": "text",
+                    "topic": "Grade announcements and academic progress tracking",
+                    "pin": [
+                        {
+                            "title": "📊 Grade Center",
+                            "description": "Track your academic progress and view grade announcements.",
+                            "color": 16763904,
+                            "fields": [
+                                {
+                                    "name": "📈 Grade Tracking",
+                                    "value": "• Current GPA calculation\n• Grade breakdowns\n• Missing assignments\n• Improvement opportunities"
+                                },
+                                {
+                                    "name": "📋 Policies",
+                                    "value": "• Grade appeal process\n• Extra credit opportunities\n• Retake policies\n• Academic probation"
+                                }
+                            ]
+                        }
+                    ],
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["SendMessages"] },
+                        {
+                            "roles": ["Professor", "Instructor", "Teaching Assistant", "Principal", "Vice Principal"],
+                            "allow": ["SendMessages"]
+                        }
+                    ]
+                },
+                {
+                    "name": "📚┃textbooks",
+                    "type": "text",
+                    "topic": "Required textbooks, digital resources, and study materials",
+                    "pin": [
+                        {
+                            "title": "📚 Textbook & Resources",
+                            "description": "Find required textbooks, digital resources, and study materials for your courses.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "📖 Required Texts",
+                                    "value": "• Course-specific textbooks\n• Digital access codes\n• Library reserves\n• Online resources"
+                                },
+                                {
+                                    "name": "💰 Cost Saving",
+                                    "value": "• Used book exchanges\n• Digital alternatives\n• Library copies\n• Group purchases"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "👥 STUDY GROUPS & COLLABORATION",
+            "channels": [
+                {
+                    "name": "👥┃study-groups",
+                    "type": "text",
+                    "topic": "Find or create study groups for various subjects",
+                    "pin": [
+                        {
+                            "title": "👥 Study Groups",
+                            "description": "Find study partners, create study groups, and collaborate on academic work.",
+                            "color": 3066993,
+                            "fields": [
+                                {
+                                    "name": "🔍 Finding Groups",
+                                    "value": "• Search by subject or course\n• Join existing groups\n• Create new study groups\n• Set meeting schedules"
+                                },
+                                {
+                                    "name": "📝 Group Guidelines",
+                                    "value": "• Regular meeting times\n• Study goals and objectives\n• Resource sharing\n• Accountability partners"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🤝┃peer-tutoring",
+                    "type": "text",
+                    "topic": "Peer tutoring services and academic support",
+                    "pin": [
+                        {
+                            "title": "🤝 Peer Tutoring",
+                            "description": "Get help from fellow students or offer your expertise to help others.",
+                            "color": 10181046,
+                            "fields": [
+                                {
+                                    "name": "🎓 Tutoring Services",
+                                    "value": "• Subject-specific help\n• Study strategies\n• Assignment assistance\n• Exam preparation"
+                                },
+                                {
+                                    "name": "👨‍🏫 Become a Tutor",
+                                    "value": "• Share your expertise\n• Help fellow students\n• Build teaching experience\n• Earn recognition"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "💬┃academic-discussion",
+                    "type": "text",
+                    "topic": "General academic discussions and questions",
+                    "pin": [
+                        {
+                            "title": "💬 Academic Discussion",
+                            "description": "Engage in academic discussions, ask questions, and share knowledge with the community.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "💡 Discussion Topics",
+                                    "value": "• Course content questions\n• Study strategies\n• Academic challenges\n• Research ideas"
+                                },
+                                {
+                                    "name": "📚 Guidelines",
+                                    "value": "• Be respectful and constructive\n• Provide helpful answers\n• Cite sources when appropriate\n• Encourage learning"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🔬┃research",
+                    "type": "text",
+                    "topic": "Research opportunities, projects, and collaboration",
+                    "pin": [
+                        {
+                            "title": "🔬 Research Opportunities",
+                            "description": "Find research opportunities, collaborate on projects, and share research findings.",
+                            "color": 10181046,
+                            "fields": [
+                                {
+                                    "name": "🔍 Research Areas",
+                                    "value": "• Faculty research projects\n• Student research initiatives\n• Interdisciplinary collaboration\n• Conference presentations"
+                                },
+                                {
+                                    "name": "📊 Resources",
+                                    "value": "• Research databases\n• Methodology guides\n• Funding opportunities\n• Publication support"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "🎓 STUDENT SUPPORT",
+            "channels": [
+                {
+                    "name": "🎯┃academic-advising",
+                    "type": "text",
+                    "topic": "Academic advising, course planning, and degree requirements",
+                    "pin": [
+                        {
+                            "title": "🎯 Academic Advising",
+                            "description": "Get guidance on course selection, degree planning, and academic goals.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "📋 Services",
+                                    "value": "• Course selection guidance\n• Degree requirement tracking\n• Academic goal planning\n• Career pathway advice"
+                                },
+                                {
+                                    "name": "📅 Appointments",
+                                    "value": "• Schedule advising sessions\n• Drop-in hours\n• Online consultations\n• Group advising sessions"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "💼┃career-services",
+                    "type": "text",
+                    "topic": "Career counseling, job opportunities, and professional development",
+                    "pin": [
+                        {
+                            "title": "💼 Career Services",
+                            "description": "Access career counseling, job opportunities, and professional development resources.",
+                            "color": 11342935,
+                            "fields": [
+                                {
+                                    "name": "🎯 Services",
+                                    "value": "• Resume and cover letter help\n• Interview preparation\n• Job search strategies\n• Networking opportunities"
+                                },
+                                {
+                                    "name": "💼 Opportunities",
+                                    "value": "• Internship postings\n• Job fairs\n• Alumni connections\n• Industry partnerships"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🏥┃counseling",
+                    "type": "text",
+                    "topic": "Mental health support, counseling services, and wellness resources",
+                    "pin": [
+                        {
+                            "title": "🏥 Counseling & Wellness",
+                            "description": "Access mental health support, counseling services, and wellness resources.",
+                            "color": 15158332,
+                            "fields": [
+                                {
+                                    "name": "💚 Support Services",
+                                    "value": "• Individual counseling\n• Group therapy sessions\n• Crisis intervention\n• Wellness workshops"
+                                },
+                                {
+                                    "name": "📞 Emergency Resources",
+                                    "value": "• 24/7 crisis hotline\n• Emergency counseling\n• Campus security\n• Medical services"
+                                }
+                            ]
+                        }
+                    ],
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["SendMessages"] },
+                        {
+                            "roles": ["Professor", "Instructor", "Teaching Assistant", "Principal", "Vice Principal", "Department Head"],
+                            "allow": ["SendMessages"]
+                        }
+                    ]
+                },
+                {
+                    "name": "♿┃accessibility",
+                    "type": "text",
+                    "topic": "Accessibility services, accommodations, and support",
+                    "pin": [
+                        {
+                            "title": "♿ Accessibility Services",
+                            "description": "Access accommodations, support services, and resources for students with disabilities.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "🔧 Accommodations",
+                                    "value": "• Testing accommodations\n• Note-taking services\n• Assistive technology\n• Classroom modifications"
+                                },
+                                {
+                                    "name": "📋 Request Process",
+                                    "value": "• Documentation requirements\n• Application procedures\n• Review timeline\n• Appeal process"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "🏛️ CAMPUS LIFE",
+            "channels": [
+                {
+                    "name": "🎉┃events",
+                    "type": "text",
+                    "topic": "Campus events, activities, and social gatherings",
+                    "pin": [
+                        {
+                            "title": "🎉 Campus Events",
+                            "description": "Stay updated with campus events, activities, and social gatherings.",
+                            "color": 15105570,
+                            "fields": [
+                                {
+                                    "name": "📅 Event Types",
+                                    "value": "• Academic conferences\n• Social gatherings\n• Cultural celebrations\n• Sports events"
+                                },
+                                {
+                                    "name": "🎫 Registration",
+                                    "value": "• Event registration\n• Ticket information\n• RSVP requirements\n• Event updates"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🏛️┃clubs-organizations",
+                    "type": "text",
+                    "topic": "Student clubs, organizations, and extracurricular activities",
+                    "pin": [
+                        {
+                            "title": "🏛️ Clubs & Organizations",
+                            "description": "Join student clubs, organizations, and extracurricular activities.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "🎯 Club Categories",
+                                    "value": "• Academic clubs\n• Cultural organizations\n• Sports clubs\n• Special interest groups"
+                                },
+                                {
+                                    "name": "📝 How to Join",
+                                    "value": "• Browse available clubs\n• Attend club meetings\n• Contact club officers\n• Start your own club"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🏆┃achievements",
+                    "type": "text",
+                    "topic": "Student achievements, awards, and recognition",
+                    "pin": [
+                        {
+                            "title": "🏆 Student Achievements",
+                            "description": "Celebrate student achievements, awards, and academic recognition.",
+                            "color": 16763904,
+                            "fields": [
+                                {
+                                    "name": "🎓 Recognition Types",
+                                    "value": "• Academic honors\n• Research awards\n• Leadership recognition\n• Community service"
+                                },
+                                {
+                                    "name": "📢 How to Share",
+                                    "value": "• Submit achievement details\n• Include supporting documentation\n• Celebrate with the community\n• Inspire others"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🍕┃campus-dining",
+                    "type": "text",
+                    "topic": "Dining hall information, meal plans, and food services",
+                    "pin": [
+                        {
+                            "title": "🍕 Campus Dining",
+                            "description": "Information about dining halls, meal plans, and campus food services.",
+                            "color": 16753920,
+                            "fields": [
+                                {
+                                    "name": "🍽️ Dining Options",
+                                    "value": "• Dining hall hours\n• Menu options\n• Special dietary needs\n• Meal plan information"
+                                },
+                                { "name": "💳 Payment", "value": "• Meal plan usage\n• Payment methods\n• Guest meals\n• Refund policies" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "🎤 VOICE CHANNELS",
+            "channels": [
+                {
+                    "name": "📚┃study-room-1",
+                    "type": "voice",
+                    "topic": "Quiet study room for individual or small group study"
+                },
+                {
+                    "name": "📚┃study-room-2",
+                    "type": "voice",
+                    "topic": "Secondary study room for larger study groups"
+                },
+                {
+                    "name": "👥┃group-study",
+                    "type": "voice",
+                    "topic": "Collaborative study sessions and group work"
+                },
+                {
+                    "name": "🎓┃office-hours",
+                    "type": "voice",
+                    "topic": "Virtual office hours with professors and TAs"
+                },
+                {
+                    "name": "💬┃general-chat",
+                    "type": "voice",
+                    "topic": "General voice chat for casual conversations"
+                },
+                {
+                    "name": "🎉┃events",
+                    "type": "voice",
+                    "topic": "Voice channel for campus events and activities"
+                }
+            ]
+        },
+        {
+            "name": "🛡️ ADMINISTRATION",
+            "channels": [
+                {
+                    "name": "👑┃administration",
+                    "type": "text",
+                    "topic": "Administrative discussions and policy updates",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        {
+                            "roles": ["Principal", "Vice Principal", "Department Head"],
+                            "allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"]
+                        }
+                    ]
+                },
+                {
+                    "name": "👨‍🏫┃faculty-lounge",
+                    "type": "text",
+                    "topic": "Faculty discussions, meetings, and collaboration",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        {
+                            "roles": ["Professor", "Instructor", "Teaching Assistant", "Principal", "Vice Principal", "Department Head"],
+                            "allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"]
+                        }
+                    ]
+                },
+                {
+                    "name": "📊┃academic-records",
+                    "type": "text",
+                    "topic": "Student records, transcripts, and academic data",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        {
+                            "roles": ["Principal", "Vice Principal", "Department Head", "Professor", "Instructor"],
+                            "allow": ["ViewChannel", "ReadMessageHistory", "SendMessages"]
+                        }
+                    ]
+                },
+                {
+                    "name": "🔧┃system-logs",
+                    "type": "text",
+                    "topic": "System logs, bot activity, and technical monitoring",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        {
+                            "roles": ["Principal", "Vice Principal", "Bot"],
+                            "allow": ["ViewChannel", "SendMessages", "ReadMessageHistory", "AttachFiles", "EmbedLinks"]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
 }

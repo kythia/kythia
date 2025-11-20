@@ -1,8 +1,8 @@
 {
-	"name": "TempVoice",
-	"featureName": "TempVoice",
-	"featureFlag": "tempvoiceOn",
-	"version": "1.0.0",
-	"description": "Create temporary voice channels for your community! Allow users to create their own voice channels by joining a specific channel, and manage them with a control panel.",
-	"author": "kenndeclouv"
+    "name": "TempVoice",
+    "featureName": "TempVoice",
+    "featureFlag": "tempvoiceOn",
+    "version": "1.0.0",
+    "description": "Create temporary voice channels for your community! Allow users to create their own voice channels by joining a specific channel, and manage them with a control panel.",
+    "author": "kenndeclouv"
 }

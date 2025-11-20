@@ -7,7 +7,6 @@
  */
 
 module.exports = {
-	subcommand: true,
-	data: (group) =>
-		group.setName("server").setDescription("Manage server checklist (public)"),
+    subcommand: true,
+    data: (group) => group.setName('server').setDescription('Manage server checklist (public)'),
 };

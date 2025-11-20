@@ -11,14 +11,5 @@
             "@srcDatabase/*": ["src/database/*"]
         }
     },
-    "exclude": [
-        "node_modules",
-        ".git",
-        "dist",
-        "temp",
-        "docs",
-        "scripts",
-        "package-lock.json",
-        "bun.lock"
-    ]
+    "exclude": ["node_modules", "dist", "temp"]
 }

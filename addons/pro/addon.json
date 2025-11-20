@@ -1,8 +1,8 @@
 {
-	"name": "Subdomain",
-	"featureName": "Subdomain",
-	"featureFlag": "subdomainOn",
-	"version": "1.0.0",
-	"description": "Manage your subdomains and monitors.",
-	"author": "kenndeclouv"
+    "name": "Subdomain",
+    "featureName": "Subdomain",
+    "featureFlag": "subdomainOn",
+    "version": "1.0.0",
+    "description": "Manage your subdomains and monitors.",
+    "author": "kenndeclouv"
 }

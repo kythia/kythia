@@ -57,35 +57,24 @@
  */
 
 // ===== 1. Load Environment Variables (.env) and Aliases =====
-require("@dotenvx/dotenvx/config"); // Loads ENV vars to process.env
-const kythiaConfig = require("./kythia.config.js"); // Unified configuration object
-require("module-alias/register"); // Enables @src, @utils, etc. path aliases
-const { Kythia, KythiaModel, createSequelizeInstance } = require("kythia-core");
+require('dotenv').config(); // Loads ENV vars to process.env
+const kythiaConfig = require('./kythia.config.js'); // Unified configuration object
+require('module-alias/register'); // Enables @src, @utils, etc. path aliases
+const { Kythia, KythiaModel, createSequelizeInstance } = require('kythia-core');
 
 // ===== 2. Load Core Helpers & Utilities with Meaningful Descriptions =====
-const logger = require("@coreHelpers/logger"); // Logging system (console and ext. sinks)
-const translator = require("@coreHelpers/translator"); // I18n (Internationalization) manager
-const {
-	isOwner,
-	isTeam,
-	embedFooter,
-	isPremium,
-	setVoiceChannelStatus,
-	isVoterActive,
-	simpleContainer,
-} = require("@coreHelpers/discord"); // Discord helper funcs for permissions/identity
-const {
-	checkCooldown,
-	formatDuration,
-	parseDuration,
-} = require("@coreHelpers/time");
+const logger = require('@coreHelpers/logger'); // Logging system (console and ext. sinks)
+const translator = require('@coreHelpers/translator'); // I18n (Internationalization) manager
+const { isOwner, isTeam, embedFooter, isPremium, setVoiceChannelStatus, isVoterActive, simpleContainer } = require('@coreHelpers/discord'); // Discord helper funcs for permissions/identity
+const { checkCooldown, formatDuration, parseDuration } = require('@coreHelpers/time');
 
 // ===== 3. Load Database Models: Sequelize Models =====
 // const ServerSetting = require('@coreModels/ServerSetting'); // Guild/server config model
 // const KythiaVoter = require('@coreModels/KythiaVoter'); // User voter model (e.g. from Top.gg votes)
 
 // ===== 4. Setup Redis Client for caching, queueing, etc =====
-const convertColor = require("kythia-core").utils.color;
+const Redis = require('ioredis');
+const convertColor = require('kythia-core').utils.color;
 // We create a Redis client instance, using the URL in config, in lazy mode (connect on use).
 
 // ===== 5. Setup Sequelize ORM Instance for Relational Database Access =====
@@ -93,11 +82,7 @@ const convertColor = require("kythia-core").utils.color;
 const sequelize = createSequelizeInstance(kythiaConfig, logger);
 
 // ===== 6. Set Up Models' Internal Dependencies =====
-KythiaModel.setDependencies({
-	logger,
-	config: kythiaConfig,
-	redisOptions: kythiaConfig.db.redis,
-}); // Inject utility deps
+KythiaModel.setDependencies({ logger, config: kythiaConfig, redisOptions: kythiaConfig.db.redis }); // Inject utility deps
 
 // ===== 7. Collect All Service/Model Deps for Containerized Injection =====
 /**
@@ -111,45 +96,37 @@ KythiaModel.setDependencies({
  *  - helpers:      Utility helpers, grouped by domain (e.g. discord)
  */
 const dependencies = {
-	config: kythiaConfig,
-	logger: logger,
-	translator: translator,
-	redis: KythiaModel.redis,
-	sequelize: sequelize,
-	models: {},
-	helpers: {
-		discord: {
-			isOwner,
-			isTeam,
-			embedFooter,
-			isPremium,
-			setVoiceChannelStatus,
-			isVoterActive,
-			simpleContainer,
-		},
-		color: { convertColor },
-		time: { checkCooldown, formatDuration, parseDuration },
-	},
-	appRoot: __dirname,
+    config: kythiaConfig,
+    logger: logger,
+    translator: translator,
+    redis: KythiaModel.redis,
+    sequelize: sequelize,
+    models: {},
+    helpers: {
+        discord: { isOwner, isTeam, embedFooter, isPremium, setVoiceChannelStatus, isVoterActive, simpleContainer },
+        color: { convertColor },
+        time: { checkCooldown, formatDuration, parseDuration },
+    },
+    appRoot: __dirname,
 };
 
 // ===== 8. Actual Boot Process: Instantiate and Start the Bot =====
 try {
-	/**
-	 * kythiaInstance: The live bot instance, receives all dependencies for DI via constructor.
-	 *  - dbDependencies: Some db models require injected context/config after construction.
-	 *  - start():        Boots the bot; attaches to Discord, loads addons, connects events, etc.
-	 */
-	const kythiaInstance = new Kythia(dependencies);
-	kythiaInstance.dbDependencies = {
-		KythiaModel, // Model with pre-wired dependencies
-		logger, // Reference for DB/model logging
-		config: kythiaConfig,
-	};
-	kythiaInstance.start();
+    /**
+     * kythiaInstance: The live bot instance, receives all dependencies for DI via constructor.
+     *  - dbDependencies: Some db models require injected context/config after construction.
+     *  - start():        Boots the bot; attaches to Discord, loads addons, connects events, etc.
+     */
+    const kythiaInstance = new Kythia(dependencies);
+    kythiaInstance.dbDependencies = {
+        KythiaModel, // Model with pre-wired dependencies
+        logger, // Reference for DB/model logging
+        config: kythiaConfig,
+    };
+    kythiaInstance.start();
 } catch (error) {
-	// If logger isn't available, fallback to console.
-	const log = logger || console;
-	log.error("🔥 FATAL ERROR during initialization:", error);
-	process.exit(1);
+    // If logger isn't available, fallback to console.
+    const log = logger || console;
+    log.error('🔥 FATAL ERROR during initialization:', error);
+    process.exit(1);
 }

@@ -6,39 +6,35 @@
  * @version 0.9.12-beta
  */
 
-const { DataTypes } = require("sequelize");
+const { DataTypes } = require('sequelize');
 
-const { KythiaModel } = require("kythia-core");
-const Playlist = require("./Playlist");
+const { KythiaModel } = require('kythia-core');
+const Playlist = require('./Playlist');
 
 class PlaylistTrack extends KythiaModel {
-	static init(sequelize) {
-		KythiaModel.init(
-			{
-				id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-				playlistId: {
-					type: DataTypes.INTEGER,
-					allowNull: false,
-					references: { model: "playlists", key: "id" },
-				},
-				title: { type: DataTypes.STRING, allowNull: false },
-				identifier: { type: DataTypes.STRING, allowNull: false },
-				author: { type: DataTypes.STRING, allowNull: false },
-				length: { type: DataTypes.BIGINT, allowNull: false },
-				uri: { type: DataTypes.STRING, allowNull: false },
-			},
-			{
-				sequelize,
-				modelName: "PlaylistTrack",
-				tableName: "playlist_tracks",
-				timestamps: false,
-			},
-		);
+    static init(sequelize) {
+        super.init(
+            {
+                id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+                playlistId: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'playlists', key: 'id' } },
+                title: { type: DataTypes.STRING, allowNull: false },
+                identifier: { type: DataTypes.STRING, allowNull: false },
+                author: { type: DataTypes.STRING, allowNull: false },
+                length: { type: DataTypes.BIGINT, allowNull: false },
+                uri: { type: DataTypes.STRING, allowNull: false },
+            },
+            {
+                sequelize,
+                modelName: 'PlaylistTrack',
+                tableName: 'playlist_tracks',
+                timestamps: false,
+            }
+        );
 
-		PlaylistTrack.setupParentTouch("playlistId", Playlist, "updatedAt");
+        this.setupParentTouch('playlistId', Playlist, 'updatedAt');
 
-		return PlaylistTrack;
-	}
+        return this;
+    }
 }
 
 module.exports = PlaylistTrack;

@@ -1,352 +1,273 @@
 {
-	"meta": {
-		"key": "tech-community",
-		"display": "Tech / Dev Community",
-		"description": "A comprehensive template for a technology and developer community: resources, code help, showcase, jobs, events, and more.",
-		"defaultLocale": "en"
-	},
-	"roles": [
-		{
-			"name": "Owner",
-			"color": 15844367,
-			"hoist": true,
-			"mentionable": false,
-			"perms": ["Administrator"]
-		},
-		{
-			"name": "Admin",
-			"color": 15158332,
-			"hoist": true,
-			"mentionable": true,
-			"perms": [
-				"ManageGuild",
-				"ManageChannels",
-				"ManageMessages",
-				"ViewAuditLog",
-				"BanMembers",
-				"KickMembers"
-			]
-		},
-		{
-			"name": "Moderator",
-			"color": 3447003,
-			"hoist": true,
-			"mentionable": true,
-			"perms": [
-				"ManageMessages",
-				"MuteMembers",
-				"DeafenMembers",
-				"MoveMembers",
-				"ManageNicknames"
-			]
-		},
-		{
-			"name": "Mentor",
-			"color": 10181046,
-			"hoist": false,
-			"mentionable": true,
-			"perms": ["ManageMessages", "SendMessages"]
-		},
-		{
-			"name": "Contributor",
-			"color": 3066993,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Member",
-			"color": 10066329,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Bot",
-			"color": 9807270,
-			"hoist": false,
-			"mentionable": false,
-			"perms": ["ManageMessages", "EmbedLinks", "AttachFiles"]
-		},
-		{
-			"name": "Muted",
-			"color": 10038562,
-			"hoist": false,
-			"mentionable": false,
-			"perms": []
-		}
-	],
-	"categories": [
-		{
-			"name": "📢 INFORMATION",
-			"channels": [
-				{
-					"name": "📢┃announcements",
-					"type": "text",
-					"topic": "Official announcements, tech news, and community updates",
-					"pin": [
-						{
-							"title": "📢 Welcome to the Tech Community!",
-							"description": "Stay tuned for the latest news, updates, and important information about our server and the tech world.",
-							"color": 3447003,
-							"fields": [
-								{
-									"name": "Rules",
-									"value": "• Be respectful\n• No spam or self-promotion\n• Use channels appropriately\n• Follow Discord ToS"
-								},
-								{
-									"name": "Get Started",
-									"value": "Introduce yourself in #introductions and check out #resources for useful links."
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "📜┃rules",
-					"type": "text",
-					"topic": "Server rules and guidelines",
-					"pin": [
-						{
-							"title": "📜 Server Rules",
-							"description": "Please read and follow these rules to keep our community safe and productive.",
-							"color": 15158332,
-							"fields": [
-								{
-									"name": "1. Respect",
-									"value": "Treat everyone with respect. No harassment, hate speech, or discrimination."
-								},
-								{
-									"name": "2. No Spam",
-									"value": "Avoid spamming messages, links, or advertisements."
-								},
-								{
-									"name": "3. Stay on Topic",
-									"value": "Use the appropriate channels for your discussions."
-								},
-								{
-									"name": "4. No NSFW",
-									"value": "Keep all content safe for work."
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🆕┃changelog",
-					"type": "text",
-					"topic": "Community changes and bot updates"
-				}
-			]
-		},
-		{
-			"name": "👋 COMMUNITY",
-			"channels": [
-				{
-					"name": "👋┃introductions",
-					"type": "text",
-					"topic": "Introduce yourself to the community",
-					"pin": [
-						{
-							"title": "👋 Introduce Yourself!",
-							"description": "Tell us about your background, interests, and what brings you here.",
-							"color": 3066993,
-							"fields": [
-								{
-									"name": "Template",
-									"value": "• Name/Alias\n• Tech Stack\n• Experience Level\n• What you hope to learn or share"
-								}
-							]
-						}
-					],
-					"rateLimitPerUser": 10
-				},
-				{
-					"name": "💬┃general",
-					"type": "text",
-					"topic": "General chat for all tech topics and casual conversation",
-					"rateLimitPerUser": 5
-				},
-				{
-					"name": "🎉┃events",
-					"type": "text",
-					"topic": "Community events, hackathons, and meetups"
-				}
-			]
-		},
-		{
-			"name": "📚 RESOURCES",
-			"channels": [
-				{
-					"name": "📚┃docs",
-					"type": "text",
-					"topic": "Curated documentation, guides, and useful links",
-					"rateLimitPerUser": 10,
-					"pin": [
-						{
-							"title": "📚 Community Resources",
-							"description": "Share and discover helpful documentation, guides, and learning materials.",
-							"color": 11342935,
-							"fields": [
-								{
-									"name": "How to Share",
-									"value": "• Provide a short description\n• Add the link\n• Mention the relevant tech/topic"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "💼┃jobs",
-					"type": "text",
-					"topic": "Job postings, gigs, and freelance opportunities",
-					"pin": [
-						{
-							"title": "💼 Job Board",
-							"description": "Share and find tech jobs, internships, and freelance gigs.",
-							"color": 15105570,
-							"fields": [
-								{
-									"name": "Posting Format",
-									"value": "• Position\n• Company\n• Location (Remote/Onsite)\n• Requirements\n• How to Apply"
-								}
-							]
-						}
-					]
-				},
-				{
-					"name": "🔗┃links",
-					"type": "text",
-					"topic": "Share useful tech links, blogs, and tools"
-				}
-			]
-		},
-		{
-			"name": "💡 CODE HELP",
-			"channels": [
-				{
-					"name": "💡┃help-forum",
-					"type": "forum",
-					"topic": "Ask for help with code, debugging, and best practices",
-					"forumTags": [
-						"javascript",
-						"python",
-						"php",
-						"go",
-						"rust",
-						"devops",
-						"frontend",
-						"backend",
-						"database",
-						"ai",
-						"cloud"
-					],
-					"pin": [
-						{
-							"title": "💡 How to Ask for Help",
-							"description": "Please provide as much detail as possible, including code snippets, error messages, and what you have tried.",
-							"color": 3447003
-						}
-					]
-				},
-				{
-					"name": "❓┃quick-questions",
-					"type": "text",
-					"topic": "One-liners, quick tips, and simple questions",
-					"rateLimitPerUser": 3
-				},
-				{
-					"name": "🧪┃code-review",
-					"type": "text",
-					"topic": "Request and provide code reviews"
-				}
-			]
-		},
-		{
-			"name": "🚀 SHOWCASE",
-			"channels": [
-				{
-					"name": "🚀┃project-showcase",
-					"type": "text",
-					"topic": "Share your projects, apps, and libraries",
-					"pin": [
-						{
-							"title": "🚀 Project Showcase",
-							"description": "Show off your latest work! Include screenshots, links, and a short description.",
-							"color": 16753920
-						}
-					]
-				},
-				{
-					"name": "🌐┃open-source",
-					"type": "text",
-					"topic": "Open source project discussion and collaboration"
-				},
-				{
-					"name": "🎨┃design-showcase",
-					"type": "text",
-					"topic": "Share UI/UX, web, and graphic design work"
-				}
-			]
-		},
-		{
-			"name": "🎙️ VOICE & COLLAB",
-			"channels": [
-				{
-					"name": "🎙️┃pair-programming",
-					"type": "voice",
-					"userLimit": 5
-				},
-				{
-					"name": "🧑‍💻┃hackathon",
-					"type": "voice",
-					"userLimit": 10
-				},
-				{
-					"name": "🔊┃general-voice",
-					"type": "voice"
-				}
-			]
-		},
-		{
-			"name": "🛡️ MODERATION",
-			"channels": [
-				{
-					"name": "🛡️┃mod-chat",
-					"type": "text",
-					"topic": "Private staff chat for moderation and coordination"
-				},
-				{
-					"name": "🚨┃error-logs",
-					"type": "text",
-					"topic": "Bot errors, logs, and system alerts",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": ["Admin", "Owner", "Bot"],
-							"allow": [
-								"ViewChannel",
-								"SendMessages",
-								"ReadMessageHistory",
-								"AttachFiles",
-								"EmbedLinks"
-							]
-						}
-					]
-				},
-				{
-					"name": "📝┃reports",
-					"type": "text",
-					"topic": "User reports and incident tracking",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": ["Admin", "Moderator", "Owner"],
-							"allow": ["ViewChannel", "SendMessages", "ReadMessageHistory"]
-						}
-					]
-				}
-			]
-		}
-	]
+    "meta": {
+        "key": "tech-community",
+        "display": "Tech / Dev Community",
+        "description": "A comprehensive template for a technology and developer community: resources, code help, showcase, jobs, events, and more.",
+        "defaultLocale": "en"
+    },
+    "roles": [
+        { "name": "Owner", "color": 15844367, "hoist": true, "mentionable": false, "perms": ["Administrator"] },
+        {
+            "name": "Admin",
+            "color": 15158332,
+            "hoist": true,
+            "mentionable": true,
+            "perms": ["ManageGuild", "ManageChannels", "ManageMessages", "ViewAuditLog", "BanMembers", "KickMembers"]
+        },
+        {
+            "name": "Moderator",
+            "color": 3447003,
+            "hoist": true,
+            "mentionable": true,
+            "perms": ["ManageMessages", "MuteMembers", "DeafenMembers", "MoveMembers", "ManageNicknames"]
+        },
+        { "name": "Mentor", "color": 10181046, "hoist": false, "mentionable": true, "perms": ["ManageMessages", "SendMessages"] },
+        { "name": "Contributor", "color": 3066993, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Member", "color": 10066329, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Bot", "color": 9807270, "hoist": false, "mentionable": false, "perms": ["ManageMessages", "EmbedLinks", "AttachFiles"] },
+        { "name": "Muted", "color": 10038562, "hoist": false, "mentionable": false, "perms": [] }
+    ],
+    "categories": [
+        {
+            "name": "📢 INFORMATION",
+            "channels": [
+                {
+                    "name": "📢┃announcements",
+                    "type": "text",
+                    "topic": "Official announcements, tech news, and community updates",
+                    "pin": [
+                        {
+                            "title": "📢 Welcome to the Tech Community!",
+                            "description": "Stay tuned for the latest news, updates, and important information about our server and the tech world.",
+                            "color": 3447003,
+                            "fields": [
+                                {
+                                    "name": "Rules",
+                                    "value": "• Be respectful\n• No spam or self-promotion\n• Use channels appropriately\n• Follow Discord ToS"
+                                },
+                                {
+                                    "name": "Get Started",
+                                    "value": "Introduce yourself in #introductions and check out #resources for useful links."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "📜┃rules",
+                    "type": "text",
+                    "topic": "Server rules and guidelines",
+                    "pin": [
+                        {
+                            "title": "📜 Server Rules",
+                            "description": "Please read and follow these rules to keep our community safe and productive.",
+                            "color": 15158332,
+                            "fields": [
+                                {
+                                    "name": "1. Respect",
+                                    "value": "Treat everyone with respect. No harassment, hate speech, or discrimination."
+                                },
+                                { "name": "2. No Spam", "value": "Avoid spamming messages, links, or advertisements." },
+                                { "name": "3. Stay on Topic", "value": "Use the appropriate channels for your discussions." },
+                                { "name": "4. No NSFW", "value": "Keep all content safe for work." }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🆕┃changelog",
+                    "type": "text",
+                    "topic": "Community changes and bot updates"
+                }
+            ]
+        },
+        {
+            "name": "👋 COMMUNITY",
+            "channels": [
+                {
+                    "name": "👋┃introductions",
+                    "type": "text",
+                    "topic": "Introduce yourself to the community",
+                    "pin": [
+                        {
+                            "title": "👋 Introduce Yourself!",
+                            "description": "Tell us about your background, interests, and what brings you here.",
+                            "color": 3066993,
+                            "fields": [
+                                {
+                                    "name": "Template",
+                                    "value": "• Name/Alias\n• Tech Stack\n• Experience Level\n• What you hope to learn or share"
+                                }
+                            ]
+                        }
+                    ],
+                    "rateLimitPerUser": 10
+                },
+                {
+                    "name": "💬┃general",
+                    "type": "text",
+                    "topic": "General chat for all tech topics and casual conversation",
+                    "rateLimitPerUser": 5
+                },
+                {
+                    "name": "🎉┃events",
+                    "type": "text",
+                    "topic": "Community events, hackathons, and meetups"
+                }
+            ]
+        },
+        {
+            "name": "📚 RESOURCES",
+            "channels": [
+                {
+                    "name": "📚┃docs",
+                    "type": "text",
+                    "topic": "Curated documentation, guides, and useful links",
+                    "rateLimitPerUser": 10,
+                    "pin": [
+                        {
+                            "title": "📚 Community Resources",
+                            "description": "Share and discover helpful documentation, guides, and learning materials.",
+                            "color": 11342935,
+                            "fields": [
+                                {
+                                    "name": "How to Share",
+                                    "value": "• Provide a short description\n• Add the link\n• Mention the relevant tech/topic"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "💼┃jobs",
+                    "type": "text",
+                    "topic": "Job postings, gigs, and freelance opportunities",
+                    "pin": [
+                        {
+                            "title": "💼 Job Board",
+                            "description": "Share and find tech jobs, internships, and freelance gigs.",
+                            "color": 15105570,
+                            "fields": [
+                                {
+                                    "name": "Posting Format",
+                                    "value": "• Position\n• Company\n• Location (Remote/Onsite)\n• Requirements\n• How to Apply"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "🔗┃links",
+                    "type": "text",
+                    "topic": "Share useful tech links, blogs, and tools"
+                }
+            ]
+        },
+        {
+            "name": "💡 CODE HELP",
+            "channels": [
+                {
+                    "name": "💡┃help-forum",
+                    "type": "forum",
+                    "topic": "Ask for help with code, debugging, and best practices",
+                    "forumTags": ["javascript", "python", "php", "go", "rust", "devops", "frontend", "backend", "database", "ai", "cloud"],
+                    "pin": [
+                        {
+                            "title": "💡 How to Ask for Help",
+                            "description": "Please provide as much detail as possible, including code snippets, error messages, and what you have tried.",
+                            "color": 3447003
+                        }
+                    ]
+                },
+                {
+                    "name": "❓┃quick-questions",
+                    "type": "text",
+                    "topic": "One-liners, quick tips, and simple questions",
+                    "rateLimitPerUser": 3
+                },
+                {
+                    "name": "🧪┃code-review",
+                    "type": "text",
+                    "topic": "Request and provide code reviews"
+                }
+            ]
+        },
+        {
+            "name": "🚀 SHOWCASE",
+            "channels": [
+                {
+                    "name": "🚀┃project-showcase",
+                    "type": "text",
+                    "topic": "Share your projects, apps, and libraries",
+                    "pin": [
+                        {
+                            "title": "🚀 Project Showcase",
+                            "description": "Show off your latest work! Include screenshots, links, and a short description.",
+                            "color": 16753920
+                        }
+                    ]
+                },
+                {
+                    "name": "🌐┃open-source",
+                    "type": "text",
+                    "topic": "Open source project discussion and collaboration"
+                },
+                {
+                    "name": "🎨┃design-showcase",
+                    "type": "text",
+                    "topic": "Share UI/UX, web, and graphic design work"
+                }
+            ]
+        },
+        {
+            "name": "🎙️ VOICE & COLLAB",
+            "channels": [
+                {
+                    "name": "🎙️┃pair-programming",
+                    "type": "voice",
+                    "userLimit": 5
+                },
+                {
+                    "name": "🧑‍💻┃hackathon",
+                    "type": "voice",
+                    "userLimit": 10
+                },
+                {
+                    "name": "🔊┃general-voice",
+                    "type": "voice"
+                }
+            ]
+        },
+        {
+            "name": "🛡️ MODERATION",
+            "channels": [
+                {
+                    "name": "🛡️┃mod-chat",
+                    "type": "text",
+                    "topic": "Private staff chat for moderation and coordination"
+                },
+                {
+                    "name": "🚨┃error-logs",
+                    "type": "text",
+                    "topic": "Bot errors, logs, and system alerts",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        {
+                            "roles": ["Admin", "Owner", "Bot"],
+                            "allow": ["ViewChannel", "SendMessages", "ReadMessageHistory", "AttachFiles", "EmbedLinks"]
+                        }
+                    ]
+                },
+                {
+                    "name": "📝┃reports",
+                    "type": "text",
+                    "topic": "User reports and incident tracking",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        { "roles": ["Admin", "Moderator", "Owner"], "allow": ["ViewChannel", "SendMessages", "ReadMessageHistory"] }
+                    ]
+                }
+            ]
+        }
+    ]
 }

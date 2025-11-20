@@ -6,91 +6,68 @@
  * @version 0.9.12-beta
  */
 
-const {
-	getChecklistAndItems,
-	getScopeMeta,
-	safeReply,
-} = require("../../helpers");
-const { EmbedBuilder } = require("discord.js");
+const { getChecklistAndItems, getScopeMeta, safeReply } = require('../../helpers');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
-	subcommand: true,
-	data: (subcommand) =>
-		subcommand
-			.setName("add")
-			.setDescription("Add item to personal checklist")
-			.addStringOption((option) =>
-				option
-					.setName("item")
-					.setDescription("Checklist item")
-					.setRequired(true),
-			),
+    subcommand: true,
+    data: (subcommand) =>
+        subcommand
+            .setName('add')
+            .setDescription('Add item to personal checklist')
+            .addStringOption((option) => option.setName('item').setDescription('Checklist item').setRequired(true)),
 
-	async execute(interaction, container) {
-		// Dependency
-		const { t, helpers } = container;
-		const { embedFooter } = helpers.discord;
+    async execute(interaction, container) {
+        // Dependency
+        const { t, helpers } = container;
+        const { embedFooter } = helpers.discord;
 
-		const guildId = interaction.guild?.id;
-		const userId = interaction.user.id; // Personal scope
-		const group = "personal";
+        const guildId = interaction.guild?.id;
+        const userId = interaction.user.id; // Personal scope
+        const group = 'personal';
 
-		const item = interaction.options.getString("item");
-		if (!item || typeof item !== "string" || !item.trim()) {
-			const embed = new EmbedBuilder()
-				.setColor("Red")
-				.setTitle(
-					await t(interaction, "checklist.server.add.invalid.item.title"),
-				)
-				.setDescription(
-					await t(interaction, "checklist.server.add.invalid.item.desc"),
-				)
-				.setTimestamp();
-			return safeReply(interaction, { embeds: [embed], ephemeral: true });
-		}
+        const item = interaction.options.getString('item');
+        if (!item || typeof item !== 'string' || !item.trim()) {
+            const embed = new EmbedBuilder()
+                .setColor('Red')
+                .setTitle(await t(interaction, 'checklist.server.add.invalid.item.title'))
+                .setDescription(await t(interaction, 'checklist.server.add.invalid.item.desc'))
+                .setTimestamp();
+            return safeReply(interaction, { embeds: [embed], ephemeral: true });
+        }
 
-		const { checklist, items } = await getChecklistAndItems({
-			guildId,
-			userId,
-			createIfNotExist: true,
-		});
+        const { checklist, items } = await getChecklistAndItems({ guildId, userId, createIfNotExist: true });
 
-		if (items.length >= 100) {
-			// Limit checklist size
-			const embed = new EmbedBuilder()
-				.setColor("Red")
-				.setTitle(await t(interaction, "checklist.server.add.full.title"))
-				.setDescription(await t(interaction, "checklist.server.add.full.desc"))
-				.setTimestamp();
-			return safeReply(interaction, { embeds: [embed], ephemeral: true });
-		}
+        if (items.length >= 100) {
+            // Limit checklist size
+            const embed = new EmbedBuilder()
+                .setColor('Red')
+                .setTitle(await t(interaction, 'checklist.server.add.full.title'))
+                .setDescription(await t(interaction, 'checklist.server.add.full.desc'))
+                .setTimestamp();
+            return safeReply(interaction, { embeds: [embed], ephemeral: true });
+        }
 
-		items.push({ text: item, checked: false });
-		try {
-			await checklist.update({ items: JSON.stringify(items) });
-		} catch (_e) {
-			const embed = new EmbedBuilder()
-				.setColor("Red")
-				.setTitle("Checklist Error")
-				.setDescription("Failed to update checklist. Please try again.")
-				.setTimestamp();
-			return safeReply(interaction, { embeds: [embed], ephemeral: true });
-		}
+        items.push({ text: item, checked: false });
+        try {
+            await checklist.update({ items: JSON.stringify(items) });
+        } catch (e) {
+            const embed = new EmbedBuilder()
+                .setColor('Red')
+                .setTitle('Checklist Error')
+                .setDescription('Failed to update checklist. Please try again.')
+                .setTimestamp();
+            return safeReply(interaction, { embeds: [embed], ephemeral: true });
+        }
 
-		const { scopeKey, color, ephemeral } = getScopeMeta(userId, group);
-		const embed = new EmbedBuilder()
-			.setTitle(
-				await t(interaction, "checklist.server.add.add.success.title", {
-					scope: await t(interaction, scopeKey),
-				}),
-			)
-			.setDescription(
-				await t(interaction, "checklist.server.add.add.success.desc", { item }),
-			)
-			.setColor(color)
-			.setFooter(await embedFooter(interaction))
-			.setTimestamp();
+        const { scopeKey, color, ephemeral } = getScopeMeta(userId, group);
+        const embed = new EmbedBuilder()
+            .setTitle(await t(interaction, 'checklist.server.add.add.success.title', { scope: await t(interaction, scopeKey) }))
+            .setDescription(await t(interaction, 'checklist.server.add.add.success.desc', { item }))
+            .setColor(color)
+            .setFooter(await embedFooter(interaction))
+            .setTimestamp();
 
-		await safeReply(interaction, { embeds: [embed], ephemeral });
-	},
+        await safeReply(interaction, { embeds: [embed], ephemeral });
+    },
 };

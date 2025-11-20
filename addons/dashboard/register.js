@@ -6,14 +6,14 @@
  * @version 0.9.12-beta
  */
 
-const initializeDashboard = require("./web/server");
+const initializeDashboard = require('./web/server');
 
 module.exports = {
-	async initialize(bot) {
-		const summery = [];
-		initializeDashboard(bot.container.client);
-		summery.push("   └─ 🚀 Initializing Dashboard...");
+    async initialize(bot) {
+        const summery = [];
+        initializeDashboard(bot.container.client);
+        summery.push('   └─ 🚀 Initializing Dashboard...');
 
-		return summery;
-	},
+        return summery;
+    },
 };

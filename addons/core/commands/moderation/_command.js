@@ -5,11 +5,11 @@
  * @assistant chaa & graa
  * @version 0.9.12-beta
  */
-const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName("mod")
-		.setDescription("Moderation action")
-		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+    data: new SlashCommandBuilder()
+        .setName('mod')
+        .setDescription('Moderation action')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 };

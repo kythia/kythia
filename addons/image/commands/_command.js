@@ -5,11 +5,9 @@
  * @assistant chaa & graa
  * @version 0.9.12-beta
  */
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, InteractionContextType } = require('discord.js');
 
 module.exports = {
-	guildOnly: false,
-	data: new SlashCommandBuilder()
-		.setName("image")
-		.setDescription("Manage images in the storage"),
+    guildOnly: false,
+    data: new SlashCommandBuilder().setName('image').setDescription('Manage images in the storage'),
 };

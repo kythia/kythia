@@ -6,23 +6,25 @@
  * @version 0.9.12-beta
  */
 
-const { KythiaModel } = require("kythia-core");
+const { DataTypes } = require('sequelize');
+
+const { KythiaModel } = require('kythia-core');
 
 class KythiaSetting extends KythiaModel {
-	static CACHE_KEYS = [["guildId"]];
-	static init(sequelize) {
-		KythiaModel.init(
-			{},
-			{
-				sequelize,
-				modelName: "KythiaSetting",
-				tableName: "kythia_settings",
-				timestamps: false,
-			},
-		);
+    static CACHE_KEYS = [['guildId']];
+    static init(sequelize) {
+        super.init(
+            {},
+            {
+                sequelize,
+                modelName: 'KythiaSetting',
+                tableName: 'kythia_settings',
+                timestamps: false,
+            }
+        );
 
-		return KythiaSetting;
-	}
+        return this;
+    }
 }
 
 // KythiaSetting.init(sequelize);

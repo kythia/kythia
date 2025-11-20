@@ -7,39 +7,32 @@
  */
 
 module.exports = {
-	data: (subcommand) =>
-		subcommand
-			.setName("delete")
-			.setDescription("Remove a user from premium")
-			.addUserOption((opt) =>
-				opt
-					.setName("user")
-					.setDescription("User to remove premium from")
-					.setRequired(true),
-			),
-	async execute(interaction, container) {
-		const { t, models } = container;
-		const { KythiaUser } = models;
+    data: (subcommand) =>
+        subcommand
+            .setName('delete')
+            .setDescription('Remove a user from premium')
+            .addUserOption((opt) => opt.setName('user').setDescription('User to remove premium from').setRequired(true)),
+    async execute(interaction, container) {
+        const { t, models } = container;
+        const { KythiaUser } = models;
 
-		await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: true });
 
-		const user = interaction.options.getUser("user");
+        const user = interaction.options.getUser('user');
 
-		const kythiaUser = await KythiaUser.getCache({ userId: user.id });
-		if (!kythiaUser || !kythiaUser.isPremium) {
-			return interaction.editReply(
-				await t(interaction, "core.premium.premium.not.premium"),
-			);
-		}
+        const kythiaUser = await KythiaUser.getCache({ userId: user.id });
+        if (!kythiaUser || !kythiaUser.isPremium) {
+            return interaction.editReply(await t(interaction, 'core.premium.premium.not.premium'));
+        }
 
-		kythiaUser.isPremium = false;
-		kythiaUser.premiumExpiresAt = null;
-		await kythiaUser.save();
+        kythiaUser.isPremium = false;
+        kythiaUser.premiumExpiresAt = null;
+        await kythiaUser.save();
 
-		return interaction.editReply(
-			await t(interaction, "core.premium.premium.delete.success", {
-				user: `<@${user.id}>`,
-			}),
-		);
-	},
+        return interaction.editReply(
+            await t(interaction, 'core.premium.premium.delete.success', {
+                user: `<@${user.id}>`,
+            })
+        );
+    },
 };

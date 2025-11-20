@@ -1,8 +1,8 @@
 {
-	"name": "QuestNotifier",
-	"featureName": "Subdomain",
-	"featureFlag": "subdomainOn",
-	"version": "1.0.0",
-	"description": "Fetches Discord quests from an API and notifies servers.",
-	"author": "kenndeclouv"
+    "name": "QuestNotifier",
+    "featureName": "Subdomain",
+    "featureFlag": "subdomainOn",
+    "version": "1.0.0",
+    "description": "Fetches Discord quests from an API and notifies servers.",
+    "author": "kenndeclouv"
 }

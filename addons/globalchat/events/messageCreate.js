@@ -6,18 +6,16 @@
  * @version 0.9.12-beta
  */
 
-const { handleGlobalChat } = require("../helpers/handleGlobalChat");
-const GlobalChat = require("../database/models/GlobalChat");
+const { handleGlobalChat } = require('../helpers/handleGlobalChat');
+const GlobalChat = require('../database/models/GlobalChat');
 
 module.exports = async (bot, message) => {
-	if (!message.guild) return;
-	const registeredChannel = await GlobalChat.getCache({
-		globalChannelId: message.channel.id,
-	});
+    if (!message.guild) return;
+    const registeredChannel = await GlobalChat.getCache({ globalChannelId: message.channel.id });
 
-	if (!registeredChannel || registeredChannel.guildId !== message.guild.id) {
-		return;
-	}
+    if (!registeredChannel || registeredChannel.guildId !== message.guild.id) {
+        return;
+    }
 
-	await handleGlobalChat(message, bot.container);
+    await handleGlobalChat(message, bot.container);
 };

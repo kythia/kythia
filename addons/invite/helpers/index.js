@@ -9,26 +9,23 @@
 const invitesCache = new Map();
 
 function getGuildInviteCache(guildId) {
-	if (!invitesCache.has(guildId)) invitesCache.set(guildId, new Map());
-	return invitesCache.get(guildId);
+    if (!invitesCache.has(guildId)) invitesCache.set(guildId, new Map());
+    return invitesCache.get(guildId);
 }
 
 async function refreshGuildInvites(guild) {
-	try {
-		const invites = await guild.invites.fetch();
-		const cache = getGuildInviteCache(guild.id);
-		cache.clear();
-		for (const invite of invites.values()) {
-			cache.set(invite.code, {
-				uses: invite.uses || 0,
-				inviterId: invite.inviter?.id || null,
-			});
-		}
-	} catch (_e) {}
+    try {
+        const invites = await guild.invites.fetch();
+        const cache = getGuildInviteCache(guild.id);
+        cache.clear();
+        for (const invite of invites.values()) {
+            cache.set(invite.code, { uses: invite.uses || 0, inviterId: invite.inviter?.id || null });
+        }
+    } catch (e) {}
 }
 
 module.exports = {
-	getGuildInviteCache,
-	refreshGuildInvites,
-	invitesCache,
+    getGuildInviteCache,
+    refreshGuildInvites,
+    invitesCache,
 };

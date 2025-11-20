@@ -25,48 +25,39 @@
  * - Ensures the temp directory exists before writing.
  */
 
-const fs = require("node:fs");
-const path = require("node:path");
+const fs = require('fs');
+const path = require('path');
 
-const OUTPUT_DIR = path.join(__dirname, "..", "temp");
-const OUTPUT_FILE = path.join(OUTPUT_DIR, "structure.md");
-const EXCLUDE = [
-	".git",
-	".vscode",
-	"vendor",
-	"storage",
-	"dist",
-	"node_modules",
-	"logs",
-	".husky",
-];
+const OUTPUT_DIR = path.join(__dirname, '..', 'temp');
+const OUTPUT_FILE = path.join(OUTPUT_DIR, 'structure.md');
+const EXCLUDE = ['.git', '.vscode', 'vendor', 'storage', 'dist', 'node_modules', 'logs', '.husky'];
 
-function generateTree(dir, prefix = "") {
-	const items = fs.readdirSync(dir).filter((item) => !EXCLUDE.includes(item));
-	let tree = "";
+function generateTree(dir, prefix = '') {
+    const items = fs.readdirSync(dir).filter((item) => !EXCLUDE.includes(item));
+    let tree = '';
 
-	items.forEach((item, index) => {
-		const fullPath = path.join(dir, item);
-		const isLast = index === items.length - 1;
-		const connector = isLast ? "└── " : "├── ";
-		tree += `${prefix}${connector}${item}\n`;
+    items.forEach((item, index) => {
+        const fullPath = path.join(dir, item);
+        const isLast = index === items.length - 1;
+        const connector = isLast ? '└── ' : '├── ';
+        tree += `${prefix}${connector}${item}\n`;
 
-		if (fs.statSync(fullPath).isDirectory()) {
-			tree += generateTree(fullPath, prefix + (isLast ? "    " : "│   "));
-		}
-	});
+        if (fs.statSync(fullPath).isDirectory()) {
+            tree += generateTree(fullPath, prefix + (isLast ? '    ' : '│   '));
+        }
+    });
 
-	return tree;
+    return tree;
 }
 
-const targetDir = path.join(__dirname, "..");
+const targetDir = path.join(__dirname, '..');
 const tree = generateTree(targetDir);
 
 // Ensure temp directory exists
 if (!fs.existsSync(OUTPUT_DIR)) {
-	fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
 // Write to file
-fs.writeFileSync(OUTPUT_FILE, tree, "utf8");
+fs.writeFileSync(OUTPUT_FILE, tree, 'utf8');
 console.log(`✅ Project structure saved to ${OUTPUT_FILE}`);

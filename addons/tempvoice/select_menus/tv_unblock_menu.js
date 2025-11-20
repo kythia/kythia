@@ -5,84 +5,64 @@
  * @assistant chaa & graa
  * @version 0.9.12-beta
  */
-const { PermissionsBitField } = require("discord.js");
+const { PermissionsBitField } = require('discord.js');
 
 module.exports = {
-	execute: async (interaction, container) => {
-		const { models, client, t, helpers } = container;
-		const { simpleContainer } = helpers.discord;
-		const { TempVoiceChannel } = models;
+    execute: async (interaction, container) => {
+        const { models, client, t, helpers } = container;
+        const { simpleContainer } = helpers.discord;
+        const { TempVoiceChannel } = models;
 
-		const channelId = interaction.customId.split(":")[1];
+        const channelId = interaction.customId.split(':')[1];
 
-		if (!channelId)
-			return interaction.update({
-				components: await simpleContainer(
-					interaction,
-					await t(interaction, "tempvoice.common.no_channel_id"),
-					{ color: "Red" },
-				),
-			});
-		const activeChannel = await TempVoiceChannel.getCache({
-			channelId: channelId,
-			ownerId: interaction.user.id,
-		});
-		if (!activeChannel)
-			return interaction.update({
-				components: await simpleContainer(
-					interaction,
-					await t(interaction, "tempvoice.common.not_owner"),
-					{ color: "Red" },
-				),
-			});
-		const channel = await client.channels
-			.fetch(channelId, { force: true })
-			.catch(() => null);
-		if (!channel)
-			return interaction.update({
-				components: await simpleContainer(
-					interaction,
-					await t(interaction, "tempvoice.common.channel_not_found"),
-					{
-						color: "Red",
-					},
-				),
-			});
+        if (!channelId)
+            return interaction.update({
+                components: await simpleContainer(interaction, await t(interaction, 'tempvoice.common.no_channel_id'), { color: 'Red' }),
+            });
+        const activeChannel = await TempVoiceChannel.getCache({
+            channelId: channelId,
+            ownerId: interaction.user.id,
+        });
+        if (!activeChannel)
+            return interaction.update({
+                components: await simpleContainer(interaction, await t(interaction, 'tempvoice.common.not_owner'), { color: 'Red' }),
+            });
+        const channel = await client.channels.fetch(channelId, { force: true }).catch(() => null);
+        if (!channel)
+            return interaction.update({
+                components: await simpleContainer(interaction, await t(interaction, 'tempvoice.common.channel_not_found'), {
+                    color: 'Red',
+                }),
+            });
 
-		const userIdsToUnblock = interaction.values;
-		const unblockedNames = [];
+        const userIdsToUnblock = interaction.values;
+        const unblockedNames = [];
 
-		try {
-			for (const userId of userIdsToUnblock) {
-				const member = await interaction.guild.members
-					.fetch(userId)
-					.catch(() => null);
-				if (member) {
-					await channel.permissionOverwrites.edit(member, {
-						[PermissionsBitField.Flags.ViewChannel]: null,
-						[PermissionsBitField.Flags.Connect]: null,
-					});
-					unblockedNames.push(member.displayName);
-				}
-			}
+        try {
+            for (const userId of userIdsToUnblock) {
+                const member = await interaction.guild.members.fetch(userId).catch(() => null);
+                if (member) {
+                    await channel.permissionOverwrites.edit(member, {
+                        [PermissionsBitField.Flags.ViewChannel]: null,
+                        [PermissionsBitField.Flags.Connect]: null,
+                    });
+                    unblockedNames.push(member.displayName);
+                }
+            }
 
-			await interaction.update({
-				components: await simpleContainer(
-					interaction,
-					await t(interaction, "tempvoice.unblock.success", {
-						users: unblockedNames.join(", "),
-					}),
-					{ color: "Green" },
-				),
-			});
-		} catch (_err) {
-			await interaction.update({
-				components: await simpleContainer(
-					interaction,
-					await t(interaction, "tempvoice.common.fail"),
-					{ color: "Red" },
-				),
-			});
-		}
-	},
+            await interaction.update({
+                components: await simpleContainer(
+                    interaction,
+                    await t(interaction, 'tempvoice.unblock.success', {
+                        users: unblockedNames.join(', '),
+                    }),
+                    { color: 'Green' }
+                ),
+            });
+        } catch (err) {
+            await interaction.update({
+                components: await simpleContainer(interaction, await t(interaction, 'tempvoice.common.fail'), { color: 'Red' }),
+            });
+        }
+    },
 };

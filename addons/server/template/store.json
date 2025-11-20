@@ -1,358 +1,237 @@
 {
-	"meta": {
-		"key": "store",
-		"display": "Store / Services",
-		"description": "Complete template with beautiful embeds, leveling roles, and bot-ready structure.",
-		"defaultLocale": "en"
-	},
-	"roles": [
-		{
-			"name": "Owner",
-			"color": 15844367,
-			"hoist": true,
-			"mentionable": false,
-			"perms": ["Administrator"]
-		},
-		{
-			"name": "Admin",
-			"color": 15158332,
-			"hoist": true,
-			"mentionable": true,
-			"perms": [
-				"ManageGuild",
-				"ManageChannels",
-				"ManageMessages",
-				"KickMembers",
-				"BanMembers",
-				"ViewAuditLog"
-			]
-		},
-		{
-			"name": "Staff",
-			"color": 3447003,
-			"hoist": true,
-			"mentionable": true,
-			"perms": ["ManageMessages", "MuteMembers", "DeafenMembers", "MoveMembers"]
-		},
-		{
-			"name": "Top Buyer",
-			"color": 16763904,
-			"hoist": true,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "VIP",
-			"color": 10181046,
-			"hoist": true,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Buyer",
-			"color": 3066993,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Partner",
-			"color": 11342935,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Level 20",
-			"color": 11027200,
-			"hoist": false,
-			"mentionable": false,
-			"perms": []
-		},
-		{
-			"name": "Level 10",
-			"color": 6323595,
-			"hoist": false,
-			"mentionable": false,
-			"perms": []
-		},
-		{
-			"name": "Level 5",
-			"color": 12745742,
-			"hoist": false,
-			"mentionable": false,
-			"perms": []
-		},
-		{
-			"name": "Notification Squad",
-			"color": 15105570,
-			"hoist": false,
-			"mentionable": true,
-			"perms": []
-		},
-		{
-			"name": "Bot",
-			"color": 9807270,
-			"hoist": false,
-			"mentionable": false,
-			"perms": ["ManageMessages", "EmbedLinks", "AttachFiles"]
-		},
-		{
-			"name": "Muted",
-			"color": 10038562,
-			"hoist": false,
-			"mentionable": false,
-			"perms": []
-		}
-	],
-	"categories": [
-		{
-			"name": "▬▬▬ INFO ▬▬▬",
-			"channels": [
-				{
-					"name": "📜┃rules",
-					"type": "text",
-					"topic": "Read the rules before engaging in activities.",
-					"pin": [
-						{
-							"title": "📜 Server Rules",
-							"description": "Welcome! For the comfort and safety of everyone, please read and follow all the rules listed below.",
-							"color": 3447003,
-							"thumbnail": { "url": "https://i.imgur.com/QzYt6rT.png" },
-							"fields": [
-								{
-									"name": "✅ General Rules",
-									"value": "> **1. Be Respectful:** Maintain proper etiquette and respect all members.\n> **2. No Spam:** Spamming chat, emojis, or unnecessary mentions is prohibited.\n> **3. No NSFW:** Adult content in any form is not allowed.\n> **4. Stay On Topic:** Use channels according to their intended purpose."
-								},
-								{
-									"name": "🛒 Transaction Rules",
-									"value": "> **1. Order via Channel:** All orders must be placed through #📝┃order channel.\n> **2. No Hit & Run:** Canceling orders unilaterally after the process has started is prohibited.\n> **3. Full Payment:** Complete payment as per invoice before order processing.\n> **4. Be Patient:** Order processing follows a queue, please be patient."
-								},
-								{
-									"name": "🗣️ Communication Rules",
-									"value": "> **1. No DM Staff:** Don't send DMs to staff unless permitted.\n> **2. One Ticket/Thread:** Create only one ticket or thread per request.\n> **3. No Promotion:** Advertising or promotion without permission is prohibited."
-								}
-							],
-							"footer": {
-								"text": "Violations will result in sanctions. Thank you!"
-							}
-						}
-					],
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["SendMessages"] },
-						{ "roles": ["Admin", "Owner"], "allow": ["SendMessages"] }
-					]
-				},
-				{
-					"name": "📢┃announcements",
-					"type": "text",
-					"topic": "Important announcements, promotions, and service updates.",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["SendMessages"] },
-						{ "roles": ["Admin", "Owner"], "allow": ["SendMessages"] }
-					]
-				},
-				{
-					"name": "🎉┃giveaway",
-					"type": "text",
-					"topic": "Events and giveaways with exciting prizes!",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["SendMessages"] },
-						{ "roles": ["Admin", "Owner", "Staff"], "allow": ["SendMessages"] }
-					]
-				},
-				{
-					"name": "🎁┃role-claim",
-					"type": "text",
-					"topic": "Get notification roles here.",
-					"pin": [
-						{
-							"title": "👋 Choose Your Role!",
-							"description": "React with the emoji below to get the role you want and never miss important updates!",
-							"color": 15105570,
-							"fields": [
-								{
-									"name": "📢 Get Notifications",
-									"value": "React with 📣 to get the **Notification Squad** role and receive pings for every announcement, update, and giveaway!"
-								},
-								{ "name": "🎨 Show Your Skills", "value": "Coming soon..." }
-							],
-							"footer": {
-								"text": "You can remove the reaction to remove the role."
-							}
-						}
-					],
-					"perms": [{ "roles": ["@everyone"], "deny": ["SendMessages"] }]
-				}
-			]
-		},
-		{
-			"name": "▬▬▬ ORDER & SUPPORT ▬▬▬",
-			"channels": [
-				{
-					"name": "📝┃order",
-					"type": "forum",
-					"topic": "Create a new post to place an order.",
-					"forumTags": [
-						"Website",
-						"Discord Bot",
-						"Graphic Design",
-						"Other Services"
-					],
-					"pin": [
-						{
-							"title": "🛒 How to Place an Order",
-							"description": "Please create a **new post** in this channel to place an order. Use a clear title and follow the format below.",
-							"color": 2067276,
-							"fields": [
-								{
-									"name": "📝 Post Title Format",
-									"value": "`[Service Type] - Your Project Name`\nExample: `[Discord Bot] - Automated Store Bot`"
-								},
-								{
-									"name": "📄 Post Content",
-									"value": "Describe your requirements in detail within the post, including:\n- **Desired features**\n- **References (if any)**\n- **Budget**\n- **Deadline (if any)**"
-								},
-								{
-									"name": "⏳ Process Flow",
-									"value": "1. You create a post.\n2. Staff will review and add **'In Progress'** tag.\n3. Further discussion will be conducted in your post's thread.\n4. Staff will send an invoice in #💸┃invoice.\n5. Order will be processed."
-								}
-							],
-							"footer": { "text": "Thank you for choosing us!" }
-						}
-					]
-				},
-				{
-					"name": "💼┃portfolio",
-					"type": "text",
-					"topic": "View our completed work and projects.",
-					"perms": [{ "roles": ["@everyone"], "deny": ["SendMessages"] }]
-				},
-				{
-					"name": "💬┃testimonials",
-					"type": "text",
-					"topic": "Collection of testimonials from our customers.",
-					"pin": [
-						{
-							"title": "⭐ Thank You for Your Trust!",
-							"description": "Satisfied with our service? Please share your best testimonial in this channel. Every review means a lot to us for continuous improvement.\n\nYou may attach screenshots as proof. Thank you! 💖",
-							"color": 16763904
-						}
-					],
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["SendMessages"] },
-						{
-							"roles": ["Buyer", "VIP", "Top Buyer"],
-							"allow": ["SendMessages", "AttachFiles", "AddReactions"]
-						}
-					]
-				},
-				{
-					"name": "💸┃invoice",
-					"type": "text",
-					"topic": "Channel for staff to send invoices.",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": ["Staff", "Admin", "Owner", "Bot"],
-							"allow": [
-								"ViewChannel",
-								"SendMessages",
-								"EmbedLinks",
-								"AttachFiles"
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "▬▬▬ COMMUNITY ▬▬▬",
-			"channels": [
-				{
-					"name": "🏠┃lounge",
-					"type": "text",
-					"topic": "Relaxed chat with other members.",
-					"rateLimitPerUser": 3
-				},
-				{
-					"name": "🎨┃showcase",
-					"type": "text",
-					"topic": "Show off your work here!",
-					"rateLimitPerUser": 10
-				},
-				{
-					"name": "💡┃suggestions-feedback",
-					"type": "text",
-					"topic": "Have ideas or feedback for the server? Share them here."
-				},
-				{
-					"name": "🤝┃partner",
-					"type": "text",
-					"topic": "Information and promotions from our partners."
-				},
-				{
-					"name": "🎲┃bot-commands",
-					"type": "text",
-					"topic": "Use entertainment bot commands here."
-				}
-			]
-		},
-		{
-			"name": "▬▬▬ VOICE ▬▬▬",
-			"channels": [
-				{ "name": "🔊┃Casual Discussion", "type": "voice" },
-				{ "name": "🎶┃Music Listening", "type": "voice" },
-				{
-					"name": "🔒┃Meeting Room",
-					"type": "voice",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["Connect"] },
-						{ "roles": ["Staff", "Admin", "Owner"], "allow": ["Connect"] }
-					]
-				}
-			]
-		},
-		{
-			"name": "▬▬▬ STAFF AREA ▬▬▬",
-			"channels": [
-				{
-					"name": "🛡️┃staff-chat",
-					"type": "text",
-					"topic": "Internal staff coordination.",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": ["Staff", "Admin", "Owner"],
-							"allow": ["ViewChannel", "SendMessages", "AttachFiles"]
-						}
-					]
-				},
-				{
-					"name": "📋┃server-logs",
-					"type": "text",
-					"topic": "Member activity logs (join, leave, boost).",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": ["Staff", "Admin", "Owner", "Bot"],
-							"allow": ["ViewChannel", "SendMessages"]
-						}
-					]
-				},
-				{
-					"name": "🗑️┃message-logs",
-					"type": "text",
-					"topic": "Logs for edited or deleted messages.",
-					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
-						{
-							"roles": ["Admin", "Owner", "Bot"],
-							"allow": ["ViewChannel", "SendMessages"]
-						}
-					]
-				}
-			]
-		}
-	]
+    "meta": {
+        "key": "store",
+        "display": "Store / Services",
+        "description": "Complete template with beautiful embeds, leveling roles, and bot-ready structure.",
+        "defaultLocale": "en"
+    },
+    "roles": [
+        { "name": "Owner", "color": 15844367, "hoist": true, "mentionable": false, "perms": ["Administrator"] },
+        {
+            "name": "Admin",
+            "color": 15158332,
+            "hoist": true,
+            "mentionable": true,
+            "perms": ["ManageGuild", "ManageChannels", "ManageMessages", "KickMembers", "BanMembers", "ViewAuditLog"]
+        },
+        {
+            "name": "Staff",
+            "color": 3447003,
+            "hoist": true,
+            "mentionable": true,
+            "perms": ["ManageMessages", "MuteMembers", "DeafenMembers", "MoveMembers"]
+        },
+        { "name": "Top Buyer", "color": 16763904, "hoist": true, "mentionable": true, "perms": [] },
+        { "name": "VIP", "color": 10181046, "hoist": true, "mentionable": true, "perms": [] },
+        { "name": "Buyer", "color": 3066993, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Partner", "color": 11342935, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Level 20", "color": 11027200, "hoist": false, "mentionable": false, "perms": [] },
+        { "name": "Level 10", "color": 6323595, "hoist": false, "mentionable": false, "perms": [] },
+        { "name": "Level 5", "color": 12745742, "hoist": false, "mentionable": false, "perms": [] },
+        { "name": "Notification Squad", "color": 15105570, "hoist": false, "mentionable": true, "perms": [] },
+        { "name": "Bot", "color": 9807270, "hoist": false, "mentionable": false, "perms": ["ManageMessages", "EmbedLinks", "AttachFiles"] },
+        { "name": "Muted", "color": 10038562, "hoist": false, "mentionable": false, "perms": [] }
+    ],
+    "categories": [
+        {
+            "name": "▬▬▬ INFO ▬▬▬",
+            "channels": [
+                {
+                    "name": "📜┃rules",
+                    "type": "text",
+                    "topic": "Read the rules before engaging in activities.",
+                    "pin": [
+                        {
+                            "title": "📜 Server Rules",
+                            "description": "Welcome! For the comfort and safety of everyone, please read and follow all the rules listed below.",
+                            "color": 3447003,
+                            "thumbnail": { "url": "https://i.imgur.com/QzYt6rT.png" },
+                            "fields": [
+                                {
+                                    "name": "✅ General Rules",
+                                    "value": "> **1. Be Respectful:** Maintain proper etiquette and respect all members.\n> **2. No Spam:** Spamming chat, emojis, or unnecessary mentions is prohibited.\n> **3. No NSFW:** Adult content in any form is not allowed.\n> **4. Stay On Topic:** Use channels according to their intended purpose."
+                                },
+                                {
+                                    "name": "🛒 Transaction Rules",
+                                    "value": "> **1. Order via Channel:** All orders must be placed through #📝┃order channel.\n> **2. No Hit & Run:** Canceling orders unilaterally after the process has started is prohibited.\n> **3. Full Payment:** Complete payment as per invoice before order processing.\n> **4. Be Patient:** Order processing follows a queue, please be patient."
+                                },
+                                {
+                                    "name": "🗣️ Communication Rules",
+                                    "value": "> **1. No DM Staff:** Don't send DMs to staff unless permitted.\n> **2. One Ticket/Thread:** Create only one ticket or thread per request.\n> **3. No Promotion:** Advertising or promotion without permission is prohibited."
+                                }
+                            ],
+                            "footer": { "text": "Violations will result in sanctions. Thank you!" }
+                        }
+                    ],
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["SendMessages"] },
+                        { "roles": ["Admin", "Owner"], "allow": ["SendMessages"] }
+                    ]
+                },
+                {
+                    "name": "📢┃announcements",
+                    "type": "text",
+                    "topic": "Important announcements, promotions, and service updates.",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["SendMessages"] },
+                        { "roles": ["Admin", "Owner"], "allow": ["SendMessages"] }
+                    ]
+                },
+                {
+                    "name": "🎉┃giveaway",
+                    "type": "text",
+                    "topic": "Events and giveaways with exciting prizes!",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["SendMessages"] },
+                        { "roles": ["Admin", "Owner", "Staff"], "allow": ["SendMessages"] }
+                    ]
+                },
+                {
+                    "name": "🎁┃role-claim",
+                    "type": "text",
+                    "topic": "Get notification roles here.",
+                    "pin": [
+                        {
+                            "title": "👋 Choose Your Role!",
+                            "description": "React with the emoji below to get the role you want and never miss important updates!",
+                            "color": 15105570,
+                            "fields": [
+                                {
+                                    "name": "📢 Get Notifications",
+                                    "value": "React with 📣 to get the **Notification Squad** role and receive pings for every announcement, update, and giveaway!"
+                                },
+                                { "name": "🎨 Show Your Skills", "value": "Coming soon..." }
+                            ],
+                            "footer": { "text": "You can remove the reaction to remove the role." }
+                        }
+                    ],
+                    "perms": [{ "roles": ["@everyone"], "deny": ["SendMessages"] }]
+                }
+            ]
+        },
+        {
+            "name": "▬▬▬ ORDER & SUPPORT ▬▬▬",
+            "channels": [
+                {
+                    "name": "📝┃order",
+                    "type": "forum",
+                    "topic": "Create a new post to place an order.",
+                    "forumTags": ["Website", "Discord Bot", "Graphic Design", "Other Services"],
+                    "pin": [
+                        {
+                            "title": "🛒 How to Place an Order",
+                            "description": "Please create a **new post** in this channel to place an order. Use a clear title and follow the format below.",
+                            "color": 2067276,
+                            "fields": [
+                                {
+                                    "name": "📝 Post Title Format",
+                                    "value": "`[Service Type] - Your Project Name`\nExample: `[Discord Bot] - Automated Store Bot`"
+                                },
+                                {
+                                    "name": "📄 Post Content",
+                                    "value": "Describe your requirements in detail within the post, including:\n- **Desired features**\n- **References (if any)**\n- **Budget**\n- **Deadline (if any)**"
+                                },
+                                {
+                                    "name": "⏳ Process Flow",
+                                    "value": "1. You create a post.\n2. Staff will review and add **'In Progress'** tag.\n3. Further discussion will be conducted in your post's thread.\n4. Staff will send an invoice in #💸┃invoice.\n5. Order will be processed."
+                                }
+                            ],
+                            "footer": { "text": "Thank you for choosing us!" }
+                        }
+                    ]
+                },
+                {
+                    "name": "💼┃portfolio",
+                    "type": "text",
+                    "topic": "View our completed work and projects.",
+                    "perms": [{ "roles": ["@everyone"], "deny": ["SendMessages"] }]
+                },
+                {
+                    "name": "💬┃testimonials",
+                    "type": "text",
+                    "topic": "Collection of testimonials from our customers.",
+                    "pin": [
+                        {
+                            "title": "⭐ Thank You for Your Trust!",
+                            "description": "Satisfied with our service? Please share your best testimonial in this channel. Every review means a lot to us for continuous improvement.\n\nYou may attach screenshots as proof. Thank you! 💖",
+                            "color": 16763904
+                        }
+                    ],
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["SendMessages"] },
+                        { "roles": ["Buyer", "VIP", "Top Buyer"], "allow": ["SendMessages", "AttachFiles", "AddReactions"] }
+                    ]
+                },
+                {
+                    "name": "💸┃invoice",
+                    "type": "text",
+                    "topic": "Channel for staff to send invoices.",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        {
+                            "roles": ["Staff", "Admin", "Owner", "Bot"],
+                            "allow": ["ViewChannel", "SendMessages", "EmbedLinks", "AttachFiles"]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "▬▬▬ COMMUNITY ▬▬▬",
+            "channels": [
+                { "name": "🏠┃lounge", "type": "text", "topic": "Relaxed chat with other members.", "rateLimitPerUser": 3 },
+                { "name": "🎨┃showcase", "type": "text", "topic": "Show off your work here!", "rateLimitPerUser": 10 },
+                { "name": "💡┃suggestions-feedback", "type": "text", "topic": "Have ideas or feedback for the server? Share them here." },
+                { "name": "🤝┃partner", "type": "text", "topic": "Information and promotions from our partners." },
+                { "name": "🎲┃bot-commands", "type": "text", "topic": "Use entertainment bot commands here." }
+            ]
+        },
+        {
+            "name": "▬▬▬ VOICE ▬▬▬",
+            "channels": [
+                { "name": "🔊┃Casual Discussion", "type": "voice" },
+                { "name": "🎶┃Music Listening", "type": "voice" },
+                {
+                    "name": "🔒┃Meeting Room",
+                    "type": "voice",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["Connect"] },
+                        { "roles": ["Staff", "Admin", "Owner"], "allow": ["Connect"] }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "▬▬▬ STAFF AREA ▬▬▬",
+            "channels": [
+                {
+                    "name": "🛡️┃staff-chat",
+                    "type": "text",
+                    "topic": "Internal staff coordination.",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        { "roles": ["Staff", "Admin", "Owner"], "allow": ["ViewChannel", "SendMessages", "AttachFiles"] }
+                    ]
+                },
+                {
+                    "name": "📋┃server-logs",
+                    "type": "text",
+                    "topic": "Member activity logs (join, leave, boost).",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        { "roles": ["Staff", "Admin", "Owner", "Bot"], "allow": ["ViewChannel", "SendMessages"] }
+                    ]
+                },
+                {
+                    "name": "🗑️┃message-logs",
+                    "type": "text",
+                    "topic": "Logs for edited or deleted messages.",
+                    "perms": [
+                        { "roles": ["@everyone"], "deny": ["ViewChannel"] },
+                        { "roles": ["Admin", "Owner", "Bot"], "allow": ["ViewChannel", "SendMessages"] }
+                    ]
+                }
+            ]
+        }
+    ]
 }

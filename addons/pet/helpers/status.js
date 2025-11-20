@@ -6,37 +6,35 @@
  * @version 0.9.12-beta
  */
 
-const _UserPet = require("../database/models/UserPet");
+const UserPet = require('../database/models/UserPet');
 
 function updatePetStatus(pet) {
-	const now = Date.now();
-	// Jika pet baru dibuat, lastUpdatedAt mungkin null, jadi kita anggap 'now'
-	const lastUpdated = pet.lastUpdatedAt
-		? new Date(pet.lastUpdatedAt).getTime()
-		: now;
+    const now = Date.now();
+    // Jika pet baru dibuat, lastUpdatedAt mungkin null, jadi kita anggap 'now'
+    const lastUpdated = pet.lastUpdatedAt ? new Date(pet.lastUpdatedAt).getTime() : now;
 
-	// Hitung selisih dalam jam, tapi pakai desimal biar lebih akurat
-	const hoursPassed = (now - lastUpdated) / (1000 * 60 * 60);
-	if (hoursPassed <= 0) {
-		// Kembalikan pet tanpa perubahan jika belum ada waktu berlalu
-		return { pet, justDied: false };
-	}
+    // Hitung selisih dalam jam, tapi pakai desimal biar lebih akurat
+    const hoursPassed = (now - lastUpdated) / (1000 * 60 * 60);
+    if (hoursPassed <= 0) {
+        // Kembalikan pet tanpa perubahan jika belum ada waktu berlalu
+        return { pet, justDied: false };
+    }
 
-	// Kalkulasi status baru
-	pet.hunger = Math.max(pet.hunger - 5 * hoursPassed, 0);
-	pet.happiness = Math.max(pet.happiness - 10 * hoursPassed, 0);
+    // Kalkulasi status baru
+    pet.hunger = Math.max(pet.hunger - 5 * hoursPassed, 0);
+    pet.happiness = Math.max(pet.happiness - 10 * hoursPassed, 0);
 
-	let justDied = false;
-	// Cek apakah pet mati di pembaruan kali ini
-	if (pet.hunger <= 0 && pet.happiness <= 0 && !pet.isDead) {
-		pet.isDead = true;
-		justDied = true; // Set flag bahwa pet BARU SAJA mati
-	}
+    let justDied = false;
+    // Cek apakah pet mati di pembaruan kali ini
+    if (pet.hunger <= 0 && pet.happiness <= 0 && !pet.isDead) {
+        pet.isDead = true;
+        justDied = true; // Set flag bahwa pet BARU SAJA mati
+    }
 
-	pet.lastUpdatedAt = new Date(now);
+    pet.lastUpdatedAt = new Date(now);
 
-	// Kembalikan hasilnya, jangan di-save di sini
-	return { pet, justDied };
+    // Kembalikan hasilnya, jangan di-save di sini
+    return { pet, justDied };
 }
 
 module.exports = { updatePetStatus };

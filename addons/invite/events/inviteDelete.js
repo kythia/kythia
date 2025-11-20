@@ -6,11 +6,11 @@
  * @version 0.9.12-beta
  */
 
-const { getGuildInviteCache } = require("../helpers");
+const { getGuildInviteCache } = require('../helpers');
 
-module.exports = async (_bot, invite) => {
-	try {
-		const cache = getGuildInviteCache(invite.guild.id);
-		cache.delete(invite.code);
-	} catch {}
+module.exports = async (bot, invite) => {
+    try {
+        const cache = getGuildInviteCache(invite.guild.id);
+        cache.delete(invite.code);
+    } catch {}
 };

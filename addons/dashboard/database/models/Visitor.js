@@ -6,34 +6,34 @@
  * @version 0.9.12-beta
  */
 
-const { DataTypes } = require("sequelize");
+const { DataTypes } = require('sequelize');
 
-const { KythiaModel } = require("kythia-core");
+const { KythiaModel } = require('kythia-core');
 
 class Visitor extends KythiaModel {
-	static init(sequelize) {
-		KythiaModel.init(
-			{
-				id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-				ipHash: { type: DataTypes.STRING, allowNull: false },
-				visitDate: { type: DataTypes.DATEONLY },
-			},
-			{
-				sequelize,
-				modelName: "Visitor",
-				tableName: "visitors",
-				timestamps: false,
-				indexes: [
-					{
-						unique: true,
-						fields: ["ipHash", "visitDate"],
-					},
-				],
-			},
-		);
+    static init(sequelize) {
+        super.init(
+            {
+                id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+                ipHash: { type: DataTypes.STRING, allowNull: false },
+                visitDate: { type: DataTypes.DATEONLY },
+            },
+            {
+                sequelize,
+                modelName: 'Visitor',
+                tableName: 'visitors',
+                timestamps: false,
+                indexes: [
+                    {
+                        unique: true,
+                        fields: ['ipHash', 'visitDate'],
+                    },
+                ],
+            }
+        );
 
-		return Visitor;
-	}
+        return this;
+    }
 }
 
 // Visitor.init(sequelize);

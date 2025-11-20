@@ -1,9 +1,9 @@
 {
-	"name": "Ticket",
-	"featureName": "Ticket",
-	"featureFlag": "ticketOn",
-	"version": "1.0.0",
-	"description": "Deliver professional customer support! Create private ticket channels, manage support queues, track issue resolution, and provide seamless help desk functionality that ensures no member request goes unanswered.",
-	"author": "kenndeclouv",
-	"kythia": "F3/9w0w+nckCXJFWzmfyCtgPiVs5xAvvHRqnN59yIutunTHRJGmduaD5AAqfRmIV15nthmWV/b4yLwx9F5NEar/bN/9qr9coRE7wII1PZb0Td7tOI/sV0lnznFmGNielWlJXU+/0ieXDWT+WI4/WToHGXktOaIEJbNSaZFukTeeJyB8ble2H5EgFRkEiP79Y2/dboXn50G8ey3kbVFi4XY3fw/t4ePJgLKN9p6lAdRox8xpUFLcQixvoeAPrzPt1OnSmrYMqQ1GRTJKKg3lrM4W9UBItlGkvspsaTH7hlvEmp7ua+I7NZe3LayEOQzlRYOKFHhVF1fljC26eRcJkRw=="
+    "name": "Ticket",
+    "featureName": "Ticket",
+    "featureFlag": "ticketOn",
+    "version": "1.0.0",
+    "description": "Deliver professional customer support! Create private ticket channels, manage support queues, track issue resolution, and provide seamless help desk functionality that ensures no member request goes unanswered.",
+    "author": "kenndeclouv",
+    "kythia": "F3/9w0w+nckCXJFWzmfyCtgPiVs5xAvvHRqnN59yIutunTHRJGmduaD5AAqfRmIV15nthmWV/b4yLwx9F5NEar/bN/9qr9coRE7wII1PZb0Td7tOI/sV0lnznFmGNielWlJXU+/0ieXDWT+WI4/WToHGXktOaIEJbNSaZFukTeeJyB8ble2H5EgFRkEiP79Y2/dboXn50G8ey3kbVFi4XY3fw/t4ePJgLKN9p6lAdRox8xpUFLcQixvoeAPrzPt1OnSmrYMqQ1GRTJKKg3lrM4W9UBItlGkvspsaTH7hlvEmp7ua+I7NZe3LayEOQzlRYOKFHhVF1fljC26eRcJkRw=="
 }

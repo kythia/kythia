@@ -6,42 +6,42 @@
  * @version 0.9.12-beta
  */
 
-const { DataTypes } = require("sequelize");
+const { DataTypes } = require('sequelize');
 
-const { KythiaModel } = require("kythia-core");
+const { KythiaModel } = require('kythia-core');
 
 class Monitor extends KythiaModel {
-	static init(sequelize) {
-		KythiaModel.init(
-			{
-				userId: {
-					type: DataTypes.STRING,
-					primaryKey: true,
-					allowNull: false,
-					references: {
-						model: "kythia_users",
-						key: "userId",
-					},
-				},
-				urlToPing: {
-					type: DataTypes.STRING,
-					allowNull: false,
-				},
-				lastStatus: {
-					type: DataTypes.ENUM("UP", "DOWN", "PENDING"),
-					defaultValue: "PENDING",
-				},
-			},
-			{
-				sequelize,
-				modelName: "Monitor",
-				tableName: "monitors",
-				timestamps: false,
-			},
-		);
+    static init(sequelize) {
+        super.init(
+            {
+                userId: {
+                    type: DataTypes.STRING,
+                    primaryKey: true,
+                    allowNull: false,
+                    references: {
+                        model: 'kythia_users',
+                        key: 'userId',
+                    },
+                },
+                urlToPing: {
+                    type: DataTypes.STRING,
+                    allowNull: false,
+                },
+                lastStatus: {
+                    type: DataTypes.ENUM('UP', 'DOWN', 'PENDING'),
+                    defaultValue: 'PENDING',
+                },
+            },
+            {
+                sequelize,
+                modelName: 'Monitor',
+                tableName: 'monitors',
+                timestamps: false,
+            }
+        );
 
-		return Monitor;
-	}
+        return this;
+    }
 }
 
 module.exports = Monitor;

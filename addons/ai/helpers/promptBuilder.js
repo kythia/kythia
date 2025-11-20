@@ -7,8 +7,8 @@
  */
 
 let _isOwner = () => false;
-let _personaPrompt = "Default Persona: You are a helpful AI assistant.";
-let _ownerInteractionPrompt = "";
+let _personaPrompt = 'Default Persona: You are a helpful AI assistant.';
+let _ownerInteractionPrompt = '';
 
 const toolRulesPrompt = `
 --- TOOL USAGE RULES (MANDATORY) ---
@@ -39,16 +39,15 @@ const discordRulesPrompt = `
  * @param {object} deps.config - The main application config object
  */
 function init({ isOwner, config }) {
-	if (typeof isOwner !== "function" || !config) {
-		console.error("PromptBuilder init requires isOwner function and config.");
+    if (typeof isOwner !== 'function' || !config) {
+        console.error('PromptBuilder init requires isOwner function and config.');
 
-		return;
-	}
-	_isOwner = isOwner;
-	const aiConfig = config.addons?.ai || {};
-	_personaPrompt = aiConfig.personaPrompt || _personaPrompt;
-	_ownerInteractionPrompt =
-		aiConfig.ownerInteractionPrompt || _ownerInteractionPrompt;
+        return;
+    }
+    _isOwner = isOwner;
+    const aiConfig = config.addons?.ai || {};
+    _personaPrompt = aiConfig.personaPrompt || _personaPrompt;
+    _ownerInteractionPrompt = aiConfig.ownerInteractionPrompt || _ownerInteractionPrompt;
 }
 
 /**
@@ -64,21 +63,17 @@ function init({ isOwner, config }) {
  * @returns {string} The fully constructed system instruction prompt.
  */
 function buildSystemInstruction(context) {
-	const isOwnerUser = _isOwner(context.userId);
+    const isOwnerUser = _isOwner(context.userId);
 
-	const instructionParts = [
-		_personaPrompt,
-		toolRulesPrompt,
-		discordRulesPrompt,
-	];
+    const instructionParts = [_personaPrompt, toolRulesPrompt, discordRulesPrompt];
 
-	if (isOwnerUser && _ownerInteractionPrompt) {
-		instructionParts.push(_ownerInteractionPrompt);
-	}
+    if (isOwnerUser && _ownerInteractionPrompt) {
+        instructionParts.push(_ownerInteractionPrompt);
+    }
 
-	let instruction = instructionParts.join("\n");
+    let instruction = instructionParts.join('\n');
 
-	const userContext = `
+    const userContext = `
    --- CURRENT INFORMATION ---
    IMPORTANT: The chat history below may contain messages from other users, marked with the format "Name: Message Content". Always focus and personalize your answer ONLY for the "Current Speaker".
    Current Speaker:
@@ -90,14 +85,14 @@ function buildSystemInstruction(context) {
    Conversation Context:
    - Server: ${context.guildName}
    - Channel: #${context.channelName}
-   ${context.userFactsString ? `\nFacts you already remember about this user:\n${context.userFactsString}` : ""}
+   ${context.userFactsString ? `\nFacts you already remember about this user:\n${context.userFactsString}` : ''}
    `;
 
-	instruction += userContext;
-	return instruction;
+    instruction += userContext;
+    return instruction;
 }
 
 module.exports = {
-	init,
-	buildSystemInstruction,
+    init,
+    buildSystemInstruction,
 };
