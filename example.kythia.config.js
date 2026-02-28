@@ -258,10 +258,10 @@ function loadKythiaConfig() {
 				/**
 				 * use Spotify for music feature
 				 * required lavalink client, you can get it at: https://github.com/lavalink-devs/Lavalink
-				 * use lavalink version 4.1.1
+				 * use lavalink version 4.2.0+ (with DAVE supports)
 				 * with plugin:
 				 * - lavasrc-plugin-4.8.1
-				 * - youtube-plugin-1.16.0 (with yt-cipher)
+				 * - youtube-plugin-1.18.0 (with yt-cipher)
 				 * - lavasearch-plugin-1.0.0
 				 * - sponsorblock-plugin-3.0.1
 				 *
