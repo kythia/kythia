@@ -263,7 +263,7 @@ Cache is automatically invalidated on updates/deletes via Sequelize hooks.
 
 ### Music System (Lavalink)
 
-- Uses Poru library with Lavalink v4.1.1
+- Uses Poru library with Lavalink v4.2.0+
 - Plugins: lavasrc, youtube, lavasearch, sponsorblock
 - Multiple platform support: Spotify, Apple Music, Deezer
 - Configure in `kythia.config.js` under `addons.music.lavalink`

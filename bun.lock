@@ -27,7 +27,7 @@
         "node-fetch": "^2.7.0",
         "passport": "^0.7.0",
         "passport-discord": "^0.1.4",
-        "poru": "^5.2.0",
+        "poru": "^5.3.0",
         "poru-spotify": "^2.0.2",
         "sequelize": "^6.37.7",
         "socket.io": "^4.8.1",
@@ -805,7 +805,7 @@
 
     "pidtree": ["pidtree@0.6.0", "", { "bin": { "pidtree": "bin/pidtree.js" } }, "sha512-eG2dWTVw5bzqGRztnHExczNxt5VGsE6OwTeCG3fdUf9KBsZzO3R5OIIIzWR+iZA0NtZ+RDVdaoE2dK1cn6jH4g=="],
 
-    "poru": ["poru@5.2.0", "", { "dependencies": { "gen-esm-wrapper": "^1.1.3", "ws": "^8.16.0" } }, "sha512-//sV79OqFizCI7GDEj/dHf2FMvqJn+YruaM96GaSoRgnsjwIh9sVt6KY0tFxaEdTkitxAUMS4GJs6PMYb8aiKw=="],
+    "poru": ["poru@5.3.0", "", { "dependencies": { "gen-esm-wrapper": "^1.1.3", "ws": "^8.16.0" } }, "sha512-K9ptpzZI6D9llg7mtFIYpbsVfzvaQ7Mwt/g8Ndx3oatcbbavHkd6K7zKPFFYgTKCtpQMJuV5KaQqc48pFKZbAA=="],
 
     "poru-spotify": ["poru-spotify@2.0.2", "", { "dependencies": { "poru": "github:parasop/poru#v4", "undici": "^5.14.0" } }, "sha512-UvbdkxH+zUirSUbzPJRMGgDqXAyMsunD/xdiJCR5i1+gJBRU5MPHniv3vmXHuxFDzgZ4ZwPqIBA9kU8lme1SKw=="],
 

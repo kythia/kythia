@@ -46,7 +46,7 @@
     "node-fetch": "^2.7.0",
     "passport": "^0.7.0",
     "passport-discord": "^0.1.4",
-    "poru": "^5.2.0",
+    "poru": "^5.3.0",
     "poru-spotify": "^2.0.2",
     "sequelize": "^6.37.7",
     "socket.io": "^4.8.1",
