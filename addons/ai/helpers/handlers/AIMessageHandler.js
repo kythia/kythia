@@ -34,24 +34,21 @@ const SAFETY_SETTINGS = [
 const SAVE_MEMORY_DECLARATION = {
 	name: 'save_memory',
 	description:
-		'Save an important fact or personal detail about the user to long-term memory. ' +
-		'Call this when the user explicitly asks to remember/save something, or when they ' +
-		'share clearly personal information worth preserving (name, birthday, hobby, ' +
-		'preference, job, location, etc.). Do NOT call this for trivial or temporary context.',
+		'MANDATORY: ONLY execute this tool if the user EXPLICITLY types words like "remember", "save", or "note" regarding their own personal identity. ' +
+		'Example: "remember my birthday is June 1st" or "my name is Andi". ' +
+		'If the user does not explicitly ask you to remember/save a personal fact, IGNORE THIS TOOL.',
 	parameters: {
 		type: 'object',
 		properties: {
 			fact: {
 				type: 'string',
 				description:
-					'A concise, self-contained fact. ' +
-					'E.g. "User\'s name is Andi", "User loves spicy food", "Birthday is March 15".',
+					'The personal identity fact to store. E.g., "User loves cats", "User is a programmer".',
 			},
 		},
 		required: ['fact'],
 	},
 };
-
 class AIMessageHandler {
 	/** @param {Object} container - Full DI container */
 	constructor(container) {
@@ -91,7 +88,7 @@ class AIMessageHandler {
 
 	// ─── Helpers ──────────────────────────────────────────────────────────────
 
-	async safeReply(message, payload) {
+	safeReply(message, payload) {
 		const options =
 			typeof payload === 'string' ? { content: payload } : { ...payload };
 		options.failIfNotExists = false;
@@ -117,16 +114,10 @@ class AIMessageHandler {
 	}
 
 	/** Build the unified tools array for every request. */
-	_buildTools(bot) {
-		const commandDeclarations =
-			Array.isArray(bot.aiCommandSchema) && bot.aiCommandSchema.length > 0
-				? bot.aiCommandSchema
-				: [];
+	_buildTools(_bot) {
 		return [
 			{ googleSearch: {} },
-			{
-				functionDeclarations: [...commandDeclarations, SAVE_MEMORY_DECLARATION],
-			},
+			{ functionDeclarations: [SAVE_MEMORY_DECLARATION] },
 		];
 	}
 
@@ -180,7 +171,7 @@ class AIMessageHandler {
 				const msg = (
 					await this.t(message, 'ai.events.messageCreate.cooldown')
 				).replace('{seconds}', secs);
-				await this.safeReply(message, msg).catch(() => {});
+				this.safeReply(message, msg).catch(() => {});
 				return;
 			}
 		}
@@ -230,7 +221,7 @@ class AIMessageHandler {
 
 			if (!cleanContent && mediaParts.length === 0) {
 				if (message.mentions.users.has(client.user.id)) {
-					await this.safeReply(
+					this.safeReply(
 						message,
 						await this.t(message, 'ai.events.messageCreate.mention'),
 					);
@@ -266,7 +257,7 @@ class AIMessageHandler {
 
 			if (!success) {
 				this.logger.error('❌ All AI tokens exhausted.', { label: 'ai' });
-				await this.safeReply(
+				this.safeReply(
 					message,
 					await this.t(message, 'ai.events.messageCreate.memory.token.limit'),
 				).catch(() => {});
@@ -380,69 +371,121 @@ class AIMessageHandler {
 
 	// ─── Response routing ─────────────────────────────────────────────────────
 
-	async handleAIResponse(response, chat, message, bot, client) {
-		const functionCalls = response.functionCalls;
-		if (functionCalls && functionCalls.length > 0) {
-			await this.handleFunctionCall(
-				functionCalls[0],
-				chat,
-				message,
-				bot,
-				client,
-			);
+	async handleAIResponse(response, chat, message, bot, client, depth = 0) {
+		if (depth > 5) {
+			this.logger.warn('⚠️ Max AI agent depth reached.', { label: 'ai' });
 			return;
 		}
 
 		const replyText = this._extractText(response);
-		const filterResult = this.responseFilter.filterResponse(
-			replyText,
-			message.author?.id,
-			this.isOwner,
-			this.aiConfig,
-		);
+		let textToSend = replyText;
+		const textToHistory = replyText;
 
-		if (!filterResult.allowed) {
-			await this.safeReply(
-				message,
-				await this.t(message, 'ai.events.messageCreate.filter.blocked'),
-			);
-			return;
+		if (response.memorySaved) {
+			textToSend = textToSend
+				? `${textToSend}\n\n-# *this information is saved*`
+				: '-# *this information is saved*';
 		}
 
-		await this.sendSplitMessage(message, replyText);
-		this.conversationManager.addToHistory(
-			message.author.id,
-			'model',
-			replyText,
-		);
+		if (textToSend) {
+			const filterResult = this.responseFilter.filterResponse(
+				textToSend,
+				message.author?.id,
+				this.isOwner,
+				this.aiConfig,
+			);
+			if (!filterResult.allowed) {
+				this.safeReply(
+					message,
+					await this.t(message, 'ai.events.messageCreate.filter.blocked'),
+				);
+				return;
+			}
+			await this.sendSplitMessage(message, textToSend);
+		}
+
+		if (textToHistory) {
+			this.conversationManager.addToHistory(
+				message.author.id,
+				'model',
+				textToHistory,
+			);
+		}
+
+		const functionCalls = response.functionCalls || [];
+
+		if (functionCalls.length > 0) {
+			this.logger.info(
+				`🧠 Executing ${functionCalls.length} parallel functions: ${functionCalls.map((f) => f.name).join(', ')}`,
+				{ label: 'ai' },
+			);
+
+			const functionResponses = [];
+			let memorySaved = false;
+			for (const call of functionCalls) {
+				const result = await this.executeSingleFunction(
+					call,
+					message,
+					bot,
+					client,
+				);
+				if (result) {
+					if (result.memorySaved) memorySaved = true;
+					functionResponses.push({ functionResponse: result.functionResponse });
+				}
+			}
+
+			if (functionResponses.length > 0) {
+				try {
+					const followUp = await chat.sendMessage({
+						message: functionResponses,
+					});
+					if (memorySaved) followUp.memorySaved = true;
+					await this.handleAIResponse(
+						followUp,
+						chat,
+						message,
+						bot,
+						client,
+						depth + 1,
+					);
+				} catch (err) {
+					this.logger.error(
+						`Error sending batch function responses: ${err.message}`,
+						{ label: 'ai' },
+					);
+				}
+			}
+		}
 	}
 
 	// ─── Function call handler ────────────────────────────────────────────────
 
-	/**
-	 * Handles a function call returned by the model.
-	 * Uses the stateful `chat` object for the follow-up turn, and includes
-	 * the cryptographically bound `call.id` in the function response.
-	 */
-	async handleFunctionCall(call, chat, message, _bot, client) {
-		const { name: fnName, args: fnArgs, id: fnId } = call;
+	async executeSingleFunction(call, message, _bot, client) {
+		let { name: fnName, args: fnArgs, id: fnId } = call;
+
+		fnName = fnName.replace(/^google:/, '').trim();
+
+		const makeResponse = (payload) => ({
+			functionResponse: {
+				id: fnId,
+				name: fnName,
+				response: {
+					content:
+						typeof payload === 'string' ? payload : JSON.stringify(payload),
+				},
+			},
+		});
 
 		// ── save_memory ────────────────────────────────────────────────────────
 		if (fnName === 'save_memory') {
 			this.logger.info(
-				`🧠 [DEBUG] AI triggered 'save_memory' function call! Args: ${JSON.stringify(fnArgs)}`,
+				`🧠 [DEBUG] AI triggered 'save_memory' args: ${JSON.stringify(fnArgs)}`,
 				{ label: 'ai' },
 			);
-
 			const fact = typeof fnArgs?.fact === 'string' ? fnArgs.fact.trim() : '';
 
-			if (!fact) {
-				await this.safeReply(
-					message,
-					await this.t(message, 'ai.events.messageCreate.memory.empty'),
-				);
-				return;
-			}
+			if (!fact) return makeResponse({ status: 'error', reason: 'empty fact' });
 
 			const status = await this.factsManager.appendFact(
 				message.author.id,
@@ -452,33 +495,7 @@ class AIMessageHandler {
 				label: 'ai',
 			});
 
-			try {
-				const followUp = await chat.sendMessage({
-					message: [
-						{
-							functionResponse: {
-								id: fnId,
-								name: fnName,
-								response: { content: JSON.stringify({ status, fact }) },
-							},
-						},
-					],
-				});
-				const confirmReply = this._extractText(followUp);
-				if (confirmReply) {
-					await this.sendSplitMessage(message, confirmReply);
-					this.conversationManager.addToHistory(
-						message.author.id,
-						'model',
-						confirmReply,
-					);
-				}
-			} catch (err) {
-				this.logger.error(`save_memory follow-up error: ${err.message}`, {
-					label: 'ai',
-				});
-			}
-			return;
+			return { ...makeResponse({ status, fact }), memorySaved: true };
 		}
 
 		// ── Discord command function calls ─────────────────────────────────────
@@ -486,22 +503,30 @@ class AIMessageHandler {
 		const command = client.commands.get(baseCommandName);
 
 		if (!command) {
-			await this.safeReply(
-				message,
-				await this.t(message, 'ai.events.messageCreate.command.not.found'),
-			);
-			return;
+			this.logger.warn(`🧠 Command not found: ${baseCommandName}`, {
+				label: 'ai',
+			});
+			return makeResponse({ status: 'error', reason: 'Command not found' });
 		}
 
 		this.logger.info(
 			`🧠 Executing /${baseCommandName} (from "${fnName}") args: ${JSON.stringify(fnArgs)}`,
 			{ label: 'ai' },
 		);
+		let rawArgsString = '';
+		if (fnArgs && typeof fnArgs === 'object') {
+			rawArgsString = Object.values(fnArgs)
+				.map((v) => {
+					const str = String(v);
+					return str.includes(' ') ? `"${str}"` : str;
+				})
+				.join(' ');
+		}
 
 		const fakeInteraction = utils.InteractionFactory.create(
 			message,
 			fnName,
-			fnArgs,
+			rawArgsString,
 		);
 
 		try {
@@ -518,47 +543,12 @@ class AIMessageHandler {
 				resultStr = `${resultStr.substring(0, 80000)}... [TRUNCATED]`;
 			}
 
-			const followUp = await chat.sendMessage({
-				message: [
-					{
-						functionResponse: {
-							id: fnId,
-							name: fnName,
-							response: { content: resultStr },
-						},
-					},
-				],
-			});
-
-			const finalReply = this._extractText(followUp);
-
-			const filterResult = this.responseFilter.filterResponse(
-				finalReply,
-				message.author?.id,
-				this.isOwner,
-				this.aiConfig,
-			);
-			if (!filterResult.allowed) {
-				await this.safeReply(
-					message,
-					await this.t(message, 'ai.events.messageCreate.filter.blocked'),
-				);
-				return;
-			}
-
-			await this.sendSplitMessage(message, finalReply);
-			this.conversationManager.addToHistory(
-				message.author.id,
-				'model',
-				finalReply,
-			);
+			return makeResponse(resultStr);
 		} catch (err) {
 			this.logger.error(`Error running "${fnName}": ${err.message}`, {
 				label: 'ai',
 			});
-			await message.channel.send(
-				await this.t(message, 'ai.events.messageCreate.command.error'),
-			);
+			return makeResponse({ status: 'error', reason: err.message });
 		}
 	}
 
@@ -665,7 +655,7 @@ class AIMessageHandler {
 				this.aiConfig,
 			);
 			if (!filterResult.allowed) {
-				await this.safeReply(
+				this.safeReply(
 					message,
 					await this.t(message, 'ai.events.messageCreate.filter.blocked'),
 				);
@@ -683,14 +673,14 @@ class AIMessageHandler {
 						this.aiConfig,
 					);
 					if (!f.allowed) {
-						await this.safeReply(
+						this.safeReply(
 							message,
 							await this.t(message, 'ai.events.messageCreate.filter.blocked'),
 						);
 						return;
 					}
 					if (!hasReplied) {
-						await this.safeReply(message, { content: sub });
+						this.safeReply(message, { content: sub });
 						hasReplied = true;
 					} else {
 						await message.channel.send(sub);
@@ -698,7 +688,7 @@ class AIMessageHandler {
 				}
 			} else {
 				if (!hasReplied) {
-					await this.safeReply(message, { content: chunk });
+					this.safeReply(message, { content: chunk });
 					hasReplied = true;
 				} else {
 					await message.channel.send(chunk);

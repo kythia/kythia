@@ -441,12 +441,10 @@ async function restoreSpecialChannels(guild, settings, _channelMap, logger) {
 	if (afkCh) updates.afkChannel = afkCh.id;
 
 	if (Object.keys(updates).length > 0) {
-		await guild
-			.edit(updates)
-			.catch((e) =>
-				logger.warn(`Failed to restore special channels: ${e.message}`, {
-					label: 'restore',
-				}),
-			);
+		await guild.edit(updates).catch((e) =>
+			logger.warn(`Failed to restore special channels: ${e.message}`, {
+				label: 'restore',
+			}),
+		);
 	}
 }

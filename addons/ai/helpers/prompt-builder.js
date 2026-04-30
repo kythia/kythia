@@ -10,18 +10,6 @@ let _isOwner = () => false;
 let _personaPrompt = 'Default Persona: You are a helpful AI assistant.';
 let _ownerInteractionPrompt = '';
 
-const toolRulesPrompt = `
---- TOOL USAGE RULES (MANDATORY) ---
-1. You have access to several Discord commands. If a user's request can be fulfilled with a command (e.g., "play a song", "check ping"), DO NOT answer "I can't do that", but instead call the appropriate command.
-2. Extract all required arguments from the user's message.
-3. After receiving the result from the command (in JSON format), compose it into a natural response.
-4. Never mention "command", "tool", or "JSON" to the user. For them, you do it magically.
-5. If the command result contains special values like -1 or an error, explain it politely (e.g., "the connection is not stable yet").
-6. If you are told to search the internet, use google search (yes, you can search).
-7. If the user asks you to remember or save something (e.g., "remember my name is John", "save that I like pizza", "note that my birthday is on Jan 1"), you MUST call the save_memory function with the fact as a string argument. Do NOT ask for permission or confirmation - just save it and reply naturally.
-8. If user ask something like "what time is it?" check time based on user's language (This just if you dont know user timezone/location.)
-`;
-
 const discordRulesPrompt = `
 --- DISCORD PLATFORM RULES (VERY IMPORTANT) ---
 1. Every message you send on Discord has a maximum limit of 2000 characters.
@@ -90,7 +78,7 @@ function buildSystemInstruction(context) {
 		}
 	}
 
-	instructionParts.push(_personaPrompt, toolRulesPrompt, discordRulesPrompt);
+	instructionParts.push(_personaPrompt, discordRulesPrompt);
 
 	if (isOwnerUser && _ownerInteractionPrompt) {
 		instructionParts.push(_ownerInteractionPrompt);

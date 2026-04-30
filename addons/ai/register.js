@@ -6,7 +6,7 @@
  * @version 1.0.0-rc
  */
 
-const { generateCommandSchema } = require('./helpers/command-schema');
+// const { generateCommandSchema } = require('./helpers/command-schema');
 const promptBuilder = require('./helpers/prompt-builder');
 const geminiHelper = require('./helpers/gemini');
 
@@ -22,13 +22,13 @@ module.exports = {
 		promptBuilder.init({ isOwner, config: bot.container.kythiaConfig });
 		summery.push('   ╰┈➤ Prompt Builder initialized.');
 
-		bot.addClientReadyHook(() => {
-			bot.aiCommandSchema = generateCommandSchema(bot.client);
-			logger.info(
-				`✅ Successfully loaded ${bot.aiCommandSchema.length} command schema for AI.`,
-				{ label: 'ai' },
-			);
-		});
+		// bot.addClientReadyHook(() => {
+		// 	bot.aiCommandSchema = generateCommandSchema(bot.client);
+		// 	logger.info(
+		// 		`✅ Successfully loaded ${bot.aiCommandSchema.length} command schema for AI.`,
+		// 		{ label: 'ai' },
+		// 	);
+		// });
 
 		return summery;
 	},
