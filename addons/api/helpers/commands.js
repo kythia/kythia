@@ -62,19 +62,31 @@ function buildCategoryMap() {
 				.filter((d) => d.isDirectory());
 			for (const category of coreCategories) {
 				const categoryPath = path.join(commandsPath, category.name);
-				fs.readdirSync(categoryPath)
-					.filter((f) => f.endsWith('.js'))
-					.forEach((file) => {
-						processFile(path.join(categoryPath, file), category.name);
-					});
+				const walkDir = (dir) => {
+					for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+						const fullPath = path.join(dir, entry.name);
+						if (entry.isDirectory()) {
+							walkDir(fullPath);
+						} else if (entry.name.endsWith('.js')) {
+							processFile(fullPath, category.name);
+						}
+					}
+				};
+				walkDir(categoryPath);
 			}
 		} else {
 			const categoryName = addon.name;
-			fs.readdirSync(commandsPath)
-				.filter((f) => f.endsWith('.js'))
-				.forEach((file) => {
-					processFile(path.join(commandsPath, file), categoryName);
-				});
+			const walkDir = (dir) => {
+				for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+					const fullPath = path.join(dir, entry.name);
+					if (entry.isDirectory()) {
+						walkDir(fullPath);
+					} else if (entry.name.endsWith('.js')) {
+						processFile(fullPath, categoryName);
+					}
+				}
+			};
+			walkDir(commandsPath);
 		}
 	}
 	return categoryMap;
