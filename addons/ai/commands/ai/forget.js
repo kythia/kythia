@@ -32,7 +32,7 @@ module.exports = {
 		// The handler is lazily initialized in messageCreate.js
 		// We'll create a temporary instance just to delete the conversation
 		const tempHandler = new AIMessageHandler(container);
-		tempHandler.conversationManager.deleteConversation(interaction.user.id);
+		tempHandler.conversationManager.deleteConversation(interaction.channel.id);
 
 		const msg = await t(interaction, 'ai.ai.forget.success');
 		const components = await simpleContainer(interaction, msg, {

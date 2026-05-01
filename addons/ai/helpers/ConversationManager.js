@@ -53,7 +53,7 @@ class ConversationManager {
 		const conversation = this.getConversation(userId);
 		const lastMessage = conversation.history[conversation.history.length - 1];
 
-		if (lastMessage && lastMessage.role === role && role === 'user') {
+		if (lastMessage && lastMessage.role === role) {
 			lastMessage.content += `\n${content}`;
 			if (lastMessage.content.length > 80000) {
 				lastMessage.content = lastMessage.content.slice(-80000);

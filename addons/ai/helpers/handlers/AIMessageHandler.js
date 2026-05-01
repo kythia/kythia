@@ -231,19 +231,22 @@ class AIMessageHandler {
 			}
 
 			// Restore or seed conversation history
-			const userConv = this.conversationManager.getConversation(
-				message.author.id,
-			);
-			if (userConv.history.length === 0) {
-				await this.loadConversationHistory(message, client, userConv);
+			const historyId = message.channel.id;
+			const channelConv = this.conversationManager.getConversation(historyId);
+			if (channelConv.history.length === 0) {
+				await this.loadConversationHistory(message, client, channelConv);
 			}
-			this.conversationManager.updateActivity(message.author.id);
+			this.conversationManager.updateActivity(historyId);
 
 			// Build the initial user turn (with optional media)
+			const prefix = `[${message.author.username}]: `;
 			const userParts =
 				mediaParts.length > 0
-					? [...mediaParts, { text: cleanContent || 'Describe this.' }]
-					: [{ text: cleanContent }];
+					? [
+							...mediaParts,
+							{ text: prefix + (cleanContent || 'Describe this.') },
+						]
+					: [{ text: prefix + cleanContent }];
 
 			const success = await this.executeAIRequest(
 				message,
@@ -284,12 +287,12 @@ class AIMessageHandler {
 		const systemInstruction = buildSystemInstruction(context);
 		const GEMINI_MODEL = this.aiConfig.model || MINIMUM_MODEL;
 		const tools = this._buildTools(bot);
-		const userId = message.author.id;
+		const historyId = message.channel.id;
 
 		// History for chat initialization (exclude the current user turn —
 		// we'll send it via chat.sendMessage so the chat tracks it internally)
 		const priorHistory = this.conversationManager
-			.buildContentsArray(userId)
+			.buildContentsArray(historyId)
 			.slice(0, -1); // drop the last entry if it was speculatively added
 
 		const totalTokens = (this.aiConfig.geminiApiKeys || '')
@@ -335,7 +338,7 @@ class AIMessageHandler {
 
 				// Store user turn in our history cache
 				this.conversationManager.addToHistory(
-					userId,
+					historyId,
 					'user',
 					userParts
 						.map((p) => p.text || '')
@@ -406,7 +409,7 @@ class AIMessageHandler {
 
 		if (textToHistory) {
 			this.conversationManager.addToHistory(
-				message.author.id,
+				message.channel.id,
 				'model',
 				textToHistory,
 			);
@@ -605,25 +608,16 @@ class AIMessageHandler {
 			: '';
 	}
 
-	async loadConversationHistory(message, client, userConv) {
+	async loadConversationHistory(message, client, _userConv) {
 		this.logger.info(
-			`🧠 Cache miss for ${message.author.tag}. Reconstructing history...`,
+			`🧠 Cache miss for channel ${message.channel.name || message.channel.id}. Reconstructing history...`,
 			{ label: 'ai' },
 		);
 
 		const limit = this.aiConfig.getMessageHistoryLength || 10;
 		const lastMessages = await message.channel.messages.fetch({ limit });
 		const relevantMessages = Array.from(lastMessages.values())
-			.filter(
-				(msg) =>
-					msg.author.id === message.author.id ||
-					(msg.author.id === client.user.id &&
-						msg.reference &&
-						lastMessages.has(msg.reference.messageId) &&
-						lastMessages.get(msg.reference.messageId).author.id ===
-							message.author.id) ||
-					(msg.author.id === client.user.id && !msg.reference),
-			)
+			.filter((msg) => !msg.author.bot || msg.author.id === client.user.id)
 			.reverse();
 
 		for (const msg of relevantMessages) {
@@ -632,10 +626,15 @@ class AIMessageHandler {
 					? msg.content.replace(/<@!?\d+>/g, '').trim()
 					: '';
 			if (!c && msg.attachments.size === 0) continue;
-			userConv.history.push({
-				role: msg.author.id === client.user.id ? 'model' : 'user',
-				content: c,
-			});
+
+			const isModel = msg.author.id === client.user.id;
+			const content = isModel ? c : `[${msg.author.username}]: ${c}`;
+
+			this.conversationManager.addToHistory(
+				message.channel.id,
+				isModel ? 'model' : 'user',
+				content,
+			);
 		}
 	}
 
