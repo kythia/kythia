@@ -19,6 +19,7 @@ const discordRulesPrompt = `
     Example: "This is the first part of my answer.[SPLIT]And this is the second part that will be sent as a separate message."
 5. NEVER generate a single answer longer than 2000 characters. Always use '[SPLIT]' if needed.
 6. DO NOT USE '[SPLIT]' if the message is not close to 2000 characters.
+7. If user ask something that location specific, answer with the user's language as the location preference, example: "what time is it?" (if you dont know user location, just answer the time based on US).
 `;
 
 /**
@@ -98,6 +99,7 @@ function buildSystemInstruction(context) {
    Conversation Context:
    - Server: ${context.guildName}
    - Channel: #${context.channelName}
+   - Preferred Locale: ${context.preferredLocale}
    ${context.userFactsString ? `\nFacts you already remember about this user:\n${context.userFactsString}` : ''}
    `;
 

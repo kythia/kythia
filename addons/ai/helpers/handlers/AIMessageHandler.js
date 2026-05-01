@@ -572,6 +572,8 @@ class AIMessageHandler {
 		const userPersonality =
 			user?.aiPersonality || this.aiConfig.defaultPersonality || 'friendly';
 
+		const preferredLocale = message.guild?.preferredLocale || 'en';
+
 		return {
 			userId: message.author.id,
 			userDisplayName,
@@ -581,6 +583,7 @@ class AIMessageHandler {
 			guildName,
 			channelName,
 			userPersonality,
+			preferredLocale,
 		};
 	}
 

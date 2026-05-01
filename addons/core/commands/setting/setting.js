@@ -122,55 +122,23 @@ const command = new SlashCommandBuilder()
 					),
 			),
 	)
-
-	// server admin
+	// raw
 	// .addSubcommandGroup((group) =>
 	// 	group
-	// 		.setName('admin')
-	// 		.setDescription('🔒 Server admin settings')
+	// 		.setName('raw')
+	// 		.setDescription('🧰 Advanced: set any ServerSetting field')
 	// 		.addSubcommand((sub) =>
 	// 			sub
-	// 				.setName('edit')
-	// 				.setDescription('🔒 Add or remove admin')
+	// 				.setName('set')
+	// 				.setDescription('🧰 Set any field (admin only)')
 	// 				.addStringOption((opt) =>
-	// 					opt
-	// 						.setName('action')
-	// 						.setDescription('Add or remove')
-	// 						.setRequired(true)
-	// 						.addChoices(
-	// 							{ name: 'Add', value: 'add' },
-	// 							{ name: 'Remove', value: 'remove' },
-	// 						),
+	// 					opt.setName('field').setDescription('Field name').setRequired(true),
 	// 				)
-	// 				.addMentionableOption((opt) =>
-	// 					opt
-	// 						.setName('target')
-	// 						.setDescription('User or role admin')
-	// 						.setRequired(true),
+	// 				.addStringOption((opt) =>
+	// 					opt.setName('value').setDescription('Value').setRequired(true),
 	// 				),
-	// 		)
-	// 		.addSubcommand((sub) =>
-	// 			sub.setName('admin-list').setDescription('View admin list'),
 	// 		),
 	// )
-
-	// raw
-	.addSubcommandGroup((group) =>
-		group
-			.setName('raw')
-			.setDescription('🧰 Advanced: set any ServerSetting field')
-			.addSubcommand((sub) =>
-				sub
-					.setName('set')
-					.setDescription('🧰 Set any field (admin only)')
-					.addStringOption((opt) =>
-						opt.setName('field').setDescription('Field name').setRequired(true),
-					)
-					.addStringOption((opt) =>
-						opt.setName('value').setDescription('Value').setRequired(true),
-					),
-			),
-	)
 
 	// view
 	.addSubcommand((sub) =>
@@ -198,6 +166,7 @@ const command = new SlashCommandBuilder()
 	})
 
 	// channels
+	// TODO: realocate this command
 	.addSubcommandGroup((group) =>
 		group
 			.setName('channels')
@@ -221,6 +190,7 @@ const command = new SlashCommandBuilder()
 	)
 
 	// stats
+	// TODO: relocate this command
 	.addSubcommandGroup((group) =>
 		group
 			.setName('stats')
@@ -318,6 +288,7 @@ const command = new SlashCommandBuilder()
 	)
 
 	// leveling
+	// TODO: relocate this command
 	.addSubcommandGroup((group) =>
 		group
 			.setName('leveling')
@@ -384,78 +355,8 @@ const command = new SlashCommandBuilder()
 			),
 	)
 
-	// testimony
-	// .addSubcommandGroup((group) =>
-	// 	group
-	// 		.setName('testimony')
-	// 		.setDescription('💬 Testimony system settings')
-	// 		.addSubcommand((sub) =>
-	// 			sub
-	// 				.setName('testimony-channel')
-	// 				.setDescription('💬 Set channel to send testimonies')
-	// 				.addChannelOption((opt) =>
-	// 					opt
-	// 						.setName('channel')
-	// 						.setDescription('Testimony channel')
-	// 						.setRequired(true),
-	// 				),
-	// 		)
-	// 		.addSubcommand((sub) =>
-	// 			sub
-	// 				.setName('feedback-channel')
-	// 				.setDescription('💬 Set channel for testimony feedback')
-	// 				.addChannelOption((opt) =>
-	// 					opt
-	// 						.setName('channel')
-	// 						.setDescription('Testimony feedback channel')
-	// 						.setRequired(true),
-	// 				),
-	// 		)
-	// 		.addSubcommand((sub) =>
-	// 			sub
-	// 				.setName('count-channel')
-	// 				.setDescription(
-	// 					'💬 Set channel to display testimony count (name will be changed automatically)',
-	// 				)
-	// 				.addChannelOption((opt) =>
-	// 					opt
-	// 						.setName('channel')
-	// 						.setDescription('Testimony counter channel')
-	// 						.setRequired(true),
-	// 				),
-	// 		)
-	// 		.addSubcommand((sub) =>
-	// 			sub
-	// 				.setName('count-format')
-	// 				.setDescription('💬 Set channel name format for testimony counter')
-	// 				.addStringOption((opt) =>
-	// 					opt
-	// 						.setName('format')
-	// 						.setDescription(
-	// 							'Channel name format, use {count} for the number. Example: testimony-{count}',
-	// 						)
-	// 						.setRequired(true),
-	// 				),
-	// 		)
-	// 		.addSubcommand((sub) =>
-	// 			sub
-	// 				.setName('reset-count')
-	// 				.setDescription('💬 Reset testimony count to 0'),
-	// 		)
-	// 		.addSubcommand((sub) =>
-	// 			sub
-	// 				.setName('count')
-	// 				.setDescription('💬 Change testimony count')
-	// 				.addIntegerOption((opt) =>
-	// 					opt
-	// 						.setName('count')
-	// 						.setDescription('New testimony count')
-	// 						.setRequired(true),
-	// 				),
-	// 		),
-	// )
-
 	// streak settings
+	// TODO: relocate this command
 	.addSubcommandGroup((group) =>
 		group
 			.setName('streak-settings')
@@ -488,6 +389,7 @@ const command = new SlashCommandBuilder()
 	)
 
 	// streak
+	// TODO: relocate this command
 	.addSubcommandGroup((group) =>
 		group
 			.setName('streak')
