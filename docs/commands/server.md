@@ -40,7 +40,7 @@
   - **Description:** id/en
   - **Type:** Text
 **`/server backup`**
-> Backup server structure to a JSON file
+> Backup server structure to a JSON file sent to your DM
 
 
 **`/server reset [<clear>]`**

@@ -10,6 +10,7 @@
 `/invites leaderboard`
 `/invites remove <user> <number>`
 `/invites reset`
+`/invites setting invite <channel>`
 `/invites user [user]`
 
 ### 🔧 Subcommands
@@ -45,6 +46,14 @@
 > _User Permissions: `Administrator`, `ManageGuild`_
 
 
+**`/invites setting invite <channel>`**
+> 📢 Set invite log channel
+> _User Permissions: `ManageGuild`_
+
+**Options for this subcommand:**
+- **`channel*`**
+  - **Description:** Channel
+  - **Type:** Channel
 **`/invites user [<user>]`**
 > Check user invites
 

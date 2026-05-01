@@ -1,5 +1,23 @@
 ## 📁 Command Category: Ai
 
+### 💾 `/imagen`
+
+**Description:** 🎨 Generate an image from a prompt or transform an existing image using Gemini AI.
+
+### 💻 Usage
+
+`/imagen [prompt] [image]`
+
+### ⚙️ Options
+
+- **`prompt`**
+  - **Description:** What do you want to generate or how to transform the image?
+  - **Type:** Text
+- **`image`**
+  - **Description:** Optional source image to transform (image-to-image).
+  - **Type:** Attachment
+
+
 ### 💾 `/translate`
 
 **Description:** 🌐 Translate text to another language using Gemini AI.

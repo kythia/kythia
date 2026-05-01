@@ -10,6 +10,10 @@
 `/level leaderboard`
 `/level profile [user]`
 `/level set <user> <level>`
+`/level setting channel <channel>`
+`/level setting cooldown <cooldown>`
+`/level setting rolereward <action> <level> <role>`
+`/level setting xp <xp>`
 `/level xp-add <user> <xp>`
 `/level xp-set <user> <xp>`
 
@@ -47,6 +51,45 @@
   - **Type:** User
 - **`level*`**
   - **Description:** The level to set.
+  - **Type:** Integer
+**`/level setting channel <channel>`**
+> 🎮 Set channel for level up messages
+> _User Permissions: `ManageGuild`_
+
+**Options for this subcommand:**
+- **`channel*`**
+  - **Description:** Channel for level up messages
+  - **Type:** Channel
+**`/level setting cooldown <cooldown>`**
+> 🎮 Set XP gain cooldown
+> _User Permissions: `ManageGuild`_
+
+**Options for this subcommand:**
+- **`cooldown*`**
+  - **Description:** Cooldown in seconds
+  - **Type:** Integer
+**`/level setting rolereward <action> <level> <role>`**
+> 🎮 Set role reward for a specific level
+> _User Permissions: `ManageGuild`_
+
+**Options for this subcommand:**
+- **`action*`**
+  - **Description:** Add or remove role reward
+  - **Type:** Text
+  - **Choices:** `Add` (`add`), `Remove` (`remove`)
+- **`level*`**
+  - **Description:** Required level
+  - **Type:** Integer
+- **`role*`**
+  - **Description:** Role to be given
+  - **Type:** Role
+**`/level setting xp <xp>`**
+> 🎮 Set XP amount per message
+> _User Permissions: `ManageGuild`_
+
+**Options for this subcommand:**
+- **`xp*`**
+  - **Description:** XP gained per message
   - **Type:** Integer
 **`/level xp-add <user> <xp>`**
 > Add XP to a user.

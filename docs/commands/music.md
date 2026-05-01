@@ -6,7 +6,7 @@
 
 ### 📋 Details
 
-- **Aliases:** `music`, `m`, `🎵`
+- **Aliases:** `music`, `m`
 - **Cooldown:** 15 seconds
 - **User Permissions:** `ViewChannel`, `SendMessages`, `Connect`, `Speak`
 - **Bot Permissions:** `SendMessages`, `Connect`, `Speak`
@@ -37,8 +37,10 @@
 `/music utils 247`
 `/music utils grab`
 `/music utils lyrics`
+`/music utils karaoke`
 `/music utils history`
 `/music utils download [query]`
+`/music utils repair`
 `/music playlist save <name>`
 `/music playlist load <name>`
 `/music playlist append <name>`
@@ -189,6 +191,10 @@
 > 🎤 Show the lyrics of the currently playing song
 
 
+**`/music utils karaoke`**
+> 🎤 Toggle live synced karaoke lyrics
+
+
 **`/music utils history`**
 > 📜 Show the history of played songs
 
@@ -200,6 +206,10 @@
 - **`query`**
   - **Description:** The song to download (optional, if not specified, the current song will be downloaded)
   - **Type:** Text
+**`/music utils repair`**
+> 🔧 Repair a stuck or broken music session
+
+
 **`/music playlist save <name>`**
 > Saves the current queue as a new playlist.
 

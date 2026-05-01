@@ -6,10 +6,22 @@
 
 ### 💻 Usage
 
-`/nsfw <category> <private> [amount]`
+`/nsfw favorites [private]`
+`/nsfw get <category> <private> [amount]`
 
-### ⚙️ Options
+### 🔧 Subcommands
 
+**`/nsfw favorites [<private>]`**
+> 🔞 View your favorited NSFW images
+
+**Options for this subcommand:**
+- **`private`**
+  - **Description:** Make the message private?
+  - **Type:** Boolean
+**`/nsfw get <category> <private> [<amount>]`**
+> 🔞 NSFW random content (only in nsfw channel)
+
+**Options for this subcommand:**
 - **`category*`**
   - **Description:** Content category
   - **Type:** Text

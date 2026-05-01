@@ -6,17 +6,15 @@
  * @version 1.0.0-rc
  */
 const {
-	SlashCommandBuilder,
-	ChannelType,
-	PermissionFlagsBits,
 	InteractionContextType,
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
 	SeparatorSpacingSize,
+	SlashCommandBuilder,
+	PermissionFlagsBits,
+	TextDisplayBuilder,
+	ContainerBuilder,
+	SeparatorBuilder,
 	MessageFlags,
 } = require('discord.js');
-const { updateStats } = require('../../helpers/stats');
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -93,197 +91,67 @@ const featureMap = {
 
 const toggleableFeatures = Object.keys(featureMap);
 
-const command = new SlashCommandBuilder()
-	.setName('set')
-	.setDescription('⚙️ Settings bot configuration')
-	.setContexts(InteractionContextType.Guild)
-	.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
-
-	// language
-	.addSubcommandGroup((group) =>
-		group
-			.setName('language')
-			.setDescription('🌐 Language settings')
-			.addSubcommand((sub) =>
-				sub
-					.setName('set')
-					.setDescription('🌐 Set bot language')
-					.addStringOption((opt) =>
-						Array.isArray(availableLanguages) && availableLanguages.length > 0
-							? opt
-									.setName('lang')
-									.setDescription('Choose language')
-									.setRequired(true)
-									.addChoices(...availableLanguages)
-							: opt
-									.setName('lang')
-									.setDescription('Choose language')
-									.setRequired(true),
-					),
-			),
-	)
-
-	// view
-	.addSubcommand((sub) =>
-		sub.setName('view').setDescription('🔍 View all bot settings'),
-	)
-
-	// features
-	.addSubcommandGroup((group) => {
-		group
-			.setName('features')
-			.setDescription('🔄 Enable or disable a specific feature');
-
-		for (const [subcommandName, [, featureDisplayName]] of Object.entries(
-			featureMap,
-		)) {
-			group.addSubcommand((sub) =>
-				sub
-					.setName(subcommandName)
-					.setDescription(`Enable or disable the ${featureDisplayName} feature`)
-					.addStringOption(createToggleOption()),
-			);
-		}
-
-		return group;
-	})
-
-	// stats
-	// TODO: relocate this command
-	// make new addon, stats addon
-	.addSubcommandGroup((group) =>
-		group
-			.setName('stats')
-			.setDescription('📈 Server statistics settings')
-			.addSubcommand((sub) =>
-				sub
-					.setName('category')
-					.setDescription('📈 Set category for server stats channels')
-					.addChannelOption((opt) =>
-						opt
-							.setName('category')
-							.setDescription('Category channel')
-							.setRequired(true),
-					),
-			)
-			.addSubcommand((sub) =>
-				sub
-					.setName('add')
-					.setDescription('📈 Add a new stat for a specific channel')
-					.addStringOption((opt) =>
-						opt
-							.setName('format')
-							.setDescription('Stat format, e.g.: {memberstotal}')
-							.setRequired(true),
-					)
-					.addChannelOption((opt) =>
-						opt
-							.setName('channel')
-							.setDescription(
-								'📈 Select a channel to use as stat (if not selected, the bot will create a new channel)',
-							)
-							.setRequired(false),
-					),
-			)
-			.addSubcommand((sub) =>
-				sub
-					.setName('edit')
-					.setDescription('📈 Edit the format of an existing stat channel')
-					.addStringOption((opt) =>
-						opt
-							.setName('stats')
-							.setDescription('Select the stat to edit')
-							.setRequired(true)
-							.setAutocomplete(true),
-					)
-					.addChannelOption((opt) =>
-						opt
-							.setName('channel')
-							.setDescription('📈 Edit stat channel')
-							.setRequired(false),
-					)
-					.addStringOption((opt) =>
-						opt
-							.setName('format')
-							.setDescription('📈 Edit stat format, e.g.: {membersonline}')
-							.setRequired(false),
-					),
-			)
-			.addSubcommand((sub) =>
-				sub
-					.setName('enable')
-					.setDescription('📈 Enable stat channel')
-					.addStringOption((opt) =>
-						opt
-							.setName('stats')
-							.setDescription('Select the stat to enable')
-							.setRequired(true)
-							.setAutocomplete(true),
-					),
-			)
-			.addSubcommand((sub) =>
-				sub
-					.setName('disable')
-					.setDescription('📈 Disable stat channel')
-					.addStringOption((opt) =>
-						opt
-							.setName('stats')
-							.setDescription('Select the stat to disable')
-							.setRequired(true)
-							.setAutocomplete(true),
-					),
-			)
-			.addSubcommand((sub) =>
-				sub
-					.setName('remove')
-					.setDescription('📈 Delete the stat and its channel')
-					.addStringOption((opt) =>
-						opt
-							.setName('stats')
-							.setDescription('Select the stat to delete')
-							.setRequired(true)
-							.setAutocomplete(true),
-					),
-			),
-	);
+// const command =
 
 module.exports = {
-	slashCommand: command,
+	slashCommand: new SlashCommandBuilder()
+		.setName('set')
+		.setDescription('⚙️ Settings bot configuration')
+		.setContexts(InteractionContextType.Guild)
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+
+		// language
+		.addSubcommandGroup((group) =>
+			group
+				.setName('language')
+				.setDescription('🌐 Language settings')
+				.addSubcommand((sub) =>
+					sub
+						.setName('set')
+						.setDescription('🌐 Set bot language')
+						.addStringOption((opt) =>
+							Array.isArray(availableLanguages) && availableLanguages.length > 0
+								? opt
+										.setName('lang')
+										.setDescription('Choose language')
+										.setRequired(true)
+										.addChoices(...availableLanguages)
+								: opt
+										.setName('lang')
+										.setDescription('Choose language')
+										.setRequired(true),
+						),
+				),
+		)
+
+		// view
+		.addSubcommand((sub) =>
+			sub.setName('view').setDescription('🔍 View all bot settings'),
+		)
+
+		// features
+		.addSubcommandGroup((group) => {
+			group
+				.setName('features')
+				.setDescription('🔄 Enable or disable a specific feature');
+
+			for (const [subcommandName, [, featureDisplayName]] of Object.entries(
+				featureMap,
+			)) {
+				group.addSubcommand((sub) =>
+					sub
+						.setName(subcommandName)
+						.setDescription(
+							`Enable or disable the ${featureDisplayName} feature`,
+						)
+						.addStringOption(createToggleOption()),
+				);
+			}
+
+			return group;
+		}),
 	permissions: PermissionFlagsBits.ManageGuild,
 	botPermissions: PermissionFlagsBits.ManageGuild,
-	async autocomplete(interaction) {
-		const container = interaction.client.container;
-		const { t, models, helpers } = container;
-		const { ServerSetting } = models;
-		const { getChannelSafe } = helpers.discord;
-		const focused = interaction.options.getFocused();
-		const settings = await ServerSetting.getCache({
-			guildId: interaction.guild.id,
-		});
-		const stats = settings?.serverStats ?? [];
-
-		const choices = [];
-		for (const stat of stats) {
-			const channel = await getChannelSafe(interaction.guild, stat.channelId);
-			if (!channel) continue;
-
-			const channelName = channel.name || 'Unknown Channel';
-			if (channelName.toLowerCase().includes(focused.toLowerCase())) {
-				const statusText = stat.enabled
-					? await t(interaction, 'core.setting.setting.stats.enabled.text')
-					: await t(interaction, 'core.setting.setting.stats.disabled.text');
-
-				const finalName = `${channelName} (${statusText})`;
-				choices.push({
-					name: finalName.length > 100 ? finalName.slice(0, 100) : finalName,
-					value: channel.id,
-				});
-			}
-			if (choices.length >= 25) break;
-		}
-
-		await interaction.respond(choices);
-	},
 
 	/**
 	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
@@ -291,7 +159,7 @@ module.exports = {
 	 */
 	async execute(interaction, container) {
 		const { t, kythiaConfig, helpers, models, logger } = container;
-		const { getChannelSafe, simpleContainer } = helpers.discord;
+		const { simpleContainer } = helpers.discord;
 		// const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
 
@@ -301,10 +169,6 @@ module.exports = {
 		const sub = interaction.options.getSubcommand();
 		const guildId = interaction.guild.id;
 		const guildName = interaction.guild.name;
-		const _status = interaction.options.getString('status');
-		// const action = interaction.options.getString('action');
-		// const target = interaction.options.getMentionable('target');
-		// const channel = interaction.options.getChannel('channel');
 
 		const [serverSetting, created] = await ServerSetting.findOrCreateWithCache({
 			where: { guildId: guildId },
@@ -625,310 +489,6 @@ module.exports = {
 						components,
 						flags: MessageFlags.IsComponentsV2,
 					});
-				}
-				break;
-			}
-			case 'stats': {
-				const allowedPlaceholders = [
-					'{memberstotal}',
-					'{online}',
-					'{idle}',
-					'{dnd}',
-					'{offline}',
-					'{bots}',
-					'{humans}',
-					'{online_bots}',
-					'{online_humans}',
-					'{boosts}',
-					'{boost_level}',
-					'{channels}',
-					'{text_channels}',
-					'{voice_channels}',
-					'{categories}',
-					'{announcement_channels}',
-					'{stage_channels}',
-					'{roles}',
-					'{emojis}',
-					'{stickers}',
-					'{guild}',
-					'{guild_id}',
-					'{owner}',
-					'{owner_id}',
-					'{region}',
-					'{verified}',
-					'{partnered}',
-					'{date}',
-					'{time}',
-					'{datetime}',
-					'{day}',
-					'{month}',
-					'{year}',
-					'{hour}',
-					'{minute}',
-					'{second}',
-					'{timestamp}',
-					'{created_date}',
-					'{created_time}',
-					'{guild_age}',
-					'{member_join}',
-				];
-				switch (sub) {
-					case 'category': {
-						const cat = interaction.options.getChannel('category');
-						if (!cat || cat.type !== ChannelType.GuildCategory) {
-							const components = await simpleContainer(
-								interaction,
-								await t(
-									interaction,
-									'core.setting.setting.stats.category.invalid',
-								),
-								{ color: 'Red' },
-							);
-							return interaction.editReply({
-								components,
-								flags: MessageFlags.IsComponentsV2,
-							});
-						}
-						serverSetting.serverStatsCategoryId = cat.id;
-						await serverSetting.save();
-						const components = await simpleContainer(
-							interaction,
-							await t(interaction, 'core.setting.setting.stats.category.set', {
-								category: `<#${cat.id}>`,
-							}),
-							{ color: 'Green' },
-						);
-						return interaction.editReply({
-							components,
-							flags: MessageFlags.IsComponentsV2,
-						});
-					}
-					case 'add': {
-						const format = interaction.options.getString('format');
-						let channel = interaction.options.getChannel('channel');
-						const hasAllowedPlaceholder = allowedPlaceholders.some((ph) =>
-							format.includes(ph),
-						);
-						if (!hasAllowedPlaceholder) {
-							const components = await simpleContainer(
-								interaction,
-								await t(
-									interaction,
-									'core.setting.setting.stats.format.invalid',
-									{
-										placeholders: allowedPlaceholders.join(', '),
-									},
-								),
-								{ color: 'Red' },
-							);
-							return interaction.editReply({
-								components,
-								flags: MessageFlags.IsComponentsV2,
-							});
-						}
-						if (!channel) {
-							channel = await interaction.guild.channels.create({
-								name: format.replace(/{.*?}/g, '0'),
-								type: ChannelType.GuildVoice,
-								parent: serverSetting.serverStatsCategoryId,
-								permissionOverwrites: [
-									{
-										id: interaction.guild.roles.everyone,
-										deny: [PermissionFlagsBits.Connect],
-										allow: [PermissionFlagsBits.ViewChannel],
-									},
-								],
-							});
-						}
-						const already = serverSetting.serverStats?.find(
-							(s) => s.channelId === channel.id,
-						);
-						if (already) {
-							const components = await simpleContainer(
-								interaction,
-								await t(interaction, 'core.setting.setting.stats.already'),
-								{ color: 'Yellow' },
-							);
-							return interaction.editReply({
-								components,
-								flags: MessageFlags.IsComponentsV2,
-							});
-						}
-						serverSetting.serverStats ??= [];
-						serverSetting.serverStats.push({
-							channelId: channel.id,
-							format,
-							enabled: true,
-						});
-						serverSetting.changed('serverStats', true);
-						await serverSetting.save();
-						await updateStats(interaction, interaction.client, [serverSetting]);
-						const components = await simpleContainer(
-							interaction,
-							await t(interaction, 'core.setting.setting.stats.add', {
-								channel: `<#${channel.id}>`,
-								format,
-							}),
-							{ color: 'Green' },
-						);
-						return interaction.editReply({
-							components,
-							flags: MessageFlags.IsComponentsV2,
-						});
-					}
-					case 'edit': {
-						const statsId = interaction.options.getString('stats');
-						const format = interaction.options.getString('format');
-						const stat = serverSetting.serverStats?.find(
-							(s) => s.channelId === statsId,
-						);
-						if (!stat) {
-							const components = await simpleContainer(
-								interaction,
-								await t(interaction, 'core.setting.setting.stats.notfound'),
-								{ color: 'Red' },
-							);
-							return interaction.editReply({
-								components,
-								flags: MessageFlags.IsComponentsV2,
-							});
-						}
-						if (format) stat.format = format;
-						const hasAllowedPlaceholder = allowedPlaceholders.some((ph) =>
-							format.includes(ph),
-						);
-						if (!hasAllowedPlaceholder) {
-							const components = await simpleContainer(
-								interaction,
-								await t(
-									interaction,
-									'core.setting.setting.stats.format.invalid',
-									{
-										placeholders: allowedPlaceholders.join(', '),
-									},
-								),
-								{ color: 'Red' },
-							);
-							return interaction.editReply({
-								components,
-								flags: MessageFlags.IsComponentsV2,
-							});
-						}
-						serverSetting.changed('serverStats', true);
-						await serverSetting.save();
-						await updateStats(interaction, interaction.client, [serverSetting]);
-						const components = await simpleContainer(
-							interaction,
-							await t(interaction, 'core.setting.setting.stats.edit', {
-								channel: `<#${statsId}>`,
-								format,
-							}),
-							{ color: 'Green' },
-						);
-						return interaction.editReply({
-							components,
-							flags: MessageFlags.IsComponentsV2,
-						});
-					}
-					case 'enable': {
-						const statsId = interaction.options.getString('stats');
-						const stat = serverSetting.serverStats?.find(
-							(s) => s.channelId === statsId,
-						);
-						if (!stat) {
-							const components = await simpleContainer(
-								interaction,
-								await t(interaction, 'core.setting.setting.stats.notfound'),
-								{ color: 'Red' },
-							);
-							return interaction.editReply({
-								components,
-								flags: MessageFlags.IsComponentsV2,
-							});
-						}
-						stat.enabled = true;
-						serverSetting.changed('serverStats', true);
-						await serverSetting.save();
-						await updateStats(interaction, interaction.client, [serverSetting]);
-						const components = await simpleContainer(
-							interaction,
-							await t(interaction, 'core.setting.setting.stats.enabled.msg', {
-								channel: `<#${statsId}>`,
-							}),
-							{ color: 'Green' },
-						);
-						return interaction.editReply({
-							components,
-							flags: MessageFlags.IsComponentsV2,
-						});
-					}
-					case 'disable': {
-						const statsId = interaction.options.getString('stats');
-						const stat = serverSetting.serverStats?.find(
-							(s) => s.channelId === statsId,
-						);
-						if (!stat) {
-							const components = await simpleContainer(
-								interaction,
-								await t(interaction, 'core.setting.setting.stats.notfound'),
-								{ color: 'Red' },
-							);
-							return interaction.editReply({
-								components,
-								flags: MessageFlags.IsComponentsV2,
-							});
-						}
-						stat.enabled = false;
-						serverSetting.changed('serverStats', true);
-						await serverSetting.save();
-						await updateStats(interaction, interaction.client, [serverSetting]);
-						const components = await simpleContainer(
-							interaction,
-							await t(interaction, 'core.setting.setting.stats.disabled.msg', {
-								channel: `<#${statsId}>`,
-							}),
-							{ color: 'Red' },
-						);
-						return interaction.editReply({
-							components,
-							flags: MessageFlags.IsComponentsV2,
-						});
-					}
-					case 'remove': {
-						const statsId = interaction.options.getString('stats');
-						const channel = await getChannelSafe(interaction.guild, statsId);
-						const before = serverSetting.serverStats?.length || 0;
-						serverSetting.serverStats = serverSetting.serverStats?.filter(
-							(s) => s.channelId !== statsId,
-						);
-						const after = serverSetting.serverStats?.length || 0;
-						try {
-							if (channel?.deletable) {
-								await channel.delete('Stat channel removed');
-							}
-						} catch (_) {}
-						serverSetting.changed('serverStats', true);
-						await serverSetting.save();
-						await updateStats(interaction, interaction.client, [serverSetting]);
-						const isSuccess = before !== after;
-						const components = await simpleContainer(
-							interaction,
-							isSuccess
-								? await t(
-										interaction,
-										'core.setting.setting.stats.remove.success',
-									)
-								: await t(
-										interaction,
-										'core.setting.setting.stats.remove.notfound',
-									),
-							{ color: isSuccess ? 'Green' : 'Yellow' },
-						);
-						return interaction.editReply({
-							components,
-							flags: MessageFlags.IsComponentsV2,
-						});
-					}
 				}
 				break;
 			}

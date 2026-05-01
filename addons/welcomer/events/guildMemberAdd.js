@@ -9,7 +9,7 @@
 const {
 	resolvePlaceholders,
 	safeResolvePlaceholder,
-} = require('../../core/helpers/stats');
+} = require('@coreHelpers/discord');
 
 const { welcomeBanner } = require('kythia-arts');
 const {

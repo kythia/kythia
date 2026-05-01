@@ -386,6 +386,228 @@ async function isVoterActive(container, userId) {
 	return true;
 }
 
+const timeLocaleCache = {};
+async function getLocalizedTime(container, locale) {
+	const { t } = container;
+	if (timeLocaleCache[locale]) return timeLocaleCache[locale];
+
+	const days = await Promise.all([
+		t({ locale }, 'core.helpers.stats.days.sunday'),
+		t({ locale }, 'core.helpers.stats.days.monday'),
+		t({ locale }, 'core.helpers.stats.days.tuesday'),
+		t({ locale }, 'core.helpers.stats.days.wednesday'),
+		t({ locale }, 'core.helpers.stats.days.thursday'),
+		t({ locale }, 'core.helpers.stats.days.friday'),
+		t({ locale }, 'core.helpers.stats.days.saturday'),
+	]);
+	const months = await Promise.all([
+		t({ locale }, 'core.helpers.stats.months.january'),
+		t({ locale }, 'core.helpers.stats.months.february'),
+		t({ locale }, 'core.helpers.stats.months.march'),
+		t({ locale }, 'core.helpers.stats.months.april'),
+		t({ locale }, 'core.helpers.stats.months.may'),
+		t({ locale }, 'core.helpers.stats.months.june'),
+		t({ locale }, 'core.helpers.stats.months.july'),
+		t({ locale }, 'core.helpers.stats.months.august'),
+		t({ locale }, 'core.helpers.stats.months.september'),
+		t({ locale }, 'core.helpers.stats.months.october'),
+		t({ locale }, 'core.helpers.stats.months.november'),
+		t({ locale }, 'core.helpers.stats.months.december'),
+	]);
+
+	timeLocaleCache[locale] = { days, months };
+	return timeLocaleCache[locale];
+}
+
+/**
+ * Resolve placeholders in a string using provided data and locale.
+ */
+async function resolvePlaceholders(container, str, data, locale) {
+	const { t } = container;
+	if (typeof str !== 'string') return '';
+
+	const now = new Date();
+	const { days, months } = await getLocalizedTime(container, locale);
+
+	let guildAge = 'Unknown';
+	if (data.createdAt) {
+		const created = new Date(data.createdAt);
+		const diff = now - created;
+		const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+		const monthsDiff = Math.floor(
+			(diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30),
+		);
+		const daysDiff = Math.floor(
+			(diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24),
+		);
+		const yearsLabel =
+			years > 0 ? await t({ locale }, 'core.helpers.stats.years') : '';
+		const monthsLabel = await t({ locale }, 'core.helpers.stats.months.months');
+		const daysLabel = await t({ locale }, 'core.helpers.stats.days.days');
+		guildAge =
+			years > 0
+				? `${years} ${yearsLabel} ${monthsDiff} ${monthsLabel} ${daysDiff} ${daysLabel}`
+				: `${monthsDiff} ${monthsLabel} ${daysDiff} ${daysLabel}`;
+	}
+
+	const verifiedStr = data.verified
+		? await t({ locale }, 'core.helpers.stats.verified.yes')
+		: await t({ locale }, 'core.helpers.stats.verified.no');
+	const partneredStr = data.partnered
+		? await t({ locale }, 'core.helpers.stats.partnered.yes')
+		: await t({ locale }, 'core.helpers.stats.partnered.no');
+
+	const formatDate = (d) => {
+		if (!(d instanceof Date) || Number.isNaN(d)) return 'Unknown';
+		return d.toLocaleDateString(locale, {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+		});
+	};
+	const formatTime = (d) => {
+		if (!(d instanceof Date) || Number.isNaN(d)) return 'Unknown';
+		return d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+	};
+
+	/**
+	 * ===== AVAILBLE PLACEHOLDERS =====
+	 *
+	 * {user}
+	 * {user_id}
+	 * {tag}
+	 * {username}
+	 * {memberstotal}
+	 * {membercount}
+	 * {boosts}
+	 * {boostcount}
+	 * {boost_level}
+	 * {channels}
+	 * {text_channels}
+	 * {voice_channels}
+	 * {categories}
+	 * {announcement_channels}
+	 * {stage_channels}
+	 * {roles}
+	 * {emojis}
+	 * {stickers}
+	 * {guild}
+	 * {guild_id}
+	 * {owner}
+	 * {owner_id}
+	 * {region}
+	 * {verified}
+	 * {partnered}
+	 * {date}
+	 * {time}
+	 * {datetime}
+	 * {day}
+	 * {month}
+	 * {year}
+	 * {hour}
+	 * {minute}
+	 * {second}
+	 * {timestamp}
+	 * {created_date}
+	 * {created_time}
+	 * {guild_age}
+	 * {member_join}
+	 */
+	const placeholders = {
+		'{user}': data.userId ? `<@${data.userId}>` : 'Unknown',
+		'{user_id}': data.userId || '0',
+		'{mention}': data.userId ? `<@${data.userId}>` : 'Unknown', // alias for {user}
+		'{tag}': data.tag ? `#${data.tag}` : 'Unknown',
+		'{username}': data.username || 'Unknown',
+
+		'{memberstotal}': data.members ?? 0,
+		'{members}': data.members ?? 0,
+		'{membercount}': data.members ?? 0, // alias for {members}
+
+		'{boosts}': data.boosts ?? 0,
+		'{boostcount}': data.boosts ?? 0, // alias for {boosts}
+		'{boost_level}': data.boostLevel ?? 0,
+		'{channels}': data.channels ?? 0,
+		'{text_channels}': data.textChannels ?? 0,
+		'{voice_channels}': data.voiceChannels ?? 0,
+		'{categories}': data.categories ?? 0,
+		'{announcement_channels}': data.announcementChannels ?? 0,
+		'{stage_channels}': data.stageChannels ?? 0,
+		'{roles}': data.roles ?? 0,
+		'{emojis}': data.emojis ?? 0,
+		'{stickers}': data.stickers ?? 0,
+
+		'{guild}': data.guildName || 'Server',
+		'{servername}': data.guildName || 'Server', // alias for {guild}
+		'{guild_id}': data.guildId || '0',
+		'{owner}': data.ownerName || 'Owner',
+		'{owner_id}': data.ownerId || '0',
+		'{region}': data.region || 'ID',
+		'{verified}': verifiedStr,
+		'{partnered}': partneredStr,
+
+		'{date}': formatDate(now),
+		'{time}': formatTime(now),
+
+		'{datetime}': `${formatDate(now)} ${formatTime(now)}`,
+		'{day}': days[now.getDay()],
+		'{month}': months[now.getMonth()],
+		'{year}': now.getFullYear().toString(),
+		'{hour}': now.getHours().toString().padStart(2, '0'),
+		'{minute}': now.getMinutes().toString().padStart(2, '0'),
+		'{second}': now.getSeconds().toString().padStart(2, '0'),
+		'{timestamp}': now.getTime().toString(),
+
+		'{created_date}': data.createdAt
+			? formatDate(new Date(data.createdAt))
+			: 'Unknown',
+		'{created_time}': data.createdAt
+			? formatTime(new Date(data.createdAt))
+			: 'Unknown',
+		'{guild_age}': guildAge,
+		'{member_join}': data.memberJoin
+			? formatDate(new Date(data.memberJoin))
+			: 'Unknown',
+	};
+
+	let result = str;
+	for (const [key, val] of Object.entries(placeholders)) {
+		if (typeof result === 'string') {
+			result = result.replace(
+				new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+				val?.toString() ?? '',
+			);
+		}
+	}
+	if (typeof result !== 'string') return '';
+	return result;
+}
+
+async function safeResolvePlaceholder(
+	container,
+	member,
+	text,
+	statsData,
+	fallback = '',
+) {
+	if (typeof text !== 'string' || !text.trim()) return fallback;
+	try {
+		let result = await resolvePlaceholders(
+			container,
+			text,
+			statsData,
+			member.guild.preferredLocale,
+		);
+		if (typeof result === 'string') {
+			result = result.replace(/\\n/g, '\n');
+		}
+		if (result == null) return fallback;
+		return result;
+	} catch (_e) {
+		return fallback;
+	}
+}
+
 module.exports = {
 	embedFooter,
 	setVoiceChannelStatus,
@@ -399,4 +621,6 @@ module.exports = {
 	isPremium,
 	isVoterActive,
 	chunkTextDisplay,
+	resolvePlaceholders,
+	safeResolvePlaceholder,
 };

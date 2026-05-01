@@ -7,8 +7,8 @@
 ### 💻 Usage
 
 `/set language set <lang>`
-`/set raw set <field> <value>`
 `/set view`
+`/set features activity <status>`
 `/set features server-stats <status>`
 `/set features leveling <status>`
 `/set features adventure <status>`
@@ -16,22 +16,6 @@
 `/set features streak <status>`
 `/set features invites <status>`
 `/set features boost-log <status>`
-`/set channels announcement <channel>`
-`/set channels invite <channel>`
-`/set stats category <category>`
-`/set stats add <format> [channel]`
-`/set stats edit <stats> [channel] [format]`
-`/set stats enable <stats>`
-`/set stats disable <stats>`
-`/set stats remove <stats>`
-`/set leveling channel <channel>`
-`/set leveling cooldown <cooldown>`
-`/set leveling xp <xp>`
-`/set leveling rolereward <action> <level> <role>`
-`/set streak-settings minimum <minimum>`
-`/set streak-settings emoji <emoji>`
-`/set streak-settings nickname <status>`
-`/set streak rolereward <action> <streak> <role>`
 
 ### 🔧 Subcommands
 
@@ -43,20 +27,18 @@
   - **Description:** Choose language
   - **Type:** Text
   - **Choices:** `en-US` (`en-US`)
-**`/set raw set <field> <value>`**
-> 🧰 Set any field (admin only)
-
-**Options for this subcommand:**
-- **`field*`**
-  - **Description:** Field name
-  - **Type:** Text
-- **`value*`**
-  - **Description:** Value
-  - **Type:** Text
 **`/set view`**
 > 🔍 View all bot settings
 
 
+**`/set features activity <status>`**
+> Enable or disable the Activity feature
+
+**Options for this subcommand:**
+- **`status*`**
+  - **Description:** Select status
+  - **Type:** Text
+  - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
 **`/set features server-stats <status>`**
 > Enable or disable the Server Stats feature
 
@@ -113,142 +95,6 @@
   - **Description:** Select status
   - **Type:** Text
   - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
-**`/set channels announcement <channel>`**
-> 📢 Set announcement channel
-
-**Options for this subcommand:**
-- **`channel*`**
-  - **Description:** Channel
-  - **Type:** Channel
-**`/set channels invite <channel>`**
-> 📢 Set invite log channel
-
-**Options for this subcommand:**
-- **`channel*`**
-  - **Description:** Channel
-  - **Type:** Channel
-**`/set stats category <category>`**
-> 📈 Set category for server stats channels
-
-**Options for this subcommand:**
-- **`category*`**
-  - **Description:** Category channel
-  - **Type:** Channel
-**`/set stats add <format> [<channel>]`**
-> 📈 Add a new stat for a specific channel
-
-**Options for this subcommand:**
-- **`format*`**
-  - **Description:** Stat format, e.g.: {memberstotal}
-  - **Type:** Text
-- **`channel`**
-  - **Description:** 📈 Select a channel to use as stat (if not selected, the bot will create a new channel)
-  - **Type:** Channel
-**`/set stats edit <stats> [<channel>] [<format>]`**
-> 📈 Edit the format of an existing stat channel
-
-**Options for this subcommand:**
-- **`stats*`**
-  - **Description:** Select the stat to edit
-  - **Type:** Text
-- **`channel`**
-  - **Description:** 📈 Edit stat channel
-  - **Type:** Channel
-- **`format`**
-  - **Description:** 📈 Edit stat format, e.g.: {membersonline}
-  - **Type:** Text
-**`/set stats enable <stats>`**
-> 📈 Enable stat channel
-
-**Options for this subcommand:**
-- **`stats*`**
-  - **Description:** Select the stat to enable
-  - **Type:** Text
-**`/set stats disable <stats>`**
-> 📈 Disable stat channel
-
-**Options for this subcommand:**
-- **`stats*`**
-  - **Description:** Select the stat to disable
-  - **Type:** Text
-**`/set stats remove <stats>`**
-> 📈 Delete the stat and its channel
-
-**Options for this subcommand:**
-- **`stats*`**
-  - **Description:** Select the stat to delete
-  - **Type:** Text
-**`/set leveling channel <channel>`**
-> 🎮 Set channel for level up messages
-
-**Options for this subcommand:**
-- **`channel*`**
-  - **Description:** Channel for level up messages
-  - **Type:** Channel
-**`/set leveling cooldown <cooldown>`**
-> 🎮 Set XP gain cooldown
-
-**Options for this subcommand:**
-- **`cooldown*`**
-  - **Description:** Cooldown in seconds
-  - **Type:** Integer
-**`/set leveling xp <xp>`**
-> 🎮 Set XP amount per message
-
-**Options for this subcommand:**
-- **`xp*`**
-  - **Description:** XP gained per message
-  - **Type:** Integer
-**`/set leveling rolereward <action> <level> <role>`**
-> 🎮 Set role reward for a specific level
-
-**Options for this subcommand:**
-- **`action*`**
-  - **Description:** Add or remove role reward
-  - **Type:** Text
-  - **Choices:** `Add` (`add`), `Remove` (`remove`)
-- **`level*`**
-  - **Description:** Required level
-  - **Type:** Integer
-- **`role*`**
-  - **Description:** Role to be given
-  - **Type:** Role
-**`/set streak-settings minimum <minimum>`**
-> 🔥 Set minimum streak
-
-**Options for this subcommand:**
-- **`minimum*`**
-  - **Description:** Minimum streak
-  - **Type:** Integer
-**`/set streak-settings emoji <emoji>`**
-> 🔥 Set streak emoji
-
-**Options for this subcommand:**
-- **`emoji*`**
-  - **Description:** Emoji
-  - **Type:** Text
-**`/set streak-settings nickname <status>`**
-> 🔥 Toggle auto-nickname for streak
-
-**Options for this subcommand:**
-- **`status*`**
-  - **Description:** Select status
-  - **Type:** Text
-  - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
-**`/set streak rolereward <action> <streak> <role>`**
-> 🔥 Set role reward for a specific streak
-
-**Options for this subcommand:**
-- **`action*`**
-  - **Description:** Add or remove role reward
-  - **Type:** Text
-  - **Choices:** `Add` (`add`), `Remove` (`remove`)
-- **`streak*`**
-  - **Description:** Required streak
-  - **Type:** Integer
-- **`role*`**
-  - **Description:** Role to be given
-  - **Type:** Role
 
 
 ### 💾 `/ascii`
@@ -287,6 +133,21 @@
 
 - **`user`**
   - **Description:** The user whose avatar you want to see.
+  - **Type:** User
+
+
+### 💾 `/banner`
+
+**Description:** 🖼️ Show user banner.
+
+### 💻 Usage
+
+`/banner [user]`
+
+### ⚙️ Options
+
+- **`user`**
+  - **Description:** The user whose banner you want to see.
   - **Type:** User
 
 
@@ -509,6 +370,7 @@
 
 `/grab sticker <sticker_id>`
 `/grab emoji <emoji>`
+`/grab image <message_id> [name]`
 
 ### 🔧 Subcommands
 
@@ -525,6 +387,16 @@
 **Options for this subcommand:**
 - **`emoji*`**
   - **Description:** Emoji to grab (custom emoji format)
+  - **Type:** Text
+**`/grab image <message_id> [<name>]`**
+> Grab an image from a message and turn it into a sticker
+
+**Options for this subcommand:**
+- **`message_id*`**
+  - **Description:** ID of the message containing the image
+  - **Type:** Text
+- **`name`**
+  - **Description:** Name for the new sticker (max 30 chars)
   - **Type:** Text
 
 

@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/core/tasks/stats-updater.js
+ * @namespace: addons/server-stats/tasks/stats-updater.js
  * @type: Scheduled Task
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
@@ -9,7 +9,7 @@
 const { runStatsUpdater } = require('../helpers/stats');
 
 module.exports = {
-	taskName: 'core-stats-updater',
+	taskName: 'server-stats-updater',
 	schedule: '*/5 * * * *',
 	active: true,
 
