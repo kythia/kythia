@@ -17,6 +17,12 @@ app.get('/', async (c) => {
 		return c.text('Metrics unavailable', 503);
 	}
 
+	const format = c.req.query('format');
+	if (format === 'json') {
+		const jsonMetrics = await metrics.registry.getMetricsAsJSON();
+		return c.json(jsonMetrics);
+	}
+
 	const rawMetrics = await metrics.getMetrics();
 	c.header('Content-Type', metrics.getContentType());
 	return c.body(rawMetrics);

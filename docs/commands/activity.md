@@ -1,15 +1,15 @@
-## 📁 Command Category: Activity
+## Command Category: Activity
 
-### 💾 `/activity`
+### `/activity`
 
 **Description:** 📊 All commands related to activity statistics.
 
-### 💻 Usage
+### Usage
 
 `/activity leaderboard [type] [period]`
 `/activity stats [user] [period]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/activity leaderboard [<type>] [<period>]`**
 > 📊 Activity leaderboard for this server.

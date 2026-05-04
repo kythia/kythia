@@ -1,10 +1,10 @@
-## 📁 Command Category: Birthday
+## Command Category: Birthday
 
-### 💾 `/birthday`
+### `/birthday`
 
 **Description:** 🎂 Manage your birthday settings.
 
-### 💻 Usage
+### Usage
 
 `/birthday check [user]`
 `/birthday list`
@@ -13,7 +13,7 @@
 `/birthday setting edit [channel] [role] [ping_role] [show_age] [message] [color] [image]`
 `/birthday setting view`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/birthday check [<user>]`**
 > 👀 Check your or another user's birthday.

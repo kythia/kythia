@@ -1,10 +1,10 @@
-## 📁 Command Category: Verification
+## Command Category: Verification
 
-### 💾 `/verify`
+### `/verify`
 
 **Description:** 🛡️ Verification system management
 
-### 💻 Usage
+### Usage
 
 `/verify force <member>`
 `/verify panel button <label>`
@@ -25,7 +25,7 @@
 `/verify setup welcome-message <message>`
 `/verify status`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/verify force <member>`**
 > Manually verify a member (skip captcha)

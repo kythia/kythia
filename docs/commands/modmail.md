@@ -1,13 +1,13 @@
-## 📁 Command Category: Modmail
+## Command Category: Modmail
 
-### 💾 `/modmail`
+### `/modmail`
 
 **Description:** 📬 All commands related to the Modmail system.
 
-### 📋 Details
+### Details
 
 - **User Permissions:** `ManageGuild`
-### 💻 Usage
+### Usage
 
 `/modmail areply <message>`
 `/modmail block <user> [reason]`
@@ -20,7 +20,7 @@
 `/modmail snippet use <name>`
 `/modmail unblock <user>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/modmail areply <message>`**
 > Reply anonymously — the user will see "Staff" instead of your name.

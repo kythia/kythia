@@ -1,10 +1,10 @@
-## 📁 Command Category: Automod
+## Command Category: Automod
 
-### 💾 `/mod`
+### `/mod`
 
 **Description:** Moderation action
 
-### 💻 Usage
+### Usage
 
 `/mod announce <message> [title]`
 `/mod autosetup`
@@ -25,7 +25,7 @@
 `/mod warn <user> [reason]`
 `/mod warnings <user>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/mod announce <message> [<title>]`**
 > 📢 Sends an announcement to the current channel.
@@ -179,11 +179,11 @@
   - **Type:** User
 
 
-### 💾 `/automod`
+### `/automod`
 
 **Description:** 🛡️ Automod settings
 
-### 💻 Usage
+### Usage
 
 `/automod whitelist add <target>`
 `/automod whitelist remove <target>`
@@ -215,7 +215,7 @@
 `/automod antinuke log-channel <channel>`
 `/automod antinuke status`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/automod whitelist add <target>`**
 > Add a user or role to the whitelist

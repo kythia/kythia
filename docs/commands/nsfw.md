@@ -1,15 +1,15 @@
-## 📁 Command Category: Nsfw
+## Command Category: Nsfw
 
-### 💾 `/nsfw`
+### `/nsfw`
 
 **Description:** 🔞 NSFW random content (only in nsfw channel)
 
-### 💻 Usage
+### Usage
 
 `/nsfw favorites [private]`
 `/nsfw get <category> <private> [amount]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/nsfw favorites [<private>]`**
 > 🔞 View your favorited NSFW images

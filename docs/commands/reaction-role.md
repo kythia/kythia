@@ -1,10 +1,10 @@
-## 📁 Command Category: Reaction-role
+## Command Category: Reaction-role
 
-### 💾 `/reaction-role`
+### `/reaction-role`
 
 **Description:** 🎭 Manage reaction roles for your server.
 
-### 💻 Usage
+### Usage
 
 `/reaction-role add <message_id> <emoji> <role> [channel]`
 `/reaction-role edit <message_id> <emoji> [new_role] [new_emoji] [channel]`
@@ -14,7 +14,7 @@
 `/reaction-role panel list`
 `/reaction-role remove <message_id> <emoji> [channel]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/reaction-role add <message_id> <emoji> <role> [<channel>]`**
 > ➕ Add a reaction role to a message.

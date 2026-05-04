@@ -1,13 +1,13 @@
-## 📁 Command Category: Welcomer
+## Command Category: Welcomer
 
-### 💾 `/welcomer`
+### `/welcomer`
 
 **Description:** 👋 Configure the welcome & farewell system
 
-### 📋 Details
+### Details
 
 - **User Permissions:** `ManageGuild`
-### 💻 Usage
+### Usage
 
 `/welcomer dm-text <text>`
 `/welcomer in-background <url>`
@@ -20,7 +20,7 @@
 `/welcomer out-text <text>`
 `/welcomer role <role>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/welcomer dm-text <text>`**
 > ✉️ Set DM message sent to new members on join

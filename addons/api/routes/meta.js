@@ -99,4 +99,58 @@ app.get('/locales', (c) => {
 	}
 });
 
+app.get('/logs', (c) => {
+	try {
+		const levelQuery = c.req.query('level');
+		const levels = levelQuery
+			? levelQuery.split(',').map((l) => l.trim().toLowerCase())
+			: null;
+		let limit = parseInt(c.req.query('limit'), 10);
+		if (Number.isNaN(limit) || limit <= 0) limit = 100;
+		limit = Math.min(limit, 1000);
+
+		const logsDir = path.join(process.cwd(), 'logs');
+		if (!fs.existsSync(logsDir)) {
+			return c.json({ logs: [] });
+		}
+
+		const files = fs
+			.readdirSync(logsDir)
+			.filter((f) => f.endsWith('-combined.log'))
+			.sort()
+			.reverse();
+
+		if (files.length === 0) {
+			return c.json({ logs: [] });
+		}
+
+		const latestLogFile = path.join(logsDir, files[0]);
+		const fileContent = fs.readFileSync(latestLogFile, 'utf-8');
+		const lines = fileContent.split('\n').filter(Boolean).reverse();
+
+		const parsedLogs = [];
+		for (const line of lines) {
+			if (parsedLogs.length >= limit) break;
+			try {
+				const logEntry = JSON.parse(line);
+				if (levels && !levels.includes(logEntry.level?.toLowerCase())) continue;
+				parsedLogs.push(logEntry);
+			} catch (_e) {
+				// Ignore malformed lines
+			}
+		}
+
+		return c.json({
+			success: true,
+			count: parsedLogs.length,
+			logs: parsedLogs,
+		});
+	} catch (error) {
+		return c.json(
+			{ success: false, error: `Failed to fetch logs: ${error}` },
+			500,
+		);
+	}
+});
+
 module.exports = app;

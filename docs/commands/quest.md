@@ -1,15 +1,15 @@
-## 📁 Command Category: Quest
+## Command Category: Quest
 
-### 💾 `/quest`
+### `/quest`
 
 **Description:** 🎁 Manage the Discord Quest Notifier system.
 
-### 💻 Usage
+### Usage
 
 `/quest remove`
 `/quest setup <channel> [mention_role]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/quest remove`**
 > Stop receiving Discord Quest notifications.

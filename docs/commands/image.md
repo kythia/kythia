@@ -1,16 +1,16 @@
-## 📁 Command Category: Image
+## Command Category: Image
 
-### 💾 `/image`
+### `/image`
 
 **Description:** Manage images in the storage
 
-### 💻 Usage
+### Usage
 
 `/image add <image>`
 `/image delete <code>`
 `/image list`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/image add <image>`**
 > Add a new image

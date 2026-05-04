@@ -1,10 +1,10 @@
-## 📁 Command Category: Server-stats
+## Command Category: Server-stats
 
-### 💾 `/server-stats`
+### `/server-stats`
 
 **Description:** 📈 Server statistics settings
 
-### 💻 Usage
+### Usage
 
 `/server-stats add <format> [channel]`
 `/server-stats category <category>`
@@ -13,7 +13,7 @@
 `/server-stats enable <stats>`
 `/server-stats remove <stats>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/server-stats add <format> [<channel>]`**
 > 📈 Add a new stat for a specific channel

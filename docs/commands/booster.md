@@ -1,20 +1,20 @@
-## 📁 Command Category: Booster
+## Command Category: Booster
 
-### 💾 `/booster`
+### `/booster`
 
 **Description:** 🚀 Configure the server booster system
 
-### 📋 Details
+### Details
 
 - **User Permissions:** `ManageGuild`
-### 💻 Usage
+### Usage
 
 `/booster background <url>`
 `/booster channel <channel>`
 `/booster style <style>`
 `/booster text <text>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/booster background <url>`**
 > 🚀 Set booster banner background URL

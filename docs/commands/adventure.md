@@ -1,10 +1,10 @@
-## 📁 Command Category: Adventure
+## Command Category: Adventure
 
-### 💾 `/adventure`
+### `/adventure`
 
 **Description:** ⚔️ Start your adventure in RPG dimension!
 
-### 💻 Usage
+### Usage
 
 `/adventure battle`
 `/adventure inventory`
@@ -14,7 +14,7 @@
 `/adventure start <character>`
 `/adventure use`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/adventure battle`**
 > ⚔️ Fight a monster in the dungeon!

@@ -1,10 +1,10 @@
-## 📁 Command Category: Streak
+## Command Category: Streak
 
-### 💾 `/streak`
+### `/streak`
 
 **Description:** All commands related to the streak system.
 
-### 💻 Usage
+### Usage
 
 `/streak claim`
 `/streak leaderboard`
@@ -15,7 +15,7 @@
 `/streak setting rolereward <action> <streak> <role>`
 `/streak user [target]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/streak claim`**
 > 🔥 Claim your streak for today, keep your streak continue!

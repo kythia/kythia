@@ -1,16 +1,16 @@
-## 📁 Command Category: Globalchat
+## Command Category: Globalchat
 
-### 💾 `/globalchat`
+### `/globalchat`
 
 **Description:** 🌏 Manage global chat settings for this server
 
-### 💻 Usage
+### Usage
 
 `/globalchat info`
 `/globalchat remove`
 `/globalchat setup [channel]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/globalchat info`**
 > Show stats and information for the Kythia Global Chat network!

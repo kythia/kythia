@@ -1,14 +1,14 @@
-## 📁 Command Category: Globalvoice
+## Command Category: Globalvoice
 
-### 💾 `/globalvoice`
+### `/globalvoice`
 
 **Description:** 🔊 Manage global voice settings for this server
 
-### 💻 Usage
+### Usage
 
 `/globalvoice connect <room>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/globalvoice connect <room>`**
 > Connect to a global voice room or create a room

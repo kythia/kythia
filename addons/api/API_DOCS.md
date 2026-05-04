@@ -25,6 +25,7 @@ The **Kythia API** is an internal REST API addon that acts as the bridge between
 - [GET /api/meta/changelog](#get-apimetachangelog)
 - [GET /api/meta/shards](#get-apimetashards)
 - [GET /api/meta/locales](#get-apimetalocales)
+- [GET /api/meta/logs](#get-apimetalogs)
 - [GET /api/chat/:guildId/channels](#get-apichatguildidchannels)
 - [GET /api/chat/messages/:channelId](#get-apichatmessageschannelid)
 - [POST /api/chat/messages/:channelId](#post-apichatmessageschannelidest)
@@ -341,7 +342,14 @@ Returns raw Prometheus-compatible metrics from the bot's internal metrics collec
 
 **Authentication:** Bearer token required.
 
-**Response:** Raw text in Prometheus exposition format (Content-Type depends on the metrics library).
+**Query Parameters:**
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `format` | `string` | `none` | Optional format. Set to `json` to receive JSON formatted metrics instead of raw text. |
+
+**Response (Default):** Raw text in Prometheus exposition format (Content-Type depends on the metrics library).
+**Response (format=json):** JSON object containing Prometheus metrics.
 
 **Error (503):** If the metrics collector is not available:
 ```
@@ -556,6 +564,47 @@ Returns an array of objects containing all loaded Discord locales with their key
 | `count` | `number` | Total number of returned locales |
 | `locales[].locale` | `string` | The Discord locale identifier key (e.g., `"en-US"`) |
 | `locales[].name` | `string` | Human-readable name (e.g., `"EnglishUS"`) |
+
+---
+
+### `GET /api/meta/logs`
+
+Returns parsed logs from the latest active log file, ordered newest first.
+
+**Authentication:** Bearer token required.
+
+**Query Parameters:**
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `level` | `string` | none | Optional filter. Supports comma-separated multiple levels (e.g. `warn,error`). |
+| `limit` | `number` | `100` | Optional limit for log entries to retrieve. Max: 1000. |
+
+**Response:**
+```json
+{
+"success": true,
+"count": 1,
+"logs": [
+  {
+    "level": "warn",
+    "message": "TOPGG_API_KEY is not set. Top.gg auto-posting is disabled.",
+    "timestamp": "2026-05-04T10:48:35.447Z",
+    "label": "core"
+  }
+]
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `success` | `boolean` | Always `true` on success |
+| `count` | `number` | Number of returned logs |
+| `logs` | `array` | Array of log entry objects |
+| `logs[].level` | `string` | Log level (e.g. `info`, `warn`, `error`) |
+| `logs[].message` | `string` | The log message |
+| `logs[].timestamp` | `string` | ISO timestamp of the log entry |
+| `logs[].label` | `string` | Optional tag denoting the origin module |
 
 ---
 

@@ -1,16 +1,16 @@
-## 📁 Command Category: Music
+## Command Category: Music
 
-### 💾 `/music`
+### `/music`
 
 **Description:** 🎵 Full music command suite using Lavalink
 
-### 📋 Details
+### Details
 
 - **Aliases:** `music`, `m`
 - **Cooldown:** 15 seconds
 - **User Permissions:** `ViewChannel`, `SendMessages`, `Connect`, `Speak`
 - **Bot Permissions:** `SendMessages`, `Connect`, `Speak`
-### 💻 Usage
+### Usage
 
 `/music play <search>`
 `/music pause`
@@ -57,7 +57,7 @@
 `/music favorite add <search>`
 `/music favorite remove <name>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/music play <search>`**
 > 🎶 Play a song or add it to the queue

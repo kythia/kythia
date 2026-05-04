@@ -1,16 +1,16 @@
-## 📁 Command Category: Tempvoice
+## Command Category: Tempvoice
 
-### 💾 `/tempvoice`
+### `/tempvoice`
 
 **Description:** 🎧 Manage and customize the Kythia TempVoice system
 
-### 💻 Usage
+### Usage
 
 `/tempvoice remove`
 `/tempvoice repair`
 `/tempvoice setup [trigger_channel] [category] [control_panel]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/tempvoice remove`**
 > Disable the tempvoice system and remove the panel.

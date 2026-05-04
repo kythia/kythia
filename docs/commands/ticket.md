@@ -1,13 +1,13 @@
-## 📁 Command Category: Ticket
+## Command Category: Ticket
 
-### 💾 `/ticket`
+### `/ticket`
 
 **Description:** 🎟️ All commands related to kythia ticket system.
 
-### 📋 Details
+### Details
 
 - **User Permissions:** `ManageGuild`
-### 💻 Usage
+### Usage
 
 `/ticket add <user>`
 `/ticket close`
@@ -19,7 +19,7 @@
 `/ticket type create`
 `/ticket type delete <type_id>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/ticket add <user>`**
 > Add a user to the ticket channel

@@ -1,16 +1,16 @@
-## 📁 Command Category: Autoreply
+## Command Category: Autoreply
 
-### 💾 `/autoreply`
+### `/autoreply`
 
 **Description:** 🤖 Manage custom auto-replies for your server.
 
-### 💻 Usage
+### Usage
 
 `/autoreply add <trigger> [response] [media] [use_container]`
 `/autoreply list`
 `/autoreply remove <trigger>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/autoreply add <trigger> [<response>] [<media>] [<use_container>]`**
 > ➕ Add a new auto-reply.

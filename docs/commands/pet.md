@@ -1,10 +1,10 @@
-## 📁 Command Category: Pet
+## Command Category: Pet
 
-### 💾 `/pet`
+### `/pet`
 
 **Description:** 🐾 All commands related to the pet system.
 
-### 💻 Usage
+### Usage
 
 `/pet admin add <name> <icon> <rarity> <bonus_type> <bonus_value>`
 `/pet admin delete <name>`
@@ -19,7 +19,7 @@
 `/pet sell`
 `/pet use`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/pet admin add <name> <icon> <rarity> <bonus_type> <bonus_value>`**
 > Add a new pet

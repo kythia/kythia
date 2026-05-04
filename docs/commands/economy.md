@@ -1,10 +1,10 @@
-## 📁 Command Category: Economy
+## Command Category: Economy
 
-### 💾 `/eco`
+### `/eco`
 
 **Description:** 💰 Get your money and become rich
 
-### 💻 Usage
+### Usage
 
 `/eco account create <bank>`
 `/eco account edit <bank>`
@@ -35,7 +35,7 @@
 `/eco withdraw <amount>`
 `/eco work`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/eco account create <bank>`**
 > 👤 Create an account and choose a bank type.

@@ -1,10 +1,10 @@
-## 📁 Command Category: Leveling
+## Command Category: Leveling
 
-### 💾 `/level`
+### `/level`
 
 **Description:** 🏅 All commands related to the leveling system.
 
-### 💻 Usage
+### Usage
 
 `/level add <user> <level>`
 `/level leaderboard`
@@ -17,7 +17,7 @@
 `/level xp-add <user> <xp>`
 `/level xp-set <user> <xp>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/level add <user> <level>`**
 > Add levels to a user.

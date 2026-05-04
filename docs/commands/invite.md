@@ -1,10 +1,10 @@
-## 📁 Command Category: Invite
+## Command Category: Invite
 
-### 💾 `/invites`
+### `/invites`
 
 **Description:** 🔗 Manage invites and rewards
 
-### 💻 Usage
+### Usage
 
 `/invites add <user> <number>`
 `/invites leaderboard`
@@ -13,7 +13,7 @@
 `/invites setting invite <channel>`
 `/invites user [user]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/invites add <user> <number>`**
 > Add invites to a user (Admin only)

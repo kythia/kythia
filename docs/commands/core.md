@@ -1,10 +1,10 @@
-## 📁 Command Category: Core
+## Command Category: Core
 
-### 💾 `/set`
+### `/set`
 
 **Description:** ⚙️ Settings bot configuration
 
-### 💻 Usage
+### Usage
 
 `/set language set <lang>`
 `/set view`
@@ -17,7 +17,7 @@
 `/set features invites <status>`
 `/set features boost-log <status>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/set language set <lang>`**
 > 🌐 Set bot language
@@ -97,18 +97,18 @@
   - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
 
 
-### 💾 `/ascii`
+### `/ascii`
 
 **Description:** 🎨 Generate ASCII art from your text using figlet.
 
-### 📋 Details
+### Details
 
 - **Cooldown:** 15 seconds
-### 💻 Usage
+### Usage
 
 `/ascii <text> [font] [allfonts]`
 
-### ⚙️ Options
+### Options
 
 - **`text*`**
   - **Description:** The text to convert to ASCII art
@@ -121,45 +121,45 @@
   - **Type:** Boolean
 
 
-### 💾 `/avatar`
+### `/avatar`
 
 **Description:** 🖼️ Show user avatar.
 
-### 💻 Usage
+### Usage
 
 `/avatar [user]`
 
-### ⚙️ Options
+### Options
 
 - **`user`**
   - **Description:** The user whose avatar you want to see.
   - **Type:** User
 
 
-### 💾 `/banner`
+### `/banner`
 
 **Description:** 🖼️ Show user banner.
 
-### 💻 Usage
+### Usage
 
 `/banner [user]`
 
-### ⚙️ Options
+### Options
 
 - **`user`**
   - **Description:** The user whose banner you want to see.
   - **Type:** User
 
 
-### 💾 `/crack-hash`
+### `/crack-hash`
 
 **Description:** 🔍 Try to lookup a hash from public databases (MD5, SHA1, SHA256, SHA512).
 
-### 💻 Usage
+### Usage
 
 `/crack-hash <algorithm> <hash>`
 
-### ⚙️ Options
+### Options
 
 - **`algorithm*`**
   - **Description:** The hash algorithm to lookup
@@ -170,15 +170,15 @@
   - **Type:** Text
 
 
-### 💾 `/decrypt`
+### `/decrypt`
 
 **Description:** 🔓 Decrypt data using the correct secret key.
 
-### 💻 Usage
+### Usage
 
 `/decrypt <encrypted-data> <secret-key>`
 
-### ⚙️ Options
+### Options
 
 - **`encrypted-data*`**
   - **Description:** The full encrypted string from the /encrypt command
@@ -188,15 +188,15 @@
   - **Type:** Text
 
 
-### 💾 `/encrypt`
+### `/encrypt`
 
 **Description:** 🔒 Encrypt a text with a secret key (two-way encryption).
 
-### 💻 Usage
+### Usage
 
 `/encrypt <text> <secret-key>`
 
-### ⚙️ Options
+### Options
 
 - **`text*`**
   - **Description:** The text you want to encrypt
@@ -206,15 +206,15 @@
   - **Type:** Text
 
 
-### 💾 `/hash`
+### `/hash`
 
 **Description:** 🔒 Hash a text string using MD5, SHA, or other algorithms.
 
-### 💻 Usage
+### Usage
 
 `/hash <algorithm> <text>`
 
-### ⚙️ Options
+### Options
 
 - **`algorithm*`**
   - **Description:** The hash algorithm to use
@@ -225,30 +225,30 @@
   - **Type:** Text
 
 
-### 💾 `/instagram`
+### `/instagram`
 
 **Description:** 📸 Get and play an Instagram post/reel by link.
 
-### 💻 Usage
+### Usage
 
 `/instagram <link>`
 
-### ⚙️ Options
+### Options
 
 - **`link*`**
   - **Description:** The Instagram post/reel link
   - **Type:** Text
 
 
-### 💾 `/obfuscate`
+### `/obfuscate`
 
 **Description:** 🔒 Obfuscate a Lua or JavaScript file and return it as an attachment.
 
-### 💻 Usage
+### Usage
 
 `/obfuscate <type> <file>`
 
-### ⚙️ Options
+### Options
 
 - **`type*`**
   - **Description:** The type of script to obfuscate (lua/javascript)
@@ -259,31 +259,31 @@
   - **Type:** Attachment
 
 
-### 💾 `/tiktok`
+### `/tiktok`
 
 **Description:** 🎬 Get and play a TikTok video by link.
 
-### 💻 Usage
+### Usage
 
 `/tiktok <link>`
 
-### ⚙️ Options
+### Options
 
 - **`link*`**
   - **Description:** The TikTok video link
   - **Type:** Text
 
 
-### 💾 `/nickprefix`
+### `/nickprefix`
 
 **Description:** 📛 Adds or removes a prefix from member nicknames.
 
-### 💻 Usage
+### Usage
 
 `/nickprefix add`
 `/nickprefix remove`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/nickprefix add`**
 > 📛 Adds the highest role prefix to member nicknames.
@@ -295,17 +295,17 @@
 
 
 
-### 💾 `/sticky`
+### `/sticky`
 
 **Description:** 📌 Manage sticky messages in a channel.
 
-### 💻 Usage
+### Usage
 
 `/sticky list`
 `/sticky remove`
 `/sticky set <message>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/sticky list`**
 > 📋 List all sticky messages in this server.
@@ -324,55 +324,55 @@
   - **Type:** Text
 
 
-### 💾 `/about`
+### `/about`
 
 **Description:** 😋 A brief introduction about kythia
 
-### 📋 Details
+### Details
 
 - **Aliases:** `abt`, `🌸`
-### 💻 Usage
+### Usage
 
 `/about`
 
 
 
-### 💾 `/afk`
+### `/afk`
 
 **Description:** 💤 Set your Away From Keyboard (AFK) status.
 
-### 💻 Usage
+### Usage
 
 `/afk [reason]`
 
-### ⚙️ Options
+### Options
 
 - **`reason`**
   - **Description:** The reason for being AFK.
   - **Type:** Text
 
 
-### 💾 `/cache`
+### `/cache`
 
 **Description:** Shows cache statistics.
 
-### 💻 Usage
+### Usage
 
 `/cache`
 
 
 
-### 💾 `/grab`
+### `/grab`
 
 **Description:** 🛍️ grab stickers or emojis from messages.
 
-### 💻 Usage
+### Usage
 
 `/grab sticker <sticker_id>`
 `/grab emoji <emoji>`
 `/grab image <message_id> [name]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/grab sticker <sticker_id>`**
 > Grab a sticker from a message
@@ -400,51 +400,51 @@
   - **Type:** Text
 
 
-### 💾 `/help`
+### `/help`
 
 **Description:** 💡 Displays a list of bot commands with complete details.
 
-### 📋 Details
+### Details
 
 - **Aliases:** `h`, `ℹ️`
-### 💻 Usage
+### Usage
 
 `/help`
 
 
 
-### 💾 `/legal`
+### `/legal`
 
 **Description:** ⚖️ View the Terms of Service and Privacy Policy
 
-### 💻 Usage
+### Usage
 
 `/legal`
 
 
 
-### 💾 `/ping`
+### `/ping`
 
 **Description:** 🔍 Checks the bot's, Discord API's, database and cache/redis connection speed.
 
-### 📋 Details
+### Details
 
 - **Aliases:** `p`, `pong`, `🏓`
-### 💻 Usage
+### Usage
 
 `/ping`
 
 
 
-### 💾 `/report`
+### `/report`
 
 **Description:** 🚨 Report a user to the moderators.
 
-### 💻 Usage
+### Usage
 
 `/report <user> <reason>`
 
-### ⚙️ Options
+### Options
 
 - **`user*`**
   - **Description:** User to report
@@ -454,72 +454,72 @@
   - **Type:** Text
 
 
-### 💾 `/serverinfo`
+### `/serverinfo`
 
 **Description:** 📰 Displays detailed information about the server.
 
-### 💻 Usage
+### Usage
 
 `/serverinfo`
 
 
 
-### 💾 `/stats`
+### `/stats`
 
 **Description:** 📊 Displays kythia statistics.
 
-### 📋 Details
+### Details
 
 - **Aliases:** `s`, `📊`
-### 💻 Usage
+### Usage
 
 `/stats`
 
 
 
-### 💾 `/userinfo`
+### `/userinfo`
 
 **Description:** 📄 Displays information about a user.
 
-### 💻 Usage
+### Usage
 
 `/userinfo [user]`
 
-### ⚙️ Options
+### Options
 
 - **`user`**
   - **Description:** User to get info about
   - **Type:** User
 
 
-### 💾 `/vote-leaderboard`
+### `/vote-leaderboard`
 
 **Description:** 🏆 View top voters for Kythia!
 
-### 💻 Usage
+### Usage
 
 `/vote-leaderboard`
 
 
 
-### 💾 `/vote`
+### `/vote`
 
 **Description:** ❤️ Vote for kythia on top.gg!
 
-### 📋 Details
+### Details
 
 - **Aliases:** `v`
-### 💻 Usage
+### Usage
 
 `/vote`
 
 
 
-### 💾 `/convert`
+### `/convert`
 
 **Description:** 🔄 Convert between units, currencies, etc.
 
-### 💻 Usage
+### Usage
 
 `/convert area <from> <to> <value>`
 `/convert currency <from> <to> <amount>`
@@ -529,7 +529,7 @@
 `/convert temperature <from> <to> <value>`
 `/convert volume <from> <to> <value>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/convert area <from> <to> <value>`**
 > 🟦 Convert area units (e.g. m² to acre)

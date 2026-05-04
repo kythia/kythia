@@ -1,10 +1,10 @@
-## 📁 Command Category: Pro
+## Command Category: Pro
 
-### 💾 `/pro`
+### `/pro`
 
 **Description:** 🌸 All commands related to the Kythia Pro users.
 
-### 💻 Usage
+### Usage
 
 `/pro claim subdomain <name>`
 `/pro dns delete <record>`
@@ -12,7 +12,7 @@
 `/pro dns list <subdomain>`
 `/pro dns set <subdomain> <type> <name> <value> [priority]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/pro claim subdomain <name>`**
 > 🌐 Claim a new .kyth.me subdomain (Max 5).

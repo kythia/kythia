@@ -1,29 +1,29 @@
-## 📁 Command Category: Fun
+## Command Category: Fun
 
-### 💾 `/8ball`
+### `/8ball`
 
 **Description:** 🔮 Ask the magic 8 ball anything
 
-### 💻 Usage
+### Usage
 
 `/8ball <question>`
 
-### ⚙️ Options
+### Options
 
 - **`question*`**
   - **Description:** What do you want to ask?
   - **Type:** Text
 
 
-### 💾 `/act`
+### `/act`
 
 **Description:** 🤗 Perform an anime action with a user
 
-### 💻 Usage
+### Usage
 
 `/act <action> [user]`
 
-### ⚙️ Options
+### Options
 
 - **`action*`**
   - **Description:** The action to perform
@@ -34,25 +34,25 @@
   - **Type:** User
 
 
-### 💾 `/fact`
+### `/fact`
 
 **Description:** 🧠 Get a random useless (but interesting) fact
 
-### 💻 Usage
+### Usage
 
 `/fact`
 
 
 
-### 💾 `/joke`
+### `/joke`
 
 **Description:** 😂 Get a random joke with a hidden punchline
 
-### 💻 Usage
+### Usage
 
 `/joke [category]`
 
-### ⚙️ Options
+### Options
 
 - **`category`**
   - **Description:** Choose a joke category
@@ -60,16 +60,16 @@
   - **Choices:** `🌍 General` (`general`), `🔨 Knock Knock` (`knock-knock`), `💻 Programming` (`programming`), `🌚 Dark` (`dark`), `😬 Pun` (`pun`), `🤪 Misc` (`misc`), `🎭 Spooky` (`spooky`), `🎄 Christmas` (`christmas`)
 
 
-### 💾 `/math`
+### `/math`
 
 **Description:** 🔢 Speed math quiz — answer streaks build your leaderboard score!
 
-### 💻 Usage
+### Usage
 
 `/math play`
 `/math leaderboard`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/math play`**
 > ▶️ Start a math quiz
@@ -81,15 +81,15 @@
 
 
 
-### 💾 `/meme`
+### `/meme`
 
 **Description:** 😂 Get a random meme from Reddit
 
-### 💻 Usage
+### Usage
 
 `/meme [subreddit]`
 
-### ⚙️ Options
+### Options
 
 - **`subreddit`**
   - **Description:** Choose a subreddit to pull the meme from
@@ -97,70 +97,70 @@
   - **Choices:** `😂 Memes` (`memes`), `🔥 Dank Memes` (`dankmemes`), `🪞 Me IRL` (`me_irl`), `🐸 Advice Animals` (`AdviceAnimals`), `😄 Funny` (`funny`), `💻 Programmer Humor` (`ProgrammerHumor`)
 
 
-### 💾 `/quote`
+### `/quote`
 
 **Description:** ✨ Get a random inspirational quote
 
-### 💻 Usage
+### Usage
 
 `/quote`
 
 
 
-### 💾 `/roast`
+### `/roast`
 
 **Description:** 🔥 Roast someone with a savage insult
 
-### 💻 Usage
+### Usage
 
 `/roast [user]`
 
-### ⚙️ Options
+### Options
 
 - **`user`**
   - **Description:** The user to roast
   - **Type:** User
 
 
-### 💾 `/rps`
+### `/rps`
 
 **Description:** ✂️ Play Rock Paper Scissors — against the bot or a friend!
 
-### 💻 Usage
+### Usage
 
 `/rps [opponent]`
 
-### ⚙️ Options
+### Options
 
 - **`opponent`**
   - **Description:** Challenge a friend (leave empty to play vs bot)
   - **Type:** User
 
 
-### 💾 `/summon`
+### `/summon`
 
 **Description:** 🔔 Summon a friend to your current channel
 
-### 💻 Usage
+### Usage
 
 `/summon <user>`
 
-### ⚙️ Options
+### Options
 
 - **`user*`**
   - **Description:** The friend you want to summon
   - **Type:** User
 
 
-### 💾 `/tictactoe`
+### `/tictactoe`
 
 **Description:** ⭕ Play Tic Tac Toe with a friend or bot.
 
-### 💻 Usage
+### Usage
 
 `/tictactoe <opponent> [difficulty]`
 
-### ⚙️ Options
+### Options
 
 - **`opponent*`**
   - **Description:** Select an opponent to play with. you can play with me too!
@@ -171,27 +171,27 @@
   - **Choices:** `Easy` (`bot_easy`), `Medium` (`bot_medium`), `Hard (Unbeatable)` (`bot_hard`)
 
 
-### 💾 `/wordle`
+### `/wordle`
 
 **Description:** 🔡 Play Wordle! Guess the 5-letter word in 6 tries.
 
-### 💻 Usage
+### Usage
 
 `/wordle`
 
 
 
-### 💾 `/friend`
+### `/friend`
 
 **Description:** 🤝 Friendship system commands
 
-### 💻 Usage
+### Usage
 
 `/friend add <user>`
 `/friend list`
 `/friend remove <user>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/friend add <user>`**
 > 🤝 Add someone as a friend
@@ -213,18 +213,18 @@
   - **Type:** User
 
 
-### 💾 `/marry`
+### `/marry`
 
 **Description:** 💍 Marriage system commands
 
-### 💻 Usage
+### Usage
 
 `/marry divorce`
 `/marry kiss`
 `/marry profile`
 `/marry propose <user>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/marry divorce`**
 > 💔 End your current marriage

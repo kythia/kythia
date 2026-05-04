@@ -1,10 +1,10 @@
-## 📁 Command Category: Checklist
+## Command Category: Checklist
 
-### 💾 `/checklist`
+### `/checklist`
 
 **Description:** 📝 Create checklists for you or your server to make life easier
 
-### 💻 Usage
+### Usage
 
 `/checklist personal add <item>`
 `/checklist personal clear`
@@ -17,7 +17,7 @@
 `/checklist server remove <index>`
 `/checklist server toggle <index>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/checklist personal add <item>`**
 > Add item to personal checklist

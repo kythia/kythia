@@ -1,17 +1,17 @@
-## 📁 Command Category: Giveaway
+## Command Category: Giveaway
 
-### 💾 `/giveaway`
+### `/giveaway`
 
 **Description:** 🎉 Create a giveaway event
 
-### 💻 Usage
+### Usage
 
 `/giveaway cancel <giveaway>`
 `/giveaway end <giveaway>`
 `/giveaway reroll <giveaway>`
 `/giveaway start <duration> <winners> <prize> [description] [color] [role]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/giveaway cancel <giveaway>`**
 > Cancel a running giveaway

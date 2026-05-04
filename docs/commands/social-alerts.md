@@ -1,10 +1,10 @@
-## 📁 Command Category: Social-alerts
+## Command Category: Social-alerts
 
-### 💾 `/social-alert`
+### `/social-alert`
 
 **Description:** 📡 Manage YouTube social alerts for this server.
 
-### 💻 Usage
+### Usage
 
 `/social-alert add <platform> <channel> <discord_channel> [message]`
 `/social-alert list`
@@ -12,7 +12,7 @@
 `/social-alert setting edit [mention_role]`
 `/social-alert setting view`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/social-alert add <platform> <channel> <discord_channel> [<message>]`**
 > ➕ Subscribe to a social media creator and get notified on new posts.

@@ -1,10 +1,10 @@
-## 📁 Command Category: Minecraft
+## Command Category: Minecraft
 
-### 💾 `/minecraft`
+### `/minecraft`
 
 **Description:** ⛏️ Minecraft: Java Edition player lookup commands
 
-### 💻 Usage
+### Usage
 
 `/minecraft player avatar <player>`
 `/minecraft player body <player>`
@@ -21,7 +21,7 @@
 `/minecraft set port <port>`
 `/minecraft set status-channel <channel>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/minecraft player avatar <player>`**
 > Shows the Minecraft: Java Edition avatar of the provided player name

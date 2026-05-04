@@ -1,16 +1,16 @@
-## 📁 Command Category: Autoreact
+## Command Category: Autoreact
 
-### 💾 `/autoreact`
+### `/autoreact`
 
 **Description:** 🤖 Manage automatic reactions for the server.
 
-### 💻 Usage
+### Usage
 
 `/autoreact add <emoji> [trigger] [channel]`
 `/autoreact list`
 `/autoreact remove <trigger>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/autoreact add <emoji> [<trigger>] [<channel>]`**
 > ➕ Add a new auto-reaction.

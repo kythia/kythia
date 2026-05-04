@@ -1,14 +1,14 @@
-## 📁 Command Category: Ai
+## Command Category: Ai
 
-### 💾 `/imagen`
+### `/imagen`
 
 **Description:** 🎨 Generate an image from a prompt or transform an existing image using Gemini AI.
 
-### 💻 Usage
+### Usage
 
 `/imagen [prompt] [image]`
 
-### ⚙️ Options
+### Options
 
 - **`prompt`**
   - **Description:** What do you want to generate or how to transform the image?
@@ -18,15 +18,15 @@
   - **Type:** Attachment
 
 
-### 💾 `/translate`
+### `/translate`
 
 **Description:** 🌐 Translate text to another language using Gemini AI.
 
-### 💻 Usage
+### Usage
 
 `/translate <text> <lang>`
 
-### ⚙️ Options
+### Options
 
 - **`text*`**
   - **Description:** Text to translate
@@ -36,11 +36,11 @@
   - **Type:** Text
 
 
-### 💾 `/ai`
+### `/ai`
 
 **Description:** 🧠 All commands related to kythia ai system.
 
-### 💻 Usage
+### Usage
 
 `/ai disable`
 `/ai enable`
@@ -51,7 +51,7 @@
 `/ai list`
 `/ai personality <style>`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/ai disable`**
 > Disable AI in this channel

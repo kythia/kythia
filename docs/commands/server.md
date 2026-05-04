@@ -1,21 +1,21 @@
-## 📁 Command Category: Server
+## Command Category: Server
 
-### 💾 `/server`
+### `/server`
 
 **Description:** ⚙️ Discord server management tools
 
-### 📋 Details
+### Details
 
 - **Aliases:** `srv`
 - **Bot Permissions:** `ManageChannels`, `ManageGuild`, `ManageRoles`
-### 💻 Usage
+### Usage
 
 `/server autobuild <template> <reset> [dry_run] [include_voice] [private_staff] [locale]`
 `/server backup`
 `/server reset [clear]`
 `/server restore <file> [clear]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/server autobuild <template> <reset> [<dry_run>] [<include_voice>] [<private_staff>] [<locale>]`**
 > Automatically build server structure from a JSON template

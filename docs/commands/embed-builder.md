@@ -1,10 +1,10 @@
-## 📁 Command Category: Embed-builder
+## Command Category: Embed-builder
 
-### 💾 `/embed-builder`
+### `/embed-builder`
 
 **Description:** 🎨 Create and manage saved embeds for your server
 
-### 💻 Usage
+### Usage
 
 `/embed-builder create <name> [mode]`
 `/embed-builder delete <id> [delete_message]`
@@ -12,7 +12,7 @@
 `/embed-builder list`
 `/embed-builder send <id> [channel] [allowed_mentions]`
 
-### 🔧 Subcommands
+### Subcommands
 
 **`/embed-builder create <name> [<mode>]`**
 > ✨ Create a new saved embed
