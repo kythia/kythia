@@ -2,83 +2,60 @@
 
 ## Overview
 
-The **Image Addon** allows users to upload, store, and manage images using the **Kythia Storage Server**. This addon integrates with an external storage service for scalable, cloud-ready image management.
+The **Image Addon** allows users to upload, store, and manage images using **Cloudflare R2** — an S3-compatible object storage service with no egress fees.
 
 ## Requirements
 
-- **Kythia Storage Server** - A running instance of the Kythia Storage Server (Rust-based)
-- **API Key** - Valid API key for authentication with the storage server
+- **Cloudflare R2 bucket** — with a public URL enabled (custom domain or R2.dev subdomain)
+- **R2 API Token** — with `Object Read & Write` permissions on the bucket
+- **`@aws-sdk/client-s3`** npm package
 
 ## Configuration
 
-### Environment Variables (Recommended)
+### Environment Variables
 
-Add these variables to your `.env` file or environment:
+Add these to your `.env` file:
 
 ```bash
-# Kythia Storage Server Base URL
-KYTHIA_IMAGE_STORAGE_URL=http://localhost:3000
+# ─── Cloudflare R2 Credentials ───────────────────────────────────────────────
 
-# API Key for authentication
-KYTHIA_IMAGE_STORAGE_API_KEY=your-super-secret-key-here
+# Your Cloudflare Account ID
+# Found at: https://dash.cloudflare.com → right sidebar → Account ID
+R2_ACCOUNT_ID=your-cloudflare-account-id
+
+# R2 API Token – Access Key ID
+# Generated at: Cloudflare Dashboard → R2 → Manage R2 API Tokens
+R2_ACCESS_KEY_ID=your-r2-access-key-id
+
+# R2 API Token – Secret Access Key
+R2_SECRET_ACCESS_KEY=your-r2-secret-access-key
+
+# The name of your R2 bucket
+R2_BUCKET_NAME=your-bucket-name
+
+# Public base URL for the bucket (no trailing slash)
+# Either your custom domain:     https://img.example.com
+# Or the R2.dev public URL:      https://pub-xxxx.r2.dev
+R2_PUBLIC_URL=https://pub-xxxx.r2.dev
 ```
 
-### Programmatic Configuration
+### How to create an R2 API Token
 
-Alternatively, configure via `kythia.config.js`:
+1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com) → **R2** → **Manage R2 API Tokens**
+2. Click **Create API Token**
+3. Set permissions: **Object Read & Write** on your specific bucket
+4. Copy the **Access Key ID** and **Secret Access Key** — the secret is shown only once
 
-```javascript
-module.exports = {
-  // ... other config
-  addons: {
-    image: {
-      storageUrl: 'http://localhost:3000',
-      apiKey: 'your-super-secret-key-here'
-    }
-  }
-}
-```
+### Enabling Public Access on Your Bucket
 
-## Setting up Kythia Storage Server
-
-1. **Clone and setup the storage server:**
-   ```bash
-   git clone https://github.com/kenndeclouv/kythia-storage.git
-   cd kythia-storage
-   cp .env.example .env
-   ```
-
-2. **Configure the storage server `.env`:**
-   ```bash
-   HOST=0.0.0.0
-   PORT=3000
-   BASE_URL=http://localhost:3000
-   
-   # Generate a secure API key
-   API_KEYS=your-super-secret-key-here
-   
-   UPLOAD_DIR=./files
-   MAX_FILE_SIZE_MB=10
-   
-   # For development
-   DATABASE_TYPE=sqlite
-   DATABASE_URL=sqlite:./storage.db
-   
-   # File types
-   ALLOWED_EXTENSIONS=jpg,jpeg,png,gif,webp,svg
-   ```
-
-3. **Run the storage server:**
-   ```bash
-   cargo run --release
-   ```
-
-The storage server will be available at `http://localhost:3000`.
+Go to your R2 bucket → **Settings** → **Public Access**, then either:
+- Allow the free **R2.dev subdomain** (`https://pub-xxxx.r2.dev`), or
+- Connect a **custom domain** you own
 
 ## Commands
 
 ### `/image add`
-Upload a new image to the storage server.
+Upload a new image to Cloudflare R2.
 
 **Usage:**
 ```
@@ -86,10 +63,13 @@ Upload a new image to the storage server.
 ```
 
 **What it does:**
-- Validates the file is an image
-- Uploads to Kythia Storage Server via API
-- Stores metadata in database
-- Returns a public URL
+1. Validates the attachment is an image
+2. Downloads the image from Discord's CDN into a Buffer
+3. Uploads the Buffer to R2 under a unique key (`images/<userId>/<uuid>.<ext>`)
+4. Stores metadata (key, public URL, MIME type, file size) in the database
+5. Replies with the public R2 URL
+
+**Supported formats:** `jpg`, `jpeg`, `png`, `gif`, `webp`, `svg`, `bmp`, `tiff`, `ico`, `avif`
 
 ### `/image list`
 List all your uploaded images.
@@ -99,12 +79,8 @@ List all your uploaded images.
 /image list
 ```
 
-**What it shows:**
-- Image code (filename)
-- Public URL to access the image
-
 ### `/image delete`
-Delete an image by its code.
+Delete an image by its code (the filename/key shown in `/image list`).
 
 **Usage:**
 ```
@@ -112,65 +88,69 @@ Delete an image by its code.
 ```
 
 **What it does:**
-- Deletes the image from the storage server
+- Deletes the object from Cloudflare R2
 - Removes the database record
 
-## Database Schema
+## File Structure
 
-The addon stores the following metadata:
+```
+addons/image/
+├── addon.json
+├── README.md
+├── commands/
+│   ├── _command.js       # Slash command group definition
+│   ├── add.js            # /image add
+│   ├── delete.js         # /image delete
+│   └── list.js           # /image list
+├── services/
+│   └── r2.js             # ← Cloudflare R2 service (upload / delete)
+├── database/
+│   ├── migrations/
+│   └── models/
+│       └── Image.js
+└── lang/
+```
+
+## Database Schema
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `userId` | STRING | Discord user ID who uploaded |
-| `filename` | STRING | Stored filename |
+| `filename` | STRING | R2 object key (e.g. `images/<userId>/<uuid>.png`) |
 | `originalName` | STRING | Original Discord filename |
-| `fileId` | STRING | Storage server's file ID (UUID) |
-| `storageUrl` | TEXT | Public URL to access the file |
-| `mimetype` | STRING | MIME type (e.g., `image/jpeg`) |
+| `fileId` | STRING | Same as `filename` (R2 key) |
+| `storageUrl` | TEXT | Public R2 URL |
+| `mimetype` | STRING | MIME type (e.g. `image/jpeg`) |
 | `fileSize` | INTEGER | File size in bytes |
 
 ## Troubleshooting
 
-### ❌ "Storage API key not configured"
-**Solution:** Set `KYTHIA_IMAGE_STORAGE_API_KEY` in your environment or configure `kythiaConfig.addons.image.apiKey`.
+### ❌ "R2_ACCOUNT_ID is not set"
+Set the `R2_ACCOUNT_ID` environment variable to your Cloudflare Account ID.
 
-### ❌ "Storage server error (401)"
-**Solution:** Your API key is invalid. Check that the key matches the one configured in the storage server's `API_KEYS`.
+### ❌ "R2_BUCKET_NAME is not set"
+Set the `R2_BUCKET_NAME` environment variable to the name of your bucket.
 
-### ❌ "Storage server error (403)"
-**Solution:** The file type may not be allowed. Check `ALLOWED_EXTENSIONS` in the storage server configuration.
+### ❌ "R2_PUBLIC_URL is not set"
+Set the `R2_PUBLIC_URL` to your bucket's public base URL (custom domain or R2.dev URL).
 
-### ❌ "Failed to upload image: fetch failed"
-**Solution:** The storage server is not reachable. Verify:
-- Storage server is running
-- `KYTHIA_IMAGE_STORAGE_URL` is correct
-- Network connectivity
+### ❌ Upload fails with 403 / Access Denied
+- Confirm the R2 API token has **Object Read & Write** on the correct bucket.
+- Double-check `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY`.
 
-## Migration from Local Storage
+### ❌ Image URL returns 403 / Access Denied
+- Your bucket's public access is not enabled.
+- Go to R2 → your bucket → **Settings** → **Public Access** and enable it.
 
-If you previously used local file storage:
-
-1. **Option A: Re-upload images**
-   - Users must re-upload their images using `/image add`
-   - Old local files in `storage/images/` will not be accessible
-
-2. **Option B: Manual migration**
-   - Upload existing files to the storage server using the API
-   - Update database records with new `fileId` and `storageUrl`
+### ❌ Image URL returns the file as a download instead of rendering
+- The `ContentType` was not set correctly. This is handled automatically based on file extension in `services/r2.js`.
 
 ## Security Best Practices
 
-- ✅ Use strong, unique API keys
-- ✅ Enable HTTPS in production (use a reverse proxy like Nginx)
-- ✅ Restrict allowed file types in storage server config
-- ✅ Set appropriate `MAX_FILE_SIZE_MB` limits
-- ✅ Regularly backup the storage server's database and files
-
-## Support
-
-For issues with:
-- **Image Addon**: Check Kythia Discord server
-- **Storage Server**: See [Kythia Storage Documentation](https://github.com/kenndeclouv/kythia-storage)
+- ✅ Store credentials in environment variables, never hardcode them
+- ✅ Scope your R2 API token to only the specific bucket it needs
+- ✅ Use a custom domain with HTTPS for production public URLs
+- ✅ Set a maximum file size in your bot's attachment validation if needed
 
 ---
 

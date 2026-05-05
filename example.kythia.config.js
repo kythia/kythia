@@ -355,11 +355,13 @@ function loadKythiaConfig() {
 			},
 			image: {
 				// ! WARN
-				// Need to add your own image storage
-				// you can use https://github.com/kenndeclouv/kythia-storage
+				// need to setup cloudflare r2 first
 				active: false,
-				storageUrl: process.env.KYTHIA_IMAGE_STORAGE_URL,
-				apiKey: process.env.KYTHIA_IMAGE_STROAGE_API_KEY,
+				accountId: process.env.R2_ACCOUNT_ID,
+				accessKeyId: process.env.R2_ACCESS_KEY_ID,
+				secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+				bucketName: process.env.R2_BUCKET_NAME,
+				publicUrl: process.env.R2_PUBLIC_URL,
 			},
 			invite: {
 				active: true,

@@ -7,6 +7,7 @@
  */
 
 const { MessageFlags } = require('discord.js');
+const { deleteFromR2 } = require('../services/r2');
 
 module.exports = {
 	subcommand: true,
@@ -30,10 +31,14 @@ module.exports = {
 		const { Image } = models;
 		const { simpleContainer } = helpers.discord;
 
+		// R2 credentials — configure these in kythia.config.js under addons.image
+		const r2Config = kythiaConfig.addons.image;
+
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 		const code = interaction.options.getString('code');
 
+		// Look up the image record by the user's own uploads
 		const image = await Image.getCache({
 			userId: interaction.user.id,
 			filename: code,
@@ -51,48 +56,12 @@ module.exports = {
 			});
 		}
 
-		// Get storage server configuration
-		const storageUrl =
-			kythiaConfig.addons.image?.storageUrl ||
-			process.env.KYTHIA_IMAGE_STORAGE_URL ||
-			'http://localhost:3000';
-		const apiKey =
-			kythiaConfig.addons.image?.apiKey ||
-			process.env.KYTHIA_IMAGE_STORAGE_API_KEY ||
-			'';
-
-		if (!apiKey) {
-			const components = await simpleContainer(
-				interaction,
-				'❌ **Storage API key not configured.** Please set `KYTHIA_IMAGE_STORAGE_API_KEY` in your environment or configure `kythiaConfig.addons.image.apiKey`.',
-				{ color: kythiaConfig.bot.color },
-			);
-			return interaction.editReply({
-				components,
-				flags: MessageFlags.IsComponentsV2,
-			});
-		}
-
 		try {
-			// Delete from Kythia Storage Server
-			const deleteResponse = await fetch(
-				`${storageUrl}/api/files/${image.fileId}`,
-				{
-					method: 'DELETE',
-					headers: {
-						Authorization: `Bearer ${apiKey}`,
-					},
-				},
-			);
+			// 1. Delete the object from Cloudflare R2 using the stored key.
+			//    `image.filename` holds the R2 object key (e.g. "images/<userId>/<uuid>.png").
+			await deleteFromR2(image.filename, r2Config);
 
-			if (!deleteResponse.ok && deleteResponse.status !== 404) {
-				const errorText = await deleteResponse.text();
-				throw new Error(
-					`Storage server error (${deleteResponse.status}): ${errorText}`,
-				);
-			}
-
-			// Delete from database
+			// 2. Remove the database record
 			await image.destroy();
 
 			const components = await simpleContainer(
