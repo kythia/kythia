@@ -163,6 +163,9 @@ The **Kythia API** is an internal REST API addon that acts as the bridge between
   - [Presence](#presence-apiownerpresence)
   - [Chat (DM as bot)](#chat-dm-as-bot-apiownerchat)
   - [Restart](#restart-apiownerrestart)
+    - [Check Schedule](#get-apiownerrestart)
+    - [Cancel Schedule](#delete-apiownerrestart)
+    - [Trigger Restart](#post-apiownerrestart)
 - [Error Reference](#error-reference)
 
 ---
@@ -8459,6 +8462,42 @@ Send a direct message to a Discord user as the bot.
 
 ### Restart (`/api/owner/restart`)
 
+#### `GET /api/owner/restart`
+
+Check whether a restart is currently scheduled via the API.
+
+**Response:**
+```json
+{
+  "success": true,
+  "scheduled": true,
+  "timestamp": 1746500000000
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `success` | `boolean` | Always `true` |
+| `scheduled` | `boolean` | Whether a restart is pending |
+| `timestamp` | `number \| null` | Unix epoch (ms) of the scheduled restart, or `null` |
+
+> The `timestamp` field mirrors `client.kythiaRestartTimestamp` set either by the slash command or by a delayed `POST /api/owner/restart`.
+
+---
+
+#### `DELETE /api/owner/restart`
+
+Cancel a previously scheduled restart (set via `POST /api/owner/restart` with a `delaySeconds` value).
+
+**Response:**
+```json
+{ "success": true, "message": "Scheduled restart cancelled." }
+```
+
+**Error (404):** No scheduled restart is pending.
+
+---
+
 #### `POST /api/owner/restart`
 
 Trigger a bot restart. The API acknowledges the request before the process exits.
@@ -8497,6 +8536,6 @@ Trigger a bot restart. The API acknowledges the request before the process exits
 }
 ```
 
-> **Note:** For immediate restarts (`delaySeconds: 0`), the API response may arrive before the restart is fully executed.
+> **Note:** For immediate restarts (`delaySeconds: 0`), the API response may arrive before the restart is fully executed. For delayed restarts, the scheduled time is stored in `client.kythiaRestartTimestamp` and can be inspected via `GET /api/owner/restart` or cancelled via `DELETE /api/owner/restart`.
 
 ---

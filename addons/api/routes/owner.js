@@ -1304,6 +1304,69 @@ app.post('/chat', async (c) => {
 // RESTART
 // =============================================================================
 
+/** Module-level timer handle shared between POST (schedule) and DELETE (cancel). */
+let apiRestartTimer = null;
+
+/**
+ * GET /api/owner/restart
+ * Returns the currently scheduled restart timestamp (if any).
+ */
+app.get('/restart', (c) => {
+	try {
+		const client = getClient(c);
+		const timestamp = client.kythiaRestartTimestamp ?? null;
+
+		return c.json({
+			success: true,
+			scheduled: timestamp !== null,
+			timestamp,
+		});
+	} catch (error) {
+		getLogger(c).error(
+			`GET /api/owner/restart error: ${error.message || error}`,
+			{ label: 'api' },
+		);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+/**
+ * DELETE /api/owner/restart
+ * Cancel a previously scheduled restart.
+ */
+app.delete('/restart', (c) => {
+	try {
+		const client = getClient(c);
+
+		if (!apiRestartTimer && !client.kythiaRestartTimestamp) {
+			return c.json(
+				{ success: false, error: 'No scheduled restart to cancel.' },
+				404,
+			);
+		}
+
+		if (apiRestartTimer) {
+			clearTimeout(apiRestartTimer);
+			apiRestartTimer = null;
+		}
+
+		client.kythiaRestartTimestamp = null;
+
+		getLogger(c).info('Scheduled restart cancelled via API.', { label: 'api' });
+
+		return c.json({
+			success: true,
+			message: 'Scheduled restart cancelled.',
+		});
+	} catch (error) {
+		getLogger(c).error(
+			`DELETE /api/owner/restart error: ${error.message || error}`,
+			{ label: 'api' },
+		);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
 /**
  * POST /api/owner/restart
  * Restart the bot process.
@@ -1330,7 +1393,7 @@ app.post('/restart', async (c) => {
 		);
 	}
 
-	if (delaySeconds > 0) {
+	if (delaySeconds !== 0) {
 		if (typeof delaySeconds !== 'number' || delaySeconds < 0) {
 			return c.json(
 				{
@@ -1390,7 +1453,18 @@ app.post('/restart', async (c) => {
 		process.exit(0);
 	};
 
-	setTimeout(() => doRestart(), delaySeconds * 1000);
+	if (apiRestartTimer) clearTimeout(apiRestartTimer);
+
+	if (delaySeconds > 0) {
+		const client = getClient(c);
+		client.kythiaRestartTimestamp = Date.now() + delaySeconds * 1000;
+		apiRestartTimer = setTimeout(() => {
+			apiRestartTimer = null;
+			doRestart();
+		}, delaySeconds * 1000);
+	} else {
+		setTimeout(() => doRestart(), 0);
+	}
 
 	return c.json({
 		success: true,
