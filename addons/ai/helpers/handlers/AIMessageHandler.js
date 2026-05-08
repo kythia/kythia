@@ -15,6 +15,7 @@ const { ChannelType } = require('discord.js');
 const { utils } = require('kythia-core');
 const { buildSystemInstruction } = require('../prompt-builder');
 const { getAndUseNextAvailableToken } = require('../gemini');
+const wait = require('node:timers/promises').setTimeout;
 
 /** Minimum supported model for tool context circulation. */
 const MINIMUM_MODEL = 'gemini-3-flash-preview';
@@ -84,6 +85,20 @@ class AIMessageHandler {
 		});
 
 		this.userCooldowns = new Map();
+
+		// Cleanup interval to prevent memory leak
+		setInterval(
+			() => {
+				const now = Date.now();
+				const windowMs = (this.aiConfig.userCooldownWindowSec ?? 60) * 1000;
+				for (const [userId, timestamps] of this.userCooldowns.entries()) {
+					const valid = timestamps.filter((ts) => now - ts < windowMs);
+					if (valid.length === 0) this.userCooldowns.delete(userId);
+					else this.userCooldowns.set(userId, valid);
+				}
+			},
+			5 * 60 * 1000,
+		).unref();
 	}
 
 	// ─── Helpers ──────────────────────────────────────────────────────────────
@@ -113,12 +128,58 @@ class AIMessageHandler {
 		return typeof raw === 'string' ? raw.trim() : '';
 	}
 
-	/** Build the unified tools array for every request. */
-	_buildTools(_bot) {
-		return [
-			{ googleSearch: {} },
-			{ functionDeclarations: [SAVE_MEMORY_DECLARATION] },
-		];
+	/** Build the unified tools array conditionally based on intent. */
+	_buildTools(intent) {
+		if (!intent.needsSearch && !intent.needsMemory) {
+			return undefined;
+		}
+
+		const tools = [];
+		if (intent.needsSearch) {
+			tools.push({ googleSearch: {} });
+		}
+		if (intent.needsMemory) {
+			tools.push({ functionDeclarations: [SAVE_MEMORY_DECLARATION] });
+		}
+		return tools;
+	}
+
+	async _analyzeIntent(userText) {
+		if (!this.aiConfig.groqApiKey) {
+			return { needsSearch: true, needsMemory: true };
+		}
+		try {
+			const response = await fetch(
+				'https://api.groq.com/openai/v1/chat/completions',
+				{
+					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${this.aiConfig.groqApiKey}`,
+						'Content-Type': 'application/json',
+					},
+					signal: AbortSignal.timeout(5000),
+					body: JSON.stringify({
+						model: 'llama-3.1-8b-instant',
+						messages: [
+							{
+								role: 'user',
+								content: `Analyze this message. Reply ONLY with valid JSON, no markdown, no explanation.\n{\n  "needsSearch": true or false,\n  "needsMemory": true or false\n}\n\nRules:\n- needsSearch = true ONLY if user asks about real-time info: current prices, today's news, live weather, recent events\n- needsMemory = true ONLY if user EXPLICITLY says words like "remember", "save", "ingat", "catat", or equivalent in ANY language\n\nMessage: "${userText}"`,
+							},
+						],
+						temperature: 0.1,
+						max_tokens: 60,
+						response_format: { type: 'json_object' },
+					}),
+				},
+			);
+			const data = await response.json();
+			return JSON.parse(data.choices[0].message.content);
+		} catch (err) {
+			this.logger.error(`Groq intent analysis error: ${err.message}`, {
+				label: 'AIMessageHandler',
+			});
+			return { needsSearch: true, needsMemory: true };
+		}
 	}
 
 	// ─── Entry point ──────────────────────────────────────────────────────────
@@ -202,6 +263,18 @@ class AIMessageHandler {
 	async processAIRequest(bot, message, client) {
 		let typingInterval;
 		try {
+			// ==========================================
+			// 1. READ PHASE
+			// ==========================================
+			const readDelay = Math.min(
+				Math.max(message.content.length * 30, 1500),
+				4000,
+			);
+			await wait(readDelay);
+
+			// ==========================================
+			// 2. TYPING PHASE
+			// ==========================================
 			await message.channel.sendTyping();
 			typingInterval = setInterval(() => {
 				message.channel.sendTyping().catch((err) => {
@@ -280,13 +353,28 @@ class AIMessageHandler {
 
 	/**
 	 * Executes the AI request using a stateful chat session.
-	 * Tools are always combined: googleSearch + functionDeclarations.
+	 * Tools are conditionally applied based on Groq intent analysis.
 	 * includeServerSideToolInvocations enables tool context circulation.
 	 */
 	async executeAIRequest(message, context, userParts, bot, client) {
 		const systemInstruction = buildSystemInstruction(context);
-		const GEMINI_MODEL = this.aiConfig.model || MINIMUM_MODEL;
-		const tools = this._buildTools(bot);
+
+		const rawUserText = userParts
+			.map((p) => p.text || '')
+			.join(' ')
+			.trim();
+		const intent = await this._analyzeIntent(rawUserText);
+		this.logger.info(
+			`needsSearch=${intent.needsSearch}, needsMemory=${intent.needsMemory}`,
+			{ label: 'ai intent' },
+		);
+
+		const GEMINI_MODEL =
+			intent.needsSearch || intent.needsMemory
+				? this.aiConfig.model || MINIMUM_MODEL
+				: 'gemini-2.5-flash-lite';
+
+		const tools = this._buildTools(intent);
 		const historyId = message.channel.id;
 
 		// History for chat initialization (exclude the current user turn —
@@ -317,17 +405,26 @@ class AIMessageHandler {
 			const genAI = new GoogleGenAI({ apiKey });
 
 			try {
+				const chatConfig = {
+					systemInstruction: { parts: [{ text: systemInstruction }] },
+					safetySettings: SAFETY_SETTINGS,
+				};
+				if (tools) {
+					chatConfig.tools = tools;
+					chatConfig.toolConfig = { includeServerSideToolInvocations: true };
+				}
+
 				// Create a stateful chat seeded with conversation history
 				const chat = genAI.chats.create({
 					model: GEMINI_MODEL,
 					history: priorHistory,
-					config: {
-						systemInstruction: { parts: [{ text: systemInstruction }] },
-						tools,
-						toolConfig: { includeServerSideToolInvocations: true },
-						safetySettings: SAFETY_SETTINGS,
-					},
+					config: chatConfig,
 				});
+
+				this.logger.info(
+					`🔍 [DEBUG] Sending request | model: ${GEMINI_MODEL} | tools: ${JSON.stringify(tools?.map((t) => Object.keys(t)[0]) || 'none')}`,
+					{ label: 'ai' },
+				);
 
 				// Send the current user message
 				const response = await chat.sendMessage({ message: userParts });
@@ -381,6 +478,27 @@ class AIMessageHandler {
 		}
 
 		const replyText = this._extractText(response);
+
+		// DEBUG: log usage
+		this.logger.info(
+			`🔍 [DEBUG] Usage: ${JSON.stringify(response?.usageMetadata)}`,
+			{ label: 'ai' },
+		);
+
+		// DEBUG: log raw response structure
+		this.logger.info(
+			`🔍 [DEBUG] Response candidates: ${JSON.stringify(
+				response?.candidates?.map((c) => ({
+					finishReason: c.finishReason,
+					groundingMetadata: c.groundingMetadata ? 'PRESENT' : 'NONE',
+					parts: c.content?.parts?.map((p) =>
+						p.text ? 'text' : p.executableCode ? 'code' : Object.keys(p)[0],
+					),
+				})),
+			)}`,
+			{ label: 'ai' },
+		);
+
 		let textToSend = replyText;
 		const textToHistory = replyText;
 
@@ -404,6 +522,16 @@ class AIMessageHandler {
 				);
 				return;
 			}
+
+			// ==========================================
+			// 3. TYPING SIMULATION PHASE
+			// ==========================================
+			const typingSpeedDelay = Math.min(textToSend.length * 15, 5000);
+			this.logger.info(`Typing speed delay: ${typingSpeedDelay}ms`, {
+				label: 'ai',
+			});
+			await wait(typingSpeedDelay);
+
 			await this.sendSplitMessage(message, textToSend);
 		}
 
@@ -602,7 +730,8 @@ class AIMessageHandler {
 	cleanMessageContent(content) {
 		return typeof content === 'string'
 			? content
-					.replace(/<@!?\d+>/g, '')
+					.replace(/<@(?:!|&)?\d+>/g, '') // Strip user & role mentions
+					.replace(/<#\d+>/g, '') // Strip channel mentions
 					.trim()
 					.slice(0, 1500)
 			: '';
@@ -665,8 +794,26 @@ class AIMessageHandler {
 			}
 
 			if (chunk.length > CHUNK_SIZE) {
-				const subChunks =
-					chunk.match(new RegExp(`.{1,${CHUNK_SIZE}}`, 'gs')) || [];
+				const lines = chunk.split('\n');
+				const subChunks = [];
+				let currentSub = '';
+
+				for (const line of lines) {
+					if (line.length > CHUNK_SIZE) {
+						if (currentSub) subChunks.push(currentSub);
+						const forceSplit =
+							line.match(new RegExp(`.{1,${CHUNK_SIZE}}`, 'gs')) || [];
+						subChunks.push(...forceSplit);
+						currentSub = '';
+					} else if (currentSub.length + line.length + 1 > CHUNK_SIZE) {
+						if (currentSub) subChunks.push(currentSub);
+						currentSub = line;
+					} else {
+						currentSub = currentSub ? `${currentSub}\n${line}` : line;
+					}
+				}
+				if (currentSub) subChunks.push(currentSub);
+
 				for (const sub of subChunks) {
 					const f = this.responseFilter.filterResponse(
 						sub,

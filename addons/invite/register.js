@@ -10,7 +10,7 @@ const { refreshGuildInvites } = require('./helpers');
 
 const initialize = (bot) => {
 	const summary = [];
-	bot.addClientReadyHook(async (client) => {
+	bot.addClientReadyHook(async ({ client }) => {
 		for (const [, guild] of client.guilds.cache) {
 			await refreshGuildInvites(guild);
 		}

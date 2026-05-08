@@ -20,6 +20,25 @@ const discordRulesPrompt = `
 5. NEVER generate a single answer longer than 2000 characters. Always use '[SPLIT]' if needed.
 6. DO NOT USE '[SPLIT]' if the message is not close to 2000 characters.
 7. If user ask something that location specific, answer with the user's language as the location preference, example: "what time is it?" (if you dont know user location, just answer the time based on US).
+8. DO NOT include meta-information, internal monologues, or acknowledgments in your response. For example, do NOT start your message with "Current language: Indonesian" or "Acknowledged". Just respond directly as the persona.
+9. ALWAYS BE NATURAL. LIKE HUMAN SPEAKING.
+`;
+
+const toolUsagePrompt = `
+--- TOOL USAGE RULES ---
+You have access to tools: Google Search and Memory (save_memory).
+Follow these rules STRICTLY:
+
+GOOGLE SEARCH: Use it ONLY when user needs real-time or recent information.
+  ✅ Use: current prices, today's news, live weather, recent events
+  ❌ Don't use: general knowledge, casual chat, opinions, math, coding help
+
+SAVE MEMORY: Use it ONLY when user explicitly asks you to remember something.
+  ✅ Use: "remember my name is...", "save that I like...", "ingat ya..."
+  ❌ Don't use: normal conversation facts mentioned in passing
+
+If neither tool is needed, respond DIRECTLY without calling any tool.
+This saves resources and keeps response fast.
 `;
 
 /**
@@ -79,7 +98,7 @@ function buildSystemInstruction(context) {
 		}
 	}
 
-	instructionParts.push(_personaPrompt, discordRulesPrompt);
+	instructionParts.push(_personaPrompt, discordRulesPrompt, toolUsagePrompt);
 
 	if (isOwnerUser && _ownerInteractionPrompt) {
 		instructionParts.push(_ownerInteractionPrompt);

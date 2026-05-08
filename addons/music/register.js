@@ -26,7 +26,7 @@ module.exports = {
 
 		summary.push('   ╰┈➤ 🎵 Initialize Music Manager');
 
-		bot.addClientReadyHook(async (client) => {
+		bot.addClientReadyHook(async ({ client }) => {
 			logger.info(`Checking persistent 24/7 sessions...`, {
 				label: '24 7 resurrector',
 			});

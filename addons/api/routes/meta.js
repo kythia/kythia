@@ -19,11 +19,34 @@ const {
 
 const app = new Hono();
 
+function getKythiaCoreVersion() {
+	try {
+		const corePkgPath = require.resolve('kythia-core/package.json');
+		const pkg = JSON.parse(fs.readFileSync(corePkgPath, 'utf8'));
+		return pkg.version;
+	} catch {
+		try {
+			const mainPkgPath = path.join(process.cwd(), 'package.json');
+			if (fs.existsSync(mainPkgPath)) {
+				const mainPkg = JSON.parse(fs.readFileSync(mainPkgPath, 'utf8'));
+				return (
+					mainPkg.dependencies?.['kythia-core'] ||
+					mainPkg.devDependencies?.['kythia-core'] ||
+					null
+				);
+			}
+		} catch {}
+	}
+	return null;
+}
+
 app.get('/stats', async (c) => {
 	const client = c.get('client');
 
 	const { totalServers, totalMembers, totalMemory } =
 		await broadcastGetMeta(client);
+
+	const { totalCommands } = await getCommandsData(client);
 
 	return c.json({
 		totalServers,
@@ -31,6 +54,8 @@ app.get('/stats', async (c) => {
 		uptime: client.container.shutdownManager.getMasterUptime(),
 		ping: client.ws.ping,
 		ram_usage: `${(totalMemory / 1024 / 1024).toFixed(2)} MB`,
+		version: getKythiaCoreVersion(),
+		totalCommands,
 	});
 });
 
