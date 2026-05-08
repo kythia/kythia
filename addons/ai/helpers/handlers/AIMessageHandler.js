@@ -380,9 +380,7 @@ class AIMessageHandler {
 
 		// History for chat initialization (exclude the current user turn —
 		// we'll send it via chat.sendMessage so the chat tracks it internally)
-		const priorHistory = this.conversationManager
-			.buildContentsArray(historyId)
-			.slice(0, -1); // drop the last entry if it was speculatively added
+		const priorHistory = this.conversationManager.buildContentsArray(historyId);
 
 		const totalTokens = (this.aiConfig.geminiApiKeys || '')
 			.split(',')
@@ -747,7 +745,11 @@ class AIMessageHandler {
 		const limit = this.aiConfig.getMessageHistoryLength || 10;
 		const lastMessages = await message.channel.messages.fetch({ limit });
 		const relevantMessages = Array.from(lastMessages.values())
-			.filter((msg) => !msg.author.bot || msg.author.id === client.user.id)
+			.filter(
+				(msg) =>
+					msg.id !== message.id &&
+					(!msg.author.bot || msg.author.id === client.user.id),
+			)
 			.reverse();
 
 		for (const msg of relevantMessages) {
