@@ -19,6 +19,7 @@ const wait = require('node:timers/promises').setTimeout;
 
 /** Minimum supported model for tool context circulation. */
 const MINIMUM_MODEL = 'gemini-3-flash-preview';
+const MINIMUM_LITE_MODEL = 'gemini-2.5-flash-lite';
 
 /** Safety settings applied to every request. */
 const SAFETY_SETTINGS = [
@@ -372,7 +373,7 @@ class AIMessageHandler {
 		const GEMINI_MODEL =
 			intent.needsSearch || intent.needsMemory
 				? this.aiConfig.model || MINIMUM_MODEL
-				: 'gemini-2.5-flash-lite';
+				: this.aiConfig.liteModel || MINIMUM_LITE_MODEL;
 
 		const tools = this._buildTools(intent);
 		const historyId = message.channel.id;

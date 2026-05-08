@@ -217,8 +217,15 @@ function loadKythiaConfig() {
 				// USE AT LEAST GEMINI 3 flash preview
 				// as the google search and function calling is supported in gemini 3 flash preview above
 				model: 'gemini-3-flash-preview',
+				// ! IMPORTANT!
+				// use for non tool-heavy messages
+				liteModel: 'gemini-2.5-flash-lite',
 				// Comma-separated list of Gemini API keys (example: your_api_key_1,your_api_key_2,your_api_key_3)
 				geminiApiKeys: process.env.GEMINI_API_KEYS,
+				// groq ai api key
+				// use for deciding the context for gemini
+				// if you don't have it, you can get it for free at: https://console.groq.com/keys
+				groqApiKey: process.env.GROQ_API_KEY,
 				// ai read message history length
 				getMessageHistoryLength: 4,
 				// ai per minute limit
