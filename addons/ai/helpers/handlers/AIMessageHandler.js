@@ -188,15 +188,15 @@ class AIMessageHandler {
 	async handleMessage(bot, message) {
 		const client = bot.client;
 
-		this.logger.debug(
-			`[AI handleMessage] entry — author: ${message.author?.id}, bot: ${message.author?.bot}, system: ${message.system}`,
-			{ label: 'ai' },
-		);
+		// this.logger.debug(
+		// 	`[AI handleMessage] entry — author: ${message.author?.id}, bot: ${message.author?.bot}, system: ${message.system}`,
+		// 	{ label: 'ai' },
+		// );
 
 		if (message.author?.bot || message.system) {
-			this.logger.debug('[AI handleMessage] exit: bot/system message', {
-				label: 'ai',
-			});
+			// this.logger.debug('[AI handleMessage] exit: bot/system message', {
+			// 	label: 'ai',
+			// });
 			return;
 		}
 
@@ -206,9 +206,9 @@ class AIMessageHandler {
 			Array.isArray(this.config?.bot?.prefixes) &&
 			this.config.bot.prefixes.some((p) => p && content.startsWith(p))
 		) {
-			this.logger.debug('[AI handleMessage] exit: prefix command', {
-				label: 'ai',
-			});
+			// this.logger.debug('[AI handleMessage] exit: prefix command', {
+			// 	label: 'ai',
+			// });
 			return;
 		}
 
@@ -219,17 +219,17 @@ class AIMessageHandler {
 		const isMentioned =
 			message.mentions.users.has(client.user.id) && !message.mentions.everyone;
 
-		this.logger.debug(
-			`[AI handleMessage] isDm=${isDm}, isMentioned=${isMentioned}, client.user.id=${client?.user?.id}`,
-			{ label: 'ai' },
-		);
+		// this.logger.debug(
+		// 	`[AI handleMessage] isDm=${isDm}, isMentioned=${isMentioned}, client.user.id=${client?.user?.id}`,
+		// 	{ label: 'ai' },
+		// );
 
 		if (isDm) {
 			const activeDMs = client.modmailActiveDMs;
 			if (activeDMs instanceof Set && activeDMs.has(message.author.id)) {
-				this.logger.debug('[AI handleMessage] exit: active modmail DM', {
-					label: 'ai',
-				});
+				// this.logger.debug('[AI handleMessage] exit: active modmail DM', {
+				// 	label: 'ai',
+				// });
 				return;
 			}
 		}
@@ -255,10 +255,10 @@ class AIMessageHandler {
 				) {
 					isAiChannel = true;
 				}
-				this.logger.debug(
-					`[AI handleMessage] isAiChannel=${isAiChannel}, aiChannelIds=${JSON.stringify(aiChannelIds)}`,
-					{ label: 'ai' },
-				);
+				// this.logger.debug(
+				// 	`[AI handleMessage] isAiChannel=${isAiChannel}, aiChannelIds=${JSON.stringify(aiChannelIds)}`,
+				// 	{ label: 'ai' },
+				// );
 			} catch (e) {
 				this.logger.error(`Error getting ServerSetting: ${e.message}`, {
 					label: 'ai',
@@ -266,16 +266,16 @@ class AIMessageHandler {
 			}
 		}
 
-		this.logger.debug(
-			`[AI handleMessage] gate — isAiChannel=${isAiChannel}, isDm=${isDm}, isMentioned=${isMentioned}`,
-			{ label: 'ai' },
-		);
+		// this.logger.debug(
+		// 	`[AI handleMessage] gate — isAiChannel=${isAiChannel}, isDm=${isDm}, isMentioned=${isMentioned}`,
+		// 	{ label: 'ai' },
+		// );
 
 		if (!(isAiChannel || isDm || isMentioned)) {
-			this.logger.debug(
-				'[AI handleMessage] exit: not an AI channel, DM, or mention',
-				{ label: 'ai' },
-			);
+			// this.logger.debug(
+			// 	'[AI handleMessage] exit: not an AI channel, DM, or mention',
+			// 	{ label: 'ai' },
+			// );
 			return;
 		}
 
@@ -318,18 +318,18 @@ class AIMessageHandler {
 	async processAIRequest(bot, message, client) {
 		let typingInterval;
 		try {
-			this.logger.debug('[AI processAIRequest] step 1: waiting readDelay', {
-				label: 'ai',
-			});
+			// this.logger.debug('[AI processAIRequest] step 1: waiting readDelay', {
+			// 	label: 'ai',
+			// });
 			const readDelay = Math.min(
 				Math.max(message.content.length * 30, 1500),
 				4000,
 			);
 			await wait(readDelay);
-			this.logger.debug(
-				'[AI processAIRequest] step 2: sendTyping (native fetch)',
-				{ label: 'ai' },
-			);
+			// this.logger.debug(
+			// 	'[AI processAIRequest] step 2: sendTyping (native fetch)',
+			// 	{ label: 'ai' },
+			// );
 
 			// ==========================================
 			// 2. TYPING PHASE — use native fetch instead of discord.js REST
@@ -350,13 +350,13 @@ class AIMessageHandler {
 			sendTypingNative();
 			typingInterval = setInterval(sendTypingNative, 8000);
 
-			this.logger.debug('[AI processAIRequest] step 3: buildContext', {
-				label: 'ai',
-			});
+			// this.logger.debug('[AI processAIRequest] step 3: buildContext', {
+			// 	label: 'ai',
+			// });
 			const context = await this.buildContext(message, client);
-			this.logger.debug('[AI processAIRequest] step 4: processAttachments', {
-				label: 'ai',
-			});
+			// this.logger.debug('[AI processAIRequest] step 4: processAttachments', {
+			// 	label: 'ai',
+			// });
 			const cleanContent = this.cleanMessageContent(message.content);
 			const mediaParts = await this.mediaProcessor.processAttachments(message);
 			mediaParts.push(
