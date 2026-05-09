@@ -187,26 +187,51 @@ class AIMessageHandler {
 
 	async handleMessage(bot, message) {
 		const client = bot.client;
-		if (message.author?.bot || message.system) return;
+
+		this.logger.debug(
+			`[AI handleMessage] entry — author: ${message.author?.id}, bot: ${message.author?.bot}, system: ${message.system}`,
+			{ label: 'ai' },
+		);
+
+		if (message.author?.bot || message.system) {
+			this.logger.debug('[AI handleMessage] exit: bot/system message', {
+				label: 'ai',
+			});
+			return;
+		}
 
 		const content =
 			typeof message.content === 'string' ? message.content.trim() : '';
 		if (
 			Array.isArray(this.config?.bot?.prefixes) &&
 			this.config.bot.prefixes.some((p) => p && content.startsWith(p))
-		)
+		) {
+			this.logger.debug('[AI handleMessage] exit: prefix command', {
+				label: 'ai',
+			});
 			return;
+		}
 
 		const isDm =
 			message.channel.type === ChannelType.DM || message.channel.type === 1;
+		// Only require that the bot is explicitly mentioned (not @everyone/@here).
+		// Role mentions alongside the bot mention are fine.
 		const isMentioned =
-			message.mentions.users.has(client.user.id) &&
-			!message.mentions.everyone &&
-			(!message.mentions.roles || message.mentions.roles.size === 0);
+			message.mentions.users.has(client.user.id) && !message.mentions.everyone;
+
+		this.logger.debug(
+			`[AI handleMessage] isDm=${isDm}, isMentioned=${isMentioned}, client.user.id=${client?.user?.id}`,
+			{ label: 'ai' },
+		);
 
 		if (isDm) {
 			const activeDMs = client.modmailActiveDMs;
-			if (activeDMs instanceof Set && activeDMs.has(message.author.id)) return;
+			if (activeDMs instanceof Set && activeDMs.has(message.author.id)) {
+				this.logger.debug('[AI handleMessage] exit: active modmail DM', {
+					label: 'ai',
+				});
+				return;
+			}
 		}
 
 		let isAiChannel = false;
@@ -215,7 +240,25 @@ class AIMessageHandler {
 				const ss = await this.ServerSetting.getCache({
 					guildId: message.guild.id,
 				});
-				if (ss?.aiChannelIds?.includes(message.channel.id)) isAiChannel = true;
+				// aiChannelIds may be stored as a JSON string in the DB — parse it first.
+				let aiChannelIds = ss?.aiChannelIds ?? [];
+				if (typeof aiChannelIds === 'string') {
+					try {
+						aiChannelIds = JSON.parse(aiChannelIds);
+					} catch {
+						aiChannelIds = [];
+					}
+				}
+				if (
+					Array.isArray(aiChannelIds) &&
+					aiChannelIds.includes(message.channel.id)
+				) {
+					isAiChannel = true;
+				}
+				this.logger.debug(
+					`[AI handleMessage] isAiChannel=${isAiChannel}, aiChannelIds=${JSON.stringify(aiChannelIds)}`,
+					{ label: 'ai' },
+				);
 			} catch (e) {
 				this.logger.error(`Error getting ServerSetting: ${e.message}`, {
 					label: 'ai',
@@ -223,7 +266,18 @@ class AIMessageHandler {
 			}
 		}
 
-		if (!(isAiChannel || isDm || isMentioned)) return;
+		this.logger.debug(
+			`[AI handleMessage] gate — isAiChannel=${isAiChannel}, isDm=${isDm}, isMentioned=${isMentioned}`,
+			{ label: 'ai' },
+		);
+
+		if (!(isAiChannel || isDm || isMentioned)) {
+			this.logger.debug(
+				'[AI handleMessage] exit: not an AI channel, DM, or mention',
+				{ label: 'ai' },
+			);
+			return;
+		}
 
 		const isOwnerUser = this.isOwner(message.author.id);
 		if (!isOwnerUser || !this.aiConfig.ownerBypassFilter) {
@@ -264,29 +318,45 @@ class AIMessageHandler {
 	async processAIRequest(bot, message, client) {
 		let typingInterval;
 		try {
-			// ==========================================
-			// 1. READ PHASE
-			// ==========================================
+			this.logger.debug('[AI processAIRequest] step 1: waiting readDelay', {
+				label: 'ai',
+			});
 			const readDelay = Math.min(
 				Math.max(message.content.length * 30, 1500),
 				4000,
 			);
 			await wait(readDelay);
+			this.logger.debug(
+				'[AI processAIRequest] step 2: sendTyping (native fetch)',
+				{ label: 'ai' },
+			);
 
 			// ==========================================
-			// 2. TYPING PHASE
+			// 2. TYPING PHASE — use native fetch instead of discord.js REST
+			// (discord.js REST client hangs on Bun; native fetch works fine)
 			// ==========================================
-			await message.channel.sendTyping();
-			typingInterval = setInterval(() => {
-				message.channel.sendTyping().catch((err) => {
-					this.logger.warn(`Typing indicator error: ${err.message}`, {
-						label: 'AIMessageHandler',
-					});
-					clearInterval(typingInterval);
-				});
-			}, 8000);
+			const sendTypingNative = () => {
+				fetch(
+					`https://discord.com/api/v10/channels/${message.channel.id}/typing`,
+					{
+						method: 'POST',
+						headers: {
+							Authorization: `Bot ${client.token}`,
+							'Content-Length': '0',
+						},
+					},
+				).catch(() => {});
+			};
+			sendTypingNative();
+			typingInterval = setInterval(sendTypingNative, 8000);
 
+			this.logger.debug('[AI processAIRequest] step 3: buildContext', {
+				label: 'ai',
+			});
 			const context = await this.buildContext(message, client);
+			this.logger.debug('[AI processAIRequest] step 4: processAttachments', {
+				label: 'ai',
+			});
 			const cleanContent = this.cleanMessageContent(message.content);
 			const mediaParts = await this.mediaProcessor.processAttachments(message);
 			mediaParts.push(
@@ -719,8 +789,14 @@ class AIMessageHandler {
 
 	async getUserBio(userId, client) {
 		try {
-			const user = await client.users.fetch(userId, { force: true });
-			return user.bio || 'Not set';
+			// Race against a 5s timeout so a slow Discord REST call never hangs.
+			const user = await Promise.race([
+				client.users.fetch(userId, { force: false }),
+				new Promise((_, reject) =>
+					setTimeout(() => reject(new Error('getUserBio timeout')), 5000),
+				),
+			]);
+			return user?.bio || 'Not set';
 		} catch {
 			return 'Cannot get bio';
 		}
