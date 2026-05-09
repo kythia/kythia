@@ -50,7 +50,7 @@ module.exports = {
 		});
 
 		return interaction.editReply({
-			embeds: reply,
+			components: reply,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	},

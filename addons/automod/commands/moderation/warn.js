@@ -103,7 +103,10 @@ module.exports = {
 					}),
 					thumbnail: interaction.guild.iconURL(),
 				});
-				await targetUser.send({ components: dmReply });
+				await targetUser.send({
+					components: dmReply,
+					flags: MessageFlags.IsComponentsV2,
+				});
 			} catch (_) {}
 
 			const setting = await ServerSetting.getCache({

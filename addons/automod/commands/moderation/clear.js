@@ -53,7 +53,7 @@ module.exports = {
 				{ color: 'Orange' },
 			);
 			return interaction.editReply({
-				embeds: reply,
+				components: reply,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
@@ -69,7 +69,7 @@ module.exports = {
 					{ color: 'Orange' },
 				);
 				return interaction.editReply({
-					embeds: reply,
+					components: reply,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
@@ -82,7 +82,7 @@ module.exports = {
 				{ color: 'Green' },
 			);
 			await interaction.editReply({
-				embeds: reply,
+				components: reply,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		} catch (_e) {
