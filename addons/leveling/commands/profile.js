@@ -124,18 +124,20 @@ module.exports = {
 		const imageName = 'level-profile.png';
 
 		const rank =
-			(await User.countWithCache({
-				where: {
-					guildId,
-					[Op.or]: [
-						{ level: { [Op.gt]: user.level } },
-						{
-							level: user.level,
-							xp: { [Op.gt]: user.xp },
-						},
-					],
-				},
-			})) + 1;
+			Number(
+				await User.countWithCache({
+					where: {
+						guildId,
+						[Op.or]: [
+							{ level: { [Op.gt]: user.level } },
+							{
+								level: user.level,
+								xp: { [Op.gt]: user.xp },
+							},
+						],
+					},
+				}),
+			) + 1;
 
 		const buffer = await profileImage(targetUser.id, {
 			botToken: kythiaConfig.bot.token,
