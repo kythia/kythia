@@ -141,6 +141,10 @@ function loadKythiaConfig() {
 			// Bot timezone
 			// list of timezone: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 			timezone: 'Asia/Jakarta',
+
+			// if your bot has an entry point (the activity launch command), set this to true
+			// https://discord.com/developers/applications/<client-id>/embedded/settings
+			hasActivityEntryPoint: false,
 		},
 
 		/** -------------------------------------------------------------------
