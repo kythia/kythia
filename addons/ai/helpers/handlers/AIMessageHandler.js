@@ -173,10 +173,33 @@ class AIMessageHandler {
 					}),
 				},
 			);
+
+			if (!response.ok) {
+				this.logger.warn(
+					`Groq API returned HTTP ${response.status} — falling back to safe defaults.`,
+					{ label: 'AIMessageHandler' },
+				);
+				return { needsSearch: true, needsMemory: true };
+			}
+
 			const data = await response.json();
-			return JSON.parse(data.choices[0].message.content);
+			const content = data?.choices?.[0]?.message?.content;
+			if (!content) {
+				this.logger.warn(
+					`Groq returned unexpected shape: ${JSON.stringify(data)}`,
+					{ label: 'AIMessageHandler' },
+				);
+				return { needsSearch: true, needsMemory: true };
+			}
+
+			const parsed = JSON.parse(content);
+			// Validate that the parsed result has boolean-compatible values.
+			return {
+				needsSearch: parsed.needsSearch === true,
+				needsMemory: parsed.needsMemory === true,
+			};
 		} catch (err) {
-			this.logger.error(`Groq intent analysis error: ${err.message}`, {
+			this.logger.warn(`Groq intent analysis error: ${err.message}`, {
 				label: 'AIMessageHandler',
 			});
 			return { needsSearch: true, needsMemory: true };
@@ -440,10 +463,12 @@ class AIMessageHandler {
 			{ label: 'ai intent' },
 		);
 
-		const GEMINI_MODEL =
+		const PREFERRED_MODEL =
 			intent.needsSearch || intent.needsMemory
 				? this.aiConfig.model || MINIMUM_MODEL
 				: this.aiConfig.liteModel || MINIMUM_LITE_MODEL;
+		const FALLBACK_MODEL = this.aiConfig.liteModel || MINIMUM_LITE_MODEL;
+		let useModelFallback = false;
 
 		const tools = this._buildTools(intent);
 		const historyId = message.channel.id;
@@ -457,8 +482,12 @@ class AIMessageHandler {
 			.map((k) => k.trim())
 			.filter(Boolean).length;
 
-		for (let attempt = 0; attempt < totalTokens; attempt++) {
-			this.logger.info(`🧠 AI attempt ${attempt + 1}/${totalTokens}...`, {
+		// Allow up to 2× totalTokens attempts so a 503-triggered model fallback
+		// always gets at least one real retry slot, even with a single API key.
+		const maxAttempts = totalTokens * 2;
+
+		for (let attempt = 0; attempt < maxAttempts; attempt++) {
+			this.logger.info(`🧠 AI attempt ${attempt + 1}/${maxAttempts}...`, {
 				label: 'ai',
 			});
 
@@ -483,15 +512,17 @@ class AIMessageHandler {
 					chatConfig.toolConfig = { includeServerSideToolInvocations: true };
 				}
 
+				const activeModel = useModelFallback ? FALLBACK_MODEL : PREFERRED_MODEL;
+
 				// Create a stateful chat seeded with conversation history
 				const chat = genAI.chats.create({
-					model: GEMINI_MODEL,
+					model: activeModel,
 					history: priorHistory,
 					config: chatConfig,
 				});
 
 				this.logger.info(
-					`🔍 [DEBUG] Sending request | model: ${GEMINI_MODEL} | tools: ${JSON.stringify(tools?.map((t) => Object.keys(t)[0]) || 'none')}`,
+					`🔍 [DEBUG] Sending request | model: ${activeModel}${useModelFallback ? ' (fallback)' : ''} | tools: ${JSON.stringify(tools?.map((t) => Object.keys(t)[0]) || 'none')}`,
 					{ label: 'ai' },
 				);
 
@@ -518,11 +549,20 @@ class AIMessageHandler {
 				const is429 =
 					err.message?.includes('429') ||
 					err.toString().includes('RESOURCE_EXHAUSTED');
+				const is503 =
+					err.message?.includes('503') ||
+					err.toString().includes('UNAVAILABLE');
 				if (is429) {
 					this.logger.warn(
 						`Token ${tokenIdx} hit 429. Retrying with next token...`,
 						{ label: 'AIMessageHandler' },
 					);
+				} else if (is503) {
+					this.logger.warn(
+						`Model overloaded (503) on token ${tokenIdx}. Retrying with fallback model...`,
+						{ label: 'AIMessageHandler' },
+					);
+					useModelFallback = true;
 				} else {
 					this.logger.error(`AI Error (non-429): ${err.message}`, {
 						label: 'AIMessageHandler',
