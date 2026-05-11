@@ -30,27 +30,28 @@ module.exports = async (bot, message) => {
 
 	try {
 		// All-time counter
-		let stat = await ActivityStat.getCache({ guildId, userId });
+		const [stat, statCreated] = await ActivityStat.getOrCreateCache(
+			{ guildId, userId },
+			{ totalMessages: '1', totalVoiceTime: '0' },
+		);
 
-		if (!stat) {
-			stat = await ActivityStat.create({
-				guildId,
-				userId,
-				totalMessages: 1,
-				totalVoiceTime: 0,
-			});
-		} else {
-			stat.totalMessages = BigInt(stat.totalMessages) + 1n;
+		if (!statCreated) {
+			stat.totalMessages = (BigInt(stat.totalMessages) + 1n).toString();
 			stat.changed('totalMessages', true);
 			await stat.save();
 		}
 
 		// Daily bucket
-		const [log] = await ActivityLog.findOrCreate({
-			where: { guildId, userId, date: today },
-			defaults: { messages: 0, voiceTime: 0 },
-		});
-		await log.increment({ messages: 1 });
+		const [log, logCreated] = await ActivityLog.getOrCreateCache(
+			{ guildId, userId, date: today },
+			{ messages: '1', voiceTime: '0' },
+		);
+
+		if (!logCreated) {
+			log.messages = (BigInt(log.messages) + 1n).toString();
+			log.changed('messages', true);
+			await log.save();
+		}
 	} catch (err) {
 		bot.client.container.logger.error(
 			`Failed to track message activity for ${userId} in ${guildId}: ${err.message}`,
