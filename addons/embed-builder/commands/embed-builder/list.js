@@ -27,7 +27,7 @@ module.exports = {
 
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-		const embeds = await EmbedModel.findAll({
+		const embeds = await EmbedModel.getAllCache({
 			where: { guildId: interaction.guild.id },
 			order: [['createdAt', 'DESC']],
 		});

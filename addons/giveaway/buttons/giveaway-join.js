@@ -20,7 +20,7 @@ module.exports = {
 		try {
 			const messageId = interaction.message.id;
 			// Cari data giveaway
-			const giveaway = await Giveaway.findOne({ where: { messageId } });
+			const giveaway = await Giveaway.getCache({ where: { messageId } });
 
 			// 1. Validasi: Udah kelar / Gak ketemu
 			if (!giveaway || giveaway.ended) {

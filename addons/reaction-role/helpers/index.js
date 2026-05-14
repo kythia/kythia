@@ -521,7 +521,7 @@ async function refreshPanelMessage(panelId, container) {
 	)
 		return;
 
-	const reactionRoles = await ReactionRole.findAll({
+	const reactionRoles = await ReactionRole.getAllCache({
 		where: { panelId: panel.id },
 	});
 
@@ -575,7 +575,9 @@ async function refreshReactionRoleMessage(messageId, container) {
 	const client = container.client;
 	const { ReactionRole } = models;
 
-	const reactionRoles = await ReactionRole.findAll({ where: { messageId } });
+	const reactionRoles = await ReactionRole.getAllCache({
+		where: { messageId },
+	});
 	if (reactionRoles.length === 0) return;
 
 	// If these belong to a panel, delegate to panel refresh

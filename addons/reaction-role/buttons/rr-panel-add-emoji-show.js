@@ -35,7 +35,7 @@ module.exports = {
 			}
 
 			// Fetch panel to know the type
-			const panel = await ReactionRolePanel.findOne({
+			const panel = await ReactionRolePanel.getCache({
 				where: { id: panelId, guildId: interaction.guildId },
 			});
 

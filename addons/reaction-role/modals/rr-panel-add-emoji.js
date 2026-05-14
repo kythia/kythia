@@ -37,7 +37,7 @@ module.exports = {
 				});
 			}
 
-			const panel = await ReactionRolePanel.findOne({
+			const panel = await ReactionRolePanel.getCache({
 				where: { id: panelId, guildId: interaction.guildId },
 			});
 

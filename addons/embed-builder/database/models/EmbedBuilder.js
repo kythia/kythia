@@ -9,6 +9,7 @@
 const { KythiaModel } = require('kythia-core');
 
 class EmbedBuilder extends KythiaModel {
+	static cacheKeys = [['guildId', 'name']];
 	static guarded = [];
 
 	static get structure() {

@@ -26,7 +26,7 @@ module.exports = {
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 		try {
-			const roles = await ReactionRole.findAll({
+			const roles = await ReactionRole.getAllCache({
 				where: {
 					guildId: interaction.guildId,
 				},

@@ -8,6 +8,7 @@
 const { KythiaModel } = require('kythia-core');
 
 class ReactionRolePanel extends KythiaModel {
+	static cacheKeys = [['guildId', 'name'], ['messageId']];
 	static guarded = [];
 }
 

@@ -26,7 +26,7 @@ module.exports = {
 
 		const userId = interaction.user.id;
 		const user = await User.getCache({ userId, guildId: interaction.guild.id });
-		const userPet = await UserPet.findOne({
+		const userPet = await UserPet.getCache({
 			where: {
 				userId: userId,
 			},

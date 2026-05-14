@@ -39,7 +39,7 @@ module.exports = {
 
 		try {
 			// Find top users who have votePoints > 0
-			const leaderboard = await KythiaUser.findAll({
+			const leaderboard = await KythiaUser.getAllCache({
 				where: {
 					votePoints: { [Op.gt]: 0 },
 				},

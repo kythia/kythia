@@ -152,7 +152,7 @@ module.exports = {
 			.filter((ch) => ch.isTextBased())
 			.map((ch) => ch.id);
 
-		const stickies = await StickyMessage.findAll({
+		const stickies = await StickyMessage.getAllCache({
 			where: { channelId: guildChannelIds },
 			order: [['channelId', 'ASC']],
 		});

@@ -38,7 +38,7 @@ module.exports = {
 
 		const embedId = parseInt(interaction.options.getString('id'), 10);
 
-		const record = await EmbedModel.findOne({
+		const record = await EmbedModel.getCache({
 			where: { id: embedId, guildId: interaction.guild.id },
 		});
 
@@ -147,7 +147,7 @@ module.exports = {
 		// customId format: eb-edit|{id}
 		const embedId = parseInt(interaction.customId.split('|')[1], 10);
 
-		const record = await EmbedModel.findOne({
+		const record = await EmbedModel.getCache({
 			where: { id: embedId, guildId: interaction.guild.id },
 		});
 

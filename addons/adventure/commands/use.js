@@ -43,9 +43,9 @@ module.exports = {
 			});
 		}
 
-		const rawInventory = await InventoryAdventure.findAll({
+		const rawInventory = await InventoryAdventure.getAllCache({
 			where: { userId: interaction.user.id },
-			raw: false,
+			cacheTags: [`InventoryAdventure:inventory:byUser:${interaction.user.id}`],
 		});
 
 		const usableItemsMap = {};
@@ -61,7 +61,9 @@ module.exports = {
 						dbId: dbItem.id,
 					};
 				}
-				usableItemsMap[dbItem.itemName].count++;
+				usableItemsMap[dbItem.itemName].count += dbItem.quantity
+					? Number(dbItem.quantity)
+					: 1;
 			}
 		}
 
@@ -180,16 +182,21 @@ module.exports = {
 			}
 
 			if (success) {
-				const itemToDelete = await InventoryAdventure.findOne({
-					where: {
-						userId: interaction.user.id,
-						itemName: selectedItemId,
-					},
+				const itemToDelete = await InventoryAdventure.getCache({
+					userId: interaction.user.id,
+					itemName: selectedItemId,
 				});
 
 				if (itemToDelete) {
-					await itemToDelete.destroy();
-					await InventoryAdventure.clearCache({ userId: interaction.user.id });
+					if (itemToDelete.quantity > 1) {
+						itemToDelete.quantity -= 1;
+						await itemToDelete.save();
+					} else {
+						await itemToDelete.destroy();
+						await InventoryAdventure.clearCache({
+							userId: interaction.user.id,
+						});
+					}
 				}
 			}
 

@@ -143,7 +143,7 @@ class KaraokeManager {
 		const track = player.currentTrack;
 
 		const { ServerSetting } = this.container.models;
-		const setting = await ServerSetting.findOne({
+		const setting = await ServerSetting.getCache({
 			where: { guildId: player.guildId },
 		});
 		const lang = setting?.lang || 'en-US';

@@ -50,7 +50,7 @@ module.exports = {
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 		// Check for duplicate name in this guild
-		const existing = await EmbedModel.findOne({
+		const existing = await EmbedModel.getCache({
 			where: { guildId: interaction.guild.id, name },
 		});
 

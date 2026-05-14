@@ -49,7 +49,7 @@ module.exports = async (bot, reaction, user) => {
 		// The reaction.emoji.toString() usually gives the formatted string for custom emojis, or the char for unicode.
 		const emojiIdentifier = reaction.emoji.toString();
 
-		const rr = await ReactionRole.findOne({
+		const rr = await ReactionRole.getCache({
 			where: {
 				guildId,
 				messageId,

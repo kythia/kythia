@@ -30,7 +30,7 @@ module.exports = {
 				});
 			}
 
-			const panel = await ReactionRolePanel.findOne({
+			const panel = await ReactionRolePanel.getCache({
 				where: { id: panelId, guildId: interaction.guildId },
 			});
 
@@ -107,7 +107,7 @@ module.exports = {
 			}
 
 			// Validate the binding still exists in DB
-			const rr = await ReactionRole.findOne({
+			const rr = await ReactionRole.getCache({
 				where: {
 					panelId: panel.id,
 					roleId,

@@ -44,7 +44,7 @@ module.exports = {
 
 			await interaction.deferUpdate();
 
-			const config = await VerificationConfig.findOne({
+			const config = await VerificationConfig.getCache({
 				where: { guildId: interaction.guild.id },
 			});
 			if (!config) return;

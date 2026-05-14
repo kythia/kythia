@@ -137,7 +137,7 @@ async function buildLeaderboard(interaction, container) {
 	const { models, t } = container;
 	const { MathScore } = models;
 
-	const top = await MathScore.findAll({
+	const top = await MathScore.getAllCache({
 		order: [['bestScore', 'DESC']],
 		limit: 10,
 	});

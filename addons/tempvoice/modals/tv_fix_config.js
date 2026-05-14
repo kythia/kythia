@@ -15,7 +15,7 @@ module.exports = {
 
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-		const config = await TempVoiceConfig.findOne({
+		const config = await TempVoiceConfig.getCache({
 			where: { guildId: guild.id },
 		});
 		if (!config)

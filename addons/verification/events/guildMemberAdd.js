@@ -21,7 +21,7 @@ module.exports = async (bot, member) => {
 		if (!settings?.verificationOn) return;
 
 		// Load verification config
-		const config = await VerificationConfig.findOne({
+		const config = await VerificationConfig.getCache({
 			where: { guildId: member.guild.id },
 		});
 		if (!config || !config.verifiedRoleId) return;

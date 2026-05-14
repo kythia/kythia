@@ -39,7 +39,7 @@ module.exports = {
 				return;
 			}
 
-			const sessions = await Music247.findAll();
+			const sessions = await Music247.getAllCache();
 			if (sessions.length === 0) {
 				logger.info(`No active sessions found.`, { label: '24 7 resurrector' });
 				return;

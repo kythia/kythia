@@ -76,7 +76,7 @@ async function runMinecraftStatsUpdater(client, settingsOverride = null) {
 		if (settingsOverride) {
 			activeSettings = settingsOverride;
 		} else {
-			const allSettings = await ServerSetting.findAll();
+			const allSettings = await ServerSetting.getAllCache();
 			// Only process guilds that have the feature on, an IP set, and at least one display channel
 			activeSettings = allSettings.filter(
 				(s) =>

@@ -9,6 +9,7 @@
 const { KythiaModel } = require('kythia-core');
 
 class Subdomain extends KythiaModel {
+	static cacheKeys = [['domain'], ['userId']];
 	static guarded = [];
 
 	static associate(models) {

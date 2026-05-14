@@ -22,7 +22,7 @@ module.exports = {
 
 		await interaction.deferReply();
 
-		const leaderboard = await UserPet.findAll({
+		const leaderboard = await UserPet.getAllCache({
 			include: [{ model: Pet, as: 'pet' }],
 			order: [
 				[

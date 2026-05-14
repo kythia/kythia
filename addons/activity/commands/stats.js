@@ -111,7 +111,7 @@ module.exports = {
 			totalVoiceTime = stat ? Number(BigInt(stat.totalVoiceTime)) : 0;
 		} else {
 			const startDate = getPeriodStart(period);
-			const [row] = await ActivityLog.findAll({
+			const [row] = await ActivityLog.getAllCache({
 				where: { guildId, userId, date: { [Op.gte]: startDate } },
 				attributes: [
 					[fn('SUM', col('messages')), 'totalMessages'],

@@ -32,7 +32,7 @@ module.exports = {
 
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-		const config = await VerificationConfig.findOne({ where: { guildId } });
+		const config = await VerificationConfig.getCache({ where: { guildId } });
 		if (!config || !config.verifiedRoleId) {
 			const components = await simpleContainer(
 				interaction,

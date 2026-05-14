@@ -29,7 +29,7 @@ module.exports = {
 		const { EmbedBuilder } = models;
 
 		try {
-			const embeds = await EmbedBuilder.findAll({
+			const embeds = await EmbedBuilder.getAllCache({
 				where: {
 					guildId: interaction.guild.id,
 				},

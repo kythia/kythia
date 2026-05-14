@@ -77,7 +77,7 @@ module.exports = {
 				});
 			}
 
-			const panel = await ReactionRolePanel.findOne({
+			const panel = await ReactionRolePanel.getCache({
 				where: { guildId: interaction.guildId, messageId },
 			});
 
@@ -99,7 +99,7 @@ module.exports = {
 			}
 
 			// Check if exists
-			const existing = await ReactionRole.findOne({
+			const existing = await ReactionRole.getCache({
 				where: {
 					guildId: interaction.guildId,
 					messageId,

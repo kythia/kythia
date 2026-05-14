@@ -86,7 +86,7 @@ module.exports = {
 
 		try {
 			// Find the existing reaction role entry
-			const rr = await ReactionRole.findOne({
+			const rr = await ReactionRole.getCache({
 				where: {
 					guildId: interaction.guildId,
 					messageId,

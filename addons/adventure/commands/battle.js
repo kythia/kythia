@@ -113,13 +113,10 @@ module.exports = {
 					.setEmoji('🔮'),
 			);
 
-			const usableItems = await InventoryAdventure.findAll({
-				where: {
-					userId: interaction.user.id,
-					itemName: ['health_potion', 'revival'],
-				},
-				raw: true,
-			});
+			const usableItems = items.filter(
+				(item) =>
+					item.itemName === 'health_potion' || item.itemName === 'revival',
+			);
 
 			if (usableItems.length === 0) {
 				battleButtons.components[1].setDisabled(true);
@@ -129,11 +126,18 @@ module.exports = {
 				if (revival) {
 					user.hp = user.maxHp;
 					await user.save();
-					await revival.destroy();
-					await InventoryAdventure.clearCache({
-						userId: user.userId,
-						itemName: 'revival',
-					});
+					if (revival.quantity > 1) {
+						revival.quantity -= 1;
+						await revival.save();
+					} else {
+						await revival.destroy();
+						await InventoryAdventure.clearCache({
+							userId: user.userId,
+							itemName: 'revival',
+						});
+						const rIdx = items.findIndex((i) => i.itemName === 'revival');
+						if (rIdx > -1) items.splice(rIdx, 1);
+					}
 
 					const msg = await t(interaction, 'adventure.battle.revive', {
 						hp: user.hp,
@@ -156,7 +160,6 @@ module.exports = {
 					return {
 						components: containerMsg,
 						end: false,
-						isRevive: true,
 					};
 				}
 
@@ -327,8 +330,9 @@ module.exports = {
 			await user.save();
 		}
 
-		const items = await InventoryAdventure.findAll({
+		const items = await InventoryAdventure.getAllCache({
 			where: { userId: userId },
+			cacheTags: [`InventoryAdventure:inventory:byUser:${userId}`],
 		});
 
 		const result = await handleBattleRound(interaction, user, items, true);
@@ -368,7 +372,9 @@ module.exports = {
 								dbId: item.id,
 							};
 						}
-						consumablesMap[def.id].count++;
+						consumablesMap[def.id].count += item.quantity
+							? Number(item.quantity)
+							: 1;
 					}
 				}
 
@@ -492,12 +498,17 @@ module.exports = {
 
 						if (itemIndex > -1) {
 							const dbItem = items[itemIndex];
-							await dbItem.destroy();
-							items.splice(itemIndex, 1);
-							await InventoryAdventure.clearCache({
-								userId: user.userId,
-								itemName: selectedItemId,
-							});
+							if (dbItem.quantity > 1) {
+								dbItem.quantity -= 1;
+								await dbItem.save();
+							} else {
+								await dbItem.destroy();
+								items.splice(itemIndex, 1);
+								await InventoryAdventure.clearCache({
+									userId: user.userId,
+									itemName: selectedItemId,
+								});
+							}
 						}
 
 						const nextResult = await handleBattleRound(
@@ -535,13 +546,6 @@ module.exports = {
 
 			await i.deferUpdate();
 			const nextResult = await handleBattleRound(i, user, items, true);
-
-			if (nextResult.isRevive) {
-				const revivalIndex = items.findIndex(
-					(item) => item?.itemName === 'revival',
-				);
-				if (revivalIndex > -1) items.splice(revivalIndex, 1);
-			}
 
 			await interaction.editReply({
 				components: nextResult.components,

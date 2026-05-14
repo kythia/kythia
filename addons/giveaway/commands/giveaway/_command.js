@@ -49,7 +49,7 @@ module.exports = {
 		}
 
 		try {
-			const choices = await Giveaway.findAll({
+			const choices = await Giveaway.getAllCache({
 				where: whereClause,
 				limit: 20,
 				order: [['endTime', 'DESC']],

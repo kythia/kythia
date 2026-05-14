@@ -81,7 +81,7 @@ module.exports = {
 			if (!inventoryMap[id]) {
 				inventoryMap[id] = { count: 0, id: id };
 			}
-			inventoryMap[id].count++;
+			inventoryMap[id].count += item.quantity ? Number(item.quantity) : 1;
 		}
 
 		const processedInventory = Object.values(inventoryMap).map((itemData) => {

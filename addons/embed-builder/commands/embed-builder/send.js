@@ -72,7 +72,7 @@ module.exports = {
 			parse: ['everyone', 'roles', 'users'],
 		};
 
-		const record = await EmbedModel.findOne({
+		const record = await EmbedModel.getCache({
 			where: { id: embedId, guildId: interaction.guild.id },
 		});
 

@@ -42,7 +42,7 @@ module.exports = {
 			});
 		}
 
-		const config = await VerificationConfig.findOne({ where: { guildId } });
+		const config = await VerificationConfig.getCache({ where: { guildId } });
 		if (!config) {
 			const components = await simpleContainer(
 				interaction,

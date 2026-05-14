@@ -9,6 +9,7 @@
 const { KythiaModel } = require('kythia-core');
 
 class UserPet extends KythiaModel {
+	static cacheKeys = [['userId']];
 	static customInvalidationTags = ['UserPet:leaderboard'];
 	static guarded = [];
 

@@ -33,7 +33,7 @@ module.exports = async (bot, message) => {
 		// Only respond in the session's channel
 		if (message.channel.id !== session.channelId) return;
 
-		const config = await VerificationConfig.findOne({
+		const config = await VerificationConfig.getCache({
 			where: { guildId: message.guild.id },
 		});
 		if (!config) return;

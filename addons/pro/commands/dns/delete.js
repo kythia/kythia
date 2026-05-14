@@ -36,7 +36,7 @@ module.exports = {
 		const baseDomain = kythiaConfig.addons.pro.cloudflare.domain || 'kyth.me';
 
 		try {
-			const userRecords = await DnsRecord.findAll({
+			const userRecords = await DnsRecord.getAllCache({
 				include: {
 					model: Subdomain,
 					as: 'subdomain',

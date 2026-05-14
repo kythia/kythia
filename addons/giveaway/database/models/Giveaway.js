@@ -9,6 +9,7 @@
 const { KythiaModel } = require('kythia-core');
 
 class Giveaway extends KythiaModel {
+	static cacheKeys = [['messageId']];
 	static guarded = [];
 
 	static get structure() {

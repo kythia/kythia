@@ -61,7 +61,7 @@ module.exports = {
 			});
 		}
 
-		const userSubdomains = await Subdomain.count({
+		const userSubdomains = await Subdomain.countWithCache({
 			where: { userId: interaction.user.id },
 		});
 		if (userSubdomains >= MAX_SUBDOMAINS) {

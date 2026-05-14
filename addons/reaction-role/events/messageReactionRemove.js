@@ -42,7 +42,7 @@ module.exports = async (bot, reaction, user) => {
 
 		const emojiIdentifier = reaction.emoji.toString();
 
-		const rr = await ReactionRole.findOne({
+		const rr = await ReactionRole.getCache({
 			where: {
 				guildId,
 				messageId,

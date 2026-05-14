@@ -46,7 +46,7 @@ module.exports = {
 		const deleteMessage =
 			interaction.options.getBoolean('delete_message') ?? false;
 
-		const record = await EmbedModel.findOne({
+		const record = await EmbedModel.getCache({
 			where: { id: embedId, guildId: interaction.guild.id },
 		});
 

@@ -24,7 +24,7 @@ module.exports = {
 
 		const userId = interaction.user.id;
 		// Get user's pet
-		const userPet = await UserPet.findOne({
+		const userPet = await UserPet.getCache({
 			where: {
 				userId: userId,
 			},

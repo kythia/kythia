@@ -25,7 +25,7 @@ module.exports = {
 		await interaction.deferReply();
 
 		const userId = interaction.user.id;
-		const userPet = await UserPet.findOne({
+		const userPet = await UserPet.getCache({
 			where: {
 				userId: userId,
 			},

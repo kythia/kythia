@@ -350,22 +350,15 @@ module.exports = {
 						userForUpdate.gold -= item.price;
 						await userForUpdate.save();
 
-						const existingItem = await InventoryAdventure.findOne({
-							where: {
-								userId: userForUpdate.userId,
-								itemName: item.id,
-							},
-						});
+						const [existingItem, created] =
+							await InventoryAdventure.getOrCreateCache(
+								{ userId: userForUpdate.userId, itemName: item.id },
+								{ quantity: 1 },
+							);
 
-						if (existingItem) {
+						if (!created) {
 							existingItem.quantity += 1;
 							await existingItem.save();
-						} else {
-							await InventoryAdventure.create({
-								userId: userForUpdate.userId,
-								itemName: item.id,
-								quantity: 1,
-							});
 						}
 
 						await i.followUp({

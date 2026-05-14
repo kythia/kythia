@@ -284,7 +284,7 @@ module.exports = {
 			const startDate = getPeriodStart(period);
 			const logColumn = type === 'voice' ? 'voiceTime' : 'messages';
 
-			allStats = await ActivityLog.findAll({
+			allStats = await ActivityLog.getAllCache({
 				where: { guildId, date: { [Op.gte]: startDate } },
 				attributes: ['userId', [fn('SUM', col(logColumn)), orderColumn]],
 				group: ['userId'],

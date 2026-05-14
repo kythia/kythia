@@ -40,7 +40,7 @@ module.exports = {
 		const panelId = interaction.options.getInteger('panel_id');
 
 		try {
-			const panel = await ReactionRolePanel.findOne({
+			const panel = await ReactionRolePanel.getCache({
 				where: { id: panelId, guildId: interaction.guildId },
 			});
 
@@ -60,7 +60,7 @@ module.exports = {
 						.fetch(panel.messageId)
 						.catch(() => null);
 					if (message) {
-						const bindings = await ReactionRole.findAll({
+						const bindings = await ReactionRole.getAllCache({
 							where: { panelId: panel.id },
 						});
 						for (const rr of bindings) {

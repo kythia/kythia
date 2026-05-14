@@ -33,7 +33,7 @@ module.exports = {
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 		try {
-			const panels = await ReactionRolePanel.findAll({
+			const panels = await ReactionRolePanel.getAllCache({
 				where: { guildId: interaction.guildId },
 			});
 
@@ -58,7 +58,7 @@ module.exports = {
 			}
 
 			// Load emoji binding counts for all panels at once
-			const allBindings = await ReactionRole.findAll({
+			const allBindings = await ReactionRole.getAllCache({
 				where: { guildId: interaction.guildId },
 				attributes: ['panelId'],
 			});

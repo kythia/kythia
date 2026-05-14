@@ -39,7 +39,7 @@ module.exports = async (bot, interaction) => {
 		}
 
 		// Check config
-		const config = await VerificationConfig.findOne({
+		const config = await VerificationConfig.getCache({
 			where: { guildId: interaction.guild.id },
 		});
 		if (!config || !config.verifiedRoleId) {

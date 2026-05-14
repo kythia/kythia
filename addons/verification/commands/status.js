@@ -25,7 +25,7 @@ module.exports = {
 		const guildId = interaction.guild.id;
 
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-		const config = await VerificationConfig.findOne({ where: { guildId } });
+		const config = await VerificationConfig.getCache({ where: { guildId } });
 		const settings = await ServerSetting.getCache({ guildId });
 
 		if (!config) {
