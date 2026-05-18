@@ -38,7 +38,7 @@ module.exports = async (bot, oldMember, newMember) => {
 	const guildId = guild.id;
 
 	const setting = await BoosterSetting.getCache({ guildId });
-	if (!setting || !setting.boosterOn) return;
+	if (!setting?.boosterOn) return;
 
 	const channel = await getTextChannelSafe(guild, setting.boosterChannelId);
 	if (!channel)

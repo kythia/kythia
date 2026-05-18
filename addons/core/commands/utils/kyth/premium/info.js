@@ -33,8 +33,7 @@ module.exports = {
 		const user = interaction.options.getUser('user');
 		const kythiaUser = await KythiaUser.getCache({ userId: user.id });
 		if (
-			!kythiaUser ||
-			!kythiaUser.isPremium ||
+			!kythiaUser?.isPremium ||
 			new Date(kythiaUser.premiumExpiresAt) < new Date()
 		) {
 			const components = await createContainer(interaction, {

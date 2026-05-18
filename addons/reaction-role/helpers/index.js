@@ -511,7 +511,7 @@ async function refreshPanelMessage(panelId, container) {
 	const { ReactionRolePanel, ReactionRole } = models;
 
 	const panel = await ReactionRolePanel.findByPk(panelId);
-	if (!panel || !panel.messageId) return;
+	if (!panel?.messageId) return;
 
 	// For dropdown panels we always need to refresh (the select menu lives in the embed)
 	// For reaction type + use_message, the reactions are on the user's message — skip rebuild

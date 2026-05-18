@@ -49,12 +49,12 @@ module.exports = async (bot, channel) => {
 		const settings = await ServerSetting.getCache({
 			guildId: channel.guild.id,
 		});
-		if (!settings || !settings.auditLogChannelId || !entry) return;
+		if (!settings?.auditLogChannelId || !entry) return;
 
 		const logChannel = await channel.guild.channels
 			.fetch(settings.auditLogChannelId)
 			.catch(() => null);
-		if (!logChannel || !logChannel.isTextBased()) return;
+		if (!logChannel?.isTextBased()) return;
 		if (
 			!logChannel
 				.permissionsFor(bot.client.user)

@@ -124,8 +124,7 @@ async function getRedisPings(container) {
 		: null;
 
 	if (
-		!KythiaModel ||
-		!KythiaModel._redisFallbackURLs ||
+		!KythiaModel?._redisFallbackURLs ||
 		KythiaModel._redisFallbackURLs.length === 0
 	) {
 		return [];

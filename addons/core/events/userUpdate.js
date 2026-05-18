@@ -71,13 +71,13 @@ module.exports = async (bot, oldUser, newUser) => {
 					// Usually servers might find this spammy. But if audit log is set, we send it.
 					// Ideally there would be a finer grain setting, but for now we follow general audit log.
 
-					if (!settings || !settings.auditLogChannelId) continue;
+					if (!settings?.auditLogChannelId) continue;
 
 					const logChannel = await guild.channels
 						.fetch(settings.auditLogChannelId)
 						.catch(() => null);
 
-					if (!logChannel || !logChannel.isTextBased()) continue;
+					if (!logChannel?.isTextBased()) continue;
 
 					const components = [
 						new ContainerBuilder()

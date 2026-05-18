@@ -48,12 +48,12 @@ module.exports = async (bot, channel) => {
 		}
 
 		const settings = await ServerSetting.getCache({ guildId });
-		if (!settings || !settings.auditLogChannelId) return;
+		if (!settings?.auditLogChannelId) return;
 
 		const logChannel = await channel.guild.channels
 			.fetch(settings.auditLogChannelId)
 			.catch(() => null);
-		if (!logChannel || !logChannel.isTextBased() || !entry) return;
+		if (!logChannel?.isTextBased() || !entry) return;
 
 		const executor = entry.executor;
 		const channelTypeNames = {

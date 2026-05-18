@@ -28,12 +28,12 @@ module.exports = async (bot, oldEvent, newEvent) => {
 		const settings = await ServerSetting.getCache({
 			guildId: newEvent.guild.id,
 		});
-		if (!settings || !settings.auditLogChannelId) return;
+		if (!settings?.auditLogChannelId) return;
 
 		const logChannel = await newEvent.guild.channels
 			.fetch(settings.auditLogChannelId)
 			.catch(() => null);
-		if (!logChannel || !logChannel.isTextBased()) return;
+		if (!logChannel?.isTextBased()) return;
 		if (
 			!logChannel
 				.permissionsFor(bot.client.user)

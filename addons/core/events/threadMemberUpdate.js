@@ -28,7 +28,7 @@ module.exports = async (bot, oldMember, newMember) => {
 
 	// We need the guild. ThreadMember has .thread which has .guild
 	const thread = newMember.thread || oldMember.thread;
-	if (!thread || !thread.guild) return;
+	if (!thread?.guild) return;
 	const guild = thread.guild;
 	const guildId = guild.id;
 
@@ -36,12 +36,12 @@ module.exports = async (bot, oldMember, newMember) => {
 		const settings = await ServerSetting.getCache({
 			guildId: guild.id,
 		});
-		if (!settings || !settings.auditLogChannelId) return;
+		if (!settings?.auditLogChannelId) return;
 
 		const logChannel = await guild.channels
 			.fetch(settings.auditLogChannelId)
 			.catch(() => null);
-		if (!logChannel || !logChannel.isTextBased()) return;
+		if (!logChannel?.isTextBased()) return;
 		if (
 			!logChannel
 				.permissionsFor(bot.client.user)

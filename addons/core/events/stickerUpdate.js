@@ -43,12 +43,12 @@ module.exports = async (bot, _oldSticker, newSticker) => {
 		const settings = await ServerSetting.getCache({
 			guildId: newSticker.guild.id,
 		});
-		if (!settings || !settings.auditLogChannelId) return;
+		if (!settings?.auditLogChannelId) return;
 
 		const logChannel = await newSticker.guild.channels
 			.fetch(settings.auditLogChannelId)
 			.catch(() => null);
-		if (!logChannel || !logChannel.isTextBased()) return;
+		if (!logChannel?.isTextBased()) return;
 		if (
 			!logChannel
 				.permissionsFor(bot.client.user)

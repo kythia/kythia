@@ -49,7 +49,7 @@ module.exports = {
 		});
 
 		const file = interaction.options.getAttachment('file');
-		if (!file || !file.name.endsWith('.json')) {
+		if (!file?.name.endsWith('.json')) {
 			components = await simpleContainer(
 				interaction,
 				`## ${await t(interaction, 'server.server.restore.file.invalid')}`,
@@ -91,7 +91,7 @@ module.exports = {
 			const backup = await res.json();
 			const clearBefore = interaction.options.getBoolean('clear') ?? false;
 
-			if (!backup || !backup.metadata) {
+			if (!backup?.metadata) {
 				components = await simpleContainer(
 					interaction,
 					`## ${await t(interaction, 'server.server.restore.data.invalid')}`,

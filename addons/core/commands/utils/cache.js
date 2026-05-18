@@ -26,7 +26,7 @@ module.exports = {
 			? Object.getPrototypeOf(models[anyModelKey])
 			: null;
 
-		if (!KythiaModel || !KythiaModel.cacheStats) {
+		if (!KythiaModel?.cacheStats) {
 			const components = await simpleContainer(
 				interaction,
 				'❌ No cache stats are available for this model.',

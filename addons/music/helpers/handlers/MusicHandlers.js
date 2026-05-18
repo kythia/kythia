@@ -855,11 +855,7 @@ class MusicHandlers {
 		const guildId = interaction.guildId;
 		const guildState = guildStates.get(guildId);
 
-		if (
-			!guildState ||
-			!guildState.previousTracks ||
-			guildState.previousTracks.length === 0
-		) {
+		if (!guildState?.previousTracks || guildState.previousTracks.length === 0) {
 			const components = await this.simpleContainer(
 				interaction,
 				await this.t(interaction, 'music.helpers.handlers.music.history.empty'),
@@ -1479,8 +1475,7 @@ class MusicHandlers {
 			const guildState = guildStates.get(guildId);
 
 			if (
-				!guildState ||
-				!guildState.previousTracks ||
+				!guildState?.previousTracks ||
 				guildState.previousTracks.length === 0
 			) {
 				// Already handled — just use reply directly if not yet deferred
@@ -3161,7 +3156,7 @@ class MusicHandlers {
 		}
 
 		const res = await client.poru.resolve({ query, requester: user });
-		if (!res || !res.tracks || res.tracks.length === 0) {
+		if (!res?.tracks || res.tracks.length === 0) {
 			return interaction.editReply({
 				content: await this.t(
 					interaction,
@@ -3904,7 +3899,7 @@ class MusicHandlers {
 				query,
 				requester: interaction.user,
 			});
-			if (!res || !res.tracks || res.tracks.length === 0) {
+			if (!res?.tracks || res.tracks.length === 0) {
 				const components = await this.simpleContainer(
 					interaction,
 					await this.t(

@@ -14,7 +14,7 @@ const {
 const { PermissionsBitField, MessageFlags } = require('discord.js');
 
 module.exports = async (bot, member) => {
-	if (!member || !member.guild) return;
+	if (!member?.guild) return;
 	const guild = member.guild;
 
 	const container = bot.client.container;

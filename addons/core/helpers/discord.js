@@ -51,7 +51,7 @@ const embedFooter = async (source) => {
  * @param {string} status - Status text to display.
  */
 async function setVoiceChannelStatus(channel, status) {
-	if (!channel || !channel.isVoiceBased()) {
+	if (!channel?.isVoiceBased()) {
 		return;
 	}
 	const config = channel.client.container.kythiaConfig;

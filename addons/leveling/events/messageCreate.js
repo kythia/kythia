@@ -25,7 +25,7 @@ module.exports = async (bot, message) => {
 
 	// Feature flag lives in ServerSetting
 	const serverSetting = await ServerSetting.getCache({ guildId });
-	if (!serverSetting || !serverSetting.levelingOn) return;
+	if (!serverSetting?.levelingOn) return;
 
 	// XP-specific settings are in LevelingSetting (falls back gracefully if row missing)
 	const setting = await LevelingSetting.getCache({ guildId });

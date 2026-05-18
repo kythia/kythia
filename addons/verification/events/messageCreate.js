@@ -28,7 +28,7 @@ module.exports = async (bot, message) => {
 		if (!settings?.verificationOn) return;
 
 		const session = getSession(message.guild.id, message.author.id);
-		if (!session || !session.answer) return; // no active image session
+		if (!session?.answer) return; // no active image session
 
 		// Only respond in the session's channel
 		if (message.channel.id !== session.channelId) return;

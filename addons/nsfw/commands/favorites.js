@@ -105,7 +105,7 @@ module.exports = {
 		await interaction.deferReply({ ephemeral });
 
 		const user = await NsfwUser.getCache({ userId: interaction.user.id });
-		if (!user || !user.nsfwFav || user.nsfwFav.length === 0) {
+		if (!user?.nsfwFav || user.nsfwFav.length === 0) {
 			return interaction.editReply({
 				content: "You haven't favorited any NSFW images yet! 💔",
 			});

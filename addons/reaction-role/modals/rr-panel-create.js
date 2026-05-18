@@ -70,7 +70,7 @@ module.exports = {
 				.fetch(channelId)
 				.catch(() => null);
 
-			if (!channel || !channel.isTextBased()) {
+			if (!channel?.isTextBased()) {
 				return interaction.followUp({
 					components: await simpleContainer(
 						interaction,

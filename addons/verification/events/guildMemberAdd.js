@@ -24,7 +24,7 @@ module.exports = async (bot, member) => {
 		const config = await VerificationConfig.getCache({
 			where: { guildId: member.guild.id },
 		});
-		if (!config || !config.verifiedRoleId) return;
+		if (!config?.verifiedRoleId) return;
 
 		// Assign unverified role if configured, so they get locked here
 		if (config.unverifiedRoleId) {

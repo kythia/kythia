@@ -24,7 +24,7 @@ module.exports = async (bot, oldState, newState) => {
 	const { TempVoiceConfig, TempVoiceChannel } = models;
 
 	const member = newState.member || oldState.member;
-	if (!member || !member.guild) return;
+	if (!member?.guild) return;
 
 	const guild = member.guild;
 	const newChannelId = newState.channelId;

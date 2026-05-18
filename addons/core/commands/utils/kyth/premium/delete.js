@@ -34,7 +34,7 @@ module.exports = {
 		const user = interaction.options.getUser('user');
 
 		const kythiaUser = await KythiaUser.getCache({ userId: user.id });
-		if (!kythiaUser || !kythiaUser.isPremium) {
+		if (!kythiaUser?.isPremium) {
 			return interaction.editReply(
 				await t(interaction, 'core.premium.premium.not.premium'),
 			);

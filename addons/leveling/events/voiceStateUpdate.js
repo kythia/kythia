@@ -36,7 +36,7 @@ const startTick = (botClient) => {
 
 				// Feature flag from ServerSetting
 				const serverSetting = await ServerSetting.getCache({ guildId });
-				if (!serverSetting || !serverSetting.levelingOn) {
+				if (!serverSetting?.levelingOn) {
 					continue;
 				}
 
@@ -64,7 +64,7 @@ const startTick = (botClient) => {
 
 				// Check if user is still in a voice channel
 				const voiceState = guild.voiceStates.cache.get(userId);
-				if (!voiceState || !voiceState.channelId) {
+				if (!voiceState?.channelId) {
 					voiceSessions.delete(key);
 					continue;
 				}

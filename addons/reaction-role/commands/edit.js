@@ -78,7 +78,7 @@ module.exports = {
 			});
 		}
 
-		if (!channel || !channel.isTextBased()) {
+		if (!channel?.isTextBased()) {
 			return interaction.editReply({
 				content: await t(interaction, 'reaction-role.invalid_channel'),
 			});

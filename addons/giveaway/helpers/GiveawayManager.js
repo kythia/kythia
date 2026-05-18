@@ -457,7 +457,7 @@ class GiveawayManager {
 	async rerollGiveaway(messageId, interaction) {
 		const giveaway = await this.Giveaway.findOne({ where: { messageId } });
 
-		if (!giveaway || !giveaway.ended) {
+		if (!giveaway?.ended) {
 			const msg = await this.t(interaction, 'giveaway.giveaway.not.ended.desc');
 			const err = await this.simpleContainer(interaction, msg, {
 				color: 'Red',

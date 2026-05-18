@@ -59,7 +59,7 @@ module.exports = {
 			const response = await fetch(apiUrl);
 			const data = await response.json();
 
-			if (!data || !data.data || !data.data.play) {
+			if (!data?.data?.play) {
 				throw new Error(data.msg || 'No video found');
 			}
 

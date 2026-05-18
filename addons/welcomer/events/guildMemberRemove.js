@@ -31,7 +31,7 @@ module.exports = async (bot, member) => {
 	const { convertColor } = helpers.color;
 
 	const setting = await WelcomeSetting.getCache({ guildId: member.guild.id });
-	if (!setting || !setting.welcomeOutOn) return;
+	if (!setting?.welcomeOutOn) return;
 
 	const guild = member.guild;
 

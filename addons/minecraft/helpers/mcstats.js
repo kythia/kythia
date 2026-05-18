@@ -30,7 +30,7 @@ async function fetchMcStatus(host, port) {
  * @param {object} logger
  */
 async function safeRename(channel, newName, logger) {
-	if (!channel || !channel.manageable) return;
+	if (!channel?.manageable) return;
 	const trimmed = newName.substring(0, 100);
 	if (channel.name === trimmed) return;
 	try {

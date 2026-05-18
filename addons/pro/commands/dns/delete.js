@@ -143,8 +143,7 @@ module.exports = {
 		});
 
 		if (
-			!recordToDelete ||
-			!recordToDelete.subdomain ||
+			!recordToDelete?.subdomain ||
 			typeof recordToDelete.subdomain.userId === 'undefined' ||
 			recordToDelete.subdomain.userId === null
 		) {

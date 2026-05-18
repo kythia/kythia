@@ -62,7 +62,7 @@ module.exports = {
 		const channel =
 			interaction.options.getChannel('channel') || interaction.channel;
 
-		if (!channel || !channel.isTextBased()) {
+		if (!channel?.isTextBased()) {
 			return interaction.editReply({
 				content: await t(interaction, 'reaction-role.invalid_channel'),
 			});

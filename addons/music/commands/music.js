@@ -576,8 +576,7 @@ module.exports = {
 					requester: interaction.user,
 				});
 				if (
-					!res ||
-					!res.tracks ||
+					!res?.tracks ||
 					!Array.isArray(res.tracks) ||
 					res.tracks.length === 0
 				) {

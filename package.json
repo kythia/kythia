@@ -16,6 +16,7 @@
 		"dev": "bun --watch index.js --dev",
 		"format": "biome format --write .",
 		"fix": "biome check --write .",
+		"fix:unsafe": "biome check --write --unsafe .",
 		"prepare": "husky"
 	},
 	"lint-staged": {

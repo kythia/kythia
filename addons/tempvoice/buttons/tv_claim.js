@@ -14,7 +14,7 @@ module.exports = {
 		const { simpleContainer } = helpers.discord;
 
 		const userVoiceState = interaction.member.voice;
-		if (!userVoiceState || !userVoiceState.channelId) {
+		if (!userVoiceState?.channelId) {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,

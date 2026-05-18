@@ -32,7 +32,7 @@ module.exports = async (bot, member) => {
 	const guildId = guild.id;
 
 	const setting = await WelcomeSetting.getCache({ guildId });
-	if (!setting || !setting.welcomeInOn) return;
+	if (!setting?.welcomeInOn) return;
 
 	const channel = await getTextChannelSafe(guild, setting.welcomeInChannelId);
 	if (!channel)

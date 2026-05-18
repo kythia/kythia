@@ -73,7 +73,7 @@ async function handleFailedGlobalChat(failedGuilds, container) {
 
 			const guildInfo = allGuildsData.find((g) => g.id === failedGuild.guildId);
 
-			if (!guildInfo || !guildInfo.globalChannelId) {
+			if (!guildInfo?.globalChannelId) {
 				logger.warn(
 					`Could not find registered channel info for guild ${failedGuild.guildId} in API /list response. Skipping fix.`,
 					{ label: 'globalchat' },
@@ -86,7 +86,7 @@ async function handleFailedGlobalChat(failedGuilds, container) {
 				channel = await client.channels
 					.fetch(guildInfo.globalChannelId)
 					.catch(() => null);
-				if (!channel || !channel.isTextBased() || channel.isDMBased()) {
+				if (!channel?.isTextBased() || channel.isDMBased()) {
 					logger.warn(
 						`Channel ${guildInfo.globalChannelId} for guild ${failedGuild.guildId} not found, not text-based, or is DM. Skipping fix.`,
 						{ label: 'globalchat' },

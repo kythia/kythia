@@ -33,7 +33,7 @@ function formatTrackDuration(ms) {
  * @returns {string} Progress bar string with current and total duration.
  */
 function createProgressBar(player) {
-	if (!player.currentTrack || !player.currentTrack.info.length) return '';
+	if (!player.currentTrack?.info.length) return '';
 
 	if (player.currentTrack.info.isStream)
 		return '`00:00|▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬🔴 LIVE`';

@@ -31,7 +31,7 @@ module.exports = async (bot, message) => {
 	const guildId = message.guild.id;
 
 	const settings = await ServerSetting.getCache({ guildId: guildId });
-	if (!settings || !settings.streakOn) return;
+	if (!settings?.streakOn) return;
 
 	const result = await claimStreak(container, message.member, settings);
 	if (!result || !NOTIFY_STATUSES.has(result.status)) return;

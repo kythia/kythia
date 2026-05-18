@@ -43,12 +43,12 @@ module.exports = async (bot, _oldChannel, newChannel) => {
 		const settings = await ServerSetting.getCache({
 			guildId,
 		});
-		if (!settings || !settings.auditLogChannelId) return;
+		if (!settings?.auditLogChannelId) return;
 
 		const logChannel = await newChannel.guild.channels
 			.fetch(settings.auditLogChannelId)
 			.catch(() => null);
-		if (!logChannel || !logChannel.isTextBased()) return;
+		if (!logChannel?.isTextBased()) return;
 		if (
 			!logChannel
 				.permissionsFor(bot.client.user)

@@ -10,7 +10,7 @@ const { MessageFlags } = require('discord.js');
 const { applyTemplate } = require('../helpers');
 
 module.exports = async (bot, member) => {
-	if (!member || !member.guild) return;
+	if (!member?.guild) return;
 	const { guild, id: memberId } = member;
 
 	const container = bot.client.container;

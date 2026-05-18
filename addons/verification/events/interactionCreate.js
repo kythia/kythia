@@ -42,7 +42,7 @@ module.exports = async (bot, interaction) => {
 		const config = await VerificationConfig.getCache({
 			where: { guildId: interaction.guild.id },
 		});
-		if (!config || !config.verifiedRoleId) {
+		if (!config?.verifiedRoleId) {
 			const comps = await simpleContainer(
 				interaction,
 				await t(interaction, 'verify.panel.not.configured'),

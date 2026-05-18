@@ -23,7 +23,7 @@ module.exports = async (bot, oldMessage, newMessage) => {
 	const guildId = newMessage.guild?.id;
 
 	try {
-		if (!newMessage || !newMessage.author || !newMessage.guild) return;
+		if (!newMessage?.author || !newMessage.guild) return;
 		if (newMessage.author.bot) return;
 
 		// Don't log if content hasn't changed
@@ -33,12 +33,12 @@ module.exports = async (bot, oldMessage, newMessage) => {
 		const settings = await ServerSetting.getCache({
 			guildId: newMessage.guild.id,
 		});
-		if (!settings || !settings.auditLogChannelId) return;
+		if (!settings?.auditLogChannelId) return;
 
 		const logChannel = await newMessage.guild.channels
 			.fetch(settings.auditLogChannelId)
 			.catch(() => null);
-		if (!logChannel || !logChannel.isTextBased()) return;
+		if (!logChannel?.isTextBased()) return;
 		if (
 			!logChannel
 				.permissionsFor(bot.client.user)

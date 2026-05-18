@@ -33,7 +33,7 @@ module.exports = {
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 		const config = await VerificationConfig.getCache({ where: { guildId } });
-		if (!config || !config.verifiedRoleId) {
+		if (!config?.verifiedRoleId) {
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'verify.setup.not.configured'),
@@ -60,7 +60,7 @@ module.exports = {
 		const ch = await interaction.guild.channels
 			.fetch(config.channelId)
 			.catch(() => null);
-		if (!ch || !ch.isTextBased()) {
+		if (!ch?.isTextBased()) {
 			const components = await simpleContainer(
 				interaction,
 				'❌ The configured verification channel could not be found or is invalid.',

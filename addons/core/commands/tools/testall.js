@@ -590,7 +590,7 @@ module.exports = {
 				commandModule = interaction.client.commands.get(rootName);
 			}
 
-			if (!commandModule || !commandModule.execute) {
+			if (!commandModule?.execute) {
 				results.skipped.push(`${fullPath} (no handler/execute)`);
 				return;
 			}
