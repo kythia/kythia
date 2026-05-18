@@ -290,7 +290,7 @@ app.post('/trigger-update/:guildId', async (c) => {
 		}
 
 		const settings = await ServerSetting.getCache({ guildId });
-		if (!settings || !settings.minecraftIp) {
+		if (!settings?.minecraftIp) {
 			return c.json(
 				{
 					success: false,

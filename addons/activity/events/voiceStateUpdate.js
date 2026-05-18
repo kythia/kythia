@@ -129,7 +129,7 @@ module.exports = async (bot, oldState, newState) => {
 
 	// Feature flag check
 	const serverSetting = await ServerSetting.getCache({ guildId });
-	if (!serverSetting || !serverSetting.activityOn) return;
+	if (!serverSetting?.activityOn) return;
 
 	const userId = member.id;
 	const key = `${guildId}-${userId}`;

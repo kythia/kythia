@@ -5,7 +5,7 @@
  * @file index.js
  * @copyright © 2025 kenndeclouv
  * @assistant chaa & graa
- * @version 1.0.0-rc
+ * @version 26.1.0
  *
  * @description
  * This file serves as the main entry point for the Kythia Discord Bot application.
@@ -60,6 +60,7 @@ const kythiaConfig = require('./kythia.config.js'); // Unified configuration obj
 require('module-alias/register'); // Enables @src, @utils, etc. path aliases
 const { Kythia, KythiaModel, createSequelizeInstance } = require('kythia-core');
 const client = require('./src/client');
+const { version: botVersion } = require('./package.json');
 
 // ===== 2. Load Core Helpers & Utilities with Meaningful Descriptions =====
 
@@ -115,6 +116,8 @@ KythiaModel.setDependencies({
 const dependencies = {
 	client,
 	config: kythiaConfig,
+	botVersion,
+	bootSalt: Date.now(),
 	redis: KythiaModel.redis,
 	sequelize: sequelize,
 	models: {},

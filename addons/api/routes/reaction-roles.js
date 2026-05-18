@@ -324,7 +324,7 @@ app.post('/panels', async (c) => {
 
 	try {
 		const channel = await client.channels.fetch(channelId).catch(() => null);
-		if (!channel || !channel.isTextBased())
+		if (!channel?.isTextBased())
 			return c.json(
 				{ success: false, error: 'Channel not found or not a text channel' },
 				404,
@@ -485,7 +485,7 @@ app.patch('/panels/:id', async (c) => {
 			const targetChannel = await client.channels
 				.fetch(targetChannelId)
 				.catch(() => null);
-			if (!targetChannel || !targetChannel.isTextBased()) {
+			if (!targetChannel?.isTextBased()) {
 				return c.json(
 					{
 						success: false,
@@ -1068,7 +1068,7 @@ app.post('/panels/:id/duplicate', async (c) => {
 		const targetChannel = await client.channels
 			.fetch(targetChannelId)
 			.catch(() => null);
-		if (!targetChannel || !targetChannel.isTextBased()) {
+		if (!targetChannel?.isTextBased()) {
 			return c.json(
 				{
 					success: false,

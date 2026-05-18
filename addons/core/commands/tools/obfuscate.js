@@ -44,7 +44,7 @@ module.exports = {
 		const type = interaction.options.getString('type');
 		const file = interaction.options.getAttachment('file');
 
-		if (!file || !file.url) {
+		if (!file?.url) {
 			return interaction.editReply({
 				content: await t(interaction, 'core.tools.obfuscate.no.file'),
 				flags: MessageFlags.Ephemeral,

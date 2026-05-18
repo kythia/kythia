@@ -28,7 +28,7 @@ module.exports = async (bot, execution) => {
 	});
 	const locale = execution.guild.preferredLocale || 'en';
 
-	if (!settings || !settings.modLogChannelId) {
+	if (!settings?.modLogChannelId) {
 		return;
 	}
 

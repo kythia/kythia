@@ -53,7 +53,7 @@ function normalizeText(text) {
 }
 
 function canDeleteMessage(message) {
-	if (!message.guild || !message.guild.members.me) return false;
+	if (!message.guild?.members.me) return false;
 	const me = message.guild.members.me;
 	const channel = message.channel;
 	if (!channel.permissionsFor(me).has(PermissionsBitField.Flags.ViewChannel))

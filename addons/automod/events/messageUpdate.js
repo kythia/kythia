@@ -14,7 +14,7 @@ module.exports = async (bot, _oldMessage, newMessage) => {
 	const { helpers } = container;
 	const { isOwner } = helpers.discord;
 
-	if (!newMessage || !newMessage.author || !newMessage.guild) return;
+	if (!newMessage?.author || !newMessage.guild) return;
 	if (newMessage.author.bot) return;
 
 	if (

@@ -1,13 +1,13 @@
 {
 	"name": "kythia",
-	"version": "1.0.0-rc",
+	"version": "26.0.0-rc.1",
 	"description": "Kythia Hye-Jin! Your sweet, cute, and beautiful companion! ",
 	"main": "index.js",
 	"author": {
 		"name": "kenndeclouv",
 		"email": "kenndeclouv@gmail.com"
 	},
-	"license": "CC-BY-NC-4.0",
+	"license": "SEE LICENSE IN LICENSE",
 	"scripts": {
 		"start": "node index.js",
 		"start:bun": "bun index.js",
@@ -28,7 +28,7 @@
 		"@discordjs/voice": "^0.19.0",
 		"@dotenvx/dotenvx": "^1.51.1",
 		"@google/genai": "^1.20.0",
-		"@hono/node-server": "^1.19.6",
+		"@hono/node-server": "^2.0.0",
 		"@sentry/node": "^10.10.0",
 		"@snazzah/davey": "^0.1.9",
 		"archiver": "^7.0.1",
@@ -42,7 +42,7 @@
 		"hono": "^4.10.7",
 		"javascript-obfuscator": "^4.1.1",
 		"kythia-arts": "^1.0.0-rc.1",
-		"kythia-core": "^1.1.0",
+		"kythia-core": "~26.0.0",
 		"luxon": "^3.7.2",
 		"marked": "^4.3.0",
 		"mathjs": "^15.1.0",

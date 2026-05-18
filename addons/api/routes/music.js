@@ -86,7 +86,7 @@ app.get('/search', async (c) => {
 			source: searchSource,
 		});
 
-		if (!res || !res.tracks || res.tracks.length === 0) {
+		if (!res?.tracks || res.tracks.length === 0) {
 			return c.json({ success: true, data: [] });
 		}
 

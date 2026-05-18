@@ -197,7 +197,7 @@ module.exports = {
 		}
 
 		if (sub === 'view') {
-			if (!serverSetting || !serverSetting.dataValues) {
+			if (!serverSetting?.dataValues) {
 				const components = await simpleContainer(
 					interaction,
 					await t(interaction, 'core.setting.setting.no.config'),

@@ -921,7 +921,7 @@ app.delete('/premium/:userId', async (c) => {
 		const { KythiaUser } = getModels(c);
 
 		const user = await KythiaUser.getCache({ userId });
-		if (!user || !user.isPremium) {
+		if (!user?.isPremium) {
 			return c.json(
 				{ success: false, error: `User ${userId} does not have premium.` },
 				404,

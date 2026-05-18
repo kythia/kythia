@@ -512,7 +512,7 @@ app.post('/:guildId/panel/send', async (c) => {
 			return c.json({ success: false, error: 'Guild not found' }, 404);
 
 		const ch = await guild.channels.fetch(config.channelId).catch(() => null);
-		if (!ch || !ch.isTextBased())
+		if (!ch?.isTextBased())
 			return c.json(
 				{ success: false, error: 'Channel not found or invalid' },
 				404,
@@ -634,7 +634,7 @@ app.post('/:guildId/panel/resend', async (c) => {
 			return c.json({ success: false, error: 'Guild not found' }, 404);
 
 		const ch = await guild.channels.fetch(config.channelId).catch(() => null);
-		if (!ch || !ch.isTextBased())
+		if (!ch?.isTextBased())
 			return c.json(
 				{ success: false, error: 'Channel not found or invalid' },
 				404,

@@ -24,7 +24,7 @@ module.exports = async (bot, message) => {
 
 	// Feature flag check
 	const serverSetting = await ServerSetting.getCache({ guildId });
-	if (!serverSetting || !serverSetting.activityOn) return;
+	if (!serverSetting?.activityOn) return;
 
 	const today = new Date().toISOString().slice(0, 10);
 

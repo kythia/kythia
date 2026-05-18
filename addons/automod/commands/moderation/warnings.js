@@ -36,11 +36,7 @@ module.exports = {
 				guildId: interaction.guild.id,
 			});
 
-			if (
-				!userRecord ||
-				!userRecord.warnings ||
-				userRecord.warnings.length === 0
-			) {
+			if (!userRecord?.warnings || userRecord.warnings.length === 0) {
 				const reply = await simpleContainer(
 					interaction,
 					await t(interaction, 'core.moderation.warnings.none', {
