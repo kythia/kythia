@@ -30,7 +30,7 @@ module.exports = async (bot, member) => {
 	try {
 		[setting, inviteSetting] = await Promise.all([
 			ServerSetting.getCache({ guildId: guild.id }),
-			InviteSetting.findOne({ where: { guildId: guild.id } }).catch(() => null),
+			InviteSetting.getCache({ guildId: guild.id }),
 		]);
 		inviteChannelId = setting?.inviteChannelId;
 	} catch (e) {

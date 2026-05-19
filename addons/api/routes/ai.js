@@ -280,4 +280,77 @@ app.delete('/personality/:userId', async (c) => {
 	}
 });
 
+// ---------------------------------------------------------------------------
+// Opt-Out
+// ---------------------------------------------------------------------------
+
+/**
+ * GET /api/ai/opt-out/:userId
+ * Get the global AI opt-out status for a user.
+ */
+app.get('/opt-out/:userId', async (c) => {
+	const { KythiaUser } = getModels(c);
+	const { userId } = c.req.param();
+
+	try {
+		const user = await KythiaUser.getCache({ userId });
+		return c.json({
+			success: true,
+			data: {
+				userId,
+				isAiOptOut: user ? user.isAiOptOut : false,
+			},
+		});
+	} catch (error) {
+		getLogger(c).error('GET /api/ai/opt-out/:userId error:', error);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+/**
+ * PATCH /api/ai/opt-out/:userId
+ * Set the global AI opt-out status for a user.
+ * Body: { isAiOptOut: boolean }
+ */
+app.patch('/opt-out/:userId', async (c) => {
+	const { KythiaUser, UserFact } = getModels(c);
+	const { userId } = c.req.param();
+
+	let body;
+	try {
+		body = await c.req.json();
+	} catch {
+		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
+	}
+
+	const { isAiOptOut } = body;
+	if (typeof isAiOptOut !== 'boolean') {
+		return c.json(
+			{ success: false, error: 'isAiOptOut must be a boolean' },
+			400,
+		);
+	}
+
+	try {
+		// Upsert the record for this user globally and automatically manage cache
+		await KythiaUser.updateOrCreateCache({ userId }, { isAiOptOut });
+
+		// If opting out, clear their facts
+		if (isAiOptOut && UserFact) {
+			await UserFact.destroy({ where: { userId } });
+		}
+
+		return c.json({
+			success: true,
+			data: {
+				userId,
+				isAiOptOut,
+			},
+		});
+	} catch (error) {
+		getLogger(c).error('PATCH /api/ai/opt-out/:userId error:', error);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
 module.exports = app;

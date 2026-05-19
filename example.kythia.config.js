@@ -655,6 +655,11 @@ function loadKythiaConfig() {
 
 const initialConfig = loadKythiaConfig();
 
+// Enforce the configured timezone across the entire Node.js process (affects cron, Date, etc.)
+if (initialConfig.bot?.timezone) {
+	process.env.TZ = initialConfig.bot.timezone;
+}
+
 global.kythia = initialConfig;
 
 module.exports = initialConfig;

@@ -59,8 +59,10 @@ module.exports = {
 			});
 		}
 
+		streak.lastStreak = streak.currentStreak; // snapshot for /streak restore
 		streak.currentStreak = 0;
 		streak.lastClaimTimestamp = null;
+		streak.lastRestoreTimestamp = null; // allow restore after this reset
 
 		await streak.save();
 		if (serverSetting.streakNickname === true) {

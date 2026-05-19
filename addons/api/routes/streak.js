@@ -18,23 +18,54 @@ const getModels = (c) => c.get('client').container.models;
 const getLogger = (c) => c.get('client').container.logger;
 const getHelpers = (c) => c.get('client').container.helpers;
 
-function getTodayDateString() {
-	return new Date().toISOString().slice(0, 10);
+/**
+ * Get the streak timezone configured for a guild.
+ * Falls back to process.env.TZ (set from kythia.config), then UTC.
+ * @param {import('hono').Context} c
+ * @param {string} guildId
+ * @returns {Promise<string>}
+ */
+async function getGuildTimezone(c, guildId) {
+	try {
+		const { ServerSetting } = getModels(c);
+		const setting = await ServerSetting.getCache({ guildId });
+		return setting?.streakTimezone || process.env.TZ || 'UTC';
+	} catch {
+		return process.env.TZ || 'UTC';
+	}
 }
 
-function getYesterdayDateString() {
+/**
+ * Returns the current date string (YYYY-MM-DD) in the given IANA timezone.
+ * @param {string} [timezone]
+ * @returns {string}
+ */
+function getTodayDateString(timezone) {
+	const tz = timezone || process.env.TZ || 'UTC';
+	return new Date().toLocaleDateString('en-CA', { timeZone: tz });
+}
+
+/**
+ * Returns yesterday's date string (YYYY-MM-DD) in the given IANA timezone.
+ * @param {string} [timezone]
+ * @returns {string}
+ */
+function getYesterdayDateString(timezone) {
+	const tz = timezone || process.env.TZ || 'UTC';
 	const yesterday = new Date();
-	yesterday.setUTCDate(yesterday.getUTCDate() - 1);
-	return yesterday.toISOString().slice(0, 10);
+	yesterday.setDate(yesterday.getDate() - 1);
+	return yesterday.toLocaleDateString('en-CA', { timeZone: tz });
 }
 
 /**
  * Resolve claim status for a streak — same logic as helpers/index.js claimStreak
  * Returns { status, streak } without touching Discord member/roles/nickname.
+ * @param {object} streak
+ * @param {string} [timezone]
  */
-function computeClaim(streak) {
-	const today = getTodayDateString();
-	const yesterday = getYesterdayDateString();
+function computeClaim(streak, timezone) {
+	const today = getTodayDateString(timezone);
+	const yesterday = getYesterdayDateString(timezone);
 	const lastClaimDateStr = streak.lastClaimTimestamp
 		? streak.lastClaimTimestamp.toISOString().slice(0, 10)
 		: null;
@@ -69,8 +100,8 @@ function computeClaim(streak) {
 	return { status, streak };
 }
 
-function formatStreak(s, rank = null) {
-	const today = getTodayDateString();
+function formatStreak(s, rank = null, timezone = null) {
+	const today = getTodayDateString(timezone);
 	const lastClaim = s.lastClaimTimestamp
 		? s.lastClaimTimestamp.toISOString().slice(0, 10)
 		: null;
@@ -82,8 +113,13 @@ function formatStreak(s, rank = null) {
 		currentStreak: s.currentStreak ?? 0,
 		highestStreak: s.highestStreak ?? 0,
 		streakFreezes: s.streakFreezes ?? 0,
+		lastStreak: s.lastStreak ?? 0,
 		lastClaimTimestamp: s.lastClaimTimestamp,
+		lastRestoreTimestamp: s.lastRestoreTimestamp ?? null,
+		restoreCount: s.restoreCount ?? 0,
+		restoreMonthKey: s.restoreMonthKey ?? null,
 		claimedToday: lastClaim === today,
+		timezone: timezone || process.env.TZ || 'UTC',
 		createdAt: s.createdAt,
 		updatedAt: s.updatedAt,
 	};
@@ -118,6 +154,7 @@ app.get('/:guildId', async (c) => {
 				];
 
 	try {
+		const timezone = await getGuildTimezone(c, guildId);
 		const { count, rows } = await Streak.findAndCountAll({
 			where: { guildId },
 			order,
@@ -127,7 +164,7 @@ app.get('/:guildId', async (c) => {
 
 		const client = c.get('client');
 		const guildObj = client.guilds.cache.get(guildId);
-		const today = getTodayDateString();
+		const today = getTodayDateString(timezone);
 
 		const data = await Promise.all(
 			rows.map(async (s, i) => {
@@ -165,6 +202,7 @@ app.get('/:guildId', async (c) => {
 			page: pageNum,
 			totalPages: Math.ceil(count / limitNum) || 1,
 			sort,
+			timezone,
 			data,
 		});
 	} catch (error) {
@@ -184,6 +222,7 @@ app.get('/:guildId/:userId', async (c) => {
 	const { Op } = require('sequelize');
 
 	try {
+		const timezone = await getGuildTimezone(c, guildId);
 		const streak = await Streak.getCache({ where: { guildId, userId } });
 		if (!streak) {
 			return c.json(
@@ -224,7 +263,7 @@ app.get('/:guildId/:userId', async (c) => {
 			}
 		}
 
-		const formatted = formatStreak(streak, aboveCount + 1);
+		const formatted = formatStreak(streak, aboveCount + 1, timezone);
 		return c.json({
 			success: true,
 			data: { ...formatted, username, avatar },
@@ -285,7 +324,8 @@ app.post('/:guildId/:userId', async (c) => {
 //
 // Actions:
 //   "claim"           — simulate /streak claim (no Discord side-effects)
-//   "reset-streak"    — reset currentStreak to 0, keep history
+//   "reset-streak"    — reset currentStreak to 0, snapshot to lastStreak
+//   "restore"         — restore currentStreak from lastStreak (one-time per loss)
 //   "set"             — directly set any combination of fields
 //   "add-freeze"      — add N streak freeze(s)
 //   "remove-freeze"   — remove N streak freeze(s)
@@ -305,6 +345,7 @@ app.patch('/:guildId/:userId', async (c) => {
 	const validActions = [
 		'claim',
 		'reset-streak',
+		'restore',
 		'set',
 		'add-freeze',
 		'remove-freeze',
@@ -320,6 +361,9 @@ app.patch('/:guildId/:userId', async (c) => {
 	}
 
 	try {
+		const { ServerSetting } = getModels(c);
+		const serverSetting = await ServerSetting.getCache({ guildId });
+		const timezone = serverSetting?.streakTimezone || process.env.TZ || 'UTC';
 		let streak = await Streak.getCache({ where: { guildId, userId } });
 
 		// Auto-create if not found (matches bot behavior with getOrCreateStreak)
@@ -338,7 +382,7 @@ app.patch('/:guildId/:userId', async (c) => {
 
 		if (action === 'claim') {
 			// Mirrors /streak claim logic (without Discord role/nickname side-effects)
-			const result = await computeClaim(streak);
+			const result = await computeClaim(streak, timezone);
 			if (result.status === 'ALREADY_CLAIMED') {
 				return c.json(
 					{
@@ -353,9 +397,75 @@ app.patch('/:guildId/:userId', async (c) => {
 			claimStatus = result.status;
 			streak = result.streak;
 		} else if (action === 'reset-streak') {
-			// Mirrors /streak reset
+			// Mirrors /streak reset — snapshot lastStreak before zeroing
+			streak.lastStreak = streak.currentStreak ?? 0;
 			streak.currentStreak = 0;
 			streak.lastClaimTimestamp = null;
+			streak.lastRestoreTimestamp = null; // allow one restore after reset
+		} else if (action === 'restore') {
+			// Restore currentStreak from lastStreak — mirrors /streak restore
+			const tz = timezone || process.env.TZ || 'UTC';
+			const currentMonthKey = new Date()
+				.toLocaleDateString('en-CA', { timeZone: tz })
+				.slice(0, 7);
+			const restoreQuota =
+				typeof serverSetting?.streakRestoreQuota === 'number'
+					? serverSetting.streakRestoreQuota
+					: 5;
+
+			if (!streak.lastStreak || streak.lastStreak <= 0) {
+				return c.json(
+					{
+						success: false,
+						error: 'No streak to restore',
+						restoreStatus: 'NO_STREAK_TO_RESTORE',
+						restoreQuota,
+					},
+					409,
+				);
+			}
+			if (streak.lastRestoreTimestamp) {
+				return c.json(
+					{
+						success: false,
+						error: 'Streak already restored for this loss',
+						restoreStatus: 'ALREADY_RESTORED',
+						restoreQuota,
+					},
+					409,
+				);
+			}
+
+			if (streak.restoreMonthKey !== currentMonthKey) {
+				streak.restoreCount = 0;
+				streak.restoreMonthKey = currentMonthKey;
+			}
+
+			const usedThisMonth = streak.restoreCount ?? 0;
+			if (usedThisMonth >= restoreQuota) {
+				return c.json(
+					{
+						success: false,
+						error: 'Monthly restore quota exceeded',
+						restoreStatus: 'QUOTA_EXCEEDED',
+						restoreQuota,
+						restoreCount: usedThisMonth,
+					},
+					409,
+				);
+			}
+
+			const restoredCount = streak.lastStreak;
+			streak.currentStreak = restoredCount;
+			streak.lastStreak = 0;
+			streak.lastRestoreTimestamp = new Date();
+			streak.lastClaimTimestamp = new Date(getTodayDateString(timezone));
+			streak.restoreCount = usedThisMonth + 1;
+			streak.restoreMonthKey = currentMonthKey;
+
+			if (streak.currentStreak > (streak.highestStreak || 0)) {
+				streak.highestStreak = streak.currentStreak;
+			}
 		} else if (action === 'set') {
 			// Direct field set: { action: "set", currentStreak?, highestStreak?, streakFreezes?, lastClaimTimestamp? }
 			if (body.currentStreak !== undefined) {
@@ -417,7 +527,7 @@ app.patch('/:guildId/:userId', async (c) => {
 
 		const response = {
 			success: true,
-			data: formatStreak(streak),
+			data: formatStreak(streak, null, timezone),
 		};
 		if (claimStatus) response.claimStatus = claimStatus;
 		return c.json(response);

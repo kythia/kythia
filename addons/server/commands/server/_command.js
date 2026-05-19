@@ -22,7 +22,7 @@ module.exports = {
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 	aliases: ['srv'],
 	guildOnly: true,
-	voteLcoked: true,
+	voteLocked: true,
 	permissions: PermissionFlagsBits.ManageGuild,
 	botPermissions: [
 		PermissionFlagsBits.ManageGuild,

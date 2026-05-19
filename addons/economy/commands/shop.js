@@ -271,7 +271,8 @@ module.exports = {
 		);
 
 		const message = await interaction.editReply({
-			components: [shopContainer] | MessageFlags.IsComponentsV2,
+			components: [shopContainer],
+			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
 
@@ -448,7 +449,8 @@ module.exports = {
 				newComponents,
 			);
 			await interaction.editReply({
-				components: [newShopContainer] | MessageFlags.IsComponentsV2,
+				components: [newShopContainer],
+				flags: MessageFlags.IsComponentsV2,
 			});
 		});
 

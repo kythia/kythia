@@ -24,7 +24,7 @@ module.exports = async (bot, member) => {
 	try {
 		const [setting, iSetting] = await Promise.all([
 			ServerSetting.getCache({ guildId: guild.id }),
-			InviteSetting.findOne({ where: { guildId: guild.id } }).catch(() => null),
+			InviteSetting.getCache({ guildId: guild.id }),
 		]);
 		if (!setting?.invitesOn) return;
 		inviteChannelId = setting.inviteChannelId;

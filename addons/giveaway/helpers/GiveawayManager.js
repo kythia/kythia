@@ -78,9 +78,7 @@ class GiveawayManager {
 
 			for (const mid of expiredIds) {
 				await this.Giveaway.scheduleRemove('active_schedule', mid);
-				const giveaway = await this.Giveaway.findOne({
-					where: { messageId: mid },
-				});
+				const giveaway = await this.Giveaway.getCache({ messageId: mid });
 
 				if (giveaway && !giveaway.ended) {
 					await this.endGiveaway(giveaway);
@@ -207,7 +205,7 @@ class GiveawayManager {
 		if (typeof giveawayData === 'string' || (interaction && !giveaway.prize)) {
 			const messageId =
 				interaction?.options.getString('giveaway') || giveawayData;
-			giveaway = await this.Giveaway.findOne({ where: { messageId } });
+			giveaway = await this.Giveaway.getCache({ messageId });
 		}
 
 		if (!giveaway || giveaway.ended) {
@@ -364,7 +362,7 @@ class GiveawayManager {
 	}
 
 	async cancelGiveaway(messageId, interaction) {
-		const giveaway = await this.Giveaway.findOne({ where: { messageId } });
+		const giveaway = await this.Giveaway.getCache({ messageId });
 
 		if (!giveaway || giveaway.ended) {
 			const desc = await this.t(
@@ -455,7 +453,7 @@ class GiveawayManager {
 	}
 
 	async rerollGiveaway(messageId, interaction) {
-		const giveaway = await this.Giveaway.findOne({ where: { messageId } });
+		const giveaway = await this.Giveaway.getCache({ messageId });
 
 		if (!giveaway?.ended) {
 			const msg = await this.t(interaction, 'giveaway.giveaway.not.ended.desc');

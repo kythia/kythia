@@ -107,6 +107,12 @@
 			"personality": {
 				"success": "✅ AI personality changed to **{personality}**!\n{description}\n\nTry chatting with me now to experience the new style!",
 				"reset": "✅ AI personality reset to config default!\n\nI'll now use the default personality set by the bot administrator."
+			},
+			"optout": {
+				"database_error": "Database not initialized. Please try again later.",
+				"success": "✅ You have successfully **opted out** of AI features. The bot will no longer process your messages, and your existing AI memories have been permanently deleted. Use this command again to opt back in.",
+				"revert": "✅ You have successfully **opted back in** to AI features. The bot will now interact with you normally.",
+				"error": "❌ An unexpected error occurred while processing your request."
 			}
 		},
 		"imagen": {

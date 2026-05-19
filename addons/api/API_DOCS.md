@@ -5684,7 +5684,14 @@ Full CRUD for the per-guild, per-user daily streak system. Streak logic (claim r
 | `highestStreak` | `number` | All-time highest streak |
 | `streakFreezes` | `number` | Available freeze tokens |
 | `lastClaimTimestamp` | `ISO date` | Last date the streak was claimed |
-| `claimedToday` | `boolean` | Computed: whether already claimed today |
+| `lastStreak` | `number` | Snapshot of `currentStreak` prior to reset/loss |
+| `lastRestoreTimestamp` | `ISO date` | Last date the user restored a lost streak |
+| `restoreCount` | `number` | Number of restores used in the current month |
+| `restoreMonthKey` | `string` | YYYY-MM key indicating which month `restoreCount` belongs to |
+| `claimedToday` | `boolean` | Computed: whether already claimed **in the guild's configured timezone** |
+| `timezone` | `string` | The IANA timezone used to evaluate `claimedToday` and day boundaries (e.g. `"Asia/Jakarta"`). Inherits global bot timezone if not set per-guild. |
+
+> **Timezone Note:** Each guild can configure its own `streakTimezone` via `/setting timezone`. All day-boundary calculations (`claimedToday`, claim/reset logic) use this timezone. If unset, falls back to the global bot timezone (configured in `kythia.config.js`), then UTC.
 
 ---
 
@@ -5716,19 +5723,24 @@ Get the streak leaderboard for a guild.
   "page": 1,
   "totalPages": 2,
   "sort": "current",
+  "timezone": "Asia/Jakarta",
   "data": [
     {
       "rank": 1,
       "userId": "123456789012345678",
+      "username": "kenndeclouv",
+      "avatar": "https://cdn.discordapp.com/avatars/.../avatar.webp",
       "currentStreak": 42,
       "highestStreak": 60,
       "streakFreezes": 2,
       "claimedToday": true,
-      "lastClaimTimestamp": "2026-03-06T00:00:00.000Z"
+      "lastClaimTimestamp": "2026-05-19T00:00:00.000Z"
     }
   ]
 }
 ```
+
+> `timezone` reflects the guild's configured `streakTimezone`. `claimedToday` is evaluated against this timezone.
 
 **Errors:**
 
@@ -5763,10 +5775,13 @@ Get a single user's streak profile in a guild, including their current rank.
     "highestStreak": 60,
     "streakFreezes": 2,
     "claimedToday": false,
-    "lastClaimTimestamp": "2026-03-05T00:00:00.000Z",
+    "timezone": "Asia/Jakarta",
+    "lastClaimTimestamp": "2026-05-18T00:00:00.000Z",
     "rank": 1,
+    "username": "kenndeclouv",
+    "avatar": "https://cdn.discordapp.com/avatars/.../avatar.webp",
     "createdAt": "2025-11-24T00:00:00.000Z",
-    "updatedAt": "2026-03-05T00:00:00.000Z"
+    "updatedAt": "2026-05-18T00:00:00.000Z"
   },
   "totalMembers": 84
 }
@@ -5843,7 +5858,8 @@ Update a user's streak using an `action`-based approach. If the user has no reco
 | `action` | Additional Fields | Behavior |
 |---|---|---|
 | `claim` | *(none)* | Simulate `/streak claim` — mirrors full claim logic (CONTINUE / FREEZE_USED / RESET / NEW). No Discord side effects. |
-| `reset-streak` | *(none)* | Reset `currentStreak` to 0 and clear `lastClaimTimestamp` (mirrors `/streak reset`) |
+| `reset-streak` | *(none)* | Reset `currentStreak` to 0, snapshot to `lastStreak` and clear `lastRestoreTimestamp` |
+| `restore` | *(none)* | Restore `currentStreak` from `lastStreak`. Fails if no streak to restore, already restored, or quota exceeded. |
 | `set` | See below | Directly set any combination of fields |
 | `add-freeze` | `amount?: number` | Add N freeze token(s) (default: 1) |
 | `remove-freeze` | `amount?: number` | Remove N freeze token(s), floored at 0 (default: 1) |
@@ -5861,6 +5877,7 @@ Update a user's streak using an `action`-based approach. If the user has no reco
 ```json
 { "action": "claim" }
 { "action": "reset-streak" }
+{ "action": "restore" }
 { "action": "set", "currentStreak": 30, "streakFreezes": 5 }
 { "action": "add-freeze", "amount": 3 }
 { "action": "remove-freeze", "amount": 1 }
@@ -5871,11 +5888,24 @@ Update a user's streak using an `action`-based approach. If the user has no reco
 {
   "success": true,
   "claimStatus": "CONTINUE",
-  "data": { ...streakObject }
+  "data": {
+    "id": 7,
+    "userId": "123456789012345678",
+    "guildId": "987654321098765432",
+    "currentStreak": 43,
+    "highestStreak": 60,
+    "streakFreezes": 2,
+    "claimedToday": true,
+    "timezone": "Asia/Jakarta",
+    "lastClaimTimestamp": "2026-05-19T00:00:00.000Z",
+    "createdAt": "2025-11-24T00:00:00.000Z",
+    "updatedAt": "2026-05-19T00:00:00.000Z"
+  }
 }
 ```
 
 > `claimStatus` is only present when `action` is `claim`. Values: `CONTINUE`, `FREEZE_USED`, `RESET`, `NEW`.
+> Day boundaries for the `claim` action are evaluated in the guild's configured `streakTimezone`.
 
 **Errors:**
 
@@ -5884,6 +5914,9 @@ Update a user's streak using an `action`-based approach. If the user has no reco
 | `400` | `{ "success": false, "error": "Missing or invalid action..." }` | Bad or missing `action` |
 | `400` | `{ "success": false, "error": "currentStreak must be a non-negative integer" }` | Invalid `set` value |
 | `409` | `{ "success": false, "error": "Streak already claimed today", "claimStatus": "ALREADY_CLAIMED" }` | `claim` action when already claimed |
+| `409` | `{ "success": false, "error": "No streak to restore", "restoreStatus": "NO_STREAK_TO_RESTORE", "restoreQuota": 5 }` | `restore` action when `lastStreak` is 0 |
+| `409` | `{ "success": false, "error": "Streak already restored for this loss", "restoreStatus": "ALREADY_RESTORED", "restoreQuota": 5 }` | `restore` action used more than once per loss |
+| `409` | `{ "success": false, "error": "Monthly restore quota exceeded", "restoreStatus": "QUOTA_EXCEEDED", "restoreQuota": 5, "restoreCount": 5 }` | `restore` action when monthly quota hit |
 | `500` | `{ "success": false, "error": "..." }` | Database error |
 
 ---

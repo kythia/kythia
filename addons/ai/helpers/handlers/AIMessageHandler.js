@@ -211,16 +211,24 @@ class AIMessageHandler {
 	async handleMessage(bot, message) {
 		const client = bot.client;
 
-		// this.logger.debug(
-		// 	`[AI handleMessage] entry — author: ${message.author?.id}, bot: ${message.author?.bot}, system: ${message.system}`,
-		// 	{ label: 'ai' },
-		// );
-
 		if (message.author?.bot || message.system) {
-			// this.logger.debug('[AI handleMessage] exit: bot/system message', {
-			// 	label: 'ai',
-			// });
 			return;
+		}
+
+		try {
+			const KythiaUser = this.container.sequelize.models.KythiaUser;
+			if (KythiaUser) {
+				const userRecord = await KythiaUser.getCache({
+					userId: message.author.id,
+				});
+				if (userRecord?.isAiOptOut) {
+					return;
+				}
+			}
+		} catch (e) {
+			this.logger.warn(`Failed to check AI opt-out status: ${e.message}`, {
+				label: 'ai',
+			});
 		}
 
 		const content =
@@ -229,30 +237,18 @@ class AIMessageHandler {
 			Array.isArray(this.config?.bot?.prefixes) &&
 			this.config.bot.prefixes.some((p) => p && content.startsWith(p))
 		) {
-			// this.logger.debug('[AI handleMessage] exit: prefix command', {
-			// 	label: 'ai',
-			// });
 			return;
 		}
 
 		const isDm =
 			message.channel.type === ChannelType.DM || message.channel.type === 1;
-		// Only require that the bot is explicitly mentioned (not @everyone/@here).
-		// Role mentions alongside the bot mention are fine.
+
 		const isMentioned =
 			message.mentions.users.has(client.user.id) && !message.mentions.everyone;
-
-		// this.logger.debug(
-		// 	`[AI handleMessage] isDm=${isDm}, isMentioned=${isMentioned}, client.user.id=${client?.user?.id}`,
-		// 	{ label: 'ai' },
-		// );
 
 		if (isDm) {
 			const activeDMs = client.modmailActiveDMs;
 			if (activeDMs instanceof Set && activeDMs.has(message.author.id)) {
-				// this.logger.debug('[AI handleMessage] exit: active modmail DM', {
-				// 	label: 'ai',
-				// });
 				return;
 			}
 		}
@@ -278,10 +274,6 @@ class AIMessageHandler {
 				) {
 					isAiChannel = true;
 				}
-				// this.logger.debug(
-				// 	`[AI handleMessage] isAiChannel=${isAiChannel}, aiChannelIds=${JSON.stringify(aiChannelIds)}`,
-				// 	{ label: 'ai' },
-				// );
 			} catch (e) {
 				this.logger.error(`Error getting ServerSetting: ${e.message}`, {
 					label: 'ai',
@@ -289,16 +281,7 @@ class AIMessageHandler {
 			}
 		}
 
-		// this.logger.debug(
-		// 	`[AI handleMessage] gate — isAiChannel=${isAiChannel}, isDm=${isDm}, isMentioned=${isMentioned}`,
-		// 	{ label: 'ai' },
-		// );
-
 		if (!(isAiChannel || isDm || isMentioned)) {
-			// this.logger.debug(
-			// 	'[AI handleMessage] exit: not an AI channel, DM, or mention',
-			// 	{ label: 'ai' },
-			// );
 			return;
 		}
 
