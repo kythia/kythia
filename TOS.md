@@ -19,7 +19,7 @@ You agree not to use the Service for any purpose that is illegal or prohibited. 
 
 The Service, its original content, source code, features, and functionality are the exclusive property of kenndeclouv.
 
-**EXCLUSIVE ARTWORK RIGHTS:** The artwork used as Kythia's official profile picture and branding is an original, commissioned piece created exclusively for this project by **rihaadeclouv**. All intellectual property rights are fully reserved. Unauthorized use, reproduction, modification, or distribution of this artwork is strictly prohibited.
+**EXCLUSIVE ARTWORK RIGHTS:** The artwork used as Kythia's official profile picture and branding is an original, commissioned piece created exclusively for this project by [rihaadeclouv](https://instagram.com/rihaadeclouv). All intellectual property rights are fully reserved. Unauthorized use, reproduction, modification, or distribution of this artwork is strictly prohibited.
 
 ## 3. Software Licensing & Self-Hosting
 
