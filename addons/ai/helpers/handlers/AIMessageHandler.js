@@ -108,6 +108,10 @@ class AIMessageHandler {
 		const options =
 			typeof payload === 'string' ? { content: payload } : { ...payload };
 		options.failIfNotExists = false;
+		options.allowedMentions = {
+			parse: [],
+			repliedUser: true,
+		};
 		return message.reply(options).catch((err) => {
 			this.logger.warn(`SafeReply fallback: ${err.message}`, {
 				label: 'AIMessageHandler',

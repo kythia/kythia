@@ -31,11 +31,11 @@ class AIResponseFilter {
 			return { allowed: true };
 		}
 
-		// Check for @everyone or @here mentions
-		if (/@everyone|@here/i.test(responseText)) {
+		// Check for @everyone, @here, User mentions (<@id> / <@!id>), and Role mentions (<@&id>)
+		if (/@everyone|@here|<@!?&?\d+>/i.test(responseText)) {
 			return {
 				allowed: false,
-				reason: 'ai_events_messageCreate_filter_everyone_here',
+				reason: 'ai_events_messageCreate_filter_mentions',
 			};
 		}
 
