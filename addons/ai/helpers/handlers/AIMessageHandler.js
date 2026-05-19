@@ -168,7 +168,7 @@ class AIMessageHandler {
 						messages: [
 							{
 								role: 'user',
-								content: `Analyze this message. Reply ONLY with valid JSON, no markdown, no explanation.\n{\n  "needsSearch": true or false,\n  "needsMemory": true or false\n}\n\nRules:\n- needsSearch = true ONLY if user asks about real-time info: current prices, today's news, live weather, recent events\n- needsMemory = true IF user explicitly says words like "remember", "save", "ingat", "catat", OR if the user is stating a personal preference, fact, or feeling about themselves (e.g., "aku suka...", "makanan favoritku...", "aku lagi sedih").\n\nMessage: "${userText}"`,
+								content: `Analyze this message. Reply ONLY with valid JSON, no markdown, no explanation.\n{\n  "needsSearch": true or false,\n  "needsMemory": true or false\n}\n\nRules:\n- needsSearch = true ONLY if user asks about real-time info: current prices, today's news, live weather, recent events, current time, date, or day, or any other real-time updated information.\n- needsMemory = true IF user explicitly says words like "remember", "save", "ingat", "catat", OR if the user is stating a personal preference, fact, or feeling about themselves (e.g., "aku suka...", "i like...", "makanan favoritku...", "my favorite food is...", "aku lagi sedih", "i'm sad").\n\nMessage: "${userText}"`,
 							},
 						],
 						temperature: 0.1,

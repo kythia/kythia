@@ -75,6 +75,18 @@ function init({ isOwner, config }) {
 function buildSystemInstruction(context) {
 	const isOwnerUser = _isOwner(context.userId);
 
+	const currentTime = new Intl.DateTimeFormat('en-US', {
+		timeZone: 'UTC',
+		weekday: 'long',
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+		second: '2-digit',
+		timeZoneName: 'short',
+	}).format(new Date());
+
 	const instructionParts = [];
 
 	// Add personality prompt if specified
@@ -108,6 +120,8 @@ function buildSystemInstruction(context) {
 
 	const userContext = `
    --- CURRENT INFORMATION ---
+   Current Time (System): ${currentTime} (Universal Time Coordinated)
+
    IMPORTANT: The chat history below may contain messages from other users, marked with the format "Name: Message Content". Always focus and personalize your answer ONLY for the "Current Speaker".
    Current Speaker:
    - Name: ${context.userDisplayName}

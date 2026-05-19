@@ -134,6 +134,7 @@ dist
 kythia.config.js
 private_key.pem
 temp/
+*tmp*
 
 storage/
 .yalc/

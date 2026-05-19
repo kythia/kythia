@@ -119,7 +119,7 @@ class MediaProcessor {
 
 			const tmpobj = tmp.fileSync({
 				postfix: path.extname(attachment.name || '.mp4'),
-				dir: this.tempDir,
+				tmpdir: this.tempDir,
 			});
 			await fsp.writeFile(tmpobj.name, buffer);
 
