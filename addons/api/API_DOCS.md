@@ -2008,6 +2008,32 @@ A JSON object containing any of the fields listed above (e.g., `boosterOn`, `boo
 
 ---
 
+### `POST /api/booster/:guildId/test`
+
+Tests the booster settings by triggering a simulated `guildMemberUpdate` event.
+
+**Path Parameters:**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `guildId` | `string` | The Discord guild ID |
+
+**Request Body (Optional):**
+
+| Field | Type | Description |
+|---|---|---|
+| `userId` | `string` | Optional. The Discord user ID to simulate the event for. Defaults to the guild owner or the bot itself. |
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Dispatched guildMemberUpdate event for testing booster."
+}
+```
+
+---
+
 ## Welcomer API (`/api/welcome`)
 
 Manages welcome-in, welcome-out, welcome DM, and style settings for a guild. All settings are stored in the dedicated `WelcomeSetting` model (`welcome_settings` table).
@@ -2185,6 +2211,33 @@ Send any subset of the fields below:
 
 > **Placeholder variables** supported in `welcomeInEmbedText`, `welcomeOutEmbedText`, and `welcomeDmText`:
 > `{username}`, `{tag}`, `{userId}`, `{guildName}`, `{members}`, `{mention}`, `{memberCount}`, `{boosts}`, `{boostLevel}`, and more.
+
+---
+
+### `POST /api/welcome/:guildId/test`
+
+Tests the welcome settings by triggering a simulated `guildMemberAdd` or `guildMemberRemove` event.
+
+**Path Parameters:**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `guildId` | `string` | The Discord guild ID |
+
+**Request Body:**
+
+| Field | Type | Description |
+|---|---|---|
+| `type` | `string` | **Required.** Must be `"in"` for welcome or `"out"` for farewell. |
+| `userId` | `string` | Optional. The Discord user ID to simulate the event for. Defaults to the guild owner or the bot itself. |
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Dispatched guildMemberAdd event for testing."
+}
+```
 
 ---
 

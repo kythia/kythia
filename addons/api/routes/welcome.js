@@ -151,4 +151,56 @@ app.patch('/:guildId', async (c) => {
 	}
 });
 
+// =============================================================================
+// POST /api/welcome/:guildId/test — Test welcome settings
+// =============================================================================
+app.post('/:guildId/test', async (c) => {
+	const client = getClient(c);
+	const guildId = c.req.param('guildId');
+
+	let body;
+	try {
+		body = await c.req.json();
+	} catch {
+		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
+	}
+
+	const { type, userId } = body;
+	if (!['in', 'out'].includes(type)) {
+		return c.json({ success: false, error: "Type must be 'in' or 'out'" }, 400);
+	}
+
+	try {
+		const guild = await client.guilds.fetch(guildId).catch(() => null);
+		if (!guild) {
+			return c.json({ success: false, error: 'Guild not found' }, 404);
+		}
+
+		let member = null;
+		if (userId) {
+			member = await guild.members.fetch(userId).catch(() => null);
+		}
+
+		if (!member) {
+			// Default to guild owner or bot itself if owner cannot be fetched
+			member =
+				(await guild.members.fetch(guild.ownerId).catch(() => null)) ||
+				guild.members.me;
+		}
+
+		if (type === 'in') {
+			client.emit('guildMemberAdd', member);
+		} else {
+			client.emit('guildMemberRemove', member);
+		}
+
+		return c.json({
+			success: true,
+			message: `Dispatched ${type === 'in' ? 'guildMemberAdd' : 'guildMemberRemove'} event for testing.`,
+		});
+	} catch (error) {
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
 module.exports = app;

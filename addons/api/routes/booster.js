@@ -116,4 +116,57 @@ app.patch('/:guildId', async (c) => {
 	}
 });
 
+// =============================================================================
+// POST /api/booster/:guildId/test — Test booster settings
+// =============================================================================
+app.post('/:guildId/test', async (c) => {
+	const client = getClient(c);
+	const guildId = c.req.param('guildId');
+
+	let body;
+	try {
+		body = await c.req.json();
+	} catch {
+		body = {}; // Allow empty body
+	}
+
+	const { userId } = body;
+
+	try {
+		const guild = await client.guilds.fetch(guildId).catch(() => null);
+		if (!guild) {
+			return c.json({ success: false, error: 'Guild not found' }, 404);
+		}
+
+		let member = null;
+		if (userId) {
+			member = await guild.members.fetch(userId).catch(() => null);
+		}
+
+		if (!member) {
+			// Default to guild owner or bot itself if owner cannot be fetched
+			member =
+				(await guild.members.fetch(guild.ownerId).catch(() => null)) ||
+				guild.members.me;
+		}
+
+		const oldMember = Object.create(member);
+		Object.defineProperty(oldMember, 'premiumSinceTimestamp', { value: null });
+
+		const newMember = Object.create(member);
+		Object.defineProperty(newMember, 'premiumSinceTimestamp', {
+			value: Date.now(),
+		});
+
+		client.emit('guildMemberUpdate', oldMember, newMember);
+
+		return c.json({
+			success: true,
+			message: `Dispatched guildMemberUpdate event for testing booster.`,
+		});
+	} catch (error) {
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
 module.exports = app;
