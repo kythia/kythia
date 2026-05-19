@@ -6,7 +6,7 @@
  * @version 1.0.0-rc
  */
 
-const { MessageFlags, PermissionFlagsBits } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const { restoreLastStreak } = require('../helpers');
 
 module.exports = {
@@ -16,12 +16,6 @@ module.exports = {
 			.setName('restore')
 			.setDescription(
 				'🔄 Restore your lost streak back to what it was before the reset.',
-			)
-			.addUserOption((opt) =>
-				opt
-					.setName('target')
-					.setDescription("Admin only: restore another member's streak")
-					.setRequired(false),
 			),
 
 	voteLocked: true,
@@ -38,50 +32,9 @@ module.exports = {
 		const serverSetting = await ServerSetting.getCache({ guildId });
 		const streakEmoji = serverSetting?.streakEmoji || '🔥';
 
-		// Targeting another user requires ManageGuild
-		const targetUser = interaction.options.getUser('target');
-		const isTargetingSelf =
-			!targetUser || targetUser.id === interaction.user.id;
+		await interaction.deferReply();
 
-		if (!isTargetingSelf) {
-			const hasPermission = interaction.memberPermissions?.has(
-				PermissionFlagsBits.ManageGuild,
-			);
-			if (!hasPermission) {
-				await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-				const components = await simpleContainer(
-					interaction,
-					await t(interaction, 'common.error.no_permission'),
-					{ color: 'Red' },
-				);
-				return interaction.editReply({
-					components,
-					flags: MessageFlags.IsComponentsV2,
-				});
-			}
-		}
-
-		await interaction.deferReply({
-			flags: isTargetingSelf ? undefined : MessageFlags.Ephemeral,
-		});
-
-		// Resolve the target member
-		let targetMember;
-		try {
-			targetMember = targetUser
-				? await interaction.guild.members.fetch(targetUser.id)
-				: interaction.member;
-		} catch {
-			const components = await simpleContainer(
-				interaction,
-				await t(interaction, 'streak.streak.user.not.found.title'),
-				{ color: 'Red' },
-			);
-			return interaction.editReply({
-				components,
-				flags: MessageFlags.IsComponentsV2,
-			});
-		}
+		const targetMember = interaction.member;
 
 		const { status, streak, rewardRolesGiven, restoreCount, restoreQuota } =
 			await restoreLastStreak(container, targetMember, serverSetting);
@@ -146,9 +99,7 @@ module.exports = {
 			})}`;
 		}
 
-		const targetMention = isTargetingSelf
-			? interaction.user.toString()
-			: targetMember.toString();
+		const targetMention = interaction.user.toString();
 
 		const msg = `## ${await t(interaction, 'streak.streak.restore.last.title')}\n${await t(
 			interaction,
