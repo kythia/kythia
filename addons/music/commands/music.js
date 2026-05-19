@@ -486,224 +486,243 @@ module.exports = {
 	 * @param {import('discord.js').Client} client
 	 */
 	async autocomplete(interaction, container) {
-		const { client, logger, models, kythiaConfig } = container;
-		const { Favorite, Playlist } = models;
-		const focusedOption = interaction.options.getFocused(true);
-		const focusedValue = focusedOption.value;
-		const subcommand = interaction.options.getSubcommand(false);
-		const subcommandgroup = interaction.options.getSubcommandGroup(false);
+		const run = async () => {
+			const { client, logger, models, kythiaConfig } = container;
+			const { Favorite, Playlist } = models;
+			const focusedOption = interaction.options.getFocused(true);
+			const focusedValue = focusedOption.value;
+			const subcommand = interaction.options.getSubcommand(false);
+			const subcommandgroup = interaction.options.getSubcommandGroup(false);
 
-		if (
-			(focusedOption.name === 'search' &&
-				(subcommand === 'play' || subcommand === 'track-add')) ||
-			(subcommandgroup === 'favorite' &&
-				subcommand === 'add' &&
-				focusedOption.name === 'search')
-		) {
-			if (focusedValue.toLowerCase().includes('spotify')) {
-				const truncatedUrl =
-					focusedValue.length > 50
-						? `${focusedValue.slice(0, 47)}...`
-						: focusedValue;
-				return interaction.respond([
-					{
-						name: `🎵 Play Spotify: ${truncatedUrl}`,
-						value:
-							focusedValue.length > 100
-								? focusedValue.slice(0, 100)
-								: focusedValue,
-					},
-				]);
-			} else if (focusedValue.toLowerCase().includes('youtube')) {
-				const truncatedUrl =
-					focusedValue.length > 50
-						? `${focusedValue.slice(0, 47)}...`
-						: focusedValue;
-				return interaction.respond([
-					{
-						name: `🎵 Play Youtube: ${truncatedUrl}`,
-						value:
-							focusedValue.length > 100
-								? focusedValue.slice(0, 100)
-								: focusedValue,
-					},
-				]);
-			} else if (/^https?:\/\//.test(focusedValue)) {
-				const truncatedUrl =
-					focusedValue.length > 60
-						? `${focusedValue.slice(0, 57)}...`
-						: focusedValue;
-				return interaction.respond([
-					{
-						name: `🎵 Play from URL: ${truncatedUrl}`,
-						value:
-							focusedValue.length > 100
-								? focusedValue.slice(0, 100)
-								: focusedValue,
-					},
-				]);
-			}
+			if (
+				(focusedOption.name === 'search' &&
+					(subcommand === 'play' || subcommand === 'track-add')) ||
+				(subcommandgroup === 'favorite' &&
+					subcommand === 'add' &&
+					focusedOption.name === 'search')
+			) {
+				if (focusedValue.toLowerCase().includes('spotify')) {
+					const truncatedUrl =
+						focusedValue.length > 50
+							? `${focusedValue.slice(0, 47)}...`
+							: focusedValue;
+					return interaction.respond([
+						{
+							name: `🎵 Play Spotify: ${truncatedUrl}`,
+							value:
+								focusedValue.length > 100
+									? focusedValue.slice(0, 100)
+									: focusedValue,
+						},
+					]);
+				} else if (focusedValue.toLowerCase().includes('youtube')) {
+					const truncatedUrl =
+						focusedValue.length > 50
+							? `${focusedValue.slice(0, 47)}...`
+							: focusedValue;
+					return interaction.respond([
+						{
+							name: `🎵 Play Youtube: ${truncatedUrl}`,
+							value:
+								focusedValue.length > 100
+									? focusedValue.slice(0, 100)
+									: focusedValue,
+						},
+					]);
+				} else if (/^https?:\/\//.test(focusedValue)) {
+					const truncatedUrl =
+						focusedValue.length > 60
+							? `${focusedValue.slice(0, 57)}...`
+							: focusedValue;
+					return interaction.respond([
+						{
+							name: `🎵 Play from URL: ${truncatedUrl}`,
+							value:
+								focusedValue.length > 100
+									? focusedValue.slice(0, 100)
+									: focusedValue,
+						},
+					]);
+				}
 
-			if (!client._musicAutocompleteCache)
-				client._musicAutocompleteCache = new Map();
-			const searchCache = client._musicAutocompleteCache;
+				if (!client._musicAutocompleteCache)
+					client._musicAutocompleteCache = new Map();
+				const searchCache = client._musicAutocompleteCache;
 
-			if (searchCache.has(focusedValue)) {
-				return interaction.respond(searchCache.get(focusedValue));
-			}
+				if (searchCache.has(focusedValue)) {
+					return interaction.respond(searchCache.get(focusedValue));
+				}
 
-			if (!focusedValue || focusedValue.trim().length === 0) {
-				return interaction.respond([]);
-			}
-
-			if (/^https?:\/\//.test(focusedValue)) {
-				return interaction.respond([]);
-			}
-
-			if (!client.poru || typeof client.poru.resolve !== 'function') {
-				logger.error(
-					'Autocomplete search failed: client.poru or client.poru.resolve is undefined',
-					{ label: 'music' },
-				);
-				return interaction.respond([]);
-			}
-
-			try {
-				const source = kythiaConfig.addons.music.defaultPlatform || 'ytsearch';
-				const res = await client.poru.resolve({
-					query: focusedValue,
-					source: source,
-					requester: interaction.user,
-				});
-				if (
-					!res?.tracks ||
-					!Array.isArray(res.tracks) ||
-					res.tracks.length === 0
-				) {
+				if (!focusedValue || focusedValue.trim().length === 0) {
 					return interaction.respond([]);
 				}
-				const choices = res.tracks
-					.slice(0, kythiaConfig.addons.music.autocompleteLimit)
-					.map((track) => ({
-						name: `🎵 ${track.info.title.length > 80 ? `${track.info.title.slice(0, 77)}…` : track.info.title} [${formatTrackDuration(track.info.length)}]`,
-						value:
-							(track.info.uri || '').length > 100
-								? track.info.uri.slice(0, 100)
-								: track.info.uri || '',
-					}));
-				searchCache.set(focusedValue, choices);
-				return interaction.respond(choices);
-			} catch (e) {
-				logger.error(`Autocomplete search failed: ${e.message || e}`, {
-					label: 'music',
-				});
-				return interaction.respond([]);
-			}
-		}
 
-		if (subcommandgroup === 'playlist' && focusedOption.name === 'name') {
-			try {
-				const userPlaylists = await Playlist.getAllCache({
-					where: { userId: interaction.user.id },
-					limit: 25,
-					cacheTags: [`Playlist:byUser:${interaction.user.id}`],
-				});
-				if (!userPlaylists) return interaction.respond([]);
-				const filteredChoices = userPlaylists
-					.map((playlist) => playlist.name)
-					.filter((name) =>
-						name.toLowerCase().includes(focusedValue.toLowerCase()),
-					)
-					.map((name) => ({
-						name: `🎵 ${name.length > 95 ? `${name.slice(0, 92)}...` : name}`,
-						value: name.length > 100 ? name.slice(0, 100) : name,
-					}));
-				return interaction.respond(filteredChoices.slice(0, 25));
-			} catch (error) {
-				logger.error(`Playlist autocomplete error: ${error.message || error}`, {
-					label: 'music',
-				});
-				return interaction.respond([]);
-			}
-		}
-
-		if (subcommandgroup === 'favorite' && focusedOption.name === 'name') {
-			try {
-				const userFavorites = await Favorite.getAllCache({
-					where: { userId: interaction.user.id },
-					limit: 25,
-					cacheTags: [`Favorite:byUser:${interaction.user.id}`],
-				});
-				if (!userFavorites) return interaction.respond([]);
-				const filteredChoices = userFavorites
-					.map((favorite) => favorite.title)
-					.filter((name) =>
-						name.toLowerCase().includes(focusedValue.toLowerCase()),
-					)
-					.map((name) => ({
-						name: `🎵 ${String(name).length > 95 ? `${String(name).slice(0, 92)}...` : name}`,
-						value: String(name).slice(0, 100),
-					}));
-				return interaction.respond(filteredChoices.slice(0, 25));
-			} catch (error) {
-				logger.error(`Favorite autocomplete error: ${error.message || error}`, {
-					label: 'music',
-				});
-				return interaction.respond([]);
-			}
-		}
-
-		if (subcommand === 'radio' && focusedOption.name === 'search') {
-			if (!client._radioAutocompleteCache)
-				client._radioAutocompleteCache = new Map();
-			if (client._radioAutocompleteCache.has(focusedValue)) {
-				return interaction.respond(
-					client._radioAutocompleteCache.get(focusedValue),
-				);
-			}
-
-			if (!focusedValue || focusedValue.trim().length === 0) {
-				return interaction.respond([]);
-			}
-
-			try {
-				const axios = require('axios');
-				const response = await axios.get(
-					`https://de1.api.radio-browser.info/json/stations/search?name=${encodeURIComponent(focusedValue)}&limit=20&hidebroken=true&order=clickcount&reverse=true`,
-					{ timeout: 2000 },
-				);
-
-				if (!response.data || !Array.isArray(response.data))
+				if (/^https?:\/\//.test(focusedValue)) {
 					return interaction.respond([]);
+				}
 
-				const choices = response.data.slice(0, 25).map((station) => {
-					const name =
-						station.name.length > 50
-							? `${station.name.substring(0, 47)}...`
-							: station.name;
-					const country = station.countrycode || '🌐';
-					const bitrate = station.bitrate || 0;
+				if (!client.poru || typeof client.poru.resolve !== 'function') {
+					logger.error(
+						'Autocomplete search failed: client.poru or client.poru.resolve is undefined',
+						{ label: 'music' },
+					);
+					return interaction.respond([]);
+				}
 
-					const finalName = `📻 ${name} [${country}|${bitrate} k]`;
-					return {
-						name:
-							finalName.length > 100
-								? `${finalName.slice(0, 97)}...`
-								: finalName,
-						value: String(station.stationuuid).slice(0, 100),
-					};
-				});
-
-				client._radioAutocompleteCache.set(focusedValue, choices);
-				setTimeout(
-					() => client._radioAutocompleteCache.delete(focusedValue),
-					60000,
-				);
-
-				return interaction.respond(choices);
-			} catch (_e) {
-				return interaction.respond([]);
+				try {
+					const source =
+						kythiaConfig.addons.music.defaultPlatform || 'ytsearch';
+					const res = await client.poru.resolve({
+						query: focusedValue,
+						source: source,
+						requester: interaction.user,
+					});
+					if (
+						!res?.tracks ||
+						!Array.isArray(res.tracks) ||
+						res.tracks.length === 0
+					) {
+						return interaction.respond([]);
+					}
+					const choices = res.tracks
+						.slice(0, kythiaConfig.addons.music.autocompleteLimit)
+						.map((track) => ({
+							name: `🎵 ${track.info.title.length > 80 ? `${track.info.title.slice(0, 77)}…` : track.info.title} [${formatTrackDuration(track.info.length)}]`,
+							value:
+								(track.info.uri || '').length > 100
+									? track.info.uri.slice(0, 100)
+									: track.info.uri || '',
+						}));
+					searchCache.set(focusedValue, choices);
+					return interaction.respond(choices);
+				} catch (e) {
+					logger.error(`Autocomplete search failed: ${e.message || e}`, {
+						label: 'music',
+					});
+					return interaction.respond([]);
+				}
 			}
+
+			if (subcommandgroup === 'playlist' && focusedOption.name === 'name') {
+				try {
+					const userPlaylists = await Playlist.getAllCache({
+						where: { userId: interaction.user.id },
+						limit: 25,
+						cacheTags: [`Playlist:byUser:${interaction.user.id}`],
+					});
+					if (!userPlaylists) return interaction.respond([]);
+					const filteredChoices = userPlaylists
+						.map((playlist) => playlist.name)
+						.filter((name) =>
+							name.toLowerCase().includes(focusedValue.toLowerCase()),
+						)
+						.map((name) => ({
+							name: `🎵 ${name.length > 95 ? `${name.slice(0, 92)}...` : name}`,
+							value: name.length > 100 ? name.slice(0, 100) : name,
+						}));
+					return interaction.respond(filteredChoices.slice(0, 25));
+				} catch (error) {
+					logger.error(
+						`Playlist autocomplete error: ${error.message || error}`,
+						{
+							label: 'music',
+						},
+					);
+					return interaction.respond([]);
+				}
+			}
+
+			if (subcommandgroup === 'favorite' && focusedOption.name === 'name') {
+				try {
+					const userFavorites = await Favorite.getAllCache({
+						where: { userId: interaction.user.id },
+						limit: 25,
+						cacheTags: [`Favorite:byUser:${interaction.user.id}`],
+					});
+					if (!userFavorites) return interaction.respond([]);
+					const filteredChoices = userFavorites
+						.map((favorite) => favorite.title)
+						.filter((name) =>
+							name.toLowerCase().includes(focusedValue.toLowerCase()),
+						)
+						.map((name) => ({
+							name: `🎵 ${String(name).length > 95 ? `${String(name).slice(0, 92)}...` : name}`,
+							value: String(name).slice(0, 100),
+						}));
+					return interaction.respond(filteredChoices.slice(0, 25));
+				} catch (error) {
+					logger.error(
+						`Favorite autocomplete error: ${error.message || error}`,
+						{
+							label: 'music',
+						},
+					);
+					return interaction.respond([]);
+				}
+			}
+
+			if (subcommand === 'radio' && focusedOption.name === 'search') {
+				if (!client._radioAutocompleteCache)
+					client._radioAutocompleteCache = new Map();
+				if (client._radioAutocompleteCache.has(focusedValue)) {
+					return interaction.respond(
+						client._radioAutocompleteCache.get(focusedValue),
+					);
+				}
+
+				if (!focusedValue || focusedValue.trim().length === 0) {
+					return interaction.respond([]);
+				}
+
+				try {
+					const axios = require('axios');
+					const response = await axios.get(
+						`https://de1.api.radio-browser.info/json/stations/search?name=${encodeURIComponent(focusedValue)}&limit=20&hidebroken=true&order=clickcount&reverse=true`,
+						{ timeout: 2000 },
+					);
+
+					if (!response.data || !Array.isArray(response.data))
+						return interaction.respond([]);
+
+					const choices = response.data.slice(0, 25).map((station) => {
+						const name =
+							station.name.length > 50
+								? `${station.name.substring(0, 47)}...`
+								: station.name;
+						const country = station.countrycode || '🌐';
+						const bitrate = station.bitrate || 0;
+
+						const finalName = `📻 ${name} [${country}|${bitrate} k]`;
+						return {
+							name:
+								finalName.length > 100
+									? `${finalName.slice(0, 97)}...`
+									: finalName,
+							value: String(station.stationuuid).slice(0, 100),
+						};
+					});
+
+					client._radioAutocompleteCache.set(focusedValue, choices);
+					setTimeout(
+						() => client._radioAutocompleteCache.delete(focusedValue),
+						60000,
+					);
+
+					return interaction.respond(choices);
+				} catch (_e) {
+					return interaction.respond([]);
+				}
+			}
+		};
+
+		try {
+			await run();
+		} catch (error) {
+			if (error.code === 10062 || error.message === 'Unknown interaction')
+				return;
+			container.logger.error(`Autocomplete error: ${error.message || error}`, {
+				label: 'music',
+			});
 		}
 	},
 

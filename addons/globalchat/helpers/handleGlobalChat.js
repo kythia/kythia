@@ -177,13 +177,17 @@ async function handleGlobalChat(message, container) {
 			});
 		}
 	} catch (apiError) {
-		if (apiError instanceof Error && apiError.name === 'TimeoutError') {
-			return; // Silently ignore timeouts
+		const errMsg = apiError.message || String(apiError);
+		if (
+			(apiError instanceof Error && apiError.name === 'TimeoutError') ||
+			apiError.name === 'AbortError' ||
+			errMsg.includes('The user aborted a request')
+		) {
+			return; // Silently ignore timeouts and aborts
 		}
-		logger.error(
-			`Failed to send message to API: ${apiError.message || apiError}`,
-			{ label: 'globalchat' },
-		);
+		logger.error(`Failed to send message to API: ${errMsg}`, {
+			label: 'globalchat',
+		});
 	}
 }
 
