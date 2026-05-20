@@ -78,8 +78,10 @@ module.exports = {
 					id: id,
 				},
 			});
-			trigger.destroy();
-			deleted = 1;
+			if (trigger) {
+				await trigger.destroy();
+				deleted = 1;
+			}
 		} else {
 			const trigger = await AutoReact.getCache({
 				where: {
@@ -87,8 +89,10 @@ module.exports = {
 					trigger: triggerInput,
 				},
 			});
-			trigger.destroy();
-			deleted = 1;
+			if (trigger) {
+				await trigger.destroy();
+				deleted = 1;
+			}
 		}
 
 		if (!deleted) {
