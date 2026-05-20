@@ -118,6 +118,12 @@ module.exports = {
 						new ActionRowBuilder().addComponents(
 							new ButtonBuilder()
 								.setStyle(ButtonStyle.Link)
+								.setLabel(
+									await t(interaction, 'core.utils.legal.button.website'),
+								)
+								.setURL(_wL),
+							new ButtonBuilder()
+								.setStyle(ButtonStyle.Link)
 								.setLabel(await t(interaction, 'core.utils.legal.button.tos'))
 								.setURL(_tL),
 							new ButtonBuilder()
@@ -126,12 +132,6 @@ module.exports = {
 									await t(interaction, 'core.utils.legal.button.privacy'),
 								)
 								.setURL(_pL),
-							new ButtonBuilder()
-								.setStyle(ButtonStyle.Link)
-								.setLabel(
-									await t(interaction, 'core.utils.legal.button.website'),
-								)
-								.setURL(_wL),
 						),
 					)
 					.addSeparatorComponents(
