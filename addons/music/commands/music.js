@@ -730,11 +730,12 @@ module.exports = {
 	 * 🏷️ Main command executor for all subcommands.
 	 * Handles permission checks and delegates to the appropriate handler.
 	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
+	 * @param {KythiaDI.Container} container
 	 */
 	async execute(interaction, container) {
 		const { client, member, guild, options } = interaction;
-		const { t, music, musicHandlers } = container;
-		// const { isOwner } = helpers.discord;
+		const { t, music, musicHandlers, helpers } = container;
+		const { simpleContainer } = helpers.discord;
 
 		if (!(member instanceof GuildMember) || !member.voice.channel) {
 			return interaction.reply({
@@ -778,9 +779,9 @@ module.exports = {
 		}
 
 		if (!player) {
-			const reply = await this.simpleContainer(
+			const reply = await simpleContainer(
 				interaction,
-				await this.t(interaction, 'music.music.player.not.found'),
+				await t(interaction, 'music.music.player.not.found'),
 				{ color: 'Red' },
 			);
 
