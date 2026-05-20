@@ -11,7 +11,6 @@ By using the Bot, you accept these terms and our Privacy Policy. These govern yo
 ## 02 Use of Service
 
 You agree NOT to:
-
 - Use the Bot for spamming, harassment, or abusive behavior.
 - Attempt to exploit, hack, or compromise the Bot or its infrastructure.
 - **Attempt prompt injection or jailbreaking** to bypass Kythia's AI safety filters or moderation tools.
@@ -40,6 +39,5 @@ We reserve the right to suspend or block access to Kythia for violations of thes
 ## 08 Contact & Support
 
 Questions regarding these terms? Initiate contact via secure channels:
-
 - Email: kenndeclouv@gmail.com
 - Support Server: https://dsc.gg/kythia

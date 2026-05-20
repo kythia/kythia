@@ -21,7 +21,8 @@
 				},
 				"button": {
 					"tos": "Terms of Service",
-					"privacy": "Privacy Policy"
+					"privacy": "Privacy Policy",
+					"website": "Website"
 				},
 				"error": {
 					"fetch": "❌ Failed to fetch the Terms of Service. Please try again later."

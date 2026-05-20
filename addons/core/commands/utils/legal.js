@@ -53,9 +53,10 @@ module.exports = {
 
 			const _pL =
 				'\x68\x74\x74\x70\x73\x3a\x2f\x2f\x6b\x79\x74\x68\x69\x61\x2e\x78\x79\x7a\x2f\x70\x72\x69\x76\x61\x63\x79';
-
 			const _tL =
 				'\x68\x74\x74\x70\x73\x3a\x2f\x2f\x6b\x79\x74\x68\x69\x61\x2e\x78\x79\x7a\x2f\x74\x6f\x73';
+			const _wL =
+				'\x68\x74\x74\x70\x73\x3a\x2f\x2f\x6b\x79\x74\x68\x69\x61\x2e\x78\x79\x7a';
 
 			let rawData;
 			try {
@@ -125,6 +126,12 @@ module.exports = {
 									await t(interaction, 'core.utils.legal.button.privacy'),
 								)
 								.setURL(_pL),
+							new ButtonBuilder()
+								.setStyle(ButtonStyle.Link)
+								.setLabel(
+									await t(interaction, 'core.utils.legal.button.website'),
+								)
+								.setURL(_wL),
 						),
 					)
 					.addSeparatorComponents(
