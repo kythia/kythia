@@ -17,6 +17,7 @@ const {
 } = require('./events');
 
 const { checkCooldown, formatDuration, parseDuration } = require('./time');
+const { resolvePreviewText } = require('./canvas');
 
 module.exports = {
 	rolePrefix,
@@ -29,4 +30,5 @@ module.exports = {
 	parseDuration,
 	figletFonts,
 	helpUtils,
+	resolvePreviewText,
 };

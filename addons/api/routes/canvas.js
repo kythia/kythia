@@ -6,8 +6,10 @@
  * @version 1.0.0-rc
  */
 
-const { welcomeBanner } = require('kythia-arts');
 const { Hono } = require('hono');
+const { welcomeBanner } = require('kythia-arts');
+const { resolvePreviewText } = require('@coreHelpers');
+
 const app = new Hono();
 
 const intOrUndefined = (val) => {
@@ -18,25 +20,6 @@ const intOrUndefined = (val) => {
 
 const strOrUndefined = (val) => (!val ? undefined : val);
 
-const resolvePreviewText = (text, _type) => {
-	if (!text) return undefined;
-
-	const replacements = {
-		'{username}': 'Kythia User',
-		'{tag}': 'Kythia#0000',
-		'{userId}': '123456789012345678',
-		'{guildName}': 'Kythia Universe',
-		'{members}': '1,337',
-		'{mention}': '@Kythia User',
-	};
-
-	let result = text;
-	for (const [key, value] of Object.entries(replacements)) {
-		result = result.replace(new RegExp(key, 'gi'), value);
-	}
-	return result;
-};
-
 app.post('/preview', async (c) => {
 	const client = c.get('client');
 	const { logger } = c.get('container');
@@ -46,11 +29,25 @@ app.post('/preview', async (c) => {
 		const type = body.type || 'In';
 		const prefix = `welcome${type}`;
 
-		const mockUserId = '000000000000000000';
-		const mockUsername = 'Kythia Chan';
+		const mockUserId = client.user?.id || '000000000000000000';
+
+		const resolvedMainText = await resolvePreviewText(
+			body[`${prefix}MainTextContent`],
+			type,
+			body.guildId,
+			c.get('container'),
+			client,
+		);
+		const resolvedSubText = await resolvePreviewText(
+			body[`${prefix}SubTextContent`],
+			type,
+			body.guildId,
+			c.get('container'),
+			client,
+		);
 
 		const options = {
-			customUsername: mockUsername,
+			customUsername: resolvedSubText || 'Kythia Chan',
 			botToken: process.env.DISCORD_BOT_TOKEN,
 
 			customWidth: intOrUndefined(body[`${prefix}BannerWidth`]),
@@ -70,7 +67,7 @@ app.post('/preview', async (c) => {
 				color: strOrUndefined(body[`${prefix}AvatarBorderColor`]),
 			},
 
-			welcomeText: resolvePreviewText(body[`${prefix}MainTextContent`], type),
+			welcomeText: resolvedMainText,
 			welcomeColor: strOrUndefined(body[`${prefix}MainTextColor`]),
 			customFont: strOrUndefined(body[`${prefix}MainTextFontFamily`]),
 			fontWeight: strOrUndefined(body[`${prefix}MainTextFontWeight`]),
@@ -83,7 +80,7 @@ app.post('/preview', async (c) => {
 			type: 'welcome',
 		};
 
-		const buffer = await welcomeBanner(client.user?.id || mockUserId, options);
+		const buffer = await welcomeBanner(mockUserId, options);
 
 		const base64Image = Buffer.from(buffer).toString('base64');
 		const dataUri = `data:image/png;base64,${base64Image}`;
