@@ -20,26 +20,11 @@ app.post('/upload', async (c) => {
 	const container = getContainer(c);
 	const { Image } = getModels(c);
 	const { kythiaConfig, logger } = container;
+	const { uploadToR2 } = require('../../image/services/r2');
+	const { v4: uuidv4 } = require('uuid');
+	const path = require('node:path');
 
-	const storageUrl =
-		kythiaConfig.addons.image?.storageUrl ||
-		process.env.KYTHIA_IMAGE_STORAGE_URL ||
-		'http://localhost:3000';
-	const apiKey =
-		kythiaConfig.addons.image?.apiKey ||
-		process.env.KYTHIA_IMAGE_STORAGE_API_KEY ||
-		'';
-
-	if (!apiKey) {
-		return c.json(
-			{
-				success: false,
-				error:
-					'Storage API key not configured. Set KYTHIA_IMAGE_STORAGE_API_KEY.',
-			},
-			500,
-		);
-	}
+	const r2Config = kythiaConfig.addons.image;
 
 	let formData;
 	try {
@@ -80,38 +65,28 @@ app.post('/upload', async (c) => {
 	}
 
 	try {
-		// Build FormData to forward the file to Kythia Storage
-		const uploadForm = new FormData();
-		const buffer = await file.arrayBuffer();
-		const blob = new Blob([buffer], { type: file.type });
-		uploadForm.append('file', blob, formData.fileName || file.name);
+		const arrayBuffer = await file.arrayBuffer();
+		const buffer = Buffer.from(arrayBuffer);
 
-		const uploadResponse = await fetch(`${storageUrl}/api/upload`, {
-			method: 'POST',
-			headers: {
-				Authorization: `Bearer ${apiKey}`,
-			},
-			body: uploadForm,
-		});
+		const ext = path.extname(file.name).toLowerCase() || '.png';
+		const uniqueKey = `images/${userId}/${uuidv4()}${ext}`;
 
-		if (!uploadResponse.ok) {
-			const errorText = await uploadResponse.text();
-			throw new Error(
-				`Storage server error (${uploadResponse.status}): ${errorText}`,
-			);
-		}
-
-		const uploadData = await uploadResponse.json();
+		const { key, publicUrl } = await uploadToR2(
+			buffer,
+			uniqueKey,
+			file.name,
+			r2Config,
+		);
 
 		// Save metadata to database
 		const savedImage = await Image.create({
 			userId,
-			filename: uploadData.metadata.stored_name,
-			originalName: uploadData.metadata.original_name,
-			fileId: uploadData.file_id,
-			storageUrl: uploadData.url,
-			mimetype: uploadData.metadata.mime_type,
-			fileSize: uploadData.metadata.file_size,
+			filename: key, // R2 object key (used for deletion)
+			originalName: file.name,
+			fileId: key, // Reuse key as the stable identifier
+			storageUrl: publicUrl, // Public R2 URL
+			mimetype: file.type,
+			fileSize: file.size,
 		});
 
 		return c.json({ success: true, data: savedImage }, 201);
@@ -238,13 +213,29 @@ app.patch('/:id', async (c) => {
 
 // DELETE /api/image/:id - Delete an image record
 app.delete('/:id', async (c) => {
+	const container = getContainer(c);
 	const { Image } = getModels(c);
+	const { kythiaConfig, logger } = container;
 	const id = c.req.param('id');
+	const { deleteFromR2 } = require('../../image/services/r2');
+
+	const r2Config = kythiaConfig.addons.image;
 
 	try {
 		const result = await Image.getCache({ id: id });
 		if (!result)
 			return c.json({ success: false, error: 'Image not found' }, 404);
+
+		try {
+			// result.filename stores the R2 key (e.g. "images/<userId>/<uuid>.png")
+			await deleteFromR2(result.filename, r2Config);
+		} catch (r2Err) {
+			logger.error(
+				`Failed to delete image from R2 (${result.filename}): ${r2Err.message || r2Err}`,
+				{ label: 'image api' },
+			);
+			// We still continue to delete from DB even if R2 fails
+		}
 
 		await result.destroy();
 		return c.json({ success: true, message: 'Image deleted successfully' });
