@@ -16,10 +16,8 @@ module.exports = {
 	execute: async (container) => {
 		const { client } = container;
 
-		// Only run on Shard 0 to prevent duplicate updates across shards
-		if (client.shard && !client.shard.ids.includes(0)) {
-			return;
-		}
+		// Runs on all shards. The helper filters by client.guilds.cache.get()
+		// which ensures each shard only updates its own guilds.
 
 		await runMinecraftStatsUpdater(client);
 	},

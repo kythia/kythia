@@ -29,6 +29,7 @@ module.exports = {
 		const { UserBirthday } = models;
 		const { t } = container;
 		const { getGuildSafe } = helpers.discord;
+		const { ShardClientUtil } = require('discord.js');
 
 		logger.info('🎂 Running birthday announcer...', { label: 'birthday' });
 
@@ -48,6 +49,14 @@ module.exports = {
 			if (birthdays.length === 0) return;
 
 			for (const record of birthdays) {
+				if (client.shard) {
+					const expectedShardId = ShardClientUtil.shardIdForGuildId(
+						record.guildId,
+						client.shard.count,
+					);
+					if (!client.shard.ids.includes(expectedShardId)) continue;
+				}
+
 				if (record.lastCelebratedYear === currentYear) continue;
 
 				const guild = await getGuildSafe(client, record.guildId);

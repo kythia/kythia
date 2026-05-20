@@ -33,11 +33,8 @@ module.exports = {
 	execute: async (container) => {
 		const { client, models, helpers, logger, kythiaConfig, t } = container;
 
-		// Only run the poller on Shard 0 to prevent duplicate posts
-		if (client.shard && !client.shard.ids.includes(0)) {
-			// Silently ignore on other shards
-			return;
-		}
+		// The poller runs on all shards. We'll filter the subscriptions by the current shard.
+		const { ShardClientUtil } = require('discord.js');
 
 		const { SocialAlertSubscription, SocialAlertSetting } = models;
 		const { convertColor } = helpers.color;
@@ -67,6 +64,14 @@ module.exports = {
 		});
 
 		for (const sub of subscriptions) {
+			if (client.shard) {
+				const expectedShardId = ShardClientUtil.shardIdForGuildId(
+					sub.guildId,
+					client.shard.count,
+				);
+				if (!client.shard.ids.includes(expectedShardId)) continue;
+			}
+
 			try {
 				const platform = sub.platform || 'youtube';
 

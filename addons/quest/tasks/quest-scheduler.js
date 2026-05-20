@@ -68,6 +68,7 @@ module.exports = {
 	execute: async (container) => {
 		const { models, logger, client, kythiaConfig } = container;
 		const { QuestConfig, QuestGuildLog } = models;
+		const { ShardClientUtil } = require('discord.js');
 		logger.info(`Running cron job...`, { label: 'questnotifier' });
 
 		const apiUrlsConfig = kythiaConfig.addons.quest.apiUrls || '';
@@ -166,6 +167,14 @@ module.exports = {
 			};
 
 			for (const config of allGuildConfigs) {
+				if (client.shard) {
+					const expectedShardId = ShardClientUtil.shardIdForGuildId(
+						config.guildId,
+						client.shard.count,
+					);
+					if (!client.shard.ids.includes(expectedShardId)) continue;
+				}
+
 				try {
 					const channel = await client.channels
 						.fetch(config.channelId, { force: true })

@@ -24,6 +24,7 @@ module.exports = {
 	execute: async (container) => {
 		const { logger, models, kythiaConfig, client } = container;
 		const { GlobalChat } = models;
+		const { ShardClientUtil } = require('discord.js');
 
 		const apiUrl = kythiaConfig.addons.globalchat.apiUrl;
 		const apiKey = kythiaConfig.addons.globalchat.apiKey;
@@ -83,6 +84,14 @@ module.exports = {
 		// Step 3: Compare and sync: Are all API guilds also in DB?
 		// If API has a guild that's missing or badly out of sync DB, warn/fix.
 		for (const apiGuild of apiGuilds) {
+			if (client.shard) {
+				const expectedShardId = ShardClientUtil.shardIdForGuildId(
+					apiGuild.id,
+					client.shard.count,
+				);
+				if (!client.shard.ids.includes(expectedShardId)) continue;
+			}
+
 			const dbEntry = dbGuildMap.get(apiGuild.id);
 
 			const shouldUpdate =

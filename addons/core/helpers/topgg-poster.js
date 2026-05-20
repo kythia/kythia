@@ -30,6 +30,23 @@ function setupTopGGPoster(bot) {
 		// Initialize the poster
 		const poster = AutoPoster(topGGToken, client);
 
+		// Override getStats to ensure we post the total server count across all shards
+		poster.getStats = async () => {
+			let serverCount = client.guilds.cache.size;
+
+			if (client.shard) {
+				const shardInfo = await client.shard.broadcastEval(
+					(c) => c.guilds.cache.size,
+				);
+				serverCount = shardInfo.reduce((acc, count) => acc + count, 0);
+			}
+
+			return {
+				serverCount,
+				shardCount: client.options?.shardCount || 1,
+			};
+		};
+
 		// Add event listeners
 		poster.on('posted', (stats) => {
 			logger.info(

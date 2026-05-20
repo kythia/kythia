@@ -45,8 +45,18 @@ module.exports = {
 				return;
 			}
 
+			const { ShardClientUtil } = require('discord.js');
 			let restoredCount = 0;
 			for (const session of sessions) {
+				// If sharding is active, only process guilds that belong to this shard
+				if (client.shard) {
+					const expectedShardId = ShardClientUtil.shardIdForGuildId(
+						session.guildId,
+						client.shard.count,
+					);
+					if (!client.shard.ids.includes(expectedShardId)) continue;
+				}
+
 				try {
 					const guild = client.guilds.cache.get(session.guildId);
 					const voiceChannel = guild
