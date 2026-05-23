@@ -23,6 +23,10 @@ const manager = new ShardingManager({
 	token: kythiaConfig.bot.token,
 	totalShards: kythiaConfig.bot.totalShards,
 	maxOldSpaceSizeMb: 2048,
+	config: kythiaConfig,
+	licenseKey: kythiaConfig.licenseKey,
+	webhookErrorLogs:
+		kythiaConfig.api?.webhookErrorLogs || process.env.WEBHOOK_ERROR_LOGS,
 });
 
 manager.spawn().catch((err) => {

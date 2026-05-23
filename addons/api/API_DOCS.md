@@ -21,6 +21,7 @@ The **Kythia API** is an internal REST API addon that acts as the bridge between
 - [GET /api/stats](#get-apistats)
 - [GET /api/metrics](#get-apimetrics)
 - [GET /api/meta/stats](#get-apimetastats)
+- [GET /api/meta/growth](#get-apimetagrowth)
 - [GET /api/meta/commands](#get-apimetacommands)
 - [GET /api/meta/changelog](#get-apimetachangelog)
 - [GET /api/meta/shards](#get-apimetashards)
@@ -385,6 +386,69 @@ Returns aggregate statistics combining data from all cached guilds.
 | `uptime` | `number` | Bot uptime in milliseconds |
 | `ping` | `number` | WebSocket latency in milliseconds |
 | `ram_usage` | `string` | Current RSS memory usage formatted as `"X.XX MB"` |
+
+---
+
+### `GET /api/meta/growth`
+
+Returns historical bot growth statistics (guild joins, leaves, and total servers count) over a specified time period. Perfect for rendering growth charts on the dashboard.
+
+**Authentication:** Bearer token required.
+
+**Query Parameters:**
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `days` | `number` | `30` | Number of past days of history to retrieve (Min: `1`, Max: `365`). |
+| `granularity` | `string` | `"day"` | The bucket time size. Can be `"day"`, `"week"`, or `"month"`. |
+
+**Response:**
+```json
+{
+  "success": true,
+  "period": {
+    "from": "2026-04-24",
+    "to": "2026-05-24",
+    "days": 30,
+    "granularity": "day"
+  },
+  "current": {
+    "totalGuilds": 1247
+  },
+  "summary": {
+    "totalJoins": 87,
+    "totalLeaves": 12,
+    "netGrowth": 75
+  },
+  "chart": [
+    {
+      "date": "2026-04-24",
+      "joins": 3,
+      "leaves": 1,
+      "net": 2,
+      "totalGuilds": 1230
+    }
+  ]
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `success` | `boolean` | Always `true` on success |
+| `period.from` | `string` | The start date of the period queried (YYYY-MM-DD) |
+| `period.to` | `string` | The end date of the period queried (YYYY-MM-DD) |
+| `period.days` | `number` | Number of days queried |
+| `period.granularity` | `string` | Time bucket size used |
+| `current.totalGuilds` | `number` | The live server count across all shards |
+| `summary.totalJoins` | `number` | Total guild joins during this period |
+| `summary.totalLeaves` | `number` | Total guild leaves during this period |
+| `summary.netGrowth` | `number` | Net server count change during this period |
+| `chart` | `array` | Time-series data points grouped by granularity |
+| `chart[].date` | `string` | Bucket identifier (YYYY-MM-DD or YYYY-MM) |
+| `chart[].joins` | `number` | Joins in this bucket |
+| `chart[].leaves` | `number` | Leaves in this bucket |
+| `chart[].net` | `number` | Net growth in this bucket |
+| `chart[].totalGuilds` | `number` | Latest recorded running total server count in this bucket |
 
 ---
 

@@ -90,7 +90,7 @@ function getWelcomeChannel(guild) {
 module.exports = async (bot, guild) => {
 	const container = bot.client.container;
 	const { t, models, helpers, kythiaConfig, logger } = container;
-	const { ServerSetting, KythiaBlacklist } = models;
+	const { ServerSetting, KythiaBlacklist, BotGrowthSnapshot } = models;
 
 	const { convertColor } = helpers.color;
 
@@ -349,5 +349,22 @@ module.exports = async (bot, guild) => {
 				}
 			}
 		}
+	}
+
+	// ─── Bot Growth Snapshot ─────────────────────────────────────────────────
+	try {
+		if (BotGrowthSnapshot) {
+			await BotGrowthSnapshot.create({
+				guildId: guild.id,
+				guildName: guild.name ?? null,
+				memberCount: guild.memberCount ?? 0,
+				event: 'join',
+				totalGuilds: bot.client.guilds.cache.size,
+			});
+		}
+	} catch (snapErr) {
+		logger.error(`Failed to record bot growth snapshot: ${snapErr.message}`, {
+			label: 'guildCreate:growth',
+		});
 	}
 };

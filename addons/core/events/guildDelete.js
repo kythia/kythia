@@ -15,7 +15,8 @@ const Sentry = require('@sentry/node');
 
 module.exports = async (bot, guild) => {
 	const container = bot.client.container;
-	const { t, kythiaConfig, helpers, logger } = container;
+	const { t, kythiaConfig, helpers, logger, models } = container;
+	const { BotGrowthSnapshot } = models;
 	const { convertColor } = helpers.color;
 
 	const minMembers = kythiaConfig.bot.minMembers ?? 0;
@@ -82,5 +83,22 @@ module.exports = async (bot, guild) => {
 				Sentry.captureException(err);
 			}
 		}
+	}
+
+	// ─── Bot Growth Snapshot ─────────────────────────────────────────────────
+	try {
+		if (BotGrowthSnapshot) {
+			await BotGrowthSnapshot.create({
+				guildId: guild.id,
+				guildName: guild.name ?? null,
+				memberCount: guild.memberCount ?? 0,
+				event: 'leave',
+				totalGuilds: bot.client.guilds.cache.size,
+			});
+		}
+	} catch (snapErr) {
+		logger.error(`Failed to record bot growth snapshot: ${snapErr.message}`, {
+			label: 'guildDelete:growth',
+		});
 	}
 };

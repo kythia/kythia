@@ -8,6 +8,7 @@
 
 const { Locale } = require('discord.js');
 const { Hono } = require('hono');
+const { Op } = require('sequelize');
 const path = require('node:path');
 const fs = require('node:fs');
 const { getCommandsData } = require('../helpers/commands');
@@ -173,6 +174,122 @@ app.get('/logs', (c) => {
 	} catch (error) {
 		return c.json(
 			{ success: false, error: `Failed to fetch logs: ${error}` },
+			500,
+		);
+	}
+});
+
+// =============================================================================
+// GET /api/meta/growth — Bot server-count growth over time (chart data)
+// Query: days=30 (1-365), granularity=day|week|month
+// =============================================================================
+app.get('/growth', async (c) => {
+	const client = c.get('client');
+	const { models } = client.container;
+	const { BotGrowthSnapshot } = models;
+
+	if (!BotGrowthSnapshot) {
+		return c.json(
+			{ success: false, error: 'BotGrowthSnapshot model not loaded' },
+			503,
+		);
+	}
+
+	let days = parseInt(c.req.query('days') || '30', 10);
+	if (Number.isNaN(days) || days < 1) days = 30;
+	if (days > 365) days = 365;
+
+	const granularity = c.req.query('granularity') || 'day';
+	if (!['day', 'week', 'month'].includes(granularity)) {
+		return c.json(
+			{ success: false, error: 'granularity must be day, week, or month' },
+			400,
+		);
+	}
+
+	try {
+		const from = new Date();
+		from.setDate(from.getDate() - days);
+		from.setHours(0, 0, 0, 0);
+
+		const rows = await BotGrowthSnapshot.findAll({
+			where: {
+				createdAt: { [Op.gte]: from },
+			},
+			order: [['createdAt', 'ASC']],
+		});
+
+		// ── Group rows into time buckets ──────────────────────────────────────
+		function getBucketKey(date) {
+			const d = new Date(date);
+			if (granularity === 'month') {
+				return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+			}
+			if (granularity === 'week') {
+				// ISO week start: Monday
+				const day = d.getUTCDay() || 7;
+				const monday = new Date(d);
+				monday.setUTCDate(d.getUTCDate() - day + 1);
+				return monday.toISOString().slice(0, 10);
+			}
+			// day
+			return d.toISOString().slice(0, 10);
+		}
+
+		const buckets = new Map();
+
+		for (const row of rows) {
+			const key = getBucketKey(row.createdAt);
+			if (!buckets.has(key)) {
+				buckets.set(key, { date: key, joins: 0, leaves: 0, totalGuilds: 0 });
+			}
+			const bucket = buckets.get(key);
+			if (row.event === 'join') bucket.joins += 1;
+			if (row.event === 'leave') bucket.leaves += 1;
+			// Always take the latest totalGuilds within the bucket
+			bucket.totalGuilds = row.totalGuilds;
+		}
+
+		const chart = Array.from(buckets.values()).map((b) => ({
+			date: b.date,
+			joins: b.joins,
+			leaves: b.leaves,
+			net: b.joins - b.leaves,
+			totalGuilds: b.totalGuilds,
+		}));
+
+		const totalJoins = chart.reduce((s, b) => s + b.joins, 0);
+		const totalLeaves = chart.reduce((s, b) => s + b.leaves, 0);
+
+		// Live current guild count from Discord cache (cross-shard via broadcastGetMeta)
+		const { totalServers } = await broadcastGetMeta(client).catch(() => ({
+			totalServers: client.guilds.cache.size,
+		}));
+
+		return c.json({
+			success: true,
+			period: {
+				from: from.toISOString().slice(0, 10),
+				to: new Date().toISOString().slice(0, 10),
+				days,
+				granularity,
+			},
+			current: {
+				totalGuilds: totalServers,
+			},
+			summary: {
+				totalJoins,
+				totalLeaves,
+				netGrowth: totalJoins - totalLeaves,
+			},
+			chart,
+		});
+	} catch (error) {
+		return c.json(
+			{
+				success: false,
+				error: `Failed to fetch growth data: ${error.message}`,
+			},
 			500,
 		);
 	}
