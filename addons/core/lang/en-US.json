@@ -1834,7 +1834,7 @@
 	},
 	"system": {
 		"maintenance": {
-			"active": "🚧 **Bot is currently under maintenance!**\n\n**Reason:** {reason}\n\n*Please try again later. We apologize for the inconvenience!*"
+			"active": "## Currently under maintenance!\n\n**Reason:**\n{reason}\n\n-# Please try again later. We apologize for the inconvenience!"
 		}
 	}
 }

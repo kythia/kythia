@@ -248,7 +248,9 @@ class AIMessageHandler {
 			message.channel.type === ChannelType.DM || message.channel.type === 1;
 
 		const isMentioned =
-			message.mentions.users.has(client.user.id) && !message.mentions.everyone;
+			client.user != null &&
+			message.mentions.users.has(client.user.id) &&
+			!message.mentions.everyone;
 
 		if (isDm) {
 			const activeDMs = client.modmailActiveDMs;
@@ -424,8 +426,8 @@ class AIMessageHandler {
 				label: 'AIMessageHandler',
 			});
 			await message.channel
-				.send(await this.t(message, 'ai.events.messageCreate.error'))
-				.catch(() => {});
+				?.send(await this.t(message, 'ai.events.messageCreate.error'))
+				?.catch(() => {});
 			if (typingInterval) clearInterval(typingInterval);
 		}
 	}

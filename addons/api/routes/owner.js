@@ -26,6 +26,7 @@ const getContainer = (c) => c.get('client').container;
 const getModels = (c) => c.get('client').container.models;
 const getRedis = (c) => c.get('client').container.redis;
 const getLogger = (c) => c.get('client').container.logger;
+const getConfig = (c) => c.get('client').container.kythiaConfig;
 
 // =============================================================================
 // MAINTENANCE
@@ -343,7 +344,7 @@ app.post('/mass-leave', async (c) => {
 		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
 	}
 
-	const { minMember, except = [] } = body;
+	const { minMember, except = [], customMsg } = body;
 
 	if (typeof minMember !== 'number' || minMember < 1) {
 		return c.json(
@@ -379,6 +380,33 @@ app.post('/mass-leave', async (c) => {
 					const lNames = [];
 					for (const [, guild] of targets) {
 						try {
+							if (context.customMsg) {
+								let channel = guild.systemChannel;
+								if (!channel) {
+									channel = guild.channels.cache.find(
+										(ch) =>
+											ch.isTextBased() &&
+											ch.permissionsFor(guild.members.me).has('SendMessages') &&
+											(ch.name.includes('general') ||
+												ch.name.includes('chat') ||
+												ch.name.includes('obrolan')),
+									);
+								}
+								if (!channel) {
+									channel = guild.channels.cache.find(
+										(ch) =>
+											ch.isTextBased() &&
+											ch.permissionsFor(guild.members.me).has('SendMessages'),
+									);
+								}
+								if (channel) {
+									await channel
+										.send({
+											content: context.customMsg,
+										})
+										.catch(() => null);
+								}
+							}
 							await guild.leave();
 							lCount++;
 							lNames.push({
@@ -386,14 +414,14 @@ app.post('/mass-leave', async (c) => {
 								id: guild.id,
 								memberCount: guild.memberCount,
 							});
-							await new Promise((r) => setTimeout(r, 500));
+							await new Promise((r) => setTimeout(r, 1000));
 						} catch {
 							eCount++;
 						}
 					}
 					return { leftCount: lCount, errorCount: eCount, leftNames: lNames };
 				},
-				{ context: { threshold: minMember, SAFE_GUILDS } },
+				{ context: { threshold: minMember, SAFE_GUILDS, customMsg } },
 			);
 
 			leftCount = results.reduce((acc, r) => acc + r.leftCount, 0);
@@ -405,6 +433,33 @@ app.post('/mass-leave', async (c) => {
 			);
 			for (const [, guild] of targets) {
 				try {
+					if (customMsg) {
+						let channel = guild.systemChannel;
+						if (!channel) {
+							channel = guild.channels.cache.find(
+								(ch) =>
+									ch.isTextBased() &&
+									ch.permissionsFor(guild.members.me).has('SendMessages') &&
+									(ch.name.includes('general') ||
+										ch.name.includes('chat') ||
+										ch.name.includes('obrolan')),
+							);
+						}
+						if (!channel) {
+							channel = guild.channels.cache.find(
+								(ch) =>
+									ch.isTextBased() &&
+									ch.permissionsFor(guild.members.me).has('SendMessages'),
+							);
+						}
+						if (channel) {
+							await channel
+								.send({
+									content: customMsg,
+								})
+								.catch(() => null);
+						}
+					}
 					leftNames.push({
 						name: guild.name,
 						id: guild.id,
@@ -412,7 +467,7 @@ app.post('/mass-leave', async (c) => {
 					});
 					await guild.leave();
 					leftCount++;
-					await new Promise((r) => setTimeout(r, 500));
+					await new Promise((r) => setTimeout(r, 1000));
 				} catch {
 					errorCount++;
 				}
@@ -1105,13 +1160,11 @@ app.get('/presence', (c) => {
 			success: true,
 			data: {
 				status: presence.status,
-				activity: activity
-					? {
-							name: activity.name,
-							type: ActivityType[activity.type] ?? activity.type,
-							url: activity.url ?? null,
-						}
+				activity: activity ? activity.state || activity.name : null,
+				activityType: activity
+					? (ActivityType[activity.type] ?? activity.type)
 					: null,
+				url: activity?.url ?? null,
 			},
 		});
 	} catch (error) {
@@ -1126,10 +1179,10 @@ app.get('/presence', (c) => {
 /**
  * PATCH /api/owner/presence
  * Update the bot's presence.
- * Body: { status: string, type: string, activity: string, url?: string }
+ * Body: { status: string, activityType: string, activity: string, url?: string }
  *
  * Valid status: online | idle | dnd | invisible
- * Valid type: Playing | Streaming | Listening | Watching | Competing | Custom
+ * Valid activityType: Playing | Streaming | Listening | Watching | Competing | Custom
  */
 app.patch('/presence', async (c) => {
 	let body;
@@ -1139,7 +1192,8 @@ app.patch('/presence', async (c) => {
 		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
 	}
 
-	const { status, type, activity: activityName, url } = body;
+	const { status, activity, url } = body;
+	const activityType = body.activityType || body.type;
 
 	const VALID_STATUSES = ['online', 'idle', 'dnd', 'invisible'];
 	const VALID_TYPES = Object.keys(ActivityType).filter(
@@ -1156,17 +1210,17 @@ app.patch('/presence', async (c) => {
 		);
 	}
 
-	if (!type || !VALID_TYPES.includes(type)) {
+	if (!activityType || !VALID_TYPES.includes(activityType)) {
 		return c.json(
 			{
 				success: false,
-				error: `Invalid \`type\`. Must be one of: ${VALID_TYPES.join(', ')}`,
+				error: `Invalid \`activityType\`. Must be one of: ${VALID_TYPES.join(', ')}`,
 			},
 			400,
 		);
 	}
 
-	if (!activityName || typeof activityName !== 'string') {
+	if (!activity || typeof activity !== 'string') {
 		return c.json(
 			{ success: false, error: 'Missing required field: activity' },
 			400,
@@ -1174,7 +1228,7 @@ app.patch('/presence', async (c) => {
 	}
 
 	if (
-		type === 'Streaming' &&
+		activityType === 'Streaming' &&
 		(!url ||
 			(!url.startsWith('https://www.twitch.tv/') &&
 				!url.startsWith('https://www.youtube.com/')))
@@ -1183,7 +1237,7 @@ app.patch('/presence', async (c) => {
 			{
 				success: false,
 				error:
-					'A valid Twitch or YouTube URL is required when type is Streaming',
+					'A valid Twitch or YouTube URL is required when activityType is Streaming',
 			},
 			400,
 		);
@@ -1193,24 +1247,26 @@ app.patch('/presence', async (c) => {
 		const client = getClient(c);
 
 		const activityPayload = {
-			name: activityName,
-			type: ActivityType[type],
+			name: activityType === 'Custom' ? 'Custom Status' : activity,
+			type: ActivityType[activityType],
 		};
 
-		if (type === 'Streaming') {
+		if (activityType === 'Custom') {
+			activityPayload.state = activity;
+		} else if (activityType === 'Streaming') {
 			activityPayload.url = url;
 		}
 
 		client.user.setPresence({ activities: [activityPayload], status });
 
 		getLogger(c).info(
-			`Bot presence updated via API: status=${status}, type=${type}, activity="${activityName}"`,
+			`Bot presence updated via API: status=${status}, activityType=${activityType}, activity="${activity}"`,
 			{ label: 'api' },
 		);
 
 		return c.json({
 			success: true,
-			data: { status, type, activity: activityName, url: url ?? null },
+			data: { status, activityType, activity, url: url ?? null },
 		});
 	} catch (error) {
 		getLogger(c).error(
@@ -1227,8 +1283,8 @@ app.patch('/presence', async (c) => {
 
 /**
  * POST /api/owner/chat
- * Send a direct message to a user as the bot.
- * Body: { userId: string, message: string }
+ * Send a message or container to a user or channel as the bot.
+ * Body: { targetType: 'user' | 'channel', targetId: string, message: string, embed?: { title?: string, color?: string, imageUrl?: string } }
  */
 app.post('/chat', async (c) => {
 	let body;
@@ -1238,11 +1294,13 @@ app.post('/chat', async (c) => {
 		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
 	}
 
-	const { userId, message } = body;
+	const { targetType = 'user', targetId, message, embed } = body;
+	// Backward compatibility fallback
+	const finalTargetId = targetId || body.userId;
 
-	if (!userId || typeof userId !== 'string') {
+	if (!finalTargetId || typeof finalTargetId !== 'string') {
 		return c.json(
-			{ success: false, error: 'Missing or invalid required field: userId' },
+			{ success: false, error: 'Missing or invalid required field: targetId' },
 			400,
 		);
 	}
@@ -1255,31 +1313,66 @@ app.post('/chat', async (c) => {
 
 	try {
 		const client = getClient(c);
+		let target;
 
-		const user = await client.users.fetch(userId).catch(() => null);
-		if (!user) {
-			return c.json(
-				{ success: false, error: `User ${userId} not found.` },
-				404,
-			);
+		if (targetType === 'channel') {
+			target = await client.channels.fetch(finalTargetId).catch(() => null);
+			if (!target || !target.isTextBased()) {
+				return c.json(
+					{ success: false, error: `Text channel ${finalTargetId} not found.` },
+					404,
+				);
+			}
+		} else {
+			target = await client.users.fetch(finalTargetId).catch(() => null);
+			if (!target) {
+				return c.json(
+					{ success: false, error: `User ${finalTargetId} not found.` },
+					404,
+				);
+			}
 		}
 
 		const { helpers } = getContainer(c);
-		const { simpleContainer } = helpers.discord;
+		const { simpleContainer, createContainer } = helpers.discord;
 
-		const components = await simpleContainer({ client }, message.trim());
-		await user.send({
+		let components;
+		if (
+			embed &&
+			(embed.title || embed.color || embed.imageUrl || embed.footer)
+		) {
+			components = await createContainer(
+				{ client },
+				{
+					title: embed.title || null,
+					description: message.trim(),
+					color: embed.color || null,
+					media: embed.imageUrl ? [embed.imageUrl] : [],
+					footer: embed.footer || false,
+				},
+			);
+		} else {
+			components = await simpleContainer({ client }, message.trim());
+		}
+
+		await target.send({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 
-		getLogger(c).info(`DM sent to ${user.tag} (${userId}) via API.`, {
-			label: 'api',
-		});
+		const targetName =
+			targetType === 'channel' ? `#${target.name}` : target.tag;
+
+		getLogger(c).info(
+			`Message sent to ${targetType} ${targetName} (${finalTargetId}) via API.`,
+			{
+				label: 'api',
+			},
+		);
 
 		return c.json({
 			success: true,
-			message: `DM sent to user ${user.tag} (${userId}).`,
+			message: `Message sent to ${targetType} ${targetName} (${finalTargetId}).`,
 		});
 	} catch (error) {
 		getLogger(c).error(
@@ -1287,7 +1380,7 @@ app.post('/chat', async (c) => {
 			{ label: 'api' },
 		);
 		// DMs can fail if the user has DMs disabled
-		if (error.code === 50007) {
+		if (error.code === 50007 && targetType === 'user') {
 			return c.json(
 				{
 					success: false,
@@ -1363,6 +1456,261 @@ app.delete('/restart', (c) => {
 			`DELETE /api/owner/restart error: ${error.message || error}`,
 			{ label: 'api' },
 		);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
+// SETUP WIZARD (Dashboard config generator)
+// ---------------------------------------------------------------------------
+
+/**
+ * GET /api/owner/setup
+ * Returns the current active configuration mapped into the exact JSON
+ * structure required by the setup wizard/writer.
+ */
+app.get('/setup', (c) => {
+	const config = getConfig(c);
+
+	const license = {
+		licenseKey: process.env.LICENSE_KEY || '',
+		acceptTOS: config.acceptTOS ?? false,
+		dataCollection: config.dataCollection ?? false,
+	};
+
+	const bot = {
+		token: process.env.DISCORD_BOT_TOKEN || '',
+		clientId: process.env.DISCORD_BOT_CLIENT_ID || '',
+		clientSecret: process.env.DISCORD_BOT_CLIENT_SECRET || '',
+		botName: config.bot?.name || 'Kythia',
+		color: config.bot?.color || '#FFFFFF',
+		status: config.bot?.status || 'online',
+		activityType: config.bot?.activityType || 'Playing',
+		activity: config.bot?.activity || '',
+		timezone: config.bot?.timezone || 'Asia/Jakarta',
+		ownerIds: config.owner?.ids || '',
+		ownerNames: config.owner?.names || '',
+		prefixes: (config.bot?.prefixes || []).join(', '),
+	};
+
+	const db = {
+		driver: process.env.DB_DRIVER || 'sqlite',
+		dbHost: process.env.DB_HOST || 'localhost',
+		dbPort: process.env.DB_PORT || '3306',
+		dbName: process.env.DB_NAME || 'kythia',
+		dbUser: process.env.DB_USER || 'root',
+		dbPass: process.env.DB_PASSWORD || '',
+	};
+
+	const redis = {
+		useRedis: config.database?.useRedis ?? false,
+		redisUrls: process.env.REDIS_URLS || '',
+	};
+
+	const addons = {};
+	if (config.addons) {
+		for (const [key, val] of Object.entries(config.addons)) {
+			addons[key] = { enabled: val.active ?? false };
+		}
+	}
+
+	return c.json({
+		success: true,
+		data: {
+			license,
+			bot,
+			db,
+			redis,
+			addons,
+		},
+	});
+});
+
+/**
+ * POST /api/owner/setup
+ * Accepts the setup wizard JSON payload, writes the new .env and kythia.config.js
+ * using the setup/writer utility, and schedules a restart.
+ */
+app.post('/setup', async (c) => {
+	let body;
+	try {
+		body = await c.req.json();
+	} catch {
+		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
+	}
+
+	// Validate minimal required fields to avoid writer crashes
+	if (!body.license || !body.bot || !body.db || !body.redis || !body.addons) {
+		return c.json(
+			{ success: false, error: 'Missing required setup blocks' },
+			400,
+		);
+	}
+
+	try {
+		const path = require('node:path');
+		// Require writer from the setup folder relative to the project root
+		const writer = require(path.join(process.cwd(), 'setup', 'writer.js'));
+
+		const { envPath, configPath, envBackup, configBackup } =
+			writer.writeFiles(body);
+
+		getLogger(c).info('Setup API generated new configuration files.', {
+			label: 'api',
+		});
+
+		// Schedule a restart in 2 seconds so the response can be sent
+		const client = getClient(c);
+		setTimeout(async () => {
+			if (client.shard) {
+				await client.shard.respawnAll();
+			} else {
+				process.exit(0);
+			}
+		}, 2000);
+
+		return c.json({
+			success: true,
+			message:
+				'Configuration successfully updated. Bot will restart in 2 seconds.',
+			files: {
+				envPath,
+				configPath,
+				envBackup,
+				configBackup,
+			},
+		});
+	} catch (error) {
+		getLogger(c).error(`POST /api/owner/setup error: ${error.message}`, {
+			label: 'api',
+		});
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
+// LIVE CONFIG PATCHER
+// ---------------------------------------------------------------------------
+
+/**
+ * GET /api/owner/config
+ * Returns the current active configuration mapped into the exact JSON
+ * structure required by the config patcher. This is an alias for /setup's GET
+ * logic, returning the current state for the dashboard forms.
+ */
+app.get('/config', (c) => {
+	const config = getConfig(c);
+
+	const license = {
+		licenseKey: process.env.LICENSE_KEY || '',
+		acceptTOS: config.acceptTOS ?? false,
+		dataCollection: config.dataCollection ?? false,
+	};
+
+	const bot = {
+		token: process.env.DISCORD_BOT_TOKEN || '',
+		clientId: process.env.DISCORD_BOT_CLIENT_ID || '',
+		clientSecret: process.env.DISCORD_BOT_CLIENT_SECRET || '',
+		botName: config.bot?.name || 'Kythia',
+		color: config.bot?.color || '#FFFFFF',
+		status: config.bot?.status || 'online',
+		activityType: config.bot?.activityType || 'Playing',
+		activity: config.bot?.activity || '',
+		timezone: config.bot?.timezone || 'Asia/Jakarta',
+		ownerIds: config.owner?.ids || '',
+		ownerNames: config.owner?.names || '',
+		prefixes: (config.bot?.prefixes || []).join(', '),
+	};
+
+	const db = {
+		driver: process.env.DB_DRIVER || 'sqlite',
+		dbHost: process.env.DB_HOST || 'localhost',
+		dbPort: process.env.DB_PORT || '3306',
+		dbName: process.env.DB_NAME || 'kythia',
+		dbUser: process.env.DB_USER || 'root',
+		dbPass: process.env.DB_PASSWORD || '',
+	};
+
+	const redis = {
+		useRedis: config.database?.useRedis ?? false,
+		redisUrls: process.env.REDIS_URLS || '',
+	};
+
+	const addons = {};
+	if (config.addons) {
+		for (const [key, val] of Object.entries(config.addons)) {
+			addons[key] = { enabled: val.active ?? false };
+		}
+	}
+
+	return c.json({
+		success: true,
+		data: {
+			license,
+			bot,
+			db,
+			redis,
+			addons,
+		},
+	});
+});
+
+/**
+ * PATCH /api/owner/config
+ * Accepts a partial JSON payload (e.g., { bot: { botName: "New" } }) and safely
+ * patches ONLY those specific fields into the live .env and kythia.config.js files,
+ * leaving all other custom settings and comments untouched.
+ */
+app.patch('/config', async (c) => {
+	let body;
+	try {
+		body = await c.req.json();
+	} catch {
+		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
+	}
+
+	if (!body || typeof body !== 'object') {
+		return c.json({ success: false, error: 'Empty or invalid payload' }, 400);
+	}
+
+	try {
+		const path = require('node:path');
+		const patcher = require(
+			path.join(__dirname, '..', 'helpers', 'configPatcher.js'),
+		);
+
+		const { envPath, configPath, envBackup, configBackup } =
+			patcher.writePatchedFiles(body);
+
+		getLogger(c).info('Live Config Patcher successfully updated files.', {
+			label: 'api',
+		});
+
+		// Schedule a restart in 2 seconds
+		const client = getClient(c);
+		setTimeout(async () => {
+			if (client.shard) {
+				await client.shard.respawnAll();
+			} else {
+				process.exit(0);
+			}
+		}, 2000);
+
+		return c.json({
+			success: true,
+			message:
+				'Configuration successfully patched. Bot will restart in 2 seconds.',
+			files: {
+				envPath,
+				configPath,
+				envBackup,
+				configBackup,
+			},
+		});
+	} catch (error) {
+		getLogger(c).error(`PATCH /api/owner/config error: ${error.message}`, {
+			label: 'api',
+		});
 		return c.json({ success: false, error: error.message }, 500);
 	}
 });
@@ -1476,6 +1824,135 @@ app.post('/restart', async (c) => {
 		shardId: shardId ?? null,
 		delaySeconds,
 	});
+});
+
+// =============================================================================
+// GLOBAL PROFILE
+// =============================================================================
+
+/**
+ * GET /api/owner/profile
+ * Get the main bot's current global profile (username, avatar, banner, bio/description).
+ */
+app.get('/profile', async (c) => {
+	try {
+		const client = getClient(c);
+
+		// Ensure application data is fetched so we can get the description (bio)
+		if (!client.application?.description) {
+			await client.application?.fetch().catch(() => null);
+		}
+
+		return c.json({
+			success: true,
+			data: {
+				nickname: client.user.username,
+				avatar:
+					client.user.displayAvatarURL({ extension: 'png', size: 1024 }) ??
+					null,
+				banner: client.user.bannerURL({ extension: 'png', size: 1024 }) ?? null,
+				bio: client.application?.description ?? null,
+			},
+		});
+	} catch (error) {
+		getLogger(c).error(
+			`GET /api/owner/profile error: ${error.message || error}`,
+			{ label: 'api' },
+		);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+/**
+ * PATCH /api/owner/profile
+ * Update the main bot's global profile.
+ * Body: { nickname?: string, avatar?: string, banner?: string, bio?: string }
+ */
+app.patch('/profile', async (c) => {
+	let body;
+	try {
+		body = await c.req.json();
+	} catch {
+		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
+	}
+
+	const { nickname, avatar, banner, bio } = body;
+
+	try {
+		const client = getClient(c);
+		let hasChanges = false;
+
+		// Update application description (bio)
+		if (
+			bio !== undefined &&
+			bio !== (client.application?.description ?? null)
+		) {
+			await client.application
+				?.edit({ description: bio || '' })
+				.catch((err) => {
+					getLogger(c).error(`Failed to update bot bio: ${err.message}`, {
+						label: 'api',
+					});
+					throw new Error(`Bio update failed: ${err.message}`);
+				});
+			hasChanges = true;
+		}
+
+		// Update user profile (username, avatar, banner)
+		const userEdits = {};
+		if (nickname !== undefined && nickname !== client.user.username) {
+			userEdits.username = nickname;
+		}
+		if (avatar !== undefined) {
+			userEdits.avatar = avatar;
+		}
+		if (banner !== undefined) {
+			userEdits.banner = banner;
+		}
+
+		if (Object.keys(userEdits).length > 0) {
+			await client.user.edit(userEdits).catch((err) => {
+				getLogger(c).error(`Failed to update bot profile: ${err.message}`, {
+					label: 'api',
+				});
+				throw new Error(
+					`Profile update failed: ${err.message}. Note: Discord rate limits profile changes.`,
+				);
+			});
+			hasChanges = true;
+		}
+
+		if (hasChanges) {
+			getLogger(c).info('Global bot profile updated via API.', {
+				label: 'api',
+			});
+		}
+
+		// Fetch updated application if needed
+		if (hasChanges) {
+			await client.application?.fetch().catch(() => null);
+		}
+
+		return c.json({
+			success: true,
+			message: 'Global profile updated successfully',
+			data: {
+				nickname: client.user.username,
+				avatar:
+					client.user.displayAvatarURL({ extension: 'png', size: 1024 }) ??
+					null,
+				banner: client.user.bannerURL({ extension: 'png', size: 1024 }) ?? null,
+				bio: client.application?.description ?? null,
+			},
+		});
+	} catch (error) {
+		getLogger(c).error(
+			`PATCH /api/owner/profile error: ${error.message || error}`,
+			{ label: 'api' },
+		);
+		// Return 400 for Discord API errors like rate limits or bad image formats
+		return c.json({ success: false, error: error.message }, 400);
+	}
 });
 
 module.exports = app;

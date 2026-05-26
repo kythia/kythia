@@ -17,6 +17,7 @@ const {
 	broadcastGetMeta,
 	broadcastGetDetailedShards,
 } = require('../helpers/shard');
+const { getAddonStatuses } = require('../helpers/addons');
 
 const app = new Hono();
 
@@ -41,6 +42,10 @@ function getKythiaCoreVersion() {
 	return null;
 }
 
+// function getKythiaVersion() {
+// 	const kythiaVersion = kythiaConfig.version;
+// }
+
 app.get('/stats', async (c) => {
 	const client = c.get('client');
 
@@ -49,14 +54,26 @@ app.get('/stats', async (c) => {
 
 	const { totalCommands } = await getCommandsData(client);
 
+	const config = c.get('config') ?? client.container.kythiaConfig;
+	const statuses = getAddonStatuses(config);
+	const activeAddons = statuses.filter((a) => a.active).length;
+	const inactiveAddons = statuses.filter((a) => !a.active).length;
+	const addons = {
+		total: statuses.length,
+		active: activeAddons,
+		inactive: inactiveAddons,
+	};
+
 	return c.json({
 		totalServers,
 		totalMembers,
 		uptime: client.container.shutdownManager.getMasterUptime(),
 		ping: client.ws.ping,
 		ram_usage: `${(totalMemory / 1024 / 1024).toFixed(2)} MB`,
-		version: getKythiaCoreVersion(),
+		coreVersion: getKythiaCoreVersion(),
+		version: client.container.kythiaConfig.version,
 		totalCommands,
+		addons,
 	});
 });
 

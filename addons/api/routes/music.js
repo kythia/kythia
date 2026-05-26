@@ -742,6 +742,665 @@ app.put('/247/:guildId', async (c) => {
 	}
 });
 
+// ============================================================================
+// PLAYER CONTROLS  /api/music/player/:guildId
+// Delegates to the same MusicHandlers methods used by Discord slash commands
+// and buttons — so no logic is duplicated and everything stays in sync.
+// ============================================================================
+
+/**
+ * Resolve the live Poru player for a guild, or null.
+ */
+function getPlayer(c, guildId) {
+	const client = getClient(c);
+	if (!client.poru) return null;
+	return client.poru.players.get(guildId) ?? null;
+}
+
+/**
+ * Build a minimal mock Discord interaction that satisfies what MusicHandlers
+ * methods need — without actually being a real Discord interaction.
+ *
+ * All Discord reply lifecycle calls (reply/editReply/deferReply/followUp) are
+ * no-ops — we only care about the side effects on the Poru player, not the
+ * Discord message output.
+ *
+ * Fields provided:
+ *  - guildId, client             → used by all handlers + simpleContainer
+ *  - guild                       → resolved from client cache (may be null for uncached)
+ *  - locale, guildLocale         → TranslatorManager.t() fallback (uses guildId first)
+ *  - options.getString/Integer   → option value accessor used by volume/loop/seek/autoplay
+ *  - isChatInputCommand()        → controls branch logic in handleLoop / handleAutoplay
+ *  - deferred, replied getters   → guards in handleBack / handleShuffle (deferReply guards)
+ *  - deferReply/reply/editReply/followUp → no-ops so handlers don't crash after player ops
+ *
+ * @param {object} opts
+ * @param {string}  opts.guildId
+ * @param {object}  opts.client         — real Discord client
+ * @param {object}  [opts.optionValues] — map of option name → raw value
+ * @param {boolean} [opts.isChatInput]  — true = slash command path, false = button path
+ */
+function makeMockInteraction({
+	guildId,
+	client,
+	optionValues = {},
+	isChatInput = true,
+}) {
+	let _deferred = false;
+	let _replied = false;
+
+	// Resolve guild from cache (may be null if bot hasn't cached it yet, which is fine —
+	// t() falls back via guildId lookup in guildLanguageCache, then to defaultLang)
+	const guild = client.guilds?.cache?.get(guildId) ?? null;
+	const defaultLocale =
+		client.container?.kythiaConfig?.bot?.language ?? 'en-US';
+
+	return {
+		guildId,
+		client,
+		guild,
+
+		// locale / guildLocale: TranslatorManager.t() reads guildId first and falls back;
+		// providing these as a safety net for any code that reads them directly.
+		locale: guild?.preferredLocale ?? defaultLocale,
+		guildLocale: guild?.preferredLocale ?? defaultLocale,
+
+		// member / user — stubs; handlers only use these for display strings (no-op replies)
+		member: {
+			voice: { channel: null },
+			displayName: 'API',
+			roles: { cache: new Map() },
+		},
+		user: {
+			id: 'api',
+			username: 'API',
+			displayName: 'API',
+			toString: () => 'API',
+		},
+
+		// channel stub — needed if any code tries to access interaction.channel
+		channel: guild?.systemChannel ?? null,
+
+		// Discord option accessors
+		options: {
+			getString: (name) =>
+				Object.hasOwn(optionValues, name) ? optionValues[name] : null,
+			getInteger: (name) =>
+				Object.hasOwn(optionValues, name)
+					? parseInt(optionValues[name], 10)
+					: null,
+			getNumber: (name) =>
+				Object.hasOwn(optionValues, name) ? Number(optionValues[name]) : null,
+			getBoolean: (name) =>
+				Object.hasOwn(optionValues, name) ? Boolean(optionValues[name]) : null,
+			getUser: () => null,
+			getChannel: () => null,
+			getRole: () => null,
+			getSubcommand: (required = false) => {
+				if (required) throw new Error('No subcommand');
+				return null;
+			},
+			getSubcommandGroup: (required = false) => {
+				if (required) throw new Error('No subcommand group');
+				return null;
+			},
+		},
+
+		// Type discriminators
+		isChatInputCommand: () => isChatInput,
+		isButton: () => false,
+		isStringSelectMenu: () => false,
+		isRepliable: () => true,
+		isMessageComponent: () => false,
+		inGuild: () => !!guild,
+		inCachedGuild: () => !!guild,
+
+		// Reply lifecycle — tracked state, no-op implementations
+		get deferred() {
+			return _deferred;
+		},
+		get replied() {
+			return _replied;
+		},
+
+		deferReply: () => {
+			_deferred = true;
+		},
+		reply: () => {
+			_replied = true;
+		},
+		editReply: async () => {},
+		followUp: async () => {},
+		deleteReply: async () => {},
+		fetchReply: async () => null,
+	};
+}
+
+// ---------------------------------------------------------------------------
+// GET /api/music/player/:guildId
+// Snapshot of the current live player state. Safe — no side effects.
+// ---------------------------------------------------------------------------
+app.get('/player/:guildId', (c) => {
+	const { guildId } = c.req.param();
+	const player = getPlayer(c, guildId);
+
+	if (!player) return c.json({ success: true, data: null, status: 'idle' });
+
+	const status = player.isPaused
+		? 'paused'
+		: player.isPlaying
+			? 'playing'
+			: 'idle';
+
+	return c.json({
+		success: true,
+		data: {
+			guildId,
+			status,
+			volume: player.volume,
+			position: player.position,
+			isLoop: {
+				track: player.trackRepeat ?? false,
+				queue: player.queueRepeat ?? false,
+			},
+			autoplay: player.autoplay ?? false,
+			track: player.currentTrack
+				? {
+						title: player.currentTrack.info.title,
+						author: player.currentTrack.info.author,
+						uri: player.currentTrack.info.uri,
+						artworkUrl:
+							player.currentTrack.info.artworkUrl ||
+							player.currentTrack.info.image ||
+							null,
+						duration: player.currentTrack.info.length,
+						requester: player.currentTrack.info.requester?.username ?? null,
+					}
+				: null,
+			queue: (player.queue ?? []).slice(0, 10).map((t) => ({
+				title: t.info.title,
+				uri: t.info.uri,
+				duration: t.info.length,
+			})),
+			queueLength: (player.queue ?? []).length,
+		},
+	});
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/music/player/:guildId/pause
+// ---------------------------------------------------------------------------
+app.post('/player/:guildId/pause', async (c) => {
+	const { guildId } = c.req.param();
+	const client = getClient(c);
+	const player = getPlayer(c, guildId);
+	if (!player)
+		return c.json(
+			{ success: false, error: 'No active player for this guild' },
+			404,
+		);
+	if (player.isPaused)
+		return c.json({ success: false, error: 'Player is already paused' }, 409);
+
+	const handlers = client.container.musicHandlers;
+	const interaction = makeMockInteraction({ guildId, client });
+
+	try {
+		await handlers.handlePause(interaction, player);
+		return c.json({ success: true, status: 'paused' });
+	} catch (error) {
+		getLogger(c).error('POST /api/music/player/:guildId/pause error:', error);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/music/player/:guildId/resume
+// ---------------------------------------------------------------------------
+app.post('/player/:guildId/resume', async (c) => {
+	const { guildId } = c.req.param();
+	const client = getClient(c);
+	const player = getPlayer(c, guildId);
+	if (!player)
+		return c.json(
+			{ success: false, error: 'No active player for this guild' },
+			404,
+		);
+	if (!player.isPaused)
+		return c.json({ success: false, error: 'Player is not paused' }, 409);
+
+	const handlers = client.container.musicHandlers;
+	const interaction = makeMockInteraction({ guildId, client });
+
+	try {
+		await handlers.handleResume(interaction, player);
+		return c.json({ success: true, status: 'playing' });
+	} catch (error) {
+		getLogger(c).error('POST /api/music/player/:guildId/resume error:', error);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/music/player/:guildId/skip
+// ---------------------------------------------------------------------------
+app.post('/player/:guildId/skip', async (c) => {
+	const { guildId } = c.req.param();
+	const client = getClient(c);
+	const player = getPlayer(c, guildId);
+	if (!player)
+		return c.json(
+			{ success: false, error: 'No active player for this guild' },
+			404,
+		);
+	if (!player.currentTrack)
+		return c.json(
+			{ success: false, error: 'No track is currently playing' },
+			409,
+		);
+
+	const handlers = client.container.musicHandlers;
+	const skippedTitle = player.currentTrack.info.title;
+	const interaction = makeMockInteraction({ guildId, client });
+
+	try {
+		await handlers.handleSkip(interaction, player);
+		return c.json({ success: true, skipped: skippedTitle });
+	} catch (error) {
+		getLogger(c).error('POST /api/music/player/:guildId/skip error:', error);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/music/player/:guildId/stop
+// ---------------------------------------------------------------------------
+app.post('/player/:guildId/stop', async (c) => {
+	const { guildId } = c.req.param();
+	const client = getClient(c);
+	const player = getPlayer(c, guildId);
+	if (!player)
+		return c.json(
+			{ success: false, error: 'No active player for this guild' },
+			404,
+		);
+
+	const handlers = client.container.musicHandlers;
+	const interaction = makeMockInteraction({ guildId, client });
+
+	try {
+		await handlers.handleStop(interaction, player);
+		return c.json({
+			success: true,
+			message: 'Playback stopped and queue cleared',
+		});
+	} catch (error) {
+		getLogger(c).error('POST /api/music/player/:guildId/stop error:', error);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/music/player/:guildId/volume
+// Body: { level: number }  (0–200)
+// ---------------------------------------------------------------------------
+app.post('/player/:guildId/volume', async (c) => {
+	const { guildId } = c.req.param();
+	const client = getClient(c);
+	const player = getPlayer(c, guildId);
+	if (!player)
+		return c.json(
+			{ success: false, error: 'No active player for this guild' },
+			404,
+		);
+
+	let body;
+	try {
+		body = await c.req.json();
+	} catch {
+		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
+	}
+
+	const level = parseInt(body.level, 10);
+	if (Number.isNaN(level) || level < 0 || level > 200) {
+		return c.json(
+			{ success: false, error: 'level must be an integer between 0 and 200' },
+			400,
+		);
+	}
+
+	const handlers = client.container.musicHandlers;
+	const interaction = makeMockInteraction({
+		guildId,
+		client,
+		optionValues: { level },
+	});
+
+	try {
+		await handlers.handleVolume(interaction, player);
+		return c.json({ success: true, volume: level });
+	} catch (error) {
+		getLogger(c).error('POST /api/music/player/:guildId/volume error:', error);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/music/player/:guildId/loop
+// Body: { mode: "track" | "queue" | "off" }
+// ---------------------------------------------------------------------------
+app.post('/player/:guildId/loop', async (c) => {
+	const { guildId } = c.req.param();
+	const client = getClient(c);
+	const player = getPlayer(c, guildId);
+	if (!player)
+		return c.json(
+			{ success: false, error: 'No active player for this guild' },
+			404,
+		);
+
+	let body;
+	try {
+		body = await c.req.json();
+	} catch {
+		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
+	}
+
+	const mode = body.mode;
+	if (!['track', 'queue', 'off'].includes(mode)) {
+		return c.json(
+			{ success: false, error: 'mode must be one of: track, queue, off' },
+			400,
+		);
+	}
+
+	const handlers = client.container.musicHandlers;
+	// Pass as a slash command so handleLoop reads from options.getString('mode')
+	const interaction = makeMockInteraction({
+		guildId,
+		client,
+		optionValues: { mode },
+		isChatInput: true,
+	});
+
+	try {
+		await handlers.handleLoop(interaction, player);
+		return c.json({ success: true, loop: mode });
+	} catch (error) {
+		getLogger(c).error('POST /api/music/player/:guildId/loop error:', error);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/music/player/:guildId/shuffle
+// ---------------------------------------------------------------------------
+app.post('/player/:guildId/shuffle', async (c) => {
+	const { guildId } = c.req.param();
+	const client = getClient(c);
+	const player = getPlayer(c, guildId);
+	if (!player)
+		return c.json(
+			{ success: false, error: 'No active player for this guild' },
+			404,
+		);
+	if ((player.queue?.length ?? 0) < 2) {
+		return c.json(
+			{ success: false, error: 'Need at least 2 tracks in queue to shuffle' },
+			409,
+		);
+	}
+
+	const handlers = client.container.musicHandlers;
+	const interaction = makeMockInteraction({ guildId, client });
+
+	try {
+		await handlers.handleShuffle(interaction, player);
+		return c.json({
+			success: true,
+			message: 'Queue shuffled',
+			queueLength: player.queue.length,
+		});
+	} catch (error) {
+		getLogger(c).error('POST /api/music/player/:guildId/shuffle error:', error);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/music/player/:guildId/seek
+// Body: { position: number }  — position in milliseconds
+// ---------------------------------------------------------------------------
+app.post('/player/:guildId/seek', async (c) => {
+	const { guildId } = c.req.param();
+	const client = getClient(c);
+	const player = getPlayer(c, guildId);
+	if (!player)
+		return c.json(
+			{ success: false, error: 'No active player for this guild' },
+			404,
+		);
+	if (!player.currentTrack)
+		return c.json(
+			{ success: false, error: 'No track is currently playing' },
+			409,
+		);
+
+	let body;
+	try {
+		body = await c.req.json();
+	} catch {
+		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
+	}
+
+	const position = parseInt(body.position, 10);
+	const duration = player.currentTrack.info.length;
+
+	if (Number.isNaN(position) || position < 0) {
+		return c.json(
+			{
+				success: false,
+				error: 'position must be a non-negative integer (milliseconds)',
+			},
+			400,
+		);
+	}
+	if (position > duration) {
+		return c.json(
+			{
+				success: false,
+				error: `position (${position}ms) exceeds track duration (${duration}ms)`,
+			},
+			400,
+		);
+	}
+
+	// handleSeek expects options.getString('time') as a seconds value string.
+	// We convert ms → seconds and pass as the 'time' option.
+	const seconds = Math.floor(position / 1000);
+	const handlers = client.container.musicHandlers;
+	const interaction = makeMockInteraction({
+		guildId,
+		client,
+		optionValues: { time: String(seconds) },
+	});
+
+	try {
+		await handlers.handleSeek(interaction, player);
+		return c.json({ success: true, position });
+	} catch (error) {
+		getLogger(c).error('POST /api/music/player/:guildId/seek error:', error);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/music/player/:guildId/back
+// Go back to the previous track in history.
+// ---------------------------------------------------------------------------
+app.post('/player/:guildId/back', async (c) => {
+	const { guildId } = c.req.param();
+	const client = getClient(c);
+	const player = getPlayer(c, guildId);
+	if (!player)
+		return c.json(
+			{ success: false, error: 'No active player for this guild' },
+			404,
+		);
+
+	const guildStates = client.container.music?.guildStates;
+	const guildState = guildStates?.get(guildId);
+	if (!guildState?.previousTracks?.length) {
+		return c.json(
+			{ success: false, error: 'No previous track in history' },
+			409,
+		);
+	}
+
+	const handlers = client.container.musicHandlers;
+	// handleBack reads interaction.guildId to look up guildStates
+	const interaction = makeMockInteraction({ guildId, client });
+
+	try {
+		await handlers.handleBack(interaction, player, guildStates);
+		return c.json({ success: true });
+	} catch (error) {
+		getLogger(c).error('POST /api/music/player/:guildId/back error:', error);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/music/player/:guildId/autoplay
+// Body: { enabled: boolean }  — omit to toggle
+// ---------------------------------------------------------------------------
+app.post('/player/:guildId/autoplay', async (c) => {
+	const { guildId } = c.req.param();
+	const client = getClient(c);
+	const player = getPlayer(c, guildId);
+	if (!player)
+		return c.json(
+			{ success: false, error: 'No active player for this guild' },
+			404,
+		);
+
+	let body;
+	try {
+		body = await c.req.json();
+	} catch {
+		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
+	}
+
+	// handleAutoplay with isChatInputCommand() === true reads options.getString('status')
+	// where 'enable' means true and anything else means false.
+	const enabled =
+		typeof body.enabled === 'boolean' ? body.enabled : !player.autoplay;
+	const handlers = client.container.musicHandlers;
+	const interaction = makeMockInteraction({
+		guildId,
+		client,
+		optionValues: { status: enabled ? 'enable' : 'disable' },
+		isChatInput: true,
+	});
+
+	try {
+		await handlers.handleAutoplay(interaction, player);
+		return c.json({ success: true, autoplay: enabled });
+	} catch (error) {
+		getLogger(c).error(
+			'POST /api/music/player/:guildId/autoplay error:',
+			error,
+		);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
+// POST /api/music/player/:guildId/play
+// Add a track to the queue and start if idle.
+// Body: { query: string, source?: string }  OR  { uri: string }
+// ---------------------------------------------------------------------------
+app.post('/player/:guildId/play', async (c) => {
+	const { guildId } = c.req.param();
+	const client = getClient(c);
+	const kythiaConfig = getConfig(c);
+
+	if (!client.poru)
+		return c.json({ success: false, error: 'Lavalink is not available' }, 503);
+
+	const player = getPlayer(c, guildId);
+	if (!player) {
+		return c.json(
+			{
+				success: false,
+				error:
+					'No active player for this guild. Start a session via /music play in Discord first.',
+			},
+			404,
+		);
+	}
+
+	let body;
+	try {
+		body = await c.req.json();
+	} catch {
+		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
+	}
+
+	const queryRaw = body.uri || body.query;
+	if (!queryRaw)
+		return c.json(
+			{ success: false, error: 'Either uri or query is required' },
+			400,
+		);
+
+	const source =
+		body.source || kythiaConfig?.addons?.music?.defaultPlatform || 'ytsearch';
+
+	let resolvedTrack;
+	try {
+		const res = await client.poru.resolve({ query: queryRaw, source });
+		if (!res?.tracks?.length) {
+			return c.json(
+				{ success: false, error: 'No tracks found for the given query' },
+				404,
+			);
+		}
+		resolvedTrack = res.tracks[0];
+	} catch (e) {
+		getLogger(c).error(
+			'POST /api/music/player/:guildId/play resolve error:',
+			e,
+		);
+		return c.json(
+			{ success: false, error: `Track resolve failed: ${e.message}` },
+			500,
+		);
+	}
+
+	try {
+		player.queue.add(resolvedTrack);
+		if (!player.isPlaying && player.isConnected) {
+			player.play();
+		}
+		return c.json(
+			{
+				success: true,
+				added: {
+					title: resolvedTrack.info.title,
+					author: resolvedTrack.info.author,
+					uri: resolvedTrack.info.uri,
+					duration: resolvedTrack.info.length,
+				},
+				queueLength: player.queue.length,
+			},
+			201,
+		);
+	} catch (error) {
+		getLogger(c).error('POST /api/music/player/:guildId/play error:', error);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
 // ---------------------------------------------------------------------------
 // DELETE /api/music/247/:guildId
 // Disable 24/7 mode for a guild

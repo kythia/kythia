@@ -41,12 +41,12 @@ const resolvePreviewText = async (text, _type, guildId, container, client) => {
 	}
 
 	try {
-		if (container && container.t) {
+		if (container?.t) {
 			const result = await resolvePlaceholders(container, text, data, locale);
 			if (result) return result;
 		}
 	} catch (e) {
-		if (container && container.logger) {
+		if (container?.logger) {
 			container.logger.error(`Error resolving placeholders: ${e.message || e}`);
 		}
 	}
