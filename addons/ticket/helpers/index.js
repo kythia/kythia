@@ -271,16 +271,19 @@ async function createTicketChannel(
 				permissionOverwrites: [
 					{
 						id: interaction.guild.id,
+						type: 0, // OverwriteType.Role
 						deny: [PermissionsBitField.Flags.ViewChannel],
 					},
 					{
 						id: interaction.user.id,
+						type: 1, // OverwriteType.Member
 						allow: [PermissionsBitField.Flags.ViewChannel],
 					},
 					...(ticketConfig.staffRoleId
 						? [
 								{
 									id: ticketConfig.staffRoleId,
+									type: 0, // OverwriteType.Role
 									allow: [PermissionsBitField.Flags.ViewChannel],
 								},
 							]

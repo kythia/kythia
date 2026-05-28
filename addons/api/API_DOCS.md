@@ -33,6 +33,7 @@ The **Kythia API** is an internal REST API addon that acts as the bridge between
 - [POST /api/canvas/preview](#post-apicanvaspreview)
 - [GET /api/guilds](#get-apiguilds)
 - [GET /api/guilds/:id](#get-apiguildsid)
+- [GET /api/guilds/:id/members](#get-apiguildsidmembers)
 - [GET /api/guilds/settings/:guildId](#get-apiguildssettingsguildid)
 - [PATCH /api/guilds/settings/:guildId](#patch-apiguildssettingsguildid)
 - [PATCH /api/guilds/branding/:guildId](#patch-apiguildsbrandingguildid)
@@ -1064,6 +1065,74 @@ Returns detailed information about a specific guild, including its server settin
 
 ```json
 { "error": "Bot is not in this guild" }
+```
+
+---
+
+### `GET /api/guilds/:id/members`
+
+Fetches all members of a specific guild by querying the appropriate shard. By default, it returns a simplified representation (only `id` and `username`) to reduce payload size. You can pass `?all=true` to include full details like avatar, roles, and join date.
+
+**Authentication:** Bearer token required.
+
+**Path Parameters:**
+
+| Parameter | Type     | Description          |
+| --------- | -------- | -------------------- |
+| `id`      | `string` | The Discord guild ID |
+
+**Query Parameters:**
+
+| Parameter | Type      | Description                                                    |
+| --------- | --------- | -------------------------------------------------------------- |
+| `all`     | `boolean` | Set to `true` to include full member details (`avatar`, etc.)  |
+
+**Response (Default):**
+
+```json
+{
+  "members": [
+    {
+      "id": "555555555555555555",
+      "username": "kenndeclouv"
+    }
+  ]
+}
+```
+
+**Response (`?all=true`):**
+
+```json
+{
+  "members": [
+    {
+      "id": "555555555555555555",
+      "username": "kenndeclouv",
+      "discriminator": "0",
+      "avatar": "https://cdn.discordapp.com/avatars/...",
+      "bot": false,
+      "roles": ["444444444444444444"],
+      "joinedAt": 1690000000000
+    }
+  ]
+}
+```
+
+| Field                     | Type      | Description                               |
+| ------------------------- | --------- | ----------------------------------------- |
+| `members`                 | `array`   | Array of member objects                   |
+| `members[].id`            | `string`  | Member's user ID                          |
+| `members[].username`      | `string`  | Member's username                         |
+| `members[].discriminator` | `string`  | Member's discriminator *(if `all=true`)*  |
+| `members[].avatar`        | `string`  | Member's avatar CDN URL *(if `all=true`)* |
+| `members[].bot`           | `boolean` | Whether the user is a bot *(if `all=true`)* |
+| `members[].roles`         | `array`   | Array of role IDs assigned to the user *(if `all=true`)* |
+| `members[].joinedAt`      | `number`  | Unix timestamp of when the user joined *(if `all=true`)* |
+
+**Error (404):**
+
+```json
+{ "error": "Bot is not in this guild or could not fetch members" }
 ```
 
 ---

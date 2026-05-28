@@ -10,6 +10,7 @@ const { Hono } = require('hono');
 const {
 	broadcastGetGuilds,
 	broadcastFindGuild,
+	broadcastGetGuildMembers,
 } = require('../../helpers/shard');
 
 const app = new Hono();
@@ -58,6 +59,23 @@ app.get('/:id', async (c) => {
 		roles,
 		botUser,
 	});
+});
+
+app.get('/:id/members', async (c) => {
+	const client = c.get('client');
+	const guildId = c.req.param('id');
+	const isDetailed = c.req.query('all') === 'true';
+
+	const members = await broadcastGetGuildMembers(client, guildId, isDetailed);
+
+	if (!members) {
+		return c.json(
+			{ error: 'Bot is not in this guild or could not fetch members' },
+			404,
+		);
+	}
+
+	return c.json({ members });
 });
 
 module.exports = app;

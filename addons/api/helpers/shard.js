@@ -74,7 +74,20 @@ async function broadcastFindGuild(client, guildId) {
 
 			return {
 				shardId: shardIds[0],
-				guild: { id: g.id, name: g.name, icon: g.iconURL() },
+				guild: {
+					id: g.id,
+					name: g.name,
+					icon: g.iconURL(),
+					memberCount: g.memberCount,
+					ownerId: g.ownerId,
+					premiumTier: g.premiumTier,
+					premiumSubscriptionCount: g.premiumSubscriptionCount,
+					createdTimestamp: g.createdTimestamp,
+					joinedTimestamp: g.joinedTimestamp,
+					verificationLevel: g.verificationLevel,
+					preferredLocale: g.preferredLocale,
+					premiumProgressBarEnabled: g.premiumProgressBarEnabled,
+				},
 				channels: {
 					text: g.channels.cache
 						.filter(
@@ -156,7 +169,20 @@ async function broadcastGetStats(client) {
 function _extractGuildData(guild, client, shardId) {
 	return {
 		shardId,
-		guild: { id: guild.id, name: guild.name, icon: guild.iconURL() },
+		guild: {
+			id: guild.id,
+			name: guild.name,
+			icon: guild.iconURL(),
+			memberCount: guild.memberCount,
+			ownerId: guild.ownerId,
+			premiumTier: guild.premiumTier,
+			premiumSubscriptionCount: guild.premiumSubscriptionCount,
+			createdTimestamp: guild.createdTimestamp,
+			joinedTimestamp: guild.joinedTimestamp,
+			verificationLevel: guild.verificationLevel,
+			preferredLocale: guild.preferredLocale,
+			premiumProgressBarEnabled: guild.premiumProgressBarEnabled,
+		},
 		channels: {
 			text: guild.channels.cache
 				.filter(
@@ -291,6 +317,71 @@ async function broadcastEditMember(client, guildId, payload) {
 	return results.some((r) => r === true);
 }
 
+/**
+ * Fetch and collect all members of a specific guild across all shards.
+ *
+ * @param {import('discord.js').Client} client
+ * @param {string} guildId
+ * @param {boolean} detailed
+ * @returns {Promise<Array<object>|null>}
+ */
+async function broadcastGetGuildMembers(client, guildId, detailed = false) {
+	if (!client.shard) {
+		const guild = client.guilds.cache.get(guildId);
+		if (!guild) return null;
+
+		await guild.members.fetch().catch(() => null);
+
+		return guild.members.cache.map((m) => {
+			if (detailed) {
+				return {
+					id: m.id,
+					username: m.user.username,
+					discriminator: m.user.discriminator,
+					avatar: m.user.displayAvatarURL(),
+					bot: m.user.bot,
+					roles: m.roles.cache.map((r) => r.id),
+					joinedAt: m.joinedTimestamp,
+				};
+			}
+			return {
+				id: m.id,
+				username: m.user.username,
+			};
+		});
+	}
+
+	const results = await client.shard.broadcastEval(
+		async (c, { id, isDetailed }) => {
+			const g = c.guilds.cache.get(id);
+			if (!g) return null;
+
+			await g.members.fetch().catch(() => null);
+
+			return g.members.cache.map((m) => {
+				if (isDetailed) {
+					return {
+						id: m.id,
+						username: m.user.username,
+						discriminator: m.user.discriminator,
+						avatar: m.user.displayAvatarURL(),
+						bot: m.user.bot,
+						roles: m.roles.cache.map((r) => r.id),
+						joinedAt: m.joinedTimestamp,
+					};
+				}
+				return {
+					id: m.id,
+					username: m.user.username,
+				};
+			});
+		},
+		{ context: { id: guildId, isDetailed: detailed } },
+	);
+
+	return results.find((r) => r !== null) ?? null;
+}
+
 module.exports = {
 	broadcastGetGuilds,
 	broadcastFindGuild,
@@ -298,4 +389,5 @@ module.exports = {
 	broadcastGetMeta,
 	broadcastGetDetailedShards,
 	broadcastEditMember,
+	broadcastGetGuildMembers,
 };
