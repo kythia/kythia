@@ -81,15 +81,6 @@ app.post('/', async (c) => {
 		);
 	}
 
-	// Resolve the Discord channel
-	const channel = client.channels.cache.get(body.channelId);
-	if (!channel) {
-		return c.json(
-			{ success: false, error: 'Channel not found or bot cannot access it.' },
-			404,
-		);
-	}
-
 	try {
 		// Build container identical to StickyMessageHandler
 		const stickyContainer = new ContainerBuilder()
@@ -106,21 +97,61 @@ app.post('/', async (c) => {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(channel, 'common.container.footer', {
+					await t({ client, user: client.user }, 'common.container.footer', {
 						username: client.user.username,
 					}),
 				),
 			);
 
-		// Send the message to Discord first
-		const sent = await channel.send({
-			components: [stickyContainer],
-			flags: MessageFlags.IsComponentsV2,
-		});
+		// Send the message to Discord via broadcastEval to handle all shards
+		const stickyContainerJSON = stickyContainer.toJSON();
+		let sentId = null;
+
+		if (client.shard) {
+			const results = await client.shard.broadcastEval(
+				async (c, { chId, containerJson }) => {
+					const ch = c.channels.cache.get(chId);
+					if (!ch) return null;
+					try {
+						const sentMsg = await ch.send({
+							components: [containerJson],
+							flags: 8192, // MessageFlags.IsComponentsV2
+						});
+						return sentMsg.id;
+					} catch (_e) {
+						return null;
+					}
+				},
+				{
+					context: { chId: body.channelId, containerJson: stickyContainerJSON },
+				},
+			);
+
+			sentId = results.find((id) => id !== null);
+		} else {
+			const channel = client.channels.cache.get(body.channelId);
+			if (channel) {
+				const sent = await channel.send({
+					components: [stickyContainerJSON],
+					flags: MessageFlags.IsComponentsV2,
+				});
+				sentId = sent.id;
+			}
+		}
+
+		if (!sentId) {
+			return c.json(
+				{
+					success: false,
+					error: 'Channel not found or bot cannot access it on any shard.',
+				},
+				404,
+			);
+		}
 
 		// Persist the record with the real messageId
 		const result = await StickyMessage.create(
-			{ channelId: body.channelId, message: body.message, messageId: sent.id },
+			{ channelId: body.channelId, message: body.message, messageId: sentId },
 			{ individualHooks: true },
 		);
 

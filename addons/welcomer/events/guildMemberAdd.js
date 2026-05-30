@@ -63,7 +63,10 @@ module.exports = async (bot, member) => {
 		userTag: member.user.id,
 		guildName: guild.name,
 		guildId: guild.id,
-		ownerName: guild.members.cache.get(guild.ownerId)?.user?.tag || 'Unknown',
+		ownerName:
+			guild.members.cache.get(guild.ownerId)?.user?.tag ||
+			(await guild.fetchOwner().catch(() => null))?.user?.tag ||
+			'Unknown',
 		ownerId: guild.ownerId,
 		region: guild.preferredLocale,
 		createdAt: guild.createdAt,

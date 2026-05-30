@@ -18,18 +18,18 @@ module.exports = {
 	 * @param {KythiaDI.Container} container
 	 */
 	async execute(interaction, container) {
-		const { helpers, models } = container;
+		const { helpers, models, sequelize } = container;
 		const { simpleContainer } = helpers.discord;
 
+		// Get any registered model subclass. Since static methods/properties
+		// are inherited, we can just use the subclass directly as our KythiaModel proxy.
 		const anyModelKey = models ? Object.keys(models)[0] : undefined;
-		const KythiaModel = anyModelKey
-			? Object.getPrototypeOf(models[anyModelKey])
-			: null;
+		const KythiaModel = anyModelKey ? models[anyModelKey] : null;
 
-		if (!KythiaModel?.cacheStats) {
+		if (!KythiaModel || typeof KythiaModel.getGlobalCacheStats !== 'function') {
 			const components = await simpleContainer(
 				interaction,
-				'❌ No cache stats are available for this model.',
+				'❌ No cache stats are available.',
 				{ color: 'Red' },
 			);
 			return interaction.reply({
@@ -38,7 +38,12 @@ module.exports = {
 			});
 		}
 
-		const stats = KythiaModel.cacheStats;
+		// ✅ Aggregate across ALL model subclasses in this shard.
+		// Reading KythiaModel.cacheStats directly always returns 0 because
+		// each subclass gets its own isolated cacheStats object in autoBoot().
+		const sequelizeModels =
+			sequelize?.models ?? (anyModelKey ? { [anyModelKey]: KythiaModel } : {});
+		const stats = KythiaModel.getGlobalCacheStats(sequelizeModels);
 		const urls = KythiaModel._redisFallbackURLs || [];
 		const currentIndex = KythiaModel._redisCurrentIndex || 0;
 

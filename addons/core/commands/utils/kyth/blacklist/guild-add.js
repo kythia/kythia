@@ -67,17 +67,36 @@ module.exports = {
 			});
 
 			// If the bot is currently in this guild, leave it immediately
-			const targetGuild = client.guilds.cache.get(guildId);
 			let left = false;
-			if (targetGuild) {
-				try {
-					await targetGuild.leave();
-					left = true;
-				} catch (leaveErr) {
-					logger.warn(
-						`Failed to leave blacklisted guild ${guildId}: ${leaveErr.message}`,
-						{ label: 'core' },
-					);
+			if (client.shard) {
+				const results = await client.shard.broadcastEval(
+					async (c, { id }) => {
+						const g = c.guilds.cache.get(id);
+						if (g) {
+							try {
+								await g.leave();
+								return true;
+							} catch {
+								return false;
+							}
+						}
+						return false;
+					},
+					{ context: { id: guildId } },
+				);
+				left = results.some((r) => r === true);
+			} else {
+				const targetGuild = client.guilds.cache.get(guildId);
+				if (targetGuild) {
+					try {
+						await targetGuild.leave();
+						left = true;
+					} catch (leaveErr) {
+						logger.warn(
+							`Failed to leave blacklisted guild ${guildId}: ${leaveErr.message}`,
+							{ label: 'core' },
+						);
+					}
 				}
 			}
 

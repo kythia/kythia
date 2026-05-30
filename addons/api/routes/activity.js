@@ -17,7 +17,7 @@ const app = new Hono();
 
 const getModels = (c) => c.get('client').container.models;
 const getLogger = (c) => c.get('client').container.logger;
-const getHelpers = (c) => c.get('client').container.helpers;
+// const getHelpers = (c) => c.get('client').container.helpers;
 
 /**
  * Returns the start date string (YYYY-MM-DD) for a given period.
@@ -102,9 +102,6 @@ app.get('/:guildId', async (c) => {
 	const orderColumn = sortKey === 'voice' ? 'totalVoiceTime' : 'totalMessages';
 
 	try {
-		const { getMemberSafe } = getHelpers(c).discord;
-		const client = c.get('client');
-		const guildObj = client.guilds.cache.get(guildId);
 		let rows;
 
 		if (period === 'all') {
@@ -138,30 +135,23 @@ app.get('/:guildId', async (c) => {
 			});
 		}
 
-		const leaderboard = await Promise.all(
-			rows.map(async (row, i) => {
-				let username = null;
-				let avatar = null;
-				if (guildObj) {
-					const member = await getMemberSafe(guildObj, row.userId);
-					const userObj = member?.user ?? null;
-					if (userObj) {
-						username = userObj.username;
-						avatar = userObj.displayAvatarURL
-							? userObj.displayAvatarURL({ size: 64 })
-							: null;
-					}
-				}
-				return {
-					rank: i + 1,
-					userId: row.userId,
-					username,
-					avatar,
-					totalMessages: row.totalMessages ?? 0,
-					totalVoiceTime: row.totalVoiceTime ?? 0,
-				};
-			}),
-		);
+		const client = c.get('client');
+		const { broadcastGetUsers } = require('../../api/helpers/shard');
+		const userIds = rows.map((r) => r.userId);
+		const cachedUsers = await broadcastGetUsers(client, userIds);
+		const userMap = new Map(cachedUsers.map((u) => [u.id, u]));
+
+		const leaderboard = rows.map((row, i) => {
+			const userObj = userMap.get(row.userId);
+			return {
+				rank: i + 1,
+				userId: row.userId,
+				username: userObj?.username ?? null,
+				avatar: userObj?.avatar ?? null,
+				totalMessages: row.totalMessages ?? 0,
+				totalVoiceTime: row.totalVoiceTime ?? 0,
+			};
+		});
 
 		return c.json({
 			success: true,
@@ -191,10 +181,6 @@ app.get('/:guildId/id/:userId', async (c) => {
 	const { period = 'all' } = c.req.query();
 
 	try {
-		const { getMemberSafe } = getHelpers(c).discord;
-		const client = c.get('client');
-		const guildObj = client.guilds.cache.get(guildId);
-
 		let totalMessages, totalVoiceTime;
 
 		if (period === 'all') {
@@ -218,18 +204,13 @@ app.get('/:guildId/id/:userId', async (c) => {
 			totalVoiceTime = row?.totalVoiceTime ?? 0;
 		}
 
-		let username = null;
-		let avatar = null;
-		if (guildObj) {
-			const member = await getMemberSafe(guildObj, userId);
-			const userObj = member?.user ?? null;
-			if (userObj) {
-				username = userObj.username;
-				avatar = userObj.displayAvatarURL
-					? userObj.displayAvatarURL({ size: 64 })
-					: null;
-			}
-		}
+		const client = c.get('client');
+		const { broadcastGetUsers } = require('../../api/helpers/shard');
+		const cachedUsers = await broadcastGetUsers(client, [userId]);
+		const userObj = cachedUsers[0];
+
+		const username = userObj?.username ?? null;
+		const avatar = userObj?.avatar ?? null;
 
 		return c.json({
 			success: true,

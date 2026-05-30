@@ -77,20 +77,26 @@ module.exports = {
 	 * @param {KythiaDI.Container} container
 	 */
 	async execute(interaction, container) {
-		const { t, kythiaConfig, helpers, models } = container;
+		const { t, kythiaConfig, helpers, models, sequelize } = container;
 		const { convertColor } = helpers.color;
 
+		// Get any registered model subclass. Since static methods/properties
+		// are inherited, we can just use the subclass directly as our KythiaModel proxy.
 		const anyModelKey = models ? Object.keys(models)[0] : undefined;
-		const KythiaModel = anyModelKey
-			? Object.getPrototypeOf(models[anyModelKey])
-			: null;
+		const KythiaModel = anyModelKey ? models[anyModelKey] : null;
 
 		let cacheStatus = 'N/A';
 		let cacheHits = 0;
 		let cacheMisses = 0;
 
-		if (KythiaModel) {
-			const stats = KythiaModel.cacheStats;
+		if (KythiaModel && typeof KythiaModel.getGlobalCacheStats === 'function') {
+			// ✅ Aggregate across ALL model subclasses in this shard.
+			// Reading KythiaModel.cacheStats directly always returns 0 because
+			// each subclass gets its own isolated cacheStats object in autoBoot().
+			const sequelizeModels =
+				sequelize?.models ??
+				(KythiaModel ? { [KythiaModel.name]: KythiaModel } : {});
+			const stats = KythiaModel.getGlobalCacheStats(sequelizeModels);
 			cacheHits = (stats.redisHits || 0) + (stats.mapHits || 0);
 			cacheMisses = stats.misses || 0;
 

@@ -11,7 +11,7 @@ const app = new Hono();
 
 const getClient = (c) => c.get('client');
 const getModels = (c) => getClient(c).container.models;
-const getHelpers = (c) => getClient(c).container.helpers;
+// const getHelpers = (c) => getClient(c).container.helpers;
 
 // =============================================================================
 // INVITE SETTINGS (/api/invite/settings/:guildId)
@@ -111,7 +111,7 @@ app.patch('/settings/:guildId', async (c) => {
 // Query: sort=total|real|fake|bonus|rejoin (default: total), page=1, limit=20
 app.get('/:guildId', async (c) => {
 	const { Invite } = getModels(c);
-	const { getMemberSafe } = getHelpers(c).discord;
+	// const { getMemberSafe } = getHelpers(c).discord;
 	const guildId = c.req.param('guildId');
 	const sort = c.req.query('sort') || 'total';
 	const page = Math.max(1, parseInt(c.req.query('page') || '1', 10));
@@ -139,36 +139,26 @@ app.get('/:guildId', async (c) => {
 		});
 
 		const client = getClient(c);
-		const guildObj = client.guilds.cache.get(guildId);
+		const { broadcastGetUsers } = require('../helpers/shard');
+		const userIds = rows.map((r) => r.userId);
+		const cachedUsers = await broadcastGetUsers(client, userIds);
+		const userMap = new Map(cachedUsers.map((u) => [u.id, u]));
 
-		const data = await Promise.all(
-			rows.map(async (row, i) => {
-				let username = null;
-				let avatar = null;
-				if (guildObj) {
-					const member = await getMemberSafe(guildObj, row.userId);
-					const userObj = member?.user ?? null;
-					if (userObj) {
-						username = userObj.username;
-						avatar = userObj.displayAvatarURL
-							? userObj.displayAvatarURL({ size: 64 })
-							: null;
-					}
-				}
-				return {
-					rank: offset + i + 1,
-					userId: row.userId,
-					username,
-					avatar,
-					invites: row.invites || 0,
-					bonus: row.bonus || 0,
-					fake: row.fake || 0,
-					leaves: row.leaves || 0,
-					rejoins: row.rejoins || 0,
-					total: (row.invites || 0) + (row.bonus || 0),
-				};
-			}),
-		);
+		const data = rows.map((row, i) => {
+			const userObj = userMap.get(row.userId);
+			return {
+				rank: offset + i + 1,
+				userId: row.userId,
+				username: userObj?.username ?? null,
+				avatar: userObj?.avatar ?? null,
+				invites: row.invites || 0,
+				bonus: row.bonus || 0,
+				fake: row.fake || 0,
+				leaves: row.leaves || 0,
+				rejoins: row.rejoins || 0,
+				total: (row.invites || 0) + (row.bonus || 0),
+			};
+		});
 
 		return c.json({
 			success: true,
@@ -185,7 +175,7 @@ app.get('/:guildId', async (c) => {
 // GET /api/invite/:guildId/user/:userId — Get stats for a specific user
 app.get('/:guildId/user/:userId', async (c) => {
 	const { Invite, InviteHistory } = getModels(c);
-	const { getMemberSafe } = getHelpers(c).discord;
+	// const { getMemberSafe } = getHelpers(c).discord;
 	const guildId = c.req.param('guildId');
 	const userId = c.req.param('userId');
 
@@ -209,19 +199,12 @@ app.get('/:guildId/user/:userId', async (c) => {
 		});
 
 		const client = getClient(c);
-		const guildObj = client.guilds.cache.get(guildId);
-		let username = null;
-		let avatar = null;
-		if (guildObj) {
-			const member = await getMemberSafe(guildObj, userId);
-			const userObj = member?.user ?? null;
-			if (userObj) {
-				username = userObj.username;
-				avatar = userObj.displayAvatarURL
-					? userObj.displayAvatarURL({ size: 64 })
-					: null;
-			}
-		}
+		const { broadcastGetUsers } = require('../helpers/shard');
+		const cachedUsers = await broadcastGetUsers(client, [userId]);
+		const userObj = cachedUsers[0];
+
+		const username = userObj?.username ?? null;
+		const avatar = userObj?.avatar ?? null;
 
 		const userTotal = (row?.invites || 0) + (row?.bonus || 0);
 

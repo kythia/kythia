@@ -101,7 +101,9 @@ module.exports = {
 
 				if (!guild) continue;
 
-				const channel = guild.channels.cache.get(sub.discordChannelId);
+				const channel =
+					guild.channels.cache.get(sub.discordChannelId) ||
+					(await guild.channels.fetch(sub.discordChannelId).catch(() => null));
 				if (!channel) continue;
 
 				// Fetch setting for optional role mention

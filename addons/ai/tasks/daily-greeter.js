@@ -44,6 +44,8 @@ module.exports = {
 		if (kythiaConfig.addons.ai.geminiApiKeys.length === 0) return;
 
 		try {
+			// Runs on all shards, but each shard only processes its own local guilds.cache.
+			// This is correct: each shard independently greets its own servers.
 			const guilds = client.guilds.cache;
 
 			for (const [guildId, guild] of guilds) {

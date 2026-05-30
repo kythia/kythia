@@ -382,6 +382,61 @@ async function broadcastGetGuildMembers(client, guildId, detailed = false) {
 	return results.find((r) => r !== null) ?? null;
 }
 
+/**
+ * Fetch and collect basic user information (id, username, avatar) across all shards.
+ * Uses the users cache. Fast and lightweight.
+ *
+ * @param {import('discord.js').Client} client
+ * @param {string[]} userIds
+ * @returns {Promise<Array<{id: string, username: string, avatar: string|null}>>}
+ */
+async function broadcastGetUsers(client, userIds) {
+	if (!userIds || userIds.length === 0) return [];
+
+	if (!client.shard) {
+		const found = [];
+		for (const id of userIds) {
+			const u = client.users.cache.get(id);
+			if (u) {
+				found.push({
+					id: u.id,
+					username: u.username,
+					avatar: u.displayAvatarURL({ size: 64 }),
+				});
+			}
+		}
+		return found;
+	}
+
+	const results = await client.shard.broadcastEval(
+		(c, { ids }) => {
+			const localFound = [];
+			for (const id of ids) {
+				const u = c.users.cache.get(id);
+				if (u) {
+					localFound.push({
+						id: u.id,
+						username: u.username,
+						avatar: u.displayAvatarURL({ size: 64 }),
+					});
+				}
+			}
+			return localFound;
+		},
+		{ context: { ids: userIds } },
+	);
+
+	const finalMap = new Map();
+	for (const shardUsers of results) {
+		for (const u of shardUsers) {
+			if (!finalMap.has(u.id)) {
+				finalMap.set(u.id, u);
+			}
+		}
+	}
+	return Array.from(finalMap.values());
+}
+
 module.exports = {
 	broadcastGetGuilds,
 	broadcastFindGuild,
@@ -390,4 +445,5 @@ module.exports = {
 	broadcastGetDetailedShards,
 	broadcastEditMember,
 	broadcastGetGuildMembers,
+	broadcastGetUsers,
 };

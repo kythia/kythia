@@ -21,7 +21,7 @@ const app = new Hono();
 
 const getModels = (c) => c.get('client').container.models;
 const getLogger = (c) => c.get('client').container.logger;
-const getHelpers = (c) => c.get('client').container.helpers;
+// const getHelpers = (c) => c.get('client').container.helpers;
 
 /**
  * Get the leveling curve settings for a guild from LevelingSetting.
@@ -211,12 +211,12 @@ app.patch('/:guildId/settings', async (c) => {
 // ---------------------------------------------------------------------------
 app.get('/:guildId', async (c) => {
 	const models = getModels(c);
-	const helpers = getHelpers(c);
+	// const helpers = getHelpers(c);
 	const { User } = models;
 	const { guildId } = c.req.param();
 	const { page = '1', limit = '50' } = c.req.query();
 
-	const { getMemberSafe } = helpers.discord;
+	// const { getMemberSafe } = helpers.discord;
 
 	const pageNum = Math.max(1, parseInt(page, 10) || 1);
 	const limitNum = Math.min(200, Math.max(1, parseInt(limit, 10) || 50));
@@ -235,37 +235,26 @@ app.get('/:guildId', async (c) => {
 
 		const { curve, multiplier } = await getGuildLevelingConfig(guildId, models);
 		const client = c.get('client');
-		const guildObj = client.guilds.cache.get(guildId);
+		const { broadcastGetUsers } = require('../../api/helpers/shard');
+		const userIds = rows.map((r) => r.userId);
+		const cachedUsers = await broadcastGetUsers(client, userIds);
+		const userMap = new Map(cachedUsers.map((u) => [u.id, u]));
 
-		const data = await Promise.all(
-			rows.map(async (u, i) => {
-				let username = null;
-				let avatar = null;
+		const data = rows.map((u, i) => {
+			const userObj = userMap.get(u.userId);
 
-				if (guildObj) {
-					const member = await getMemberSafe(guildObj, u.userId);
-					const userObj = member?.user ?? null;
-					if (userObj) {
-						username = userObj.username;
-						avatar = userObj.displayAvatarURL
-							? userObj.displayAvatarURL({ size: 64 })
-							: null;
-					}
-				}
-
-				return {
-					rank: offset + i + 1,
-					userId: u.userId,
-					username,
-					avatar,
-					level: u.level ?? 1,
-					xp: u.xp ?? 0,
-					xpRequired: levelUpXp(u.level ?? 1, curve, multiplier),
-					createdAt: u.createdAt,
-					updatedAt: u.updatedAt,
-				};
-			}),
-		);
+			return {
+				rank: offset + i + 1,
+				userId: u.userId,
+				username: userObj?.username ?? null,
+				avatar: userObj?.avatar ?? null,
+				level: u.level ?? 1,
+				xp: u.xp ?? 0,
+				xpRequired: levelUpXp(u.level ?? 1, curve, multiplier),
+				createdAt: u.createdAt,
+				updatedAt: u.updatedAt,
+			};
+		});
 
 		return c.json({
 			success: true,
@@ -291,11 +280,11 @@ app.get('/:guildId', async (c) => {
 // ---------------------------------------------------------------------------
 app.get('/:guildId/:userId', async (c) => {
 	const models = getModels(c);
-	const helpers = getHelpers(c);
+	// const helpers = getHelpers(c);
 	const { User } = models;
 	const { guildId, userId } = c.req.param();
 
-	const { getMemberSafe } = helpers.discord;
+	// const { getMemberSafe } = helpers.discord;
 
 	try {
 		const user = await User.getCache({ where: { guildId, userId } });
@@ -327,19 +316,12 @@ app.get('/:guildId/:userId', async (c) => {
 		});
 
 		const client = c.get('client');
-		const guildObj = client.guilds.cache.get(guildId);
-		let username = null;
-		let avatar = null;
-		if (guildObj) {
-			const member = await getMemberSafe(guildObj, user.userId);
-			const userObj = member?.user ?? null;
-			if (userObj) {
-				username = userObj.username;
-				avatar = userObj.displayAvatarURL
-					? userObj.displayAvatarURL({ size: 64 })
-					: null;
-			}
-		}
+		const { broadcastGetUsers } = require('../../api/helpers/shard');
+		const cachedUsers = await broadcastGetUsers(client, [user.userId]);
+		const userObj = cachedUsers[0];
+
+		const username = userObj?.username ?? null;
+		const avatar = userObj?.avatar ?? null;
 
 		return c.json({
 			success: true,

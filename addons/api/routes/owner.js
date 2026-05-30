@@ -576,12 +576,31 @@ app.post('/blacklist/guilds', async (c) => {
 		}
 
 		let left = false;
-		const targetGuild = client.guilds.cache.get(guildId);
-		if (targetGuild) {
-			try {
-				await targetGuild.leave();
-				left = true;
-			} catch {}
+		if (client.shard) {
+			const results = await client.shard.broadcastEval(
+				async (c, { id }) => {
+					const g = c.guilds.cache.get(id);
+					if (g) {
+						try {
+							await g.leave();
+							return true;
+						} catch {
+							return false;
+						}
+					}
+					return false;
+				},
+				{ context: { id: guildId } },
+			);
+			left = results.some((r) => r === true);
+		} else {
+			const targetGuild = client.guilds.cache.get(guildId);
+			if (targetGuild) {
+				try {
+					await targetGuild.leave();
+					left = true;
+				} catch {}
+			}
 		}
 
 		getLogger(c).info(

@@ -33,6 +33,7 @@ module.exports = {
 				],
 				['level', 'DESC'],
 			],
+			limit: 10,
 			cacheTags: ['UserPet:leaderboard'],
 		});
 
@@ -40,19 +41,23 @@ module.exports = {
 		if (leaderboard.length) {
 			// Await all translations before joining
 			const entries = await Promise.all(
-				leaderboard.map((pet, index) =>
-					t(interaction, 'pet.leaderboard.entry', {
+				leaderboard.map(async (pet, index) => {
+					let user = interaction.client.users.cache.get(pet.userId);
+					if (!user) {
+						user = await interaction.client.users
+							.fetch(pet.userId)
+							.catch(() => null);
+					}
+					return t(interaction, 'pet.leaderboard.entry', {
 						index: index + 1,
 						userId: pet.userId,
-						username:
-							interaction.client.users.cache.get(pet.userId)?.username ||
-							'Unknown',
+						username: user?.username || 'Unknown',
 						icon: pet.pet.icon,
 						rarity: pet.pet.rarity,
 						name: pet.pet.name,
 						level: pet.level,
-					}),
-				),
+					});
+				}),
 			);
 			leaderboardDesc = entries.join('\n');
 		} else {

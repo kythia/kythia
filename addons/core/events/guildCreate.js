@@ -354,12 +354,20 @@ module.exports = async (bot, guild) => {
 	// ─── Bot Growth Snapshot ─────────────────────────────────────────────────
 	try {
 		if (BotGrowthSnapshot) {
+			let totalGuilds = bot.client.guilds.cache.size;
+			if (bot.client.shard) {
+				const results = await bot.client.shard.broadcastEval(
+					(c) => c.guilds.cache.size,
+				);
+				totalGuilds = results.reduce((acc, size) => acc + size, 0);
+			}
+
 			await BotGrowthSnapshot.create({
 				guildId: guild.id,
 				guildName: guild.name ?? null,
 				memberCount: guild.memberCount ?? 0,
 				event: 'join',
-				totalGuilds: bot.client.guilds.cache.size,
+				totalGuilds,
 			});
 		}
 	} catch (snapErr) {

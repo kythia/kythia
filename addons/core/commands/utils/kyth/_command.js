@@ -28,15 +28,26 @@ module.exports = {
 		const focusedOption = interaction.options.getFocused(true);
 		if (focusedOption.name === 'guild_id') {
 			const focusedValue = focusedOption.value;
-			const guilds = interaction.client.guilds.cache;
+			let guildList = [];
 
-			const filtered = guilds.filter(
-				(guild) =>
-					guild.name.toLowerCase().includes(focusedValue.toLowerCase()) ||
-					guild.id.includes(focusedValue),
-			);
+			if (interaction.client.shard) {
+				const results = await interaction.client.shard.broadcastEval((c) =>
+					c.guilds.cache.map((g) => ({ id: g.id, name: g.name })),
+				);
+				guildList = results.flat();
+			} else {
+				guildList = interaction.client.guilds.cache.map((g) => ({
+					id: g.id,
+					name: g.name,
+				}));
+			}
 
-			const choices = filtered
+			const choices = guildList
+				.filter(
+					(guild) =>
+						guild.name.toLowerCase().includes(focusedValue.toLowerCase()) ||
+						guild.id.includes(focusedValue),
+				)
 				.map((guild) => ({
 					name: `${guild.name} (${guild.id})`.slice(0, 100),
 					value: guild.id,

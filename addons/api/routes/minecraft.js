@@ -7,7 +7,7 @@
  */
 
 const { Hono } = require('hono');
-const { ChannelType, PermissionFlagsBits } = require('discord.js');
+// const { ChannelType, PermissionFlagsBits } = require('discord.js');
 const {
 	fetchMcStatus,
 	runMinecraftStatsUpdater,
@@ -177,10 +177,6 @@ app.post('/autosetup/:guildId', async (c) => {
 		);
 	}
 
-	const guild = client.guilds.cache.get(guildId);
-	if (!guild)
-		return c.json({ success: false, error: 'Guild not found in cache' }, 404);
-
 	try {
 		// 1. Fetch initial status (best-effort)
 		let initialData = null;
@@ -194,58 +190,105 @@ app.post('/autosetup/:guildId', async (c) => {
 		const onlinePlayers = isOnline ? (initialData?.players?.online ?? 0) : 0;
 		const maxPlayers = isOnline ? (initialData?.players?.max ?? 0) : 0;
 
-		// 2. Create category
-		const category = await guild.channels.create({
-			name: categoryName ?? '⛏️ Minecraft Server',
-			type: ChannelType.GuildCategory,
-			reason: 'Minecraft Stats Auto-Setup (API)',
-		});
+		// 2 & 3. Create category and channels on the correct shard
+		let setupResult = null;
 
-		// 3. Create 4 voice channels
-		const channelDefs = [
-			{ name: `🖥️ IP: ${host}`, field: 'minecraftIpChannelId' },
-			{ name: `🔌 Port: ${port}`, field: 'minecraftPortChannelId' },
-			{
-				name: isOnline ? `🟢 Online` : '🔴 Offline',
-				field: 'minecraftStatusChannelId',
-			},
-			{
-				name: isOnline ? `👥 ${onlinePlayers}/${maxPlayers}` : '👥 —/—',
-				field: 'minecraftPlayersChannelId',
-			},
-		];
+		const createChannelsLogic = async (c, context) => {
+			const { ChannelType, PermissionFlagsBits } = require('discord.js');
+			const g = c.guilds.cache.get(context.guildId);
+			if (!g) return null;
 
-		const createdChannels = {};
-		for (const def of channelDefs) {
-			try {
-				const ch = await guild.channels.create({
-					name: def.name,
-					type: ChannelType.GuildVoice,
-					parent: category.id,
-					permissionOverwrites: [
-						{
-							id: guild.roles.everyone.id,
-							deny: [PermissionFlagsBits.Connect],
-						},
-					],
-					reason: 'Minecraft Stats Auto-Setup (API)',
-				});
-				createdChannels[def.field] = ch.id;
-			} catch {
-				/* best-effort */
+			const category = await g.channels.create({
+				name: context.categoryName ?? '⛏️ Minecraft Server',
+				type: ChannelType.GuildCategory,
+				reason: 'Minecraft Stats Auto-Setup (API)',
+			});
+
+			const channelDefs = [
+				{ name: `🖥️ IP: ${context.host}`, field: 'minecraftIpChannelId' },
+				{ name: `🔌 Port: ${context.port}`, field: 'minecraftPortChannelId' },
+				{
+					name: context.isOnline ? `🟢 Online` : '🔴 Offline',
+					field: 'minecraftStatusChannelId',
+				},
+				{
+					name: context.isOnline
+						? `👥 ${context.onlinePlayers}/${context.maxPlayers}`
+						: '👥 —/—',
+					field: 'minecraftPlayersChannelId',
+				},
+			];
+
+			const createdChannels = {};
+			for (const def of channelDefs) {
+				try {
+					const ch = await g.channels.create({
+						name: def.name,
+						type: ChannelType.GuildVoice,
+						parent: category.id,
+						permissionOverwrites: [
+							{
+								id: g.roles.everyone.id,
+								deny: [PermissionFlagsBits.Connect],
+							},
+						],
+						reason: 'Minecraft Stats Auto-Setup (API)',
+					});
+					createdChannels[def.field] = ch.id;
+				} catch {
+					/* best-effort */
+				}
 			}
+
+			return {
+				categoryId: category.id,
+				channels: createdChannels,
+				guildName: g.name,
+			};
+		};
+
+		if (client.shard) {
+			const results = await client.shard.broadcastEval(createChannelsLogic, {
+				context: {
+					guildId,
+					host,
+					port,
+					categoryName,
+					isOnline,
+					onlinePlayers,
+					maxPlayers,
+				},
+			});
+			setupResult = results.find((r) => r !== null);
+		} else {
+			setupResult = await createChannelsLogic(client, {
+				guildId,
+				host,
+				port,
+				categoryName,
+				isOnline,
+				onlinePlayers,
+				maxPlayers,
+			});
+		}
+
+		if (!setupResult) {
+			return c.json(
+				{ success: false, error: 'Guild not found on any shard' },
+				404,
+			);
 		}
 
 		// 4. Save to ServerSetting
 		const [settings] = await ServerSetting.findOrCreateWithCache({
 			where: { guildId },
-			defaults: { guildId, guildName: guild.name },
+			defaults: { guildId, guildName: setupResult.guildName },
 		});
 
 		settings.minecraftIp = host;
 		settings.minecraftPort = port;
 		settings.minecraftStatsOn = true;
-		for (const [field, channelId] of Object.entries(createdChannels)) {
+		for (const [field, channelId] of Object.entries(setupResult.channels)) {
 			settings[field] = channelId;
 		}
 		await settings.save();
@@ -253,10 +296,10 @@ app.post('/autosetup/:guildId', async (c) => {
 		return c.json({
 			success: true,
 			data: {
-				categoryId: category.id,
+				categoryId: setupResult.categoryId,
 				host,
 				port,
-				channels: createdChannels,
+				channels: setupResult.channels,
 			},
 		});
 	} catch (err) {

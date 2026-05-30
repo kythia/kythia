@@ -235,19 +235,63 @@ class PrefixCommandHandler {
 
 		// Main guild check
 		if (command.isInMainGuild) {
-			const mainGuild = message.client.guilds.cache.get(
-				kythiaConfig.bot.mainGuildId,
-			);
-			if (!mainGuild) {
-				logger.error(
-					`Bot is not a member of the main guild specified in config: ${kythiaConfig.bot.mainGuildId}`,
-					{ label: 'PrefixCommandHandler' },
-				);
+			const mainGuildId = kythiaConfig.bot.mainGuildId;
+			if (!mainGuildId) {
+				logger.error(`mainGuildId not set in config.`, {
+					label: 'PrefixCommandHandler',
+				});
 			}
+
+			let isMember = false;
+			let mainGuildName = 'Support Server';
+
 			try {
-				await mainGuild.members.fetch(message.author.id);
-			} catch (_error) {
-				const container = new ContainerBuilder()
+				if (message.client.shard) {
+					const results = await message.client.shard.broadcastEval(
+						async (c, { gId, uId }) => {
+							const g = c.guilds.cache.get(gId);
+							if (!g) return null;
+							try {
+								await g.members.fetch(uId);
+								return { isMember: true, name: g.name };
+							} catch {
+								return { isMember: false, name: g.name };
+							}
+						},
+						{ context: { gId: mainGuildId, uId: message.author.id } },
+					);
+					const hit = results.find((r) => r !== null);
+					if (hit) {
+						isMember = hit.isMember;
+						mainGuildName = hit.name;
+					} else {
+						return { allowed: true };
+					} // fail open if guild not found on any shard
+				} else {
+					const mainGuild = message.client.guilds.cache.get(mainGuildId);
+					if (!mainGuild) {
+						logger.error(`Bot is not a member of main guild: ${mainGuildId}`, {
+							label: 'PrefixCommandHandler',
+						});
+						return { allowed: true }; // fail open
+					}
+					mainGuildName = mainGuild.name;
+					try {
+						await mainGuild.members.fetch(message.author.id);
+						isMember = true;
+					} catch {
+						isMember = false;
+					}
+				}
+			} catch (err) {
+				logger.error(`isInMainGuild check failed: ${err.message}`, {
+					label: 'PrefixCommandHandler',
+				});
+				return { allowed: true }; // fail open
+			}
+
+			if (!isMember) {
+				const errorContainer = new ContainerBuilder()
 					.setAccentColor(
 						convertColor(kythiaConfig.bot.color, {
 							from: 'hex',
@@ -257,7 +301,7 @@ class PrefixCommandHandler {
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
 							await t(message, 'common.error.not.in.main.guild.text', {
-								name: mainGuild.name,
+								name: mainGuildName,
 							}),
 						),
 					)
@@ -290,7 +334,7 @@ class PrefixCommandHandler {
 				return {
 					allowed: false,
 					response: {
-						components: [container],
+						components: [errorContainer],
 						flags: MessageFlags.IsComponentsV2,
 					},
 				};

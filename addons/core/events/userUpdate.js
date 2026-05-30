@@ -55,9 +55,9 @@ module.exports = async (bot, oldUser, newUser) => {
 			`**User:** ${newUser.tag} (<@${newUser.id}>)\n\n` +
 			`**Changes:**\n${changes.join('\n')}`;
 
-		// Find mutual guilds where the user is a member
-		// This can be expensive if the bot is in many guilds.
-		// We iterate through guilds cache.
+		// Find mutual guilds where the user is a member.
+		// Each shard iterates only its own guilds.cache — this is correct shard behavior:
+		// the userUpdate event fires on every shard that has the user cached.
 		for (const guild of bot.client.guilds.cache.values()) {
 			if (guild.members.cache.has(newUser.id)) {
 				const guildId = guild.id;
