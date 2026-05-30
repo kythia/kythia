@@ -3,7 +3,7 @@
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 const editCommand = require('./commands/embed-builder/edit');

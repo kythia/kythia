@@ -1,9 +1,9 @@
 /**
  * @namespace: addons/core/buttons/help-btn.js
- * @type: Button Interaction
+ * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 const { MessageFlags } = require('discord.js');
 

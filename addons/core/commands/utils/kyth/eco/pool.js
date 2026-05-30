@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/core/commands/utils/kyth/pool.js
- * @type: Admin Command
+ * @namespace: addons/core/commands/utils/kyth/eco/pool.js
+ * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 const { MessageFlags } = require('discord.js');

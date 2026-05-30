@@ -1,13 +1,9 @@
 /**
  * @namespace: addons/economy/tasks/kyth-dividend.js
- * @type: Scheduled Task — Daily KYTH Staking Dividend
+ * @type: Scheduled Task
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 2.0.0
- *
- * Runs daily at 00:00 UTC.
- * SKIPS if pool.dividendActive === false (admin-controlled via /kyth config).
- * Uses pool.dividendSplitPct instead of hardcoded 50%.
+ * @version 26.0.0-rc.1
  */
 
 const { Op } = require('sequelize');

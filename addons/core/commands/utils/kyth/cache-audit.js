@@ -1,9 +1,9 @@
 /**
  * @namespace: addons/core/commands/utils/kyth/cache-audit.js
- * @type: Command
+ * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');

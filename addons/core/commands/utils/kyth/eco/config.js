@@ -1,13 +1,9 @@
 /**
- * @namespace: addons/core/commands/utils/kyth/config.js
- * @type: Admin Command
+ * @namespace: addons/core/commands/utils/kyth/eco/config.js
+ * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0
- *
- * Full admin control panel for the KYTH AMM economy.
- * Every automated behavior can be toggled, tuned, or paused from here.
- * No redeploy needed — all settings live in the DB.
+ * @version 26.0.0-rc.1
  */
 
 const { MessageFlags } = require('discord.js');

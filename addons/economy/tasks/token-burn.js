@@ -1,13 +1,9 @@
 /**
  * @namespace: addons/economy/tasks/token-burn.js
- * @type: Scheduled Task — KYTH Monthly Token Burn
+ * @type: Scheduled Task
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 2.0.0
- *
- * Runs on the 1st of each month at 12:00 UTC.
- * SKIPS if pool.burnActive === false (admin-controlled via /kyth config).
- * Uses pool.burnRatePct instead of hardcoded 5%.
+ * @version 26.0.0-rc.1
  */
 
 module.exports = {

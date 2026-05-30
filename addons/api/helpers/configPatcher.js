@@ -1,4 +1,12 @@
 /**
+ * @namespace: addons/api/helpers/configPatcher.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
+/**
  * @file addons/api/helpers/configPatcher.js
  * @description Safely patches live .env and kythia.config.js files via API.
  */

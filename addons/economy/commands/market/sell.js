@@ -3,7 +3,7 @@
  * @type: Command
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 2.0.0
+ * @version 26.0.0-rc.1
  */
 const {
 	MessageFlags,

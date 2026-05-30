@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/economy/helpers/lock.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const Redis = require('ioredis');
 
 // Ensure we only create one connection per process

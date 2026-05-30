@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/economy/commands/slots.js
+ * @namespace: addons/economy/commands/gamble/slots.js
  * @type: Command
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 const { MessageFlags } = require('discord.js');

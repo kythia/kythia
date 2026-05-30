@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/economy/commands/loan.js
+ * @namespace: addons/economy/commands/bank/loan.js
  * @type: Command
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 const { MessageFlags } = require('discord.js');

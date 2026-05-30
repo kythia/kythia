@@ -1,23 +1,9 @@
 /**
  * @namespace: addons/economy/helpers/blackmarket-items.js
- * @type: Helper — Configurable Black Market Item Registry
+ * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
- *
- * All prices are in KYTH tokens.
- * Add or remove items here freely — the shop command reads this list dynamically.
- *
- * Each item:
- * {
- *   id: string           — unique identifier
- *   emoji: string        — display emoji
- *   name: string         — display name
- *   description: string  — short description
- *   priceKyth: number    — price in KYTH tokens
- *   stock: number | null — null = unlimited, number = limited stock
- *   effect: string       — what the item does when used (informational label)
- * }
+ * @version 26.0.0-rc.1
  */
 
 const BLACKMARKET_ITEMS = [

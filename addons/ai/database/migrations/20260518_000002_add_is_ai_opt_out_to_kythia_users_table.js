@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/core/database/migrations/20260518_000001_add_is_ai_opt_out_to_users_table.js
+ * @namespace: addons/ai/database/migrations/20260518_000002_add_is_ai_opt_out_to_kythia_users_table.js
  * @type: Database Migration
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 module.exports = {

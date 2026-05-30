@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/economy/commands/bank_upgrade.js
+ * @namespace: addons/economy/commands/bank/upgrade.js
  * @type: Command
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 const {
 	MessageFlags,

@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/economy/commands/blackmarket.js
+ * @namespace: addons/economy/commands/crime/blackmarket.js
  * @type: Command
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 const {

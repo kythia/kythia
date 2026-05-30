@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/server-stats/commands/server-stats/_command.js
+ * @namespace: addons/server-stats/commands/_command.js
  * @type: Command Group Definition
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 const {

@@ -1,39 +1,9 @@
 /**
  * @namespace: addons/image/services/r2.js
- * @type: Service
+ * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
- *
- * Cloudflare R2 Storage Service
- * Uses the S3 compatibility API via @aws-sdk/client-s3.
- * Docs: https://developers.cloudflare.com/r2/api/s3/api/
- *
- * Credentials are sourced from kythiaConfig.addons.image (passed in by the caller).
- * Configure them in kythia.config.js under addons.image:
- *
- *   addons: {
- *     image: {
- *       // ← Your Cloudflare Account ID
- *       // Found at: https://dash.cloudflare.com → right sidebar → Account ID
- *       accountId: 'your-cloudflare-account-id',
- *
- *       // ← R2 API Token Access Key ID
- *       // Generated at: Cloudflare Dashboard → R2 → Manage R2 API Tokens
- *       accessKeyId: 'your-r2-access-key-id',
- *
- *       // ← R2 API Token Secret Access Key
- *       secretAccessKey: 'your-r2-secret-access-key',
- *
- *       // ← The name of your R2 bucket
- *       bucketName: 'your-bucket-name',
- *
- *       // ← Public base URL for your bucket (no trailing slash)
- *       // Either a custom domain:  'https://img.example.com'
- *       // Or the R2.dev URL:       'https://pub-xxxx.r2.dev'
- *       publicUrl: 'https://pub-xxxx.r2.dev',
- *     },
- *   },
+ * @version 26.0.0-rc.1
  */
 
 const {

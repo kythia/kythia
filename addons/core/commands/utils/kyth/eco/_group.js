@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/core/commands/utils/kyth/team/_group.js
+ * @namespace: addons/core/commands/utils/kyth/eco/_group.js
  * @type: Subcommand Group Definition
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 module.exports = {

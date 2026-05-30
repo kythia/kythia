@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/core/helpers/helpUtils.js
- * @type: Helper
+ * @namespace: addons/core/helpers/help-utils.js
+ * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 const {

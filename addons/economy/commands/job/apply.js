@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/economy/commands/job_apply.js
+ * @namespace: addons/economy/commands/job/apply.js
  * @type: Command
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 const {
 	MessageFlags,

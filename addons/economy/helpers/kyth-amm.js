@@ -1,30 +1,9 @@
 /**
  * @namespace: addons/economy/helpers/kyth-amm.js
- * @type: Helper — AMM Engine (Uniswap V2 CPMM)
+ * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 2.0.0
- *
- * Implements the Uniswap V2 Constant Product Market Maker: X * Y = K
- *
- *   X = coinReserve  (Kythia Coin in pool)
- *   Y = kythReserve  (KYTH tokens in pool)
- *   K = kConstant    (invariant — stays constant during every swap)
- *
- * Spot Price of 1 KYTH = X / Y
- *
- * Fee Model (same as Uniswap V2):
- *   - 2% of gross input is taken as protocol fee BEFORE the swap
- *   - Only 98% of input moves the reserves → K is slightly inflated over time
- *     (this is intentional; in Uniswap it compounds as LP fee, here it goes to stakers)
- *
- * Price Impact (correct Uniswap formula):
- *   midPrice        = X / Y                     (spot price, no slippage)
- *   executionPrice  = coinIn / kythOut          (effective price you paid per KYTH)
- *   priceImpactPct  = (executionPrice - midPrice) / midPrice * 100
- *
- *   This is the industry-standard way — it compares what you paid vs the no-impact price.
- *   Always positive for buys, always negative for sells.
+ * @version 26.0.0-rc.1
  */
 
 // ─── Swap Calculations ─────────────────────────────────────────────────────────

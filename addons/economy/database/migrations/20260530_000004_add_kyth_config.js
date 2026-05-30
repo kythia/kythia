@@ -3,10 +3,7 @@
  * @type: Database Migration
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0
- *
- * Adds admin-configurable control columns to kythia_liquidity_pool.
- * All settings here can be changed via /kyth config without a redeploy.
+ * @version 26.0.0-rc.1
  */
 
 module.exports = {
