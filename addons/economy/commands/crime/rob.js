@@ -7,8 +7,8 @@
  */
 
 const { MessageFlags } = require('discord.js');
-const banks = require('../helpers/banks');
-const { toBigIntSafe } = require('../helpers/bigint');
+const banks = require('../../helpers/banks');
+const { toBigIntSafe } = require('../../helpers/bigint');
 
 module.exports = {
 	subcommand: true,
@@ -97,13 +97,38 @@ module.exports = {
 			userId: target.userId,
 			itemName: '🚓 Guard',
 		});
+		const padlock = await Inventory.getCache({
+			userId: target.userId,
+			itemName: '🔒 Padlock',
+		});
+		const fakeWallet = await Inventory.getCache({
+			userId: target.userId,
+			itemName: '👛 Fake Wallet',
+		});
 		let poison = null;
-		if (!guard) {
+		if (!guard && !padlock) {
 			poison = await Inventory.getCache({
 				userId: target.userId,
 				itemName: '🧪 Poison',
 			});
 		}
+
+		if (padlock) {
+			await padlock.destroy();
+			const msg = `## 🔒 Robbery Blocked!\nYour robbery attempt was blocked by ${targetUser.username}'s Padlock! The padlock broke.`;
+			const components = await simpleContainer(interaction, msg, {
+				color: 'Red',
+			});
+			return interaction.editReply({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+			});
+		}
+
+		const stealthSuit = await Inventory.getCache({
+			userId: user.userId,
+			itemName: '🥷 Stealth Suit',
+		});
 
 		const userBank = banks.getBank(user.bankType);
 		let success = false;
@@ -141,21 +166,50 @@ module.exports = {
 				});
 			}
 
-			user.kythiaCoin = toBigIntSafe(user.kythiaCoin) + toBigIntSafe(robAmount);
+			let finalRobAmount = robAmount;
+			if (fakeWallet) {
+				await fakeWallet.destroy();
+				finalRobAmount = Math.floor(robAmount * 0.1); // Fake wallet reduces to 10%
+			}
+
+			user.kythiaCoin =
+				toBigIntSafe(user.kythiaCoin) + toBigIntSafe(finalRobAmount);
 			target.kythiaCoin =
-				toBigIntSafe(target.kythiaCoin) - toBigIntSafe(robAmount);
+				toBigIntSafe(target.kythiaCoin) - toBigIntSafe(finalRobAmount);
 			user.lastRob = new Date();
 
+			let bountyIncrease = Math.floor(finalRobAmount * 0.5);
+			let stealthMsg = '';
+			if (stealthSuit) {
+				if (Math.random() < 0.2) {
+					await stealthSuit.destroy();
+					stealthMsg = '\n🥷 *Your Stealth Suit tore and broke!*';
+				} else {
+					bountyIncrease = 0; // Bounty doesn't increase if stealth suit works
+					stealthMsg =
+						'\n🥷 *Your Stealth Suit kept your identity hidden! No bounty added.*';
+				}
+			}
+
+			user.bountyAmount =
+				toBigIntSafe(user.bountyAmount || 0) + toBigIntSafe(bountyIncrease);
+
 			user.changed('kythiaCoin', true);
+			user.changed('bountyAmount', true);
 			target.changed('kythiaCoin', true);
 
 			await user.save();
 			await target.save();
 
-			const msg = await t(interaction, 'economy.rob.rob.success.text', {
-				amount: robAmount,
-				target: targetUser.username,
-			});
+			const msgText = fakeWallet
+				? `## 👛 Fake Wallet Triggered!\nYou robbed ${targetUser.username}, but they had a Fake Wallet! You only got 🪙 ${finalRobAmount.toLocaleString()}.\nYour bounty increased by 🪙 ${bountyIncrease.toLocaleString()}!${stealthMsg}`
+				: (await t(interaction, 'economy.rob.rob.success.text', {
+						amount: finalRobAmount,
+						target: targetUser.username,
+					})) +
+					`\nYour bounty increased by 🪙 ${bountyIncrease.toLocaleString()}!${stealthMsg}`;
+
+			const msg = msgText;
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -166,7 +220,7 @@ module.exports = {
 
 			const dmMsg = await t(interaction, 'economy.rob.rob.success.dm', {
 				robber: interaction.user.username,
-				amount: robAmount,
+				amount: finalRobAmount,
 			});
 			const dmComponents = await simpleContainer(interaction, dmMsg, {
 				color: 'Red',

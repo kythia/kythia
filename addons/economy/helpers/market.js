@@ -15,7 +15,7 @@ let marketCache = {
 
 const CACHE_DURATION_MS = 10 * 60 * 1000; // 10 minutes
 
-const ASSET_IDS = ['bitcoin', 'ethereum', 'solana', 'dogecoin'];
+const ASSET_IDS = ['bitcoin', 'ethereum', 'solana', 'dogecoin', 'kyth'];
 
 async function getMarketData() {
 	const now = Date.now();
@@ -129,4 +129,5 @@ module.exports = {
 	getMarketData,
 	ASSET_IDS,
 	getChartBuffer,
+	KYTH_ASSET_ID: 'kyth',
 };

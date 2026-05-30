@@ -52,16 +52,17 @@ async function processOrders(bot) {
 
 				if (order.side === 'buy') {
 					const _totalCost = order.quantity * order.price;
+					const quantityBought = order.quantity * 0.98; // 2% fee
 
 					const portfolio = await MarketPortfolio.getCache({
 						userId: order.userId,
 						assetId: order.assetId,
 					});
 					if (portfolio) {
-						const newQuantity = portfolio.quantity + order.quantity;
+						const newQuantity = portfolio.quantity + quantityBought;
 						const newAvgPrice =
 							(portfolio.quantity * portfolio.avgBuyPrice +
-								order.quantity * order.price) /
+								quantityBought * order.price) /
 							newQuantity;
 						portfolio.quantity = newQuantity;
 						portfolio.avgBuyPrice = newAvgPrice;
@@ -70,7 +71,7 @@ async function processOrders(bot) {
 						await MarketPortfolio.create({
 							userId: order.userId,
 							assetId: order.assetId,
-							quantity: order.quantity,
+							quantity: quantityBought,
 							avgBuyPrice: order.price,
 						});
 					}
@@ -84,7 +85,9 @@ async function processOrders(bot) {
 						price: order.price,
 					});
 				} else {
-					const totalReceived = order.quantity * currentPrice;
+					const grossReceived = order.quantity * currentPrice;
+					const feeAmount = grossReceived * 0.02; // 2% fee
+					const totalReceived = grossReceived - feeAmount;
 
 					user.kythiaCoin =
 						toBigIntSafe(user.kythiaCoin) + toBigIntSafe(totalReceived);

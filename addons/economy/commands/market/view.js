@@ -20,7 +20,9 @@ const {
 	getMarketData,
 	ASSET_IDS,
 	getChartBuffer,
+	KYTH_ASSET_ID,
 } = require('../../helpers/market');
+const { formatPoolStats, getSpotPrice } = require('../../helpers/kyth-amm');
 
 function formatMarketTable(rows) {
 	return [
@@ -58,7 +60,8 @@ module.exports = {
 
 	async execute(interaction, container) {
 		const { t, models, kythiaConfig, helpers } = container;
-		const { KythiaUser, MarketOrder } = models;
+		const { KythiaUser, MarketOrder, KythLiquidityPool, MarketTransaction } =
+			models;
 		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 
@@ -76,9 +79,109 @@ module.exports = {
 			});
 		}
 
-		const marketData = await getMarketData();
 		const assetId = interaction.options.getString('asset');
 		const files = [];
+
+		// ─── KYTH AMM View ─────────────────────────────────────────────────────────
+		if (assetId === KYTH_ASSET_ID) {
+			const pool = await KythLiquidityPool.getCache(
+				{ id: 1 },
+				{ noCache: true },
+			);
+			const userKyth = Number(user.kythHolding) || 0;
+			const userStaked = Number(user.kythStaked) || 0;
+
+			if (!pool) {
+				const components = await simpleContainer(
+					interaction,
+					'## ❌ KYTH Pool Not Found\nThe AMM has not been initialized.',
+					{ color: 'Red' },
+				);
+				return interaction.editReply({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
+			}
+
+			const stats = formatPoolStats(pool);
+			const spotPrice = getSpotPrice(pool);
+
+			// Recent trades for 24h change simulation
+			const recentTrades =
+				(await MarketTransaction.findAll({
+					where: { assetId: 'kyth' },
+					order: [['createdAt', 'DESC']],
+					limit: 50,
+				})) ?? [];
+
+			// Rough 24h change: compare current price vs oldest recent trade
+			let change24h = 0;
+			if (recentTrades.length > 1) {
+				const oldestPrice = recentTrades[recentTrades.length - 1].price;
+				change24h =
+					oldestPrice > 0 ? ((spotPrice - oldestPrice) / oldestPrice) * 100 : 0;
+			}
+			const changeEmoji = change24h >= 0 ? '🟢 ▲' : '🔴 ▼';
+			const kDriftWarning =
+				parseFloat(stats.kDriftPct) > 0.1
+					? `\n> ⚠️ **K Drift:** ${stats.kDriftPct}% (admin recalc recommended)`
+					: '';
+
+			const description = [
+				`## 💎 KYTH Coin — AMM Market Data`,
+				`*Powered by Kythia's on-chain Automated Market Maker (X×Y=K)*`,
+				``,
+				`**💰 Spot Price:** ${stats.spotPrice} Coin/KYTH`,
+				`**${changeEmoji} 24h Change:** ${change24h.toFixed(2)}%`,
+				``,
+				`**📊 Pool Reserves**`,
+				`\`\`\``,
+				`Coin Reserve (X): ${stats.coinReserve}`,
+				`KYTH Reserve (Y): ${stats.kythReserve}`,
+				`K Constant:       ${stats.kConstant}`,
+				`K Drift:          ${stats.kDriftPct}%`,
+				`\`\`\``,
+				``,
+				`**🌊 Market Stats**`,
+				`\`\`\``,
+				`Circulating Supply: ${stats.circulatingSupply} KYTH`,
+				`Market Cap (FDV):   ${stats.fdv} Coin`,
+				`TVL (Pool):         ${stats.tvl} Coin`,
+				`Staker Rewards:     ${stats.totalTaxCollected} Coin (pending)`,
+				`\`\`\``,
+				``,
+				`**💎 Your KYTH**`,
+				`Wallet: **${userKyth.toFixed(6)} KYTH** ≈ 🪙 ${(userKyth * spotPrice).toLocaleString(undefined, { maximumFractionDigits: 2 })} Coin`,
+				`Staked: **${userStaked.toFixed(6)} KYTH**${kDriftWarning}`,
+			].join('\n');
+
+			const viewContainer = new ContainerBuilder()
+				.setAccentColor(
+					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+				)
+				.addTextDisplayComponents(
+					new TextDisplayBuilder().setContent(description),
+				)
+				.addSeparatorComponents(
+					new SeparatorBuilder()
+						.setSpacing(SeparatorSpacingSize.Small)
+						.setDivider(true),
+				)
+				.addTextDisplayComponents(
+					new TextDisplayBuilder().setContent(
+						await t(interaction, 'common.container.footer', {
+							username: interaction.client.user.username,
+						}),
+					),
+				);
+
+			return interaction.editReply({
+				components: [viewContainer],
+				flags: MessageFlags.IsComponentsV2,
+			});
+		}
+
+		const marketData = await getMarketData();
 
 		if (assetId) {
 			const data = marketData[assetId];

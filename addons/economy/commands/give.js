@@ -98,8 +98,12 @@ module.exports = {
 			});
 		}
 
-		if (giver.kythiaCoin < amount) {
-			const msg = await t(interaction, 'economy.give.give.not.enough.cash');
+		const fee = Math.floor(amount * 0.05);
+
+		if (giver.kythiaCoin < amount + fee) {
+			const msg = await t(interaction, 'economy.give.give.not.enough.cash', {
+				fee,
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -119,6 +123,7 @@ module.exports = {
 					await t(interaction, 'economy.give.give.confirm', {
 						amount,
 						target: target.username,
+						fee,
 					}),
 				),
 			)
@@ -154,7 +159,7 @@ module.exports = {
 		collector.on('collect', async (i) => {
 			if (i.customId === 'confirm') {
 				giver.kythiaCoin =
-					toBigIntSafe(giver.kythiaCoin) - toBigIntSafe(amount);
+					toBigIntSafe(giver.kythiaCoin) - toBigIntSafe(amount + fee);
 				receiver.kythiaCoin =
 					toBigIntSafe(receiver.kythiaCoin) + toBigIntSafe(amount);
 
@@ -167,6 +172,7 @@ module.exports = {
 				const msg = await t(interaction, 'economy.give.give.success', {
 					amount,
 					target: target.username,
+					fee,
 				});
 				const components = await simpleContainer(i, msg, {
 					color: kythiaConfig.bot.color,

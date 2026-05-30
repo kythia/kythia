@@ -7,8 +7,8 @@
  */
 
 const { MessageFlags } = require('discord.js');
-const banks = require('../helpers/banks');
-const { toBigIntSafe } = require('../helpers/bigint');
+const banks = require('../../helpers/banks');
+const { toBigIntSafe } = require('../../helpers/bigint');
 
 module.exports = {
 	subcommand: true,

@@ -69,7 +69,10 @@ async function generateShopContainer(
 		for (const item of pageItems) {
 			const itemName = await t(interaction, item.nameKey);
 			const itemDesc = await t(interaction, item.descKey);
-			const priceStr = safeLocaleString(item.price, '?');
+			const actualPrice = Math.floor(
+				item.price * (user && user.bankType === 'zenith_commerce' ? 0.95 : 1),
+			);
+			const priceStr = safeLocaleString(actualPrice, '?');
 			itemBlocks.push(
 				new TextDisplayBuilder().setContent(
 					`**${item.emoji} ${itemName} — 🪙 ${priceStr}**\n\`\`\`${itemDesc}\`\`\``,
@@ -140,6 +143,7 @@ async function generateShopComponentRows(
 	totalPages,
 	category,
 	pageItems,
+	user,
 ) {
 	const { t } = interaction.client.container;
 	const categoryOptions = await Promise.all(
@@ -167,14 +171,19 @@ async function generateShopComponentRows(
 	);
 
 	const buyOptions = await Promise.all(
-		pageItems.map(async (item) => ({
-			label: await t(interaction, item.nameKey),
-			description: await t(interaction, 'economy.shop.item.price', {
-				price: safeLocaleString(item.price, '?'),
-			}),
-			value: item.id,
-			emoji: item.emoji,
-		})),
+		pageItems.map(async (item) => {
+			const actualPrice = Math.floor(
+				item.price * (user && user.bankType === 'zenith_commerce' ? 0.95 : 1),
+			);
+			return {
+				label: await t(interaction, item.nameKey),
+				description: await t(interaction, 'economy.shop.item.price', {
+					price: safeLocaleString(actualPrice, '?'),
+				}),
+				value: item.id,
+				emoji: item.emoji,
+			};
+		}),
 	);
 
 	const buyRow = new ActionRowBuilder().addComponents(
@@ -260,6 +269,7 @@ module.exports = {
 			totalPages,
 			currentCategory,
 			pageItems,
+			user,
 		);
 		const { shopContainer } = await generateShopContainer(
 			interaction,
@@ -371,7 +381,11 @@ module.exports = {
 					});
 				}
 
-				if (user.kythiaCoin < selectedItem.price) {
+				const actualPrice = Math.floor(
+					selectedItem.price * (user.bankType === 'zenith_commerce' ? 0.95 : 1),
+				);
+
+				if (user.kythiaCoin < actualPrice) {
 					const errShopContainer = new ContainerBuilder()
 						.setAccentColor(
 							kythiaConfig.bot.color
@@ -392,7 +406,7 @@ module.exports = {
 				}
 
 				user.kythiaCoin =
-					toBigIntSafe(user.kythiaCoin) - toBigIntSafe(selectedItem.price);
+					toBigIntSafe(user.kythiaCoin) - toBigIntSafe(actualPrice);
 
 				user.changed('kythiaCoin', true);
 
@@ -403,7 +417,7 @@ module.exports = {
 					itemName: itemNameWithEmoji,
 				});
 
-				const priceStr = safeLocaleString(selectedItem.price, '?');
+				const priceStr = safeLocaleString(actualPrice, '?');
 				const successShopContainer = new ContainerBuilder()
 					.setAccentColor(
 						kythiaConfig.bot.color
@@ -439,6 +453,7 @@ module.exports = {
 				totalPages,
 				currentCategory,
 				pageItems,
+				user,
 			);
 			const { shopContainer: newShopContainer } = await generateShopContainer(
 				interaction,

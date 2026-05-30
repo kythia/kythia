@@ -13,15 +13,14 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-const banks = require('../helpers/banks');
-const { toBigIntSafe } = require('../helpers/bigint');
+const banks = require('../../helpers/banks');
+const { toBigIntSafe } = require('../../helpers/bigint');
 
 module.exports = {
 	subcommand: true,
-	aliases: ['bank'],
 	slashCommand: (subcommand) =>
 		subcommand
-			.setName('bank')
+			.setName('info')
 			.setDescription('💰 Check your kythia bank balance and full bank info.'),
 
 	/**
@@ -88,7 +87,9 @@ module.exports = {
 				val:
 					bank.maxBalance === Infinity
 						? await t(interaction, 'economy.bank.max.balance.unlimited')
-						: bank.maxBalance.toLocaleString(),
+						: (
+								bank.maxBalance + (user.extraBankCapacity || 0)
+							).toLocaleString(),
 			},
 		];
 

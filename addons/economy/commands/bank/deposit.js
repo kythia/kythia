@@ -7,8 +7,8 @@
  */
 
 const { MessageFlags } = require('discord.js');
-const banks = require('../helpers/banks');
-const { toBigIntSafe } = require('../helpers/bigint');
+const banks = require('../../helpers/banks');
+const { toBigIntSafe } = require('../../helpers/bigint');
 
 module.exports = {
 	subcommand: true,
@@ -117,7 +117,10 @@ module.exports = {
 		}
 
 		const userBank = banks.getBank(user.bankType);
-		const maxBalance = userBank.maxBalance;
+		const maxBalance =
+			userBank.maxBalance === Infinity
+				? Infinity
+				: userBank.maxBalance + (user.extraBankCapacity || 0);
 
 		if (user.kythiaBank + amount > maxBalance) {
 			const msg = await t(interaction, 'economy.deposit.deposit.max.balance', {
