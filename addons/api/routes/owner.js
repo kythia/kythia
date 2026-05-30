@@ -1317,7 +1317,7 @@ app.post('/chat', async (c) => {
 
 		if (targetType === 'channel') {
 			target = await client.channels.fetch(finalTargetId).catch(() => null);
-			if (!target || !target.isTextBased()) {
+			if (!target?.isTextBased()) {
 				return c.json(
 					{ success: false, error: `Text channel ${finalTargetId} not found.` },
 					404,

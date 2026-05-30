@@ -159,7 +159,7 @@ app.get('/settings/:guildId', async (c) => {
 	const guildId = c.req.param('guildId');
 
 	try {
-		const setting = await BirthdaySetting.getCache({ id: guildId });
+		const setting = await BirthdaySetting.getCache({ guildId });
 		return c.json({ success: true, data: setting ?? null });
 	} catch (error) {
 		return c.json({ success: false, error: error.message }, 500);

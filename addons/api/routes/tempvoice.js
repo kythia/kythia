@@ -168,7 +168,7 @@ app.post('/configs/:guildId/refresh', async (c) => {
 	const guildId = c.req.param('guildId');
 
 	try {
-		const config = await TempVoiceConfig.getCache({ id: guildId });
+		const config = await TempVoiceConfig.getCache({ guildId });
 		if (!config) {
 			return c.json(
 				{ success: false, error: 'TempVoiceConfig not found' },
@@ -237,7 +237,7 @@ app.get('/configs/:guildId', async (c) => {
 	const guildId = c.req.param('guildId');
 
 	try {
-		const config = await TempVoiceConfig.getCache({ id: guildId });
+		const config = await TempVoiceConfig.getCache({ guildId });
 		if (!config)
 			return c.json(
 				{ success: false, error: 'TempVoiceConfig not found' },
@@ -303,7 +303,7 @@ app.patch('/configs/:guildId', async (c) => {
 	const body = await c.req.json();
 
 	try {
-		const config = await TempVoiceConfig.getCache({ id: guildId });
+		const config = await TempVoiceConfig.getCache({ guildId });
 		if (!config)
 			return c.json(
 				{ success: false, error: 'TempVoiceConfig not found' },
@@ -336,7 +336,7 @@ app.delete('/configs/:guildId', async (c) => {
 	const guildId = c.req.param('guildId');
 
 	try {
-		const config = await TempVoiceConfig.getCache({ id: guildId });
+		const config = await TempVoiceConfig.getCache({ guildId });
 		if (!config)
 			return c.json(
 				{ success: false, error: 'TempVoiceConfig not found' },

@@ -423,7 +423,7 @@ app.get('/monitors/:userId', async (c) => {
 	const { Monitor } = getModels(c);
 	const { userId } = c.req.param();
 	try {
-		const row = await Monitor.getCache({ id: userId });
+		const row = await Monitor.getCache({ userId });
 		if (!row)
 			return c.json(
 				{ status: 'error', error: 'Monitor not found', code: 'NOT_FOUND' },
@@ -513,7 +513,7 @@ app.patch('/monitors/:userId', async (c) => {
 		);
 	}
 	try {
-		const row = await Monitor.getCache({ id: userId });
+		const row = await Monitor.getCache({ userId });
 		if (!row)
 			return c.json(
 				{ status: 'error', error: 'Monitor not found', code: 'NOT_FOUND' },
@@ -536,7 +536,7 @@ app.delete('/monitors/:userId', async (c) => {
 	const { Monitor } = getModels(c);
 	const { userId } = c.req.param();
 	try {
-		const row = await Monitor.getCache({ id: userId });
+		const row = await Monitor.getCache({ userId });
 		if (!row)
 			return c.json(
 				{ status: 'error', error: 'Monitor not found', code: 'NOT_FOUND' },
