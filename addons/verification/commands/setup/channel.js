@@ -9,6 +9,7 @@
 const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
+	subcommand: true,
 	slashCommand: new SlashCommandSubcommandBuilder()
 		.setName('channel')
 		.setDescription('Channel where captcha is sent (leave blank for DM only)')

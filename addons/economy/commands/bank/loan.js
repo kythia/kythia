@@ -6,16 +6,7 @@
  * @version 1.0.0-rc
  */
 
-const {
-	MessageFlags,
-	ContainerBuilder,
-	TextDisplayBuilder,
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	SeparatorBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const { toBigIntSafe } = require('../../helpers/bigint');
 const banks = require('../../helpers/banks');
 
@@ -67,7 +58,7 @@ module.exports = {
 		if (amount <= 0) {
 			const components = await simpleContainer(
 				interaction,
-				'Amount must be greater than 0.',
+				await t(interaction, 'economy.bank.loan.error.invalid_amount.desc'),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -83,7 +74,11 @@ module.exports = {
 			if (user.activeLoan > 0) {
 				const components = await simpleContainer(
 					interaction,
-					`## 🏦 Loan Denied\nYou already have an active loan of **🪙 ${user.activeLoan.toLocaleString()}**. You must repay it first.`,
+					await t(
+						interaction,
+						'economy.bank.loan.borrow.error.active_loan.desc',
+						{ loan: user.activeLoan.toLocaleString() },
+					),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -96,7 +91,10 @@ module.exports = {
 			if (amount > maxLoan) {
 				const components = await simpleContainer(
 					interaction,
-					`## 🏦 Loan Denied\nYour credit score (${user.creditScore}) only allows you to borrow up to **🪙 ${maxLoan.toLocaleString()}**.`,
+					await t(interaction, 'economy.bank.loan.borrow.error.max_loan.desc', {
+						score: user.creditScore,
+						max: maxLoan.toLocaleString(),
+					}),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -123,7 +121,15 @@ module.exports = {
 			user.changed('kythiaCoin', true);
 			await user.save();
 
-			const msg = `## 🏦 Loan Approved!\nYou have borrowed **🪙 ${amount.toLocaleString()}** at a daily interest rate of ${interestRate * 100}%.\nYou must repay it before <t:${Math.floor(dueDate.getTime() / 1000)}:f> or your assets will be seized!`;
+			const msg = await t(
+				interaction,
+				'economy.bank.loan.borrow.success.desc',
+				{
+					amount: amount.toLocaleString(),
+					rate: interestRate * 100,
+					date: Math.floor(dueDate.getTime() / 1000),
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -135,7 +141,7 @@ module.exports = {
 			if (user.activeLoan <= 0) {
 				const components = await simpleContainer(
 					interaction,
-					`You don't have an active loan to repay.`,
+					await t(interaction, 'economy.bank.loan.repay.error.no_loan.desc'),
 					{ color: 'Yellow' },
 				);
 				return interaction.editReply({
@@ -154,7 +160,11 @@ module.exports = {
 			if (user.kythiaCoin < repayAmount) {
 				const components = await simpleContainer(
 					interaction,
-					`You don't have enough cash (**🪙 ${repayAmount.toLocaleString()}**) to make this repayment.`,
+					await t(
+						interaction,
+						'economy.bank.loan.repay.error.insufficient_funds.desc',
+						{ amount: repayAmount.toLocaleString() },
+					),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -176,7 +186,11 @@ module.exports = {
 				user.creditScore += creditIncrease;
 				if (user.creditScore > 850) user.creditScore = 850;
 
-				extraMsg = `\n\n📈 Loan fully repaid! Your Credit Score increased by **${creditIncrease}** (Now: ${user.creditScore})!`;
+				extraMsg = await t(
+					interaction,
+					'economy.bank.loan.repay.credit_increase',
+					{ increase: creditIncrease, score: user.creditScore },
+				);
 
 				user.changed('loanDueDate', true);
 				user.changed('loanInterest', true);
@@ -187,7 +201,11 @@ module.exports = {
 			user.changed('activeLoan', true);
 			await user.save();
 
-			const msg = `## 🏦 Loan Repayment\nYou repaid **🪙 ${repayAmount.toLocaleString()}**. Remaining balance: **🪙 ${user.activeLoan.toLocaleString()}**.${extraMsg}`;
+			const msg = await t(interaction, 'economy.bank.loan.repay.success.desc', {
+				amount: repayAmount.toLocaleString(),
+				balance: user.activeLoan.toLocaleString(),
+				extra: extraMsg,
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});

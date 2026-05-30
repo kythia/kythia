@@ -1222,6 +1222,13 @@
 					},
 					"nickname": {
 						"set": "✅ Streak auto-nickname has been **{status}**."
+					},
+					"quota": {
+						"disabled": "⏸️ Streak restores have been **disabled** for this server. Members can no longer restore their streaks.",
+						"set": "✅ Monthly streak restore quota set to **{quota}** per member."
+					},
+					"timezone": {
+						"set": "✅ Streak timezone set to **{timezone}**. Daily streak resets will now follow this timezone."
 					}
 				},
 				"no": {

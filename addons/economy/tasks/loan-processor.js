@@ -60,7 +60,7 @@ module.exports = {
 						await discordUser.send(
 							`## 🚨 LOAN DEFAULTED!\nYou failed to repay your loan in time. The bank has **seized all your cash and bank balance**, and your credit score has tanked!`,
 						);
-					} catch (e) {}
+					} catch (_e) {}
 				} else {
 					const currentLoan = Number(user.activeLoan);
 					const interest = Math.floor(currentLoan * user.loanInterest);

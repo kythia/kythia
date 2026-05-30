@@ -15,6 +15,7 @@ const CAPTCHA_TYPES = [
 ];
 
 module.exports = {
+	subcommand: true,
 	slashCommand: new SlashCommandSubcommandBuilder()
 		.setName('status')
 		.setDescription('View current verification config'),

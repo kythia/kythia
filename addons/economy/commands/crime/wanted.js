@@ -57,7 +57,7 @@ module.exports = {
 			if (wantedUsers.length === 0) {
 				const components = await simpleContainer(
 					interaction,
-					'## 🤠 Most Wanted\nThe town is peaceful. No bounties currently active.',
+					await t(interaction, 'economy.crime.wanted.empty.desc'),
 					{ color: 'Green' },
 				);
 				return interaction.editReply({
@@ -66,10 +66,14 @@ module.exports = {
 				});
 			}
 
-			let listText = '## 🤠 Most Wanted Criminals\n\n';
+			let listText = await t(interaction, 'economy.crime.wanted.list.title');
 			for (let i = 0; i < wantedUsers.length; i++) {
 				const wUser = wantedUsers[i];
-				listText += `**#${i + 1}** <@${wUser.userId}> — 💰 **🪙 ${wUser.bountyAmount.toLocaleString()}**\n`;
+				listText += await t(interaction, 'economy.crime.wanted.list.entry', {
+					rank: i + 1,
+					userId: wUser.userId,
+					bounty: wUser.bountyAmount.toLocaleString(),
+				});
 			}
 
 			const replyContainer = new ContainerBuilder()
@@ -87,7 +91,7 @@ module.exports = {
 		if (targetOpt.id === interaction.user.id) {
 			const components = await simpleContainer(
 				interaction,
-				'You cannot capture yourself!',
+				await t(interaction, 'economy.crime.wanted.error.self.desc'),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -100,7 +104,7 @@ module.exports = {
 		if (!target?.bountyAmount || target.bountyAmount <= 0) {
 			const components = await simpleContainer(
 				interaction,
-				'This user does not have an active bounty.',
+				await t(interaction, 'economy.crime.wanted.error.no_bounty.desc'),
 				{ color: 'Yellow' },
 			);
 			return interaction.editReply({
@@ -117,7 +121,7 @@ module.exports = {
 		if (!bountyLicense) {
 			const components = await simpleContainer(
 				interaction,
-				'You need a **🕵️ Bounty License** from the shop to capture bounties!',
+				await t(interaction, 'economy.crime.wanted.error.no_license.desc'),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -147,7 +151,10 @@ module.exports = {
 			await user.save();
 			await target.save();
 
-			const msg = `## 🤠 Bounty Claimed!\nYou successfully captured ${targetOpt.username} and claimed the bounty of **🪙 ${reward.toLocaleString()}**!`;
+			const msg = await t(interaction, 'economy.crime.wanted.success.desc', {
+				username: targetOpt.username,
+				reward: reward.toLocaleString(),
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -156,7 +163,9 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		} else {
-			const msg = `## 💥 Capture Failed!\n${targetOpt.username} managed to escape! Better luck next time.`;
+			const msg = await t(interaction, 'economy.crime.wanted.fail.desc', {
+				username: targetOpt.username,
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});

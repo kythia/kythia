@@ -11,6 +11,7 @@ const { sendCaptcha } = require('../helpers/verify');
 const { clearSession } = require('../helpers/session');
 
 module.exports = {
+	subcommand: true,
 	slashCommand: new SlashCommandSubcommandBuilder()
 		.setName('reset')
 		.setDescription('Re-send captcha to a member')

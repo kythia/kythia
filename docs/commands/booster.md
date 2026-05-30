@@ -12,6 +12,7 @@
 `/booster background <url>`
 `/booster channel <channel>`
 `/booster style <style>`
+`/booster test [user]`
 `/booster text <text>`
 
 ### Subcommands
@@ -38,6 +39,13 @@
   - **Description:** Choose the message style
   - **Type:** Text
   - **Choices:** `🖼️ Components V2 card (default)` (`components-v2`), `💬 Plain text only` (`plain-text`)
+**`/booster test [<user>]`**
+> 👋 Test the booster message
+
+**Options for this subcommand:**
+- **`user`**
+  - **Description:** User to test with (defaults to you)
+  - **Type:** User
 **`/booster text <text>`**
 > 🚀 Set booster message text (supports placeholders)
 

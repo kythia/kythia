@@ -9,6 +9,7 @@
 const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
+	subcommand: true,
 	slashCommand: new SlashCommandSubcommandBuilder()
 		.setName('attempts')
 		.setDescription('Max wrong attempts before failing')

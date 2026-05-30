@@ -19,6 +19,7 @@
 `/welcomer out-style <style>`
 `/welcomer out-text <text>`
 `/welcomer role <role>`
+`/welcomer test <type> [user]`
 
 ### Subcommands
 
@@ -94,5 +95,16 @@
 - **`role*`**
   - **Description:** Role to assign on join
   - **Type:** Role
+**`/welcomer test <type> [<user>]`**
+> 👋 Test the welcome or farewell messages
+
+**Options for this subcommand:**
+- **`type*`**
+  - **Description:** Which event to test
+  - **Type:** Text
+  - **Choices:** `Welcome` (`in`), `Farewell` (`out`)
+- **`user`**
+  - **Description:** User to test with (defaults to you)
+  - **Type:** User
 
 

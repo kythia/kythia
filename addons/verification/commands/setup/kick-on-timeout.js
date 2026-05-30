@@ -9,6 +9,7 @@
 const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
+	subcommand: true,
 	slashCommand: new SlashCommandSubcommandBuilder()
 		.setName('kick-on-timeout')
 		.setDescription('Kick member if they time out')

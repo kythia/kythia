@@ -57,7 +57,9 @@ module.exports = {
 		);
 
 		if (cooldown.remaining) {
-			const msg = `## ${await t(interaction, 'economy.work.work.cooldown.title')}\n${await t(interaction, 'economy.work.work.cooldown.desc', { time: cooldown.time })}`;
+			const msg = await t(interaction, 'economy.work.work.cooldown.desc', {
+				time: cooldown.time,
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -68,7 +70,10 @@ module.exports = {
 		}
 
 		if (!user.profession) {
-			const msg = `## 👨‍💼 Unemployed\nYou don't have a profession yet! Use \`/eco job_apply\` to select a job.`;
+			const msg = await t(
+				interaction,
+				'economy.job.work.error.unemployed.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -97,7 +102,10 @@ module.exports = {
 			user.profession = null;
 			user.changed('profession', true);
 			await user.save();
-			const msg = `## ⚠️ Invalid Profession\nYour chosen profession is no longer valid. Please apply for a new one using \`/eco job_apply\`.`;
+			const msg = await t(
+				interaction,
+				'economy.job.work.error.invalid_profession.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -132,7 +140,11 @@ module.exports = {
 			const reqStr = Array.isArray(tierObj.requiredItem)
 				? tierObj.requiredItem.join(' / ')
 				: tierObj.requiredItem;
-			const msg = `## 🛠️ Missing Tool\nYou cannot work as a ${await t(interaction, job.nameKey)} because you are missing the required item(s): **${reqStr}**!`;
+			const msg = await t(
+				interaction,
+				'economy.job.work.error.missing_tool.desc',
+				{ job: await t(interaction, job.nameKey), req: reqStr },
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -161,7 +173,11 @@ module.exports = {
 			);
 
 			const eventContainer = await createContainer(interaction, {
-				description: `## ⚠️ Crossroads Event!\nWhile working as a ${await t(interaction, job.nameKey)}, you encounter a strange client who offers you a bribe to do something highly unethical. They will pay you **🪙 50,000**, but there is a 25% chance you will be caught, lose your job, and your bounty will increase!\n\nDo you accept?`,
+				description: await t(
+					interaction,
+					'economy.job.work.event.crossroads.desc.desc',
+					{ job: await t(interaction, job.nameKey) },
+				),
 				components: [row],
 			});
 
@@ -188,21 +204,30 @@ module.exports = {
 						user.changed('bountyAmount', true);
 						user.changed('jobExp', true);
 						await user.save();
-						outcomeMsg = `## 🚨 Busted!\nYou accepted the bribe but got caught by the authorities! You have been **fired**, lost all your Job EXP, and your bounty increased by **🪙 25,000**!`;
+						outcomeMsg = await t(
+							interaction,
+							'economy.job.work.event.crossroads.busted',
+						);
 					} else {
 						// Success
 						user.kythiaCoin =
 							toBigIntSafe(user.kythiaCoin) + toBigIntSafe(50000);
 						user.changed('kythiaCoin', true);
 						await user.save();
-						outcomeMsg = `## 💰 Paid Off!\nYou accepted the bribe and successfully got away with it! You earned **🪙 50,000**!`;
+						outcomeMsg = await t(
+							interaction,
+							'economy.job.work.event.crossroads.success',
+						);
 					}
 				} else {
 					// Decline
 					user.jobExp = toBigIntSafe(user.jobExp || 0) + toBigIntSafe(50);
 					user.changed('jobExp', true);
 					await user.save();
-					outcomeMsg = `## 🛡️ Honest Work\nYou declined the shady offer. Your integrity earned you **+50 Job EXP**!`;
+					outcomeMsg = await t(
+						interaction,
+						'economy.job.work.event.crossroads.declined',
+					);
 				}
 				const components = await simpleContainer(i, outcomeMsg, {
 					color: i.customId === 'event_accept' ? 'Red' : 'Green',
@@ -214,7 +239,7 @@ module.exports = {
 				if (collected.size === 0) {
 					const components = await simpleContainer(
 						interaction,
-						'You took too long to decide. The opportunity passed.',
+						await t(interaction, 'economy.job.work.event.timeout.desc'),
 						{ color: 'Yellow' },
 					);
 					await interaction.editReply({
@@ -274,7 +299,9 @@ module.exports = {
 				itemName: requiredItemFound,
 			});
 			if (toolToBreak) await toolToBreak.destroy();
-			extraText += `\n⚠️ **Oh no! Your ${requiredItemFound} broke while working!**`;
+			extraText += await t(interaction, 'economy.job.work.result.tool_broke', {
+				tool: requiredItemFound,
+			});
 		}
 
 		user.changed('kythiaCoin', true);
@@ -292,7 +319,10 @@ module.exports = {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`## ${job.emoji} You worked as a **${fullJobTitle}**!`,
+					await t(interaction, 'economy.job.work.result.title', {
+						emoji: job.emoji,
+						title: fullJobTitle,
+					}),
 				),
 			)
 			.addSeparatorComponents(

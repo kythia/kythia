@@ -9,6 +9,7 @@
 const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
+	subcommand: true,
 	slashCommand: new SlashCommandSubcommandBuilder()
 		.setName('timeout')
 		.setDescription('How long members have to complete the captcha (seconds)')

@@ -11,8 +11,6 @@ const {
 	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
-	ContainerBuilder,
-	TextDisplayBuilder,
 } = require('discord.js');
 const banks = require('../../helpers/banks');
 const { toBigIntSafe } = require('../../helpers/bigint');
@@ -211,7 +209,11 @@ module.exports = {
 				user.changed('lastHack', true);
 				await user.save();
 
-				const msg = `## 🚨 Connection Traced!\nYou triggered the security alarms at Node ${currentNode}!\nPenalty paid: **🪙 ${penalty}**`;
+				const msg = await t(
+					interaction,
+					'economy.crime.hack.event.busted.desc',
+					{ node: currentNode, penalty },
+				);
 				const components = await simpleContainer(i, msg, { color: 'Red' });
 				return i.update({ components, flags: MessageFlags.IsComponentsV2 });
 			}
@@ -266,7 +268,7 @@ module.exports = {
 						components: dmComponents,
 						flags: MessageFlags.IsComponentsV2,
 					});
-				} catch (e) {}
+				} catch (_e) {}
 
 				const successMsg = `## 💻 Mainframe Breached!\nYou successfully hacked ${targetUser.username}'s bank account and stole **🪙 ${totalHacked.toLocaleString()}**!\nYour bounty increased by **🪙 ${Math.floor(totalHacked * 0.5).toLocaleString()}**!`;
 				const components = await simpleContainer(i, successMsg, {
@@ -276,7 +278,7 @@ module.exports = {
 			}
 		});
 
-		collector.on('end', async (collected, reason) => {
+		collector.on('end', async (_collected, reason) => {
 			if (reason === 'time' && !failed) {
 				const components = await simpleContainer(
 					interaction,

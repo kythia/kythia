@@ -18,7 +18,6 @@ const {
 } = require('../../helpers/market');
 const {
 	calcBuyOutput,
-	getSpotPrice,
 	getImpactLevel,
 	calcMinOut,
 } = require('../../helpers/kyth-amm');
@@ -85,7 +84,11 @@ module.exports = {
 				? Number(user.kythiaCoin)
 				: Number(user.kythiaCoin);
 		if (userCoin < amountToSpend) {
-			const msg = `## ${await t(interaction, 'economy.market.buy.insufficient.funds.title')}\n${await t(interaction, 'economy.market.buy.insufficient.funds.desc', { amount: amountToSpend.toLocaleString() })}`;
+			const msg = await t(
+				interaction,
+				'economy.market.buy.insufficient.funds.desc',
+				{ amount: amountToSpend.toLocaleString() },
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -105,7 +108,7 @@ module.exports = {
 			if (!pool) {
 				const components = await simpleContainer(
 					interaction,
-					'## ❌ AMM Unavailable\nThe KYTH liquidity pool has not been initialized yet. Contact an admin.',
+					await t(interaction, 'economy.market.buy.error.amm_unavailable.desc'),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -118,7 +121,7 @@ module.exports = {
 			if (pool.tradingHalted) {
 				const components = await simpleContainer(
 					interaction,
-					'## 🚫 KYTH Trading Halted\nThe admin has temporarily halted all KYTH trading. Check back later.',
+					await t(interaction, 'economy.market.buy.error.trading_halted.desc'),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -133,7 +136,9 @@ module.exports = {
 			if (amountToSpend < minTrade) {
 				const components = await simpleContainer(
 					interaction,
-					`## ❌ Below Minimum\nMinimum trade size is **🪙 ${minTrade.toLocaleString()} Coin**.`,
+					await t(interaction, 'economy.market.buy.error.below_minimum.desc', {
+						minTrade: minTrade.toLocaleString(),
+					}),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -144,7 +149,11 @@ module.exports = {
 			if (maxTrade > 0 && amountToSpend > maxTrade) {
 				const components = await simpleContainer(
 					interaction,
-					`## ❌ Exceeds Maximum\nMax trade size is **🪙 ${maxTrade.toLocaleString()} Coin** (anti-whale limit). Split your order!`,
+					await t(
+						interaction,
+						'economy.market.buy.error.exceeds_maximum.desc',
+						{ maxTrade: maxTrade.toLocaleString() },
+					),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -166,10 +175,13 @@ module.exports = {
 			let result;
 			try {
 				result = calcBuyOutput(amountToSpend, poolSnapshot);
-			} catch (e) {
+			} catch (_e) {
 				const components = await simpleContainer(
 					interaction,
-					'## ❌ Invalid trade parameters.',
+					await t(
+						interaction,
+						'economy.market.buy.error.invalid_parameters.desc',
+					),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -181,7 +193,10 @@ module.exports = {
 			if (result.kythOut <= 0) {
 				const components = await simpleContainer(
 					interaction,
-					'## ❌ Insufficient Liquidity\nThe pool does not have enough KYTH to fill your order.',
+					await t(
+						interaction,
+						'economy.market.buy.error.insufficient_liquidity.desc',
+					),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -204,27 +219,35 @@ module.exports = {
 				result.newCoinReserve / result.newKythReserve
 			).toFixed(6);
 
-			const previewLines = [
-				`## 💎 KYTH Buy Preview`,
-				``,
-				`**You Spend:**  🪙 ${amountToSpend.toLocaleString()} Coin`,
-				`**Protocol Fee (${(result.feeRate * 100).toFixed(1)}%):**  🪙 ${feeCoinAmount} Coin`,
-				`**You Receive:** 💎 ${result.kythOut.toFixed(6)} KYTH`,
-				``,
-				`**Mid Price:** ${result.midPrice.toFixed(6)} Coin/KYTH`,
-				`**Execution Price:** ${result.executionPrice.toFixed(6)} Coin/KYTH`,
-				`**Price After:** ${priceAfter} Coin/KYTH`,
-				`${impactEmoji} **Price Impact:** ${result.priceImpactPct.toFixed(2)}%`,
-				`**Min. Received:** ${minOut.toFixed(6)} KYTH (0.5% slippage tol.)`,
-			];
+			const previewStr = await t(
+				interaction,
+				'economy.market.buy.preview.desc',
+				{
+					amountToSpend: amountToSpend.toLocaleString(),
+					feeRate: (result.feeRate * 100).toFixed(1),
+					feeCoinAmount,
+					kythOut: result.kythOut.toFixed(6),
+					midPrice: result.midPrice.toFixed(6),
+					executionPrice: result.executionPrice.toFixed(6),
+					priceAfter,
+					impactEmoji,
+					priceImpactPct: result.priceImpactPct.toFixed(2),
+					minOut: minOut.toFixed(6),
+				},
+			);
+			const previewLines = previewStr.split('\n');
 
-			const warningNote = {
-				safe: '',
-				warning:
-					'\n\n⚠️ **High price impact.** Your trade is large relative to pool size. You are paying a significant premium.',
-				danger:
-					'\n\n🚨 **EXTREME PRICE IMPACT!** This trade will move the market by a lot. You are buying at a very high premium. Are you absolutely sure?',
-			}[impactLevel];
+			let warningNote = '';
+			if (impactLevel === 'warning')
+				warningNote = await t(
+					interaction,
+					'economy.market.buy.warning.high_impact',
+				);
+			else if (impactLevel === 'danger')
+				warningNote = await t(
+					interaction,
+					'economy.market.buy.warning.extreme_impact',
+				);
 
 			if (warningNote) previewLines.push(warningNote);
 
@@ -232,6 +255,7 @@ module.exports = {
 			if (impactLevel === 'safe') {
 				return _executeBuyKyth({
 					interactionOrI: interaction,
+					t,
 					user,
 					pool,
 					amountToSpend,
@@ -283,6 +307,7 @@ module.exports = {
 					);
 					return _executeBuyKyth({
 						interactionOrI: i,
+						t,
 						user,
 						pool: freshPool,
 						amountToSpend,
@@ -294,7 +319,7 @@ module.exports = {
 				}
 				const cancelComponents = await simpleContainer(
 					i,
-					'Purchase cancelled.',
+					await t(i, 'economy.market.buy.cancel.desc'),
 					{ color: kythiaConfig.bot.color },
 				);
 				await i.update({
@@ -307,7 +332,7 @@ module.exports = {
 				if (collected.size === 0) {
 					const components = await simpleContainer(
 						interaction,
-						'⏱️ Confirmation timed out. Trade cancelled.',
+						await t(interaction, 'economy.market.buy.timeout.desc'),
 						{ color: kythiaConfig.bot.color },
 					);
 					await interaction.editReply({
@@ -325,7 +350,10 @@ module.exports = {
 		const assetData = marketData[assetId];
 
 		if (!assetData) {
-			const msg = `## ${await t(interaction, 'economy.market.buy.asset.not.found.title')}\n${await t(interaction, 'economy.market.buy.asset.not.found.desc')}`;
+			const msg = await t(
+				interaction,
+				'economy.market.buy.asset.not.found.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -366,7 +394,11 @@ module.exports = {
 			user.changed('kythiaCoin', true);
 			await user.save();
 
-			const msg = `## ${await t(interaction, 'economy.market.buy.success.title')}\n${await t(interaction, 'economy.market.buy.success.desc', { quantity: quantityToBuy.toFixed(6), asset: assetId.toUpperCase(), amount: amountToSpend.toLocaleString() })}`;
+			const msg = await t(interaction, 'economy.market.buy.success.desc', {
+				quantity: quantityToBuy.toFixed(6),
+				asset: assetId.toUpperCase(),
+				amount: amountToSpend.toLocaleString(),
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -378,7 +410,7 @@ module.exports = {
 			logger.error(`Error during market buy: ${error.message || error}`, {
 				label: 'economy:market:buy',
 			});
-			const msg = `## ${await t(interaction, 'economy.market.buy.error.title')}\n${await t(interaction, 'economy.market.buy.error.desc')}`;
+			const msg = await t(interaction, 'economy.market.buy.error.desc');
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -404,8 +436,9 @@ module.exports = {
  */
 async function _executeBuyKyth({
 	interactionOrI,
+	t,
 	user,
-	pool,
+	_pool,
 	amountToSpend,
 	minOut,
 	simpleContainer,
@@ -450,7 +483,10 @@ async function _executeBuyKyth({
 			if (result.kythOut < minOut) {
 				const components = await simpleContainer(
 					interactionOrI,
-					`## ⚠️ Slippage Exceeded\nThe market moved while you were confirming. You would have received **${result.kythOut.toFixed(6)} KYTH** but your minimum is **${minOut.toFixed(6)} KYTH**.\nPlease try again.`,
+					await t(interactionOrI, 'economy.market.buy.error.slippage.desc', {
+						received: result.kythOut.toFixed(6),
+						minOut: minOut.toFixed(6),
+					}),
 					{ color: 'Red' },
 				);
 				return interactionOrI[method]({ components, flags: MF.IsComponentsV2 });

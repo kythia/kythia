@@ -53,7 +53,7 @@ module.exports = {
 							await sellerDiscord.send(
 								`## 📦 Auction Ended!\nYour auction for **${listing.itemName}** has ended!\nAfter the 10% market tax, you received **🪙 ${profit.toLocaleString()}**.`,
 							);
-						} catch (e) {}
+						} catch (_e) {}
 					}
 
 					await Inventory.create({
@@ -68,7 +68,7 @@ module.exports = {
 						await winnerDiscord.send(
 							`## 🔨 Auction Won!\nYou won the auction for **${listing.itemName}** with a bid of **🪙 ${listing.currentBid.toLocaleString()}**! The item is now in your inventory.`,
 						);
-					} catch (e) {}
+					} catch (_e) {}
 				} else {
 					await Inventory.create({
 						userId: listing.sellerId,
@@ -80,7 +80,7 @@ module.exports = {
 						await sellerDiscord.send(
 							`## 📦 Listing Expired\nYour listing for **${listing.itemName}** expired without selling. The item has been returned to your inventory.`,
 						);
-					} catch (e) {}
+					} catch (_e) {}
 				}
 
 				await listing.destroy();

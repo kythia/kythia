@@ -18,7 +18,6 @@ const {
 } = require('../../helpers/market');
 const {
 	calcSellOutput,
-	getSpotPrice,
 	getImpactLevel,
 	calcMinOut,
 } = require('../../helpers/kyth-amm');
@@ -115,7 +114,7 @@ module.exports = {
 			if (pool.tradingHalted) {
 				const components = await simpleContainer(
 					interaction,
-					'## 🚫 KYTH Trading Halted\nThe admin has temporarily halted all KYTH trading. Check back later.',
+					await t(interaction, 'economy.market.sell.error.trading_halted.desc'),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -134,10 +133,13 @@ module.exports = {
 			let result;
 			try {
 				result = calcSellOutput(sellQuantity, poolSnapshot);
-			} catch (e) {
+			} catch (_e) {
 				const components = await simpleContainer(
 					interaction,
-					'## ❌ Invalid trade parameters.',
+					await t(
+						interaction,
+						'economy.market.sell.error.invalid_parameters.desc',
+					),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -196,6 +198,7 @@ module.exports = {
 			if (impactLevel === 'safe') {
 				return _executeSellKyth({
 					interactionOrI: interaction,
+					t,
 					user,
 					pool,
 					sellQuantity,
@@ -244,6 +247,7 @@ module.exports = {
 					);
 					return _executeSellKyth({
 						interactionOrI: i,
+						t,
 						user,
 						pool: freshPool,
 						sellQuantity,
@@ -253,9 +257,13 @@ module.exports = {
 						logger,
 					});
 				}
-				const cancelComponents = await simpleContainer(i, 'Sell cancelled.', {
-					color: kythiaConfig.bot.color,
-				});
+				const cancelComponents = await simpleContainer(
+					i,
+					await t(i, 'economy.market.sell.cancel.desc'),
+					{
+						color: kythiaConfig.bot.color,
+					},
+				);
 				await i.update({
 					components: cancelComponents,
 					flags: MessageFlags.IsComponentsV2,
@@ -266,7 +274,7 @@ module.exports = {
 				if (collected.size === 0) {
 					const components = await simpleContainer(
 						interaction,
-						'⏱️ Confirmation timed out. Trade cancelled.',
+						await t(interaction, 'economy.market.sell.timeout.desc'),
 						{ color: kythiaConfig.bot.color },
 					);
 					await interaction.editReply({
@@ -286,7 +294,11 @@ module.exports = {
 		});
 
 		if (!holding || holding.quantity < sellQuantity) {
-			const msg = `## ${await t(interaction, 'economy.market.sell.insufficient.asset.title')}\n${await t(interaction, 'economy.market.sell.insufficient.asset.desc', { asset: assetId.toUpperCase() })}`;
+			const msg = await t(
+				interaction,
+				'economy.market.sell.insufficient.asset.desc',
+				{ asset: assetId.toUpperCase() },
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -299,7 +311,10 @@ module.exports = {
 		const marketData = await getMarketData();
 		const assetData = marketData[assetId];
 		if (!assetData) {
-			const msg = `## ${await t(interaction, 'economy.market.sell.asset.not.found.title')}\n${await t(interaction, 'economy.market.sell.asset.not.found.desc')}`;
+			const msg = await t(
+				interaction,
+				'economy.market.sell.asset.not.found.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -372,7 +387,7 @@ module.exports = {
 			logger.error(`Error during market sell: ${error.message || error}`, {
 				label: 'economy:market:sell',
 			});
-			const msg = `## ${await t(interaction, 'economy.market.sell.error.title')}\n${await t(interaction, 'economy.market.sell.error.desc')}`;
+			const msg = await t(interaction, 'economy.market.sell.error.desc');
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -386,8 +401,9 @@ module.exports = {
 
 async function _executeSellKyth({
 	interactionOrI,
+	t,
 	user,
-	pool,
+	_pool,
 	sellQuantity,
 	minCoinOut,
 	simpleContainer,
@@ -432,7 +448,14 @@ async function _executeSellKyth({
 			if (result.coinOut < minCoinOut) {
 				const components = await simpleContainer(
 					interactionOrI,
-					`## ⚠️ Slippage Exceeded\nMarket moved. You'd receive **🪙 ${result.coinOut.toLocaleString(undefined, { maximumFractionDigits: 2 })}** but your minimum is **🪙 ${minCoinOut.toLocaleString(undefined, { maximumFractionDigits: 2 })}**.\nPlease try again.`,
+					await t(interactionOrI, 'economy.market.sell.error.slippage.desc', {
+						received: result.coinOut.toLocaleString(undefined, {
+							maximumFractionDigits: 2,
+						}),
+						minOut: minCoinOut.toLocaleString(undefined, {
+							maximumFractionDigits: 2,
+						}),
+					}),
 					{ color: 'Red' },
 				);
 				return interactionOrI[method]({ components, flags: MF.IsComponentsV2 });

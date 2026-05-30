@@ -43,7 +43,11 @@ module.exports = {
 		const CAPACITY_INCREASE = 100000;
 
 		if (user.kythiaCoin < UPGRADE_COST) {
-			const msg = `## 🏦 Bank Upgrade Failed\nYou need at least **🪙 ${UPGRADE_COST.toLocaleString()}** cash to upgrade your bank capacity.`;
+			const msg = await t(
+				interaction,
+				'economy.bank.upgrade.error.insufficient_funds.desc',
+				{ cost: UPGRADE_COST.toLocaleString() },
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -92,13 +96,21 @@ module.exports = {
 				user.changed('extraBankCapacity', true);
 				await user.save();
 
-				const msg = `## 🏦 Bank Upgraded!\nYou successfully spent **🪙 ${UPGRADE_COST.toLocaleString()}** to increase your bank capacity by **${CAPACITY_INCREASE.toLocaleString()}**.\nTotal Extra Capacity: **${user.extraBankCapacity.toLocaleString()}**`;
+				const msg = await t(i, 'economy.bank.upgrade.success.desc', {
+					cost: UPGRADE_COST.toLocaleString(),
+					capacity: CAPACITY_INCREASE.toLocaleString(),
+					newCapacity: user.extraBankCapacity.toLocaleString(),
+				});
 				const components = await simpleContainer(i, msg, { color: 'Green' });
 				await i.update({ components, flags: MessageFlags.IsComponentsV2 });
 			} else if (i.customId === 'cancel') {
-				const components = await simpleContainer(i, 'Upgrade cancelled.', {
-					color: kythiaConfig.bot.color,
-				});
+				const components = await simpleContainer(
+					i,
+					await t(i, 'economy.bank.upgrade.cancel.desc'),
+					{
+						color: kythiaConfig.bot.color,
+					},
+				);
 				await i.update({ components, flags: MessageFlags.IsComponentsV2 });
 			}
 		});
@@ -107,7 +119,7 @@ module.exports = {
 			if (collected.size === 0) {
 				const components = await simpleContainer(
 					interaction,
-					'Upgrade timed out.',
+					await t(interaction, 'economy.bank.upgrade.timeout.desc'),
 					{ color: kythiaConfig.bot.color },
 				);
 				await interaction.editReply({

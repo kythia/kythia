@@ -515,6 +515,30 @@
 
 
 
+### `/widget`
+
+**Description:** 🛠️ Manage your Kythia Profile Widget on Discord.
+
+### Details
+
+- **Aliases:** `wdg`
+### Usage
+
+`/widget setup`
+`/widget refresh`
+
+### Subcommands
+
+**`/widget setup`**
+> Get the authorization link to enable the Kythia widget on your profile.
+
+
+**`/widget refresh`**
+> Refresh your Kythia Profile Widget data on Discord.
+
+
+
+
 ### `/convert`
 
 **Description:** 🔄 Convert between units, currencies, etc.

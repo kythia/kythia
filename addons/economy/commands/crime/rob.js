@@ -115,7 +115,9 @@ module.exports = {
 
 		if (padlock) {
 			await padlock.destroy();
-			const msg = `## 🔒 Robbery Blocked!\nYour robbery attempt was blocked by ${targetUser.username}'s Padlock! The padlock broke.`;
+			const msg = await t(interaction, 'economy.crime.rob.event.blocked.desc', {
+				target: targetUser.username,
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});

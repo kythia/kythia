@@ -90,7 +90,10 @@ module.exports = {
 			});
 		}
 
-		const spinningMsg = `## ${await t(interaction, 'economy.slots.slots.spinning.title')}\n${await t(interaction, 'economy.slots.slots.spinning.desc')}\n\n🎰 | 🎰 | 🎰`;
+		const spinningMsg = await t(
+			interaction,
+			'economy.slots.slots.spinning.desc',
+		);
 		const spinningComponents = await simpleContainer(interaction, spinningMsg, {
 			color: 'Yellow',
 		});

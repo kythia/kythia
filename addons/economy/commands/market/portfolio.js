@@ -58,7 +58,7 @@ module.exports = {
 		});
 
 		if (userHoldings.length === 0) {
-			const msg = `## ${await t(interaction, 'economy.market.portfolio.empty.title')}\n${await t(interaction, 'economy.market.portfolio.empty.desc')}`;
+			const msg = await t(interaction, 'economy.market.portfolio.empty.desc');
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});

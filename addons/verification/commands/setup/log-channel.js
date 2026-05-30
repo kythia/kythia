@@ -9,6 +9,7 @@
 const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
+	subcommand: true,
 	slashCommand: new SlashCommandSubcommandBuilder()
 		.setName('log-channel')
 		.setDescription('Channel to log verification events')

@@ -37,7 +37,10 @@ module.exports = {
 			});
 
 			if (!order) {
-				const msg = `## ${await t(interaction, 'economy.market.cancel.not.found.title')}\n${await t(interaction, 'economy.market.cancel.not.found.desc')}`;
+				const msg = await t(
+					interaction,
+					'economy.market.cancel.not.found.desc',
+				);
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Red',
 				});
@@ -78,7 +81,9 @@ module.exports = {
 			order.status = 'cancelled';
 			await order.save();
 
-			const msg = `## ${await t(interaction, 'economy.market.cancel.success.title')}\n${await t(interaction, 'economy.market.cancel.success.desc', { orderId: order.id })}`;
+			const msg = await t(interaction, 'economy.market.cancel.success.desc', {
+				orderId: order.id,
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -90,7 +95,7 @@ module.exports = {
 			logger.error(`Error in cancel order: ${error.message || error}`, {
 				label: 'core:commands:economy:market:cancel',
 			});
-			const msg = `## ${await t(interaction, 'economy.market.cancel.error.title')}\n${await t(interaction, 'economy.market.cancel.error.desc')}`;
+			const msg = await t(interaction, 'economy.market.cancel.error.desc');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});

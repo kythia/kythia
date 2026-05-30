@@ -76,7 +76,7 @@ module.exports = {
 		);
 
 		const applyContainer = await createContainer(interaction, {
-			description: `## 👨‍💼 Job Application\nSelect a profession from the list. Once selected, your \`/eco work\` will focus on this job!\n\nNote: If you don't meet the item requirements, you won't be able to work!`,
+			description: await t(interaction, 'economy.job.apply.prompt.desc'),
 			components: [row],
 		});
 
@@ -99,7 +99,7 @@ module.exports = {
 				user.changed('profession', true);
 				await user.save();
 
-				const msg = `## 👨‍💼 Hired!\nYou are now officially working as a professional! Use \`/eco work\` to start earning!`;
+				const msg = await t(i, 'economy.job.apply.success.desc');
 				const components = await simpleContainer(i, msg, { color: 'Green' });
 				await i.update({ components, flags: MessageFlags.IsComponentsV2 });
 			}
@@ -109,7 +109,7 @@ module.exports = {
 			if (collected.size === 0) {
 				const components = await simpleContainer(
 					interaction,
-					'Application timed out.',
+					await t(interaction, 'economy.job.apply.timeout.desc'),
 					{ color: kythiaConfig.bot.color },
 				);
 				await interaction.editReply({

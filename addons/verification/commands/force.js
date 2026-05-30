@@ -10,6 +10,7 @@ const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
 const { clearSession } = require('../helpers/session');
 
 module.exports = {
+	subcommand: true,
 	slashCommand: new SlashCommandSubcommandBuilder()
 		.setName('force')
 		.setDescription('Manually verify a member (skip captcha)')

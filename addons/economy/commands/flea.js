@@ -9,8 +9,6 @@ const {
 	MessageFlags,
 	ActionRowBuilder,
 	StringSelectMenuBuilder,
-	ContainerBuilder,
-	TextDisplayBuilder,
 	ButtonBuilder,
 	ButtonStyle,
 } = require('discord.js');
@@ -87,7 +85,7 @@ module.exports = {
 			if (!itemName || !price) {
 				const components = await simpleContainer(
 					interaction,
-					'You must provide both item name and price to list an item.',
+					await t(interaction, 'economy.flea.error.missing_params.desc'),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -99,7 +97,7 @@ module.exports = {
 			if (price <= 0) {
 				const components = await simpleContainer(
 					interaction,
-					'Price must be greater than 0.',
+					await t(interaction, 'economy.flea.error.invalid_price.desc'),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -115,7 +113,9 @@ module.exports = {
 			if (!item) {
 				const components = await simpleContainer(
 					interaction,
-					`You don't own an item named **${itemName}**.`,
+					await t(interaction, 'economy.flea.error.not_owned.desc', {
+						item: itemName,
+					}),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -144,7 +144,11 @@ module.exports = {
 
 			const components = await simpleContainer(
 				interaction,
-				`## 📦 Item Listed!\nYou have successfully listed **${itemName}** as **${type.toUpperCase()}** for **🪙 ${price.toLocaleString()}**!`,
+				await t(interaction, 'economy.flea.list.success.desc', {
+					item: itemName,
+					type: type.toUpperCase(),
+					price: price.toLocaleString(),
+				}),
 				{ color: 'Green' },
 			);
 			return interaction.editReply({
@@ -181,26 +185,37 @@ module.exports = {
 					return {
 						components: await simpleContainer(
 							interaction,
-							'## 📦 Flea Market\nNo items found.',
+							await t(interaction, 'economy.flea.view.empty.desc'),
 							{ color: 'Yellow' },
 						),
 					};
 				}
 
-				const options = listings.map((listing) => {
-					const isAuction = listing.type === 'auction';
-					const displayPrice = isAuction ? listing.currentBid : listing.price;
-					return {
-						label: listing.itemName.substring(0, 50),
-						description: `${isAuction ? 'Bid' : 'BIN'}: 🪙 ${displayPrice.toLocaleString()}`,
-						value: listing.id.toString(),
-					};
-				});
+				const options = await Promise.all(
+					listings.map(async (listing) => {
+						const isAuction = listing.type === 'auction';
+						const displayPrice = isAuction ? listing.currentBid : listing.price;
+						return {
+							label: listing.itemName.substring(0, 50),
+							description: await t(
+								interaction,
+								'economy.flea.view.price_desc',
+								{
+									type: isAuction ? 'Bid' : 'BIN',
+									price: displayPrice.toLocaleString(),
+								},
+							),
+							value: listing.id.toString(),
+						};
+					}),
+				);
 
 				const row = new ActionRowBuilder().addComponents(
 					new StringSelectMenuBuilder()
 						.setCustomId('interact_flea_item')
-						.setPlaceholder('Select an item to buy or bid...')
+						.setPlaceholder(
+							await t(interaction, 'economy.flea.view.placeholder'),
+						)
 						.addOptions(options),
 				);
 
@@ -223,7 +238,7 @@ module.exports = {
 				);
 
 				const viewContainer = await createContainer(interaction, {
-					description: `## 📦 The Grand Auction House\nBrowse items listed by other players! (10% market tax on successful trades)`,
+					description: await t(interaction, 'economy.flea.view.title'),
 					components: [row, navRow],
 				});
 				return { components: viewContainer, totalPages };
@@ -266,7 +281,7 @@ module.exports = {
 					if (!listing || new Date() > new Date(listing.expiresAt)) {
 						const components = await simpleContainer(
 							i,
-							'This item is no longer available.',
+							await t(i, 'economy.flea.error.unavailable.desc'),
 							{ color: 'Red' },
 						);
 						return i.update({ components, flags: MessageFlags.IsComponentsV2 });
@@ -275,7 +290,7 @@ module.exports = {
 					if (listing.sellerId === interaction.user.id) {
 						const components = await simpleContainer(
 							i,
-							'You cannot buy/bid on your own listing.',
+							await t(i, 'economy.flea.error.self_buy.desc'),
 							{ color: 'Red' },
 						);
 						return i.update({ components, flags: MessageFlags.IsComponentsV2 });
@@ -289,7 +304,7 @@ module.exports = {
 						if (user.kythiaCoin < listing.price) {
 							const components = await simpleContainer(
 								i,
-								'You do not have enough cash to buy this item.',
+								await t(i, 'economy.flea.buy.error.funds.desc'),
 								{ color: 'Red' },
 							);
 							return i.update({
@@ -323,7 +338,10 @@ module.exports = {
 
 						const components = await simpleContainer(
 							i,
-							`## 📦 Purchase Successful!\nYou bought **${listing.itemName}** for **🪙 ${listing.price.toLocaleString()}**!`,
+							await t(i, 'economy.flea.buy.success.desc', {
+								item: listing.itemName,
+								price: listing.price.toLocaleString(),
+							}),
 							{ color: 'Green' },
 						);
 						await i.update({ components, flags: MessageFlags.IsComponentsV2 });
@@ -343,7 +361,14 @@ module.exports = {
 						);
 
 						const components = await createContainer(i, {
-							description: `## 🔨 Auction: ${listing.itemName}\nCurrent Bid: **🪙 ${listing.currentBid.toLocaleString()}**\nTime Left: <t:${Math.floor(new Date(listing.expiresAt).getTime() / 1000)}:R>\n\nDo you want to place a bid for **🪙 ${minBid.toLocaleString()}**?`,
+							description: await t(i, 'economy.flea.buy.auction_desc', {
+								item: listing.itemName,
+								currentBid: listing.currentBid.toLocaleString(),
+								timeLeft: Math.floor(
+									new Date(listing.expiresAt).getTime() / 1000,
+								),
+								minBid: minBid.toLocaleString(),
+							}),
 							components: [bidRow],
 						});
 						await i.update({ components, flags: MessageFlags.IsComponentsV2 });
@@ -357,7 +382,7 @@ module.exports = {
 					if (!listing || new Date() > new Date(listing.expiresAt)) {
 						const components = await simpleContainer(
 							i,
-							'Auction has ended or is unavailable.',
+							await t(i, 'economy.flea.bid.error.ended.desc'),
 							{ color: 'Red' },
 						);
 						return i.update({ components, flags: MessageFlags.IsComponentsV2 });
@@ -372,7 +397,7 @@ module.exports = {
 					if (user.kythiaCoin < minBid) {
 						const components = await simpleContainer(
 							i,
-							'You do not have enough cash to place this bid.',
+							await t(i, 'economy.flea.bid.error.funds.desc'),
 							{ color: 'Red' },
 						);
 						return i.update({ components, flags: MessageFlags.IsComponentsV2 });
@@ -403,7 +428,10 @@ module.exports = {
 
 					const components = await simpleContainer(
 						i,
-						`## 🔨 Bid Placed!\nYou successfully bid **🪙 ${minBid.toLocaleString()}** on **${listing.itemName}**!`,
+						await t(i, 'economy.flea.bid.success.desc', {
+							bid: minBid.toLocaleString(),
+							item: listing.itemName,
+						}),
 						{ color: 'Green' },
 					);
 					await i.update({ components, flags: MessageFlags.IsComponentsV2 });
@@ -427,7 +455,7 @@ module.exports = {
 			if (listings.length === 0) {
 				const components = await simpleContainer(
 					interaction,
-					'You do not have any active listings.',
+					await t(interaction, 'economy.flea.manage.empty.desc'),
 					{ color: 'Yellow' },
 				);
 				return interaction.editReply({
@@ -446,13 +474,13 @@ module.exports = {
 				new StringSelectMenuBuilder()
 					.setCustomId('cancel_listing')
 					.setPlaceholder(
-						'Select a listing to cancel (Auctions with bids cannot be cancelled)',
+						await t(interaction, 'economy.flea.manage.placeholder'),
 					)
 					.addOptions(options),
 			);
 
 			const myContainer = await createContainer(interaction, {
-				description: `## 📦 My Listings\nSelect a listing to cancel it and retrieve your item.`,
+				description: await t(interaction, 'economy.flea.manage.title'),
 				components: [row],
 			});
 
@@ -475,16 +503,20 @@ module.exports = {
 					});
 
 					if (!listing) {
-						const components = await simpleContainer(i, 'Listing not found.', {
-							color: 'Red',
-						});
+						const components = await simpleContainer(
+							i,
+							await t(i, 'economy.flea.manage.error.not_found.desc'),
+							{
+								color: 'Red',
+							},
+						);
 						return i.update({ components, flags: MessageFlags.IsComponentsV2 });
 					}
 
 					if (listing.type === 'auction' && listing.highestBidderId) {
 						const components = await simpleContainer(
 							i,
-							'You cannot cancel an auction that already has bids!',
+							await t(i, 'economy.flea.manage.error.has_bids.desc'),
 							{ color: 'Red' },
 						);
 						return i.update({ components, flags: MessageFlags.IsComponentsV2 });
@@ -498,7 +530,9 @@ module.exports = {
 
 					const components = await simpleContainer(
 						i,
-						`## 📦 Listing Cancelled\nYou cancelled the listing for **${listing.itemName}** and it was returned to your inventory.`,
+						await t(i, 'economy.flea.manage.cancel_success.desc', {
+							item: listing.itemName,
+						}),
 						{ color: 'Green' },
 					);
 					await i.update({ components, flags: MessageFlags.IsComponentsV2 });

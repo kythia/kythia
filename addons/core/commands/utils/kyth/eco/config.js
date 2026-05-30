@@ -197,12 +197,6 @@ module.exports = {
 		if (!rawValue) {
 			const def = CONFIG_PARAMS[param];
 			const currentRaw = pool[def.column];
-			const currentDisplay =
-				def.type === 'bool'
-					? fmtBool(
-							!currentRaw && def.column === 'tradingHalted' ? true : currentRaw,
-						)
-					: currentRaw;
 			const components = await simpleContainer(
 				interaction,
 				`**${def.label}**\n*${def.desc}*\n\nCurrent value: \`${currentRaw}\`\n\nProvide a \`value\` to change it.`,

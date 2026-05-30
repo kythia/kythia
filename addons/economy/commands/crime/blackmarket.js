@@ -19,7 +19,6 @@ const {
 	BLACKMARKET_ITEMS,
 	getItem,
 } = require('../../helpers/blackmarket-items');
-const { toBigIntSafe } = require('../../helpers/bigint');
 const { getSpotPrice } = require('../../helpers/kyth-amm');
 
 const ITEMS_PER_PAGE = 5;
@@ -56,7 +55,7 @@ module.exports = {
 		if (pool && pool.blackmarketActive === false) {
 			const components = await simpleContainer(
 				interaction,
-				'## 🔒 Black Market Closed\nThe Black Market is currently closed by admin. Check back later.',
+				await t(interaction, 'economy.crime.blackmarket.error.closed.desc'),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -75,26 +74,23 @@ module.exports = {
 
 		const currentPage = 1;
 
-		const renderPage = (page) => {
+		const renderPage = async (page) => {
 			const start = (page - 1) * ITEMS_PER_PAGE;
 			const pageItems = BLACKMARKET_ITEMS.slice(start, start + ITEMS_PER_PAGE);
-			const totalPages = Math.max(
-				1,
-				Math.ceil(BLACKMARKET_ITEMS.length / ITEMS_PER_PAGE),
-			);
+
+			const totalPages = Math.ceil(BLACKMARKET_ITEMS.length / ITEMS_PER_PAGE);
 
 			let itemText = '';
 			for (const item of pageItems) {
-				const stockText = item.stock !== null ? ` (Stock: ${item.stock})` : '';
-				const coinEquiv = (item.priceKyth * spotPrice).toLocaleString(
-					undefined,
-					{ maximumFractionDigits: 0 },
-				);
-				itemText += `**${item.emoji} ${item.name}**${stockText}\n*${item.description}*\n💎 **${item.priceKyth} KYTH** ≈ 🪙 ${coinEquiv} Coin\n\n`;
+				const eqStr =
+					item.priceKyth > 0 && spotPrice > 0
+						? `(≈ 🪙 ${(item.priceKyth * spotPrice).toLocaleString()})`
+						: '';
+				itemText += `${item.emoji} **${item.name}**\n*${item.description}*\n💰 **Price:** ${item.priceKyth} KYTH ${eqStr}\n\n`;
 			}
 
 			const selectOptions = pageItems.map((item) => ({
-				label: `${item.name} (${item.priceKyth} KYTH)`,
+				label: item.name,
 				value: item.id,
 				emoji: item.emoji,
 				description: item.description.substring(0, 100),
@@ -112,7 +108,11 @@ module.exports = {
 				.setAccentColor(0x1a1a2e)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						`## 🕶️ The Black Market\nWelcome, stranger. KYTH only. No refunds.\n\n💎 **Your KYTH Balance:** ${userKyth.toFixed(4)}\n📄 Page ${page}/${totalPages}`,
+						await t(interaction, 'economy.crime.blackmarket.title.desc', {
+							balance: userKyth.toFixed(4),
+							page,
+							total: totalPages,
+						}),
 					),
 				)
 				.addSeparatorComponents(
@@ -122,7 +122,8 @@ module.exports = {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						itemText.trim() || 'No items available.',
+						itemText.trim() ||
+							(await t(interaction, 'economy.crime.blackmarket.empty.desc')),
 					),
 				)
 				.addSeparatorComponents(
@@ -135,7 +136,7 @@ module.exports = {
 			return { container, pageItems, totalPages };
 		};
 
-		const { container: shopContainer, totalPages } = renderPage(currentPage);
+		const { container: shopContainer } = await renderPage(currentPage);
 		const message = await interaction.editReply({
 			components: [shopContainer],
 			flags: MessageFlags.IsComponentsV2,
@@ -155,7 +156,7 @@ module.exports = {
 				if (!item) {
 					const comps = await simpleContainer(
 						i,
-						'This item no longer exists.',
+						await t(i, 'economy.crime.blackmarket.error.no_item.desc'),
 						{ color: 'Red' },
 					);
 					return i.update({
@@ -167,7 +168,9 @@ module.exports = {
 				if (item.stock !== null && item.stock <= 0) {
 					const comps = await simpleContainer(
 						i,
-						`## ❌ Out of Stock\n**${item.emoji} ${item.name}** is sold out.`,
+						await t(i, 'economy.crime.blackmarket.error.out_of_stock.desc', {
+							item: `${item.emoji} ${item.name}`,
+						}),
 						{ color: 'Red' },
 					);
 					return i.update({
@@ -185,7 +188,11 @@ module.exports = {
 				if (freshKyth < item.priceKyth) {
 					const comps = await simpleContainer(
 						i,
-						`## ❌ Insufficient KYTH\nYou need **${item.priceKyth} KYTH** but only have **${freshKyth.toFixed(4)} KYTH**.`,
+						await t(
+							i,
+							'economy.crime.blackmarket.error.insufficient_kyth.desc',
+							{ price: item.priceKyth, balance: freshKyth.toFixed(4) },
+						),
 						{ color: 'Red' },
 					);
 					return i.update({
@@ -212,7 +219,10 @@ module.exports = {
 
 				const comps = await simpleContainer(
 					i,
-					`## 🕶️ Purchase Complete!\nYou bought **${item.emoji} ${item.name}** for **${item.priceKyth} KYTH**.\nThe item has been added to your inventory. Use it wisely.`,
+					await t(i, 'economy.crime.blackmarket.success.desc', {
+						item: `${item.emoji} ${item.name}`,
+						price: item.priceKyth,
+					}),
 					{ color: 'Green' },
 				);
 				await i.update({

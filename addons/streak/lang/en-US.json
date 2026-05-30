@@ -87,7 +87,15 @@
 					"button": "🗳️ Vote for {username} on top.gg"
 				},
 				"success": "Your streak of **{streak} {emoji}** has been restored and extended! Keep it up! 🎉",
-				"expired": "You didn't restore your streak in time. Your streak has been reset. Start fresh! 💪"
+				"expired": "You didn't restore your streak in time. Your streak has been reset. Start fresh! 💪",
+				"last": {
+					"title": "🔄 Streak Restore",
+					"nothing": "You don't have a lost streak to restore! Keep claiming daily to maintain your {emoji} streak.",
+					"already": "You've already restored your streak this cycle. Keep claiming daily to keep your {emoji} streak alive!",
+					"quota_exceeded": "You've used all **{quota}** of your monthly streak restores. Your {emoji} streak restore quota resets at the start of next month.",
+					"success": "{user}'s streak has been restored to **{streak} {emoji}**! Keep it up!",
+					"quota_remaining": "{remaining}/{quota} restores remaining this month."
+				}
 			}
 		}
 	}

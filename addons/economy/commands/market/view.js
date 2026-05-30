@@ -186,7 +186,11 @@ module.exports = {
 		if (assetId) {
 			const data = marketData[assetId];
 			if (!data) {
-				const msg = `## ${await t(interaction, 'economy.market.view.asset.not.found.title')}\n${await t(interaction, 'economy.market.view.asset.not.found.desc', { asset: assetId.toUpperCase() })}`;
+				const msg = await t(
+					interaction,
+					'economy.market.view.asset.not.found.desc',
+					{ asset: assetId.toUpperCase() },
+				);
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Red',
 				});

@@ -19,6 +19,7 @@ const {
 } = require('discord.js');
 
 module.exports = {
+	subcommand: true,
 	slashCommand: new SlashCommandSubcommandBuilder()
 		.setName('send')
 		.setDescription(

@@ -166,8 +166,8 @@
 			"desc": "## 🛒 {bot}'s Shop - {category}\nWelcome! See the available items.\n> Your kythia coin: **🪙 {cash}**",
 			"footer": "Page {page} of {totalPages}",
 			"empty": {
-				"title": "Empty!",
-				"desc": "There are no items available in this category."
+				"desc": "There are no items available in this category.",
+				"title": "Empty!"
 			},
 			"category": {
 				"all": "All Items",
@@ -278,13 +278,11 @@
 			},
 			"work": {
 				"cooldown": {
-					"title": "Tired!",
-					"desc": "🕒 You are exhausted! Try working again in **{time}**."
+					"desc": "## Tired!\n🕒 You are exhausted! Try working again in **{time}**."
 				},
 				"no": {
 					"job": {
-						"title": "No Jobs Available",
-						"desc": "❌ It seems there are no jobs available for you at the moment."
+						"desc": "## No Jobs Available\n❌ It seems there are no jobs available for you at the moment."
 					}
 				},
 				"levelup": {
@@ -356,8 +354,7 @@
 					}
 				},
 				"spinning": {
-					"title": "🎰 Spinning the Wheels",
-					"desc": "The slot machine is spinning... Good luck!"
+					"desc": "## undefined\n## 🎰 Spinning the Wheels\nThe slot machine is spinning... Good luck!\n\n🎰 | 🎰 | 🎰"
 				},
 				"author": "{username}'s Slot Game",
 				"bet": {
@@ -658,6 +655,81 @@
 				"rob": {
 					"penalty": "Reduced profit from robbing"
 				}
+			},
+			"switch": {
+				"error": {
+					"insufficient_funds": {
+						"desc": "## 🏦 Bank Switch Failed\nYou need at least **🪙 {cost}** cash to switch your bank."
+					},
+					"already_using": {
+						"desc": "You are already using **{bank}**."
+					},
+					"over_capacity": {
+						"desc": "## 🏦 Bank Switch Failed\nYou have too much money in your bank to switch to **{bank}**. Please withdraw some first."
+					}
+				},
+				"prompt": {
+					"desc": "## 🏦 Switch Bank Type\nChoose a new bank to switch to. Warning: This will cost you **🪙 {cost}** cash immediately!\n\nYour current bank: **{currentBank}**"
+				},
+				"success": {
+					"desc": "## 🏦 Bank Switched!\nYou paid **🪙 {cost}** and successfully switched to **{bank}**.\nEnjoy your new perks!"
+				},
+				"timeout": {
+					"desc": "Bank switch timed out."
+				}
+			},
+			"upgrade": {
+				"error": {
+					"insufficient_funds": {
+						"desc": "## 🏦 Bank Upgrade Failed\nYou need at least **🪙 {cost}** cash to upgrade your bank capacity."
+					}
+				},
+				"prompt": {
+					"desc": "## 🏦 Upgrade Bank Capacity\nAre you sure you want to spend **🪙 {cost}** cash to increase your bank capacity by **{capacity}**?\n\nCurrent Extra Capacity: **{currentCapacity}**"
+				},
+				"success": {
+					"desc": "## 🏦 Bank Upgraded!\nYou successfully spent **🪙 {cost}** to increase your bank capacity by **{capacity}**.\nTotal Extra Capacity: **{newCapacity}**"
+				},
+				"cancel": {
+					"desc": "Upgrade cancelled."
+				},
+				"timeout": {
+					"desc": "Upgrade timed out."
+				}
+			},
+			"loan": {
+				"error": {
+					"invalid_amount": {
+						"desc": "Amount must be greater than 0."
+					}
+				},
+				"borrow": {
+					"error": {
+						"active_loan": {
+							"desc": "## 🏦 Loan Denied\nYou already have an active loan of **🪙 {loan}**. You must repay it first."
+						},
+						"max_loan": {
+							"desc": "## 🏦 Loan Denied\nYour credit score ({score}) only allows you to borrow up to **🪙 {max}**."
+						}
+					},
+					"success": {
+						"desc": "## 🏦 Loan Approved!\nYou have borrowed **🪙 {amount}** at a daily interest rate of {rate}%.\nYou must repay it before <t:{date}:f> or your assets will be seized!"
+					}
+				},
+				"repay": {
+					"error": {
+						"no_loan": {
+							"desc": "You don't have an active loan to repay."
+						},
+						"insufficient_funds": {
+							"desc": "You don't have enough cash (**🪙 {amount}**) to make this repayment."
+						}
+					},
+					"credit_increase": "\n\n📈 Loan fully repaid! Your Credit Score increased by **{increase}** (Now: {score})!",
+					"success": {
+						"desc": "## 🏦 Loan Repayment\nYou repaid **🪙 {amount}**. Remaining balance: **🪙 {balance}**.{extra}"
+					}
+				}
 			}
 		},
 		"account": {
@@ -690,33 +762,66 @@
 			"sell": {
 				"insufficient": {
 					"asset": {
-						"title": "❌ Insufficient Assets",
-						"desc": "You do not own enough **{asset}** to sell that amount."
+						"desc": "## ❌ Insufficient Assets\nYou do not own enough **{asset}** to sell that amount."
+					},
+					"kyth": {
+						"desc": "## ❌ Insufficient KYTH\nYou only have **💎 {balance} KYTH**."
 					}
 				},
 				"asset": {
 					"not": {
 						"found": {
-							"title": "❌ Asset Not Found",
-							"desc": "Asset data not found or market information currently unavailable."
+							"desc": "## ❌ Asset Not Found\nAsset data not found or market information currently unavailable."
 						}
 					}
 				},
 				"success": {
-					"title": "✅ Asset Sold!",
-					"desc": "You have successfully sold **{quantity} {asset}** for **🪙 {amount}**.\n\n> Avg. Buy Price: `${avgBuyPrice}`\n> Sell Price: `${sellPrice}`\n> P/L on this sale: `{pnlEmoji} {pnlSign}${pnl}`"
+					"desc": "## ✅ Asset Sold!\nYou have successfully sold **{quantity} {asset}** for **🪙 {amount}**.\n\n> Avg. Buy Price: `${avgBuyPrice}`\n> Sell Price: `${sellPrice}`\n> P/L on this sale: `{pnlEmoji} {pnlSign}${pnl}`",
+					"title": "✅ Asset Sold!"
 				},
 				"error": {
-					"title": "❌ Sale Error",
-					"desc": "An error occurred while processing your sale. Please try again."
+					"desc": "## ❌ Sale Error\nAn error occurred while processing your sale. Please try again.",
+					"amm_unavailable": {
+						"desc": "## ❌ AMM Unavailable\nThe KYTH liquidity pool has not been initialized yet. Contact an admin."
+					},
+					"trading_halted": {
+						"desc": "## 🚫 KYTH Trading Halted\nThe admin has temporarily halted all KYTH trading. Check back later."
+					},
+					"below_minimum": {
+						"desc": "## ❌ Below Minimum\nMinimum trade size is **💎 {minTrade} KYTH**."
+					},
+					"exceeds_maximum": {
+						"desc": "## ❌ Exceeds Maximum\nMax trade size is **💎 {maxTrade} KYTH** (anti-whale limit). Split your order!"
+					},
+					"invalid_parameters": {
+						"desc": "## ❌ Invalid trade parameters."
+					},
+					"insufficient_liquidity": {
+						"desc": "## ❌ Insufficient Liquidity\nThe pool does not have enough Coin to fill your order."
+					},
+					"slippage": {
+						"desc": "## ⚠️ Slippage Exceeded\nMarket moved. You'd receive **🪙 {received}** but your minimum is **🪙 {minOut}**.\nPlease try again."
+					}
+				},
+				"preview": {
+					"desc": "## 🪙 KYTH Sell Preview\n\n**You Sell:** 💎 {sellQuantity} KYTH\n**Protocol Fee ({feeRate}%):** 💎 {feeKythAmount} KYTH\n**You Receive:** 🪙 {coinOut} Coin\n\n**Mid Price:** {midPrice} Coin/KYTH\n**Execution Price:** {executionPrice} Coin/KYTH\n**Price After:** {priceAfter} Coin/KYTH\n{impactEmoji} **Price Impact:** {priceImpactPct}%\n**Min. Received:** 🪙 {minCoinOut} (0.5% slippage tol.)"
+				},
+				"warning": {
+					"high_impact": "\n\n⚠️ **High price impact.** Your trade is large relative to pool size. You are selling at a significant discount.",
+					"extreme_impact": "\n\n🚨 **EXTREME PRICE IMPACT!** This trade will move the market by a lot. You are selling at a very high discount. Are you absolutely sure?"
+				},
+				"cancel": {
+					"desc": "Sell cancelled."
+				},
+				"timeout": {
+					"desc": "⏱️ Confirmation timed out. Trade cancelled."
 				}
 			},
 			"view": {
 				"asset": {
 					"not": {
 						"found": {
-							"title": "❌ Asset Not Found",
-							"desc": "Asset `{asset}` not found."
+							"desc": "## ❌ Asset Not Found\nAsset `{asset}` not found."
 						}
 					}
 				},
@@ -751,32 +856,61 @@
 			"buy": {
 				"insufficient": {
 					"funds": {
-						"title": "❌ Insufficient Funds",
-						"desc": "You don't have enough KythiaCoin to make this purchase. You need 🪙 {amount}."
+						"desc": "## ❌ Insufficient Funds\nYou don't have enough KythiaCoin to make this purchase. You need 🪙 {amount}."
 					}
 				},
 				"asset": {
 					"not": {
 						"found": {
-							"title": "❌ Asset Not Found",
-							"desc": "The asset was not found or market data is currently unavailable."
+							"desc": "## ❌ Asset Not Found\nThe asset was not found or market data is currently unavailable."
 						}
 					}
 				},
 				"success": {
-					"title": "✅ Purchase Successful!",
-					"desc": "You have successfully purchased **{quantity} {asset}** for **🪙 {amount}**."
+					"desc": "## ✅ Purchase Successful!\nYou have successfully purchased **{quantity} {asset}** for **🪙 {amount}**."
 				},
 				"error": {
-					"title": "❌ Transaction Error",
-					"desc": "An error occurred while processing your transaction. Please try again."
+					"desc": "## ❌ Transaction Error\nAn error occurred while processing your transaction. Please try again.",
+					"amm_unavailable": {
+						"desc": "## ❌ AMM Unavailable\nThe KYTH liquidity pool has not been initialized yet. Contact an admin."
+					},
+					"trading_halted": {
+						"desc": "## 🚫 KYTH Trading Halted\nThe admin has temporarily halted all KYTH trading. Check back later."
+					},
+					"below_minimum": {
+						"desc": "## ❌ Below Minimum\nMinimum trade size is **🪙 {minTrade} Coin**."
+					},
+					"exceeds_maximum": {
+						"desc": "## ❌ Exceeds Maximum\nMax trade size is **🪙 {maxTrade} Coin** (anti-whale limit). Split your order!"
+					},
+					"invalid_parameters": {
+						"desc": "## ❌ Invalid trade parameters."
+					},
+					"insufficient_liquidity": {
+						"desc": "## ❌ Insufficient Liquidity\nThe pool does not have enough KYTH to fill your order."
+					},
+					"slippage": {
+						"desc": "## ⚠️ Slippage Exceeded\nThe market moved while you were confirming. You would have received **{received} KYTH** but your minimum is **{minOut} KYTH**.\nPlease try again."
+					}
+				},
+				"preview": {
+					"desc": "## 💎 KYTH Buy Preview\n\n**You Spend:**  🪙 {amountToSpend} Coin\n**Protocol Fee ({feeRate}%):**  🪙 {feeCoinAmount} Coin\n**You Receive:** 💎 {kythOut} KYTH\n\n**Mid Price:** {midPrice} Coin/KYTH\n**Execution Price:** {executionPrice} Coin/KYTH\n**Price After:** {priceAfter} Coin/KYTH\n{impactEmoji} **Price Impact:** {priceImpactPct}%\n**Min. Received:** {minOut} KYTH (0.5% slippage tol.)"
+				},
+				"warning": {
+					"high_impact": "\n\n⚠️ **High price impact.** Your trade is large relative to pool size. You are paying a significant premium.",
+					"extreme_impact": "\n\n🚨 **EXTREME PRICE IMPACT!** This trade will move the market by a lot. You are buying at a very high premium. Are you absolutely sure?"
+				},
+				"cancel": {
+					"desc": "Purchase cancelled."
+				},
+				"timeout": {
+					"desc": "⏱️ Confirmation timed out. Trade cancelled."
 				}
 			},
 			"portfolio": {
 				"title": "Your Portfolio, {username}",
 				"empty": {
-					"title": "Your Asset Portfolio is Empty",
-					"desc": "You don't own any assets yet. Use /eco market buy to purchase assets from the global market!"
+					"desc": "## Your Asset Portfolio is Empty\nYou don't own any assets yet. Use /eco market buy to purchase assets from the global market!"
 				},
 				"data": {
 					"unavailable": "Market data for this asset is currently unavailable. (Holding: {quantity})"
@@ -822,56 +956,294 @@
 			"limit": {
 				"buy": {
 					"success": {
-						"title": "Limit Buy Order Placed",
-						"desc": "Successfully placed a limit buy order for **{quantity} {asset}** at **${price}** per asset."
+						"desc": "## Limit Buy Order Placed\nSuccessfully placed a limit buy order for **{quantity} {asset}** at **${price}** per asset."
 					}
 				},
 				"sell": {
 					"success": {
-						"title": "Limit Sell Order Placed",
-						"desc": "Successfully placed a limit sell order for **{quantity} {asset}** at **${price}** per asset."
+						"desc": "## Limit Sell Order Placed\nSuccessfully placed a limit sell order for **{quantity} {asset}** at **${price}** per asset."
+					}
+				},
+				"error": {
+					"invalid": {
+						"desc": "## ❌ Invalid Parameters\nPrice must be greater than 0."
+					},
+					"below_minimum": {
+						"desc": "## ❌ Below Minimum\nYou must spend at least 🪙 {minTrade}."
+					},
+					"exceeds_maximum": {
+						"desc": "## ❌ Exceeds Maximum\nYou can spend at most 🪙 {maxTrade} per order."
+					},
+					"insufficient_funds": {
+						"desc": "## ❌ Insufficient Funds\nYou don't have enough KythiaCoin to place this buy order. You need 🪙 {amount}."
+					},
+					"sell_invalid": {
+						"desc": "## ❌ Invalid Parameters\nQuantity and price must be greater than 0."
+					},
+					"sell_insufficient": {
+						"desc": "## ❌ Insufficient Asset\nYou do not have enough {asset} to place this sell order."
 					}
 				}
 			},
 			"stoploss": {
 				"sell": {
 					"success": {
-						"title": "Stop-Loss Order Placed",
-						"desc": "Successfully placed a stop-loss order to sell **{quantity} {asset}** if the price drops to **${price}** per asset."
+						"desc": "## Stop-Loss Order Placed\nSuccessfully placed a stop-loss order to sell **{quantity} {asset}** if the price drops to **${price}** per asset."
+					}
+				},
+				"error": {
+					"invalid": {
+						"desc": "## ❌ Invalid Parameters\nQuantity and price must be greater than 0."
+					},
+					"insufficient": {
+						"desc": "## ❌ Insufficient Asset\nYou do not have enough {asset} to place this stop-loss order."
 					}
 				}
 			},
 			"order": {
 				"error": {
-					"title": "❌ Order Error",
-					"desc": "An unexpected error occurred while placing your order."
+					"desc": "## ❌ Order Error\nAn unexpected error occurred while placing your order."
 				}
 			},
 			"history": {
 				"title": "Transaction History for {username}",
 				"empty": {
-					"title": "Transaction History",
-					"desc": "Your transaction history is empty."
+					"desc": "## Transaction History\nYour transaction history is empty."
 				},
 				"error": {
-					"title": "❌ Error",
-					"desc": "An unexpected error occurred while fetching your transaction history."
+					"desc": "## ❌ Error\nAn unexpected error occurred while fetching your transaction history."
 				}
 			},
 			"cancel": {
 				"not": {
 					"found": {
-						"title": "❌ Order Not Found",
-						"desc": "Could not find an open order with that ID belonging to you."
+						"desc": "## ❌ Order Not Found\nCould not find an open order with that ID belonging to you."
 					}
 				},
 				"success": {
-					"title": "✅ Order Cancelled",
-					"desc": "Successfully cancelled order **{orderId}**."
+					"desc": "## ✅ Order Cancelled\nSuccessfully cancelled order **{orderId}**."
 				},
 				"error": {
-					"title": "❌ Error",
-					"desc": "An unexpected error occurred while cancelling your order."
+					"desc": "## ❌ Error\nAn unexpected error occurred while cancelling your order."
+				}
+			},
+			"stake": {
+				"error": {
+					"invalid_amount": {
+						"desc": "Please provide a valid KYTH amount."
+					},
+					"paused": {
+						"desc": "## ⏸️ Staking Paused\nKYTH staking is temporarily disabled by admin. Your existing stake is safe."
+					},
+					"below_minimum": {
+						"desc": "## ❌ Below Minimum\nYou must stake at least **{minStake} KYTH**."
+					},
+					"wrong_bank": {
+						"desc": "## 🏦 Staking Unavailable\nYou must use **Solara Mutual** bank to stake KYTH for dividends. Switch banks with `/eco bank_switch`!"
+					},
+					"insufficient_kyth": {
+						"desc": "## ❌ Insufficient KYTH\nYou only have **{balance} KYTH** in your wallet."
+					},
+					"insufficient_staked": {
+						"desc": "## ❌ Insufficient Staked KYTH\nYou only have **{balance} KYTH** staked."
+					}
+				},
+				"success": {
+					"desc": "## 🔒 KYTH Staked!\nYou staked **{amount} KYTH** with Solara Mutual.\n**Total Staked:** {totalStaked} KYTH\nYou will earn a share of daily dividends from protocol fees!"
+				},
+				"unstake_success": {
+					"desc": "## 🔓 KYTH Unstaked!\nYou unstaked **{amount} KYTH** from Solara Mutual.\n**Remaining Staked:** {totalStaked} KYTH"
+				},
+				"status": {
+					"desc": "## 🏦 KYTH Staking Status\n**💎 KYTH in Wallet:** {wallet}\n**🔒 KYTH Staked:** {staked}\n\nStaked KYTH earns a share of the daily dividend pool (50% of all protocol fees collected).\n{bankStatus}"
+				},
+				"status_none": {
+					"desc": "## 🏦 Solara Mutual Staking\nYou do not have an active staking position.\n\n> **Current APY:** ~{apy}%\nUse `/market stake action:Stake amount:<amount>` to start earning daily dividends!"
+				}
+			}
+		},
+		"crime": {
+			"wanted": {
+				"empty": {
+					"desc": "## 🤠 Most Wanted\nThe town is peaceful. No bounties currently active."
+				},
+				"list": {
+					"title": "## 🤠 Most Wanted Criminals\n\n",
+					"entry": "**#{rank}** <@{userId}> — 💰 **🪙 {bounty}**\n"
+				},
+				"error": {
+					"self": {
+						"desc": "You cannot capture yourself!"
+					},
+					"no_bounty": {
+						"desc": "This user does not have an active bounty."
+					},
+					"no_license": {
+						"desc": "You need a **🕵️ Bounty License** from the shop to capture bounties!"
+					}
+				},
+				"success": {
+					"desc": "## 🤠 Bounty Claimed!\nYou successfully captured {username} and claimed the bounty of **🪙 {reward}**!"
+				},
+				"fail": {
+					"desc": "## 💥 Capture Failed!\n{username} managed to escape! Better luck next time."
+				}
+			},
+			"blackmarket": {
+				"title": {
+					"desc": "## 🕶️ The Black Market\nWelcome, stranger. KYTH only. No refunds.\n\n💎 **Your KYTH Balance:** {balance}\n📄 Page {page}/{total}"
+				},
+				"empty": {
+					"desc": "No items available."
+				},
+				"error": {
+					"closed": {
+						"desc": "## 🔒 Black Market Closed\nThe Black Market is currently closed by admin. Check back later."
+					},
+					"no_item": {
+						"desc": "This item no longer exists."
+					},
+					"out_of_stock": {
+						"desc": "## ❌ Out of Stock\n**{item}** is sold out."
+					},
+					"insufficient_kyth": {
+						"desc": "## ❌ Insufficient KYTH\nYou need **{price} KYTH** but only have **{balance} KYTH**."
+					}
+				},
+				"success": {
+					"desc": "## 🕶️ Purchase Complete!\nYou bought **{item}** for **{price} KYTH**.\nThe item has been added to your inventory. Use it wisely."
+				}
+			},
+			"hack": {
+				"event": {
+					"busted": {
+						"desc": "## 🚨 Connection Traced!\nYou triggered the security alarms at Node {node}!\nPenalty paid: **🪙 {penalty}**"
+					}
+				}
+			},
+			"rob": {
+				"event": {
+					"blocked": {
+						"desc": "## 🔒 Robbery Blocked!\nYour robbery attempt was blocked by {target}'s Padlock! The padlock broke."
+					}
+				}
+			}
+		},
+		"job": {
+			"apply": {
+				"prompt": {
+					"desc": "## 👨‍💼 Job Application\nSelect a profession from the list. Once selected, your `/eco work` will focus on this job!\n\nNote: If you don't meet the item requirements, you won't be able to work!"
+				},
+				"success": {
+					"desc": "## 👨‍💼 Hired!\nYou are now officially working as a professional! Use `/eco work` to start earning!"
+				},
+				"timeout": {
+					"desc": "Application timed out."
+				}
+			},
+			"work": {
+				"error": {
+					"unemployed": {
+						"desc": "## 👨‍💼 Unemployed\nYou don't have a profession yet! Use `/eco job_apply` to select a job."
+					},
+					"invalid_profession": {
+						"desc": "## ⚠️ Invalid Profession\nYour chosen profession is no longer valid. Please apply for a new one using `/eco job_apply`."
+					},
+					"missing_tool": {
+						"desc": "## 🛠️ Missing Tool\nYou cannot work as a {job} because you are missing the required item(s): **{req}**!"
+					}
+				},
+				"event": {
+					"crossroads": {
+						"desc": {
+							"desc": "## ⚠️ Crossroads Event!\nWhile working as a **{job}**, you encounter a strange client who offers you a bribe to do something highly unethical. They will pay you **🪙 50,000**, but there is a 25% chance you will be caught, lose your job, and your bounty will increase!\n\nDo you accept?"
+						},
+						"busted": "## 🚨 Busted!\nYou accepted the bribe but got caught by the authorities! You have been **fired**, lost all your Job EXP, and your bounty increased by **🪙 25,000**!",
+						"success": "## 💰 Paid Off!\nYou accepted the bribe and successfully got away with it! You earned **🪙 50,000**!",
+						"declined": "## 🛡️ Honest Work\nYou declined the shady offer. Your integrity earned you **+50 Job EXP**!"
+					},
+					"timeout": {
+						"desc": "You took too long to decide. The opportunity passed."
+					}
+				},
+				"result": {
+					"exp_gain": "\n\n📈 You gained **+10 Job EXP**! (Total: {exp})",
+					"tool_broke": "\n⚠️ **Oh no! Your {tool} broke while working!**",
+					"title": "## {emoji} You worked as a **{title}**!"
+				}
+			}
+		},
+		"flea": {
+			"error": {
+				"missing_params": {
+					"desc": "You must provide both item name and price to list an item."
+				},
+				"invalid_price": {
+					"desc": "Price must be greater than 0."
+				},
+				"not_owned": {
+					"desc": "You don't own an item named **{item}**."
+				},
+				"unavailable": {
+					"desc": "This item is no longer available."
+				},
+				"self_buy": {
+					"desc": "You cannot buy/bid on your own listing."
+				}
+			},
+			"list": {
+				"success": {
+					"desc": "## 📦 Item Listed!\nYou have successfully listed **{item}** as **{type}** for **🪙 {price}**!"
+				}
+			},
+			"view": {
+				"title": "## 📦 The Grand Auction House\nBrowse items listed by other players! (10% market tax on successful trades)",
+				"empty": {
+					"desc": "## 📦 Flea Market\nNo items found."
+				},
+				"price_desc": "{type}: 🪙 {price}",
+				"placeholder": "Select an item to buy or bid..."
+			},
+			"buy": {
+				"error": {
+					"funds": {
+						"desc": "You do not have enough cash to buy this item."
+					}
+				},
+				"success": {
+					"desc": "## 📦 Purchase Successful!\nYou bought **{item}** for **🪙 {price}**!"
+				},
+				"auction_desc": "## 🔨 Auction: {item}\nCurrent Bid: **🪙 {currentBid}**\nTime Left: <t:{timeLeft}:R>\n\nDo you want to place a bid for **🪙 {minBid}**?"
+			},
+			"bid": {
+				"error": {
+					"ended": {
+						"desc": "Auction has ended or is unavailable."
+					},
+					"funds": {
+						"desc": "You do not have enough cash to place this bid."
+					}
+				},
+				"success": {
+					"desc": "## 🔨 Bid Placed!\nYou successfully bid **🪙 {bid}** on **{item}**!"
+				}
+			},
+			"manage": {
+				"title": "## 📦 My Listings\nSelect a listing to cancel it and retrieve your item.",
+				"empty": {
+					"desc": "You do not have any active listings."
+				},
+				"placeholder": "Select a listing to cancel (Auctions with bids cannot be cancelled)",
+				"error": {
+					"not_found": {
+						"desc": "Listing not found."
+					},
+					"has_bids": {
+						"desc": "You cannot cancel an auction that already has bids!"
+					}
+				},
+				"cancel_success": {
+					"desc": "## 📦 Listing Cancelled\nYou cancelled the listing for **{item}** and it was returned to your inventory."
 				}
 			}
 		}

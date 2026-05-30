@@ -42,7 +42,11 @@ module.exports = {
 		const SWITCH_COST = 250000;
 
 		if (user.kythiaCoin < SWITCH_COST) {
-			const msg = `## 🏦 Bank Switch Failed\nYou need at least **🪙 ${SWITCH_COST.toLocaleString()}** cash to switch your bank.`;
+			const msg = await t(
+				interaction,
+				'economy.bank.switch.error.insufficient_funds.desc',
+				{ cost: SWITCH_COST.toLocaleString() },
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -69,7 +73,10 @@ module.exports = {
 		);
 
 		const switchContainer = await createContainer(interaction, {
-			description: `## 🏦 Switch Bank Type\nChoose a new bank to switch to. Warning: This will cost you **🪙 ${SWITCH_COST.toLocaleString()}** cash immediately!\n\nYour current bank: **${banks.getBank(user.bankType).name}**`,
+			description: await t(interaction, 'economy.bank.switch.prompt.desc', {
+				cost: SWITCH_COST.toLocaleString(),
+				currentBank: banks.getBank(user.bankType).name,
+			}),
 			components: [row],
 		});
 
@@ -89,7 +96,11 @@ module.exports = {
 				const selectedBankId = i.values[0];
 
 				if (user.bankType === selectedBankId) {
-					const msg = `You are already using **${banks.getBank(selectedBankId).name}**.`;
+					const msg = await t(
+						i,
+						'economy.bank.switch.error.already_using.desc',
+						{ bank: banks.getBank(selectedBankId).name },
+					);
 					const components = await simpleContainer(i, msg, { color: 'Yellow' });
 					return i.update({ components, flags: MessageFlags.IsComponentsV2 });
 				}
@@ -101,7 +112,11 @@ module.exports = {
 						: selectedBank.maxBalance + (user.extraBankCapacity || 0);
 
 				if (user.kythiaBank > maxCap) {
-					const msg = `## 🏦 Bank Switch Failed\nYou have too much money in your bank to switch to **${selectedBank.name}**. Please withdraw some first.`;
+					const msg = await t(
+						i,
+						'economy.bank.switch.error.over_capacity.desc',
+						{ bank: selectedBank.name },
+					);
 					const components = await simpleContainer(i, msg, { color: 'Red' });
 					return i.update({ components, flags: MessageFlags.IsComponentsV2 });
 				}
@@ -114,7 +129,10 @@ module.exports = {
 				user.changed('bankType', true);
 				await user.save();
 
-				const msg = `## 🏦 Bank Switched!\nYou paid **🪙 ${SWITCH_COST.toLocaleString()}** and successfully switched to **${selectedBank.name}**.\nEnjoy your new perks!`;
+				const msg = await t(i, 'economy.bank.switch.success.desc', {
+					cost: SWITCH_COST.toLocaleString(),
+					bank: selectedBank.name,
+				});
 				const components = await simpleContainer(i, msg, { color: 'Green' });
 				await i.update({ components, flags: MessageFlags.IsComponentsV2 });
 			}
@@ -124,7 +142,7 @@ module.exports = {
 			if (collected.size === 0) {
 				const components = await simpleContainer(
 					interaction,
-					'Bank switch timed out.',
+					await t(interaction, 'economy.bank.switch.timeout.desc'),
 					{ color: kythiaConfig.bot.color },
 				);
 				await interaction.editReply({

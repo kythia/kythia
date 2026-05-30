@@ -42,7 +42,7 @@ module.exports = {
 			});
 
 			if (transactions.length === 0) {
-				const msg = `## ${await t(interaction, 'economy.market.history.empty.title')}\n${await t(interaction, 'economy.market.history.empty.desc')}`;
+				const msg = await t(interaction, 'economy.market.history.empty.desc');
 				const components = await simpleContainer(interaction, msg, {
 					color: kythiaConfig.bot.color,
 				});
@@ -76,7 +76,7 @@ module.exports = {
 			logger.error(`Error in history command: ${error.message || error}`, {
 				label: 'core:commands:economy:market:history',
 			});
-			const msg = `## ${await t(interaction, 'economy.market.history.error.title')}\n${await t(interaction, 'economy.market.history.error.desc')}`;
+			const msg = await t(interaction, 'economy.market.history.error.desc');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});

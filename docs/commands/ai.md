@@ -49,6 +49,7 @@
 `/ai forget`
 `/ai help`
 `/ai list`
+`/ai optout`
 `/ai personality <style>`
 
 ### Subcommands
@@ -86,6 +87,10 @@
 
 **`/ai list`**
 > View list of AI-enabled channels
+
+
+**`/ai optout`**
+> Opt-out of all AI features and delete your stored AI memories.
 
 
 **`/ai personality <style>`**

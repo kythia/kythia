@@ -70,7 +70,11 @@ module.exports = {
 			});
 
 			if (!holding || holding.quantity < quantity) {
-				const msg = `## ${await t(interaction, 'economy.market.sell.insufficient.asset.title')}\n${await t(interaction, 'economy.market.sell.insufficient.asset.desc', { asset: assetId.toUpperCase() })}`;
+				const msg = await t(
+					interaction,
+					'economy.market.sell.insufficient.asset.desc',
+					{ asset: assetId.toUpperCase() },
+				);
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Red',
 				});
@@ -96,7 +100,16 @@ module.exports = {
 				await holding.destroy();
 			}
 
-			const msg = `## ${await t(interaction, 'economy.market.stoploss.sell.success.title')}\n${await t(interaction, 'economy.market.stoploss.sell.success.desc', { quantity: quantity, asset: assetId.toUpperCase(), price: price.toLocaleString() })}\n\nOrder ID: \`${order.id}\``;
+			const msg = await t(
+				interaction,
+				'economy.market.stoploss.sell.success.desc',
+				{
+					quantity,
+					asset: assetId.toUpperCase(),
+					price: price.toLocaleString(),
+					orderId: order.id,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -108,7 +121,7 @@ module.exports = {
 			logger.error(`Error in stop-loss order: ${error.message || error}`, {
 				label: 'economy:market:stoploss',
 			});
-			const msg = `## ${await t(interaction, 'economy.market.order.error.title')}\n${await t(interaction, 'economy.market.order.error.desc')}`;
+			const msg = await t(interaction, 'economy.market.order.error.desc');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});

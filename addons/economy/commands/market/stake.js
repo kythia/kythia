@@ -6,12 +6,7 @@
  * @version 1.0.0-rc
  */
 
-const {
-	MessageFlags,
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-} = require('discord.js');
+const { MessageFlags } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
@@ -68,16 +63,15 @@ module.exports = {
 		const userStaked = Number(user.kythStaked) || 0;
 
 		if (action === 'status') {
-			const msg = [
-				`## 🏦 KYTH Staking Status`,
-				`**💎 KYTH in Wallet:** ${userKyth.toFixed(6)}`,
-				`**🔒 KYTH Staked:** ${userStaked.toFixed(6)}`,
-				``,
-				`Staked KYTH earns a share of the daily dividend pool (50% of all protocol fees collected).`,
+			const bankStatusStr =
 				user.bankType !== 'solara_mutual'
-					? `\n⚠️ You are not using **Solara Mutual** bank. Only Solara Mutual users earn staking dividends!`
-					: `✅ You are using **Solara Mutual**. You are eligible for dividends!`,
-			].join('\n');
+					? '\n⚠️ You are not using **Solara Mutual** bank. Only Solara Mutual users earn staking dividends!'
+					: '✅ You are using **Solara Mutual**. You are eligible for dividends!';
+			const msg = await t(interaction, 'economy.market.stake.status.desc', {
+				wallet: userKyth.toFixed(6),
+				staked: userStaked.toFixed(6),
+				bankStatus: bankStatusStr,
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -90,7 +84,7 @@ module.exports = {
 		if (!amount || amount <= 0) {
 			const components = await simpleContainer(
 				interaction,
-				'Please provide a valid KYTH amount.',
+				await t(interaction, 'economy.market.stake.error.invalid_amount.desc'),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -108,7 +102,7 @@ module.exports = {
 			if (pool && pool.stakingActive === false) {
 				const components = await simpleContainer(
 					interaction,
-					'## ⏸️ Staking Paused\nKYTH staking is temporarily disabled by admin. Your existing stake is safe.',
+					await t(interaction, 'economy.market.stake.error.paused.desc'),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -122,7 +116,11 @@ module.exports = {
 			if (amount < minStake) {
 				const components = await simpleContainer(
 					interaction,
-					`## ❌ Below Minimum\nYou must stake at least **${minStake.toFixed(4)} KYTH**.`,
+					await t(
+						interaction,
+						'economy.market.stake.error.below_minimum.desc',
+						{ minStake: minStake.toFixed(4) },
+					),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -134,7 +132,7 @@ module.exports = {
 			if (user.bankType !== 'solara_mutual') {
 				const components = await simpleContainer(
 					interaction,
-					'## 🏦 Staking Unavailable\nYou must use **Solara Mutual** bank to stake KYTH for dividends. Switch banks with `/eco bank_switch`!',
+					await t(interaction, 'economy.market.stake.error.wrong_bank.desc'),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -146,7 +144,11 @@ module.exports = {
 			if (userKyth < amount) {
 				const components = await simpleContainer(
 					interaction,
-					`## ❌ Insufficient KYTH\nYou only have **${userKyth.toFixed(6)} KYTH** in your wallet.`,
+					await t(
+						interaction,
+						'economy.market.stake.error.insufficient_kyth.desc',
+						{ balance: userKyth.toFixed(6) },
+					),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -161,7 +163,10 @@ module.exports = {
 			user.changed('kythStaked', true);
 			await user.save();
 
-			const msg = `## 🔒 KYTH Staked!\nYou staked **${amount.toFixed(6)} KYTH** with Solara Mutual.\n**Total Staked:** ${user.kythStaked.toFixed(6)} KYTH\nYou will earn a share of daily dividends from protocol fees!`;
+			const msg = await t(interaction, 'economy.market.stake.success.desc', {
+				amount: amount.toFixed(6),
+				totalStaked: user.kythStaked.toFixed(6),
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -175,7 +180,11 @@ module.exports = {
 			if (userStaked < amount) {
 				const components = await simpleContainer(
 					interaction,
-					`## ❌ Insufficient Staked KYTH\nYou only have **${userStaked.toFixed(6)} KYTH** staked.`,
+					await t(
+						interaction,
+						'economy.market.stake.error.insufficient_staked.desc',
+						{ balance: userStaked.toFixed(6) },
+					),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -190,7 +199,11 @@ module.exports = {
 			user.changed('kythStaked', true);
 			await user.save();
 
-			const msg = `## 🔓 KYTH Unstaked!\nYou unstaked **${amount.toFixed(6)} KYTH** from Solara Mutual.\n**Remaining Staked:** ${user.kythStaked.toFixed(6)} KYTH`;
+			const msg = await t(
+				interaction,
+				'economy.market.stake.unstake_success.desc',
+				{ amount: amount.toFixed(6), totalStaked: user.kythStaked.toFixed(6) },
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
