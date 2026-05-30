@@ -507,19 +507,73 @@ app.post('/mass-leave', async (c) => {
  */
 app.get('/blacklist/guilds', async (c) => {
 	try {
+		const client = getClient(c);
 		const { KythiaBlacklist } = getModels(c);
 		const entries = await KythiaBlacklist.getAllCache({
 			where: { type: 'guild' },
 		});
+
+		const guildIds = entries.map((e) => e.targetId);
+		let cachedGuilds = [];
+		if (guildIds.length > 0) {
+			if (client.shard) {
+				const results = await client.shard.broadcastEval(
+					(c, { ids }) => {
+						const localFound = [];
+						for (const id of ids) {
+							const g = c.guilds.cache.get(id);
+							if (g) {
+								localFound.push({
+									id: g.id,
+									name: g.name,
+									icon: g.iconURL({ size: 64 }),
+								});
+							}
+						}
+						return localFound;
+					},
+					{ context: { ids: guildIds } },
+				);
+
+				const finalMap = new Map();
+				for (const shardGuilds of results) {
+					for (const g of shardGuilds) {
+						if (!finalMap.has(g.id)) {
+							finalMap.set(g.id, g);
+						}
+					}
+				}
+				cachedGuilds = Array.from(finalMap.values());
+			} else {
+				for (const id of guildIds) {
+					const g = client.guilds.cache.get(id);
+					if (g) {
+						cachedGuilds.push({
+							id: g.id,
+							name: g.name,
+							icon: g.iconURL({ size: 64 }),
+						});
+					}
+				}
+			}
+		}
+
+		const guildMap = new Map(cachedGuilds.map((g) => [g.id, g]));
+
 		return c.json({
 			success: true,
 			total: entries.length,
-			data: entries.map((e) => ({
-				id: e.id,
-				targetId: e.targetId,
-				reason: e.reason ?? null,
-				createdAt: e.createdAt,
-			})),
+			data: entries.map((e) => {
+				const guildObj = guildMap.get(e.targetId);
+				return {
+					id: e.id,
+					targetId: e.targetId,
+					name: guildObj?.name ?? null,
+					avatar: guildObj?.icon ?? null,
+					reason: e.reason ?? null,
+					createdAt: e.createdAt,
+				};
+			}),
 		});
 	} catch (error) {
 		getLogger(c).error(
@@ -684,19 +738,31 @@ app.delete('/blacklist/guilds/:guildId', async (c) => {
  */
 app.get('/blacklist/users', async (c) => {
 	try {
+		const client = getClient(c);
 		const { KythiaBlacklist } = getModels(c);
 		const entries = await KythiaBlacklist.getAllCache({
 			where: { type: 'user' },
 		});
+
+		const { broadcastGetUsers } = require('../helpers/shard');
+		const userIds = entries.map((e) => e.targetId);
+		const cachedUsers = await broadcastGetUsers(client, userIds);
+		const userMap = new Map(cachedUsers.map((u) => [u.id, u]));
+
 		return c.json({
 			success: true,
 			total: entries.length,
-			data: entries.map((e) => ({
-				id: e.id,
-				targetId: e.targetId,
-				reason: e.reason ?? null,
-				createdAt: e.createdAt,
-			})),
+			data: entries.map((e) => {
+				const userObj = userMap.get(e.targetId);
+				return {
+					id: e.id,
+					targetId: e.targetId,
+					username: userObj?.username ?? null,
+					avatar: userObj?.avatar ?? null,
+					reason: e.reason ?? null,
+					createdAt: e.createdAt,
+				};
+			}),
 		});
 	} catch (error) {
 		getLogger(c).error(
@@ -851,16 +917,27 @@ app.get('/premium', async (c) => {
 			offset: (pageNum - 1) * limitNum,
 		});
 
+		const client = getClient(c);
+		const { broadcastGetUsers } = require('../helpers/shard');
+		const userIds = users.map((u) => u.userId);
+		const cachedUsers = await broadcastGetUsers(client, userIds);
+		const userMap = new Map(cachedUsers.map((u) => [u.id, u]));
+
 		return c.json({
 			success: true,
 			total,
 			page: pageNum,
 			totalPages: Math.max(1, Math.ceil(total / limitNum)),
-			data: users.map((u) => ({
-				userId: u.userId,
-				isPremium: u.isPremium,
-				premiumExpiresAt: u.premiumExpiresAt,
-			})),
+			data: users.map((u) => {
+				const userObj = userMap.get(u.userId);
+				return {
+					userId: u.userId,
+					username: userObj?.username ?? null,
+					avatar: userObj?.avatar ?? null,
+					isPremium: u.isPremium,
+					premiumExpiresAt: u.premiumExpiresAt,
+				};
+			}),
 		});
 	} catch (error) {
 		getLogger(c).error(
@@ -1037,15 +1114,26 @@ app.get('/team', async (c) => {
 	try {
 		const { KythiaTeam } = getModels(c);
 		const members = await KythiaTeam.getAllCache();
+		const client = getClient(c);
+		const { broadcastGetUsers } = require('../helpers/shard');
+		const userIds = members.map((m) => m.userId);
+		const cachedUsers = await broadcastGetUsers(client, userIds);
+		const userMap = new Map(cachedUsers.map((u) => [u.id, u]));
+
 		return c.json({
 			success: true,
 			total: members.length,
-			data: members.map((m) => ({
-				id: m.id,
-				userId: m.userId,
-				name: m.name ?? null,
-				createdAt: m.createdAt,
-			})),
+			data: members.map((m) => {
+				const userObj = userMap.get(m.userId);
+				return {
+					id: m.id,
+					userId: m.userId,
+					username: userObj?.username ?? null,
+					avatar: userObj?.avatar ?? null,
+					name: m.name ?? null,
+					createdAt: m.createdAt,
+				};
+			}),
 		});
 	} catch (error) {
 		getLogger(c).error(`GET /api/owner/team error: ${error.message || error}`, {
