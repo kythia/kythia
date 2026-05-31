@@ -31,7 +31,7 @@ module.exports = {
 
 		try {
 			const order = await MarketOrder.getCache({
-				id: orderId,
+				orderId,
 				userId: interaction.user.id,
 				status: 'open',
 			});
