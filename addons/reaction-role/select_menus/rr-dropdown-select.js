@@ -34,7 +34,7 @@ module.exports = {
 				where: { id: panelId, guildId: interaction.guildId },
 			});
 
-			if (!panel || panel.panelType !== 'dropdown') {
+			if (panel?.panelType !== 'dropdown') {
 				return interaction.editReply({
 					components: await simpleContainer(
 						interaction,

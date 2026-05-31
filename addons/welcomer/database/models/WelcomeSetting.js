@@ -18,18 +18,14 @@ class WelcomeSetting extends KythiaModel {
 	 * null layout → CV2 card (default). { style: 'plain-text' } → plain text.
 	 */
 	get isWelcomeInCV2() {
-		return (
-			!this.welcomeInLayout || this.welcomeInLayout?.style !== 'plain-text'
-		);
+		return this.welcomeInLayout?.style !== 'plain-text';
 	}
 
 	/**
 	 * Returns true if the welcome-out message should use Components V2 card.
 	 */
 	get isWelcomeOutCV2() {
-		return (
-			!this.welcomeOutLayout || this.welcomeOutLayout?.style !== 'plain-text'
-		);
+		return this.welcomeOutLayout?.style !== 'plain-text';
 	}
 }
 

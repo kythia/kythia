@@ -24,7 +24,7 @@ module.exports = {
 			flags: MessageFlags.Ephemeral,
 		});
 
-		if (!redis || redis.status !== 'ready') {
+		if (redis?.status !== 'ready') {
 			const msg =
 				'❌ Redis is not connected or is currently down. Unable to flush.';
 

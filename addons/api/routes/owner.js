@@ -40,7 +40,7 @@ app.get('/maintenance', async (c) => {
 	try {
 		const redis = getRedis(c);
 
-		if (!redis || redis.status !== 'ready') {
+		if (redis?.status !== 'ready') {
 			return c.json({
 				success: true,
 				enabled: false,
@@ -91,7 +91,7 @@ app.post('/maintenance', async (c) => {
 	try {
 		const redis = getRedis(c);
 
-		if (!redis || redis.status !== 'ready') {
+		if (redis?.status !== 'ready') {
 			return c.json(
 				{ success: false, error: 'Redis is not connected or unavailable' },
 				503,
@@ -140,7 +140,7 @@ app.post('/flush', async (c) => {
 	try {
 		const redis = getRedis(c);
 
-		if (!redis || redis.status !== 'ready') {
+		if (redis?.status !== 'ready') {
 			return c.json(
 				{ success: false, error: 'Redis is not connected or unavailable' },
 				503,

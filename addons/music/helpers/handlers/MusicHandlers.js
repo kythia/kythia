@@ -155,8 +155,7 @@ class MusicHandlers {
 			);
 		if (isSpotifyPlaylist) {
 			if (
-				!res ||
-				res.loadType !== 'PLAYLIST_LOADED' ||
+				res?.loadType !== 'PLAYLIST_LOADED' ||
 				!Array.isArray(res.tracks) ||
 				res.tracks.length === 0
 			) {
@@ -3391,7 +3390,7 @@ class MusicHandlers {
 			query: url,
 			requester: user,
 		});
-		if (!res || res.loadType !== 'PLAYLIST_LOADED' || !res.tracks.length) {
+		if (res?.loadType !== 'PLAYLIST_LOADED' || !res.tracks.length) {
 			const components = await this.simpleContainer(
 				interaction,
 				await this.t(

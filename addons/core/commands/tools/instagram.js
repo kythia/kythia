@@ -74,7 +74,7 @@ module.exports = {
 
 			const data = await response.json();
 
-			if (!data || data.status !== 'ok') {
+			if (data?.status !== 'ok') {
 				throw new Error(data.msg || 'No media found');
 			}
 

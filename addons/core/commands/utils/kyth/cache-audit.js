@@ -82,7 +82,7 @@ module.exports = {
 				if (!Model) continue;
 
 				const redis = Model.getRedis ? Model.getRedis() : null;
-				if (!redis || redis.status !== 'ready') continue;
+				if (redis?.status !== 'ready') continue;
 
 				const pattern = `${cacheVersion}:${mName}:*`;
 				const keys = [];

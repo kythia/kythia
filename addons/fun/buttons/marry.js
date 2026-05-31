@@ -25,7 +25,7 @@ module.exports = {
 		const marriage = await Marriage.getCache({ id: marriageId });
 
 		if (actionType === 'accept') {
-			if (!marriage || marriage.status !== 'pending') {
+			if (marriage?.status !== 'pending') {
 				const container = new ContainerBuilder()
 					.setAccentColor(
 						convertColor(kythiaConfig.bot.color, {
@@ -105,7 +105,7 @@ module.exports = {
 				components: [container],
 			});
 		} else if (actionType === 'reject') {
-			if (!marriage || marriage.status !== 'pending') {
+			if (marriage?.status !== 'pending') {
 				const container = new ContainerBuilder()
 					.setAccentColor(
 						convertColor(kythiaConfig.bot.color, {

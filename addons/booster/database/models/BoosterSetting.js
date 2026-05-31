@@ -18,7 +18,7 @@ class BoosterSetting extends KythiaModel {
 	 * null layout → CV2 card (default). { style: 'plain-text' } → plain text.
 	 */
 	get isBoosterCV2() {
-		return !this.boosterLayout || this.boosterLayout?.style !== 'plain-text';
+		return this.boosterLayout?.style !== 'plain-text';
 	}
 }
 

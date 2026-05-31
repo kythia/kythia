@@ -25,7 +25,7 @@ module.exports = {
 		const friendReq = await Friend.getCache({ id: friendReqId });
 
 		if (actionType === 'accept') {
-			if (!friendReq || friendReq.status !== 'pending') {
+			if (friendReq?.status !== 'pending') {
 				const cont = new ContainerBuilder()
 					.setAccentColor(
 						convertColor(kythiaConfig.bot.color, {
@@ -103,7 +103,7 @@ module.exports = {
 				components: [cont],
 			});
 		} else if (actionType === 'reject') {
-			if (!friendReq || friendReq.status !== 'pending') {
+			if (friendReq?.status !== 'pending') {
 				const cont = new ContainerBuilder()
 					.setAccentColor(
 						convertColor(kythiaConfig.bot.color, {
