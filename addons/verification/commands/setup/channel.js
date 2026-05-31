@@ -6,19 +6,20 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('channel')
-		.setDescription('Channel where captcha is sent (leave blank for DM only)')
-		.addChannelOption((o) =>
-			o
-				.setName('channel')
-				.setDescription('Verification channel')
-				.setRequired(false),
-		),
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('channel')
+			.setDescription('Channel where captcha is sent (leave blank for DM only)')
+			.addChannelOption((o) =>
+				o
+					.setName('channel')
+					.setDescription('Verification channel')
+					.setRequired(false),
+			),
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer } = helpers.discord;

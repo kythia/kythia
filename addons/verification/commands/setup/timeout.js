@@ -6,21 +6,22 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('timeout')
-		.setDescription('How long members have to complete the captcha (seconds)')
-		.addIntegerOption((o) =>
-			o
-				.setName('seconds')
-				.setDescription('Timeout in seconds (30-600)')
-				.setRequired(true)
-				.setMinValue(30)
-				.setMaxValue(600),
-		),
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('timeout')
+			.setDescription('How long members have to complete the captcha (seconds)')
+			.addIntegerOption((o) =>
+				o
+					.setName('seconds')
+					.setDescription('Timeout in seconds (30-600)')
+					.setRequired(true)
+					.setMinValue(30)
+					.setMaxValue(600),
+			),
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer } = helpers.discord;

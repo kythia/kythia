@@ -6,19 +6,20 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('button')
-		.setDescription('Set the text on the verification panel button')
-		.addStringOption((o) =>
-			o
-				.setName('label')
-				.setDescription('Button text (e.g. Verify Me)')
-				.setRequired(true),
-		),
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('button')
+			.setDescription('Set the text on the verification panel button')
+			.addStringOption((o) =>
+				o
+					.setName('label')
+					.setDescription('Button text (e.g. Verify Me)')
+					.setRequired(true),
+			),
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;

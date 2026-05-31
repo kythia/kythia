@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 
 const CAPTCHA_TYPES = [
 	{ name: 'Math (multiple choice buttons)', value: 'math' },
@@ -16,9 +16,10 @@ const CAPTCHA_TYPES = [
 
 module.exports = {
 	subcommand: true,
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('status')
-		.setDescription('View current verification config'),
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('status')
+			.setDescription('View current verification config'),
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer, createContainer } = helpers.discord;

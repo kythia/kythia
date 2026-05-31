@@ -7,7 +7,6 @@
  */
 
 const {
-	SlashCommandSubcommandBuilder,
 	MessageFlags,
 	ContainerBuilder,
 	TextDisplayBuilder,
@@ -20,11 +19,12 @@ const {
 
 module.exports = {
 	subcommand: true,
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('send')
-		.setDescription(
-			'Send the interactive verification panel to the configured channel',
-		),
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('send')
+			.setDescription(
+				'Send the interactive verification panel to the configured channel',
+			),
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer } = helpers.discord;

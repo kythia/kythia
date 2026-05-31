@@ -6,22 +6,25 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('text')
-		.setDescription('Set the title and description for the verification panel')
-		.addStringOption((o) =>
-			o.setName('title').setDescription('Panel title').setRequired(true),
-		)
-		.addStringOption((o) =>
-			o
-				.setName('description')
-				.setDescription('Panel description')
-				.setRequired(true),
-		),
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('text')
+			.setDescription(
+				'Set the title and description for the verification panel',
+			)
+			.addStringOption((o) =>
+				o.setName('title').setDescription('Panel title').setRequired(true),
+			)
+			.addStringOption((o) =>
+				o
+					.setName('description')
+					.setDescription('Panel description')
+					.setRequired(true),
+			),
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;

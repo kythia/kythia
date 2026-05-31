@@ -6,16 +6,17 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('kick-on-fail')
-		.setDescription('Kick member if they exceed max attempts')
-		.addBooleanOption((o) =>
-			o.setName('enabled').setDescription('Enable?').setRequired(true),
-		),
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('kick-on-fail')
+			.setDescription('Kick member if they exceed max attempts')
+			.addBooleanOption((o) =>
+				o.setName('enabled').setDescription('Enable?').setRequired(true),
+			),
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer } = helpers.discord;

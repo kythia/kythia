@@ -67,7 +67,7 @@ app.get('/stats', async (c) => {
 	return c.json({
 		totalServers,
 		totalMembers,
-		uptime: client.container.shutdownManager.getMasterUptime(),
+		uptime: client.container.shutdownManager?.getMasterUptime() ?? '0s',
 		ping: client.ws.ping,
 		ram_usage: `${(totalMemory / 1024 / 1024).toFixed(2)} MB`,
 		coreVersion: getKythiaCoreVersion(),

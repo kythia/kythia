@@ -6,18 +6,19 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const { sendCaptcha } = require('../helpers/verify');
 const { clearSession } = require('../helpers/session');
 
 module.exports = {
 	subcommand: true,
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('reset')
-		.setDescription('Re-send captcha to a member')
-		.addUserOption((o) =>
-			o.setName('member').setDescription('Target member').setRequired(true),
-		),
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('reset')
+			.setDescription('Re-send captcha to a member')
+			.addUserOption((o) =>
+				o.setName('member').setDescription('Target member').setRequired(true),
+			),
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer } = helpers.discord;

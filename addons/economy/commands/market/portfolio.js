@@ -14,6 +14,7 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { getMarketData } = require('../../helpers/market');
+const { getSpotPrice } = require('../../helpers/kyth-amm');
 
 function getChangeEmoji(percent) {
 	if (percent > 0) return '🟢 ▲';
@@ -57,7 +58,10 @@ module.exports = {
 			cacheTags: [`MarketPortfolio:byUser:${interaction.user.id}`],
 		});
 
-		if (userHoldings.length === 0) {
+		if (
+			userHoldings.length === 0 &&
+			(!user.kythHolding || user.kythHolding <= 0)
+		) {
 			const msg = await t(interaction, 'economy.market.portfolio.empty.desc');
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
@@ -69,6 +73,19 @@ module.exports = {
 		}
 
 		const marketData = await getMarketData();
+		const pool = await models.KythLiquidityPool.findByPk(1);
+		const kythSpotPrice = pool ? getSpotPrice(pool) : 0;
+		marketData.kyth = {
+			usd: kythSpotPrice,
+			usd_24h_change: 0,
+		};
+		if (user.kythHolding > 0) {
+			userHoldings.push({
+				assetId: 'kyth',
+				quantity: user.kythHolding,
+				avgBuyPrice: kythSpotPrice,
+			});
+		}
 		let totalValue = 0;
 		let totalPnl = 0;
 		let totalInvested = 0;
@@ -159,8 +176,8 @@ module.exports = {
 
 		const portfolioContainer = new ContainerBuilder()
 			.setAccentColor(
-				convertColor(totalPnl >= 0 ? '#00FF00' : '#FF0000', {
-					from: 'hex',
+				convertColor(totalPnl >= 0 ? 'Green' : 'Red', {
+					from: 'discord',
 					to: 'decimal',
 				}),
 			)

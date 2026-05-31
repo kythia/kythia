@@ -6,16 +6,17 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('unverified-role')
-		.setDescription('Role assigned on join (restricts unverified members)')
-		.addRoleOption((o) =>
-			o.setName('role').setDescription('Unverified role').setRequired(true),
-		),
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('unverified-role')
+			.setDescription('Role assigned on join (restricts unverified members)')
+			.addRoleOption((o) =>
+				o.setName('role').setDescription('Unverified role').setRequired(true),
+			),
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer } = helpers.discord;

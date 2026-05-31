@@ -415,7 +415,7 @@ class AIMessageHandler {
 			clearInterval(typingInterval);
 
 			if (!success) {
-				this.logger.error('❌ All AI tokens exhausted.', { label: 'ai' });
+				this.logger.warn('❌ All AI tokens exhausted.', { label: 'ai' });
 				this.safeReply(
 					message,
 					await this.t(message, 'ai.events.messageCreate.memory.token.limit'),

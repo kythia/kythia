@@ -6,19 +6,20 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('color')
-		.setDescription('Set the color of the verification panel')
-		.addStringOption((o) =>
-			o
-				.setName('hex')
-				.setDescription('HEX color code (e.g. #ff0000)')
-				.setRequired(true),
-		),
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('color')
+			.setDescription('Set the color of the verification panel')
+			.addStringOption((o) =>
+				o
+					.setName('hex')
+					.setDescription('HEX color code (e.g. #ff0000)')
+					.setRequired(true),
+			),
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;

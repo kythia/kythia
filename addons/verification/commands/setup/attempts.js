@@ -6,21 +6,22 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('attempts')
-		.setDescription('Max wrong attempts before failing')
-		.addIntegerOption((o) =>
-			o
-				.setName('count')
-				.setDescription('Max attempts (1-10)')
-				.setRequired(true)
-				.setMinValue(1)
-				.setMaxValue(10),
-		),
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('attempts')
+			.setDescription('Max wrong attempts before failing')
+			.addIntegerOption((o) =>
+				o
+					.setName('count')
+					.setDescription('Max attempts (1-10)')
+					.setRequired(true)
+					.setMinValue(1)
+					.setMaxValue(10),
+			),
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer } = helpers.discord;

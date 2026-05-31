@@ -6,19 +6,20 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('welcome-message')
-		.setDescription('DM sent to members after they verify')
-		.addStringOption((o) =>
-			o
-				.setName('message')
-				.setDescription('Welcome message text (or "none" to disable)')
-				.setRequired(true),
-		),
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('welcome-message')
+			.setDescription('DM sent to members after they verify')
+			.addStringOption((o) =>
+				o
+					.setName('message')
+					.setDescription('Welcome message text (or "none" to disable)')
+					.setRequired(true),
+			),
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer } = helpers.discord;
