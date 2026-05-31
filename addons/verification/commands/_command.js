@@ -14,7 +14,7 @@ const {
 
 module.exports = {
 	slashCommand: new SlashCommandBuilder()
-		.setName('verify')
+		.setName('verification')
 		.setDescription('🛡️ Verification system management')
 		.setContexts(InteractionContextType.Guild)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
