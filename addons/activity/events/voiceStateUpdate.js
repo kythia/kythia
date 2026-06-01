@@ -32,33 +32,54 @@ const flushVoiceTime = async (bot, guildId, userId, durationSeconds) => {
 	if (durationSeconds <= 0) return;
 
 	const { models, logger } = bot.client.container;
-	const { ActivityStat, ActivityLog } = models;
-	const today = new Date().toISOString().slice(0, 10);
+	const { ActivityStat, ActivityLog, ActivityHourly } = models;
+	const now = new Date();
+	const today = now.toISOString().slice(0, 10);
+	const dayOfWeek = now.getDay();
+	const hour = now.getHours();
 
 	try {
 		// All-time counter
-		let stat = await ActivityStat.getCache({ guildId, userId });
+		const [stat, statCreated] = await ActivityStat.firstOrCreateCache(
+			{ guildId, userId },
+			{ totalMessages: '0', totalVoiceTime: durationSeconds.toString() },
+		);
 
-		if (!stat) {
-			stat = await ActivityStat.create({
-				guildId,
-				userId,
-				totalMessages: 0,
-				totalVoiceTime: durationSeconds,
-			});
-		} else {
-			stat.totalVoiceTime =
-				BigInt(stat.totalVoiceTime) + BigInt(durationSeconds);
+		if (!statCreated) {
+			stat.totalVoiceTime = (
+				BigInt(stat.totalVoiceTime) + BigInt(durationSeconds)
+			).toString();
 			stat.changed('totalVoiceTime', true);
 			await stat.save();
 		}
 
 		// Daily bucket
-		const [log] = await ActivityLog.findOrCreate({
-			where: { guildId, userId, date: today },
-			defaults: { messages: 0, voiceTime: 0 },
-		});
-		await log.increment({ voiceTime: durationSeconds });
+		const [log, logCreated] = await ActivityLog.firstOrCreateCache(
+			{ guildId, userId, date: today },
+			{ messages: '0', voiceTime: durationSeconds.toString() },
+		);
+
+		if (!logCreated) {
+			log.voiceTime = (
+				BigInt(log.voiceTime) + BigInt(durationSeconds)
+			).toString();
+			log.changed('voiceTime', true);
+			await log.save();
+		}
+
+		// Hourly bucket
+		const [hourlyLog, hourlyCreated] = await ActivityHourly.firstOrCreateCache(
+			{ guildId, dayOfWeek, hour },
+			{ messages: '0', voiceTime: durationSeconds.toString() },
+		);
+
+		if (!hourlyCreated) {
+			hourlyLog.voiceTime = (
+				BigInt(hourlyLog.voiceTime) + BigInt(durationSeconds)
+			).toString();
+			hourlyLog.changed('voiceTime', true);
+			await hourlyLog.save();
+		}
 	} catch (err) {
 		logger.error(
 			`Failed to flush voice time for ${userId} in ${guildId}: ${err.message}`,

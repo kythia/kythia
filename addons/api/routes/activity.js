@@ -86,6 +86,62 @@ app.patch('/:guildId/toggle', async (c) => {
 });
 
 // ---------------------------------------------------------------------------
+// GET /api/activity/:guildId/analytics
+// Returns the analytics data for the guild (daily and hourly)
+// ---------------------------------------------------------------------------
+app.get('/:guildId/analytics', async (c) => {
+	const models = getModels(c);
+	const { ActivityLog, ActivityHourly } = models;
+	const { guildId } = c.req.param();
+
+	try {
+		// Daily: last 30 days
+		const startDate = getPeriodStart('monthly');
+		const daily = await ActivityLog.findAll({
+			where: { guildId, date: { [Op.gte]: startDate } },
+			attributes: [
+				'date',
+				[fn('SUM', col('messages')), 'messages'],
+				[fn('SUM', col('voiceTime')), 'voiceTime'],
+			],
+			group: ['date'],
+			order: [['date', 'ASC']],
+			raw: true,
+		});
+
+		// Hourly: overall
+		const hourly = await ActivityHourly.findAll({
+			where: { guildId },
+			attributes: [
+				'dayOfWeek',
+				'hour',
+				[fn('SUM', col('messages')), 'messages'],
+				[fn('SUM', col('voiceTime')), 'voiceTime'],
+			],
+			group: ['dayOfWeek', 'hour'],
+			order: [
+				['dayOfWeek', 'ASC'],
+				['hour', 'ASC'],
+			],
+			raw: true,
+		});
+
+		return c.json({
+			success: true,
+			guildId,
+			daily,
+			hourly,
+		});
+	} catch (error) {
+		getLogger(c).error(
+			`GET /api/activity/:guildId/analytics error: ${error.message || error}`,
+			{ label: 'api:activity' },
+		);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
 // GET /api/activity/:guildId
 // Returns the top-N activity leaderboard for a guild
 // Query: { sort?: 'messages' | 'voice', limit?: number, period?: 'all' | 'daily' | 'weekly' | 'monthly' }
