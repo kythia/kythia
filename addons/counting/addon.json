@@ -1,0 +1,8 @@
+{
+	"name": "Counting",
+	"featureName": "Counting",
+	"featureFlag": "countingOn",
+	"version": "1.0.0",
+	"description": "Engage your community with a counting channel where users count together sequentially.",
+	"author": "kenndeclouv"
+}

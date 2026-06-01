@@ -48,6 +48,7 @@ The **Kythia API** is an internal REST API addon that acts as the bridge between
   - [Snippets](#modmail-snippets)
 - [AutoReact API (`/api/autoreact`)](#autoreact-api-apiautoreact)
 - [AutoReply API (`/api/autoreply`)](#autoreply-api-apiautoreply)
+- [Counting API (`/api/counting`)](#counting-api-apicounting)
 - [Invite API (`/api/invite`)](#invite-api-apiinvite)
   - [Invite Settings](#invite-settings-apiinvitesettingsguildid)
   - [Invite Stats / Leaderboard](#invite-stats-apiinviteguildid)
@@ -1714,6 +1715,40 @@ Update an existing rule.
 #### `DELETE /api/autoreply/:id`
 
 Delete a rule.
+
+---
+
+### Counting API (`/api/counting`)
+
+Manage server counting configurations, including base modes, custom emojis, strict modes, and math evaluation settings.
+
+#### `GET /api/counting`
+
+List all counting configurations.
+
+- **Query Params:** `guildId`
+
+**Response:** `{ "success": true, "count": 1, "data": [...] }`
+
+#### `GET /api/counting/:guildId`
+
+Get counting configuration for a specific server.
+
+#### `POST /api/counting`
+
+Create a new counting configuration.
+
+- **Body:** `{ guildId, channelId, mode, successReaction, failReaction, mathEnabled, strictEnabled }`
+
+#### `PATCH /api/counting/:guildId`
+
+Update an existing counting configuration.
+
+- **Body:** Any of `{ channelId, mode, successReaction, failReaction, mathEnabled, strictEnabled }`
+
+#### `DELETE /api/counting/:guildId`
+
+Delete a server's counting configuration.
 
 ---
 

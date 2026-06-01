@@ -7,7 +7,11 @@
  */
 
 const { MessageFlags } = require('discord.js');
-const { getSession, incrementAttempts } = require('../helpers/session');
+const {
+	getSession,
+	getSessionByChannel,
+	incrementAttempts,
+} = require('../helpers/session');
 const {
 	handleSuccess,
 	handleFail,
@@ -15,26 +19,37 @@ const {
 } = require('../helpers/verify');
 
 module.exports = async (bot, message) => {
-	if (message.author.bot || !message.guild) return;
+	if (message.author.bot) return;
 
 	const container = bot.client.container;
 	const { models, logger } = container;
 	const { VerificationConfig, ServerSetting } = models;
 
 	try {
-		const settings = await ServerSetting.getCache({
-			guildId: message.guild.id,
-		});
-		if (!settings?.verificationOn) return;
+		let session = null;
+		let guildId = null;
 
-		const session = getSession(message.guild.id, message.author.id);
-		if (!session?.answer) return; // no active image session
+		if (message.guild) {
+			guildId = message.guild.id;
+			session = getSession(guildId, message.author.id);
+		} else {
+			// DM fallback
+			session = getSessionByChannel(message.channel.id, message.author.id);
+			if (session) guildId = session.guildId;
+		}
+
+		if (!session?.answer || !guildId) return;
 
 		// Only respond in the session's channel
 		if (message.channel.id !== session.channelId) return;
 
+		const settings = await ServerSetting.getCache({
+			guildId: guildId,
+		});
+		if (!settings?.verificationOn) return;
+
 		const config = await VerificationConfig.getCache({
-			where: { guildId: message.guild.id },
+			where: { guildId: guildId },
 		});
 		if (!config) return;
 
@@ -43,7 +58,11 @@ module.exports = async (bot, message) => {
 
 		if (input === correct) {
 			await message.delete().catch(() => null);
-			const member = await message.guild.members
+			const guild =
+				bot.client.guilds.cache.get(guildId) ||
+				(await bot.client.guilds.fetch(guildId).catch(() => null));
+			if (!guild) return;
+			const member = await guild.members
 				.fetch(message.author.id)
 				.catch(() => null);
 			if (!member) return;
@@ -51,7 +70,7 @@ module.exports = async (bot, message) => {
 			const { simpleContainer } = container.helpers.discord;
 			const comps = await simpleContainer(
 				message.channel,
-				`✅ <@${message.author.id}> You're verified! Welcome to **${message.guild.name}**.`,
+				`✅ <@${message.author.id}> You're verified! Welcome to **${guild.name}**.`,
 				{ color: 'Green' },
 			);
 			await message.channel
@@ -64,8 +83,12 @@ module.exports = async (bot, message) => {
 				.then((m) => setTimeout(() => m.delete().catch(() => null), 8000));
 		} else {
 			await message.delete().catch(() => null);
-			const attempts = incrementAttempts(message.guild.id, message.author.id);
-			const member = await message.guild.members
+			const attempts = incrementAttempts(guildId, message.author.id);
+			const guild =
+				bot.client.guilds.cache.get(guildId) ||
+				(await bot.client.guilds.fetch(guildId).catch(() => null));
+			if (!guild) return;
+			const member = await guild.members
 				.fetch(message.author.id)
 				.catch(() => null);
 			if (!member) return;

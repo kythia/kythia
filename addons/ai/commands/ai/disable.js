@@ -14,7 +14,7 @@ module.exports = {
 		subcommand.setName('disable').setDescription('Disable AI in this channel'),
 	permissions: [PermissionFlagsBits.ManageChannels],
 	aliases: ['aioff'],
-
+	guildOnly: true,
 	/**
 	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
 	 * @param {KythiaDI.Container} container

@@ -23,7 +23,7 @@ function randomInt(min, max) {
  * @param {string} userId
  * @returns {{ question: string, answer: number, rows: ActionRowBuilder[] }}
  */
-function generateMathCaptcha(userId) {
+function generateMathCaptcha(userId, guildId) {
 	const op = OPERATIONS[randomInt(0, OPERATIONS.length - 1)];
 	let a, b, answer;
 
@@ -55,7 +55,7 @@ function generateMathCaptcha(userId) {
 		const isCorrect = val === answer;
 		return new ButtonBuilder()
 			.setCustomId(
-				`verify-math:${userId}:${isCorrect ? 'correct' : `wrong_${val}`}`,
+				`verify-math:${guildId}:${userId}:${isCorrect ? 'correct' : `wrong_${val}`}`,
 			)
 			.setLabel(String(val))
 			.setStyle(ButtonStyle.Secondary);

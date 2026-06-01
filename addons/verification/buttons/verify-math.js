@@ -23,8 +23,9 @@ module.exports = {
 
 		try {
 			const parts = interaction.customId.split(':');
-			const targetUserId = parts[1];
-			const result = parts[2]; // 'correct' or 'wrong_VALUE'
+			const guildId = parts[1];
+			const targetUserId = parts[2];
+			const result = parts[3]; // 'correct' or 'wrong_VALUE'
 
 			// Only the right user can click
 			if (interaction.user.id !== targetUserId) {
@@ -34,7 +35,7 @@ module.exports = {
 				});
 			}
 
-			if (!getSession(interaction.guild.id, interaction.user.id)) {
+			if (!getSession(guildId, interaction.user.id)) {
 				return interaction.reply({
 					content:
 						'⏰ This captcha has expired. Please wait for a new one to be sent.',
@@ -45,11 +46,16 @@ module.exports = {
 			await interaction.deferUpdate();
 
 			const config = await VerificationConfig.getCache({
-				where: { guildId: interaction.guild.id },
+				where: { guildId: guildId },
 			});
 			if (!config) return;
 
-			const member = await interaction.guild.members
+			const guild =
+				bot.client.guilds.cache.get(guildId) ||
+				(await bot.client.guilds.fetch(guildId).catch(() => null));
+			if (!guild) return;
+
+			const member = await guild.members
 				.fetch(interaction.user.id)
 				.catch(() => null);
 			if (!member) return;
@@ -59,7 +65,7 @@ module.exports = {
 				const { simpleContainer } = bot.client.container.helpers.discord;
 				const comps = await simpleContainer(
 					interaction,
-					`✅ <@${interaction.user.id}> Correct! You're now verified. Welcome to **${interaction.guild.name}**! 🎉`,
+					`✅ <@${interaction.user.id}> Correct! You're now verified. Welcome to **${guild.name}**! 🎉`,
 					{ color: 'Green' },
 				);
 				await interaction
@@ -71,10 +77,7 @@ module.exports = {
 					})
 					.catch(() => null);
 			} else {
-				const attempts = incrementAttempts(
-					interaction.guild.id,
-					interaction.user.id,
-				);
+				const attempts = incrementAttempts(guildId, interaction.user.id);
 				await handleFail(member, config, attempts, async (remaining) => {
 					const payload = buildCaptchaPayload(member, config);
 					await interaction

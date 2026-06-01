@@ -63,7 +63,7 @@ function buildCaptchaPayload(member, config) {
 		);
 
 	if (captchaType === 'math') {
-		const { question, rows } = generateMathCaptcha(userId);
+		const { question, rows } = generateMathCaptcha(userId, member.guild.id);
 		header.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
 				`🔢 **Math Challenge**\n\n${question}\n\n*Click the correct answer:*`,
@@ -77,7 +77,7 @@ function buildCaptchaPayload(member, config) {
 	}
 
 	if (captchaType === 'emoji') {
-		const { prompt, rows } = generateEmojiCaptcha(userId);
+		const { prompt, rows } = generateEmojiCaptcha(userId, member.guild.id);
 		header.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
 				`😀 **Emoji Challenge**\n\n${prompt}`,

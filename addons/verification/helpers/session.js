@@ -54,6 +54,18 @@ function getSession(guildId, userId) {
 }
 
 /**
+ * Get a session by channel and user (useful for DMs).
+ */
+function getSessionByChannel(channelId, userId) {
+	for (const session of sessions.values()) {
+		if (session.channelId === channelId && session.userId === userId) {
+			return session;
+		}
+	}
+	return null;
+}
+
+/**
  * Increment attempt count. Returns new count.
  */
 function incrementAttempts(guildId, userId) {
@@ -83,6 +95,7 @@ function hasSession(guildId, userId) {
 module.exports = {
 	createSession,
 	getSession,
+	getSessionByChannel,
 	incrementAttempts,
 	clearSession,
 	hasSession,

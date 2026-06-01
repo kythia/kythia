@@ -100,7 +100,7 @@ function shuffle(arr) {
  * @param {string} userId
  * @returns {{ target: string, prompt: string, rows: ActionRowBuilder[] }}
  */
-function generateEmojiCaptcha(userId) {
+function generateEmojiCaptcha(userId, guildId) {
 	const pool = shuffle([...EMOJI_POOL]);
 	const target = pool[0];
 	const decoys = pool.slice(1, 6);
@@ -110,7 +110,7 @@ function generateEmojiCaptcha(userId) {
 	const buttons = all.map((emoji) =>
 		new ButtonBuilder()
 			.setCustomId(
-				`verify-emoji:${userId}:${emoji === target ? 'correct' : 'wrong'}`,
+				`verify-emoji:${guildId}:${userId}:${emoji === target ? 'correct' : 'wrong'}`,
 			)
 			.setEmoji(emoji)
 			.setLabel('\u200b') // zero-width space for label (emoji-only button)

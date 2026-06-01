@@ -129,7 +129,7 @@ module.exports = {
 		subcommand
 			.setName('list')
 			.setDescription('View list of AI-enabled channels'),
-
+	guildOnly: true,
 	/**
 	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
 	 * @param {KythiaDI.Container} container

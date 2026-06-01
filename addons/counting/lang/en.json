@@ -1,0 +1,46 @@
+{
+	"counting": {
+		"setup": {
+			"description": "Configure the counting channel.",
+			"channel": {
+				"description": "The channel to use for counting."
+			},
+			"option": "channel",
+			"success": "Counting has been enabled in {channel}. Start from 1!",
+			"already_configured": "Counting is already configured for this server.",
+			"start": "## `🔢` Counting Game Has Started!\nCounting has been enabled in this channel. Start from **1**! \nYou dont need to answer the exact number, you can use math to count up!"
+		},
+		"disable": {
+			"description": "Disable the counting channel.",
+			"success": "Counting has been disabled.",
+			"not_enabled": "Counting is not enabled in this server."
+		},
+		"reset": {
+			"success": "Counting has been reset.",
+			"not_enabled": "Counting is not enabled in this server.",
+			"fail": "Failed to reset counting."
+		},
+		"config": {
+			"success": "Counting settings updated successfully!",
+			"no_changes": "No changes were provided to update."
+		},
+		"stats": {
+			"description": "📊 **Counting Stats for {user}**\n\n✅ Correct: **{correct}**\n❌ Ruined: **{ruined}**\n🎯 Accuracy: **{accuracy}%**"
+		},
+		"leaderboard": {
+			"empty": "No one has started counting yet!",
+			"description": "🏆 **Top Counters**\n\n{board}"
+		},
+		"game": {
+			"double_count": "You cannot count twice in a row! Wait for someone else.",
+			"wrong_number": "Wrong number, {user}! The next number is **{number}**.",
+			"wrong_number_reset": "Wrong number, {user}! The next number was **{number}**. The count has been reset to 0!",
+			"only_numbers": "Only numbers or math expressions are allowed in this channel!",
+			"invalid_input": "Invalid input for mode **{mode}**. Please try again!",
+			"invalid_characters": "Your message contains invalid characters. Only numbers and math allowed!",
+			"reset": "The count has been reset to 0.",
+			"not_enabled": "Counting is not enabled in this server.",
+			"milestone": "🎉 **MILESTONE REACHED!** {user} just hit **{number}**! Keep it going!"
+		}
+	}
+}
