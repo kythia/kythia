@@ -33,7 +33,7 @@ module.exports = async (bot, oldState, newState) => {
 	const config = await TempVoiceConfig.getCache({ guildId: guild.id });
 	if (!config) return;
 
-	if (newChannelId === config.triggerChannelId && !member.user.bot) {
+	if (newChannelId === config.triggerChannelId && !member.user?.bot) {
 		// Prevent spam: if the user already owns an active temp voice channel,
 		// move them back to it instead of creating a new one.
 		const existingChannel = await TempVoiceChannel.getCache({
@@ -105,7 +105,7 @@ module.exports = async (bot, oldState, newState) => {
 	if (
 		newChannelId &&
 		newChannelId !== config.triggerChannelId &&
-		!member.user.bot
+		!member.user?.bot
 	) {
 		const mainChannel = await TempVoiceChannel.getCache({
 			waitingRoomChannelId: newChannelId,

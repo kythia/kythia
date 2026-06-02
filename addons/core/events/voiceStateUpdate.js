@@ -32,7 +32,7 @@ module.exports = async (bot, oldState, newState) => {
 		if (!member) return;
 		// If bot, usually we might want to log it, but sometimes ignored.
 		// Let's keep bots for now unless user wants to ignore.
-		if (member.user.bot) return;
+		if (!member.user || member.user.bot) return;
 
 		// Determine the type of action
 		// 1. Join: oldState.channelId is null, newState.channelId is set

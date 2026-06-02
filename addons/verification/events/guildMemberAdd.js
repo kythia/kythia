@@ -9,7 +9,7 @@
 const { sendCaptcha } = require('../helpers/verify');
 
 module.exports = async (bot, member) => {
-	if (!member.guild || member.user.bot) return;
+	if (!member?.guild || !member.user || member.user.bot) return;
 
 	const container = bot.client.container;
 	const { models, logger } = container;

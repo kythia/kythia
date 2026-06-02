@@ -14,7 +14,7 @@ const processedMessageIds = new Set();
 async function handleGlobalChat(message, container) {
 	const { logger, kythiaConfig } = container;
 
-	if (message.author.bot) return;
+	if (!message.author || message.author.bot) return;
 	if (!message.guild) return;
 
 	// Prevent duplicate processing

@@ -14,7 +14,7 @@ const { parseInputToNumber, formatNumberByMode } = require('../helpers');
  * @param {import('kythia-core').Kythia} bot
  */
 module.exports = async (bot, message) => {
-	if (message.author.bot || !message.guild) return;
+	if (!message.author || message.author.bot || !message.guild) return;
 
 	const { container } = bot;
 	const { models, t, helpers } = container;

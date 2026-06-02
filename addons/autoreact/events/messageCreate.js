@@ -10,7 +10,7 @@ module.exports = async (bot, message) => {
 	const { models } = bot.client.container;
 	const { AutoReact } = models;
 
-	if (message.author.bot || !message.guild) return;
+	if (!message.author || message.author.bot || !message.guild) return;
 
 	const allReactions = await AutoReact.getAllCache({
 		where: { guildId: message.guild.id },

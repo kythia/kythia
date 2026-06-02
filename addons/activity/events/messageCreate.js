@@ -14,7 +14,7 @@
  * @param {import('discord.js').Message} message
  */
 module.exports = async (bot, message) => {
-	if (message.author.bot || !message.guild) return;
+	if (!message.author || message.author.bot || !message.guild) return;
 
 	const { models } = bot.client.container;
 	const { ServerSetting, ActivityStat, ActivityLog, ActivityHourly } = models;

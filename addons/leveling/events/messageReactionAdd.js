@@ -18,13 +18,18 @@ const authorCooldown = new Map();
  * @param {import('discord.js').User} user
  */
 module.exports = async (bot, reaction, user) => {
-	if (user.bot || !reaction.message.guild) return;
+	if (!user || user.bot || !reaction.message.guild) return;
 
 	if (reaction.partial) await reaction.fetch().catch(() => {});
 	if (reaction.message.partial) await reaction.message.fetch().catch(() => {});
 
 	const message = reaction.message;
-	if (!message.guild || message.author.bot || message.author.id === user.id)
+	if (
+		!message.guild ||
+		!message.author ||
+		message.author.bot ||
+		message.author.id === user.id
+	)
 		return;
 
 	const guildId = message.guild.id;
@@ -82,7 +87,11 @@ module.exports = async (bot, reaction, user) => {
 	}
 
 	// Award Author
-	if ((awardType === 'both' || awardType === 'author') && !message.author.bot) {
+	if (
+		(awardType === 'both' || awardType === 'author') &&
+		message.author &&
+		!message.author.bot
+	) {
 		const aKey = `${guildId}-${authorId}`;
 		if (now - (authorCooldown.get(aKey) || 0) >= cdTime) {
 			await addXp(guildId, authorId, xpToAdd, message, announceChannel);

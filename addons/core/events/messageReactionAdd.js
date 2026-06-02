@@ -23,6 +23,8 @@ module.exports = async (bot, reaction, user) => {
 	const guildId = reaction.message.guild?.id;
 
 	try {
+		if (!user) return; // Prevent null user errors
+
 		// Handle partials
 		if (reaction.partial) {
 			try {

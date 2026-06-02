@@ -24,7 +24,7 @@ module.exports = async (bot, oldMessage, newMessage) => {
 
 	try {
 		if (!newMessage?.author || !newMessage.guild) return;
-		if (newMessage.author.bot) return;
+		if (!newMessage.author || newMessage.author.bot) return;
 
 		// Don't log if content hasn't changed
 		if (oldMessage.content === newMessage.content) return;

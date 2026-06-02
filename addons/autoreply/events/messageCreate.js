@@ -13,7 +13,7 @@ module.exports = async (bot, message) => {
 	const { AutoReply } = models;
 	const { createContainer } = helpers.discord;
 
-	if (message.author.bot || !message.guild) return;
+	if (!message.author || message.author.bot || !message.guild) return;
 
 	const autoReplies = await AutoReply.getAllCache({
 		where: { guildId: message.guild.id },

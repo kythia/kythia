@@ -853,7 +853,7 @@ class AIMessageHandler {
 			.filter(
 				(msg) =>
 					msg.id !== message.id &&
-					(!msg.author.bot || msg.author.id === client.user.id),
+					(!msg.author?.bot || msg.author.id === client.user.id),
 			)
 			.reverse();
 

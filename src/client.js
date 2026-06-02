@@ -76,7 +76,7 @@ const client = new Client({
 			interval: 3600,
 
 			filter: () => (user) => {
-				if (user.bot) return false;
+				if (!user || user.bot) return false;
 				if (user.id === user.client.user.id) return false;
 				return true;
 			},

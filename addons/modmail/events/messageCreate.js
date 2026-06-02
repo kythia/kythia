@@ -38,7 +38,7 @@ module.exports = async (bot, message) => {
 		client.modmailActiveDMs = new Set();
 	}
 
-	if (message.author.bot) return;
+	if (!message.author || message.author.bot) return;
 
 	// ─── CASE 1: User DM ──────────────────────────────────────────────────────
 	if (!message.guild) {

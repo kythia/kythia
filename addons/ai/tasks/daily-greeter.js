@@ -57,7 +57,7 @@ module.exports = {
 					const morningPrompt = kythiaConfig.addons.ai.dailyGreeterPrompt;
 
 					const guildInfo = `FYI: Nama Server ${guild.name}\n
-                    Jumlah Member Online ${guild.members.cache.filter((m) => !m.user.bot).size}`;
+                    Jumlah Member Online ${guild.members.cache.filter((m) => !m.user?.bot).size}`;
 
 					const prompt = `${personaPrompt}\n\n${morningPrompt}\n${guildInfo}`;
 

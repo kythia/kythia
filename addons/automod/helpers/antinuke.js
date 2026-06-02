@@ -227,7 +227,7 @@ async function checkThreshold({ bot, guild, executor, moduleName, detail }) {
 		if (!member) return;
 
 		// Bot itself and whitelisted users are immune
-		if (member.user.bot) return;
+		if (!member.user || member.user.bot) return;
 		if (isWhitelisted(member, config)) return;
 
 		const count = _track(guild.id, moduleName, executor.id, mod.window);
@@ -278,7 +278,7 @@ async function checkInstant({ bot, guild, executor, moduleName, detail }) {
 
 		const member = await guild.members.fetch(executor.id).catch(() => null);
 		if (!member) return;
-		if (member.user.bot) return;
+		if (!member.user || member.user.bot) return;
 		if (isWhitelisted(member, config)) return;
 
 		const reason = `[AntiNuke] ${moduleName}: unauthorized action`;

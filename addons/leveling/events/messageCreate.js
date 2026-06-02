@@ -17,7 +17,7 @@ const cooldown = new Map();
  */
 module.exports = async (bot, message) => {
 	const { ServerSetting, LevelingSetting } = bot.client.container.models;
-	if (message.author.bot || !message.guild) return;
+	if (!message.author || message.author.bot || !message.guild) return;
 	const guildId = message.guild.id;
 	const userId = message.author.id;
 	const { helpers } = bot.client.container;

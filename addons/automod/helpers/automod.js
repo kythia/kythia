@@ -66,7 +66,7 @@ function canDeleteMessage(message) {
 async function automodSystem(message) {
 	const { models } = message.client.container;
 	const { ServerSetting } = models;
-	if (message.author.bot || !message.guild) return;
+	if (!message.author || message.author.bot || !message.guild) return;
 
 	const { guild, author: user } = message;
 

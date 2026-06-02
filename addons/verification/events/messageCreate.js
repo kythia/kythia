@@ -19,7 +19,7 @@ const {
 } = require('../helpers/verify');
 
 module.exports = async (bot, message) => {
-	if (message.author.bot) return;
+	if (!message.author || message.author.bot) return;
 
 	const container = bot.client.container;
 	const { models, logger } = container;

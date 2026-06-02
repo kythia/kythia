@@ -12,7 +12,7 @@ module.exports = async (bot, reaction, user) => {
 	const { ReactionRole } = models;
 
 	try {
-		if (user.bot) return;
+		if (!user || user.bot) return;
 
 		// Handle partials
 		if (reaction.partial) {

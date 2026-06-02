@@ -339,7 +339,7 @@ async function broadcastGetGuildMembers(client, guildId, detailed = false) {
 					username: m.user.username,
 					discriminator: m.user.discriminator,
 					avatar: m.user.displayAvatarURL(),
-					bot: m.user.bot,
+					bot: m.user?.bot ?? false,
 					roles: m.roles.cache.map((r) => r.id),
 					joinedAt: m.joinedTimestamp,
 				};
@@ -365,7 +365,7 @@ async function broadcastGetGuildMembers(client, guildId, detailed = false) {
 						username: m.user.username,
 						discriminator: m.user.discriminator,
 						avatar: m.user.displayAvatarURL(),
-						bot: m.user.bot,
+						bot: m.user?.bot ?? false,
 						roles: m.roles.cache.map((r) => r.id),
 						joinedAt: m.joinedTimestamp,
 					};

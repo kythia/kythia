@@ -140,7 +140,7 @@ const endSession = (key) => {
  */
 module.exports = async (bot, oldState, newState) => {
 	const member = newState.member || oldState.member;
-	if (!member || member.user.bot) return;
+	if (!member?.user || member.user.bot) return;
 
 	const guildId = (newState.guild || oldState.guild)?.id;
 	if (!guildId) return;
