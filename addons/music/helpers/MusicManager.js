@@ -122,6 +122,40 @@ class MusicManager {
 			plugins: plugins,
 		});
 
+		// Patch Poru Nodes to prevent fatal crashes on connection timeout
+		for (const node of this.client.poru.nodes.values()) {
+			node.reconnect = function () {
+				this.reconnectAttempt = setTimeout(async () => {
+					if (this.attempt > this.reconnectTries) {
+						this.poru.emit(
+							'nodeError',
+							this,
+							new Error(
+								`[Poru Websocket] Unable to connect with ${this.options.name} node after ${this.reconnectTries} tries`,
+							),
+						);
+						return;
+					}
+
+					this.isConnected = false;
+					if (this.ws) {
+						this.ws.removeAllListeners();
+						this.ws = null;
+					}
+
+					this.poru.emit('nodeReconnect', this);
+					try {
+						await this.connect();
+					} catch (e) {
+						this.poru.emit('nodeError', this, e);
+					}
+					this.attempt++;
+				}, this.reconnectTimeout);
+
+				return Promise.resolve();
+			};
+		}
+
 		const originalPacketUpdate = this.client.poru.packetUpdate.bind(
 			this.client.poru,
 		);
