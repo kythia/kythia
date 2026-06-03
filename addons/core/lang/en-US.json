@@ -1657,7 +1657,7 @@
 		},
 		"events": {
 			"messageCreate": {
-				"error": "❌ An error occurred while returning from AFK.",
+				"error": "❌ An error occurred while executing this command",
 				"sticky": {
 					"title": "📌 Sticky Message"
 				},

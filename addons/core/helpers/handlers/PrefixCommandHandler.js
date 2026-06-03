@@ -4,6 +4,27 @@
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
+ *
+ * Dual-mode Command Bridge
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Every command in Kythia is written once as a SlashCommand handler. This
+ * module transparently bridges any prefix message (e.g. !play, !m, !ping)
+ * into a fakeInteraction that matches the real ChatInputCommandInteraction
+ * surface, so command code never needs to know whether it was invoked via
+ * slash or prefix.
+ *
+ * Features
+ *  • Alias resolution   — !m → music command, !p → ping, etc.
+ *  • Subcommand routing — !music play <query>, !music skip, etc.
+ *  • defaultArgument    — !m <query> ≡ !music play <query>
+ *  • prefixDisabled     — opt-out per-command (set to true in command file)
+ *  • Typing indicator   — shows "bot is typing" while executing
+ *  • Payload normalization:
+ *      ↳ Strip Ephemeral flag (can't whisper in prefix context)
+ *      ↳ Strip IsComponentsV2 flag (legacy Discord clients need plain text)
+ *      ↳ Inject zero-width-space when component-only payload has no text
+ *  • Permission & cooldown guards (identical to slash flow)
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 
 const { utils } = require('kythia-core');
@@ -19,64 +40,214 @@ const {
 	Collection,
 } = require('discord.js');
 
+// Flags that must be stripped when forwarding to a real Message reply.
+// Ephemeral is interaction-only; IsComponentsV2 must be removed when no
+// components are present (we keep it when components exist, since Discord.js
+// message.reply() accepts it on newer library versions).
+const STRIP_FLAGS = MessageFlags.Ephemeral | (MessageFlags.SuppressEmbeds ?? 0);
+
 class PrefixCommandHandler {
 	/**
-	 * Handle prefix command execution
-	 * @param {Message} message - Discord message
-	 * @param {KythiaDI.Container} container - Kythia container
-	 * @returns {Promise<boolean>} - true if command was handled
+	 * Primary entry-point. Called from the messageCreate event.
+	 * @param {import('discord.js').Message} message
+	 * @param {KythiaDI.Container} container
+	 * @returns {Promise<boolean>} true if the message was consumed as a command
 	 */
 	async handle(message, container) {
+		// ── 1. Resolve active prefix set ──────────────────────────────────
 		const { kythiaConfig, models } = container;
 		const { ServerSetting } = models;
 
+		if (message.author?.bot) return false;
+
 		const contentLower = message.content.toLowerCase();
 		const serverSetting = message.guild
-			? await ServerSetting.getCache({ guildId: message.guild.id })
+			? await ServerSetting.getCache({ guildId: message.guild.id }).catch(
+					() => null,
+				)
 			: null;
 		const customPrefix = serverSetting?.prefix;
 
 		const allPrefixes = [...kythiaConfig.bot.prefixes];
-		if (customPrefix) {
-			allPrefixes.push(customPrefix);
-		}
+		if (customPrefix) allPrefixes.push(customPrefix);
 
-		const matchedPrefix = this.findMatchedPrefix(contentLower, allPrefixes);
+		const matchedPrefix = this._findMatchedPrefix(contentLower, allPrefixes);
 		if (!matchedPrefix) return false;
 
-		if (message.author?.bot) return false;
-
+		// ── 2. Parse command name & raw arguments ──────────────────────────
 		const contentAfterPrefix = message.content
 			.slice(matchedPrefix.length)
 			.trim();
+		if (!contentAfterPrefix) return false; // bare prefix, ignore
+
 		const args = contentAfterPrefix.split(/ +/);
 		const commandName = args.shift().toLowerCase();
+		if (!commandName) return false;
 
-		const baseCommand = this.findCommand(commandName, message.client);
+		// ── 3. Locate the base command (by name or alias) ──────────────────
+		const baseCommand = this._findCommand(commandName, message.client);
 		if (!baseCommand) return false;
 
-		const remainingArgsString = args.join(' ');
+		// Allow commands to opt-out of prefix mode entirely
+		if (baseCommand.prefixDisabled === true) return false;
+
+		// Resolve the actual registered slash command name.
+		// This is CRITICAL when an alias is used (e.g. !m → 'music').
+		// InteractionFactory looks up client.commands.get(name) internally to
+		// parse subcommands — it won't find anything if we pass the alias.
+		const actualCommandName =
+			baseCommand.slashCommand?.name ?? baseCommand.data?.name ?? commandName;
+
+		const slashData = baseCommand.slashCommand ?? baseCommand.data;
+		const topOptions = slashData?.options ?? [];
+
+		// ── 4. Handle defaultArgument shortcut ─────────────────────────────
+		// Format: 'subcommand:optionName'  e.g. 'play:search'
+		// If the first word isn't a known subcommand/group, inject the default
+		// subcommand directly into the `args` array BEFORE parsing.
+		if (baseCommand.defaultArgument && args.length > 0) {
+			const defaultSub = baseCommand.defaultArgument;
+			const colonIdx = defaultSub.indexOf(':');
+			if (colonIdx !== -1) {
+				const subName = defaultSub.slice(0, colonIdx);
+				const topLevelNames = topOptions.map((o) => o.name);
+				const firstWord = args[0]?.toLowerCase();
+
+				if (!topLevelNames.includes(firstWord)) {
+					// e.g. ['jennie', 'solo'] → ['play', 'jennie', 'solo']
+					args.unshift(subName);
+				}
+			}
+		}
+
+		// ── 5. Smart args string builder ──────────────────────────────────
+		// Problem: InteractionFactory splits args by whitespace, so
+		// "play jennie solo" → ['play','jennie','solo'] and only the first
+		// word maps to the `search` option — "solo" is silently dropped.
+		//
+		// Fix: detect structural args (subcommand / group names) from the
+		// slash schema, then quote any multi-word positional remainder so
+		// the factory treats it as a single token.
+		//
+		// Examples:
+		//  !m play jennie solo     → 'play "jennie solo"'        ✓
+		//  !music playback loop queue → 'playback loop queue'     ✓  (single word)
+		//  !m play https://...     → 'play "https://..."'         ✓  (URL, single token)
+		//  !m jennie solo          → 'play "jennie solo"'        ✓  (via defaultArgument)
+
+		/** True for a named arg like `search:value` but NOT a URL like `https://…` */
+		const isNamedArg = (token) => {
+			const ci = token.indexOf(':');
+			if (ci <= 0) return false;
+			const key = token.slice(0, ci);
+			const val = token.slice(ci + 1);
+			return (
+				/^[a-zA-Z_]\w*$/.test(key) && val.length > 0 && !val.startsWith('//')
+			);
+		};
+
+		let remainingArgsString;
+		{
+			let cursor = 0; // how many leading args are structural
+
+			const first = args[0]?.toLowerCase();
+			const firstOpt = first && topOptions.find((o) => o.name === first);
+
+			if (firstOpt) {
+				cursor = 1; // first arg is a known sub or group name
+
+				// If it's a subcommand group, peek at the second arg for the sub name
+				const isGroup =
+					firstOpt.type === 2 ||
+					firstOpt.constructor?.name === 'SlashCommandSubcommandGroupBuilder';
+
+				if (isGroup && args[1]) {
+					const second = args[1].toLowerCase();
+					const groupSubs = firstOpt.options ?? [];
+					if (groupSubs.some((o) => o.name === second)) cursor = 2;
+				}
+			}
+
+			const structuralParts = args.slice(0, cursor);
+			const valueParts = args.slice(cursor);
+
+			const named = valueParts.filter(isNamedArg);
+			const positional = valueParts.filter((a) => !isNamedArg(a));
+
+			const out = [...structuralParts];
+			if (positional.length > 1) {
+				// Multi-word value → wrap in quotes so factory treats it as one token
+				out.push(`"${positional.join(' ')}"`);
+			} else {
+				out.push(...positional);
+			}
+			out.push(...named);
+			remainingArgsString = out.join(' ');
+		}
+
+		// ── 6. Build the fakeInteraction via InteractionFactory ────────────
+		//    Pass actualCommandName (e.g. 'music') NOT the alias ('m') so that
+		//    InteractionFactory can resolve the slash command's option schema.
 		const fakeInteraction = utils.InteractionFactory.create(
 			message,
-			commandName,
+			actualCommandName,
 			remainingArgsString,
 		);
 
-		// Override reply methods so responses quote/ping the original message
-		// (InteractionFactory uses channel.send() which sends without a reply reference)
+		// ── 6. Override reply/edit/followUp to use message.reply() ─────────
+		//    InteractionFactory defaults to channel.send() (no reply reference).
+		//    We also normalise payloads here so command code stays clean.
 		let _replied = false;
 		let _replyMessage = null;
 
-		fakeInteraction.reply = async (opts) => {
-			if (_replied) {
-				// Already replied — edit the existing reply message
-				const payload = typeof opts === 'string' ? { content: opts } : opts;
+		/**
+		 * Normalise a reply payload for prefix-command context:
+		 *  - Coerce string → object
+		 *  - Strip interaction-only flags
+		 *  - Inject zero-width space when payload only contains components
+		 *    (Discord API rejects truly empty messages)
+		 * @param {string|object} opts
+		 * @returns {object}
+		 */
+		const _buildPayload = (opts) => {
+			const payload =
+				typeof opts === 'string' ? { content: opts } : { ...opts };
 
-				// Strip interaction-only flags for prefix commands
-				if (payload.flags) {
-					payload.flags &= ~MessageFlags.Ephemeral;
+			// Strip Ephemeral and other interaction-only flags
+			if (payload.flags != null) {
+				payload.flags &= ~STRIP_FLAGS;
+				// If flags is now 0, remove the key entirely to avoid API errors
+				if (payload.flags === 0) delete payload.flags;
+			}
+
+			const hasText = Boolean(payload.content);
+			const hasEmbeds =
+				Array.isArray(payload.embeds) && payload.embeds.length > 0;
+			const hasFiles = Array.isArray(payload.files) && payload.files.length > 0;
+			const hasComponents =
+				Array.isArray(payload.components) && payload.components.length > 0;
+
+			if (!hasText && !hasEmbeds && !hasFiles && hasComponents) {
+				// When IS_COMPONENTS_V2 flag is set, Discord FORBIDS the 'content' field —
+				// components alone satisfy the non-empty requirement in that mode.
+				// For regular components (no V2 flag), inject a zero-width space.
+				const isComponentsV2Mode =
+					payload.flags != null &&
+					Boolean(payload.flags & MessageFlags.IsComponentsV2);
+
+				if (!isComponentsV2Mode) {
+					payload.content = '\u200b';
 				}
+			}
 
+			return payload;
+		};
+
+		fakeInteraction.reply = async (opts) => {
+			const payload = _buildPayload(opts);
+
+			if (_replied) {
+				// Already replied → edit the existing message instead
 				if (_replyMessage) {
 					_replyMessage = await _replyMessage.edit(payload);
 				} else {
@@ -84,29 +255,19 @@ class PrefixCommandHandler {
 				}
 				return _replyMessage;
 			}
+
 			_replied = true;
-			const payload = typeof opts === 'string' ? { content: opts } : opts;
-
-			// Strip interaction-only flags for prefix commands
-			if (payload.flags) {
-				payload.flags &= ~MessageFlags.Ephemeral;
-			}
-
 			_replyMessage = await message.reply(payload);
 			return _replyMessage;
 		};
 
 		fakeInteraction.editReply = async (opts) => {
-			const payload = typeof opts === 'string' ? { content: opts } : opts;
-
-			// Strip interaction-only flags for prefix commands
-			if (payload.flags) {
-				payload.flags &= ~MessageFlags.Ephemeral;
-			}
+			const payload = _buildPayload(opts);
 
 			if (_replyMessage) {
 				_replyMessage = await _replyMessage.edit(payload);
 			} else {
+				// No prior reply yet — send fresh
 				_replyMessage = await message.reply(payload);
 			}
 			_replied = true;
@@ -114,23 +275,35 @@ class PrefixCommandHandler {
 		};
 
 		fakeInteraction.followUp = (opts) => {
-			const payload = typeof opts === 'string' ? { content: opts } : opts;
-			return message.reply(payload).catch(() => null);
+			const payload = _buildPayload(opts);
+			return message.reply(payload);
 		};
 
 		fakeInteraction.deferReply = () => {
+			// Mark as deferred so editReply() sends a fresh reply instead of throwing.
+			// No typing indicator — prefix commands respond instantly.
 			_replied = true;
-			// No visible typing indicator needed for prefix; just mark as deferred
 			return Promise.resolve(null);
 		};
 
-		const subcommand = fakeInteraction.options.getSubcommand();
-		const subcommandGroup = fakeInteraction.options.getSubcommandGroup();
+		fakeInteraction.fetchReply = () => Promise.resolve(_replyMessage);
 
-		let finalCommandKey = commandName;
-		if (subcommandGroup)
-			finalCommandKey = `${commandName} ${subcommandGroup} ${subcommand}`;
-		else if (subcommand) finalCommandKey = `${commandName} ${subcommand}`;
+		fakeInteraction.deleteReply = async () => {
+			if (_replyMessage) {
+				await _replyMessage.delete().catch(() => {});
+				_replyMessage = null;
+			}
+		};
+
+		// ── 7. Resolve final command (with subcommand key) ──────────────────
+		const subcommand = fakeInteraction.options.getSubcommand(false);
+		const subcommandGroup = fakeInteraction.options.getSubcommandGroup(false);
+
+		// Build the lookup key using the REAL command name (not alias)
+		let finalCommandKey = actualCommandName;
+		if (subcommandGroup && subcommand)
+			finalCommandKey = `${actualCommandName} ${subcommandGroup} ${subcommand}`;
+		else if (subcommand) finalCommandKey = `${actualCommandName} ${subcommand}`;
 
 		const finalCommand =
 			message.client.commands.get(finalCommandKey) ||
@@ -144,35 +317,34 @@ class PrefixCommandHandler {
 
 		if (!finalCommand) return false;
 
-		// Validate permissions
-		const permissionCheck = await this.validatePermissions(
+		// ── 8. Permission gate ─────────────────────────────────────────────
+		const permissionCheck = await this._validatePermissions(
 			finalCommand,
 			message,
 			container,
 		);
 		if (!permissionCheck.allowed) {
 			if (permissionCheck.response) {
-				await message.reply(permissionCheck.response);
+				const permPayload = _buildPayload(permissionCheck.response);
+				await message.reply(permPayload).catch(() => {});
 			}
 			return true;
 		}
 
-		// Check cooldown
-		const cooldownCheck = await this.checkCooldown(
+		// ── 9. Cooldown gate ───────────────────────────────────────────────
+		const cooldownCheck = await this._checkCooldown(
 			finalCommand,
 			finalCommandKey,
 			message,
 			container,
 		);
 		if (!cooldownCheck.allowed) {
-			if (cooldownCheck.response) {
-				await cooldownCheck.response;
-			}
+			if (cooldownCheck.response) await cooldownCheck.response;
 			return true;
 		}
 
-		// Execute command
-		await this.executeCommand(
+		// ── 10. Execute ────────────────────────────────────────────────────
+		await this._executeCommand(
 			finalCommand,
 			fakeInteraction,
 			finalCommandKey,
@@ -183,13 +355,29 @@ class PrefixCommandHandler {
 		return true;
 	}
 
-	findMatchedPrefix(contentLower, allPrefixes) {
-		return allPrefixes.find((prefix) =>
-			contentLower.startsWith(prefix.toLowerCase()),
-		);
+	// ─── Private helpers ─────────────────────────────────────────────────────
+
+	/**
+	 * Find the first prefix that matches the start of the lowercased content.
+	 * Longer prefixes take priority over shorter ones to avoid false matches.
+	 * @param {string} contentLower
+	 * @param {string[]} allPrefixes
+	 * @returns {string|undefined}
+	 */
+	_findMatchedPrefix(contentLower, allPrefixes) {
+		// Sort descending by length so "!!" matches before "!"
+		return [...allPrefixes]
+			.sort((a, b) => b.length - a.length)
+			.find((prefix) => contentLower.startsWith(prefix.toLowerCase()));
 	}
 
-	findCommand(commandName, client) {
+	/**
+	 * Locate a command by its registered name or one of its aliases.
+	 * @param {string} commandName
+	 * @param {import('discord.js').Client} client
+	 * @returns {object|undefined}
+	 */
+	_findCommand(commandName, client) {
 		return (
 			client.commands.get(commandName) ||
 			[...client.commands.values()].find(
@@ -200,21 +388,22 @@ class PrefixCommandHandler {
 		);
 	}
 
-	async validatePermissions(command, message, container) {
+	/**
+	 * Full permission validation:
+	 *  guildOnly → ownerOnly → userPerms → botPerms → isInMainGuild → voteLocked
+	 */
+	async _validatePermissions(command, message, container) {
 		const { kythiaConfig, helpers, t, logger, models } = container;
 		const { isOwner } = helpers.discord;
 		const { convertColor } = helpers.color;
 		const { KythiaVoter } = models;
 
-		// Guild-only check
-		if (command.guildOnly && !message.guild) {
-			return { allowed: false };
-		}
+		// Guild-only
+		if (command.guildOnly && !message.guild) return { allowed: false };
 
-		// Owner-only check
-		if (command.ownerOnly && !isOwner(message.author.id)) {
+		// Owner-only
+		if (command.ownerOnly && !isOwner(message.author.id))
 			return { allowed: false };
-		}
 
 		// User permissions
 		if (command.permissions && message.member) {
@@ -226,18 +415,18 @@ class PrefixCommandHandler {
 		// Bot permissions
 		if (command.botPermissions && message.guild) {
 			if (
-				message.guild.members.me.permissions.missing(command.botPermissions)
+				message.guild.members.me?.permissions.missing(command.botPermissions)
 					.length > 0
 			) {
 				return { allowed: false };
 			}
 		}
 
-		// Main guild check
+		// Main-guild membership check (sharded + non-sharded)
 		if (command.isInMainGuild) {
 			const mainGuildId = kythiaConfig.bot.mainGuildId;
 			if (!mainGuildId) {
-				logger.error(`mainGuildId not set in config.`, {
+				logger.error('mainGuildId not set in config.', {
 					label: 'PrefixCommandHandler',
 				});
 			}
@@ -265,8 +454,8 @@ class PrefixCommandHandler {
 						isMember = hit.isMember;
 						mainGuildName = hit.name;
 					} else {
-						return { allowed: true };
-					} // fail open if guild not found on any shard
+						return { allowed: true }; // guild not found on any shard → fail open
+					}
 				} else {
 					const mainGuild = message.client.guilds.cache.get(mainGuildId);
 					if (!mainGuild) {
@@ -291,13 +480,12 @@ class PrefixCommandHandler {
 			}
 
 			if (!isMember) {
+				const accent = convertColor(kythiaConfig.bot.color, {
+					from: 'hex',
+					to: 'decimal',
+				});
 				const errorContainer = new ContainerBuilder()
-					.setAccentColor(
-						convertColor(kythiaConfig.bot.color, {
-							from: 'hex',
-							to: 'decimal',
-						}),
-					)
+					.setAccentColor(accent)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
 							await t(message, 'common.error.not.in.main.guild.text', {
@@ -334,6 +522,7 @@ class PrefixCommandHandler {
 				return {
 					allowed: false,
 					response: {
+						content: '\u200b',
 						components: [errorContainer],
 						flags: MessageFlags.IsComponentsV2,
 					},
@@ -341,19 +530,20 @@ class PrefixCommandHandler {
 			}
 		}
 
-		// Vote lock check
+		// Vote-locked
 		if (command.voteLocked && !isOwner(message.author.id)) {
-			const voter = await KythiaVoter.getCache({ userId: message.author.id });
+			const voter = await KythiaVoter.getCache({
+				userId: message.author.id,
+			}).catch(() => null);
 			const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
 
 			if (!voter || voter.votedAt < twelveHoursAgo) {
-				const container = new ContainerBuilder()
-					.setAccentColor(
-						convertColor(kythiaConfig.bot.color, {
-							from: 'hex',
-							to: 'decimal',
-						}),
-					)
+				const accent = convertColor(kythiaConfig.bot.color, {
+					from: 'hex',
+					to: 'decimal',
+				});
+				const voteContainer = new ContainerBuilder()
+					.setAccentColor(accent)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
 							await t(message, 'common.error.vote.locked.text'),
@@ -390,8 +580,9 @@ class PrefixCommandHandler {
 				return {
 					allowed: false,
 					response: {
-						components: [container],
-						flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+						content: '\u200b',
+						components: [voteContainer],
+						flags: MessageFlags.IsComponentsV2,
 					},
 				};
 			}
@@ -400,12 +591,16 @@ class PrefixCommandHandler {
 		return { allowed: true };
 	}
 
-	async checkCooldown(command, commandKey, message, container) {
+	/**
+	 * Per-user cooldown check. Owners are always exempt.
+	 */
+	async _checkCooldown(command, commandKey, message, container) {
 		const { kythiaConfig, helpers, t } = container;
 		const { isOwner } = helpers.discord;
 
 		const cooldownDuration =
 			command.cooldown ?? kythiaConfig.bot.globalCommandCooldown ?? 0;
+
 		if (cooldownDuration <= 0 || isOwner(message.author.id)) {
 			return { allowed: true };
 		}
@@ -443,7 +638,11 @@ class PrefixCommandHandler {
 		return { allowed: true };
 	}
 
-	async executeCommand(
+	/**
+	 * Execute the resolved command. Falls back to a helpful "use /command"
+	 * hint when the matched object has no `execute` function (e.g. group root).
+	 */
+	async _executeCommand(
 		command,
 		fakeInteraction,
 		commandKey,
@@ -456,26 +655,41 @@ class PrefixCommandHandler {
 			if (typeof command.execute === 'function') {
 				await command.execute(fakeInteraction, container);
 			} else {
+				// Command object has no execute — likely a parent command without a handler.
+				// Guide the user toward a valid subcommand.
 				const helpMessage = await t(
 					fakeInteraction,
 					'core.events.messageCreate.subcommand.required',
 					{ command: commandName },
 				);
-				await fakeInteraction.reply(helpMessage);
+				await fakeInteraction.reply({ content: helpMessage });
 			}
 		} catch (err) {
 			logger.error(
-				`Error executing prefix command '${commandKey}': ${err.message}`,
+				`Error executing prefix command '${commandKey}': ${err.message}\nFull Error: ${JSON.stringify(err, Object.getOwnPropertyNames(err), 2)}`,
 				{ label: 'PrefixCommandHandler' },
 			);
 			await fakeInteraction
-				.reply(
-					await t(fakeInteraction, 'core.events.messageCreate.error', {
-						command: commandKey,
-					}),
-				)
+				.reply(await t(fakeInteraction, 'core.events.messageCreate.error'))
 				.catch(() => {});
 		}
+	}
+
+	// ─── Legacy aliases (kept for backward compatibility) ────────────────────
+	findMatchedPrefix(...args) {
+		return this._findMatchedPrefix(...args);
+	}
+	findCommand(...args) {
+		return this._findCommand(...args);
+	}
+	validatePermissions(...args) {
+		return this._validatePermissions(...args);
+	}
+	checkCooldown(...args) {
+		return this._checkCooldown(...args);
+	}
+	executeCommand(...args) {
+		return this._executeCommand(...args);
 	}
 }
 

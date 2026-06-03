@@ -43,7 +43,7 @@ module.exports = {
 	slashCommand: (subcommand) =>
 		subcommand
 			.setName('get')
-			.setDescription('🔞 NSFW random content (only in nsfw channel)')
+			.setDescription('🌶️ Get random mature content (only in 18+ channels)')
 			.addStringOption((option) =>
 				option
 					.setName('category')

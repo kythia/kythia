@@ -477,7 +477,7 @@ module.exports = {
 		PermissionFlagsBits.SendMessages,
 	],
 	aliases: ['music', 'm'],
-	defaultArgument: 'search',
+	defaultArgument: 'play:search',
 
 	/**
 	 * 🔎 Handles autocomplete for the 'play' subcommand.

@@ -1,25 +1,25 @@
-## Command Category: Nsfw
+## Command Category: Spicy
 
-### `/nsfw`
+### `/spicy`
 
-**Description:** 🔞 NSFW random content (only in nsfw channel)
+**Description:** 🌶️ Explore mature content (restricted to age-verified channels)
 
 ### Usage
 
-`/nsfw favorites [private]`
-`/nsfw get <category> <private> [amount]`
+`/spicy favorites [private]`
+`/spicy get <category> <private> [amount]`
 
 ### Subcommands
 
-**`/nsfw favorites [<private>]`**
-> 🔞 View your favorited NSFW images
+**`/spicy favorites [<private>]`**
+> 🌶️ View your favorited mature images
 
 **Options for this subcommand:**
 - **`private`**
   - **Description:** Make the message private?
   - **Type:** Boolean
-**`/nsfw get <category> <private> [<amount>]`**
-> 🔞 NSFW random content (only in nsfw channel)
+**`/spicy get <category> <private> [<amount>]`**
+> 🌶️ Get random mature content (only in 18+ channels)
 
 **Options for this subcommand:**
 - **`category*`**

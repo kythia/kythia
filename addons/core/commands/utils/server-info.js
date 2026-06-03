@@ -36,6 +36,8 @@ module.exports = {
 	 * @param {KythiaDI.Container} container
 	 */
 	async execute(interaction, container) {
+		await interaction.deferReply();
+
 		const { t, helpers, kythiaConfig } = container;
 		const { convertColor } = helpers.color;
 
@@ -455,17 +457,20 @@ module.exports = {
 		// }
 		// mainContainer.addSectionComponents(new SectionBuilder().addTextDisplayComponents(new TextDisplayBuilder().setContent(`## ${emojis.name} ${guild.name}`)));
 
-		mainContainer.addSectionComponents(
-			new SectionBuilder()
+		if (iconURL) {
+			const serverNameSection = new SectionBuilder()
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(`# ${emojis.name} ${guild.name}`),
 				)
 				.setThumbnailAccessory(
-					iconURL
-						? new ThumbnailBuilder().setDescription(guild.name).setURL(iconURL)
-						: null,
-				),
-		);
+					new ThumbnailBuilder().setDescription(guild.name).setURL(iconURL),
+				);
+			mainContainer.addSectionComponents(serverNameSection);
+		} else {
+			mainContainer.addTextDisplayComponents(
+				new TextDisplayBuilder().setContent(`# ${emojis.name} ${guild.name}`),
+			);
+		}
 
 		mainContainer.addSeparatorComponents(
 			new SeparatorBuilder()
@@ -509,7 +514,7 @@ module.exports = {
 			new TextDisplayBuilder().setContent(`${footerText}`),
 		);
 
-		return interaction.reply({
+		return interaction.editReply({
 			components: [mainContainer],
 			allowedMentions: {
 				parse: [],

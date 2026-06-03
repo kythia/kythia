@@ -28,11 +28,32 @@ module.exports = async (bot, message) => {
 	if (message.author?.bot) return;
 
 	const container = bot.client.container;
-	const { models, helpers, logger, t } = container;
+	const { models, helpers, logger, t, redis } = container;
 	const { ServerSetting } = models;
 	const { convertColor } = helpers.color;
 
 	const guildId = message.guild.id;
+
+	// Save to snipe cache using Redis
+	if (redis && redis.status === 'ready') {
+		const snipeKey = `snipe:${message.channelId}`;
+		const snipeData = {
+			content: message.content,
+			authorId: message.author.id,
+			authorTag: message.author.tag,
+			image: message.attachments.first()?.url,
+			timestamp: Date.now(),
+		};
+		try {
+			await redis.lpush(snipeKey, JSON.stringify(snipeData));
+			await redis.ltrim(snipeKey, 0, 19); // Keep up to 20 deleted messages
+			await redis.expire(snipeKey, 86400); // 24 hours expiry
+		} catch (e) {
+			logger.error(`Snipe Redis Error: ${e.message}`, {
+				label: 'messageDelete',
+			});
+		}
+	}
 
 	try {
 		const settings = await ServerSetting.getCache({

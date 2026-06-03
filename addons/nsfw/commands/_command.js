@@ -9,8 +9,10 @@ const { InteractionContextType, SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
 	slashCommand: new SlashCommandBuilder()
-		.setName('nsfw')
-		.setDescription('🔞 NSFW random content (only in nsfw channel)')
+		.setName('spicy')
+		.setDescription(
+			'🌶️ Explore mature content (restricted to age-verified channels)',
+		)
 		.setContexts(InteractionContextType.Guild)
 		.setNSFW(true),
 };

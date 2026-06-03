@@ -83,7 +83,7 @@ module.exports = {
 	slashCommand: (subcommand) =>
 		subcommand
 			.setName('favorites')
-			.setDescription('🔞 View your favorited NSFW images')
+			.setDescription('🌶️ View your favorited mature images')
 			.addBooleanOption((option) =>
 				option
 					.setName('private')
