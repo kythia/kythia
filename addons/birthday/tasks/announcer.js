@@ -16,7 +16,7 @@ const {
 	MediaGalleryItemBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-const { welcomeBanner } = require('kythia-arts');
+// kythia-arts is now imported in the sandboxed queue processor
 const { DateTime } = require('luxon');
 
 module.exports = {
@@ -133,22 +133,39 @@ module.exports = {
 							.replace(/{zodiac}/g, zodiac);
 					}
 
-					const bannerBuffer = await welcomeBanner(user.id, {
-						customUsername: user.username,
-						botToken: client.token,
-						customBackground: setting?.bgUrl || null,
-						welcomeText: 'HAPPY BIRTHDAY',
-						welcomeColor: setting?.embedColor || '#FFD700',
-						usernameColor: '#FFFFFF',
-						avatarBorder: {
-							width: 6,
-							color: setting?.embedColor || '#FFD700',
-						},
-						type: 'welcome',
-					}).catch((e) => {
-						logger?.error(`❌ [Birthday] Failed to generate arts: ${e}`);
-						return null;
-					});
+					let bannerBuffer = null;
+					try {
+						const job = await container.queueManager.dispatch(
+							'kythia-birthday-queue',
+							'birthdayBanner',
+							{
+								userId: user.id,
+								options: {
+									customUsername: user.username,
+									botToken: client.token,
+									customBackground: setting?.bgUrl || null,
+									welcomeText: 'HAPPY BIRTHDAY',
+									welcomeColor: setting?.embedColor || '#FFD700',
+									usernameColor: '#FFFFFF',
+									avatarBorder: {
+										width: 6,
+										color: setting?.embedColor || '#FFD700',
+									},
+									type: 'welcome',
+								},
+							},
+						);
+
+						const result = await container.queueManager.waitFor(
+							job,
+							'kythia-birthday-queue',
+						);
+						bannerBuffer = Buffer.from(result.data);
+					} catch (e) {
+						logger?.error(
+							`❌ [Birthday] Failed to generate arts: ${e.message || e}`,
+						);
+					}
 
 					const files = [];
 					let imageUrl = null;

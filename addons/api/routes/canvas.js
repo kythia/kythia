@@ -7,7 +7,7 @@
  */
 
 const { Hono } = require('hono');
-const { welcomeBanner } = require('kythia-arts');
+// kythia-arts is now imported in the sandboxed queue processor
 const { resolvePreviewText } = require('@coreHelpers');
 
 const app = new Hono();
@@ -80,7 +80,21 @@ app.post('/preview', async (c) => {
 			type: 'welcome',
 		};
 
-		const buffer = await welcomeBanner(mockUserId, options);
+		const container = c.get('container');
+		const job = await container.queueManager.dispatch(
+			'kythia-api-canvas-queue',
+			'apiPreviewBanner',
+			{
+				userId: mockUserId,
+				options,
+			},
+		);
+
+		const result = await container.queueManager.waitFor(
+			job,
+			'kythia-api-canvas-queue',
+		);
+		const buffer = Buffer.from(result.data);
 
 		const base64Image = Buffer.from(buffer).toString('base64');
 		const dataUri = `data:image/png;base64,${base64Image}`;

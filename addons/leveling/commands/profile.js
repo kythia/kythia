@@ -16,7 +16,6 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-const { profileImage } = require('kythia-arts');
 const { levelUpXp } = require('../helpers');
 const { Op } = require('sequelize');
 
@@ -37,7 +36,7 @@ module.exports = {
 	 * @param {KythiaDI.Container} container
 	 */
 	async execute(interaction, container) {
-		const { t, models, kythiaConfig, helpers } = container;
+		const { t, models, kythiaConfig, helpers, queueManager } = container;
 		const { User, LevelingSetting } = models;
 		const { convertColor } = helpers.color;
 
@@ -139,40 +138,47 @@ module.exports = {
 				}),
 			) + 1;
 
-		const buffer = await profileImage(targetUser.id, {
-			botToken: kythiaConfig.bot.token,
+		const job = await queueManager.dispatch('kythia-image-queue', 'profile', {
+			type: 'profileImage',
+			userId: targetUser.id,
+			options: {
+				botToken: kythiaConfig.bot.token,
 
-			customWidth: 1024,
-			customHeight: 450,
-			customTag: `Level ${user.level}`,
-			customSubtitle: `XP Progress`,
+				customWidth: 1024,
+				customHeight: 450,
+				customTag: `Level ${user.level}`,
+				customSubtitle: `XP Progress`,
 
-			customDate: new Date().toISOString(),
+				customDate: new Date().toISOString(),
 
-			customBackground: backgroundUrl,
+				customBackground: backgroundUrl,
 
-			usernameColor,
-			tagColor,
-			borderColor,
+				usernameColor,
+				tagColor,
+				borderColor,
 
-			rankData: {
-				currentXp: user.xp,
-				requiredXp: levelUpXp(user.level, curve, multiplier),
-				level: user.level,
-				barColor,
-				levelColor: tagColor,
-				rank,
+				rankData: {
+					currentXp: user.xp,
+					requiredXp: levelUpXp(user.level, curve, multiplier),
+					level: user.level,
+					barColor,
+					levelColor: tagColor,
+					rank,
+				},
+
+				customFont: 'BagelFatOne-Regular',
+				fontWeight: 'normal',
+
+				badgesFrame: false,
+
+				disabledBadges: false,
+				squareAvatar: false,
+				moreBackgroundBlur: false,
 			},
-
-			customFont: 'BagelFatOne-Regular',
-			fontWeight: 'normal',
-
-			badgesFrame: false,
-
-			disabledBadges: false,
-			squareAvatar: false,
-			moreBackgroundBlur: false,
 		});
+
+		const result = await queueManager.waitFor(job, 'kythia-image-queue');
+		const buffer = Buffer.from(result.data);
 
 		const accentColorDecimal = convertColor(accentColorHex, {
 			from: 'hex',

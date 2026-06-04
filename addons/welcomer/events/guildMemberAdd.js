@@ -11,7 +11,7 @@ const {
 	safeResolvePlaceholder,
 } = require('@coreHelpers/discord');
 
-const { welcomeBanner } = require('kythia-arts');
+// kythia-arts is now imported in the sandboxed queue processor
 const {
 	ContainerBuilder,
 	SeparatorBuilder,
@@ -153,42 +153,55 @@ module.exports = async (bot, member) => {
 		// ── Banner ────────────────────────────────────────────────
 		let welcomeInImage = null;
 		try {
-			welcomeInImage = await welcomeBanner(member.user.id, {
-				botToken: process.env.DISCORD_BOT_TOKEN,
-				customWidth: setting.welcomeInBannerWidth || 1024,
-				customHeight: setting.welcomeInBannerHeight || 450,
-				customBackground: setting.welcomeInBackgroundUrl || null,
-				overlayColor: setting.welcomeInOverlayColor || null,
-				avatarSize: setting.welcomeInAvatarSize || null,
-				avatarY: setting.welcomeInAvatarYOffset || null,
-				avatarBorder: {
-					width: setting.welcomeInAvatarBorderWidth || 6,
-					color: setting.welcomeInAvatarBorderColor || '#FFFFFF',
+			const job = await container.queueManager.dispatch(
+				'kythia-welcomer-queue',
+				'welcomeBanner',
+				{
+					userId: member.user.id,
+					options: {
+						botToken: process.env.DISCORD_BOT_TOKEN,
+						customWidth: setting.welcomeInBannerWidth || 1024,
+						customHeight: setting.welcomeInBannerHeight || 450,
+						customBackground: setting.welcomeInBackgroundUrl || null,
+						overlayColor: setting.welcomeInOverlayColor || null,
+						avatarSize: setting.welcomeInAvatarSize || null,
+						avatarY: setting.welcomeInAvatarYOffset || null,
+						avatarBorder: {
+							width: setting.welcomeInAvatarBorderWidth || 6,
+							color: setting.welcomeInAvatarBorderColor || '#FFFFFF',
+						},
+						welcomeText:
+							(await safeResolvePlaceholder(
+								container,
+								member,
+								setting.welcomeInMainTextContent || 'WELCOME',
+								statsData,
+								'WELCOME',
+							)) || 'WELCOME',
+						customUsername:
+							(await safeResolvePlaceholder(
+								container,
+								member,
+								setting.welcomeInSubTextContent || '{username}',
+								statsData,
+								member.user.username,
+							)) || member.user.username,
+						customFont: setting.welcomeInMainTextFontFamily || null,
+						fontWeight: setting.welcomeInMainTextFontWeight || null,
+						welcomeColor: setting.welcomeInMainTextColor || null,
+						usernameColor: setting.welcomeInSubTextColor || null,
+						textOffsetY: setting.welcomeInMainTextYOffset || null,
+						textShadow: !!setting.welcomeInShadowColor,
+						type: 'welcome',
+					},
 				},
-				welcomeText:
-					(await safeResolvePlaceholder(
-						container,
-						member,
-						setting.welcomeInMainTextContent || 'WELCOME',
-						statsData,
-						'WELCOME',
-					)) || 'WELCOME',
-				customUsername:
-					(await safeResolvePlaceholder(
-						container,
-						member,
-						setting.welcomeInSubTextContent || '{username}',
-						statsData,
-						member.user.username,
-					)) || member.user.username,
-				customFont: setting.welcomeInMainTextFontFamily || null,
-				fontWeight: setting.welcomeInMainTextFontWeight || null,
-				welcomeColor: setting.welcomeInMainTextColor || null,
-				usernameColor: setting.welcomeInSubTextColor || null,
-				textOffsetY: setting.welcomeInMainTextYOffset || null,
-				textShadow: !!setting.welcomeInShadowColor,
-				type: 'welcome',
-			});
+			);
+
+			const result = await container.queueManager.waitFor(
+				job,
+				'kythia-welcomer-queue',
+			);
+			welcomeInImage = Buffer.from(result.data);
 		} catch (e) {
 			logger.error(`Failed to generate banner: ${e.message}`, {
 				label: 'welcomer:guildMemberAdd:banner',

@@ -20,7 +20,7 @@ const {
 	safeResolvePlaceholder,
 } = require('@coreHelpers/discord');
 
-const { welcomeBanner } = require('kythia-arts');
+// kythia-arts is now imported in the sandboxed queue processor
 
 module.exports = async (bot, member) => {
 	if (!member.guild) return;
@@ -131,41 +131,54 @@ module.exports = async (bot, member) => {
 	if (setting.isWelcomeOutCV2) {
 		let goodbyeImage = null;
 		try {
-			goodbyeImage = await welcomeBanner(member.user.id, {
-				botToken: kythiaConfig.bot.token,
-				customWidth: setting.welcomeOutBannerWidth || 1024,
-				customHeight: setting.welcomeOutBannerHeight || 450,
-				customBackground: setting.welcomeOutBackgroundUrl || null,
-				overlayColor: setting.welcomeOutOverlayColor || null,
-				avatarSize: setting.welcomeOutAvatarSize || null,
-				avatarY: setting.welcomeOutAvatarYOffset || null,
-				avatarBorder: {
-					width: setting.welcomeOutAvatarBorderWidth || 6,
-					color: setting.welcomeOutAvatarBorderColor || '#FFFFFF',
+			const job = await container.queueManager.dispatch(
+				'kythia-welcomer-queue',
+				'goodbyeBanner',
+				{
+					userId: member.user.id,
+					options: {
+						botToken: kythiaConfig.bot.token,
+						customWidth: setting.welcomeOutBannerWidth || 1024,
+						customHeight: setting.welcomeOutBannerHeight || 450,
+						customBackground: setting.welcomeOutBackgroundUrl || null,
+						overlayColor: setting.welcomeOutOverlayColor || null,
+						avatarSize: setting.welcomeOutAvatarSize || null,
+						avatarY: setting.welcomeOutAvatarYOffset || null,
+						avatarBorder: {
+							width: setting.welcomeOutAvatarBorderWidth || 6,
+							color: setting.welcomeOutAvatarBorderColor || '#FFFFFF',
+						},
+						welcomeText:
+							(await safeResolvePlaceholder(
+								container,
+								member,
+								setting.welcomeOutMainTextContent || 'GOODBYE',
+								statsData,
+								'GOODBYE',
+							)) || 'GOODBYE',
+						customUsername:
+							(await safeResolvePlaceholder(
+								container,
+								member,
+								setting.welcomeOutSubTextContent || '{username}',
+								statsData,
+								member.user.username,
+							)) || member.user.username,
+						customFont: setting.welcomeOutMainTextFontFamily || null,
+						fontWeight: setting.welcomeOutMainTextFontWeight || null,
+						welcomeColor: setting.welcomeOutMainTextColor || null,
+						usernameColor: setting.welcomeOutSubTextColor || null,
+						textOffsetY: setting.welcomeOutMainTextYOffset || null,
+						type: 'goodbye',
+					},
 				},
-				welcomeText:
-					(await safeResolvePlaceholder(
-						container,
-						member,
-						setting.welcomeOutMainTextContent || 'GOODBYE',
-						statsData,
-						'GOODBYE',
-					)) || 'GOODBYE',
-				customUsername:
-					(await safeResolvePlaceholder(
-						container,
-						member,
-						setting.welcomeOutSubTextContent || '{username}',
-						statsData,
-						member.user.username,
-					)) || member.user.username,
-				customFont: setting.welcomeOutMainTextFontFamily || null,
-				fontWeight: setting.welcomeOutMainTextFontWeight || null,
-				welcomeColor: setting.welcomeOutMainTextColor || null,
-				usernameColor: setting.welcomeOutSubTextColor || null,
-				textOffsetY: setting.welcomeOutMainTextYOffset || null,
-				type: 'goodbye',
-			});
+			);
+
+			const result = await container.queueManager.waitFor(
+				job,
+				'kythia-welcomer-queue',
+			);
+			goodbyeImage = Buffer.from(result.data);
 		} catch (e) {
 			logger.error(
 				`[Welcomer] Failed to generate goodbye banner: ${e.message}`,

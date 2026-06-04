@@ -11,7 +11,7 @@ const {
 	safeResolvePlaceholder,
 } = require('@coreHelpers/discord');
 
-const { welcomeBanner } = require('kythia-arts');
+// kythia-arts is now imported in the sandboxed queue processor
 const {
 	ContainerBuilder,
 	SeparatorBuilder,
@@ -139,42 +139,55 @@ module.exports = async (bot, oldMember, newMember) => {
 		// ── Banner ────────────────────────────────────────────────
 		let boosterImage = null;
 		try {
-			boosterImage = await welcomeBanner(newMember.user.id, {
-				botToken: process.env.DISCORD_BOT_TOKEN,
-				customWidth: setting.boosterBannerWidth || 1024,
-				customHeight: setting.boosterBannerHeight || 450,
-				customBackground: setting.boosterBackgroundUrl || null,
-				overlayColor: setting.boosterOverlayColor || null,
-				avatarSize: setting.boosterAvatarSize || null,
-				avatarY: setting.boosterAvatarYOffset || null,
-				avatarBorder: {
-					width: setting.boosterAvatarBorderWidth || 6,
-					color: setting.boosterAvatarBorderColor || '#FF73FA',
+			const job = await container.queueManager.dispatch(
+				'kythia-booster-queue',
+				'boosterBanner',
+				{
+					userId: newMember.user.id,
+					options: {
+						botToken: process.env.DISCORD_BOT_TOKEN,
+						customWidth: setting.boosterBannerWidth || 1024,
+						customHeight: setting.boosterBannerHeight || 450,
+						customBackground: setting.boosterBackgroundUrl || null,
+						overlayColor: setting.boosterOverlayColor || null,
+						avatarSize: setting.boosterAvatarSize || null,
+						avatarY: setting.boosterAvatarYOffset || null,
+						avatarBorder: {
+							width: setting.boosterAvatarBorderWidth || 6,
+							color: setting.boosterAvatarBorderColor || '#FF73FA',
+						},
+						welcomeText:
+							(await safeResolvePlaceholder(
+								container,
+								newMember,
+								setting.boosterMainTextContent || 'SERVER BOOSTER',
+								statsData,
+								'SERVER BOOSTER',
+							)) || 'SERVER BOOSTER',
+						customUsername:
+							(await safeResolvePlaceholder(
+								container,
+								newMember,
+								setting.boosterSubTextContent || '{username}',
+								statsData,
+								newMember.user.username,
+							)) || newMember.user.username,
+						customFont: setting.boosterMainTextFontFamily || null,
+						fontWeight: setting.boosterMainTextFontWeight || null,
+						welcomeColor: setting.boosterMainTextColor || '#FF73FA',
+						usernameColor: setting.boosterSubTextColor || null,
+						textOffsetY: setting.boosterMainTextYOffset || null,
+						textShadow: !!setting.boosterShadowColor,
+						type: 'welcome',
+					},
 				},
-				welcomeText:
-					(await safeResolvePlaceholder(
-						container,
-						newMember,
-						setting.boosterMainTextContent || 'SERVER BOOSTER',
-						statsData,
-						'SERVER BOOSTER',
-					)) || 'SERVER BOOSTER',
-				customUsername:
-					(await safeResolvePlaceholder(
-						container,
-						newMember,
-						setting.boosterSubTextContent || '{username}',
-						statsData,
-						newMember.user.username,
-					)) || newMember.user.username,
-				customFont: setting.boosterMainTextFontFamily || null,
-				fontWeight: setting.boosterMainTextFontWeight || null,
-				welcomeColor: setting.boosterMainTextColor || '#FF73FA',
-				usernameColor: setting.boosterSubTextColor || null,
-				textOffsetY: setting.boosterMainTextYOffset || null,
-				textShadow: !!setting.boosterShadowColor,
-				type: 'welcome',
-			});
+			);
+
+			const result = await container.queueManager.waitFor(
+				job,
+				'kythia-booster-queue',
+			);
+			boosterImage = Buffer.from(result.data);
 		} catch (e) {
 			logger.error(`Failed to generate banner: ${e.message}`, {
 				label: 'booster:guildMemberUpdate:banner',
