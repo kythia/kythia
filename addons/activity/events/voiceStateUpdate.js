@@ -42,7 +42,12 @@ const flushVoiceTime = async (bot, guildId, userId, durationSeconds) => {
 		// All-time counter
 		const [stat, statCreated] = await ActivityStat.firstOrCreateCache(
 			{ guildId, userId },
-			{ totalMessages: '0', totalVoiceTime: durationSeconds.toString() },
+			{
+				totalMessages: '0',
+				totalVoiceTime: durationSeconds.toString(),
+				totalReactions: '0',
+				totalVoiceJoins: '0',
+			},
 		);
 
 		if (!statCreated) {
@@ -56,7 +61,7 @@ const flushVoiceTime = async (bot, guildId, userId, durationSeconds) => {
 		// Daily bucket
 		const [log, logCreated] = await ActivityLog.firstOrCreateCache(
 			{ guildId, userId, date: today },
-			{ messages: '0', voiceTime: durationSeconds.toString() },
+			{ messages: '0', voiceTime: durationSeconds.toString(), reactions: '0' },
 		);
 
 		if (!logCreated) {
@@ -79,6 +84,18 @@ const flushVoiceTime = async (bot, guildId, userId, durationSeconds) => {
 			).toString();
 			hourlyLog.changed('voiceTime', true);
 			await hourlyLog.save();
+		}
+
+		// Achievement check after voice flush
+		const guild = bot.client.guilds.cache.get(guildId);
+		if (guild) {
+			const { checkAndUnlock } = require('../helpers/achievementChecker');
+			checkAndUnlock('voice_flush', {
+				guildId,
+				userId,
+				guild,
+				container: bot.client.container,
+			}).catch(() => null);
 		}
 	} catch (err) {
 		logger.error(
@@ -115,6 +132,63 @@ const startSession = (bot, guildId, userId, key, now) => {
 	}, VOICE_FLUSH_INTERVAL_MS);
 
 	voiceSessions.set(key, { joinedAt: now, intervalId });
+
+	// Increment voice join counter + fire achievement check async
+	(async () => {
+		try {
+			const { models } = bot.client.container;
+			const { ActivityStat, ServerSetting } = models;
+			const serverSetting = await ServerSetting.getCache({ guildId });
+			if (!serverSetting?.activityOn) return;
+
+			const [stat, statCreated] = await ActivityStat.firstOrCreateCache(
+				{ guildId, userId },
+				{
+					totalMessages: '0',
+					totalVoiceTime: '0',
+					totalReactions: '0',
+					totalVoiceJoins: '1',
+				},
+			);
+
+			if (!statCreated) {
+				stat.totalVoiceJoins = (BigInt(stat.totalVoiceJoins) + 1n).toString();
+				stat.changed('totalVoiceJoins', true);
+				await stat.save();
+			}
+
+			const specialFlags = [];
+
+			// First voice join
+			if (statCreated || BigInt(stat.totalVoiceJoins) === 1n) {
+				specialFlags.push('first_voice_join');
+			}
+
+			// Echo chamber: joined a voice channel where nobody else is present
+			const guild = bot.client.guilds.cache.get(guildId);
+			if (guild) {
+				const member = guild.members.cache.get(userId);
+				const channelId = member?.voice?.channelId;
+				if (channelId) {
+					const channel = guild.channels.cache.get(channelId);
+					const humanCount =
+						channel?.members?.filter((m) => !m.user.bot).size ?? 0;
+					if (humanCount <= 1) specialFlags.push('echo_chamber');
+				}
+
+				const { checkAndUnlock } = require('../helpers/achievementChecker');
+				checkAndUnlock('voice_join', {
+					guildId,
+					userId,
+					guild,
+					container: bot.client.container,
+					specialFlags,
+				}).catch(() => null);
+			}
+		} catch {
+			// Non-critical — silent fail
+		}
+	})();
 };
 
 /**

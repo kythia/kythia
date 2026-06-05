@@ -13,7 +13,8 @@ const {
 	SeparatorBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-const { getMarketData } = require('../../helpers/market');
+const { getMarketData, ASSET_IDS } = require('../../helpers/market');
+const { getTopStocksData, getStockData } = require('../../helpers/stock');
 const { getSpotPrice } = require('../../helpers/kyth-amm');
 
 function getChangeEmoji(percent) {
@@ -73,6 +74,7 @@ module.exports = {
 		}
 
 		const marketData = await getMarketData();
+		const topStocksData = await getTopStocksData();
 		const pool = await models.KythLiquidityPool.findByPk(1);
 		const kythSpotPrice = pool ? getSpotPrice(pool) : 0;
 		marketData.kyth = {
@@ -95,7 +97,25 @@ module.exports = {
 		const portfolioSections = [];
 
 		for (const holding of userHoldings) {
-			const currentAssetData = marketData[holding.assetId];
+			const isCrypto =
+				holding.assetId === 'kyth' || ASSET_IDS.includes(holding.assetId);
+			let currentAssetData;
+
+			if (isCrypto) {
+				currentAssetData = marketData[holding.assetId];
+			} else {
+				let stockData = topStocksData[holding.assetId.toUpperCase()];
+				if (!stockData) {
+					stockData = await getStockData(holding.assetId);
+				}
+				if (stockData) {
+					currentAssetData = {
+						usd: stockData.price,
+						usd_24h_change: stockData.changePercent,
+					};
+				}
+			}
+
 			if (!currentAssetData) {
 				portfolioSections.push(
 					`### 💠 ${holding.assetId.toUpperCase()}\n${await t(

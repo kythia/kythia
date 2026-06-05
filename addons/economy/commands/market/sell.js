@@ -16,6 +16,7 @@ const {
 	ASSET_IDS,
 	KYTH_ASSET_ID,
 } = require('../../helpers/market');
+const { getStockData, TOP_STOCKS } = require('../../helpers/stock');
 const {
 	calcSellOutput,
 	getImpactLevel,
@@ -35,12 +36,10 @@ module.exports = {
 				option
 					.setName('asset')
 					.setDescription(
-						'The symbol of the asset you want to sell (e.g., BTC, ETH, KYTH)',
+						'The symbol of the asset you want to sell (e.g., BTC, ETH, AAPL)',
 					)
 					.setRequired(true)
-					.addChoices(
-						...ASSET_IDS.map((id) => ({ name: id.toUpperCase(), value: id })),
-					),
+					.setAutocomplete(true),
 			)
 			.addNumberOption((option) =>
 				option
@@ -51,6 +50,24 @@ module.exports = {
 					.setRequired(true)
 					.setMinValue(0.000001),
 			),
+
+	async autocomplete(interaction) {
+		const focusedValue = interaction.options.getFocused().toLowerCase();
+		const combined = [
+			...ASSET_IDS.map((id) => id.toUpperCase()),
+			...TOP_STOCKS,
+		];
+
+		const filtered = combined.filter((choice) =>
+			choice.toLowerCase().includes(focusedValue),
+		);
+
+		await interaction.respond(
+			filtered
+				.slice(0, 25)
+				.map((choice) => ({ name: choice, value: choice.toLowerCase() })),
+		);
+	},
 
 	async execute(interaction, container) {
 		const { t, models, kythiaConfig, helpers, logger } = container;
@@ -287,7 +304,7 @@ module.exports = {
 			return;
 		}
 
-		// ─── Standard CoinGecko Path ───────────────────────────────────────────
+		// ─── Standard CoinGecko & Stock Path ───────────────────────────────────────────
 		const holding = await MarketPortfolio.getCache({
 			userId: interaction.user.id,
 			assetId,
@@ -308,23 +325,43 @@ module.exports = {
 			});
 		}
 
-		const marketData = await getMarketData();
-		const assetData = marketData[assetId];
-		if (!assetData) {
-			const msg = await t(
-				interaction,
-				'economy.market.sell.asset.not.found.desc',
-			);
-			const components = await simpleContainer(interaction, msg, {
-				color: kythiaConfig.bot.color,
-			});
-			return interaction.editReply({
-				components,
-				flags: MessageFlags.IsComponentsV2,
-			});
-		}
+		const isCrypto = ASSET_IDS.includes(assetId);
+		let currentPrice;
 
-		const currentPrice = assetData.usd;
+		if (isCrypto) {
+			const marketData = await getMarketData();
+			const assetData = marketData[assetId];
+			if (!assetData) {
+				const msg = await t(
+					interaction,
+					'economy.market.sell.asset.not.found.desc',
+				);
+				const components = await simpleContainer(interaction, msg, {
+					color: kythiaConfig.bot.color,
+				});
+				return interaction.editReply({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
+			}
+			currentPrice = assetData.usd;
+		} else {
+			const stockData = await getStockData(assetId);
+			if (!stockData) {
+				const msg = await t(
+					interaction,
+					'economy.market.sell.asset.not.found.desc',
+				);
+				const components = await simpleContainer(interaction, msg, {
+					color: kythiaConfig.bot.color,
+				});
+				return interaction.editReply({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
+			}
+			currentPrice = stockData.price;
+		}
 		const grossReceived = sellQuantity * currentPrice;
 		const feeAmount = grossReceived * 0.02;
 		const totalReceived = grossReceived - feeAmount;

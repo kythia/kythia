@@ -20,9 +20,17 @@ const {
 	getMarketData,
 	ASSET_IDS,
 	getChartBuffer,
+	renderChartFromData,
 	KYTH_ASSET_ID,
 } = require('../../helpers/market');
+const {
+	getStockData,
+	getStockChartBuffer,
+	getTopStocksData,
+	TOP_STOCKS,
+} = require('../../helpers/stock');
 const { formatPoolStats, getSpotPrice } = require('../../helpers/kyth-amm');
+const { Op } = require('sequelize');
 
 function formatMarketTable(rows) {
 	return [
@@ -50,13 +58,43 @@ module.exports = {
 				option
 					.setName('asset')
 					.setDescription(
-						'The symbol of the asset to view, or leave empty for all',
+						'Symbol of the asset to view (e.g. bitcoin, AAPL), or leave empty for all',
 					)
 					.setRequired(false)
+					.setAutocomplete(true),
+			)
+			.addStringOption((option) =>
+				option
+					.setName('timeframe')
+					.setDescription('The time range for the chart (default: 7 Days)')
+					.setRequired(false)
 					.addChoices(
-						...ASSET_IDS.map((id) => ({ name: id.toUpperCase(), value: id })),
+						{ name: '1 Day', value: '1' },
+						{ name: '7 Days', value: '7' },
+						{ name: '14 Days', value: '14' },
+						{ name: '30 Days', value: '30' },
+						{ name: '90 Days', value: '90' },
+						{ name: '365 Days', value: '365' },
 					),
 			),
+
+	async autocomplete(interaction) {
+		const focusedValue = interaction.options.getFocused().toLowerCase();
+		const combined = [
+			...ASSET_IDS.map((id) => id.toUpperCase()),
+			...TOP_STOCKS,
+		];
+
+		const filtered = combined.filter((choice) =>
+			choice.toLowerCase().includes(focusedValue),
+		);
+
+		await interaction.respond(
+			filtered
+				.slice(0, 25)
+				.map((choice) => ({ name: choice, value: choice.toLowerCase() })),
+		);
+	},
 
 	async execute(interaction, container) {
 		const { t, models, kythiaConfig, helpers } = container;
@@ -80,6 +118,7 @@ module.exports = {
 		}
 
 		const assetId = interaction.options.getString('asset');
+		const timeframe = interaction.options.getString('timeframe') || '7';
 		const files = [];
 
 		// ─── KYTH AMM View ─────────────────────────────────────────────────────────
@@ -127,6 +166,74 @@ module.exports = {
 					? `\n> ⚠️ **K Drift:** ${stats.kDriftPct}% (admin recalc recommended)`
 					: '';
 
+			const dataPoints = [];
+			const daysNum = parseInt(timeframe, 10) || 7;
+			const startDate = new Date();
+			startDate.setDate(startDate.getDate() - daysNum);
+
+			const allTrades = await MarketTransaction.findAll({
+				where: {
+					assetId: 'kyth',
+					createdAt: { [Op.gte]: startDate },
+				},
+				order: [['createdAt', 'ASC']],
+			});
+
+			if (allTrades.length > 0) {
+				let binSizeMs = 1000 * 60 * 60 * 24;
+				if (daysNum === 1) binSizeMs = 1000 * 60 * 30;
+				else if (daysNum <= 14) binSizeMs = 1000 * 60 * 60 * 4;
+				else if (daysNum === 365) binSizeMs = 1000 * 60 * 60 * 24 * 4;
+
+				let currentBinStart =
+					Math.floor(allTrades[0].createdAt.getTime() / binSizeMs) * binSizeMs;
+				let currentBin = [];
+
+				for (const trade of allTrades) {
+					const tradeTime = trade.createdAt.getTime();
+					if (tradeTime < currentBinStart + binSizeMs) {
+						currentBin.push(trade.price);
+					} else {
+						if (currentBin.length > 0) {
+							dataPoints.push({
+								x: currentBinStart,
+								o: currentBin[0],
+								h: Math.max(...currentBin),
+								l: Math.min(...currentBin),
+								c: currentBin[currentBin.length - 1],
+							});
+						}
+						currentBinStart = Math.floor(tradeTime / binSizeMs) * binSizeMs;
+						currentBin = [trade.price];
+					}
+				}
+				if (currentBin.length > 0) {
+					dataPoints.push({
+						x: currentBinStart,
+						o: currentBin[0],
+						h: Math.max(...currentBin),
+						l: Math.min(...currentBin),
+						c: currentBin[currentBin.length - 1],
+					});
+				}
+			}
+
+			let mediaUrl = null;
+			if (dataPoints.length > 0) {
+				const chartBuffer = await renderChartFromData(
+					kythiaConfig,
+					'kyth',
+					dataPoints,
+				);
+				if (chartBuffer) {
+					const attachment = new AttachmentBuilder(chartBuffer, {
+						name: 'kyth-chart.png',
+					});
+					files.push(attachment);
+					mediaUrl = 'attachment://kyth-chart.png';
+				}
+			}
+
 			const description = [
 				`## 💎 KYTH Coin — AMM Market Data`,
 				`*Powered by Kythia's on-chain Automated Market Maker (X×Y=K)*`,
@@ -161,7 +268,23 @@ module.exports = {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(description),
-				)
+				);
+
+			if (mediaUrl) {
+				viewContainer
+					.addSeparatorComponents(
+						new SeparatorBuilder()
+							.setSpacing(SeparatorSpacingSize.Small)
+							.setDivider(true),
+					)
+					.addMediaGalleryComponents(
+						new MediaGalleryBuilder().addItems([
+							new MediaGalleryItemBuilder().setURL(mediaUrl),
+						]),
+					);
+			}
+
+			viewContainer
 				.addSeparatorComponents(
 					new SeparatorBuilder()
 						.setSpacing(SeparatorSpacingSize.Small)
@@ -177,6 +300,7 @@ module.exports = {
 
 			return interaction.editReply({
 				components: [viewContainer],
+				files: files,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
@@ -184,34 +308,38 @@ module.exports = {
 		const marketData = await getMarketData();
 
 		if (assetId) {
-			const data = marketData[assetId];
-			if (!data) {
-				const msg = await t(
-					interaction,
-					'economy.market.view.asset.not.found.desc',
-					{ asset: assetId.toUpperCase() },
-				);
-				const components = await simpleContainer(interaction, msg, {
-					color: 'Red',
-				});
-				return interaction.editReply({
-					components,
-					flags: MessageFlags.IsComponentsV2,
-				});
+			const isCrypto = ASSET_IDS.includes(assetId);
+			// const isStock = !isCrypto;
+
+			let data, price, percent, emoji, assetName;
+
+			if (isCrypto) {
+				data = marketData[assetId];
+				if (!data) return assetNotFound(interaction, assetId, t, helpers);
+				price = data.usd;
+				percent = data.usd_24h_change;
+				assetName = assetId.toUpperCase();
+			} else {
+				data = await getStockData(assetId);
+				if (!data) return assetNotFound(interaction, assetId, t, helpers);
+				price = data.price;
+				percent = data.changePercent;
+				assetName = data.symbol;
 			}
 
-			const percent = data.usd_24h_change.toFixed(2);
-			const emoji = getChangeEmoji(data.usd_24h_change);
+			emoji = getChangeEmoji(percent);
 
 			let description = `## ${await t(
 				interaction,
 				'economy.market.view.chart.title',
 				{
-					asset: assetId.toUpperCase(),
+					asset: assetName,
+					timeframe: timeframe,
 				},
 			)}\n\n`;
-			description += `**${await t(interaction, 'economy.market.view.price.label')}:** $${data.usd.toLocaleString()}\n`;
-			description += `**${await t(interaction, 'economy.market.view.24h.change.label')}:** ${emoji} ${percent}%\n`;
+
+			description += `**${await t(interaction, 'economy.market.view.price.label')}:** $${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n`;
+			description += `**${await t(interaction, 'economy.market.view.24h.change.label')}:** ${emoji} ${percent.toFixed(2)}%\n`;
 
 			const openOrders = await MarketOrder.getAllCache({
 				where: {
@@ -227,13 +355,16 @@ module.exports = {
 			if (openOrders.length > 0) {
 				const orderSummary = openOrders
 					.map((order) => {
-						return `- **${order.side.toUpperCase()} ${order.quantity} ${order.assetId.toUpperCase()}** at $${order.price} (${order.type})`;
+						return `- **${order.side.toUpperCase()} ${order.quantity} ${assetName}** at $${order.price} (${order.type})`;
 					})
 					.join('\n');
 				description += `\n**${await t(interaction, 'economy.market.view.open.orders.label')}:**\n${orderSummary}`;
 			}
 
-			const chartBuffer = await getChartBuffer(kythiaConfig, assetId);
+			const chartBuffer = isCrypto
+				? await getChartBuffer(kythiaConfig, assetId, timeframe)
+				: await getStockChartBuffer(kythiaConfig, assetId, timeframe);
+
 			let mediaUrl = null;
 			if (chartBuffer) {
 				const attachment = new AttachmentBuilder(chartBuffer, {
@@ -301,11 +432,30 @@ module.exports = {
 
 				return `${symbol}| ${price}| ${change}`;
 			});
-			const prettyTable = formatMarketTable(assetRows);
+
+			const topStocksData = await getTopStocksData();
+			const stockRows = TOP_STOCKS.map((id) => {
+				const data = topStocksData[id];
+				if (!data) return null;
+				const symbol = data.symbol.padEnd(8);
+				const price = `$${data.price.toLocaleString('en-US', {
+					minimumFractionDigits: 2,
+					maximumFractionDigits: 2,
+				})}`.padEnd(15);
+				const percent = data.changePercent.toFixed(2);
+				const emoji = getChangeEmoji(data.changePercent);
+				const change = `${emoji} ${percent}%`;
+
+				return `${symbol}| ${price}| ${change}`;
+			}).filter(Boolean);
+
+			const cryptoTable = formatMarketTable(assetRows);
+			const stockTable = formatMarketTable(stockRows);
 
 			const msg =
 				`## ${await t(interaction, 'economy.market.view.all.title')}\n` +
-				prettyTable;
+				`**Top Crypto**\n${cryptoTable}\n` +
+				`**Top Stocks**\n${stockTable}`;
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -317,3 +467,16 @@ module.exports = {
 		}
 	},
 };
+
+async function assetNotFound(interaction, assetId, t, helpers) {
+	const msg = await t(interaction, 'economy.market.view.asset.not.found.desc', {
+		asset: assetId.toUpperCase(),
+	});
+	const components = await helpers.discord.simpleContainer(interaction, msg, {
+		color: 'Red',
+	});
+	return interaction.editReply({
+		components,
+		flags: MessageFlags.IsComponentsV2,
+	});
+}

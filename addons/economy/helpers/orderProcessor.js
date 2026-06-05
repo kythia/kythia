@@ -7,7 +7,9 @@
  */
 
 const { toBigIntSafe } = require('./bigint');
-const { getMarketData } = require('./market');
+const { getMarketData, ASSET_IDS } = require('./market');
+const { getStockData } = require('./stock');
+const { getSpotPrice } = require('./kyth-amm');
 
 async function processOrders(bot) {
 	const { models, logger } = bot.container;
@@ -16,14 +18,56 @@ async function processOrders(bot) {
 
 	logger.info(`Processing market orders...`, { label: 'economy' });
 	try {
-		const marketData = await getMarketData();
+		const marketData = (await getMarketData()) || {};
 		const openOrders = await MarketOrder.getAllCache({ status: 'open' });
 
-		for (const order of openOrders) {
-			const assetData = marketData[order.assetId];
-			if (!assetData) continue;
+		const pool = await models.KythLiquidityPool.getCache({ id: 1 });
+		const kythSpotPrice = pool ? getSpotPrice(pool) : 0;
+		marketData.kyth = { usd: kythSpotPrice };
 
-			const currentPrice = assetData.usd;
+		// Pre-fetch all non-crypto unique stocks to avoid rate limiting or multiple requests
+		const stockSymbols = [
+			...new Set(
+				openOrders
+					.filter((o) => !ASSET_IDS.includes(o.assetId))
+					.map((o) => o.assetId.toUpperCase()),
+			),
+		];
+
+		const stocksData = {};
+		if (stockSymbols.length > 0) {
+			try {
+				const { default: yahooFinance } = require('yahoo-finance2');
+				const quotes = await yahooFinance.quote(stockSymbols);
+				for (const q of quotes) {
+					stocksData[q.symbol.toUpperCase()] = q.regularMarketPrice;
+				}
+			} catch (e) {
+				logger.warn(
+					`Failed to fetch stock quotes for order processor: ${e.message}`,
+					{ label: 'economy' },
+				);
+			}
+		}
+
+		for (const order of openOrders) {
+			let currentPrice;
+			const isCrypto = ASSET_IDS.includes(order.assetId);
+
+			if (isCrypto) {
+				const assetData = marketData[order.assetId];
+				if (!assetData) continue;
+				currentPrice = assetData.usd;
+			} else {
+				currentPrice = stocksData[order.assetId.toUpperCase()];
+				if (!currentPrice) {
+					// Fallback to fetch individually if yahooFinance.quote failed or missed it
+					const stockData = await getStockData(order.assetId);
+					if (!stockData) continue;
+					currentPrice = stockData.price;
+					stocksData[order.assetId.toUpperCase()] = currentPrice;
+				}
+			}
 			let shouldExecute = false;
 
 			if (

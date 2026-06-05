@@ -826,7 +826,7 @@
 					}
 				},
 				"chart": {
-					"title": "📈 7-Day Chart for {asset}"
+					"title": "📈 {timeframe} Day Chart for {asset}"
 				},
 				"price": {
 					"label": "Price (USD)"

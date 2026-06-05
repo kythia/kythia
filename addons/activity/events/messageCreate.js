@@ -35,7 +35,12 @@ module.exports = async (bot, message) => {
 		// All-time counter
 		const [stat, statCreated] = await ActivityStat.firstOrCreateCache(
 			{ guildId, userId },
-			{ totalMessages: '1', totalVoiceTime: '0' },
+			{
+				totalMessages: '1',
+				totalVoiceTime: '0',
+				totalReactions: '0',
+				totalVoiceJoins: '0',
+			},
 		);
 
 		if (!statCreated) {
@@ -47,7 +52,7 @@ module.exports = async (bot, message) => {
 		// Daily bucket
 		const [log, logCreated] = await ActivityLog.firstOrCreateCache(
 			{ guildId, userId, date: today },
-			{ messages: '1', voiceTime: '0' },
+			{ messages: '1', voiceTime: '0', reactions: '0' },
 		);
 
 		if (!logCreated) {
@@ -67,6 +72,50 @@ module.exports = async (bot, message) => {
 			hourlyLog.changed('messages', true);
 			await hourlyLog.save();
 		}
+
+		// ── Achievement checks ──────────────────────────────────────────
+		const { checkAndUnlock } = require('../helpers/achievementChecker');
+
+		// Detect special flags
+		const specialFlags = [];
+
+		// First message ever in this guild
+		if (statCreated || BigInt(stat.totalMessages) === 1n) {
+			specialFlags.push('first_message');
+		}
+
+		// Night owl: message sent at exactly 03:xx UTC
+		if (now.getUTCHours() === 3) {
+			specialFlags.push('night_owl');
+		}
+
+		// Wall of text: message longer than 1000 characters
+		if (message.content?.length > 1000) {
+			specialFlags.push('wall_of_text');
+		}
+
+		// Precision typer: message exactly 200 characters
+		if (message.content?.length === 200) {
+			specialFlags.push('precision_typer');
+		}
+
+		// Talking to myself: reply to own message
+		if (
+			message.reference?.messageId &&
+			message.channel.messages?.cache.get(message.reference.messageId)?.author
+				?.id === userId
+		) {
+			specialFlags.push('talking_to_myself');
+		}
+
+		// Fire-and-forget achievement check (non-blocking)
+		checkAndUnlock('message', {
+			guildId,
+			userId,
+			guild: message.guild,
+			container: bot.client.container,
+			specialFlags,
+		}).catch(() => null);
 	} catch (err) {
 		bot.client.container.logger.error(
 			`Failed to track message activity for ${userId} in ${guildId}: ${err.message}`,

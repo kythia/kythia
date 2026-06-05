@@ -37,6 +37,284 @@
 					}
 				}
 			}
+		},
+		"achievement": {
+			"messages_250": {
+				"name": "250 Messages Sent",
+				"desc": "Send 250 messages total."
+			},
+			"messages_500": {
+				"name": "500 Messages Sent",
+				"desc": "Send 500 messages total."
+			},
+			"messages_1000": {
+				"name": "1,000 Messages Sent",
+				"desc": "Send 1,000 messages total."
+			},
+			"messages_2500": {
+				"name": "2,500 Messages Sent",
+				"desc": "Send 2,500 messages total."
+			},
+			"messages_5000": {
+				"name": "5,000 Messages Sent",
+				"desc": "Send 5,000 messages total."
+			},
+			"messages_10000": {
+				"name": "10,000 Messages Sent",
+				"desc": "Send 10,000 messages total."
+			},
+			"messages_25000": {
+				"name": "25,000 Messages Sent",
+				"desc": "Send 25,000 messages total."
+			},
+			"messages_50000": {
+				"name": "50,000 Messages Sent",
+				"desc": "Send 50,000 messages total."
+			},
+			"messages_100000": {
+				"name": "100,000 Messages Sent",
+				"desc": "Send 100,000 messages total."
+			},
+			"messages_250000": {
+				"name": "250,000 Messages Sent",
+				"desc": "Send 250,000 messages total."
+			},
+			"messages_daily_100": {
+				"name": "100 Messages in a Day",
+				"desc": "Send 100 messages in a day."
+			},
+			"messages_daily_250": {
+				"name": "250 Messages in a Day",
+				"desc": "Send 250 messages in a day."
+			},
+			"messages_daily_500": {
+				"name": "500 Messages in a Day",
+				"desc": "Send 500 messages in a day."
+			},
+			"messages_daily_1000": {
+				"name": "1,000 Messages in a Day",
+				"desc": "Send 1,000 messages in a day."
+			},
+			"messages_daily_2500": {
+				"name": "2,500 Messages in a Day",
+				"desc": "Send 2,500 messages in a day."
+			},
+			"messages_daily_5000": {
+				"name": "5,000 Messages in a Day",
+				"desc": "Send 5,000 messages in a day."
+			},
+			"messages_daily_10000": {
+				"name": "10,000 Messages in a Day",
+				"desc": "Send 10,000 messages in a day."
+			},
+			"messages_weekly_100": {
+				"name": "100 Messages in a Week",
+				"desc": "Send 100 messages in a week."
+			},
+			"messages_weekly_500": {
+				"name": "500 Messages in a Week",
+				"desc": "Send 500 messages in a week."
+			},
+			"messages_weekly_1000": {
+				"name": "1,000 Messages in a Week",
+				"desc": "Send 1,000 messages in a week."
+			},
+			"messages_weekly_2500": {
+				"name": "2,500 Messages in a Week",
+				"desc": "Send 2,500 messages in a week."
+			},
+			"messages_weekly_5000": {
+				"name": "5,000 Messages in a Week",
+				"desc": "Send 5,000 messages in a week."
+			},
+			"messages_weekly_10000": {
+				"name": "10,000 Messages in a Week",
+				"desc": "Send 10,000 messages in a week."
+			},
+			"messages_weekly_15000": {
+				"name": "15,000 Messages in a Week",
+				"desc": "Send 15,000 messages in a week."
+			},
+			"voice_5h": {
+				"name": "5 Hours in Voice Chat",
+				"desc": "Spend 5 hours in voice chat."
+			},
+			"voice_10h": {
+				"name": "10 Hours in Voice Chat",
+				"desc": "Spend 10 hours in voice chat."
+			},
+			"voice_24h": {
+				"name": "24 Hours in Voice Chat",
+				"desc": "Spend 24 hours in voice chat."
+			},
+			"voice_48h": {
+				"name": "48 Hours in Voice Chat",
+				"desc": "Spend 48 hours in voice chat."
+			},
+			"voice_72h": {
+				"name": "72 Hours in Voice Chat",
+				"desc": "Spend 72 hours in voice chat."
+			},
+			"voice_100h": {
+				"name": "100 Hours in Voice Chat",
+				"desc": "Spend 100 hours in voice chat."
+			},
+			"voice_250h": {
+				"name": "250 Hours in Voice Chat",
+				"desc": "Spend 250 hours in voice chat."
+			},
+			"voice_500h": {
+				"name": "500 Hours in Voice Chat",
+				"desc": "Spend 500 hours in voice chat."
+			},
+			"voice_1000h": {
+				"name": "1,000 Hours in Voice Chat",
+				"desc": "Spend 1,000 hours in voice chat."
+			},
+			"voice_2500h": {
+				"name": "2,500 Hours in Voice Chat",
+				"desc": "Spend 2,500 hours in voice chat."
+			},
+			"voice_joins_5": {
+				"name": "Joined Voice 5 Times",
+				"desc": "Join voice channels 5 times."
+			},
+			"voice_joins_25": {
+				"name": "Joined Voice 25 Times",
+				"desc": "Join voice channels 25 times."
+			},
+			"voice_joins_100": {
+				"name": "Joined Voice 100 Times",
+				"desc": "Join voice channels 100 times."
+			},
+			"voice_joins_250": {
+				"name": "Joined Voice 250 Times",
+				"desc": "Join voice channels 250 times."
+			},
+			"voice_joins_500": {
+				"name": "Joined Voice 500 Times",
+				"desc": "Join voice channels 500 times."
+			},
+			"voice_joins_1000": {
+				"name": "Joined Voice 1,000 Times",
+				"desc": "Join voice channels 1,000 times."
+			},
+			"voice_joins_5000": {
+				"name": "Joined Voice 5,000 Times",
+				"desc": "Join voice channels 5,000 times."
+			},
+			"reactions_25": {
+				"name": "Reacted 25 Times",
+				"desc": "Add 25 reactions."
+			},
+			"reactions_100": {
+				"name": "Reacted 100 Times",
+				"desc": "Add 100 reactions."
+			},
+			"reactions_500": {
+				"name": "Reacted 500 Times",
+				"desc": "Add 500 reactions."
+			},
+			"reactions_1000": {
+				"name": "Reacted 1,000 Times",
+				"desc": "Add 1,000 reactions."
+			},
+			"reactions_2500": {
+				"name": "Reacted 2,500 Times",
+				"desc": "Add 2,500 reactions."
+			},
+			"reactions_5000": {
+				"name": "Reacted 5,000 Times",
+				"desc": "Add 5,000 reactions."
+			},
+			"reactions_10000": {
+				"name": "Reacted 10,000 Times",
+				"desc": "Add 10,000 reactions."
+			},
+			"server_age_1w": {
+				"name": "In Server for 1 Week",
+				"desc": "One week in — you survived! Let's see how long you last."
+			},
+			"server_age_1m": {
+				"name": "In Server for 1 Month",
+				"desc": "One month down! You're part of the furniture now."
+			},
+			"server_age_3m": {
+				"name": "In Server for 3 Months",
+				"desc": "Three months? You know too much to leave."
+			},
+			"server_age_6m": {
+				"name": "In Server for 6 Months",
+				"desc": "Half a year! At this point you deserve a loyalty card."
+			},
+			"server_age_1y": {
+				"name": "In Server for 1 Year",
+				"desc": "One year! You didn't rage-quit — impressive!"
+			},
+			"server_age_2y": {
+				"name": "In Server for 2 Years",
+				"desc": "Two years! You're still here… voluntarily? Wild."
+			},
+			"server_age_3y": {
+				"name": "In Server for 3 Years",
+				"desc": "Three years strong! You're not just a member anymore."
+			},
+			"server_age_4y": {
+				"name": "In Server for 4 Years",
+				"desc": "Four years! You've seen more drama than the mods."
+			},
+			"server_age_5y": {
+				"name": "In Server for 5 Years",
+				"desc": "Half a decade with us — incredible!"
+			},
+			"collector_10": {
+				"name": "Achievement Collector I",
+				"desc": "Unlock 10 achievements."
+			},
+			"collector_25": {
+				"name": "Achievement Collector II",
+				"desc": "Unlock 25 achievements."
+			},
+			"collector_50": {
+				"name": "Achievement Collector III",
+				"desc": "Unlock 50 achievements."
+			},
+			"collector_100": {
+				"name": "Achievement Collector IV",
+				"desc": "Unlock 100 achievements."
+			},
+			"first_message": {
+				"name": "First Message",
+				"desc": "Send your first message in the server."
+			},
+			"first_voice_join": {
+				"name": "First Voice Channel Join",
+				"desc": "Join your first voice channel."
+			},
+			"night_owl": {
+				"name": "Night Owl",
+				"desc": "Send a message at 03:00 AM (UTC)."
+			},
+			"wall_of_text": {
+				"name": "Wall of Text",
+				"desc": "Send a message longer than 1,000 characters."
+			},
+			"precision_typer": {
+				"name": "Precision Typer",
+				"desc": "Send a message that is exactly 200 characters long."
+			},
+			"talking_to_myself": {
+				"name": "Talking to Myself",
+				"desc": "Reply to your own message."
+			},
+			"echo_chamber": {
+				"name": "Echo Chamber",
+				"desc": "Join a voice channel where nobody else is present."
+			},
+			"server_booster": {
+				"name": "Server Booster",
+				"desc": "Boost magic deployed — you're a legend!"
+			}
 		}
 	}
 }

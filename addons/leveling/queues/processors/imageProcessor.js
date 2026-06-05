@@ -11,7 +11,7 @@
  * Canvas operations here will NOT block the event loop.
  */
 
-const { profileImage } = require('kythia-arts');
+const { profileImage, achievementBanner } = require('kythia-arts');
 
 /**
  * @param {import('bullmq').Job} job
@@ -23,6 +23,11 @@ module.exports = async (job) => {
 		const buffer = await profileImage(userId, options);
 		// BullMQ serializes the Buffer to { type: 'Buffer', data: [...] }
 		// — reconstruct on the main thread with Buffer.from(result.data)
+		return buffer;
+	}
+
+	if (type === 'achievementBanner') {
+		const buffer = await achievementBanner(userId, options);
 		return buffer;
 	}
 

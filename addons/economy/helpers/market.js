@@ -7,6 +7,7 @@
  */
 
 const axios = require('axios');
+const { renderChartFromData } = require('./chart');
 
 let marketCache = {
 	data: null,
@@ -15,111 +16,63 @@ let marketCache = {
 
 const CACHE_DURATION_MS = 10 * 60 * 1000; // 10 minutes
 
-const ASSET_IDS = ['bitcoin', 'ethereum', 'solana', 'dogecoin', 'kyth'];
+const ASSET_IDS = [
+	'kyth',
+	'bitcoin',
+	'ethereum',
+	'solana',
+	'dogecoin',
+	'monero',
+	'tether',
+	'binancecoin',
+	'ripple',
+	'pax-gold',
+];
 
 async function getMarketData() {
 	const now = Date.now();
 	if (marketCache.data && now - marketCache.timestamp < CACHE_DURATION_MS) {
 		return marketCache.data;
 	}
-	// Fetch data baru dari API
-	const response = await axios.get(
-		'https://api.coingecko.com/api/v3/simple/price',
-		{
-			params: {
-				ids: ASSET_IDS.join(','),
-				vs_currencies: 'usd',
-				include_24hr_change: 'true',
+	try {
+		const response = await axios.get(
+			'https://api.coingecko.com/api/v3/simple/price',
+			{
+				params: {
+					ids: ASSET_IDS.join(','),
+					vs_currencies: 'usd',
+					include_24hr_change: 'true',
+				},
 			},
-		},
-	);
-	marketCache = {
-		data: response.data,
-		timestamp: now,
-	};
-	return response.data;
+		);
+		marketCache = {
+			data: response.data,
+			timestamp: now,
+		};
+		return response.data;
+	} catch (_e) {
+		return null;
+	}
 }
-async function getChartBuffer(config, assetId) {
+
+async function getChartBuffer(config, assetId, days = '7') {
 	try {
 		const historyResponse = await axios.get(
-			`https://api.coingecko.com/api/v3/coins/${assetId}/market_chart`,
+			`https://api.coingecko.com/api/v3/coins/${assetId}/ohlc`,
 			{
-				params: { vs_currency: 'usd', days: '7' },
-			},
-		);
-		const prices = historyResponse.data.prices;
-		const dailyPrices = prices.filter((_, index) => index % 24 === 0);
-
-		const labels = dailyPrices.map((p) =>
-			new Date(p[0]).toLocaleDateString('en-US', {
-				month: 'short',
-				day: 'numeric',
-			}),
-		);
-		const dataPoints = dailyPrices.map((p) => p[1]);
-
-		const hexColor = config.bot.color || '#4bc0c0';
-
-		function hexToRgba(hex, alpha = 1) {
-			let c = hex.replace('#', '');
-			if (c.length === 3)
-				c = c
-					.split('')
-					.map((x) => x + x)
-					.join('');
-			const num = parseInt(c, 16);
-			const r = (num >> 16) & 255;
-			const g = (num >> 8) & 255;
-			const b = num & 255;
-			return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-		}
-
-		const chartConfig = {
-			type: 'line',
-			data: {
-				labels: labels,
-				datasets: [
-					{
-						label: assetId.toUpperCase(),
-						data: dataPoints,
-						fill: true,
-						backgroundColor: hexToRgba(hexColor, 0.2),
-						borderColor: hexColor,
-						borderWidth: 2,
-						pointRadius: 1,
-					},
-				],
-			},
-			options: {
-				plugins: {
-					legend: { display: false },
-				},
-				scales: {
-					y: {
-						ticks: { color: 'white' },
-					},
-					x: {
-						ticks: { color: 'white' },
-					},
-				},
-			},
-		};
-		// --- SELESAI PERUBAHAN ---
-
-		const response = await axios.post(
-			'https://quickchart.io/chart',
-			{
-				chart: chartConfig,
-				backgroundColor: 'rgb(47,49,54)',
-				width: 550, // Sedikit lebih kecil biar pas di embed
-				height: 350,
-			},
-			{
-				responseType: 'arraybuffer',
+				params: { vs_currency: 'usd', days: days },
 			},
 		);
 
-		return response.data;
+		const dataPoints = historyResponse.data.map((p) => ({
+			x: p[0],
+			o: p[1],
+			h: p[2],
+			l: p[3],
+			c: p[4],
+		}));
+
+		return await renderChartFromData(config, assetId, dataPoints);
 	} catch (_e) {
 		return null;
 	}

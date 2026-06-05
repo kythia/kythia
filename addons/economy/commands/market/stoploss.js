@@ -7,6 +7,7 @@
  */
 const { MessageFlags } = require('discord.js');
 const { ASSET_IDS } = require('../../helpers/market');
+const { TOP_STOCKS } = require('../../helpers/stock');
 
 module.exports = {
 	subcommand: true,
@@ -21,9 +22,7 @@ module.exports = {
 					.setName('asset')
 					.setDescription('The symbol of the asset')
 					.setRequired(true)
-					.addChoices(
-						...ASSET_IDS.map((id) => ({ name: id.toUpperCase(), value: id })),
-					),
+					.setAutocomplete(true),
 			)
 			.addNumberOption((option) =>
 				option
@@ -40,6 +39,24 @@ module.exports = {
 					.setMinValue(0.01),
 			),
 
+	async autocomplete(interaction) {
+		const focusedValue = interaction.options.getFocused().toLowerCase();
+		const combined = [
+			...ASSET_IDS.map((id) => id.toUpperCase()),
+			...TOP_STOCKS,
+		];
+
+		const filtered = combined.filter((choice) =>
+			choice.toLowerCase().includes(focusedValue),
+		);
+
+		await interaction.respond(
+			filtered
+				.slice(0, 25)
+				.map((choice) => ({ name: choice, value: choice.toLowerCase() })),
+		);
+	},
+
 	async execute(interaction, container) {
 		const { t, models, kythiaConfig, helpers, logger } = container;
 		const { KythiaUser, MarketPortfolio, MarketOrder } = models;
@@ -50,6 +67,37 @@ module.exports = {
 		const assetId = interaction.options.getString('asset');
 		const quantity = interaction.options.getNumber('quantity');
 		const price = interaction.options.getNumber('price');
+
+		if (assetId === 'kyth') {
+			const components = await simpleContainer(
+				interaction,
+				'## ❌ Unsupported Asset\nStop-loss orders are **not supported** for the `KYTH` token due to the real-time Automated Market Maker mechanics. Please use `/eco market sell` directly.',
+				{ color: 'Red' },
+			);
+			return interaction.editReply({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+			});
+		}
+
+		const isCrypto = ASSET_IDS.includes(assetId);
+		if (!isCrypto) {
+			const { getStockData } = require('../../helpers/stock');
+			const stockData = await getStockData(assetId);
+			if (!stockData) {
+				const msg = await t(
+					interaction,
+					'economy.market.buy.asset.not.found.desc',
+				);
+				const components = await simpleContainer(interaction, msg, {
+					color: kythiaConfig.bot.color,
+				});
+				return interaction.editReply({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
+			}
+		}
 
 		const user = await KythiaUser.getCache({ userId: interaction.user.id });
 		if (!user) {
