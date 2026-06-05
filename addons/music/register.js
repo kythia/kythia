@@ -82,10 +82,9 @@ module.exports = {
 					restoredCount++;
 				} catch (e) {
 					logger.warn(
-						`Failed to restore ${session.guildId}: ${e.message}. Removing from DB.`,
+						`Failed to restore ${session.guildId}: ${e.message}. Skipping...`,
 						{ label: '24 7 resurrector' },
 					);
-					await session.destroy();
 				}
 			}
 			logger.info(

@@ -132,35 +132,63 @@ module.exports = {
 
 		const username = interaction.client.user.username;
 
-		const uptime = container.shutdownManager.getMasterUptime();
-		const memory = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
+		const uptime = container.shutdownManager?.getMasterUptime() ?? '0s';
+		let totalMemory = process.memoryUsage().rss;
 		let guilds = client.guilds.cache.size;
 		let users = client.guilds.cache.reduce(
-			(acc, guild) => acc + guild.memberCount,
+			(acc, guild) => acc + (guild.memberCount || 0),
 			0,
 		);
 
 		let shardStatusSection = '';
 		if (client.shard) {
-			const shardInfo = await client.shard.broadcastEval((c) => ({
-				id: c.shard.ids[0],
-				ping: Math.round(c.ws.ping),
-				guilds: c.guilds.cache.size,
-				members: c.guilds.cache.reduce(
-					(acc, guild) => acc + guild.memberCount,
-					0,
-				),
-			}));
+			const shardInfo = await client.shard.broadcastEval((c) => {
+				let localCacheStats = { redisHits: 0, mapHits: 0, misses: 0 };
+				try {
+					const sModels = c.container?.sequelize?.models ?? c.container?.models;
+					const anyModelKey = sModels ? Object.keys(sModels)[0] : undefined;
+					const modelCls = anyModelKey ? sModels[anyModelKey] : null;
+					if (modelCls && typeof modelCls.getGlobalCacheStats === 'function') {
+						localCacheStats = modelCls.getGlobalCacheStats(sModels);
+					}
+				} catch (e) {}
+
+				return {
+					id: c.shard.ids[0],
+					ping: Math.round(c.ws.ping),
+					guilds: c.guilds.cache.size,
+					members: c.guilds.cache.reduce(
+						(acc, guild) => acc + (guild.memberCount || 0),
+						0,
+					),
+					ram_usage: process.memoryUsage().rss,
+					cacheStats: localCacheStats,
+				};
+			});
 
 			guilds = shardInfo.reduce((acc, data) => acc + data.guilds, 0);
 			users = shardInfo.reduce((acc, data) => acc + data.members, 0);
+			totalMemory = shardInfo.reduce((acc, data) => acc + data.ram_usage, 0);
+
+			const globalCacheStats = shardInfo.reduce(
+				(acc, data) => {
+					acc.redisHits += data.cacheStats?.redisHits || 0;
+					acc.mapHits += data.cacheStats?.mapHits || 0;
+					acc.misses += data.cacheStats?.misses || 0;
+					return acc;
+				},
+				{ redisHits: 0, mapHits: 0, misses: 0 },
+			);
+
+			cacheHits = globalCacheStats.redisHits + globalCacheStats.mapHits;
+			cacheMisses = globalCacheStats.misses;
 
 			const totalShards = shardInfo.length;
 			const shardDetails = shardInfo
 				.sort((a, b) => a.id - b.id)
 				.map(
 					(s) =>
-						`> \`#${s.id}\` 🟢 **Operational** • 📶 ${s.ping}ms • 🛡️ ${s.guilds} • 👥 ${s.members}`,
+						`> \`#${s.id}\` 🟢 **Operational** • 📶 ${s.ping < 0 ? 'N/A' : s.ping + 'ms'} • 🛡️ ${s.guilds} • 👥 ${s.members} • 💾 ${(s.ram_usage / 1024 / 1024).toFixed(2)}MB`,
 				)
 				.join('\n');
 
@@ -168,6 +196,8 @@ module.exports = {
 		} else {
 			shardStatusSection = '\n\n**Shards**\n> `❌` **Sharding Disabled**';
 		}
+
+		const memory = (totalMemory / 1024 / 1024).toFixed(2);
 		let runtimeDisplay;
 		if (process.versions.bun) {
 			runtimeDisplay = `**Bun:** \`${process.versions.bun}\``;
