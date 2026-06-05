@@ -217,7 +217,7 @@ async function checkAndUnlock(triggerType, ctx) {
 		);
 
 		// Invalidate achievement count cache after bulk insert
-		await UserAchievement.invalidateCache({ guildId, userId });
+		// await UserAchievement.clearCache({ queryType: 'count', where: { guildId, userId } });
 
 		// Get total count for the banner counter
 		const totalCount = ALL_ACHIEVEMENTS.length;

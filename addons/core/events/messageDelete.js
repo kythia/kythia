@@ -35,13 +35,13 @@ module.exports = async (bot, message) => {
 	const guildId = message.guild.id;
 
 	// Save to snipe cache using Redis
-	if (redis && redis.status === 'ready') {
+	if (redis && redis.status === 'ready' && !message.partial) {
 		const snipeKey = `snipe:${message.channelId}`;
 		const snipeData = {
 			content: message.content,
-			authorId: message.author.id,
-			authorTag: message.author.tag,
-			image: message.attachments.first()?.url,
+			authorId: message.author?.id,
+			authorTag: message.author?.tag,
+			image: message.attachments?.first()?.url,
 			timestamp: Date.now(),
 		};
 		try {

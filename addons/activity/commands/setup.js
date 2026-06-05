@@ -50,7 +50,7 @@ module.exports = {
 		setting.changed('activityOn', true);
 		await setting.save();
 
-		await ServerSetting.invalidateCache({ guildId });
+		// await ServerSetting.clearCache({ guildId });
 
 		const accentColorDecimal = convertColor(
 			kythiaConfig.bot.color || '#5865F2',

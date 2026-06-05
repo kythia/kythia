@@ -66,6 +66,7 @@
 		"winston": "^3.17.0",
 		"winston-daily-rotate-file": "^5.0.0",
 		"ws": "^8.18.3",
+		"yahoo-finance2": "^3.15.2",
 		"youtube-transcript": "1.2.1"
 	},
 	"devDependencies": {
