@@ -136,7 +136,7 @@
 							"message": "🔄 Autoplay disabled."
 						},
 						"status": {
-							"desc": "🔄 Autoplay **{status}**."
+							"desc": "## 🔄 Autoplay **{status}**\n"
 						}
 					},
 					"set": "🔊 Volume set to **{level}**.",
