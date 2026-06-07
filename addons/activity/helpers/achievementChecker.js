@@ -4,11 +4,6 @@
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
- *
- * Core achievement checker.
- * Call `checkAndUnlock(triggerType, context)` from event handlers.
- * It resolves which achievements need evaluation, checks DB/stats,
- * and unlocks + announces newly earned achievements.
  */
 
 const { Op, fn, col } = require('sequelize');

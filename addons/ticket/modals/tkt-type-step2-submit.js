@@ -12,15 +12,16 @@ const {
 	SeparatorBuilder,
 	MessageFlags,
 	SeparatorSpacingSize,
+	ButtonBuilder,
+	ButtonStyle,
+	ActionRowBuilder,
 } = require('discord.js');
-const { refreshTicketPanel } = require('../helpers');
 
 module.exports = {
 	execute: async (interaction, container) => {
-		const { redis, kythiaConfig, t, helpers, models, logger } = container;
+		const { redis, kythiaConfig, t, helpers, logger } = container;
 		const { convertColor } = helpers.color;
 		const { simpleContainer } = helpers.discord;
-		const { TicketConfig } = models;
 
 		await interaction.deferUpdate();
 		const cacheKey = `ticket:type-create:${interaction.user.id}`;
@@ -53,88 +54,49 @@ module.exports = {
 			const ticketCategoryId = interaction.fields
 				.getSelectedChannels('ticketCategoryId')
 				?.first()?.id;
-			const askReason =
-				interaction.fields.getTextInputValue('askReason') || null;
 
-			// New: ticket style
-			const ticketStyle =
-				interaction.fields.getStringSelectValues('ticketStyle')?.[0] ||
-				'channel';
-			const ticketThreadChannelId =
-				interaction.fields.getSelectedChannels('ticketThreadChannelId')?.first()
-					?.id || null;
-
-			if (!staffRoleId || !logsChannelId || !transcriptChannelId) {
-				const desc = await t(interaction, 'ticket.errors.mega_modal_missing');
-				return interaction.followUp({
-					components: await simpleContainer(interaction, desc, {
-						color: 'Red',
-					}),
-					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
-				});
-			}
-
-			// Validate: thread style requires a parent channel
-			if (ticketStyle === 'thread' && !ticketThreadChannelId) {
-				const desc = await t(
-					interaction,
-					'ticket.errors.thread_channel_required',
-				);
-				return interaction.followUp({
-					components: await simpleContainer(interaction, desc, {
-						color: 'Red',
-					}),
-					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
-				});
-			}
-
-			await TicketConfig.create({
+			const step2Data = {
 				...step1Data,
-				guildId: interaction.guild.id,
-				staffRoleId: staffRoleId,
-				logsChannelId: logsChannelId,
-				transcriptChannelId: transcriptChannelId,
+				staffRoleId,
+				logsChannelId,
+				transcriptChannelId,
 				ticketCategoryId: ticketCategoryId || null,
-				askReason: askReason,
-				ticketStyle: ticketStyle,
-				ticketThreadChannelId: ticketThreadChannelId,
-			});
+			};
+			await redis.set(cacheKey, JSON.stringify(step2Data), 'EX', 1800);
 
-			await refreshTicketPanel(step1Data.panelMessageId, container);
-
-			await redis.del(cacheKey);
-
-			const _accentColor = convertColor(kythiaConfig.bot.color, {
+			const accentColor = convertColor(kythiaConfig.bot.color, {
 				from: 'hex',
 				to: 'decimal',
 			});
-			const descSuccess = await t(interaction, 'ticket.type_create.success', {
-				typeName: step1Data.typeName,
-			});
-			const successContainer = [
+			const nextButton = new ButtonBuilder()
+				.setCustomId('tkt-type-step3-show')
+				.setLabel(await t(interaction, 'ticket.type.next_button_step3'))
+				.setStyle(ButtonStyle.Secondary)
+				.setEmoji('🎟️');
+
+			const components = [
 				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Green', { from: 'discord', to: 'decimal' }),
-					)
+					.setAccentColor(accentColor)
 					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(`${descSuccess}`),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
+						new TextDisplayBuilder().setContent(
+							await t(interaction, 'ticket.type.step3_title'),
+						),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t(interaction, 'common.container.footer', {
-								username: interaction.client.user.username,
-							}),
+							await t(interaction, 'ticket.type.step3_desc'),
 						),
+					)
+					.addSeparatorComponents(
+						new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small),
+					)
+					.addActionRowComponents(
+						new ActionRowBuilder().addComponents(nextButton),
 					),
 			];
 
 			await interaction.channel.messages.edit(messageId, {
-				components: successContainer,
+				components: components,
 			});
 		} catch (error) {
 			logger.error(

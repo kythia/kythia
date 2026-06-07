@@ -4,27 +4,6 @@
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
- *
- * Dual-mode Command Bridge
- * ─────────────────────────────────────────────────────────────────────────────
- * Every command in Kythia is written once as a SlashCommand handler. This
- * module transparently bridges any prefix message (e.g. !play, !m, !ping)
- * into a fakeInteraction that matches the real ChatInputCommandInteraction
- * surface, so command code never needs to know whether it was invoked via
- * slash or prefix.
- *
- * Features
- *  • Alias resolution   — !m → music command, !p → ping, etc.
- *  • Subcommand routing — !music play <query>, !music skip, etc.
- *  • defaultArgument    — !m <query> ≡ !music play <query>
- *  • prefixDisabled     — opt-out per-command (set to true in command file)
- *  • Typing indicator   — shows "bot is typing" while executing
- *  • Payload normalization:
- *      ↳ Strip Ephemeral flag (can't whisper in prefix context)
- *      ↳ Strip IsComponentsV2 flag (legacy Discord clients need plain text)
- *      ↳ Inject zero-width-space when component-only payload has no text
- *  • Permission & cooldown guards (identical to slash flow)
- * ─────────────────────────────────────────────────────────────────────────────
  */
 
 const { utils } = require('kythia-core');
@@ -344,6 +323,10 @@ class PrefixCommandHandler {
 		}
 
 		// ── 10. Execute ────────────────────────────────────────────────────
+		if (serverSetting?.deleteCommandMessages && message.deletable) {
+			message.delete().catch(() => {});
+		}
+
 		await this._executeCommand(
 			finalCommand,
 			fakeInteraction,

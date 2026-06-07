@@ -4,9 +4,6 @@
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
- *
- * Detects when a member starts boosting the server and unlocks
- * the server_booster achievement.
  */
 
 /**

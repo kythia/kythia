@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const { profileImage } = require('kythia-arts');
+const { rankCard } = require('kythia-arts');
 
 const {
 	MessageFlags,
@@ -190,7 +190,7 @@ const addXp = async (guildId, userId, xpToAdd, message, channel) => {
 					},
 				})) + 1;
 
-			buffer = await profileImage(userId, {
+			buffer = await rankCard(userId, {
 				botToken: kythiaConfig.bot.token,
 				customTag: `Level Up!`,
 				customSubtitle: `New Level: ${user.level}`,

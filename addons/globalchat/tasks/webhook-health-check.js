@@ -54,7 +54,7 @@ module.exports = {
 			}
 			apiGuilds = apiData.data.guilds;
 		} catch (apiErr) {
-			logger.error(
+			logger.warn(
 				`Failed to fetch /list from API: ${apiErr.message || apiErr}`,
 				{
 					label: 'global chat',

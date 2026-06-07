@@ -4,26 +4,6 @@
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
- *
- * Achievement definitions for the activity addon.
- * Each entry has:
- *   - id         Unique string key (used in DB)
- *   - nameKey    i18n key for the display name
- *   - descKey    i18n key for the description
- *   - emoji      Decorative emoji
- *   - rarity     'common' | 'rare' | 'epic' | 'legendary'
- *   - condition  { type, value } — evaluated by achievementChecker.js
- *
- * Condition types:
- *   messages_total    — ActivityStat.totalMessages >= value
- *   messages_daily    — ActivityLog SUM(messages) for today >= value
- *   messages_weekly   — ActivityLog SUM(messages) for last 7 days >= value
- *   voice_hours       — ActivityStat.totalVoiceTime (seconds) >= value * 3600
- *   voice_joins       — ActivityStat.totalVoiceJoins >= value
- *   reactions_total   — ActivityStat.totalReactions >= value
- *   achievements_count — UserAchievement count for user/guild >= value
- *   server_age_days   — member.joinedAt age in days >= value
- *   special           — hardcoded flag checked inline (no DB query needed)
  */
 
 module.exports = {

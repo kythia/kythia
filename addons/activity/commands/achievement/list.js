@@ -113,8 +113,10 @@ module.exports = {
 				const unlocked = unlockedSet.has(a.id);
 				const rarityEmoji = RARITY_EMOJI[a.rarity] ?? '⚪';
 				const status = unlocked ? '✅' : '🔒';
+				const localizedName = await container.t(interaction, a.nameKey);
+				const localizedDesc = await container.t(interaction, a.descKey);
 				lines.push(
-					`${status} ${rarityEmoji} **${a.nameKey.split('.').pop()}** — ${a.descKey.split('.').pop()}`,
+					`${status} ${rarityEmoji} **${localizedName}** — ${localizedDesc}`,
 				);
 			}
 

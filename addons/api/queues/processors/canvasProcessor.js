@@ -1,7 +1,9 @@
 /**
  * @namespace: addons/api/queues/processors/canvasProcessor.js
- * @type: BullMQ Sandboxed Processor
+ * @type: Module
  * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
  */
 
 const { welcomeBanner } = require('kythia-arts');

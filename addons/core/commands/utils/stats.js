@@ -151,7 +151,7 @@ module.exports = {
 					if (modelCls && typeof modelCls.getGlobalCacheStats === 'function') {
 						localCacheStats = modelCls.getGlobalCacheStats(sModels);
 					}
-				} catch (e) {}
+				} catch (_e) {}
 
 				return {
 					id: c.shard.ids[0],
@@ -188,7 +188,7 @@ module.exports = {
 				.sort((a, b) => a.id - b.id)
 				.map(
 					(s) =>
-						`> \`#${s.id}\` 🟢 **Operational** • 📶 ${s.ping < 0 ? 'N/A' : s.ping + 'ms'} • 🛡️ ${s.guilds} • 👥 ${s.members} • 💾 ${(s.ram_usage / 1024 / 1024).toFixed(2)}MB`,
+						`> \`#${s.id}\` 🟢 **Operational** • 📶 ${s.ping < 0 ? 'N/A' : `${s.ping}ms`} • 🛡️ ${s.guilds} • 👥 ${s.members} • 💾 ${(s.ram_usage / 1024 / 1024).toFixed(2)}MB`,
 				)
 				.join('\n');
 

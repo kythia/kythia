@@ -7,6 +7,7 @@
  */
 
 const { roleUnprefix } = require('../../../helpers');
+const { MessageFlags } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
@@ -20,15 +21,61 @@ module.exports = {
 	 * @param {KythiaDI.Container} container
 	 */
 	async execute(interaction, container) {
-		const { t } = container;
+		const { t, helpers } = container;
+		const { simpleContainer } = helpers.discord;
 
 		await interaction.deferReply();
 
-		const updated = await roleUnprefix(interaction.guild, container);
+		const startedMsg = await t(interaction, 'core.tools.prefix.remove.started');
+		const startedComponents = await simpleContainer(interaction, startedMsg);
+
 		await interaction.editReply({
-			content: await t(interaction, 'core.tools.prefix.remove.success', {
-				count: updated,
-			}),
+			components: startedComponents,
+			flags: MessageFlags.IsComponentsV2,
 		});
+
+		try {
+			const updated = await roleUnprefix(interaction.guild, container);
+			const successMsg = await t(
+				interaction,
+				'core.tools.prefix.remove.success',
+				{ count: updated },
+			);
+			const successComponents = await simpleContainer(interaction, successMsg);
+
+			try {
+				await interaction.editReply({
+					components: successComponents,
+					flags: MessageFlags.IsComponentsV2,
+				});
+			} catch (_e) {
+				await interaction.channel
+					.send({
+						content: `<@${interaction.user.id}>`,
+						components: successComponents,
+						flags: MessageFlags.IsComponentsV2,
+					})
+					.catch(() => {});
+			}
+		} catch (_e) {
+			const errMsg = await t(interaction, 'core.tools.prefix.remove.error');
+			const errorComponents = await simpleContainer(interaction, errMsg, {
+				color: 'Red',
+			});
+			try {
+				await interaction.editReply({
+					components: errorComponents,
+					flags: MessageFlags.IsComponentsV2,
+				});
+			} catch (_e) {
+				await interaction.channel
+					.send({
+						content: `<@${interaction.user.id}>`,
+						components: errorComponents,
+						flags: MessageFlags.IsComponentsV2,
+					})
+					.catch(() => {});
+			}
+		}
 	},
 };

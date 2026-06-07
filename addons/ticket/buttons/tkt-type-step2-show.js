@@ -13,9 +13,6 @@ const {
 	ChannelSelectMenuBuilder,
 	ChannelType,
 	MessageFlags,
-	TextInputBuilder,
-	TextInputStyle,
-	StringSelectMenuBuilder,
 } = require('discord.js');
 
 module.exports = {
@@ -41,7 +38,7 @@ module.exports = {
 
 			const modal = new ModalBuilder()
 				.setCustomId(`tkt-type-step2-submit:${messageId}`)
-				.setTitle('Create Type - Step 2/2: Config')
+				.setTitle('Create Type - Step 2/3: Core Config')
 				.addLabelComponents(
 					new LabelBuilder()
 						.setLabel('Select Staff Role')
@@ -73,7 +70,7 @@ module.exports = {
 								.setMaxValues(1),
 						),
 					new LabelBuilder()
-						.setLabel('Select Ticket Category (Optional, for Channel style)')
+						.setLabel('Ticket Category (Optional, Channel Style)')
 						.setChannelSelectMenuComponent(
 							new ChannelSelectMenuBuilder()
 								.setCustomId('ticketCategoryId')
@@ -82,60 +79,6 @@ module.exports = {
 								.setRequired(false)
 								.setMinValues(0)
 								.setMaxValues(1),
-						),
-					new LabelBuilder()
-						.setLabel('Ticket Style')
-						.setDescription(
-							'Channel = new private channel per ticket. Thread = new private thread inside a text channel.',
-						)
-						.setStringSelectMenuComponent(
-							new StringSelectMenuBuilder()
-								.setCustomId('ticketStyle')
-								.setPlaceholder('Select ticket style...')
-								.addOptions([
-									{
-										label: 'Channel (Default)',
-										description: 'Each ticket opens in its own text channel.',
-										value: 'channel',
-										default: true,
-									},
-									{
-										label: 'Thread',
-										description:
-											'Each ticket opens as a thread inside a parent channel.',
-										value: 'thread',
-									},
-								])
-								.setMinValues(1)
-								.setMaxValues(1),
-						),
-					new LabelBuilder()
-						.setLabel('Thread Parent Channel (Required for Thread style)')
-						.setDescription(
-							'Only used when Ticket Style is set to Thread. Tickets will be opened as threads inside this channel.',
-						)
-						.setChannelSelectMenuComponent(
-							new ChannelSelectMenuBuilder()
-								.setCustomId('ticketThreadChannelId')
-								.setPlaceholder('Select a text channel for threads...')
-								.addChannelTypes(ChannelType.GuildText)
-								.setRequired(false)
-								.setMinValues(0)
-								.setMaxValues(1),
-						),
-					new LabelBuilder()
-						.setLabel('Ticket Creator Reason Question')
-						.setDescription(
-							'If filled, the user will be prompted. If empty, the ticket will be created immediately.',
-						)
-						.setTextInputComponent(
-							new TextInputBuilder()
-								.setCustomId('askReason')
-								.setStyle(TextInputStyle.Paragraph)
-								.setPlaceholder(
-									'Example: What issue are you experiencing? Please explain in detail.',
-								)
-								.setRequired(false),
 						),
 				);
 

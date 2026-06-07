@@ -57,7 +57,7 @@ module.exports = {
 
 			const modal = new ModalBuilder()
 				.setCustomId(`tkt-type-step1-submit:${messageId}`)
-				.setTitle('Create Type - Step 1/2: Basic Info')
+				.setTitle('Create Type - Step 1/3: Basic Info')
 				.addLabelComponents(
 					new LabelBuilder()
 						.setLabel('Select Target Panel')

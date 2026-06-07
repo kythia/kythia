@@ -24,6 +24,45 @@ module.exports = {
 		if (container.helpers.discord.isOwner(interaction.user.id)) return true;
 
 		const { kythiaConfig, t, helpers, redis } = container;
+
+		// Skip vote lock if user is a team member
+		const teamCacheKey = `kythia:middleware:teamOnly:${interaction.user.id}`;
+		let isTeamMember = await redis.get(teamCacheKey);
+		if (isTeamMember !== null) {
+			isTeamMember = JSON.parse(isTeamMember);
+		} else {
+			isTeamMember = await helpers.discord.isTeam(
+				container,
+				interaction.user.id,
+			);
+			await redis.set(
+				teamCacheKey,
+				JSON.stringify(Boolean(isTeamMember)),
+				'EX',
+				1800,
+			);
+		}
+		if (isTeamMember) return true;
+
+		// Skip vote lock if user is premium
+		const premiumCacheKey = `kythia:middleware:premium:${interaction.user.id}`;
+		let isPremiumUser = await redis.get(premiumCacheKey);
+		if (isPremiumUser !== null) {
+			isPremiumUser = JSON.parse(isPremiumUser);
+		} else {
+			isPremiumUser = await helpers.discord.isPremium(
+				container,
+				interaction.user.id,
+			);
+			await redis.set(
+				premiumCacheKey,
+				JSON.stringify(Boolean(isPremiumUser)),
+				'EX',
+				1800,
+			);
+		}
+		if (isPremiumUser) return true;
+
 		const { KythiaVoter } = container.models;
 		const { convertColor } = helpers.color;
 

@@ -653,10 +653,14 @@
 			},
 			"prefix": {
 				"add": {
-					"success": "✅ Finished updating prefixes for {count} members!"
+					"started": "📛 Starting to add prefixes to nicknames. This might take a while...",
+					"success": "✅ Finished updating prefixes for {count} members!",
+					"error": "❌ An error occurred while adding prefixes."
 				},
 				"remove": {
-					"success": "✅ Finished removing prefixes from {count} members!"
+					"started": "📛 Starting to remove prefixes from nicknames. This might take a while...",
+					"success": "✅ Finished removing prefixes from {count} members!",
+					"error": "❌ An error occurred while removing prefixes."
 				}
 			},
 			"sticky": {

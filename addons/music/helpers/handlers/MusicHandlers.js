@@ -113,6 +113,18 @@ class MusicHandlers {
 		await interaction.deferReply();
 		const query = options.getString('search');
 
+		if (!query) {
+			const components = await this.simpleContainer(
+				interaction,
+				await this.t(interaction, 'music.helpers.handlers.music.play.no.query'),
+				{ color: 'Red' },
+			);
+			return interaction.editReply({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+			});
+		}
+
 		if (
 			query.toLowerCase().includes('spotify') &&
 			(!this.config.addons.music.spotify.clientID ||

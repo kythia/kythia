@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/_counting/database/migrations/20260531_232600_add_counting_modes.js
+ * @namespace: addons/counting/database/migrations/20260531_232600_add_counting_modes.js
  * @type: Database Migration
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 module.exports = {

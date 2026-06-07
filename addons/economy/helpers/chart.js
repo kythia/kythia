@@ -16,7 +16,7 @@ const axios = require('axios');
  * @param {Array} dataPoints - Array of OHLC objects { x: timestamp, o: open, h: high, l: low, c: close }
  * @returns {Buffer|null} PNG Image Buffer or null on failure
  */
-async function renderChartFromData(config, assetId, dataPoints) {
+async function renderChartFromData(_config, assetId, dataPoints) {
 	try {
 		const chartConfig = {
 			type: 'candlestick',

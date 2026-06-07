@@ -4,9 +4,6 @@
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
- *
- * Tracks totalReactions and daily reactions for the activity addon.
- * Also fires achievement checks for reaction-based achievements.
  */
 
 /**

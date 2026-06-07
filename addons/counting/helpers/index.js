@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/_counting/utils.js
- * @type: Utility
+ * @namespace: addons/counting/helpers/index.js
+ * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 const { evaluate } = require('mathjs');

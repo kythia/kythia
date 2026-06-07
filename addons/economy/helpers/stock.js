@@ -29,7 +29,7 @@ async function getStockData(symbol) {
 			shortName: quote.shortName || quote.longName || quote.symbol,
 			marketCap: quote.marketCap,
 		};
-	} catch (e) {
+	} catch (_e) {
 		return null;
 	}
 }
@@ -42,7 +42,7 @@ async function getStockData(symbol) {
  */
 async function getStockChartBuffer(config, symbol, days = '7') {
 	try {
-		const daysNum = parseInt(days) || 7;
+		const daysNum = parseInt(days, 10) || 7;
 		let interval = '1d';
 
 		if (daysNum === 1)
@@ -75,7 +75,7 @@ async function getStockChartBuffer(config, symbol, days = '7') {
 			.filter((p) => p.o != null && p.h != null && p.l != null && p.c != null);
 
 		return await renderChartFromData(config, symbol, dataPoints);
-	} catch (e) {
+	} catch (_e) {
 		return null;
 	}
 }
@@ -100,7 +100,7 @@ async function getTopStocksData() {
 			};
 		}
 		return data;
-	} catch (e) {
+	} catch (_e) {
 		return {};
 	}
 }

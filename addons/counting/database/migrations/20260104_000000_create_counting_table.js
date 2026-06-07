@@ -1,9 +1,9 @@
 /**
- * @namespace: addons/_counting/database/migrations/20260104_000000_create_counting_table.js
+ * @namespace: addons/counting/database/migrations/20260104_000000_create_counting_table.js
  * @type: Database Migration
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
- * @version 1.0.0-rc
+ * @version 26.0.0-rc.1
  */
 
 module.exports = {

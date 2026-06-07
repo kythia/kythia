@@ -163,7 +163,8 @@
 					"seeked": "⏩ Seeked to {time} seconds.",
 					"play": {
 						"no": {
-							"results": "❌ No results found for your query."
+							"results": "❌ No results found for your query.",
+							"query": "❌ Please provide a song name or URL to play."
 						}
 					},
 					"jumped": "🐇 Jumped to position **{position}**.",
