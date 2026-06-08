@@ -79,7 +79,7 @@ app.post('/', async (c) => {
 	}
 
 	try {
-		const [record, created] = await UserBirthday.findOrCreate({
+		const [record, created] = await UserBirthday.findOrCreateWithCache({
 			where: { guildId, userId },
 			defaults: { guildId, userId, day, month, year: year ?? null },
 		});
@@ -184,7 +184,7 @@ app.patch('/settings/:guildId', async (c) => {
 	];
 
 	try {
-		const [setting, created] = await BirthdaySetting.findOrCreate({
+		const [setting, created] = await BirthdaySetting.findOrCreateWithCache({
 			where: { guildId },
 			defaults: { guildId },
 		});

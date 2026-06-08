@@ -154,11 +154,11 @@ app.get('/:guildId', async (c) => {
 
 	try {
 		const timezone = await getGuildTimezone(c, guildId);
-		const { count, rows } = await Streak.findAndCountAll({
+		const { count, rows } = await Streak.paginateCache({
 			where: { guildId },
 			order,
-			limit: limitNum,
-			offset,
+			page: pageNum,
+			pageSize: limitNum,
 		});
 
 		const client = c.get('client');
@@ -222,7 +222,7 @@ app.get('/:guildId/:userId', async (c) => {
 			);
 		}
 
-		const aboveCount = await Streak.count({
+		const aboveCount = await Streak.countWithCache({
 			where: {
 				guildId,
 				[Op.or]: [
@@ -234,7 +234,7 @@ app.get('/:guildId/:userId', async (c) => {
 				],
 			},
 		});
-		const totalMembers = await Streak.count({ where: { guildId } });
+		const totalMembers = await Streak.countWithCache({ where: { guildId } });
 
 		const client = c.get('client');
 		const { broadcastGetUsers } = require('../helpers/shard');
@@ -558,7 +558,7 @@ app.delete('/:guildId', async (c) => {
 	const { guildId } = c.req.param();
 
 	try {
-		const deleted = await Streak.destroy({ where: { guildId } });
+		const deleted = await Streak.destroyAndClearCache({ where: { guildId } });
 		return c.json({
 			success: true,
 			message: `Deleted ${deleted} streak record(s) in guild ${guildId}`,

@@ -40,17 +40,16 @@ app.get('/facts/:userId', async (c) => {
 
 	const pageNum = Math.max(1, parseInt(page, 10) || 1);
 	const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 50));
-	const offset = (pageNum - 1) * limitNum;
 
 	try {
 		const where = { userId };
 		if (type) where.type = type;
 
-		const { count, rows } = await UserFact.findAndCountAll({
+		const { count, rows } = await UserFact.paginateCache({
 			where,
 			order: [['createdAt', 'DESC']],
-			limit: limitNum,
-			offset,
+			page: pageNum,
+			pageSize: limitNum,
 		});
 
 		const totalPages = Math.ceil(count / limitNum) || 1;
@@ -101,7 +100,7 @@ app.post('/facts/:userId', async (c) => {
 	const resolvedType = type || manager.classifyFact(fact.trim());
 
 	try {
-		const [factInstance, created] = await UserFact.findOrCreate({
+		const [factInstance, created] = await UserFact.findOrCreateWithCache({
 			where: { userId, fact: fact.trim() },
 			defaults: { userId, fact: fact.trim(), type: resolvedType },
 		});
@@ -155,7 +154,7 @@ app.delete('/facts/:userId', async (c) => {
 	const { userId } = c.req.param();
 
 	try {
-		const deleted = await UserFact.destroy({ where: { userId } });
+		const deleted = await UserFact.destroyAndClearCache({ where: { userId } });
 		return c.json({
 			success: true,
 			message: `Deleted ${deleted} fact(s) for user ${userId}`,
@@ -225,7 +224,7 @@ app.patch('/personality/:userId', async (c) => {
 	}
 
 	try {
-		const [user] = await KythiaUser.findOrCreate({
+		const [user] = await KythiaUser.findOrCreateWithCache({
 			where: { userId },
 			defaults: { userId },
 		});
@@ -337,7 +336,7 @@ app.patch('/opt-out/:userId', async (c) => {
 
 		// If opting out, clear their facts
 		if (isAiOptOut && UserFact) {
-			await UserFact.destroy({ where: { userId } });
+			await UserFact.destroyAndClearCache({ where: { userId } });
 		}
 
 		return c.json({

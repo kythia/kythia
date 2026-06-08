@@ -229,7 +229,7 @@ app.get('/growth', async (c) => {
 		from.setDate(from.getDate() - days);
 		from.setHours(0, 0, 0, 0);
 
-		const rows = await BotGrowthSnapshot.findAll({
+		const rows = await BotGrowthSnapshot.getAllCache({
 			where: {
 				createdAt: { [Op.gte]: from },
 			},

@@ -40,7 +40,7 @@ async function getOrCreateConfig(c) {
 	const { VerificationConfig, ServerSetting } = getModels(c);
 	const { guildId } = c.req.param();
 	const setting = await ServerSetting.getCache({ guildId });
-	const [config] = await VerificationConfig.findOrCreate({
+	const [config] = await VerificationConfig.findOrCreateWithCache({
 		where: { guildId },
 		defaults: { guildId },
 	});
@@ -146,15 +146,10 @@ app.patch('/:guildId/toggle', async (c) => {
 	try {
 		const { ServerSetting } = getModels(c);
 		const { guildId } = c.req.param();
-		const [setting] =
-			(await ServerSetting.findOrCreateWithCache?.({
-				where: { guildId },
-				defaults: { guildId },
-			}).then((r) => r)) ??
-			(await ServerSetting.findOrCreate({
-				where: { guildId },
-				defaults: { guildId },
-			}));
+		const [setting] = await ServerSetting.findOrCreateWithCache({
+			where: { guildId },
+			defaults: { guildId },
+		});
 		setting.verificationOn = body.enabled;
 		await setting.save();
 		return c.json({

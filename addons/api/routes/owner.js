@@ -26,7 +26,6 @@ const getContainer = (c) => c.get('client').container;
 const getModels = (c) => c.get('client').container.models;
 const getRedis = (c) => c.get('client').container.redis;
 const getLogger = (c) => c.get('client').container.logger;
-const getConfig = (c) => c.get('client').container.kythiaConfig;
 
 // =============================================================================
 // MAINTENANCE
@@ -700,7 +699,7 @@ app.delete('/blacklist/guilds/:guildId', async (c) => {
 			);
 		}
 
-		await KythiaBlacklist.destroy({
+		await KythiaBlacklist.destroyAndClearCache({
 			where: { type: 'guild', targetId: guildId },
 		});
 
@@ -860,7 +859,7 @@ app.delete('/blacklist/users/:userId', async (c) => {
 			);
 		}
 
-		await KythiaBlacklist.destroy({
+		await KythiaBlacklist.destroyAndClearCache({
 			where: { type: 'user', targetId: userId },
 		});
 
@@ -906,7 +905,7 @@ app.get('/premium', async (c) => {
 		const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
 
 		const now = new Date();
-		const total = await KythiaUser.count({
+		const total = await KythiaUser.countWithCache({
 			where: { isPremium: true, premiumExpiresAt: { [Op.gt]: now } },
 		});
 
@@ -1223,7 +1222,7 @@ app.delete('/team/:userId', async (c) => {
 			);
 		}
 
-		await KythiaTeam.destroy({ where: { userId } });
+		await KythiaTeam.destroyAndClearCache({ where: { userId } });
 
 		getLogger(c).info(`User ${userId} removed from Kythia Team via API.`, {
 			label: 'api',

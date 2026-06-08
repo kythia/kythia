@@ -446,7 +446,7 @@ app.delete('/playlists/:userId/:playlistId/tracks', async (c) => {
 		if (!playlist)
 			return c.json({ success: false, error: 'Playlist not found' }, 404);
 
-		const deleted = await PlaylistTrack.destroy({
+		const deleted = await PlaylistTrack.destroyAndClearCache({
 			where: { playlistId: playlist.id },
 		});
 		return c.json({
@@ -475,14 +475,13 @@ app.get('/favorites/:userId', async (c) => {
 
 	const pageNum = Math.max(1, parseInt(page, 10) || 1);
 	const limitNum = Math.min(200, Math.max(1, parseInt(limit, 10) || 50));
-	const offset = (pageNum - 1) * limitNum;
 
 	try {
-		const { count, rows } = await Favorite.findAndCountAll({
+		const { count, rows } = await Favorite.paginateCache({
 			where: { userId },
 			order: [['createdAt', 'DESC']],
-			limit: limitNum,
-			offset,
+			page: pageNum,
+			pageSize: limitNum,
 		});
 		return c.json({
 			success: true,
@@ -639,7 +638,7 @@ app.delete('/favorites/:userId', async (c) => {
 	const { userId } = c.req.param();
 
 	try {
-		const deleted = await Favorite.destroy({ where: { userId } });
+		const deleted = await Favorite.destroyAndClearCache({ where: { userId } });
 		return c.json({
 			success: true,
 			message: `Cleared ${deleted} favorite(s)`,
@@ -713,7 +712,7 @@ app.put('/247/:guildId', async (c) => {
 	}
 
 	try {
-		const [config, created] = await Music247.findOrCreate({
+		const [config, created] = await Music247.findOrCreateWithCache({
 			where: { guildId },
 			defaults: { guildId, textChannelId, voiceChannelId },
 		});

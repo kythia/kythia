@@ -26,32 +26,6 @@ function setEnvKey(content, key, value) {
 	return `${content}\n${key}="${escaped}"`;
 }
 
-function setJsStringKey(content, key, newValue) {
-	if (newValue === undefined || newValue === null) return content;
-	const re = new RegExp(
-		`(\\b${key}:\\s*)('(?:[^'\\\\]|\\\\.)*'|"(?:[^"\\\\]|\\\\.)*"|true|false|\\d+)`,
-		'',
-	);
-	const replacement =
-		typeof newValue === 'string'
-			? `$1'${newValue.replace(/'/g, "\\'")}'`
-			: `$1${newValue}`;
-	return content.replace(re, replacement);
-}
-
-function setJsBool(content, key, bool) {
-	if (bool === undefined || bool === null) return content;
-	const re = new RegExp(`(\\b${key}:\\s*)(true|false)`);
-	return content.replace(re, `$1${bool}`);
-}
-
-function setJsArray(content, key, items) {
-	if (!items) return content;
-	const re = new RegExp(`(\\b${key}:\\s*)\\[[^\\]]*\\]`);
-	const arr = `[${items.map((i) => `'${i.replace(/'/g, "\\'")}'`).join(', ')}]`;
-	return content.replace(re, `$1${arr}`);
-}
-
 // ── Patching Functions ───────────────────────────────────────────────────────
 
 function patchEnv(payload, currentEnvStr) {
@@ -120,8 +94,8 @@ function writePatchedFiles(payload) {
 	if (fs.existsSync(dynamicPath)) {
 		try {
 			dynamicConfig = JSON.parse(fs.readFileSync(dynamicPath, 'utf8'));
-		} catch (e) {
-			console.error('Failed to parse kythia.dynamic.json', e);
+		} catch {
+			// ignore parse errors
 		}
 	}
 

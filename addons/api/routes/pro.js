@@ -137,7 +137,7 @@ app.post('/subdomains', async (c) => {
 	// Check quota (max from config, default 5)
 	const container = getContainer(c);
 	const maxSubdomains = container.kythiaConfig?.addons?.pro?.maxSubdomains ?? 5;
-	const userCount = await Subdomain.count({ where: { userId } });
+	const userCount = await Subdomain.countWithCache({ where: { userId } });
 	if (userCount >= maxSubdomains) {
 		return c.json(
 			{
@@ -150,7 +150,7 @@ app.post('/subdomains', async (c) => {
 	}
 
 	try {
-		const [record, created] = await Subdomain.findOrCreate({
+		const [record, created] = await Subdomain.findOrCreateWithCache({
 			where: { name: normalizedName },
 			defaults: { userId, name: normalizedName },
 		});
@@ -465,7 +465,7 @@ app.post('/monitors', async (c) => {
 	}
 
 	try {
-		const [row, created] = await Monitor.findOrCreate({
+		const [row, created] = await Monitor.findOrCreateWithCache({
 			where: { userId },
 			defaults: {
 				userId,

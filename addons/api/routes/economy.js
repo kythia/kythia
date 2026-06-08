@@ -7,7 +7,7 @@
  */
 
 const { Hono } = require('hono');
-const { Op } = require('sequelize');
+const { Op, fn, col } = require('sequelize');
 
 const app = new Hono();
 
@@ -27,11 +27,7 @@ app.get('/pool', async (c) => {
 	const { KythLiquidityPool } = models;
 
 	try {
-		let pool = await KythLiquidityPool.getCache({ where: { id: 1 } });
-		if (!pool) {
-			// Fallback if not cached or initialized properly
-			pool = await KythLiquidityPool.findByPk(1);
-		}
+		const pool = await KythLiquidityPool.getCache({ id: 1 });
 
 		if (!pool) {
 			return c.json({ success: false, error: 'Liquidity pool not found' }, 404);
@@ -94,7 +90,7 @@ app.patch('/pool/config', async (c) => {
 	}
 
 	try {
-		const pool = await KythLiquidityPool.findByPk(1);
+		const pool = await KythLiquidityPool.getCache({ id: 1 });
 		if (!pool) {
 			return c.json({ success: false, error: 'Liquidity pool not found' }, 404);
 		}
@@ -150,25 +146,21 @@ app.get('/leaderboard', async (c) => {
 	const { KythiaUser } = models;
 	const { limit = '50', page = '1' } = c.req.query();
 
+	const pageNum = parseInt(page, 10) || 1;
 	const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 50));
-	const offsetNum = (Math.max(1, parseInt(page, 10) || 1) - 1) * limitNum;
+	const offsetNum = (pageNum - 1) * limitNum;
 
 	try {
-		const { count, rows } = await KythiaUser.findAndCountAll({
+		const { count, rows } = await KythiaUser.paginateCache({
 			where: {
 				[Op.or]: [
 					{ kythHolding: { [Op.gt]: 0 } },
 					{ kythStaked: { [Op.gt]: 0 } },
 				],
 			},
-			order: [
-				// Custom order assuming we want to sum holding + staked
-				// If Sequelize dialect allows literal ordering:
-				// [models.sequelize.literal('kythHolding + kythStaked'), 'DESC'],
-				['kythHolding', 'DESC'], // Fallback basic sorting
-			],
-			limit: limitNum,
-			offset: offsetNum,
+			order: [['kythHolding', 'DESC']],
+			page: pageNum,
+			pageSize: limitNum,
 		});
 
 		const client = c.get('client');
@@ -207,7 +199,7 @@ app.get('/leaderboard', async (c) => {
 		return c.json({
 			success: true,
 			count,
-			page: parseInt(page, 10) || 1,
+			page: pageNum,
 			totalPages: Math.ceil(count / limitNum),
 			data,
 		});
@@ -229,17 +221,22 @@ app.get('/stats', async (c) => {
 	const { KythiaUser, KythLiquidityPool } = models;
 
 	try {
-		const pool =
-			(await KythLiquidityPool.getCache({ where: { id: 1 } })) ||
-			(await KythLiquidityPool.findByPk(1));
+		const pool = await KythLiquidityPool.getCache({ id: 1 });
 		const price = pool ? pool.coinReserve / pool.kythReserve : 0;
 
-		const totalCirculating = (await KythiaUser.sum('kythHolding')) || 0;
-		const totalStaked = (await KythiaUser.sum('kythStaked')) || 0;
-		const totalHolders = await KythiaUser.count({
+		const sumAgg = await KythiaUser.aggregateWithCache({
+			attributes: [
+				[fn('SUM', col('kythHolding')), 'holding'],
+				[fn('SUM', col('kythStaked')), 'staked'],
+			],
+			raw: true,
+		});
+		const totalCirculating = Number(sumAgg[0]?.holding || 0);
+		const totalStaked = Number(sumAgg[0]?.staked || 0);
+		const totalHolders = await KythiaUser.countWithCache({
 			where: { kythHolding: { [Op.gt]: 0 } },
 		});
-		const totalStakers = await KythiaUser.count({
+		const totalStakers = await KythiaUser.countWithCache({
 			where: { kythStaked: { [Op.gt]: 0 } },
 		});
 
@@ -279,14 +276,12 @@ app.get('/users/:userId', async (c) => {
 	const { userId } = c.req.param();
 
 	try {
-		const user = await KythiaUser.getCache({ where: { userId } });
+		const user = await KythiaUser.getCache({ userId });
 		if (!user) {
 			return c.json({ success: false, error: 'User not found' }, 404);
 		}
 
-		const pool =
-			(await KythLiquidityPool.getCache({ where: { id: 1 } })) ||
-			(await KythLiquidityPool.findByPk(1));
+		const pool = await KythLiquidityPool.getCache({ id: 1 });
 		const price = pool ? pool.coinReserve / pool.kythReserve : 0;
 
 		const holdingValue = (user.kythHolding || 0) * price;
@@ -325,8 +320,8 @@ app.get('/market/transactions', async (c) => {
 	const { MarketTransaction } = models;
 	const { limit = '50', page = '1' } = c.req.query();
 
+	const pageNum = parseInt(page, 10) || 1;
 	const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 50));
-	const offsetNum = (Math.max(1, parseInt(page, 10) || 1) - 1) * limitNum;
 
 	try {
 		if (!MarketTransaction) {
@@ -336,17 +331,17 @@ app.get('/market/transactions', async (c) => {
 			);
 		}
 
-		const { count, rows } = await MarketTransaction.findAndCountAll({
+		const { count, rows } = await MarketTransaction.paginateCache({
 			where: { assetId: 'KYTH' },
 			order: [['createdAt', 'DESC']],
-			limit: limitNum,
-			offset: offsetNum,
+			page: pageNum,
+			pageSize: limitNum,
 		});
 
 		return c.json({
 			success: true,
 			count,
-			page: parseInt(page, 10) || 1,
+			page: pageNum,
 			totalPages: Math.ceil(count / limitNum),
 			data: rows,
 		});
@@ -366,7 +361,7 @@ app.get('/market/transactions', async (c) => {
 app.get('/chart', async (c) => {
 	const models = getModels(c);
 	const { MarketTransaction, KythLiquidityPool } = models;
-	const { timeframe = '1h', limit = '500' } = c.req.query();
+	const { limit = '500' } = c.req.query();
 
 	const limitNum = Math.min(2000, Math.max(1, parseInt(limit, 10) || 500));
 
@@ -381,7 +376,7 @@ app.get('/chart', async (c) => {
 		// Retrieve the latest raw transactions to build the chart
 		// For a complete TradingView style OHLC chart, the frontend or backend would group by time intervals.
 		// We return the raw data points here to allow maximum flexibility.
-		const transactions = await MarketTransaction.findAll({
+		const transactions = await MarketTransaction.getAllCache({
 			where: { assetId: 'KYTH' },
 			order: [['createdAt', 'ASC']],
 			limit: limitNum,
@@ -396,9 +391,7 @@ app.get('/chart', async (c) => {
 		}));
 
 		// Include current live price as the final data point
-		const pool =
-			(await KythLiquidityPool.getCache({ where: { id: 1 } })) ||
-			(await KythLiquidityPool.findByPk(1));
+		const pool = await KythLiquidityPool.getCache({ id: 1 });
 		if (pool) {
 			const currentPrice = pool.coinReserve / pool.kythReserve;
 			dataPoints.push({

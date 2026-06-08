@@ -377,7 +377,7 @@ app.delete('/panels/:id', async (c) => {
 
 		// Delete all associated ticket types
 		const relatedTypes = await TicketConfig.getAllCache({
-			panelMessageId: panel.messageId,
+			where: { panelMessageId: panel.messageId },
 		});
 		if (relatedTypes && relatedTypes.length > 0) {
 			for (const type of relatedTypes) {

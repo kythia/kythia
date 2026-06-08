@@ -266,7 +266,7 @@ app.post('/configs', async (c) => {
 	}
 
 	try {
-		const [config, created] = await TempVoiceConfig.findOrCreate({
+		const [config, created] = await TempVoiceConfig.findOrCreateWithCache({
 			where: { guildId },
 			defaults: {
 				guildId,

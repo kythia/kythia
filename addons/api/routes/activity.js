@@ -97,7 +97,7 @@ app.get('/:guildId/analytics', async (c) => {
 	try {
 		// Daily: last 30 days
 		const startDate = getPeriodStart('monthly');
-		const daily = await ActivityLog.findAll({
+		const daily = await ActivityLog.aggregateWithCache({
 			where: { guildId, date: { [Op.gte]: startDate } },
 			attributes: [
 				'date',
@@ -110,7 +110,7 @@ app.get('/:guildId/analytics', async (c) => {
 		});
 
 		// Hourly: overall
-		const hourly = await ActivityHourly.findAll({
+		const hourly = await ActivityHourly.aggregateWithCache({
 			where: { guildId },
 			attributes: [
 				'dayOfWeek',
@@ -170,7 +170,7 @@ app.get('/:guildId', async (c) => {
 			const startDate = getPeriodStart(period);
 			const logColumn = sortKey === 'voice' ? 'voiceTime' : 'messages';
 
-			rows = await ActivityLog.findAll({
+			rows = await ActivityLog.aggregateWithCache({
 				where: { guildId, date: { [Op.gte]: startDate } },
 				attributes: [
 					'userId',
@@ -248,7 +248,7 @@ app.get('/:guildId/id/:userId', async (c) => {
 			totalVoiceTime = stat.totalVoiceTime ?? 0;
 		} else {
 			const startDate = getPeriodStart(period);
-			const [row] = await ActivityLog.findAll({
+			const [row] = await ActivityLog.aggregateWithCache({
 				where: { guildId, userId, date: { [Op.gte]: startDate } },
 				attributes: [
 					[fn('SUM', col('messages')), 'totalMessages'],
@@ -302,7 +302,7 @@ app.delete('/:guildId/id/:userId', async (c) => {
 		});
 
 		// Also wipe their daily log buckets
-		await ActivityLog.destroy({ where: { guildId, userId } });
+		await ActivityLog.destroyAndClearCache({ where: { guildId, userId } });
 
 		if (!deleted) {
 			return c.json({ success: false, error: 'User stats not found' }, 404);
@@ -333,7 +333,7 @@ app.delete('/:guildId', async (c) => {
 		});
 
 		// Also wipe all daily log buckets for the guild
-		await ActivityLog.destroy({ where: { guildId } });
+		await ActivityLog.destroyAndClearCache({ where: { guildId } });
 
 		return c.json({ success: true, deleted });
 	} catch (error) {

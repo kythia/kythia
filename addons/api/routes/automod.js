@@ -423,11 +423,11 @@ app.get('/:guildId/logs', async (c) => {
 	if (moderatorId) where.moderatorId = moderatorId;
 
 	try {
-		const { count, rows } = await ModLog.findAndCountAll({
+		const { count, rows } = await ModLog.paginateCache({
 			where,
 			order: [['createdAt', 'DESC']],
-			limit,
-			offset,
+			page,
+			pageSize: limit,
 		});
 		return c.json({
 			status: 'ok',
@@ -506,7 +506,7 @@ app.delete('/:guildId/logs', async (c) => {
 	const where = { guildId };
 	if (action) where.action = action;
 	try {
-		const deleted = await ModLog.destroy({ where });
+		const deleted = await ModLog.destroyAndClearCache({ where });
 		return c.json({
 			status: 'ok',
 			message: `Deleted ${deleted} log entries`,
@@ -530,15 +530,10 @@ const {
 async function getANConfig(c) {
 	const { ServerSetting } = getModels(c);
 	const { guildId } = c.req.param();
-	const setting =
-		(await ServerSetting.findOrCreateWithCache?.({
-			where: { guildId },
-			defaults: { guildId },
-		}).then((r) => r[0])) ??
-		(await ServerSetting.findOrCreate({
-			where: { guildId },
-			defaults: { guildId },
-		}).then((r) => r[0]));
+	const [setting] = await ServerSetting.findOrCreateWithCache({
+		where: { guildId },
+		defaults: { guildId },
+	});
 	const config = getAntiNukeConfig(setting);
 	return { setting, config, guildId };
 }

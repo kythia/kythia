@@ -223,14 +223,14 @@ app.get('/:guildId', async (c) => {
 	const offset = (pageNum - 1) * limitNum;
 
 	try {
-		const { count, rows } = await User.findAndCountAll({
+		const { count, rows } = await User.paginateCache({
 			where: { guildId },
 			order: [
 				['level', 'DESC'],
 				['xp', 'DESC'],
 			],
-			limit: limitNum,
-			offset,
+			page: pageNum,
+			pageSize: limitNum,
 		});
 
 		const { curve, multiplier } = await getGuildLevelingConfig(guildId, models);
@@ -297,12 +297,11 @@ app.get('/:guildId/:userId', async (c) => {
 
 		const { curve, multiplier } = await getGuildLevelingConfig(guildId, models);
 
-		// Count rank
-		const { count: rank } = await User.findAndCountAll({
+		// Total members
+		const rank = await User.countWithCache({
 			where: { guildId },
-			// Users that have higher level, OR same level but more xp
 		});
-		const aboveCount = await User.count({
+		const aboveCount = await User.countWithCache({
 			where: {
 				guildId,
 				[require('sequelize').Op.or]: [
@@ -595,7 +594,7 @@ app.delete('/:guildId', async (c) => {
 	const { guildId } = c.req.param();
 
 	try {
-		const deleted = await User.destroy({ where: { guildId } });
+		const deleted = await User.destroyAndClearCache({ where: { guildId } });
 		return c.json({
 			success: true,
 			message: `Reset leveling data for ${deleted} member(s) in guild ${guildId}`,

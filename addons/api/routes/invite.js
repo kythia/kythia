@@ -75,7 +75,7 @@ app.patch('/settings/:guildId', async (c) => {
 			if (Object.hasOwn(body, field)) settingUpdates[field] = body[field];
 		}
 		if (Object.keys(settingUpdates).length > 0) {
-			const [setting] = await InviteSetting.findOrCreate({
+			const [setting] = await InviteSetting.findOrCreateWithCache({
 				where: { guildId },
 				defaults: { guildId },
 			});
@@ -89,7 +89,7 @@ app.patch('/settings/:guildId', async (c) => {
 			if (Object.hasOwn(body, field)) serverUpdates[field] = body[field];
 		}
 		if (Object.keys(serverUpdates).length > 0) {
-			const [serverSetting] = await ServerSetting.findOrCreate({
+			const [serverSetting] = await ServerSetting.findOrCreateWithCache({
 				where: { guildId },
 				defaults: { guildId },
 			});
@@ -131,11 +131,11 @@ app.get('/:guildId', async (c) => {
 	const orderCol = sortColumnMap[sort] || 'invites';
 
 	try {
-		const { count, rows } = await Invite.findAndCountAll({
+		const { count, rows } = await Invite.paginateCache({
 			where: { guildId },
 			order: [[orderCol, 'DESC']],
-			limit,
-			offset,
+			page,
+			pageSize: limit,
 		});
 
 		const client = getClient(c);
@@ -254,7 +254,7 @@ app.patch('/:guildId/user/:userId', async (c) => {
 	const ALLOWED = ['invites', 'bonus', 'fake', 'leaves', 'rejoins'];
 
 	try {
-		const [row] = await Invite.findOrCreate({
+		const [row] = await Invite.findOrCreateWithCache({
 			where: { guildId, userId },
 			defaults: {
 				guildId,
@@ -322,7 +322,7 @@ app.delete('/:guildId', async (c) => {
 	const guildId = c.req.param('guildId');
 
 	try {
-		await Invite.destroy({ where: { guildId } });
+		await Invite.destroyAndClearCache({ where: { guildId } });
 		return c.json({
 			success: true,
 			message: 'All invite stats reset for guild.',
@@ -350,7 +350,6 @@ app.get('/:guildId/history', async (c) => {
 		100,
 		Math.max(1, parseInt(c.req.query('limit') || '20', 10)),
 	);
-	const offset = (page - 1) * limit;
 
 	const where = { guildId };
 	if (inviterId) where.inviterId = inviterId;
@@ -359,11 +358,11 @@ app.get('/:guildId/history', async (c) => {
 	if (joinType) where.joinType = joinType;
 
 	try {
-		const { count, rows } = await InviteHistory.findAndCountAll({
+		const { count, rows } = await InviteHistory.paginateCache({
 			where,
 			order: [['createdAt', 'DESC']],
-			limit,
-			offset,
+			page,
+			pageSize: limit,
 		});
 
 		return c.json({
@@ -485,7 +484,7 @@ app.post('/:guildId/milestones', async (c) => {
 		return c.json({ success: false, error: 'Missing invites or roleId' }, 400);
 
 	try {
-		const [setting] = await InviteSetting.findOrCreate({
+		const [setting] = await InviteSetting.findOrCreateWithCache({
 			where: { guildId },
 			defaults: { guildId, milestoneRoles: [] },
 		});

@@ -97,7 +97,7 @@ app.post('/', async (c) => {
 		}
 
 		// Upsert — find existing or create new
-		const [rr, created] = await ReactionRole.findOrCreate({
+		const [rr, created] = await ReactionRole.findOrCreateWithCache({
 			where: { guildId, messageId, emoji },
 			defaults: { guildId, channelId, messageId, emoji, roleId },
 		});
@@ -197,7 +197,9 @@ app.delete('/message/:messageId', async (c) => {
 		}
 
 		// Bulk destroy all records for this message
-		const deletedCount = await ReactionRole.destroy({ where: { messageId } });
+		const deletedCount = await ReactionRole.destroyAndClearCache({
+			where: { messageId },
+		});
 
 		return c.json({
 			success: true,
@@ -713,7 +715,7 @@ app.post('/panels/:id/emoji', async (c) => {
 			return c.json({ success: false, error: `Invalid emoji: ${emoji}` }, 400);
 		}
 
-		const [rr, created] = await ReactionRole.findOrCreate({
+		const [rr, created] = await ReactionRole.findOrCreateWithCache({
 			where: { guildId: panel.guildId, messageId: panel.messageId, emoji },
 			defaults: {
 				guildId: panel.guildId,
@@ -940,7 +942,7 @@ app.put('/panels/:id/emoji', async (c) => {
 		}
 
 		// Destroy all existing bindings for this panel
-		await ReactionRole.destroy({ where: { panelId: panel.id } });
+		await ReactionRole.destroyAndClearCache({ where: { panelId: panel.id } });
 
 		// Create new bindings and react
 		const created = [];

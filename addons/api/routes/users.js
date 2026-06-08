@@ -41,7 +41,7 @@ app.post('/:userId/managed-guilds', async (c) => {
 	// Second pass: bulk fetch settings for remaining guilds
 	if (botGuilds.length > 0) {
 		try {
-			const settings = await ServerSetting.findAll({
+			const settings = await ServerSetting.getAllCache({
 				where: { guildId: botGuilds },
 			});
 			const settingsMap = new Map(
