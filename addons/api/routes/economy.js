@@ -269,6 +269,51 @@ app.get('/stats', async (c) => {
 });
 
 // ---------------------------------------------------------------------------
+// GET /api/economy/stocks
+// Get the S&P 500 Top Guild Stocks Leaderboard
+// ---------------------------------------------------------------------------
+app.get('/stocks', async (c) => {
+	const models = getModels(c);
+	const { GuildLiquidityPool } = models;
+
+	if (!GuildLiquidityPool) {
+		return c.json({ success: true, data: [] });
+	}
+
+	try {
+		const pools = await GuildLiquidityPool.getAllCache();
+		if (!pools || pools.length === 0) {
+			return c.json({ success: true, data: [] });
+		}
+
+		const mappedPools = pools.map((pool) => {
+			const price = pool.kythReserve / pool.tokenReserve;
+			const marketCap = price * pool.tokenReserve;
+			return {
+				guildId: pool.guildId,
+				ticker: pool.ticker,
+				price,
+				marketCap,
+				kythReserve: pool.kythReserve,
+				tokenReserve: pool.tokenReserve,
+				feeRatePct: pool.feeRatePct,
+			};
+		});
+
+		mappedPools.sort((a, b) => b.marketCap - a.marketCap);
+		const topPools = mappedPools.slice(0, 50);
+
+		return c.json({ success: true, data: topPools });
+	} catch (error) {
+		getLogger(c).error(
+			`GET /api/economy/stocks error: ${error.message || error}`,
+			{ label: 'api:economy' },
+		);
+		return c.json({ success: false, error: error.message }, 500);
+	}
+});
+
+// ---------------------------------------------------------------------------
 // GET /api/economy/users/:userId
 // Get a specific user's Kyth portfolio
 // ---------------------------------------------------------------------------

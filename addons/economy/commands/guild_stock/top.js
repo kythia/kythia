@@ -1,0 +1,85 @@
+/**
+ * @namespace: addons/economy/commands/guild_stock/top.js
+ * @type: Slash Command
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
+module.exports = {
+	subcommand: true,
+	slashCommand: (subcommand) =>
+		subcommand
+			.setName('top')
+			.setDescription(
+				'🌐 View the top Guild Stocks by Market Cap (The Kythia S&P 500).',
+			),
+
+	/**
+	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
+	 * @param {KythiaDI.Container} container
+	 */
+	async execute(interaction, container) {
+		await interaction.deferReply();
+		const { t, models, helpers } = container;
+		const { GuildLiquidityPool } = models;
+		const { simpleContainer } = helpers.discord;
+		const { MessageFlags } = require('discord.js');
+
+		const pools = await GuildLiquidityPool.getAllCache();
+
+		if (!pools || pools.length === 0) {
+			const msg = await t(interaction, 'economy.guild_stock.top.empty');
+			const title = await t(interaction, 'economy.guild_stock.top.title');
+			const components = await simpleContainer(
+				interaction,
+				`## ${title}\n${msg}`,
+				{ color: 'Red' },
+			);
+			return interaction.editReply({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+			});
+		}
+
+		// Calculate market cap for each pool
+		const mappedPools = pools.map((pool) => {
+			const price = pool.kythReserve / pool.tokenReserve;
+			const marketCap = price * pool.tokenReserve; // which is mathematically just pool.kythReserve, but good to be explicit
+			return {
+				...pool.toJSON(),
+				price,
+				marketCap,
+			};
+		});
+
+		// Sort by Market Cap descending
+		mappedPools.sort((a, b) => b.marketCap - a.marketCap);
+
+		const topPools = mappedPools.slice(0, 10);
+
+		const title = await t(interaction, 'economy.guild_stock.top.title');
+		const desc = await t(interaction, 'economy.guild_stock.top.desc');
+
+		let description = '';
+		for (let i = 0; i < topPools.length; i++) {
+			const p = topPools[i];
+			let medal = '🔹';
+			if (i === 0) medal = '🥇';
+			else if (i === 1) medal = '🥈';
+			else if (i === 2) medal = '🥉';
+
+			description += `${medal} **$${p.ticker}** — **${p.marketCap.toFixed(2)}** KYTH (Price: ${p.price.toFixed(4)})\n`;
+		}
+
+		const fullText = `## ${title}\n${desc}\n\n${description}`;
+
+		const components = await simpleContainer(interaction, fullText, {
+			color: 'Blue',
+		});
+		return interaction.editReply({
+			components,
+			flags: MessageFlags.IsComponentsV2,
+		});
+	},
+};

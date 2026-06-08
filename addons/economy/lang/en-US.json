@@ -1173,6 +1173,78 @@
 				}
 			}
 		},
+		"guild_stock": {
+			"create": {
+				"error": {
+					"members": "Your server must have at least **{required} members** to launch a Guild Stock. You currently have {current} members.",
+					"ticker": "The ticker must be between 2 and 4 letters (A-Z) only.",
+					"exists": "This server already has an active stock: **${ticker}**",
+					"taken": "The ticker **${ticker}** is already in use by another server.",
+					"funds": "You need **{totalCost} KYTH** to launch this stock ({fee} KYTH listing fee + {liquidity} KYTH initial liquidity).\nYou only have **{balance} KYTH**.",
+					"db": "An error occurred while launching the stock. Please try again."
+				},
+				"success": {
+					"title": "🎉 Guild Stock Launched: ${ticker}",
+					"desc": "Congratulations! The local stock market for **{guildName}** is now live!",
+					"price": "1 ${ticker} = **{price} KYTH**",
+					"liquidity": "{liquidity} KYTH",
+					"supply": "{supply} ${ticker}",
+					"footer": "Listing Fee: {fee} KYTH | Founder Reward: {reward} ${ticker}"
+				}
+			},
+			"portfolio": {
+				"empty": {
+					"desc": "You do not own any Guild Stocks. Use `/eco guild_stock view` to discover stocks to buy!"
+				},
+				"title": "📈 Your Guild Portfolio",
+				"desc": "Total Portfolio Value: **{value} KYTH**",
+				"field": "**Balance:** {balance}\n**Value:** {value} KYTH"
+			},
+			"view": {
+				"error": {
+					"not_found": "No stock found with the ticker **${ticker}**.",
+					"no_guild_stock": "This server has not launched a stock yet. The owner can use `/eco guild_stock create` to launch one."
+				},
+				"title": "📊 ${ticker} Stock Overview",
+				"halted": "⚠️ **TRADING HALTED**",
+				"active": "✅ Trading Active",
+				"price": "**{price}** KYTH",
+				"cap": "**{cap}** KYTH",
+				"holders": "**{holders}** Users",
+				"x": "**{x}**",
+				"y": "**{y}**",
+				"fee": "**{fee}%**",
+				"footer": "Guild ID: {guildId}"
+			},
+			"top": {
+				"empty": "No guild stocks have been created yet.",
+				"title": "🌐 The Kythia S&P 500",
+				"desc": "Top 10 Server Stocks ranked by Market Cap."
+			},
+			"swap": {
+				"error": {
+					"not_found": "No stock found with the ticker **${ticker}**.",
+					"halted": "Trading for **${ticker}** is currently halted by the Central Bank.",
+					"liquidity": "Not enough stock in the pool to fulfill this order.",
+					"kyth_liquidity": "The pool does not have enough KYTH liquidity to fulfill this sell order.",
+					"funds": "You need **{cost} KYTH** to buy {amount} ${ticker}.\nYou only have **{balance} KYTH**.",
+					"balance": "You don't have enough ${ticker}. You only have **{balance}**."
+				},
+				"success": {
+					"buy": "You bought **{amount} ${ticker}** for **{cost} KYTH**.\nYour new balance: **{balance} ${ticker}**",
+					"sell": "You sold **{amount} ${ticker}** and received **{earned} KYTH**.\nYour new balance: **{balance} ${ticker}**"
+				}
+			},
+			"central_bank": {
+				"error": {
+					"owner": "Only the Bot Owner (Central Bank Governor) can use this command.",
+					"db": "Global Liquidity Pool not found."
+				},
+				"title": "🏦 Central Bank Policy",
+				"current": "Current Policies:\n- Fee Rate: **{fee}%**\n- Dividend Split: **{dividend}%**\n- Burn Rate: **{burn}%**\n- Trading Halted: **{halted}**\n\nProvide options to update the policy.",
+				"success": "The global monetary policy has been updated by the Governor.\n\n{changes}"
+			}
+		},
 		"flea": {
 			"error": {
 				"missing_params": {
