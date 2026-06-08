@@ -249,6 +249,8 @@ app.get('/stats', async (c) => {
 				marketCap,
 				totalCirculating,
 				totalStaked,
+				poolKythReserve: pool?.kythReserve || 0,
+				poolCoinReserve: pool?.coinReserve || 0,
 				totalHolders,
 				totalStakers,
 				stakedPercentage:
@@ -384,7 +386,7 @@ app.get('/chart', async (c) => {
 
 		// Format to standard chart data points
 		const dataPoints = transactions.map((tx) => ({
-			time: tx.createdAt.getTime(),
+			time: new Date(tx.createdAt).getTime(),
 			price: tx.price,
 			volume: tx.quantity,
 			type: tx.type, // 'buy' or 'sell'
