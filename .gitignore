@@ -132,6 +132,7 @@ dist
 *.zip
 # lavalink/
 kythia.config.js
+kythia.dynamic.json
 private_key.pem
 temp/
 *tmp*

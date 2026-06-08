@@ -543,6 +543,7 @@ function loadKythiaConfig() {
 		 * IX. MISCELLANEOUS SETTINGS
 		 * ------------------------------------------------------------------- */
 		settings: {
+			startup: 'full', // full, minimum
 			// all / warn,error,info,debug
 			logConsoleFilter: 'all',
 			// error,warn
@@ -653,7 +654,41 @@ function loadKythiaConfig() {
 	};
 }
 
-const initialConfig = loadKythiaConfig();
+function isObject(item) {
+	return item && typeof item === 'object' && !Array.isArray(item);
+}
+
+function mergeDeep(target, ...sources) {
+	if (!sources.length) return target;
+	const source = sources.shift();
+
+	if (isObject(target) && isObject(source)) {
+		for (const key in source) {
+			if (isObject(source[key])) {
+				if (!target[key]) Object.assign(target, { [key]: {} });
+				mergeDeep(target[key], source[key]);
+			} else {
+				Object.assign(target, { [key]: source[key] });
+			}
+		}
+	}
+	return mergeDeep(target, ...sources);
+}
+
+let initialConfig = loadKythiaConfig();
+
+try {
+	const fs = require('node:fs');
+	const path = require('node:path');
+	const dynamicPath = path.join(__dirname, 'kythia.dynamic.json');
+	if (fs.existsSync(dynamicPath)) {
+		const dynamicConfig = JSON.parse(fs.readFileSync(dynamicPath, 'utf8'));
+		initialConfig = mergeDeep(initialConfig, dynamicConfig);
+	}
+} catch (e) {
+	// biome-ignore lint/suspicious/noConsole: dynamic override no need to logging it
+	console.error('[Config] Failed to apply dynamic overrides:', e.message);
+}
 
 // Enforce the configured timezone across the entire Node.js process (affects cron, Date, etc.)
 if (initialConfig.bot?.timezone) {

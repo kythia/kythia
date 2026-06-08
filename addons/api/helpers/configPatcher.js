@@ -56,10 +56,9 @@ function setJsArray(content, key, items) {
 
 function patchEnv(payload, currentEnvStr) {
 	let env = currentEnvStr;
-	const { license = {}, bot = {}, db = {}, redis = {} } = payload;
+	const { licenseKey, bot = {}, db = {} } = payload;
 
-	if (license.licenseKey !== undefined)
-		env = setEnvKey(env, 'LICENSE_KEY', license.licenseKey);
+	if (licenseKey !== undefined) env = setEnvKey(env, 'LICENSE_KEY', licenseKey);
 	if (bot.token !== undefined)
 		env = setEnvKey(env, 'DISCORD_BOT_TOKEN', bot.token);
 	if (bot.clientId !== undefined)
@@ -68,128 +67,90 @@ function patchEnv(payload, currentEnvStr) {
 		env = setEnvKey(env, 'DISCORD_BOT_CLIENT_SECRET', bot.clientSecret);
 
 	if (db.driver !== undefined) env = setEnvKey(env, 'DB_DRIVER', db.driver);
-	if (db.dbHost !== undefined) env = setEnvKey(env, 'DB_HOST', db.dbHost);
-	if (db.dbPort !== undefined) env = setEnvKey(env, 'DB_PORT', db.dbPort);
-	if (db.dbName !== undefined) env = setEnvKey(env, 'DB_NAME', db.dbName);
-	if (db.dbUser !== undefined) env = setEnvKey(env, 'DB_USER', db.dbUser);
-	if (db.dbPass !== undefined) env = setEnvKey(env, 'DB_PASSWORD', db.dbPass);
-
-	if (redis.redisUrls !== undefined)
-		env = setEnvKey(env, 'REDIS_URLS', redis.redisUrls);
+	if (db.host !== undefined) env = setEnvKey(env, 'DB_HOST', db.host);
+	if (db.port !== undefined) env = setEnvKey(env, 'DB_PORT', db.port);
+	if (db.name !== undefined) env = setEnvKey(env, 'DB_NAME', db.name);
+	if (db.user !== undefined) env = setEnvKey(env, 'DB_USER', db.user);
+	if (db.pass !== undefined) env = setEnvKey(env, 'DB_PASSWORD', db.pass);
+	if (db.redis !== undefined) env = setEnvKey(env, 'REDIS_URLS', db.redis);
 
 	return env;
 }
 
-function patchConfig(payload, currentConfigStr) {
-	let cfg = currentConfigStr;
-	const { license = {}, bot = {}, redis = {}, addons = {} } = payload;
+function isObject(item) {
+	return item && typeof item === 'object' && !Array.isArray(item);
+}
 
-	if (license.acceptTOS !== undefined)
-		cfg = setJsBool(cfg, 'acceptTOS', license.acceptTOS);
-	if (license.dataCollection !== undefined)
-		cfg = setJsBool(cfg, 'dataCollection', license.dataCollection);
+function mergeDeep(target, ...sources) {
+	if (!sources.length) return target;
+	const source = sources.shift();
 
-	if (bot.ownerIds !== undefined)
-		cfg = setJsStringKey(cfg, 'ids', bot.ownerIds);
-	if (bot.ownerNames !== undefined)
-		cfg = setJsStringKey(cfg, 'names', bot.ownerNames);
-	if (bot.botName !== undefined) cfg = setJsStringKey(cfg, 'name', bot.botName);
-	if (bot.color !== undefined) cfg = setJsStringKey(cfg, 'color', bot.color);
-	if (bot.status !== undefined) cfg = setJsStringKey(cfg, 'status', bot.status);
-	if (bot.activityType !== undefined)
-		cfg = setJsStringKey(cfg, 'activityType', bot.activityType);
-	if (bot.activity !== undefined)
-		cfg = setJsStringKey(cfg, 'activity', bot.activity);
-	if (bot.timezone !== undefined)
-		cfg = setJsStringKey(cfg, 'timezone', bot.timezone);
-
-	if (bot.prefixes !== undefined) {
-		const prefixList = bot.prefixes
-			.split(',')
-			.map((p) => p.trim())
-			.filter(Boolean);
-		cfg = setJsArray(cfg, 'prefixes', prefixList);
-	}
-
-	if (redis.useRedis !== undefined)
-		cfg = setJsBool(cfg, 'useRedis', redis.useRedis);
-
-	const addonMap = {
-		activity: 'activity',
-		adventure: 'adventure',
-		ai: 'ai',
-		api: 'api',
-		automod: 'automod',
-		autoreact: 'autoreact',
-		autoreply: 'autoreply',
-		birthday: 'birthday',
-		booster: 'booster',
-		checklist: 'checklist',
-		economy: 'economy',
-		'embed-builder': 'embedBuilder',
-		fun: 'fun',
-		giveaway: 'giveaway',
-		globalchat: 'globalchat',
-		globalvoice: 'globalvoice',
-		image: 'image',
-		invite: 'invite',
-		leveling: 'leveling',
-		minecraft: 'minecraft',
-		modmail: 'modmail',
-		music: 'music',
-		nsfw: 'nsfw',
-		pet: 'pet',
-		pro: 'pro',
-		quest: 'quest',
-		'reaction-role': 'reactionRole',
-		server: 'server',
-		'social-alerts': 'socialAlerts',
-		streak: 'streak',
-		tempvoice: 'tempvoice',
-		ticket: 'ticket',
-		verification: 'verification',
-		welcomer: 'welcomer',
-	};
-
-	for (const [rawName, camelName] of Object.entries(addonMap)) {
-		const result = addons[rawName] ?? addons[camelName];
-		if (result && result.enabled !== undefined) {
-			const addonKeyRe = new RegExp(
-				`(\\b${camelName}:\\s*\\{[^}]*?active:\\s*)(true|false)`,
-				's',
-			);
-			cfg = cfg.replace(addonKeyRe, `$1${result.enabled}`);
+	if (isObject(target) && isObject(source)) {
+		for (const key in source) {
+			if (isObject(source[key])) {
+				if (!target[key]) Object.assign(target, { [key]: {} });
+				mergeDeep(target[key], source[key]);
+			} else {
+				Object.assign(target, { [key]: source[key] });
+			}
 		}
 	}
 
-	return cfg;
+	return mergeDeep(target, ...sources);
 }
 
 function writePatchedFiles(payload) {
 	const root = process.cwd();
 	const envPath = path.join(root, '.env');
-	const configPath = path.join(root, 'kythia.config.js');
+	const dynamicPath = path.join(root, 'kythia.dynamic.json');
 
 	const envBackup = `${envPath}.backup`;
-	const configBackup = `${configPath}.backup`;
 
-	if (!fs.existsSync(envPath) || !fs.existsSync(configPath)) {
+	if (!fs.existsSync(envPath)) {
 		throw new Error('Config files not found. Setup must be completed first.');
 	}
 
 	const currentEnv = fs.readFileSync(envPath, 'utf8');
-	const currentConfig = fs.readFileSync(configPath, 'utf8');
-
 	const newEnv = patchEnv(payload, currentEnv);
-	const newConfig = patchConfig(payload, currentConfig);
 
 	fs.copyFileSync(envPath, envBackup);
-	fs.copyFileSync(configPath, configBackup);
-
 	fs.writeFileSync(envPath, newEnv, 'utf8');
-	fs.writeFileSync(configPath, newConfig, 'utf8');
 
-	return { envPath, configPath, envBackup, configBackup };
+	let dynamicConfig = {};
+	if (fs.existsSync(dynamicPath)) {
+		try {
+			dynamicConfig = JSON.parse(fs.readFileSync(dynamicPath, 'utf8'));
+		} catch (e) {
+			console.error('Failed to parse kythia.dynamic.json', e);
+		}
+	}
+
+	// Remove fields from payload that are specifically tracked in .env to prevent duplicates
+	const cleanPayload = JSON.parse(JSON.stringify(payload));
+	delete cleanPayload.licenseKey;
+	if (cleanPayload.bot) {
+		delete cleanPayload.bot.token;
+		delete cleanPayload.bot.clientId;
+		delete cleanPayload.bot.clientSecret;
+	}
+	if (cleanPayload.db) {
+		delete cleanPayload.db.driver;
+		delete cleanPayload.db.host;
+		delete cleanPayload.db.port;
+		delete cleanPayload.db.name;
+		delete cleanPayload.db.user;
+		delete cleanPayload.db.pass;
+		delete cleanPayload.db.redis;
+	}
+
+	const newDynamicConfig = mergeDeep(dynamicConfig, cleanPayload);
+	fs.writeFileSync(
+		dynamicPath,
+		JSON.stringify(newDynamicConfig, null, 4),
+		'utf8',
+	);
+
+	return { envPath, configPath: dynamicPath, envBackup, configBackup: '' };
 }
 
-module.exports = { patchEnv, patchConfig, writePatchedFiles };
+module.exports = { patchEnv, writePatchedFiles };

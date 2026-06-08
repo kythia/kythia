@@ -9,17 +9,22 @@
 const dotenv = require('@dotenvx/dotenvx');
 const path = require('node:path');
 
-const { loadKythiaConfig } = require(`${process.cwd()}/kythia.config.js`);
+const kythiaConfigExport = require(`${process.cwd()}/kythia.config.js`);
+const { loadKythiaConfig } = kythiaConfigExport;
 
 const envPath = path.resolve(process.cwd(), '.env');
 
 /**
- * Reloads the `.env` file into `process.env` and refreshes `global.kythia`.
+ * Reloads the `.env` file into `process.env` and refreshes the existing config references.
  */
 function reloadConfig() {
-	dotenv.config({ path: envPath, override: true, quite: true });
+	dotenv.config({ path: envPath, override: true, quiet: true });
 
-	global.kythia = loadKythiaConfig();
+	const newConfig = loadKythiaConfig();
+
+	Object.assign(global.kythia, newConfig);
+
+	Object.assign(kythiaConfigExport, newConfig);
 }
 
 module.exports = { reloadConfig };

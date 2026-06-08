@@ -1577,58 +1577,23 @@ app.delete('/restart', (c) => {
  * structure required by the setup wizard/writer.
  */
 app.get('/setup', (c) => {
-	const config = getConfig(c);
-
-	const license = {
-		licenseKey: process.env.LICENSE_KEY || '',
-		acceptTOS: config.acceptTOS ?? false,
-		dataCollection: config.dataCollection ?? false,
-	};
-
-	const bot = {
-		token: process.env.DISCORD_BOT_TOKEN || '',
-		clientId: process.env.DISCORD_BOT_CLIENT_ID || '',
-		clientSecret: process.env.DISCORD_BOT_CLIENT_SECRET || '',
-		botName: config.bot?.name || 'Kythia',
-		color: config.bot?.color || '#FFFFFF',
-		status: config.bot?.status || 'online',
-		activityType: config.bot?.activityType || 'Playing',
-		activity: config.bot?.activity || '',
-		timezone: config.bot?.timezone || 'Asia/Jakarta',
-		ownerIds: config.owner?.ids || '',
-		ownerNames: config.owner?.names || '',
-		prefixes: (config.bot?.prefixes || []).join(', '),
-	};
-
-	const db = {
-		driver: process.env.DB_DRIVER || 'sqlite',
-		dbHost: process.env.DB_HOST || 'localhost',
-		dbPort: process.env.DB_PORT || '3306',
-		dbName: process.env.DB_NAME || 'kythia',
-		dbUser: process.env.DB_USER || 'root',
-		dbPass: process.env.DB_PASSWORD || '',
-	};
-
-	const redis = {
-		useRedis: config.database?.useRedis ?? false,
-		redisUrls: process.env.REDIS_URLS || '',
-	};
-
-	const addons = {};
-	if (config.addons) {
-		for (const [key, val] of Object.entries(config.addons)) {
-			addons[key] = { enabled: val.active ?? false };
-		}
-	}
+	const config = global.kythia || {};
 
 	return c.json({
 		success: true,
 		data: {
-			license,
-			bot,
-			db,
-			redis,
-			addons,
+			license: {
+				licenseKey: config.licenseKey || process.env.LICENSE_KEY || '',
+				acceptTOS: config.legal?.acceptTOS ?? true,
+				dataCollection: config.legal?.dataCollection ?? true,
+			},
+			bot: config.bot || {},
+			db: config.db || {},
+			redis: config.redis || {},
+			addons: config.addons || {},
+			settings: config.settings || {},
+			emojis: config.emojis || {},
+			api: config.api || {},
 		},
 	});
 });
@@ -1706,58 +1671,20 @@ app.post('/setup', async (c) => {
  * logic, returning the current state for the dashboard forms.
  */
 app.get('/config', (c) => {
-	const config = getConfig(c);
-
-	const license = {
-		licenseKey: process.env.LICENSE_KEY || '',
-		acceptTOS: config.acceptTOS ?? false,
-		dataCollection: config.dataCollection ?? false,
-	};
-
-	const bot = {
-		token: process.env.DISCORD_BOT_TOKEN || '',
-		clientId: process.env.DISCORD_BOT_CLIENT_ID || '',
-		clientSecret: process.env.DISCORD_BOT_CLIENT_SECRET || '',
-		botName: config.bot?.name || 'Kythia',
-		color: config.bot?.color || '#FFFFFF',
-		status: config.bot?.status || 'online',
-		activityType: config.bot?.activityType || 'Playing',
-		activity: config.bot?.activity || '',
-		timezone: config.bot?.timezone || 'Asia/Jakarta',
-		ownerIds: config.owner?.ids || '',
-		ownerNames: config.owner?.names || '',
-		prefixes: (config.bot?.prefixes || []).join(', '),
-	};
-
-	const db = {
-		driver: process.env.DB_DRIVER || 'sqlite',
-		dbHost: process.env.DB_HOST || 'localhost',
-		dbPort: process.env.DB_PORT || '3306',
-		dbName: process.env.DB_NAME || 'kythia',
-		dbUser: process.env.DB_USER || 'root',
-		dbPass: process.env.DB_PASSWORD || '',
-	};
-
-	const redis = {
-		useRedis: config.database?.useRedis ?? false,
-		redisUrls: process.env.REDIS_URLS || '',
-	};
-
-	const addons = {};
-	if (config.addons) {
-		for (const [key, val] of Object.entries(config.addons)) {
-			addons[key] = { enabled: val.active ?? false };
-		}
-	}
+	const config = global.kythia || {};
 
 	return c.json({
 		success: true,
 		data: {
-			license,
-			bot,
-			db,
-			redis,
-			addons,
+			licenseKey: config.licenseKey || process.env.LICENSE_KEY || '',
+			legal: config.legal || {},
+			owner: config.owner || {},
+			bot: config.bot || {},
+			db: config.db || {},
+			addons: config.addons || {},
+			settings: config.settings || {},
+			emojis: config.emojis || {},
+			api: config.api || {},
 		},
 	});
 });
@@ -1789,24 +1716,21 @@ app.patch('/config', async (c) => {
 		const { envPath, configPath, envBackup, configBackup } =
 			patcher.writePatchedFiles(body);
 
-		getLogger(c).info('Live Config Patcher successfully updated files.', {
-			label: 'api',
-		});
+		getLogger(c).info(
+			'Live Config Patcher successfully updated files. Triggering hot reload...',
+			{
+				label: 'api',
+			},
+		);
 
-		// Schedule a restart in 2 seconds
-		const client = getClient(c);
-		setTimeout(async () => {
-			if (client.shard) {
-				await client.shard.respawnAll();
-			} else {
-				process.exit(0);
-			}
-		}, 2000);
+		// Trigger hot reload instead of restarting
+		const { reloadConfig } = require('@coreHelpers/reload-config');
+		reloadConfig();
 
 		return c.json({
 			success: true,
 			message:
-				'Configuration successfully patched. Bot will restart in 2 seconds.',
+				'Configuration successfully patched and hot-reloaded with zero downtime.',
 			files: {
 				envPath,
 				configPath,

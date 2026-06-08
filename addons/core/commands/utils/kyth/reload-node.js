@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/music/commands/reload-node.js
+ * @namespace: addons/core/commands/utils/kyth/reload-node.js
  * @type: Command
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
@@ -12,7 +12,7 @@ const {
 	SlashCommandBuilder,
 	InteractionContextType,
 } = require('discord.js');
-const { reloadLavalinkNodes } = require('../helpers/reload-node');
+const { reloadLavalinkNodes } = require('../../../helpers/reload-node');
 
 module.exports = {
 	slashCommand: new SlashCommandBuilder()

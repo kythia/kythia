@@ -1,12 +1,12 @@
 /**
- * @namespace: addons/music/helpers/reload-node.js
+ * @namespace: addons/core/helpers/reload-node.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
 
-const { reloadConfig } = require('@coreHelpers/reload-config');
+const { reloadConfig } = require('./reload-config');
 
 async function reloadLavalinkNodes(client) {
 	const { logger, kythiaConfig } = client.container;
