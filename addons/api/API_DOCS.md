@@ -172,6 +172,13 @@ The **Kythia API** is an internal REST API addon that acts as the bridge between
     - [Cancel Schedule](#delete-apiownerrestart)
     - [Trigger Restart](#post-apiownerrestart)
   - [Global Profile](#global-profile-apiownerprofile)
+- [Economy API (`/api/economy`)](#economy-api-apieconomy)
+  - [Pool Status](#pool-status-apieconomypool)
+  - [Global Stats](#global-stats-apieconomystats)
+  - [Leaderboard](#leaderboard-apieconomyleaderboard)
+  - [User Portfolio](#user-portfolio-apieconomyusersuserid)
+  - [Market Transactions](#market-transactions-apieconomymarkettransactions)
+  - [Trading Chart Data](#trading-chart-data-apieconomychart)
 - [Error Reference](#error-reference)
 
 ---
@@ -9919,3 +9926,189 @@ Update the main bot's global profile.
 
 ---
 
+## Economy API (`/api/economy`)
+
+The Kyth Economy API exposes detailed data about the KYTH AMM Liquidity Pool, ecosystem stats, user holdings, market transactions, and a specialized endpoint for trading charts.
+
+### `GET /api/economy/pool`
+
+Fetch the current Kythia Liquidity Pool state and configuration.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "price": 0.015,
+    "reserves": {
+      "coinReserve": 150000,
+      "kythReserve": 10000000
+    },
+    "kConstant": 1500000000000,
+    "totalTaxCollected": 50000,
+    "lastBurnAt": null,
+    "config": {
+      "tradingHalted": false,
+      "feeRatePct": 2.0,
+      "minTradeAmount": 1,
+      "maxTradeAmount": 0,
+      "burnActive": true,
+      "burnRatePct": 5.0,
+      "dividendActive": true,
+      "dividendSplitPct": 50.0,
+      "blackmarketActive": true,
+      "stakingActive": true,
+      "stakingMinKyth": 1.0
+    },
+    "updatedAt": "2026-06-08T10:00:00.000Z"
+  }
+}
+```
+
+---
+
+### `PATCH /api/economy/pool/config`
+
+Update the Kythia Liquidity Pool configuration.
+
+**Request Body:**
+
+```json
+{
+  "feeRatePct": 3.0,
+  "tradingHalted": true
+}
+```
+
+---
+
+### `GET /api/economy/stats`
+
+Get global Kyth ecosystem statistics.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "price": 0.015,
+    "marketCap": 75000,
+    "totalCirculating": 4000000,
+    "totalStaked": 1000000,
+    "totalHolders": 150,
+    "totalStakers": 50,
+    "stakedPercentage": 20.0
+  }
+}
+```
+
+---
+
+### `GET /api/economy/leaderboard`
+
+Get a paginated leaderboard of users sorted by total Kyth (holding + staked).
+
+**Query Parameters:**
+
+| Parameter | Type     | Default | Description                   |
+| --------- | -------- | ------- | ----------------------------- |
+| `limit`   | `number` | `50`    | Items per page (max `100`)    |
+| `page`    | `number` | `1`     | Page number                   |
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "count": 150,
+  "page": 1,
+  "totalPages": 3,
+  "data": [
+    {
+      "rank": 1,
+      "userId": "111111111111111111",
+      "username": "whale_user",
+      "avatar": "https://cdn.discordapp.com/...",
+      "kythHolding": 500000,
+      "kythStaked": 1000000,
+      "totalKyth": 1500000
+    }
+  ]
+}
+```
+
+---
+
+### `GET /api/economy/users/:userId`
+
+Get a specific user's Kyth portfolio.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "userId": "111111111111111111",
+    "kythHolding": 5000,
+    "kythStaked": 10000,
+    "totalKyth": 15000,
+    "valuations": {
+      "holdingValueCoins": 75,
+      "stakedValueCoins": 150,
+      "totalValueCoins": 225
+    },
+    "coinBalance": 50000
+  }
+}
+```
+
+---
+
+### `GET /api/economy/market/transactions`
+
+Get recent market transactions for KYTH.
+
+**Query Parameters:**
+
+| Parameter | Type     | Default | Description                   |
+| --------- | -------- | ------- | ----------------------------- |
+| `limit`   | `number` | `50`    | Items per page (max `100`)    |
+| `page`    | `number` | `1`     | Page number                   |
+
+---
+
+### `GET /api/economy/chart`
+
+Get historical price data tailored for rendering trading charts (e.g. TradingView Lightweight Charts).
+
+**Query Parameters:**
+
+| Parameter   | Type     | Default | Description                           |
+| ----------- | -------- | ------- | ------------------------------------- |
+| `limit`     | `number` | `500`   | Max data points returned (max `2000`) |
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "time": 1717830000000,
+      "price": 0.012,
+      "volume": 1000,
+      "type": "buy"
+    },
+    {
+      "time": 1717830500000,
+      "price": 0.015,
+      "volume": 0,
+      "type": "current"
+    }
+  ]
+}
+```
