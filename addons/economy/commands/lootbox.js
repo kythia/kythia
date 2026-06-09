@@ -61,9 +61,8 @@ module.exports = {
 			});
 		}
 
-		const avgHourly = 5677 / 160;
-		const minHourly = avgHourly * 0.9;
-		const maxHourly = avgHourly * 1.1;
+		const minHourly = 5;
+		const maxHourly = 15;
 		const baseReward =
 			Math.floor(Math.random() * (maxHourly - minHourly + 1)) +
 			Math.floor(minHourly);

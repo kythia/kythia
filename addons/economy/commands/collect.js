@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/economy/commands/daily.js
+ * @namespace: addons/economy/commands/collect.js
  * @type: Command
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
@@ -7,16 +7,14 @@
  */
 
 const { MessageFlags } = require('discord.js');
-const banks = require('../helpers/banks');
 const { toBigIntSafe } = require('../helpers/bigint');
 
 module.exports = {
 	subcommand: true,
-	aliases: ['daily'],
 	slashCommand: (subcommand) =>
 		subcommand
-			.setName('daily')
-			.setDescription('💰 Collect your daily kythia coin.'),
+			.setName('collect')
+			.setDescription('🏦 Collect daily passive income from your assets'),
 
 	/**
 	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
@@ -24,7 +22,7 @@ module.exports = {
 	 */
 	async execute(interaction, container) {
 		const { t, models, kythiaConfig, helpers } = container;
-		const { KythiaUser } = models;
+		const { KythiaUser, Inventory } = models;
 		const { simpleContainer } = helpers.discord;
 		const { checkCooldown } = helpers.time;
 
@@ -42,13 +40,15 @@ module.exports = {
 			});
 		}
 
+		// Check cooldown (24 hours)
 		const cooldown = checkCooldown(
-			user.lastDaily,
-			kythiaConfig.addons.economy.dailyCooldown || 86400,
+			user.lastCollect,
+			86400, // 24 hours
 			interaction,
 		);
+
 		if (cooldown.remaining) {
-			const msg = await t(interaction, 'economy.daily.daily.cooldown', {
+			const msg = await t(interaction, 'economy.collect.cooldown', {
 				time: cooldown.time,
 			});
 			const components = await simpleContainer(interaction, msg, {
@@ -60,30 +60,57 @@ module.exports = {
 			});
 		}
 
-		const minDaily = 10;
-		const maxDaily = 25;
-		const baseCoin =
-			Math.floor(Math.random() * (maxDaily - minDaily + 1)) +
-			Math.floor(minDaily);
+		// Check for assets
+		const house = await Inventory.getCache({
+			userId: interaction.user.id,
+			itemName: '🏠 Luxury House',
+		});
 
-		const userBank = banks.getBank(user.bankType);
-		const incomeBonusPercent = userBank.incomeBonusPercent;
-		const bankBonus = Math.floor(baseCoin * (incomeBonusPercent / 100));
-		const randomCoin = baseCoin + bankBonus;
+		const company = await Inventory.getCache({
+			userId: interaction.user.id,
+			itemName: '🏢 Company',
+		});
 
-		user.kythiaCoin = toBigIntSafe(user.kythiaCoin) + toBigIntSafe(randomCoin);
-		user.lastDaily = Date.now();
+		if (!house && !company) {
+			const msg = await t(interaction, 'economy.collect.no_assets');
+			const components = await simpleContainer(interaction, msg, {
+				color: 'Red',
+			});
+			return interaction.editReply({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+			});
+		}
+
+		let passiveIncome = 0;
+		const assetMsgs = [];
+
+		if (house && house.quantity > 0) {
+			passiveIncome += 1500;
+			assetMsgs.push('🏠 Luxury House (+🪙 1,500)');
+		}
+
+		if (company && company.quantity > 0) {
+			passiveIncome += 5000;
+			assetMsgs.push('🏢 Company (+🪙 5,000)');
+		}
+
+		user.kythiaCoin =
+			toBigIntSafe(user.kythiaCoin) + toBigIntSafe(passiveIncome);
+		user.lastCollect = Date.now();
 
 		user.changed('kythiaCoin', true);
-		user.changed('lastDaily', true);
+		user.changed('lastCollect', true);
 
 		await user.save();
 
-		const msg = await t(interaction, 'economy.daily.daily.success', {
-			amount: randomCoin,
+		const msg = await t(interaction, 'economy.collect.success', {
+			amount: passiveIncome,
+			assets: assetMsgs.join('\n> '),
 		});
+
 		const components = await simpleContainer(interaction, msg, {
-			color: kythiaConfig.bot.color,
+			color: 'Green',
 		});
 		return interaction.editReply({
 			components,

@@ -57,7 +57,7 @@ module.exports = {
 			});
 		}
 
-		const baseCoin = Math.floor(Math.random() * 21) + 5;
+		const baseCoin = Math.floor(Math.random() * 5) + 1; // 1 to 5 kythiaCoin
 
 		const userBank = banks.getBank(user.bankType);
 		const incomeBonusPercent = userBank.incomeBonusPercent;

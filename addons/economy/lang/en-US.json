@@ -174,7 +174,9 @@
 				"utility": "Utility",
 				"robbing": "Robbing",
 				"pet": "Pet",
-				"merriage": "Merriage"
+				"merriage": "Merriage",
+				"consumables": "Consumables",
+				"lifestyle": "Lifestyle"
 			},
 			"select": {
 				"category": {
@@ -238,6 +240,46 @@
 					"name": "Company",
 					"description": "Unlocks access to the highest jobs in Tier 5!"
 				},
+				"padlock_item": {
+					"name": "Padlock",
+					"description": "Protects your wallet from robbers for a limited time."
+				},
+				"fakewallet_item": {
+					"name": "Fake Wallet",
+					"description": "Fools robbers into stealing fake money instead of your real stash."
+				},
+				"antivirus_item": {
+					"name": "Antivirus",
+					"description": "Protects you from digital hacking attempts."
+				},
+				"bicycle_vehicle": {
+					"name": "Bicycle",
+					"description": "Required for basic courier and delivery jobs."
+				},
+				"motorcycle_vehicle": {
+					"name": "Motorcycle",
+					"description": "Required for mid-tier delivery and Ojek jobs."
+				},
+				"camera_tech": {
+					"name": "Camera",
+					"description": "Required for the Photographer job."
+				},
+				"microphone_tech": {
+					"name": "Microphone",
+					"description": "Required for Influencer and Podcaster jobs."
+				},
+				"briefcase_item": {
+					"name": "Briefcase",
+					"description": "Required for corporate and consulting jobs."
+				},
+				"bankvault_item": {
+					"name": "Bank Vault",
+					"description": "Protects a larger portion of your money from being robbed."
+				},
+				"cctv_item": {
+					"name": "CCTV Camera",
+					"description": "Reveals the identity of whoever tries to rob you."
+				},
 				"poison_item": {
 					"name": "Poison",
 					"description": "Use to increase your chance of successful robbery."
@@ -246,11 +288,62 @@
 					"name": "Guard",
 					"description": "Protects your money from robbers for 1 hour."
 				},
+				"bounty_license_item": {
+					"name": "Bounty License",
+					"description": "Allows you to legally hunt down wanted criminals."
+				},
+				"stealth_suit_item": {
+					"name": "Stealth Suit",
+					"description": "Increases your chances of a successful robbery without getting caught."
+				},
+				"lockpick_item": {
+					"name": "Lockpick",
+					"description": "Has a chance to bypass a victim's Padlock during a robbery."
+				},
+				"smokegrenade_item": {
+					"name": "Smoke Grenade",
+					"description": "Automatically deploys if a robbery fails, letting you escape without a fine."
+				},
+				"lawyer_contact_item": {
+					"name": "Lawyer Contact",
+					"description": "Automatically halves your penalty fine if you get caught committing a crime."
+				},
 				"petfood_item": {
 					"name": "Pet Food",
 					"description": "Feed your pet to increase its happiness."
 				},
-				"marriage_ring": {}
+				"merriage_ring": {
+					"name": "Marriage Ring",
+					"description": "A beautiful ring to propose to your loved one."
+				},
+				"coffee_item": {
+					"name": "Coffee",
+					"description": "Instantly resets your /work cooldown so you can work again."
+				},
+				"energydrink_item": {
+					"name": "Energy Drink",
+					"description": "Reduces all cooldowns by 50% for the next hour."
+				},
+				"lotteryticket_item": {
+					"name": "Lottery Ticket",
+					"description": "Gives you a small chance to win a massive jackpot."
+				},
+				"goldbar_item": {
+					"name": "Gold Bar",
+					"description": "A stable store of value, excellent for trading on the Flea Market."
+				},
+				"designerwatch_item": {
+					"name": "Designer Watch",
+					"description": "A luxury item to flex your wealth."
+				},
+				"yacht_vehicle": {
+					"name": "Yacht",
+					"description": "A massive luxury yacht for ultra-wealthy individuals."
+				},
+				"privatejet_vehicle": {
+					"name": "Private Jet",
+					"description": "The ultimate end-game luxury item. Fly anywhere in style."
+				}
 			}
 		},
 		"leaderboard": {
@@ -387,6 +480,7 @@
 						"self": "❌ You cannot rob yourself!"
 					}
 				},
+
 				"target": {
 					"no": {
 						"account": {
@@ -1125,6 +1219,9 @@
 				"event": {
 					"blocked": {
 						"desc": "## 🔒 Robbery Blocked!\nYour robbery attempt was blocked by {target}'s Padlock! The padlock broke."
+					},
+					"lockpick_fail": {
+						"desc": "## ❌ Lockpick Broke!\nYou tried to pick {target}'s padlock, but your lockpick broke and the padlock held strong! The robbery was blocked."
 					}
 				}
 			}
@@ -1318,6 +1415,22 @@
 					"desc": "## 📦 Listing Cancelled\nYou cancelled the listing for **{item}** and it was returned to your inventory."
 				}
 			}
+		},
+		"use": {
+			"error": {
+				"no_item": "## ❌ Missing Item\nYou don't own any **{item}** in your inventory!"
+			},
+			"success": {
+				"coffee": "You drank a hot cup of coffee ☕. You feel energized! Your `/eco work` cooldown has been reset!",
+				"energydrink": "You chugged an Energy Drink 🥫. You feel invincible! ALL of your economy cooldowns have been instantly reset!",
+				"lottery_win": "🎉 JACKPOT! Your lottery ticket was a winner! You just received 🪙 10,000 Kythia Coin!",
+				"lottery_lose": "😔 Better luck next time... Your lottery ticket was a dud."
+			}
+		},
+		"collect": {
+			"cooldown": "🕒 | You can collect your passive income again in **{time}**!",
+			"no_assets": "## 🏦 No Assets Found\nYou do not own any assets that generate passive income. Buy a Luxury House or a Company from the shop!",
+			"success": "## 🏦 Passive Income Collected\nYou successfully collected your daily dividends:\n> {assets}\n\n**Total Collected: 🪙 {amount}**"
 		}
 	}
 }

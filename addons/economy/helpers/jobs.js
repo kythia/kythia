@@ -36,6 +36,7 @@ module.exports = {
 				nameKey: 'economy.jobs.courier.name', // Kurir (mis. UPS, FedEx, DoorDash, dsb)
 				emoji: '📦',
 				basePay: [16, 22], // $16-22/jam
+				requiredItem: '🚲 Bicycle',
 				scenarios: [
 					{
 						descKey: 'economy.jobs.courier.scenarios.s1',
@@ -204,7 +205,7 @@ module.exports = {
 				nameKey: 'economy.jobs.influencer.name',
 				emoji: '🤳',
 				basePay: [28, 100], // $28-100/jam (bisa tinggi tapi biasanya di range ini untuk kecil/menengah)
-				requiredItem: '📱 Smartphone',
+				requiredItem: ['📱 Smartphone', '🎙️ Microphone'],
 				scenarios: [
 					{
 						descKey: 'economy.jobs.influencer.scenarios.s1',
@@ -227,7 +228,7 @@ module.exports = {
 				nameKey: 'economy.jobs.ojek_driver.name',
 				emoji: '🛵',
 				basePay: [16, 25], // ride-sharing (Uber, Lyft): $16-25/jam
-				requiredItem: '📱 Smartphone',
+				requiredItem: ['📱 Smartphone', '🏍️ Motorcycle'],
 				scenarios: [
 					{
 						descKey: 'economy.jobs.ojek_driver.scenarios.s1',
@@ -273,7 +274,7 @@ module.exports = {
 				nameKey: 'economy.jobs.photographer.name',
 				emoji: '📸',
 				basePay: [20, 40], // rata-rata freelance photographer US per jam
-				requiredItem: '📱 Smartphone',
+				requiredItem: ['📱 Smartphone', '📸 Camera'],
 				scenarios: [
 					{
 						descKey: 'economy.jobs.photographer.scenarios.s1',
@@ -347,7 +348,7 @@ module.exports = {
 				nameKey: 'economy.jobs.it_consultant.name',
 				emoji: '🧑‍💼',
 				basePay: [60, 120], // IT Consultant US: $60-120/jam
-				requiredItem: '🖥️ PC Desktop',
+				requiredItem: ['🖥️ PC Desktop', '💼 Briefcase'],
 				scenarios: [
 					{
 						descKey: 'economy.jobs.it_consultant.scenarios.s1',

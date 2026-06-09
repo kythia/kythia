@@ -120,6 +120,36 @@ module.exports = {
 			await marriage.update({ status: 'divorced' });
 			divorceConfirmations.delete(key);
 
+			// Asset Split (Harta Gono-Gini)
+			const { KythiaUser } = models;
+			const ecoUser1 = await KythiaUser.getCache({ userId: marriage.user1Id });
+			const ecoUser2 = await KythiaUser.getCache({ userId: marriage.user2Id });
+
+			let splitMsg = '';
+			if (ecoUser1 && ecoUser2) {
+				const bal1 = BigInt(ecoUser1.kythiaBank || 0n);
+				const bal2 = BigInt(ecoUser2.kythiaBank || 0n);
+
+				if (bal1 > bal2) {
+					const diff = bal1 - bal2;
+					const splitAmount = diff / 2n;
+					ecoUser1.kythiaBank = bal1 - splitAmount;
+					ecoUser2.kythiaBank = bal2 + splitAmount;
+					splitMsg = `\n\n⚖️ **Asset Split**: 🪙 ${splitAmount.toLocaleString()} was transferred from <@${ecoUser1.userId}> to <@${ecoUser2.userId}>.`;
+				} else if (bal2 > bal1) {
+					const diff = bal2 - bal1;
+					const splitAmount = diff / 2n;
+					ecoUser2.kythiaBank = bal2 - splitAmount;
+					ecoUser1.kythiaBank = bal1 + splitAmount;
+					splitMsg = `\n\n⚖️ **Asset Split**: 🪙 ${splitAmount.toLocaleString()} was transferred from <@${ecoUser2.userId}> to <@${ecoUser1.userId}>.`;
+				}
+
+				ecoUser1.changed('kythiaBank', true);
+				ecoUser2.changed('kythiaBank', true);
+				await ecoUser1.save();
+				await ecoUser2.save();
+			}
+
 			let userA, userB;
 			try {
 				userA = await interaction.client.users.fetch(marriage.user1Id);
@@ -130,7 +160,7 @@ module.exports = {
 
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'fun.marry.divorced.title')}\n${await t(interaction, 'fun.marry.divorced.description')}`,
+				`## ${await t(interaction, 'fun.marry.divorced.title')}\n${await t(interaction, 'fun.marry.divorced.description')}${splitMsg}`,
 				{ color: 'Red' },
 			);
 

@@ -105,6 +105,27 @@ module.exports = {
 			userId: target.userId,
 			itemName: '👛 Fake Wallet',
 		});
+		const bankVault = await Inventory.getCache({
+			userId: target.userId,
+			itemName: '🏦 Bank Vault',
+		});
+		const cctv = await Inventory.getCache({
+			userId: target.userId,
+			itemName: '📹 CCTV Camera',
+		});
+		const lockpick = await Inventory.getCache({
+			userId: user.userId,
+			itemName: '🪛 Lockpick',
+		});
+		const smokeGrenade = await Inventory.getCache({
+			userId: user.userId,
+			itemName: '💨 Smoke Grenade',
+		});
+		const lawyer = await Inventory.getCache({
+			userId: user.userId,
+			itemName: '👔 Lawyer Contact',
+		});
+
 		let poison = null;
 		if (!guard && !padlock) {
 			poison = await Inventory.getCache({
@@ -113,18 +134,46 @@ module.exports = {
 			});
 		}
 
+		let lockpickMsg = '';
 		if (padlock) {
-			await padlock.destroy();
-			const msg = await t(interaction, 'economy.crime.rob.event.blocked.desc', {
-				target: targetUser.username,
-			});
-			const components = await simpleContainer(interaction, msg, {
-				color: 'Red',
-			});
-			return interaction.editReply({
-				components,
-				flags: MessageFlags.IsComponentsV2,
-			});
+			if (lockpick) {
+				await lockpick.destroy();
+				if (Math.random() < 0.5) {
+					await padlock.destroy();
+					lockpickMsg = '\n🪛 *You successfully picked their Padlock!*';
+				} else {
+					const msg = await t(
+						interaction,
+						'economy.crime.rob.event.lockpick_fail.desc',
+						{
+							target: targetUser.username,
+						},
+					);
+					const components = await simpleContainer(interaction, msg, {
+						color: 'Red',
+					});
+					return interaction.editReply({
+						components,
+						flags: MessageFlags.IsComponentsV2,
+					});
+				}
+			} else {
+				await padlock.destroy();
+				const msg = await t(
+					interaction,
+					'economy.crime.rob.event.blocked.desc',
+					{
+						target: targetUser.username,
+					},
+				);
+				const components = await simpleContainer(interaction, msg, {
+					color: 'Red',
+				});
+				return interaction.editReply({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
+			}
 		}
 
 		const stealthSuit = await Inventory.getCache({
@@ -169,9 +218,13 @@ module.exports = {
 			}
 
 			let finalRobAmount = robAmount;
+			let vaultMsg = '';
 			if (fakeWallet) {
 				await fakeWallet.destroy();
 				finalRobAmount = Math.floor(robAmount * 0.1); // Fake wallet reduces to 10%
+			} else if (bankVault) {
+				finalRobAmount = Math.floor(robAmount * 0.2); // Bank vault reduces to 20%
+				vaultMsg = '\n🏦 *Their Bank Vault protected 80% of their cash!*';
 			}
 
 			user.kythiaCoin =
@@ -204,12 +257,12 @@ module.exports = {
 			await target.save();
 
 			const msgText = fakeWallet
-				? `## 👛 Fake Wallet Triggered!\nYou robbed ${targetUser.username}, but they had a Fake Wallet! You only got 🪙 ${finalRobAmount.toLocaleString()}.\nYour bounty increased by 🪙 ${bountyIncrease.toLocaleString()}!${stealthMsg}`
+				? `## 👛 Fake Wallet Triggered!\nYou robbed ${targetUser.username}, but they had a Fake Wallet! You only got 🪙 ${finalRobAmount.toLocaleString()}.\nYour bounty increased by 🪙 ${bountyIncrease.toLocaleString()}!${stealthMsg}${lockpickMsg}`
 				: (await t(interaction, 'economy.rob.rob.success.text', {
 						amount: finalRobAmount,
 						target: targetUser.username,
 					})) +
-					`\nYour bounty increased by 🪙 ${bountyIncrease.toLocaleString()}!${stealthMsg}`;
+					`\nYour bounty increased by 🪙 ${bountyIncrease.toLocaleString()}!${stealthMsg}${lockpickMsg}${vaultMsg}`;
 
 			const msg = msgText;
 			const components = await simpleContainer(interaction, msg, {
@@ -221,7 +274,7 @@ module.exports = {
 			});
 
 			const dmMsg = await t(interaction, 'economy.rob.rob.success.dm', {
-				robber: interaction.user.username,
+				robber: cctv ? interaction.user.username : 'Someone (Anonymous)',
 				amount: finalRobAmount,
 			});
 			const dmComponents = await simpleContainer(interaction, dmMsg, {
@@ -249,6 +302,9 @@ module.exports = {
 				});
 			}
 			let penalty = basePenalty;
+			let smokeMsg = '';
+			let lawyerMsg = '';
+
 			if (poison) {
 				penalty = user.kythiaCoin;
 
@@ -257,10 +313,20 @@ module.exports = {
 					toBigIntSafe(target.kythiaCoin) + toBigIntSafe(penalty);
 				await poison.destroy();
 			} else {
-				user.kythiaCoin =
-					toBigIntSafe(user.kythiaCoin) - toBigIntSafe(basePenalty);
+				if (smokeGrenade) {
+					await smokeGrenade.destroy();
+					penalty = 0;
+					smokeMsg =
+						'\n💨 *You used a Smoke Grenade and escaped without paying a fine!*';
+				} else if (lawyer) {
+					await lawyer.destroy();
+					penalty = Math.floor(basePenalty * 0.5);
+					lawyerMsg = '\n👔 *Your Lawyer intervened and cut your fine by 50%!*';
+				}
+
+				user.kythiaCoin = toBigIntSafe(user.kythiaCoin) - toBigIntSafe(penalty);
 				target.kythiaCoin =
-					toBigIntSafe(target.kythiaCoin) + toBigIntSafe(basePenalty);
+					toBigIntSafe(target.kythiaCoin) + toBigIntSafe(penalty);
 			}
 
 			user.lastRob = new Date();
@@ -271,18 +337,18 @@ module.exports = {
 			await user.save();
 			await target.save();
 
-			const msg = await t(interaction, 'economy.rob.rob.fail.text', {
+			const msg = `${await t(interaction, 'economy.rob.rob.fail.text', {
 				target: targetUser.username,
 				penalty: poison
 					? await t(interaction, 'economy.rob.rob.fail.penalty.all')
-					: `${robAmount} kythia coin`,
+					: `${penalty} kythia coin`,
 				guard: guard
 					? await t(interaction, 'economy.rob.rob.fail.guard.text')
 					: '',
 				poison: poison
 					? await t(interaction, 'economy.rob.rob.fail.poison')
 					: '',
-			});
+			})}${smokeMsg}${lawyerMsg}${lockpickMsg}`;
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -292,9 +358,9 @@ module.exports = {
 			});
 
 			const dmMsg = await t(interaction, 'economy.rob.rob.fail.dm', {
-				robber: interaction.user.username,
+				robber: cctv ? interaction.user.username : 'Someone (Anonymous)',
 				amount: robAmount,
-				penalty: poison ? penalty : robAmount,
+				penalty: penalty,
 				guard: guard
 					? await t(interaction, 'economy.rob.rob.fail.guard.dm')
 					: '',
