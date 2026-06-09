@@ -1208,6 +1208,20 @@
 					"desc": "## 🕶️ Purchase Complete!\nYou bought **{item}** for **{price} KYTH**.\nThe item has been added to your inventory. Use it wisely."
 				}
 			},
+			"jail": {
+				"locked": "## 🚓 You are in JAIL!\nYou cannot perform this action right now. You will be released in **{time} minutes**."
+			},
+			"arrest": {
+				"error": {
+					"not_police": "## ❌ Unauthorized\nOnly a **Police Officer** can perform arrests!",
+					"self": "## ❌ Error\nYou cannot arrest yourself!",
+					"no_bounty": "## ❌ No Bounty\n**{target}** does not have an active bounty. You cannot arrest innocent citizens!"
+				},
+				"success": {
+					"text": "## 🚓 Arrest Successful!\nYou have successfully arrested **{target}**! They have been sent to Jail for 2 hours, and you collected their bounty of **🪙 {bounty}**!",
+					"dm": "## 🚓 YOU HAVE BEEN ARRESTED\nOfficer **{officer}** has arrested you! You have been sent to Jail and cannot use economy commands for 2 hours!"
+				}
+			},
 			"hack": {
 				"event": {
 					"busted": {
@@ -1431,6 +1445,33 @@
 			"cooldown": "🕒 | You can collect your passive income again in **{time}**!",
 			"no_assets": "## 🏦 No Assets Found\nYou do not own any assets that generate passive income. Buy a Luxury House or a Company from the shop!",
 			"success": "## 🏦 Passive Income Collected\nYou successfully collected your daily dividends:\n> {assets}\n\n**Total Collected: 🪙 {amount}**"
+		},
+		"company": {
+			"hire": {
+				"error": {
+					"no_company": "## ❌ Missing Company\nYou must own a **🏢 Company** to hire employees!",
+					"invalid_target": "## ❌ Invalid Target\nYou cannot hire bots or yourself!",
+					"already_employed": "## ❌ Already Employed\n**{target}** is already employed by someone else!"
+				},
+				"prompt": "## 🏢 Job Offer\n**{employer}** has offered **{target}** a job at their company!\nIf accepted, the employer will take a 10% tax cut from your `/eco work` income.",
+				"success": "## 🏢 Hired!\n**{target}** is now officially an employee of **{employer}**!",
+				"decline": "## ❌ Declined\n**{target}** declined the job offer.",
+				"timeout": "## ⏱️ Offer Expired\nThe job offer has expired."
+			},
+			"fire": {
+				"error": {
+					"not_employee": "## ❌ Error\n**{target}** is not your employee!"
+				},
+				"success": "## 🏢 Fired!\nYou have fired **{target}** from your company.",
+				"dm": "## 🏢 You've been fired!\n**{employer}** has fired you from their company."
+			},
+			"resign": {
+				"error": {
+					"not_employed": "## ❌ Error\nYou are not currently employed by anyone!"
+				},
+				"success": "## 🏃‍♂️ Resigned!\nYou have successfully resigned from your employer.",
+				"dm": "## 🏢 Resignation\nYour employee **{employee}** has resigned from your company."
+			}
 		}
 	}
 }

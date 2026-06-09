@@ -10,6 +10,14 @@
 					"interaction": "❌ This interaction is not for you."
 				}
 			}
+		},
+		"error": {
+			"premium": {
+				"locked": {
+					"text": "## 💎 Premium Feature\nThis feature requires **{tier} Tier** or higher to use! Support {username} by upgrading your tier.",
+					"button": "Upgrade to Premium"
+				}
+			}
 		}
 	},
 	"core": {

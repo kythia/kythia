@@ -152,6 +152,24 @@ module.exports = {
 			buyable: true,
 			sellPrice: 150,
 		},
+		{
+			id: 'policecruiser_item',
+			emoji: '🚓',
+			nameKey: 'economy.shop.items.policecruiser_item.name',
+			descKey: 'economy.shop.items.policecruiser_item.description',
+			price: 50000,
+			buyable: true,
+			sellPrice: 25000,
+		},
+		{
+			id: 'taser_item',
+			emoji: '🔫',
+			nameKey: 'economy.shop.items.taser_item.name',
+			descKey: 'economy.shop.items.taser_item.description',
+			price: 2000,
+			buyable: true,
+			sellPrice: 1000,
+		},
 	],
 	robbing: [
 		{

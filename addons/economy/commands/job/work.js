@@ -48,6 +48,13 @@ module.exports = {
 			});
 		}
 
+		if (
+			helpers.jail &&
+			(await helpers.jail.checkJail(interaction, user, container))
+		) {
+			return;
+		}
+
 		const userInventory = await Inventory.getAllCache({ userId: user.userId });
 
 		const cooldown = checkCooldown(
@@ -284,14 +291,42 @@ module.exports = {
 		const bankBonus = Math.floor(
 			baseEarning * (userBank.incomeBonusPercent / 100),
 		);
-		const finalEarning =
-			Math.floor(baseEarning * scenario.modifier) + bankBonus;
+		let finalEarning = Math.floor(baseEarning * scenario.modifier) + bankBonus;
+
+		let employerTax = 0;
+
+		if (user.employerId) {
+			const employer = await KythiaUser.getCache({ userId: user.employerId });
+			if (employer) {
+				const companyItem = await Inventory.getCache({
+					userId: user.employerId,
+					itemName: '🏢 Company',
+				});
+				if (companyItem && companyItem.quantity > 0) {
+					employerTax = Math.floor(finalEarning * 0.1);
+					finalEarning -= employerTax;
+					employer.kythiaBank =
+						toBigIntSafe(employer.kythiaBank) + toBigIntSafe(employerTax);
+					employer.changed('kythiaBank', true);
+					await employer.save();
+				} else {
+					user.employerId = null;
+					user.changed('employerId', true);
+				}
+			} else {
+				user.employerId = null;
+				user.changed('employerId', true);
+			}
+		}
 
 		user.kythiaCoin =
 			toBigIntSafe(user.kythiaCoin) + toBigIntSafe(finalEarning);
 		user.jobExp = toBigIntSafe(user.jobExp || 0) + toBigIntSafe(10); // Gain 10 EXP per work
 
 		let extraText = `\n\n📈 You gained **+10 Job EXP**! (Total: ${Number(user.jobExp || 0) + 10})`;
+		if (employerTax > 0) {
+			extraText += `\n🏢 **Employer Tax (10%)**: 🪙 ${employerTax.toLocaleString()} was sent to your Boss!`;
+		}
 
 		if (requiredItemFound && Math.random() < 0.05) {
 			const toolToBreak = await Inventory.getCache({

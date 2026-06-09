@@ -393,8 +393,36 @@ module.exports = {
 		],
 	},
 	tier5: {
-		requiredItem: ['🏠 Luxury House', '🏢 Company'],
+		requiredItem: [
+			'🏠 Luxury House',
+			'🏢 Company',
+			'🚓 Police Cruiser',
+			'🔫 Taser',
+		],
 		jobs: [
+			{
+				nameKey: 'economy.jobs.police_officer.name',
+				emoji: '🚓',
+				basePay: [200, 450], // Higher pay due to enforcing the law and danger
+				requiredItem: ['🚓 Police Cruiser', '🔫 Taser'],
+				scenarios: [
+					{
+						descKey: 'economy.jobs.police_officer.scenarios.s1',
+						outcome: 'success',
+						modifier: 1.8,
+					},
+					{
+						descKey: 'economy.jobs.police_officer.scenarios.s2',
+						outcome: 'neutral',
+						modifier: 1.0,
+					},
+					{
+						descKey: 'economy.jobs.police_officer.scenarios.s3',
+						outcome: 'failure',
+						modifier: 0.7,
+					},
+				],
+			},
 			{
 				nameKey: 'economy.jobs.ceo_startup.name',
 				emoji: '🦸‍♂️',

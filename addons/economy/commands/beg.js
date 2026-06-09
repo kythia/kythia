@@ -39,6 +39,13 @@ module.exports = {
 			});
 		}
 
+		if (
+			helpers.jail &&
+			(await helpers.jail.checkJail(interaction, user, container))
+		) {
+			return;
+		}
+
 		const cooldown = checkCooldown(
 			user.lastBeg,
 			kythiaConfig.addons.economy.begCooldown || 3600,

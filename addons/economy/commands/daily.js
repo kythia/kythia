@@ -42,6 +42,13 @@ module.exports = {
 			});
 		}
 
+		if (
+			helpers.jail &&
+			(await helpers.jail.checkJail(interaction, user, container))
+		) {
+			return;
+		}
+
 		const cooldown = checkCooldown(
 			user.lastDaily,
 			kythiaConfig.addons.economy.dailyCooldown || 86400,

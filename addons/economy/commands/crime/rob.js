@@ -59,6 +59,13 @@ module.exports = {
 			});
 		}
 
+		if (
+			helpers.jail &&
+			(await helpers.jail.checkJail(interaction, user, container))
+		) {
+			return;
+		}
+
 		const target = await KythiaUser.getCache({ userId: targetUser.id });
 		if (!target) {
 			const msg = await t(
