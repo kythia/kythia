@@ -17,6 +17,11 @@
 `/eco bank withdraw <amount>`
 `/eco beg`
 `/eco coin`
+`/eco collect`
+`/eco company fire <target>`
+`/eco company hire <target>`
+`/eco company resign`
+`/eco crime arrest <target>`
 `/eco crime blackmarket`
 `/eco crime hack <target>`
 `/eco crime rob <target>`
@@ -26,6 +31,11 @@
 `/eco gamble coinflip <bet> <side>`
 `/eco gamble slots <bet>`
 `/eco give <target> <amount>`
+`/eco guild_stock create <ticker> <initial_kyth> <initial_supply>`
+`/eco guild_stock portfolio`
+`/eco guild_stock swap <ticker> <action> <amount>`
+`/eco guild_stock top`
+`/eco guild_stock view [ticker]`
 `/eco inventory`
 `/eco job apply`
 `/eco job work`
@@ -39,9 +49,15 @@
 `/eco market sell <asset> <quantity>`
 `/eco market stake <action> [amount]`
 `/eco market stoploss <asset> <quantity> <price>`
-`/eco market view [asset]`
+`/eco market view [asset] [timeframe]`
+`/eco marry divorce`
+`/eco marry kiss`
+`/eco marry profile`
+`/eco marry propose <user>`
+`/eco premium`
 `/eco profile [user]`
 `/eco shop`
+`/eco use <item>`
 
 ### Subcommands
 
@@ -120,6 +136,35 @@
 > 💰 Check your kythia coin balance.
 
 
+**`/eco collect`**
+> 🏦 Collect daily passive income from your assets
+
+
+**`/eco company fire <target>`**
+> 🏢 (Company Owner) Fire an employee from your company.
+
+**Options for this subcommand:**
+- **`target*`**
+  - **Description:** The employee you want to fire
+  - **Type:** User
+**`/eco company hire <target>`**
+> 🏢 (Company Owner) Hire a player to work for you.
+
+**Options for this subcommand:**
+- **`target*`**
+  - **Description:** The player you want to hire
+  - **Type:** User
+**`/eco company resign`**
+> 🏃‍♂️ Resign from your current employer.
+
+
+**`/eco crime arrest <target>`**
+> 🚓 (Police Only) Arrest a wanted criminal!
+
+**Options for this subcommand:**
+- **`target*`**
+  - **Description:** The wanted criminal you want to arrest
+  - **Type:** User
 **`/eco crime blackmarket`**
 > 🕶️ The underground Black Market. Accepts KYTH only.
 
@@ -196,6 +241,48 @@
 - **`amount*`**
   - **Description:** Amount of kythia coin to give
   - **Type:** Integer
+**`/eco guild_stock create <ticker> <initial_kyth> <initial_supply>`**
+> 🚀 (Owner) Launch your server's local stock market via ICO.
+
+**Options for this subcommand:**
+- **`ticker*`**
+  - **Description:** Max 4-letter symbol for your stock (e.g. MEME)
+  - **Type:** Text
+- **`initial_kyth*`**
+  - **Description:** Initial KYTH liquidity to deposit into the pool
+  - **Type:** Number
+- **`initial_supply*`**
+  - **Description:** Initial supply of your Guild Token to deposit
+  - **Type:** Number
+**`/eco guild_stock portfolio`**
+> 📈 View all the Guild Stocks you currently own.
+
+
+**`/eco guild_stock swap <ticker> <action> <amount>`**
+> 🔄 Swap KYTH for Guild Tokens, or vice versa via AMM.
+
+**Options for this subcommand:**
+- **`ticker*`**
+  - **Description:** The ticker of the stock to trade (e.g. MEME)
+  - **Type:** Text
+- **`action*`**
+  - **Description:** Are you buying or selling the stock?
+  - **Type:** Text
+  - **Choices:** `Buy (Pay KYTH, Get Stock)` (`buy`), `Sell (Pay Stock, Get KYTH)` (`sell`)
+- **`amount*`**
+  - **Description:** Amount of stock to buy/sell
+  - **Type:** Number
+**`/eco guild_stock top`**
+> 🌐 View the top Guild Stocks by Market Cap (The Kythia S&P 500).
+
+
+**`/eco guild_stock view [<ticker>]`**
+> 📊 View the live market data for a server's stock.
+
+**Options for this subcommand:**
+- **`ticker`**
+  - **Description:** The 2-4 letter stock ticker (leave blank for this server's stock)
+  - **Type:** Text
 **`/eco inventory`**
 > 🛄 View all items in your inventory.
 
@@ -223,9 +310,8 @@
 
 **Options for this subcommand:**
 - **`asset*`**
-  - **Description:** The symbol of the asset you want to buy (e.g., BTC, ETH, KYTH)
+  - **Description:** The symbol of the asset you want to buy (e.g., BTC, ETH, AAPL)
   - **Type:** Text
-  - **Choices:** `BITCOIN` (`bitcoin`), `ETHEREUM` (`ethereum`), `SOLANA` (`solana`), `DOGECOIN` (`dogecoin`), `KYTH` (`kyth`)
 - **`amount*`**
   - **Description:** The amount of KythiaCoin you want to spend
   - **Type:** Number
@@ -251,7 +337,6 @@
 - **`asset*`**
   - **Description:** The symbol of the asset
   - **Type:** Text
-  - **Choices:** `BITCOIN` (`bitcoin`), `ETHEREUM` (`ethereum`), `SOLANA` (`solana`), `DOGECOIN` (`dogecoin`), `KYTH` (`kyth`)
 - **`quantity*`**
   - **Description:** The amount of the asset to buy or sell
   - **Type:** Number
@@ -267,9 +352,8 @@
 
 **Options for this subcommand:**
 - **`asset*`**
-  - **Description:** The symbol of the asset you want to sell (e.g., BTC, ETH, KYTH)
+  - **Description:** The symbol of the asset you want to sell (e.g., BTC, ETH, AAPL)
   - **Type:** Text
-  - **Choices:** `BITCOIN` (`bitcoin`), `ETHEREUM` (`ethereum`), `SOLANA` (`solana`), `DOGECOIN` (`dogecoin`), `KYTH` (`kyth`)
 - **`quantity*`**
   - **Description:** The amount of the asset you want to sell (e.g., 0.5 KYTH)
   - **Type:** Number
@@ -291,21 +375,46 @@
 - **`asset*`**
   - **Description:** The symbol of the asset
   - **Type:** Text
-  - **Choices:** `BITCOIN` (`bitcoin`), `ETHEREUM` (`ethereum`), `SOLANA` (`solana`), `DOGECOIN` (`dogecoin`), `KYTH` (`kyth`)
 - **`quantity*`**
   - **Description:** The amount of the asset to sell
   - **Type:** Number
 - **`price*`**
   - **Description:** The price at which to trigger the sell order
   - **Type:** Number
-**`/eco market view [<asset>]`**
+**`/eco market view [<asset>] [<timeframe>]`**
 > 📈 View real-time crypto prices from the global market.
 
 **Options for this subcommand:**
 - **`asset`**
-  - **Description:** The symbol of the asset to view, or leave empty for all
+  - **Description:** Symbol of the asset to view (e.g. bitcoin, AAPL), or leave empty for all
   - **Type:** Text
-  - **Choices:** `BITCOIN` (`bitcoin`), `ETHEREUM` (`ethereum`), `SOLANA` (`solana`), `DOGECOIN` (`dogecoin`), `KYTH` (`kyth`)
+- **`timeframe`**
+  - **Description:** The time range for the chart (default: 7 Days)
+  - **Type:** Text
+  - **Choices:** `1 Day` (`1`), `7 Days` (`7`), `14 Days` (`14`), `30 Days` (`30`), `90 Days` (`90`), `365 Days` (`365`)
+**`/eco marry divorce`**
+> 💔 End your current marriage
+
+
+**`/eco marry kiss`**
+> 😘 Kiss your partner
+
+
+**`/eco marry profile`**
+> 👰 View your marriage profile
+
+
+**`/eco marry propose <user>`**
+> 💍 Propose to another user
+
+**Options for this subcommand:**
+- **`user*`**
+  - **Description:** The user you want to propose to
+  - **Type:** User
+**`/eco premium`**
+> 💎 Enter the Premium Shop to buy Kythia Tiers.
+
+
 **`/eco profile [<user>]`**
 > 🗃️ View a user's full profile, including level, bank, cash, and more.
 
@@ -317,5 +426,13 @@
 > 🛒 Look and buy items from the shop.
 
 
+**`/eco use <item>`**
+> 🎒 Use a consumable item from your inventory.
+
+**Options for this subcommand:**
+- **`item*`**
+  - **Description:** The item you want to use
+  - **Type:** Text
+  - **Choices:** `☕ Coffee` (`coffee_item`), `🥫 Energy Drink` (`energydrink_item`), `🎫 Lottery Ticket` (`lotteryticket_item`)
 
 

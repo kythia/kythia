@@ -61,7 +61,13 @@ class MediaProcessor {
 				) {
 					const videoPart = await this.processVideoOrAudio(attachment);
 					if (videoPart) mediaParts.push(videoPart);
-				} else if (attachment.contentType?.startsWith('application/pdf')) {
+				} else if (
+					attachment.contentType?.startsWith('application/pdf') ||
+					attachment.contentType?.startsWith('text/') ||
+					attachment.contentType?.startsWith('application/json') ||
+					attachment.contentType?.startsWith('application/xml') ||
+					attachment.contentType?.startsWith('application/javascript')
+				) {
 					const docPart = await this.processDocument(attachment);
 					if (docPart) mediaParts.push(docPart);
 				}
@@ -78,17 +84,31 @@ class MediaProcessor {
 	 */
 	async processImage(attachment) {
 		try {
+			if (attachment.size > 10 * 1024 * 1024) {
+				// 10MB
+				this.logger.warn(
+					`🖼️ Image too large, skipping: ${attachment.name} (${attachment.size} bytes)`,
+					{ label: 'ai' },
+				);
+				return null;
+			}
+
 			this.logger.info(`🖼️ Image detected: ${attachment.name}...`, {
 				label: 'ai',
 			});
 			const res = await fetch(attachment.url);
+			if (!res.ok) {
+				throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+			}
 			const arrayBuffer = await res.arrayBuffer();
 			const buffer = Buffer.from(arrayBuffer);
 			const base64Image = buffer.toString('base64');
 
 			return {
 				inlineData: {
-					mimeType: attachment.contentType,
+					mimeType: attachment.contentType
+						? attachment.contentType.split(';')[0].trim()
+						: 'image/png',
 					data: base64Image,
 				},
 			};
@@ -107,12 +127,24 @@ class MediaProcessor {
 	 */
 	async processVideoOrAudio(attachment) {
 		try {
+			if (attachment.size > 30 * 1024 * 1024) {
+				// 30MB
+				this.logger.warn(
+					`🎛️ Media too large, skipping: ${attachment.name} (${attachment.size} bytes)`,
+					{ label: 'ai' },
+				);
+				return null;
+			}
+
 			this.logger.info(
 				`🎛️ ${attachment.contentType} detected: ${attachment.name}...`,
 				{ label: 'ai' },
 			);
 
 			const fetchRes = await fetch(attachment.url);
+			if (!fetchRes.ok) {
+				throw new Error(`HTTP ${fetchRes.status}: ${fetchRes.statusText}`);
+			}
 			const buffer = Buffer.from(await fetchRes.arrayBuffer());
 			const tmp = require('tmp');
 			const { promises: fsp } = require('node:fs');
@@ -134,7 +166,11 @@ class MediaProcessor {
 					apiKey: this.geminiApiKey,
 				}).files.upload({
 					file: tmpobj.name,
-					config: { mimeType: attachment.contentType },
+					config: {
+						mimeType: attachment.contentType
+							? attachment.contentType.split(';')[0].trim()
+							: 'video/mp4',
+					},
 				});
 			} catch (uploadErr) {
 				if (uploadErr?.details?.includes?.('not in an ACTIVE state')) {
@@ -146,7 +182,11 @@ class MediaProcessor {
 						apiKey: this.geminiApiKey,
 					}).files.upload({
 						file: tmpobj.name,
-						config: { mimeType: attachment.contentType },
+						config: {
+							mimeType: attachment.contentType
+								? attachment.contentType.split(';')[0].trim()
+								: 'video/mp4',
+						},
 					});
 				} else {
 					throw uploadErr;
@@ -198,18 +238,41 @@ class MediaProcessor {
 	 */
 	async processDocument(attachment) {
 		try {
+			const isText =
+				attachment.contentType?.startsWith('text/') ||
+				attachment.contentType?.startsWith('application/json') ||
+				attachment.contentType?.startsWith('application/javascript') ||
+				attachment.contentType?.startsWith('application/xml');
+
+			// 1MB limit for text to prevent token exhaustion (1MB text ≈ 250k tokens)
+			// 10MB limit for PDFs
+			const maxSize = isText ? 1024 * 1024 : 10 * 1024 * 1024;
+
+			if (attachment.size > maxSize) {
+				this.logger.warn(
+					`📄 Document too large (${Math.round(attachment.size / 1024)}KB), skipping: ${attachment.name}`,
+					{ label: 'ai' },
+				);
+				return null;
+			}
+
 			this.logger.info(
 				`📄 Document detected: ${attachment.name} (${attachment.contentType})...`,
 				{ label: 'ai' },
 			);
 			const res = await fetch(attachment.url);
+			if (!res.ok) {
+				throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+			}
 			const arrayBuffer = await res.arrayBuffer();
 			const buffer = Buffer.from(arrayBuffer);
 			const base64File = buffer.toString('base64');
 
 			return {
 				inlineData: {
-					mimeType: attachment.contentType,
+					mimeType: attachment.contentType
+						? attachment.contentType.split(';')[0].trim()
+						: 'application/pdf',
 					data: base64File,
 				},
 			};

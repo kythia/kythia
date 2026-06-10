@@ -185,7 +185,7 @@ async function handleGlobalChat(message, container) {
 		) {
 			return; // Silently ignore timeouts and aborts
 		}
-		logger.error(`Failed to send message to API: ${errMsg}`, {
+		logger.warn(`Failed to send message to API: ${errMsg}`, {
 			label: 'globalchat',
 		});
 	}

@@ -17,6 +17,7 @@
 `/mod role <user> <role>`
 `/mod say <message>`
 `/mod slowmode <seconds> [reason]`
+`/mod snipe [index]`
 `/mod timeout <user> <duration> [reason]`
 `/mod unban <user_id>`
 `/mod unlock [reason]`
@@ -119,6 +120,13 @@
 - **`reason`**
   - **Description:** Reason for changing slowmode
   - **Type:** Text
+**`/mod snipe [<index>]`**
+> 👀 Snipe deleted messages in this channel.
+
+**Options for this subcommand:**
+- **`index`**
+  - **Description:** The index of the deleted message to snipe (1 = most recent)
+  - **Type:** Integer
 **`/mod timeout <user> <duration> [<reason>]`**
 > ⏳ Timeouts a user.
 

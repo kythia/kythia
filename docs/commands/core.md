@@ -240,6 +240,21 @@
   - **Type:** Text
 
 
+### `/lastseen`
+
+**Description:** 👀 Check when a user last sent a message in this server.
+
+### Usage
+
+`/lastseen <user>`
+
+### Options
+
+- **`user*`**
+  - **Description:** The user to check
+  - **Type:** User
+
+
 ### `/obfuscate`
 
 **Description:** 🔒 Obfuscate a Lua or JavaScript file and return it as an attachment.

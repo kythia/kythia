@@ -48,7 +48,7 @@ module.exports = {
 			const resJson = await res.json();
 			apiStats = resJson?.data;
 		} catch (err) {
-			logger.error(
+			logger.warn(
 				`Failed to fetch globalchat stats from API: ${err.message || err}`,
 				{
 					label: 'globalchat',
