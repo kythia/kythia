@@ -60,7 +60,7 @@ module.exports = {
 
 	async execute(interaction, container) {
 		const { client, member, guild } = interaction;
-		const { t, musicHandlers, music } = container;
+		const { t, musicHandlers } = container;
 
 		if (!(member instanceof GuildMember) || !member.voice.channel) {
 			return interaction.reply({

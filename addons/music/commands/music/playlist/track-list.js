@@ -58,7 +58,7 @@ module.exports = {
 		}
 	},
 
-	async execute(interaction, container) {
+	execute(interaction, container) {
 		const { client, guild } = interaction;
 		const { musicHandlers } = container;
 
