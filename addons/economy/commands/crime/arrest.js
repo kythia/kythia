@@ -70,7 +70,10 @@ module.exports = {
 
 		const target = await KythiaUser.getCache({ userId: targetUser.id });
 		if (!target) {
-			const msg = await t(interaction, 'economy.rob.target.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.rob.rob.target.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});

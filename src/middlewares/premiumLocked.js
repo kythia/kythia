@@ -31,7 +31,7 @@ module.exports = {
 		if (!command.isPremium || command.isPremium === 'none') return true;
 		if (container.helpers.discord.isOwner(interaction.user.id)) return true;
 
-		const { t, helpers, redis, models } = container;
+		const { t, helpers, redis, models, kythiaConfig } = container;
 		const { KythiaUser } = models;
 
 		// Skip if user is a team member
@@ -107,6 +107,7 @@ module.exports = {
 				new TextDisplayBuilder().setContent(
 					await t(interaction, 'common.error.premium.locked.text', {
 						tier: requiredTierName,
+						username: interaction.client.user.username,
 					}),
 				),
 			);
@@ -124,7 +125,7 @@ module.exports = {
 							await t(interaction, 'common.error.premium.locked.button'),
 						)
 						.setStyle(ButtonStyle.Link)
-						.setURL(`https://patreon.com/kythia`), // Optional external link
+						.setURL(kythiaConfig.settings.patreon),
 				),
 			);
 

@@ -130,13 +130,10 @@
 					"off": "❌ Loop disabled.",
 					"autoplay": {
 						"enabled": {
-							"message": "🔄 Autoplay enabled. Loop modes have been disabled."
+							"message": "## 🔄 Autoplay enabled.\nAutoplay will now automatically queue songs after the current song ends, loop modes have been disabled.\n-# Feel free to support us on Ko-fi. "
 						},
 						"disabled": {
-							"message": "🔄 Autoplay disabled."
-						},
-						"status": {
-							"desc": "## 🔄 Autoplay **{status}**\n"
+							"message": "## 🔄 Autoplay disabled.\n-# Feel free to support us on Ko-fi. "
 						}
 					},
 					"set": "🔊 Volume set to **{level}**.",

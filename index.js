@@ -67,8 +67,10 @@ const { version: botVersion } = require('./package.json');
 const {
 	isTeam,
 	isPremium,
+	voteLocked,
 	embedFooter,
 	getGuildSafe,
+	premiumLocked,
 	isVoterActive,
 	getMemberSafe,
 	getChannelSafe,
@@ -125,8 +127,10 @@ const dependencies = {
 		discord: {
 			isTeam,
 			isPremium,
+			voteLocked,
 			embedFooter,
 			getGuildSafe,
+			premiumLocked,
 			isVoterActive,
 			getMemberSafe,
 			getChannelSafe,

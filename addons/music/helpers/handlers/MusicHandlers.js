@@ -1416,15 +1416,9 @@ class MusicHandlers {
 					'music.helpers.handlers.music.autoplay.disabled.message',
 				);
 
-		const components = await this.simpleContainer(
-			interaction,
-			await this.t(
-				interaction,
-				'music.helpers.handlers.music.autoplay.status.desc',
-				{ status: statusMessage },
-			),
-			{ color: player.autoplay ? this.config.bot.color : 'Red' },
-		);
+		const components = await this.simpleContainer(interaction, statusMessage, {
+			color: player.autoplay ? this.config.bot.color : 'Red',
+		});
 
 		return interaction.reply({
 			components,

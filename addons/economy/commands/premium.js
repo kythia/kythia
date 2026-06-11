@@ -26,7 +26,7 @@ module.exports = {
 			.setDescription('💎 Enter the Premium Shop to buy Kythia Tiers.'),
 
 	async execute(interaction, container) {
-		const { helpers, kythiaConfig, t, models, redis } = container;
+		const { helpers, kythiaConfig, models, redis } = container;
 		const { simpleContainer } = helpers.discord;
 		const { formatNumber } = helpers.economy;
 		const { KythiaUser } = models;
@@ -35,18 +35,12 @@ module.exports = {
 		await interaction.deferReply();
 
 		// Fetch user
-		const kythiaUser = await KythiaUser.findByPk(interaction.user.id);
-		if (!kythiaUser) {
-			const components = await simpleContainer(
-				interaction,
-				await t(interaction, 'economy.core.profile.not_found'),
-				{ color: 'Red' },
-			);
-			return interaction.editReply({
-				components,
-				flags: MessageFlags.IsComponentsV2,
-			});
-		}
+		const [kythiaUser] = await KythiaUser.findOrCreateWithCache({
+			where: { userId: interaction.user.id },
+			defaults: {
+				userId: interaction.user.id,
+			},
+		});
 
 		// Initial Panel
 		const getMainMenu = async () => {

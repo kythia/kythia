@@ -15,7 +15,7 @@ const app = new Hono();
 // ---------------------------------------------------------------------------
 const { requireVote } = require('../helpers/locks');
 
-app.use('*', async (c, next) => {
+app.use('*', (c, next) => {
 	if (c.req.method !== 'GET') {
 		return requireVote()(c, next);
 	}
