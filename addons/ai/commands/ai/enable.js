@@ -10,6 +10,7 @@ const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
+	voteLocked: true,
 	slashCommand: (subcommand) =>
 		subcommand.setName('enable').setDescription('Enable AI in this channel'),
 	permissions: [PermissionFlagsBits.ManageChannels],

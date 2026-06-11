@@ -10,6 +10,7 @@ const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
 	guildOnly: false,
+	voteLocked: true,
 	slashCommand: new SlashCommandBuilder()
 		.setName('image')
 		.setDescription('Manage images in the storage'),

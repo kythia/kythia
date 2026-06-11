@@ -77,6 +77,10 @@ class MusicHandlers {
 		this.embedFooter = helpers.discord.embedFooter;
 		this.isPremium = helpers.discord.isPremium;
 		this.simpleContainer = helpers.discord.simpleContainer;
+		this.premiumLocked = (interaction, requiredTier) =>
+			helpers.discord.premiumLocked(interaction, this.container, requiredTier);
+		this.voteLocked = (interaction) =>
+			helpers.discord.voteLocked(interaction, this.container);
 
 		this.guildStates = new Map();
 		this.TICKER_INTERVAL = 5000;
@@ -656,6 +660,9 @@ class MusicHandlers {
 	 * @param {object} player - The music player instance.
 	 */
 	async handleJump(interaction, player) {
+		const isVote = await this.voteLocked(interaction);
+		if (!isVote) return;
+
 		const position = interaction.options.getInteger('position');
 		if (position < 1 || position > player.queue.length) {
 			const components = await this.simpleContainer(
@@ -1304,6 +1311,9 @@ class MusicHandlers {
 	 * @param {object} player - The music player instance.
 	 */
 	async handleLoop(interaction, player) {
+		const isVote = await this.voteLocked(interaction);
+		if (!isVote) return;
+
 		let nextMode;
 
 		if (interaction.isChatInputCommand()) {
@@ -1375,6 +1385,9 @@ class MusicHandlers {
 	 * @param {object} player - The music player instance.
 	 */
 	async handleAutoplay(interaction, player) {
+		const isPremium = await this.premiumLocked(interaction, 'cute');
+		if (!isPremium) return;
+
 		let nextState;
 
 		if (interaction.isChatInputCommand()) {
@@ -1446,6 +1459,9 @@ class MusicHandlers {
 	 * @param {object} player - The music player instance.
 	 */
 	async handleShuffle(interaction, player) {
+		const isVote = await this.voteLocked(interaction);
+		if (!isVote) return;
+
 		await interaction.deferReply();
 		if (player.queue.length < 2) {
 			const components = await this.simpleContainer(
@@ -1565,6 +1581,9 @@ class MusicHandlers {
 	 * @param {object} player - The music player instance.
 	 */
 	async handleFilter(interaction, player) {
+		const isPremium = await this.premiumLocked(interaction, 'powerful');
+		if (!isPremium) return;
+
 		if (!(player.filters instanceof customFilter)) {
 			player.filters = new customFilter(player);
 		}
@@ -4050,6 +4069,9 @@ class MusicHandlers {
 	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
 	 */
 	async handle247(interaction, player) {
+		const isPremium = await this.premiumLocked(interaction, 'cute');
+		if (!isPremium) return;
+
 		await interaction.deferReply();
 		const { client, member, guild, channel } = interaction;
 

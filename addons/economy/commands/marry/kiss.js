@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/fun/commands/marry/kiss.js
+ * @namespace: addons/economy/commands/marry/kiss.js
  * @type: Command
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

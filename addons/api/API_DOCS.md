@@ -240,6 +240,39 @@ HTTP 401
 { "message": "Unauthorized: Invalid Token" }
 ```
 
+### Feature Gating & User Identification
+
+For state-mutating requests (POST, PATCH, PUT, DELETE) that correspond to premium or vote-locked commands, the dashboard must identify the acting user using the `X-User-Id` header.
+
+| Header | Value | Description |
+| --- | --- | --- |
+| `X-User-Id` | `<discord_user_id>` | The Discord ID of the user performing the action on the dashboard. |
+
+The API uses this ID to check Redis cache for the user's Premium Tier and Top.gg voting status. **Bot owners and team members automatically bypass these locks.**
+
+If the user fails the authorization check, the API returns a structured HTTP 403 response:
+
+**Vote Locked Response:**
+```json
+HTTP 403 Forbidden
+{
+  "status": "error",
+  "error": "Top.gg Vote Required",
+  "code": "VOTE_LOCKED"
+}
+```
+
+**Premium Locked Response:**
+```json
+HTTP 403 Forbidden
+{
+  "status": "error",
+  "error": "Premium Required: powerful",
+  "code": "PREMIUM_LOCKED",
+  "requiredTier": "powerful"
+}
+```
+
 ### Webhook Routes (`/api/webhooks/*`)
 
 Webhook endpoints use their own auth tokens (see per-route docs below). They are intentionally excluded from the global auth middleware so that external services (e.g. Top.gg) can call them.
@@ -501,12 +534,16 @@ Returns a structured list of all publicly visible slash commands and context men
               "choices": "`forest` (`forest`), `dungeon` (`dungeon`)"
             }
           ],
-          "aliases": []
+          "aliases": [],
+          "premiumLocked": false,
+          "voteLocked": true
         }
       ],
       "aliases": [],
       "type": "slash",
-      "isContextMenu": false
+      "isContextMenu": false,
+      "premiumLocked": "powerful",
+      "voteLocked": false
     },
     {
       "name": "Report Message",
@@ -516,7 +553,9 @@ Returns a structured list of all publicly visible slash commands and context men
       "subcommands": [],
       "aliases": [],
       "type": "message",
-      "isContextMenu": true
+      "isContextMenu": true,
+      "premiumLocked": false,
+      "voteLocked": false
     }
   ],
   "categories": ["adventure", "moderation", "utility"],
@@ -526,16 +565,18 @@ Returns a structured list of all publicly visible slash commands and context men
 
 #### Command Object
 
-| Field           | Type      | Description                                      |
-| --------------- | --------- | ------------------------------------------------ |
-| `name`          | `string`  | Command name                                     |
-| `description`   | `string`  | Human-readable description                       |
-| `category`      | `string`  | Category derived from the addon/folder structure |
-| `options`       | `array`   | Top-level options (non-subcommand)               |
-| `subcommands`   | `array`   | Subcommands and subcommand-group entries         |
-| `aliases`       | `array`   | Prefix command aliases, if any                   |
-| `type`          | `string`  | `"slash"`, `"user"`, or `"message"`              |
-| `isContextMenu` | `boolean` | Whether this is a context menu command           |
+| Field           | Type       | Description                                      |
+| --------------- | ---------- | ------------------------------------------------ | -------------------------------------------------------------- |
+| `name`          | `string`   | Command name                                     |
+| `description`   | `string`   | Human-readable description                       |
+| `category`      | `string`   | Category derived from the addon/folder structure |
+| `options`       | `array`    | Top-level options (non-subcommand)               |
+| `subcommands`   | `array`    | Subcommands and subcommand-group entries         |
+| `aliases`       | `array`    | Prefix command aliases, if any                   |
+| `type`          | `string`   | `"slash"`, `"user"`, or `"message"`              |
+| `isContextMenu` | `boolean`  | Whether this is a context menu command           |
+| `premiumLocked` | `string \\ | boolean`                                         | The required premium tier (`"cute"`, `"powerful"`), or `false` |
+| `voteLocked`    | `boolean`  | Whether the command requires Top.gg voting       |
 
 #### Option Object
 
@@ -1091,9 +1132,9 @@ Fetches all members of a specific guild by querying the appropriate shard. By de
 
 **Query Parameters:**
 
-| Parameter | Type      | Description                                                    |
-| --------- | --------- | -------------------------------------------------------------- |
-| `all`     | `boolean` | Set to `true` to include full member details (`avatar`, etc.)  |
+| Parameter | Type      | Description                                                   |
+| --------- | --------- | ------------------------------------------------------------- |
+| `all`     | `boolean` | Set to `true` to include full member details (`avatar`, etc.) |
 
 **Response (Default):**
 
@@ -1126,16 +1167,16 @@ Fetches all members of a specific guild by querying the appropriate shard. By de
 }
 ```
 
-| Field                     | Type      | Description                               |
-| ------------------------- | --------- | ----------------------------------------- |
-| `members`                 | `array`   | Array of member objects                   |
-| `members[].id`            | `string`  | Member's user ID                          |
-| `members[].username`      | `string`  | Member's username                         |
-| `members[].discriminator` | `string`  | Member's discriminator *(if `all=true`)*  |
-| `members[].avatar`        | `string`  | Member's avatar CDN URL *(if `all=true`)* |
-| `members[].bot`           | `boolean` | Whether the user is a bot *(if `all=true`)* |
-| `members[].roles`         | `array`   | Array of role IDs assigned to the user *(if `all=true`)* |
-| `members[].joinedAt`      | `number`  | Unix timestamp of when the user joined *(if `all=true`)* |
+| Field                     | Type      | Description                                              |
+| ------------------------- | --------- | -------------------------------------------------------- |
+| `members`                 | `array`   | Array of member objects                                  |
+| `members[].id`            | `string`  | Member's user ID                                         |
+| `members[].username`      | `string`  | Member's username                                        |
+| `members[].discriminator` | `string`  | Member's discriminator _(if `all=true`)_                 |
+| `members[].avatar`        | `string`  | Member's avatar CDN URL _(if `all=true`)_                |
+| `members[].bot`           | `boolean` | Whether the user is a bot _(if `all=true`)_              |
+| `members[].roles`         | `array`   | Array of role IDs assigned to the user _(if `all=true`)_ |
+| `members[].joinedAt`      | `number`  | Unix timestamp of when the user joined _(if `all=true`)_ |
 
 **Error (404):**
 
@@ -9872,12 +9913,12 @@ Get the main bot's current global profile, including username, avatar, banner, a
 }
 ```
 
-| Field      | Type             | Description                                          |
-| ---------- | ---------------- | ---------------------------------------------------- |
-| `nickname` | `string`         | The bot's global Discord username                    |
-| `avatar`   | `string \| null` | URL to the bot's global avatar (PNG)                 |
-| `banner`   | `string \| null` | URL to the bot's global banner (PNG)                 |
-| `bio`      | `string \| null` | The bot's "About Me" global application description  |
+| Field      | Type             | Description                                         |
+| ---------- | ---------------- | --------------------------------------------------- |
+| `nickname` | `string`         | The bot's global Discord username                   |
+| `avatar`   | `string \| null` | URL to the bot's global avatar (PNG)                |
+| `banner`   | `string \| null` | URL to the bot's global banner (PNG)                |
+| `bio`      | `string \| null` | The bot's "About Me" global application description |
 
 ---
 
@@ -9920,9 +9961,9 @@ Update the main bot's global profile.
 
 **Errors:**
 
-| Status | Description                                                                 |
-| ------ | --------------------------------------------------------------------------- |
-| `400`  | Discord API rejected the update (e.g. rate limited, invalid image format)   |
+| Status | Description                                                               |
+| ------ | ------------------------------------------------------------------------- |
+| `400`  | Discord API rejected the update (e.g. rate limited, invalid image format) |
 
 ---
 
@@ -10013,10 +10054,10 @@ Get a paginated leaderboard of users sorted by total Kyth (holding + staked).
 
 **Query Parameters:**
 
-| Parameter | Type     | Default | Description                   |
-| --------- | -------- | ------- | ----------------------------- |
-| `limit`   | `number` | `50`    | Items per page (max `100`)    |
-| `page`    | `number` | `1`     | Page number                   |
+| Parameter | Type     | Default | Description                |
+| --------- | -------- | ------- | -------------------------- |
+| `limit`   | `number` | `50`    | Items per page (max `100`) |
+| `page`    | `number` | `1`     | Page number                |
 
 **Response:**
 
@@ -10074,10 +10115,10 @@ Get recent market transactions for KYTH.
 
 **Query Parameters:**
 
-| Parameter | Type     | Default | Description                   |
-| --------- | -------- | ------- | ----------------------------- |
-| `limit`   | `number` | `50`    | Items per page (max `100`)    |
-| `page`    | `number` | `1`     | Page number                   |
+| Parameter | Type     | Default | Description                |
+| --------- | -------- | ------- | -------------------------- |
+| `limit`   | `number` | `50`    | Items per page (max `100`) |
+| `page`    | `number` | `1`     | Page number                |
 
 ---
 
@@ -10087,9 +10128,9 @@ Get historical price data tailored for rendering trading charts (e.g. TradingVie
 
 **Query Parameters:**
 
-| Parameter   | Type     | Default | Description                           |
-| ----------- | -------- | ------- | ------------------------------------- |
-| `limit`     | `number` | `500`   | Max data points returned (max `2000`) |
+| Parameter | Type     | Default | Description                           |
+| --------- | -------- | ------- | ------------------------------------- |
+| `limit`   | `number` | `500`   | Max data points returned (max `2000`) |
 
 **Response:**
 

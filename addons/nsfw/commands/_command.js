@@ -8,6 +8,7 @@
 const { InteractionContextType, SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
+	voteLocked: true,
 	slashCommand: new SlashCommandBuilder()
 		.setName('spicy')
 		.setDescription(

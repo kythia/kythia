@@ -1,6 +1,6 @@
 /**
  * @namespace: addons/economy/commands/guild_stock/top.js
- * @type: Slash Command
+ * @type: Command
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1

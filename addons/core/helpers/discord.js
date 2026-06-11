@@ -13,7 +13,19 @@ const {
 	MediaGalleryBuilder,
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	MessageFlags,
 } = require('discord.js');
+
+const TIER_LEVELS = {
+	none: 0,
+	cute: 1,
+	powerful: 2,
+	yours: 3,
+	ecosystem: 4,
+};
 
 const axios = require('axios');
 
@@ -373,6 +385,267 @@ async function isPremium(container, userId) {
 	return premium.isPremium === true;
 }
 
+async function premiumLocked(interaction, container, requiredTier = 'none') {
+	if (requiredTier === 'none') return true;
+	if (container.helpers.discord.isOwner(interaction.user.id)) return true;
+
+	const { t, helpers, redis, models } = container;
+	const { KythiaUser } = models;
+
+	// Skip if user is a team member
+	const teamCacheKey = `kythia:middleware:teamOnly:${interaction.user.id}`;
+	let isTeamMember = await redis.get(teamCacheKey);
+	if (isTeamMember !== null) {
+		isTeamMember = JSON.parse(isTeamMember);
+	} else {
+		isTeamMember = await helpers.discord.isTeam(container, interaction.user.id);
+		await redis.set(
+			teamCacheKey,
+			JSON.stringify(Boolean(isTeamMember)),
+			'EX',
+			1800,
+		);
+	}
+	if (isTeamMember) return true;
+
+	const requiredTierLevel = TIER_LEVELS[requiredTier] || 0;
+
+	// Get user's actual premium tier
+	const premiumCacheKey = `kythia:middleware:premiumTier:${interaction.user.id}`;
+	let userPremiumTier = await redis.get(premiumCacheKey);
+
+	if (!userPremiumTier) {
+		// Fetch from DB
+		const user = await KythiaUser.getCache({ userId: interaction.user.id });
+
+		// Check if premium is active
+		let activeTier = 'none';
+		if (user?.premiumTier) {
+			if (
+				user.premiumExpiresAt &&
+				new Date(user.premiumExpiresAt).getTime() > Date.now()
+			) {
+				activeTier = user.premiumTier;
+			} else if (!user.premiumExpiresAt) {
+				// Lifetime or external premium
+				activeTier = user.premiumTier;
+			} else {
+				// Expired
+				user.premiumTier = 'none';
+				user.premiumExpiresAt = null;
+				user.changed('premiumTier', true);
+				user.changed('premiumExpiresAt', true);
+				await user.save();
+			}
+		}
+
+		userPremiumTier = activeTier;
+		// Cache for 5 minutes
+		await redis.set(premiumCacheKey, userPremiumTier, 'EX', 300);
+	}
+
+	const userTierLevel = TIER_LEVELS[userPremiumTier] || 0;
+
+	if (userTierLevel < requiredTierLevel) {
+		const { convertColor } = helpers.color;
+		const errContainer = new ContainerBuilder().setAccentColor(
+			convertColor('Red', {
+				from: 'discord',
+				to: 'decimal',
+			}),
+		);
+
+		const requiredTierName =
+			requiredTier.charAt(0).toUpperCase() + requiredTier.slice(1);
+
+		errContainer.addTextDisplayComponents(
+			new TextDisplayBuilder().setContent(
+				await t(interaction, 'common.error.premium.locked.text', {
+					tier: requiredTierName,
+				}),
+			),
+		);
+
+		errContainer.addSeparatorComponents(
+			new SeparatorBuilder()
+				.setSpacing(SeparatorSpacingSize.Small)
+				.setDivider(true),
+		);
+
+		errContainer.addActionRowComponents(
+			new ActionRowBuilder().addComponents(
+				new ButtonBuilder()
+					.setLabel(await t(interaction, 'common.error.premium.locked.button'))
+					.setStyle(ButtonStyle.Link)
+					.setURL(`https://patreon.com/kythia`), // Optional external link
+			),
+		);
+
+		errContainer.addSeparatorComponents(
+			new SeparatorBuilder()
+				.setSpacing(SeparatorSpacingSize.Small)
+				.setDivider(true),
+		);
+
+		errContainer.addTextDisplayComponents(
+			new TextDisplayBuilder().setContent(
+				await t(interaction, 'common.container.footer', {
+					username: interaction.client.user.username,
+				}),
+			),
+		);
+
+		if (interaction.isRepliable()) {
+			if (interaction.replied || interaction.deferred) {
+				await interaction.editReply({
+					components: [errContainer],
+					flags: MessageFlags.IsComponentsV2,
+				});
+			} else {
+				await interaction.reply({
+					components: [errContainer],
+					flags: MessageFlags.IsComponentsV2,
+				});
+			}
+		}
+		return false;
+	}
+
+	return true;
+}
+
+async function voteLocked(interaction, container) {
+	if (container.helpers.discord.isOwner(interaction.user.id)) return true;
+
+	const { kythiaConfig, t, helpers, redis } = container;
+
+	// Skip vote lock if user is a team member
+	const teamCacheKey = `kythia:middleware:teamOnly:${interaction.user.id}`;
+	let isTeamMember = await redis.get(teamCacheKey);
+	if (isTeamMember !== null) {
+		isTeamMember = JSON.parse(isTeamMember);
+	} else {
+		isTeamMember = await helpers.discord.isTeam(container, interaction.user.id);
+		await redis.set(
+			teamCacheKey,
+			JSON.stringify(Boolean(isTeamMember)),
+			'EX',
+			1800,
+		);
+	}
+	if (isTeamMember) return true;
+
+	// Skip vote lock if user is premium
+	const premiumCacheKey = `kythia:middleware:premium:${interaction.user.id}`;
+	let isPremiumUser = await redis.get(premiumCacheKey);
+	if (isPremiumUser !== null) {
+		isPremiumUser = JSON.parse(isPremiumUser);
+	} else {
+		isPremiumUser = await helpers.discord.isPremium(
+			container,
+			interaction.user.id,
+		);
+		await redis.set(
+			premiumCacheKey,
+			JSON.stringify(Boolean(isPremiumUser)),
+			'EX',
+			1800,
+		);
+	}
+	if (isPremiumUser) return true;
+
+	const { KythiaVoter } = container.models;
+	const { convertColor } = helpers.color;
+
+	if (!kythiaConfig.api.topgg.authToken) return true;
+
+	const cacheKey = `kythia:middleware:voteLocked:${interaction.user.id}`;
+	let isVoteLocked = await redis.get(cacheKey);
+
+	if (isVoteLocked !== null) {
+		isVoteLocked = JSON.parse(isVoteLocked);
+	} else {
+		const voter = await KythiaVoter.getCache({
+			userId: interaction.user.id,
+		});
+		const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
+		isVoteLocked = !voter || new Date(voter.votedAt) < twelveHoursAgo;
+
+		if (!isVoteLocked) {
+			// Cache that they are NOT vote locked for 30 minutes
+			await redis.set(cacheKey, JSON.stringify(false), 'EX', 1800);
+		} else {
+			// Cache that they ARE vote locked for a short time (60s) so they can vote and retry quickly
+			await redis.set(cacheKey, JSON.stringify(true), 'EX', 60);
+		}
+	}
+
+	if (isVoteLocked) {
+		const errContainer = new ContainerBuilder().setAccentColor(
+			convertColor(kythiaConfig.bot.color, {
+				from: 'hex',
+				to: 'decimal',
+			}),
+		);
+
+		errContainer.addTextDisplayComponents(
+			new TextDisplayBuilder().setContent(
+				await t(interaction, 'common.error.vote.locked.text'),
+			),
+		);
+
+		errContainer.addSeparatorComponents(
+			new SeparatorBuilder()
+				.setSpacing(SeparatorSpacingSize.Small)
+				.setDivider(true),
+		);
+
+		errContainer.addActionRowComponents(
+			new ActionRowBuilder().addComponents(
+				new ButtonBuilder()
+					.setLabel(
+						await t(interaction, 'common.error.vote.locked.button', {
+							username: interaction.client.user.username,
+						}),
+					)
+					.setStyle(ButtonStyle.Link)
+					.setURL(`https://top.gg/bot/${kythiaConfig.bot.clientId}/vote`),
+			),
+		);
+
+		errContainer.addSeparatorComponents(
+			new SeparatorBuilder()
+				.setSpacing(SeparatorSpacingSize.Small)
+				.setDivider(true),
+		);
+
+		errContainer.addTextDisplayComponents(
+			new TextDisplayBuilder().setContent(
+				await t(interaction, 'common.container.footer', {
+					username: interaction.client.user.username,
+				}),
+			),
+		);
+
+		if (interaction.isRepliable()) {
+			if (interaction.replied || interaction.deferred) {
+				await interaction.editReply({
+					components: [errContainer],
+					flags: MessageFlags.IsComponentsV2,
+				});
+			} else {
+				await interaction.reply({
+					components: [errContainer],
+					flags: MessageFlags.IsComponentsV2,
+				});
+			}
+		}
+		return false;
+	}
+
+	return true;
+}
+
 async function isVoterActive(container, userId) {
 	const { models } = container;
 	const { KythiaUser } = models;
@@ -619,6 +892,8 @@ module.exports = {
 	getGuildSafe,
 	isTeam,
 	isPremium,
+	premiumLocked,
+	voteLocked,
 	isVoterActive,
 	chunkTextDisplay,
 	resolvePlaceholders,

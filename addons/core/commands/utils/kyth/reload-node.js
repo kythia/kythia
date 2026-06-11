@@ -1,6 +1,6 @@
 /**
  * @namespace: addons/core/commands/utils/kyth/reload-node.js
- * @type: Command
+ * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1

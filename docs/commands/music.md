@@ -72,7 +72,6 @@
 
 **`/music favorite play [<append>]`**
 > 🎶 Play all songs from your favorites.
-> _Aliases: `play`_
 
 **Options for this subcommand:**
 - **`append`**
@@ -119,12 +118,10 @@
 
 **`/music pause`**
 > ⏸️ Pause the currently playing song
-> _Aliases: `pause`_
 
 
 **`/music play <search>`**
 > 🎶 Play a song or add it to the queue
-> _Aliases: `play`_
 
 **Options for this subcommand:**
 - **`search*`**
@@ -261,7 +258,6 @@
   - **Type:** Integer
 **`/music queue`**
 > 📜 Show the current song queue
-> _Aliases: `queue`_
 
 
 **`/music radio <search>`**
@@ -277,12 +273,10 @@
 
 **`/music skip`**
 > ⏭️ Skip the current song
-> _Aliases: `skip`_
 
 
 **`/music stop`**
 > ⏹️ Stop music and clear the queue
-> _Aliases: `stop`_
 
 
 **`/music utils 247`**

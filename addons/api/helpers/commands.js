@@ -10,89 +10,7 @@ const {
 	ApplicationCommandType,
 	ApplicationCommandOptionType,
 } = require('discord.js');
-const { clearRequireCache, getOptionType, formatChoices } = require('.');
-const path = require('node:path');
-const fs = require('node:fs');
-
-function buildCategoryMap() {
-	const categoryMap = {};
-	const rootAddonsDir = path.join(__dirname, '..', '..');
-	const addonDirs = fs
-		.readdirSync(rootAddonsDir, { withFileTypes: true })
-		.filter((dirent) => dirent.isDirectory());
-
-	for (const addon of addonDirs) {
-		const commandsPath = path.join(rootAddonsDir, addon.name, 'commands');
-		if (!fs.existsSync(commandsPath)) continue;
-
-		const processFile = (filePath, categoryName) => {
-			try {
-				clearRequireCache(filePath);
-				const command = require(filePath);
-				const commandNames = [];
-
-				if (command.slashCommand) {
-					const name = command.slashCommand.name;
-					if (name) commandNames.push(name);
-				}
-
-				if (command.contextMenuCommand) {
-					const name = command.contextMenuCommand.name;
-					if (name) commandNames.push(name);
-				}
-
-				if (command.data) {
-					const name = command.data.name;
-					if (name) commandNames.push(name);
-				}
-
-				if (typeof command.name === 'string') {
-					commandNames.push(command.name);
-				}
-
-				[...new Set(commandNames.filter(Boolean))].forEach((cmdName) => {
-					categoryMap[cmdName] = categoryName;
-				});
-			} catch (_e) {}
-		};
-
-		if (addon.name === 'core') {
-			const coreCategories = fs
-				.readdirSync(commandsPath, { withFileTypes: true })
-				.filter((d) => d.isDirectory());
-			for (const category of coreCategories) {
-				const categoryPath = path.join(commandsPath, category.name);
-				const walkDir = (dir) => {
-					for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-						const fullPath = path.join(dir, entry.name);
-						if (entry.isDirectory()) {
-							walkDir(fullPath);
-						} else if (entry.name.endsWith('.js')) {
-							processFile(fullPath, category.name);
-						}
-					}
-				};
-				walkDir(categoryPath);
-			}
-		} else {
-			const categoryName = addon.name;
-			const walkDir = (dir) => {
-				for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-					const fullPath = path.join(dir, entry.name);
-					if (entry.isDirectory()) {
-						walkDir(fullPath);
-					} else if (entry.name.endsWith('.js')) {
-						processFile(fullPath, categoryName);
-					}
-				}
-			};
-			walkDir(commandsPath);
-		}
-	}
-	return categoryMap;
-}
-
-const categoryMap = buildCategoryMap();
+const { getOptionType, formatChoices } = require('.');
 
 // biome-ignore lint/suspicious/useAwait: important
 async function getCommandsData(client) {
@@ -134,7 +52,10 @@ async function getCommandsData(client) {
 			if (!processedCommands.has(uniqueKey)) {
 				processedCommands.add(uniqueKey);
 
-				const categoryName = categoryMap[commandJSON.name] || 'uncategorized';
+				const categoryMap = client.container?.addons?.commandCategoryMap;
+				const categoryName =
+					categoryMap?.get(commandJSON.name) || 'uncategorized';
+
 				const parsedCommand = {
 					name: commandJSON.name,
 					description: commandJSON.description || 'No description provided.',
@@ -144,6 +65,8 @@ async function getCommandsData(client) {
 					aliases: aliases,
 					type: 'slash',
 					isContextMenu: false,
+					premiumLocked: command.premiumLocked || command.isPremium || false,
+					voteLocked: command.voteLocked || false,
 				};
 
 				if (
@@ -177,6 +100,10 @@ async function getCommandsData(client) {
 									) {
 										subAliases = [subInGroup.aliases.trim()];
 									}
+
+									const cmdKey = `${commandJSON.name} ${sub.name} ${subInGroup.name}`;
+									const subModule = client.commands.get(cmdKey);
+
 									parsedCommand.subcommands.push({
 										name: `${sub.name} ${subInGroup.name}`,
 										description: subInGroup.description,
@@ -188,6 +115,9 @@ async function getCommandsData(client) {
 											choices: formatChoices(opt.choices),
 										})),
 										aliases: subAliases,
+										premiumLocked:
+											subModule?.premiumLocked || subModule?.isPremium || false,
+										voteLocked: subModule?.voteLocked || false,
 									});
 								});
 							} else {
@@ -203,6 +133,10 @@ async function getCommandsData(client) {
 								) {
 									subAliases = [sub.aliases.trim()];
 								}
+
+								const cmdKey = `${commandJSON.name} ${sub.name}`;
+								const subModule = client.commands.get(cmdKey);
+
 								parsedCommand.subcommands.push({
 									name: sub.name,
 									description: sub.description,
@@ -214,6 +148,9 @@ async function getCommandsData(client) {
 										choices: formatChoices(opt.choices),
 									})),
 									aliases: subAliases,
+									premiumLocked:
+										subModule?.premiumLocked || subModule?.isPremium || false,
+									voteLocked: subModule?.voteLocked || false,
 								});
 							}
 						});
@@ -253,7 +190,9 @@ async function getCommandsData(client) {
 			if (!processedCommands.has(uniqueKey)) {
 				processedCommands.add(uniqueKey);
 
-				const categoryName = categoryMap[commandJSON.name] || 'uncategorized';
+				const categoryMap = client.container?.addons?.commandCategoryMap;
+				const categoryName =
+					categoryMap?.get(commandJSON.name) || 'uncategorized';
 
 				let description;
 
@@ -304,6 +243,8 @@ async function getCommandsData(client) {
 								? 'user'
 								: 'message',
 						isContextMenu: true,
+						premiumLocked: command.premiumLocked || command.isPremium || false,
+						voteLocked: command.voteLocked || false,
 					};
 
 					allCommands.push(parsedCommand);
@@ -322,6 +263,5 @@ async function getCommandsData(client) {
 }
 
 module.exports = {
-	buildCategoryMap,
 	getCommandsData,
 };

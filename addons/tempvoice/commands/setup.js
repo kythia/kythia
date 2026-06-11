@@ -10,6 +10,7 @@ const { buildInterface } = require('../helpers/interface');
 
 module.exports = {
 	subcommand: true,
+	voteLocked: true,
 	slashCommand: (subcommand) =>
 		subcommand
 			.setName('setup')

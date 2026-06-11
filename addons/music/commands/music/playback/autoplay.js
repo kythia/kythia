@@ -1,6 +1,6 @@
 /**
  * @namespace: addons/music/commands/music/playback/autoplay.js
- * @type: Command
+ * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
@@ -10,7 +10,7 @@ const { GuildMember, MessageFlags } = require('discord.js');
 
 module.exports = {
 	subcommand: true,
-	isPremium: 'cute',
+	premiumLocked: 'cute',
 	slashCommand: (subcommand) =>
 		subcommand
 			.setName('autoplay')

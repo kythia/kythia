@@ -83,6 +83,7 @@ function fetchUrlAsBase64(url) {
 }
 
 module.exports = {
+	voteLocked: true,
 	slashCommand: new SlashCommandBuilder()
 		.setName('imagen')
 		.setDescription(

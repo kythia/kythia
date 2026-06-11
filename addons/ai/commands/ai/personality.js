@@ -48,6 +48,7 @@ const PERSONALITIES = {
 
 module.exports = {
 	subcommand: true,
+	premiumLocked: 'powerful',
 	slashCommand: (subcommand) =>
 		subcommand
 			.setName('personality')

@@ -1,5 +1,6 @@
 /**
  * @namespace: addons/core/commands/utils/kyth/eco/central_bank.js
+ * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1

@@ -1,6 +1,6 @@
 /**
- * @namespace: addons/fun/commands/marry/_command.js
- * @type: Command Group Definition
+ * @namespace: addons/economy/commands/marry/_group.js
+ * @type: Subcommand Group Definition
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1

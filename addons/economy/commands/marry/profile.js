@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/fun/commands/marry/profile.js
+ * @namespace: addons/economy/commands/marry/profile.js
  * @type: Command
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

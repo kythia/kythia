@@ -13,6 +13,15 @@ const app = new Hono();
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+const { requireVote } = require('../helpers/locks');
+
+app.use('*', async (c, next) => {
+	if (c.req.method !== 'GET') {
+		return requireVote()(c, next);
+	}
+	return next();
+});
+
 const getModels = (c) => c.get('client').container.models;
 const getLogger = (c) => c.get('client').container.logger;
 

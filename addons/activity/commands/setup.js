@@ -15,6 +15,7 @@ const {
 
 module.exports = {
 	subcommand: true,
+	premiumLocked: 'cute',
 	slashCommand: (subcommand) =>
 		subcommand
 			.setName('setup')

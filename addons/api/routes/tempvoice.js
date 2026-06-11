@@ -16,6 +16,15 @@ const { buildInterface } = require('../../tempvoice/helpers/interface.js');
 const getClient = (c) => c.get('client');
 const getModels = (c) => getClient(c).container.models;
 
+const { requireVote } = require('../helpers/locks');
+
+app.use('*', async (c, next) => {
+	if (c.req.method !== 'GET') {
+		return requireVote()(c, next);
+	}
+	return next();
+});
+
 // =============================================================================
 // TEMP VOICE SETUP endpoint (/api/tempvoice/setup)
 // =============================================================================

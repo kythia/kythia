@@ -15,6 +15,20 @@ const app = new Hono();
 const getModels = (c) => c.get('client').container.models;
 const getLogger = (c) => c.get('client').container.logger;
 
+const { requirePremium, requireVote } = require('../helpers/locks');
+
+const applyLocks = (c, next) => {
+	if (c.req.method !== 'GET') {
+		return requireVote()(c, () => {
+			return requirePremium('powerful')(c, next);
+		});
+	}
+	return next();
+};
+
+app.use('/facts/*', applyLocks);
+app.use('/personality/*', applyLocks);
+
 const VALID_PERSONALITIES = [
 	'default',
 	'friendly',

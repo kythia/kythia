@@ -1,6 +1,6 @@
 /**
- * @namespace: addons/music/commands/music/_root.js
- * @type: Root Command Definition
+ * @namespace: addons/music/commands/music/_command.js
+ * @type: Command Group Definition
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1

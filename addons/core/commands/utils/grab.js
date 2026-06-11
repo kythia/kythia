@@ -77,8 +77,6 @@ module.exports = {
 
 	permissions: PermissionFlagsBits.ManageGuildExpressions,
 	botPermissions: PermissionFlagsBits.ManageGuildExpressions,
-	voteLocked: true,
-	isPremium: 'cute',
 
 	/**
 	 * @param {import('discord.js').ChatInputCommandInteraction} interaction

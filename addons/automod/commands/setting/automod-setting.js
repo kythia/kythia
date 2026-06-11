@@ -406,7 +406,12 @@ module.exports = {
 		),
 	permissions: PermissionFlagsBits.ManageGuild,
 	botPermissions: PermissionFlagsBits.ManageGuild,
+	voteLocked: true,
 
+	/**
+	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
+	 * @param {KythiaDI.Container} container
+	 */
 	async execute(interaction, container) {
 		const { t, kythiaConfig, helpers, models } = container;
 		const { getChannelSafe, simpleContainer } = helpers.discord;

@@ -79,4 +79,97 @@ app.post('/:userId/managed-guilds', async (c) => {
 	return c.json({ managedGuildIds });
 });
 
+// =============================================================================
+// GET /api/users/:userId/premium
+// Returns the premium and vote status for a given Discord user ID from KythiaUser.
+// Dashboard uses this to show lock banners on addon setting pages.
+// Cached on the bot side via the model cache layer.
+// =============================================================================
+app.get('/:userId/premium', async (c) => {
+	const userId = c.req.param('userId');
+	const client = c.get('client');
+	const container = c.get('container') ?? client?.container;
+
+	if (!container) {
+		return c.json({ success: false, error: 'Container not available' }, 500);
+	}
+
+	const { models, helpers } = container;
+	const { KythiaUser } = models;
+
+	if (!KythiaUser) {
+		return c.json(
+			{ success: false, error: 'KythiaUser model not loaded' },
+			503,
+		);
+	}
+
+	try {
+		// Bot owner always gets full premium
+		const isOwner = helpers?.discord?.isOwner(userId) ?? false;
+		if (isOwner) {
+			return c.json({
+				success: true,
+				userId,
+				isPremium: true,
+				premiumTier: 'yours',
+				premiumExpiresAt: null,
+				isVoted: true,
+				voteExpiresAt: null,
+				isOwner: true,
+			});
+		}
+
+		const user = await KythiaUser.getCache({ userId });
+
+		if (!user) {
+			return c.json({
+				success: true,
+				userId,
+				isPremium: false,
+				premiumTier: 'none',
+				premiumExpiresAt: null,
+				isVoted: false,
+				voteExpiresAt: null,
+				isOwner: false,
+			});
+		}
+
+		// Determine active premium status
+		let activeTier = user.premiumTier ?? 'none';
+		let isPremiumActive = user.isPremium === true;
+
+		if (
+			user.premiumExpiresAt &&
+			new Date(user.premiumExpiresAt).getTime() <= Date.now()
+		) {
+			// Expired
+			activeTier = 'none';
+			isPremiumActive = false;
+		}
+
+		// Determine active vote status
+		let isVotedActive = user.isVoted === true;
+		if (
+			user.voteExpiresAt &&
+			new Date(user.voteExpiresAt).getTime() <= Date.now()
+		) {
+			isVotedActive = false;
+		}
+
+		return c.json({
+			success: true,
+			userId,
+			isPremium: isPremiumActive,
+			premiumTier: activeTier ?? 'none',
+			premiumExpiresAt: user.premiumExpiresAt ?? null,
+			isVoted: isVotedActive,
+			voteExpiresAt: user.voteExpiresAt ?? null,
+			isOwner: false,
+		});
+	} catch (err) {
+		return c.json({ success: false, error: err.message }, 500);
+	}
+});
+
 module.exports = app;
