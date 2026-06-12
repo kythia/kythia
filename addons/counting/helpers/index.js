@@ -6,20 +6,21 @@
  * @version 26.0.0-rc.1
  */
 
-const { evaluate } = require('mathjs');
+const { create, all } = require('mathjs');
+const math = create(all, { number: 'BigNumber' });
 
 const romanToInt = (s) => {
 	const romanMap = {
-		I: 1,
-		V: 5,
-		X: 10,
-		L: 50,
-		C: 100,
-		D: 500,
-		M: 1000,
+		I: 1n,
+		V: 5n,
+		X: 10n,
+		L: 50n,
+		C: 100n,
+		D: 500n,
+		M: 1000n,
 	};
-	let total = 0;
-	let prevValue = 0;
+	let total = 0n;
+	let prevValue = 0n;
 	for (let i = s.length - 1; i >= 0; i--) {
 		const char = s[i].toUpperCase();
 		const currentValue = romanMap[char];
@@ -42,13 +43,13 @@ const parseInputToNumber = (content, mode = 'decimal', mathEnabled = true) => {
 		if (mode === 'binary') {
 			const validBinaryRegex = /^[01]+$/;
 			if (!validBinaryRegex.test(trimmed)) return null;
-			return parseInt(trimmed, 2);
+			return BigInt(`0b${trimmed}`);
 		}
 
 		if (mode === 'hex') {
 			const validHexRegex = /^[0-9a-fA-F]+$/;
 			if (!validHexRegex.test(trimmed)) return null;
-			return parseInt(trimmed, 16);
+			return BigInt(`0x${trimmed}`);
 		}
 
 		if (mode === 'roman') {
@@ -60,19 +61,24 @@ const parseInputToNumber = (content, mode = 'decimal', mathEnabled = true) => {
 			const validCharsRegex = /^[0-9\s+\-*/().^%]+$/;
 			if (!validCharsRegex.test(trimmed)) return null;
 
-			const result = evaluate(trimmed);
+			const result = math.evaluate(trimmed);
+			// Check if result is a BigNumber and an integer
 			if (
-				typeof result !== 'number' ||
-				!Number.isFinite(result) ||
-				!Number.isInteger(result)
+				!result ||
+				typeof result.isInteger !== 'function' ||
+				!result.isInteger()
 			) {
+				// Fallback if it evaluates to a primitive number for some reason
+				if (typeof result === 'number' && Number.isInteger(result)) {
+					return BigInt(result);
+				}
 				return null;
 			}
-			return result;
+			return BigInt(result.toString());
 		} else {
 			const validDecimalRegex = /^[0-9]+$/;
 			if (!validDecimalRegex.test(trimmed)) return null;
-			return parseInt(trimmed, 10);
+			return BigInt(trimmed);
 		}
 	} catch (_e) {
 		return null;
@@ -80,7 +86,22 @@ const parseInputToNumber = (content, mode = 'decimal', mathEnabled = true) => {
 };
 
 const intToRoman = (num) => {
-	const val = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+	let n = BigInt(num);
+	const val = [
+		1000n,
+		900n,
+		500n,
+		400n,
+		100n,
+		90n,
+		50n,
+		40n,
+		10n,
+		9n,
+		5n,
+		4n,
+		1n,
+	];
 	const syb = [
 		'M',
 		'CM',
@@ -98,8 +119,8 @@ const intToRoman = (num) => {
 	];
 	let roman = '';
 	for (let i = 0; i < val.length; i++) {
-		while (num >= val[i]) {
-			num -= val[i];
+		while (n >= val[i]) {
+			n -= val[i];
 			roman += syb[i];
 		}
 	}
@@ -107,10 +128,11 @@ const intToRoman = (num) => {
 };
 
 const formatNumberByMode = (num, mode) => {
-	if (mode === 'binary') return num.toString(2);
-	if (mode === 'hex') return num.toString(16).toUpperCase();
-	if (mode === 'roman') return intToRoman(num);
-	return num.toString(10);
+	const n = BigInt(num);
+	if (mode === 'binary') return n.toString(2);
+	if (mode === 'hex') return n.toString(16).toUpperCase();
+	if (mode === 'roman') return intToRoman(n);
+	return n.toString(10);
 };
 
 module.exports = {

@@ -50,7 +50,7 @@ module.exports = async (bot, message) => {
 		return;
 	}
 
-	const expectedFromDB = setting.currentCount + 1;
+	const expectedFromDB = BigInt(setting.currentCount || 0) + 1n;
 
 	// Handle race conditions/cache lag by checking the actual last message in the channel
 	if (inputNumber !== expectedFromDB) {
@@ -66,14 +66,17 @@ module.exports = async (bot, message) => {
 					mode,
 					mathEnabled,
 				);
-				if (lastNumberInChat !== null && inputNumber === lastNumberInChat + 1) {
-					setting.currentCount = lastNumberInChat;
+				if (
+					lastNumberInChat !== null &&
+					inputNumber === lastNumberInChat + 1n
+				) {
+					setting.currentCount = Number(lastNumberInChat);
 				}
 			}
 		} catch (_e) {}
 	}
 
-	const nextNumber = setting.currentCount + 1;
+	const nextNumber = BigInt(setting.currentCount || 0) + 1n;
 
 	// Check for double counting
 	if (setting.lastUserId === message.author.id && inputNumber === nextNumber) {
@@ -99,7 +102,7 @@ module.exports = async (bot, message) => {
 
 	// Correct Number
 	if (inputNumber === nextNumber) {
-		setting.currentCount = nextNumber;
+		setting.currentCount = Number(nextNumber);
 		setting.lastUserId = message.author.id;
 		await setting.save();
 		await message.react(successReaction).catch(() => {});
@@ -110,7 +113,7 @@ module.exports = async (bot, message) => {
 		await userStat.save();
 
 		// Milestone celebration
-		if (nextNumber > 0 && nextNumber % 100 === 0) {
+		if (nextNumber > 0n && nextNumber % 100n === 0n) {
 			const milestoneDesc = await t(message, 'counting.game.milestone', {
 				number: formatNumberByMode(nextNumber, mode),
 				user: message.author.toString(),

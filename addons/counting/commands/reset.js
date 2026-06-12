@@ -44,7 +44,7 @@ module.exports = {
 		let reset = false;
 
 		try {
-			await counting.saveAndUpdateCache();
+			await counting.save();
 			reset = true;
 		} catch (_e) {
 			reset = false;

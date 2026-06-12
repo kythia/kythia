@@ -101,7 +101,7 @@ module.exports = {
 		}
 
 		if (updated) {
-			await counting.saveAndUpdateCache();
+			await counting.save();
 			const desc = await t(interaction, 'counting.config.success');
 			await interaction.editReply({
 				components: await simpleContainer(interaction, desc, {

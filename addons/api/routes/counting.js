@@ -74,12 +74,7 @@ app.post('/', async (c) => {
 		}
 
 		const result = await Counting.create(body);
-		// saveAndUpdateCache is specific to some Kythia models handling singletons/configurations
-		if (typeof result.saveAndUpdateCache === 'function') {
-			await result.saveAndUpdateCache();
-		} else {
-			await result.save();
-		}
+		await result.save();
 
 		return c.json({ success: true, data: result });
 	} catch (error) {
@@ -103,11 +98,7 @@ app.patch('/:guildId', async (c) => {
 
 		await result.update(body);
 
-		if (typeof result.saveAndUpdateCache === 'function') {
-			await result.saveAndUpdateCache();
-		} else {
-			await result.save();
-		}
+		await result.save();
 
 		return c.json({ success: true, data: result });
 	} catch (error) {

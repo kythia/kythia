@@ -62,7 +62,6 @@ module.exports = {
 					botToken: kythiaConfig.bot.token,
 					achievementName: `${unlockedCount}/${totalCount} Achievements`,
 					achievementDesc: `${targetUser.username} has unlocked ${unlockedCount} out of ${totalCount} achievements in this server.`,
-					achievementEmoji: '🏆',
 					rarity:
 						unlockedCount >= totalCount * 0.75
 							? 'legendary'

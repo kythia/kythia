@@ -24,12 +24,12 @@ module.exports = {
 			.addStringOption((option) =>
 				option
 					.setName('mode')
-					.setDescription('Counting mode (base).')
+					.setDescription('The number format to use.')
 					.addChoices(
-						{ name: 'Decimal (Base 10)', value: 'decimal' },
-						{ name: 'Binary (Base 2)', value: 'binary' },
-						{ name: 'Hexadecimal (Base 16)', value: 'hex' },
-						{ name: 'Roman Numerals', value: 'roman' },
+						{ name: 'Normal Numbers (1, 2, 3...)', value: 'decimal' },
+						{ name: 'Roman Numerals (I, II, III, IV...)', value: 'roman' },
+						{ name: 'Binary / Hacker (1, 10, 11, 100...)', value: 'binary' },
+						{ name: 'Hexadecimal (1...9, A, B, C...)', value: 'hex' },
 					),
 			)
 			.addStringOption((option) =>
