@@ -20,6 +20,10 @@ module.exports = {
 					.setDescription('HEX color code (e.g. #ff0000)')
 					.setRequired(true),
 			),
+	/**
+	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
+	 * @param {KythiaDI.Container} container
+	 */
 	async execute(interaction, container) {
 		const { models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
@@ -42,7 +46,7 @@ module.exports = {
 		}
 		if (!hex.startsWith('#')) hex = `#${hex}`;
 
-		const [config] = await VerificationConfig.findOrCreate({
+		const [config] = await VerificationConfig.findOrCreateWithCache({
 			where: { guildId },
 			defaults: { guildId },
 		});

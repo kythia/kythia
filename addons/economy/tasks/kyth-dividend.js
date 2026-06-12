@@ -63,7 +63,7 @@ module.exports = {
 				return;
 			}
 
-			const stakers = await KythiaUser.findAll({
+			const stakers = await KythiaUser.getAllCache({
 				where: {
 					kythStaked: { [Op.gt]: 0 },
 					bankType: 'solara_mutual',

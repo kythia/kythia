@@ -27,7 +27,7 @@ module.exports = {
 		});
 
 		try {
-			const expiredListings = await FleaMarketListing.findAll({
+			const expiredListings = await FleaMarketListing.getAllCache({
 				where: {
 					expiresAt: {
 						[Op.lte]: new Date(),

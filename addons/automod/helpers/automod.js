@@ -11,26 +11,8 @@ const sendLogsWarning = require('./send-logs');
 const leetMap = require('./leet-map');
 const kythiaConfig = require('../../../kythia.config');
 
+const automodDeletedMessages = new Set();
 const userCache = new Collection();
-const SPAM_THRESHOLD = kythiaConfig.settings.spamThreshold || 5;
-const DUPLICATE_THRESHOLD = kythiaConfig.settings.duplicateThreshold || 3;
-const MENTION_THRESHOLD = kythiaConfig.settings.mentionThreshold || 3;
-const FAST_TIME_WINDOW = kythiaConfig.settings.fastTimeWindow || 40 * 1000;
-const DUPLICATE_TIME_WINDOW =
-	kythiaConfig.settings.duplicateTimeWindow || 15 * 60 * 1000;
-const CACHE_EXPIRATION_TIME =
-	kythiaConfig.settings.cacheExpirationTime || 15 * 60 * 1000;
-const PUNISHMENT_COOLDOWN =
-	kythiaConfig.settings.punishmentCooldown || 1 * 1000;
-const SHORT_MESSAGE_THRESHOLD =
-	kythiaConfig.settings.shortMessageThreshold || 5;
-
-const ALL_CAPS_MIN_LENGTH = kythiaConfig.settings.antiAllCapsMinLength || 15;
-const ALL_CAPS_RATIO = kythiaConfig.settings.antiAllCapsRatio || 0.7;
-const ANTI_EMOJI_MIN_TOTAL = kythiaConfig.settings.antiEmojiMinTotal || 11;
-const ANTI_EMOJI_RATIO = kythiaConfig.settings.antiEmojiRatio || 0.8;
-const ANTI_ZALGO_MIN = kythiaConfig.settings.antiZalgoMin || 8;
-
 const reverseLeetMap = new Map();
 for (const [baseChar, variations] of Object.entries(leetMap)) {
 	for (const variation of variations) {
@@ -113,6 +95,26 @@ async function automodSystem(message) {
 async function checkSpam(message, setting) {
 	const { logger, t } = message.client.container;
 	if (!setting.antiSpamOn) return false;
+
+	const config = setting.automodConfig || {};
+	const SPAM_THRESHOLD =
+		config.spamThreshold ?? kythiaConfig.settings.spamThreshold ?? 5;
+	const DUPLICATE_THRESHOLD =
+		config.duplicateThreshold ?? kythiaConfig.settings.duplicateThreshold ?? 3;
+	const FAST_TIME_WINDOW =
+		config.fastTimeWindow ?? kythiaConfig.settings.fastTimeWindow ?? 40 * 1000;
+	const DUPLICATE_TIME_WINDOW =
+		config.duplicateTimeWindow ??
+		kythiaConfig.settings.duplicateTimeWindow ??
+		15 * 60 * 1000;
+	const PUNISHMENT_COOLDOWN =
+		config.punishmentCooldown ??
+		kythiaConfig.settings.punishmentCooldown ??
+		1 * 1000;
+	const SHORT_MESSAGE_THRESHOLD =
+		config.shortMessageThreshold ??
+		kythiaConfig.settings.shortMessageThreshold ??
+		5;
 
 	const now = Date.now();
 	const key = `${message.guild.id}-${message.author.id}`;
@@ -199,6 +201,7 @@ async function checkSpam(message, setting) {
 
 		for (const msg of messagesToDelete) {
 			if (canDeleteMessage(msg)) {
+				automodDeletedMessages.add(msg.id);
 				msg.delete().catch((err) => {
 					if (err.code !== 50013 && err.code !== 10008) {
 						logger.error(
@@ -250,6 +253,14 @@ async function checkAllCaps(message, setting) {
 	const { logger, t } = message.client.container;
 	if (!setting.antiAllCapsOn) return false;
 
+	const config = setting.automodConfig || {};
+	const ALL_CAPS_MIN_LENGTH =
+		config.antiAllCapsMinLength ??
+		kythiaConfig.settings.antiAllCapsMinLength ??
+		15;
+	const ALL_CAPS_RATIO =
+		config.antiAllCapsRatio ?? kythiaConfig.settings.antiAllCapsRatio ?? 0.7;
+
 	const raw = message.content || '';
 	if (raw.length < ALL_CAPS_MIN_LENGTH) return false;
 
@@ -268,6 +279,7 @@ async function checkAllCaps(message, setting) {
 		);
 		sendLogsWarning(message, reason, message.content, setting);
 		if (canDeleteMessage(message)) {
+			automodDeletedMessages.add(message.id);
 			message.delete().catch((err) => {
 				if (err.code !== 50013 && err.code !== 10008)
 					logger.error(
@@ -299,6 +311,12 @@ async function checkEmojiSpam(message, setting) {
 	const { logger, t } = message.client.container;
 	if (!setting.antiEmojiSpamOn) return false;
 
+	const config = setting.automodConfig || {};
+	const ANTI_EMOJI_MIN_TOTAL =
+		config.antiEmojiMinTotal ?? kythiaConfig.settings.antiEmojiMinTotal ?? 11;
+	const ANTI_EMOJI_RATIO =
+		config.antiEmojiRatio ?? kythiaConfig.settings.antiEmojiRatio ?? 0.8;
+
 	const raw = message.content || '';
 	if (!raw || raw.length < 3) return false;
 
@@ -312,6 +330,7 @@ async function checkEmojiSpam(message, setting) {
 		sendLogsWarning(message, reason, message.content, setting);
 
 		if (canDeleteMessage(message)) {
+			automodDeletedMessages.add(message.id);
 			message.delete().catch((err) => {
 				if (err.code !== 50013 && err.code !== 10008)
 					logger.error(
@@ -337,6 +356,10 @@ async function checkZalgo(message, setting) {
 	const { logger, t } = message.client.container;
 	if (!setting.antiZalgoOn) return false;
 
+	const config = setting.automodConfig || {};
+	const ANTI_ZALGO_MIN =
+		config.antiZalgoMin ?? kythiaConfig.settings.antiZalgoMin ?? 8;
+
 	const raw = message.content || '';
 
 	if (!raw || raw.length < 6) return false;
@@ -350,6 +373,7 @@ async function checkZalgo(message, setting) {
 		sendLogsWarning(message, reason, message.content, setting);
 
 		if (canDeleteMessage(message)) {
+			automodDeletedMessages.add(message.id);
 			message.delete().catch((err) => {
 				if (err.code !== 50013 && err.code !== 10008)
 					logger.error(
@@ -419,6 +443,7 @@ async function checkBadwords(message, setting) {
 		sendLogsWarning(message, reason, foundBadword, setting);
 
 		if (canDeleteMessage(message)) {
+			automodDeletedMessages.add(message.id);
 			message.delete().catch(() => {});
 		}
 		return true;
@@ -430,6 +455,10 @@ async function checkBadwords(message, setting) {
 async function checkMentions(message, setting) {
 	const { logger, t } = message.client.container;
 	if (!setting.antiMentionOn) return false;
+
+	const config = setting.automodConfig || {};
+	const MENTION_THRESHOLD =
+		config.mentionThreshold ?? kythiaConfig.settings.mentionThreshold ?? 3;
 
 	const mentionRegex =
 		/<@!?[0-9]+>|<@&[0-9]+>|@everyone|@here|[\uFF20][eE][vV][eE][rR][yY][oO][nN][eE]|[\uFF20][hH][eE][rR][eE]/g;
@@ -447,6 +476,7 @@ async function checkMentions(message, setting) {
 		);
 		sendLogsWarning(message, reason, message.content, setting);
 		if (canDeleteMessage(message)) {
+			automodDeletedMessages.add(message.id);
 			message.delete().catch((err) => {
 				if (err.code !== 50013 && err.code !== 10008) {
 					logger.error(
@@ -672,6 +702,7 @@ async function checkLinks(message, setting) {
 		);
 		await sendLogsWarning(message, reason, message.content, setting);
 		if (canDeleteMessage(message)) {
+			automodDeletedMessages.add(message.id);
 			return message.delete().catch((err) => {
 				if (err.code !== 50013 && err.code !== 10008) {
 					logger.error(
@@ -699,6 +730,7 @@ async function checkLinks(message, setting) {
 		);
 		await sendLogsWarning(message, reason, message.content, setting);
 		if (canDeleteMessage(message)) {
+			automodDeletedMessages.add(message.id);
 			return message.delete().catch((err) => {
 				if (err.code !== 50013 && err.code !== 10008) {
 					logger.error(`Failed to delete link message: ${err.message || err}`, {
@@ -720,6 +752,13 @@ function cleanupCaches() {
 			userCache.delete(key);
 		}
 	}
+
+	// Keep the deleted messages set small (max 500)
+	if (automodDeletedMessages.size > 500) {
+		const arr = Array.from(automodDeletedMessages).slice(-300);
+		automodDeletedMessages.clear();
+		for (const id of arr) automodDeletedMessages.add(id);
+	}
 }
 
 setInterval(cleanupCaches, 60 * 60 * 1000);
@@ -727,4 +766,5 @@ setInterval(cleanupCaches, 60 * 60 * 1000);
 module.exports = {
 	automodSystem,
 	userCache,
+	automodDeletedMessages,
 };

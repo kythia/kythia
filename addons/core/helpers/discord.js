@@ -478,7 +478,11 @@ async function premiumLocked(interaction, container, requiredTier = 'none') {
 				new ButtonBuilder()
 					.setLabel(await t(interaction, 'common.error.premium.locked.button'))
 					.setStyle(ButtonStyle.Link)
-					.setURL(kythiaConfig.settings.patreon), // Optional external link
+					.setURL(
+						kythiaConfig.settings.patreon ||
+							kythiaConfig.settings.kythiaWeb ||
+							'https://kythia.xyz',
+					),
 			),
 		);
 

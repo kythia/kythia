@@ -10153,3 +10153,158 @@ Get historical price data tailored for rendering trading charts (e.g. TradingVie
   ]
 }
 ```
+
+---
+
+## Vote API (`/api/vote`)
+
+The Vote API allows you to retrieve top voters and manage individual user vote points and statuses.
+
+### `GET /api/vote/leaderboard`
+
+Get a list of the top 100 users by vote points.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "leaderboard": [
+    {
+      "userId": "111111111111111111",
+      "votePoints": 42,
+      "username": "awesome_user",
+      "avatarUrl": "https://cdn.discordapp.com/avatars/..."
+    }
+  ]
+}
+```
+
+---
+
+### `GET /api/vote/user/:userId`
+
+Get the vote info for a specific user.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "user": {
+    "userId": "111111111111111111",
+    "votePoints": 42,
+    "isVoted": true,
+    "voteExpiresAt": "2026-06-13T10:00:00.000Z"
+  }
+}
+```
+
+---
+
+### `PATCH /api/vote/user/:userId/points`
+
+Increment or decrement a user's vote points.
+
+**Request Body:**
+
+```json
+{
+  "increment": 1
+}
+```
+*or*
+```json
+{
+  "decrement": 1
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "votePoints": 43
+}
+```
+
+---
+
+### `PUT /api/vote/user/:userId/points`
+
+Set a user's vote points exactly.
+
+**Request Body:**
+
+```json
+{
+  "points": 10
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "votePoints": 10
+}
+```
+
+---
+
+### `DELETE /api/vote/user/:userId/points`
+
+Reset a user's vote points to 0.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "votePoints": 0
+}
+```
+
+---
+
+### `PUT /api/vote/user/:userId/status`
+
+Set a user's active vote status.
+
+**Request Body (Optional):**
+
+```json
+{
+  "expiresAt": "2026-06-13T10:00:00.000Z"
+}
+```
+
+> If `expiresAt` is not provided, the vote expiration defaults to 12 hours from the current time.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "isVoted": true,
+  "voteExpiresAt": "2026-06-13T10:00:00.000Z"
+}
+```
+
+---
+
+### `DELETE /api/vote/user/:userId/status`
+
+Remove a user's active vote status.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "isVoted": false,
+  "voteExpiresAt": null
+}
+```

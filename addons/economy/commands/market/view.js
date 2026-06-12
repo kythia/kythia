@@ -147,7 +147,7 @@ module.exports = {
 
 			// Recent trades for 24h change simulation
 			const recentTrades =
-				(await MarketTransaction.findAll({
+				(await MarketTransaction.getAllCache({
 					where: { assetId: 'kyth' },
 					order: [['createdAt', 'DESC']],
 					limit: 50,
@@ -171,7 +171,7 @@ module.exports = {
 			const startDate = new Date();
 			startDate.setDate(startDate.getDate() - daysNum);
 
-			const allTrades = await MarketTransaction.findAll({
+			const allTrades = await MarketTransaction.getAllCache({
 				where: {
 					assetId: 'kyth',
 					createdAt: { [Op.gte]: startDate },

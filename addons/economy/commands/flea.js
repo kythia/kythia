@@ -274,7 +274,7 @@ module.exports = {
 					});
 				} else if (i.customId === 'interact_flea_item') {
 					const listingId = i.values[0];
-					const listing = await FleaMarketListing.findOne({
+					const listing = await FleaMarketListing.getCache({
 						where: { id: listingId },
 					});
 
@@ -375,7 +375,7 @@ module.exports = {
 					}
 				} else if (i.customId.startsWith('confirm_bid_')) {
 					const listingId = i.customId.split('_')[2];
-					const listing = await FleaMarketListing.findOne({
+					const listing = await FleaMarketListing.getCache({
 						where: { id: listingId },
 					});
 
@@ -447,7 +447,7 @@ module.exports = {
 		}
 
 		if (action === 'my_listings') {
-			const listings = await FleaMarketListing.findAll({
+			const listings = await FleaMarketListing.getAllCache({
 				where: { sellerId: interaction.user.id },
 				order: [['createdAt', 'DESC']],
 			});
@@ -498,7 +498,7 @@ module.exports = {
 			collector.on('collect', async (i) => {
 				if (i.customId === 'cancel_listing') {
 					const listingId = i.values[0];
-					const listing = await FleaMarketListing.findOne({
+					const listing = await FleaMarketListing.getCache({
 						where: { id: listingId, sellerId: interaction.user.id },
 					});
 

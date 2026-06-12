@@ -26,7 +26,7 @@ module.exports = {
 
 		await interaction.deferReply();
 
-		const topUsers = await CountingUser.findAll({
+		const topUsers = await CountingUser.getAllCache({
 			where: { guildId: interaction.guild.id },
 			order: [['correctCounts', 'DESC']],
 			limit: 10,

@@ -34,7 +34,7 @@ module.exports = {
 
 		const targetUser = interaction.options.getUser('user') || interaction.user;
 
-		const stats = await CountingUser.findOne({
+		const stats = await CountingUser.getCache({
 			where: { guildId: interaction.guild.id, userId: targetUser.id },
 		});
 

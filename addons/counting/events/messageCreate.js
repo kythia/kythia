@@ -93,7 +93,7 @@ module.exports = async (bot, message) => {
 
 	// Helper to fetch/create user stats
 	const getUserStats = async (userId) => {
-		const [userStat] = await CountingUser.findOrCreate({
+		const [userStat] = await CountingUser.findOrCreateWithCache({
 			where: { guildId, userId },
 			defaults: { correctCounts: 0, ruinedCounts: 0 },
 		});

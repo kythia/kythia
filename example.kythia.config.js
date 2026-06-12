@@ -557,9 +557,12 @@ function loadKythiaConfig() {
 			// Bot invite link (auto-generated from client ID)
 			inviteLink: `https://discord.com/oauth2/authorize?client_id=${process.env.DISCORD_BOT_CLIENT_ID}&scope=bot%20applications.commands&permissions=8`,
 			// Owner's website
-			ownerWeb: 'https://kenndeclouv.me',
+			ownerWeb: 'https://kenndeclouv.com',
 			// Kythia website
 			kythiaWeb: 'https://kythia.xyz',
+
+			patreon: 'https://patreon.com/cw/kythia',
+
 			// Banner image URL for embeds or dashboard
 			// you can host it on your own server
 			// or you can use a CDN like Cloudflare Images/ imagekit/ etc

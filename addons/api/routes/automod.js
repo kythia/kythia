@@ -47,6 +47,7 @@ const TOGGLE_FIELDS = [
 	'antiAllCapsOn',
 	'antiEmojiSpamOn',
 	'antiZalgoOn',
+	'antiGhostPingOn',
 ];
 
 // channel fields
@@ -64,7 +65,9 @@ function formatSettings(s) {
 			antiAllCapsOn: s.antiAllCapsOn,
 			antiEmojiSpamOn: s.antiEmojiSpamOn,
 			antiZalgoOn: s.antiZalgoOn,
+			antiGhostPingOn: s.antiGhostPingOn,
 		},
+		config: s.automodConfig || {},
 		channels: {
 			modLogChannelId: s.modLogChannelId || null,
 			auditLogChannelId: s.auditLogChannelId || null,
@@ -115,7 +118,7 @@ app.patch('/:guildId', async (c) => {
 		return c.json({ status: 'error', error: 'Invalid JSON body' }, 400);
 	}
 
-	const allowedFields = [...TOGGLE_FIELDS, ...CHANNEL_FIELDS];
+	const allowedFields = [...TOGGLE_FIELDS, ...CHANNEL_FIELDS, 'automodConfig'];
 	const updates = {};
 	for (const field of allowedFields) {
 		if (field in body) updates[field] = body[field];
@@ -690,6 +693,16 @@ app.patch('/:guildId/antinuke/modules/:module', async (c) => {
 		if (body.action) mod.action = body.action;
 		if (typeof body.threshold === 'number') mod.threshold = body.threshold;
 		if (typeof body.window === 'number') mod.window = body.window;
+
+		// Advanced Fake Account Module Properties
+		if (typeof body.minAgeDays === 'number') mod.minAgeDays = body.minAgeDays;
+		if (typeof body.requireNoAvatar === 'boolean')
+			mod.requireNoAvatar = body.requireNoAvatar;
+		if (typeof body.requireNoBanner === 'boolean')
+			mod.requireNoBanner = body.requireNoBanner;
+		if (typeof body.detectGibberish === 'boolean')
+			mod.detectGibberish = body.detectGibberish;
+
 		await saveANConfig(setting, config);
 		return c.json({ status: 'ok', data: { module: moduleName, ...mod } });
 	} catch (error) {

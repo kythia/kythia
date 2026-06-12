@@ -48,7 +48,7 @@ module.exports = {
 		const targetOpt = interaction.options.getUser('target');
 
 		if (!targetOpt) {
-			const wantedUsers = await KythiaUser.findAll({
+			const wantedUsers = await KythiaUser.getAllCache({
 				where: { bountyAmount: { [Op.gt]: 0 } },
 				order: [['bountyAmount', 'DESC']],
 				limit: 10,

@@ -35,7 +35,7 @@ module.exports = {
 
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-		const [config] = await VerificationConfig.findOrCreate({
+		const [config] = await VerificationConfig.findOrCreateWithCache({
 			where: { guildId },
 			defaults: { guildId },
 		});

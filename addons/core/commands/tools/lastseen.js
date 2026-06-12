@@ -33,7 +33,7 @@ module.exports = {
 		const targetUser = interaction.options.getUser('user');
 
 		try {
-			const userData = await User.findOne({
+			const userData = await User.getCache({
 				where: { userId: targetUser.id, guildId: interaction.guildId },
 				attributes: ['lastMessage'],
 			});

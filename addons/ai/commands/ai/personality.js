@@ -81,7 +81,7 @@ module.exports = {
 		const personalityData = PERSONALITIES[personality];
 
 		// Get or create user
-		const [user] = await KythiaUser.findOrCreate({
+		const [user] = await KythiaUser.findOrCreateWithCache({
 			where: { userId: interaction.user.id },
 			defaults: {
 				userId: interaction.user.id,

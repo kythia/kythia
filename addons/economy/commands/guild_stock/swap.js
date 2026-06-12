@@ -55,7 +55,7 @@ module.exports = {
 		const amount = interaction.options.getNumber('amount');
 		const userId = interaction.user.id;
 
-		const pool = await GuildLiquidityPool.findOne({ where: { ticker } });
+		const pool = await GuildLiquidityPool.getCache({ where: { ticker } });
 
 		if (!pool) {
 			const msg = await t(

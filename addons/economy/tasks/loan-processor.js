@@ -27,7 +27,7 @@ module.exports = {
 		});
 
 		try {
-			const usersWithLoans = await KythiaUser.findAll({
+			const usersWithLoans = await KythiaUser.getAllCache({
 				where: {
 					activeLoan: {
 						[Op.gt]: 0,

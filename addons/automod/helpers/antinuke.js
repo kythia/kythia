@@ -34,6 +34,47 @@ const DEFAULT_CONFIG = () => ({
 		roleDelete: DEFAULT_MODULE(3, 10000, 'kick'),
 		webhookCreate: DEFAULT_MODULE(5, 10000, 'kick'),
 		adminGrant: { enabled: true, action: 'kick' },
+		fakeAccount: {
+			enabled: false,
+			action: 'kick',
+			minAgeDays: 7,
+			requireNoAvatar: true,
+			requireNoBanner: true,
+			detectGibberish: true,
+		},
+		botAdd: { enabled: false, action: 'kick' },
+		massJoin: {
+			enabled: false,
+			action: 'lockdown',
+			threshold: 10,
+			window: 10000,
+		},
+		serverUpdate: { enabled: false, action: 'kick' },
+		roleUpdate: { enabled: false, action: 'kick', threshold: 3, window: 10000 },
+		channelUpdate: {
+			enabled: false,
+			action: 'kick',
+			threshold: 3,
+			window: 10000,
+		},
+		emojiUpdate: {
+			enabled: false,
+			action: 'kick',
+			threshold: 5,
+			window: 10000,
+		},
+		emojiDelete: {
+			enabled: false,
+			action: 'kick',
+			threshold: 3,
+			window: 10000,
+		},
+		inviteDelete: {
+			enabled: false,
+			action: 'kick',
+			threshold: 3,
+			window: 10000,
+		},
 	},
 	whitelistedRoles: [],
 	whitelistedUsers: [],
@@ -99,6 +140,15 @@ function isWhitelisted(member, config) {
 // Execute the configured action against a member
 // ---------------------------------------------------------------------------
 async function executeAction(guild, member, action, reason) {
+	if (action === 'lockdown') {
+		try {
+			await guild.setVerificationLevel(4, reason); // VERY_HIGH
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
 	if (!member) return false;
 
 	switch (action) {
@@ -157,6 +207,7 @@ async function sendAlert(
 			ban: '🔨',
 			kick: '👢',
 			dehoistRole: '🎭',
+			lockdown: '🔒',
 			none: '👁️',
 		}[action] || '⚠️';
 
@@ -316,10 +367,85 @@ function serializeConfig(config) {
 	return JSON.stringify(config);
 }
 
+/**
+ * Revert tampering action for Anti-Tamper modules
+ * @param {object} entity - The discord.js object (Guild, Role, Channel)
+ * @param {object} oldState - The old state of the entity
+ * @param {string} type - 'guild', 'role', 'channel'
+ */
+async function revertTampering(entity, oldState, type) {
+	try {
+		if (type === 'guild') {
+			const updates = {};
+			if (entity.name !== oldState.name) updates.name = oldState.name;
+			if (entity.icon !== oldState.icon) updates.icon = oldState.icon;
+			// Note: Vanity URL usually requires 'features' or specific REST call, but d.js has setVanityCode (if available)
+
+			if (Object.keys(updates).length > 0) {
+				await entity.edit(updates, 'AntiNuke: Reverting unauthorized changes');
+			}
+
+			// Handle vanity separately if supported and changed
+			if (
+				oldState.vanityURLCode &&
+				entity.vanityURLCode !== oldState.vanityURLCode
+			) {
+				try {
+					await entity.setVanityURLCode(
+						oldState.vanityURLCode,
+						'AntiNuke: Reverting unauthorized vanity change',
+					);
+				} catch (_e) {
+					// Might not have boost level 3 anymore
+				}
+			}
+		} else if (type === 'role') {
+			const updates = {};
+			if (entity.name !== oldState.name) updates.name = oldState.name;
+			if (entity.permissions.bitfield !== oldState.permissions.bitfield)
+				updates.permissions = oldState.permissions;
+			if (entity.color !== oldState.color) updates.color = oldState.color;
+			if (entity.hoist !== oldState.hoist) updates.hoist = oldState.hoist;
+			if (entity.mentionable !== oldState.mentionable)
+				updates.mentionable = oldState.mentionable;
+
+			if (Object.keys(updates).length > 0) {
+				await entity.edit(
+					updates,
+					'AntiNuke: Reverting unauthorized role changes',
+				);
+			}
+		} else if (type === 'channel') {
+			if (entity.name !== oldState.name) {
+				await entity.setName(
+					oldState.name,
+					'AntiNuke: Reverting unauthorized channel rename',
+				);
+			}
+		} else if (type === 'emoji') {
+			if (entity.name !== oldState.name) {
+				await entity.edit(
+					{ name: oldState.name },
+					'AntiNuke: Reverting unauthorized emoji rename',
+				);
+			}
+		}
+		return true;
+	} catch (_e) {
+		return false;
+	}
+}
+
 module.exports = {
 	checkThreshold,
 	checkInstant,
 	getAntiNukeConfig,
 	serializeConfig,
 	DEFAULT_CONFIG,
+	getConfig,
+	executeAction,
+	sendAlert,
+	_track,
+	_resetCount,
+	revertTampering,
 };

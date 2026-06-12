@@ -130,7 +130,7 @@ module.exports = {
 			}
 
 			// Upsert the binding
-			const [rr, created] = await ReactionRole.findOrCreate({
+			const [rr, created] = await ReactionRole.findOrCreateWithCache({
 				where: {
 					guildId: interaction.guildId,
 					messageId: panel.messageId,

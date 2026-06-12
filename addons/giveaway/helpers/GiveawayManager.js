@@ -41,7 +41,7 @@ class GiveawayManager {
 
 	async init() {
 		this.logger.info(`🎁 Syncing Scheduler...`, { label: 'giveaway' });
-		const active = await this.Giveaway.findAll({ where: { ended: false } });
+		const active = await this.Giveaway.getAllCache({ where: { ended: false } });
 
 		for (const g of active) {
 			const endSec = Math.floor(new Date(g.endTime).getTime() / 1000);
