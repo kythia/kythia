@@ -16,7 +16,7 @@ const {
 const { toBigIntSafe } = require('../helpers/bigint');
 const banks = require('../helpers/banks');
 
-const TIERS = require('../helpers/premium-tiers');
+const TIERS = require('../../core/helpers/premium-tiers');
 
 module.exports = {
 	subcommand: true,

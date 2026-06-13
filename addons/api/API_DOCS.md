@@ -1787,12 +1787,16 @@ Get counting configuration for a specific server.
 Create a new counting configuration.
 
 - **Body:** `{ guildId, channelId, mode, successReaction, failReaction, mathEnabled, strictEnabled }`
+  - `mode`: Must be one of `decimal`, `roman`, `binary`, `hex`.
+  - `math`: Can be used as an alias for `mathEnabled`.
 
 #### `PATCH /api/counting/:guildId`
 
 Update an existing counting configuration.
 
 - **Body:** Any of `{ channelId, mode, successReaction, failReaction, mathEnabled, strictEnabled }`
+  - `mode`: Must be one of `decimal`, `roman`, `binary`, `hex`.
+  - `math`: Can be used as an alias for `mathEnabled`.
 
 #### `DELETE /api/counting/:guildId`
 
@@ -9419,6 +9423,7 @@ List all currently active premium users with pagination.
     {
       "userId": "333333333333333333",
       "isPremium": true,
+      "premiumTier": "powerful",
       "premiumExpiresAt": "2026-04-18T00:00:00.000Z"
     }
   ]
@@ -9439,12 +9444,13 @@ Get premium status for a specific user.
   "data": {
     "userId": "333333333333333333",
     "isPremium": true,
+    "premiumTier": "powerful",
     "premiumExpiresAt": "2026-04-18T00:00:00.000Z"
   }
 }
 ```
 
-> `isPremium` is `false` if the user has no record or if the subscription has expired.
+> `isPremium` is `false` and `premiumTier` is `"none"` if the user has no record or if the subscription has expired.
 
 ---
 
@@ -9457,7 +9463,8 @@ Grant premium to a user.
 ```json
 {
   "userId": "333333333333333333",
-  "days": 30
+  "days": 30,
+  "tier": "powerful"
 }
 ```
 
@@ -9465,6 +9472,7 @@ Grant premium to a user.
 | -------- | -------- | -------- | -------------------------------------- |
 | `userId` | `string` | Yes      | Discord user ID                        |
 | `days`   | `number` | No       | Number of premium days (default: `30`) |
+| `tier`   | `string` | No       | Premium tier: `cute` or `powerful` (default: `powerful`) |
 
 **Response (201):**
 
@@ -9474,6 +9482,7 @@ Grant premium to a user.
   "data": {
     "userId": "333333333333333333",
     "days": 30,
+    "tier": "powerful",
     "premiumExpiresAt": "2026-04-18T00:00:00.000Z"
   }
 }

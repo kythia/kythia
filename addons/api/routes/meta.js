@@ -312,4 +312,37 @@ app.get('/growth', async (c) => {
 	}
 });
 
+// =============================================================================
+// GET /api/meta/premium-tiers — Get all premium tiers
+// =============================================================================
+app.get('/premium-tiers', (c) => {
+	try {
+		const TIERS = require('../../core/helpers/premium-tiers');
+		// Convert BigInts to strings so JSON.stringify doesn't crash
+		const serializedTiers = {};
+		for (const [key, data] of Object.entries(TIERS)) {
+			serializedTiers[key] = { ...data };
+			if (data.prices) {
+				serializedTiers[key].prices = {};
+				for (const [days, price] of Object.entries(data.prices)) {
+					serializedTiers[key].prices[days] = price.toString();
+				}
+			}
+		}
+
+		return c.json({
+			success: true,
+			data: serializedTiers,
+		});
+	} catch (error) {
+		return c.json(
+			{
+				success: false,
+				error: `Failed to fetch premium tiers: ${error.message}`,
+			},
+			500,
+		);
+	}
+});
+
 module.exports = app;

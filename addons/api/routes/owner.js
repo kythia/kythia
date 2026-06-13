@@ -906,11 +906,17 @@ app.get('/premium', async (c) => {
 
 		const now = new Date();
 		const total = await KythiaUser.countWithCache({
-			where: { isPremium: true, premiumExpiresAt: { [Op.gt]: now } },
+			where: {
+				premiumTier: { [Op.notIn]: ['none', null] },
+				premiumExpiresAt: { [Op.gt]: now },
+			},
 		});
 
 		const users = await KythiaUser.getAllCache({
-			where: { isPremium: true, premiumExpiresAt: { [Op.gt]: now } },
+			where: {
+				premiumTier: { [Op.notIn]: ['none', null] },
+				premiumExpiresAt: { [Op.gt]: now },
+			},
 			order: [['premiumExpiresAt', 'ASC']],
 			limit: limitNum,
 			offset: (pageNum - 1) * limitNum,
@@ -933,7 +939,8 @@ app.get('/premium', async (c) => {
 					userId: u.userId,
 					username: userObj?.username ?? null,
 					avatar: userObj?.avatar ?? null,
-					isPremium: u.isPremium,
+					isPremium: u.premiumTier && u.premiumTier !== 'none',
+					premiumTier: u.premiumTier || 'none',
 					premiumExpiresAt: u.premiumExpiresAt,
 				};
 			}),
@@ -963,12 +970,18 @@ app.get('/premium/:userId', async (c) => {
 		if (!user) {
 			return c.json({
 				success: true,
-				data: { userId, isPremium: false, premiumExpiresAt: null },
+				data: {
+					userId,
+					isPremium: false,
+					premiumTier: 'none',
+					premiumExpiresAt: null,
+				},
 			});
 		}
 
 		const isActive =
-			user.isPremium &&
+			user.premiumTier &&
+			user.premiumTier !== 'none' &&
 			user.premiumExpiresAt &&
 			new Date(user.premiumExpiresAt) > new Date();
 
@@ -977,6 +990,7 @@ app.get('/premium/:userId', async (c) => {
 			data: {
 				userId: user.userId,
 				isPremium: isActive,
+				premiumTier: isActive ? user.premiumTier : 'none',
 				premiumExpiresAt: user.premiumExpiresAt ?? null,
 			},
 		});
@@ -994,7 +1008,7 @@ app.get('/premium/:userId', async (c) => {
 /**
  * POST /api/owner/premium
  * Grant premium to a user.
- * Body: { userId: string, days?: number }
+ * Body: { userId: string, days?: number, tier?: string }
  */
 app.post('/premium', async (c) => {
 	let body;
@@ -1004,7 +1018,7 @@ app.post('/premium', async (c) => {
 		return c.json({ success: false, error: 'Invalid JSON body' }, 400);
 	}
 
-	const { userId, days = 30 } = body;
+	const { userId, days = 30, tier = 'powerful' } = body;
 
 	if (!userId || typeof userId !== 'string') {
 		return c.json(
@@ -1026,26 +1040,26 @@ app.post('/premium', async (c) => {
 
 		let user = await KythiaUser.getCache({ userId });
 		if (user) {
-			user.isPremium = true;
+			user.premiumTier = tier;
 			user.premiumExpiresAt = expiresAt;
 			await user.save();
 		} else {
 			user = await KythiaUser.create({
 				userId,
-				isPremium: true,
+				premiumTier: tier,
 				premiumExpiresAt: expiresAt,
 			});
 		}
 
 		getLogger(c).info(
-			`Premium granted to user ${userId} for ${days} days via API.`,
+			`Premium granted to user ${userId} for ${days} days (Tier: ${tier}) via API.`,
 			{ label: 'api' },
 		);
 
 		return c.json(
 			{
 				success: true,
-				data: { userId, days, premiumExpiresAt: expiresAt },
+				data: { userId, days, tier, premiumExpiresAt: expiresAt },
 			},
 			201,
 		);
@@ -1071,14 +1085,14 @@ app.delete('/premium/:userId', async (c) => {
 		const { KythiaUser } = getModels(c);
 
 		const user = await KythiaUser.getCache({ userId });
-		if (!user?.isPremium) {
+		if (!user?.premiumTier || user.premiumTier === 'none') {
 			return c.json(
 				{ success: false, error: `User ${userId} does not have premium.` },
 				404,
 			);
 		}
 
-		user.isPremium = false;
+		user.premiumTier = 'none';
 		user.premiumExpiresAt = null;
 		await user.save();
 

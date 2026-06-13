@@ -51,6 +51,7 @@ class CountingQueue {
  */
 module.exports = async (bot, message) => {
 	if (!message.author || message.author.bot || !message.guild) return;
+	if (!message.channel || !message.channelId) return;
 
 	const { container } = bot;
 	const { models, t, helpers } = container;
@@ -62,7 +63,7 @@ module.exports = async (bot, message) => {
 	// Initial check to prevent queueing messages in non-counting channels
 	const quickSetting = await Counting.getCache({ guildId });
 	if (!quickSetting?.channelId) return;
-	if (message.channel.id !== quickSetting.channelId) return;
+	if (message.channelId !== quickSetting.channelId) return;
 
 	const lines = message.content
 		.split('\n')

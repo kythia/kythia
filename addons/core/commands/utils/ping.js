@@ -182,9 +182,19 @@ module.exports = {
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
 
+		const start = Date.now();
 		await interaction.deferReply();
 
-		const botLatency = Math.max(0, Date.now() - interaction.createdTimestamp);
+		const deferTime = Date.now() - start;
+		const timestampDiff = Math.max(
+			0,
+			Date.now() - interaction.createdTimestamp,
+		);
+
+		// If deferTime > 5ms, it's a real REST API call (Slash Command). We use this to bypass Discord's interaction queue delay.
+		// If < 5ms, it was mocked locally (Prefix Command), so we use the standard timestamp diff.
+		const botLatency = deferTime > 5 ? deferTime : timestampDiff;
+
 		const apiLatency = Math.round(interaction.client.ws.ping);
 
 		const [lavalinkNodes, dbPingInfo, redisNodes] = await Promise.all([
