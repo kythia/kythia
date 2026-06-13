@@ -82,5 +82,6 @@ module.exports = {
 	getMarketData,
 	ASSET_IDS,
 	getChartBuffer,
+	renderChartFromData,
 	KYTH_ASSET_ID: 'kyth',
 };

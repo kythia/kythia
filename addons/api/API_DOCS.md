@@ -9043,7 +9043,7 @@ Updates or creates the overall Social Alerts settings for a guild.
 > | Header          | Value                 | Description                                                      |
 > | --------------- | --------------------- | ---------------------------------------------------------------- |
 > | `Authorization` | `Bearer <API_SECRET>` | Global API secret — same as all other `/api/*` routes            |
-> | `X-Owner-Id`    | `<Discord User ID>`   | Your Discord user ID, verified against `kythiaConfig.bot.owners` |
+> | `X-Owner-Id`    | `<Discord User ID>`   | Your Discord user ID, verified against `kythiaConfig.owner.ids` |
 >
 > If `X-Owner-Id` is missing or the ID is not recognised as an owner, the request is rejected with HTTP **403**.
 >

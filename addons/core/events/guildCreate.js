@@ -195,18 +195,20 @@ module.exports = async (bot, guild) => {
 							guild,
 							'core.events.guildCreate.events.guild.create.webhook.desc',
 							{
-								bot: guild.client.user.username,
-								guild: guild.name,
-								guildId: guild.id,
-								ownerId: guild.ownerId,
-								ownerName: ownerName,
+								bot: guild.client?.user?.username ?? 'Unknown Bot',
+								guild: guild.name ?? 'Unknown',
+								guildId: guild.id ?? 'Unknown',
+								ownerId: guild.ownerId ?? 'Unknown',
+								ownerName: ownerName ?? 'Unknown',
 								memberCount: guild.memberCount ?? '?',
 								invite: inviteText,
-								createdAt: guild.createdAt.toLocaleDateString('en-US', {
-									year: 'numeric',
-									month: 'long',
-									day: 'numeric',
-								}),
+								createdAt: guild.createdAt
+									? guild.createdAt.toLocaleDateString('en-US', {
+											year: 'numeric',
+											month: 'long',
+											day: 'numeric',
+										})
+									: 'Unknown',
 							},
 						),
 					),

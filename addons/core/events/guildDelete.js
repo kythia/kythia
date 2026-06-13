@@ -40,16 +40,18 @@ module.exports = async (bot, guild) => {
 							guild,
 							'core.events.guildDelete.events.guild.delete.webhook.desc',
 							{
-								bot: guild.client.user.username,
-								guild: guild.name,
-								guildId: guild.id,
-								ownerId: guild.ownerId,
+								bot: guild.client?.user?.username ?? 'Unknown Bot',
+								guild: guild.name ?? 'Unknown',
+								guildId: guild.id ?? 'Unknown',
+								ownerId: guild.ownerId ?? 'Unknown',
 								memberCount: guild.memberCount ?? '?',
-								createdAt: guild.createdAt.toLocaleDateString('en-US', {
-									year: 'numeric',
-									month: 'long',
-									day: 'numeric',
-								}),
+								createdAt: guild.createdAt
+									? guild.createdAt.toLocaleDateString('en-US', {
+											year: 'numeric',
+											month: 'long',
+											day: 'numeric',
+										})
+									: 'Unknown',
 							},
 						),
 					),
