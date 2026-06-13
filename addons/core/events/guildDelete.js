@@ -19,6 +19,11 @@ module.exports = async (bot, guild) => {
 	const { BotGrowthSnapshot } = models;
 	const { convertColor } = helpers.color;
 
+	// Ignore server outages or uncached partial guilds sent during restart
+	if (guild.available === false || !guild.name) {
+		return;
+	}
+
 	const minMembers = kythiaConfig.bot.minMembers ?? 0;
 	if (minMembers > 0 && (guild.memberCount ?? 0) < minMembers) {
 		return;
