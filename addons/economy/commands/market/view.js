@@ -430,8 +430,9 @@ module.exports = {
 					minimumFractionDigits: 2,
 					maximumFractionDigits: 2,
 				})}`.padEnd(15);
-				const percent = data.usd_24h_change.toFixed(2);
-				const emoji = getChangeEmoji(data.usd_24h_change);
+				const changeVal = data.usd_24h_change || 0;
+				const percent = changeVal.toFixed(2);
+				const emoji = getChangeEmoji(changeVal);
 				const change = `${emoji} ${percent}%`;
 
 				return `${symbol}| ${price}| ${change}`;
@@ -446,8 +447,9 @@ module.exports = {
 					minimumFractionDigits: 2,
 					maximumFractionDigits: 2,
 				})}`.padEnd(15);
-				const percent = data.changePercent.toFixed(2);
-				const emoji = getChangeEmoji(data.changePercent);
+				const changeVal = data.changePercent || 0;
+				const percent = changeVal.toFixed(2);
+				const emoji = getChangeEmoji(changeVal);
 				const change = `${emoji} ${percent}%`;
 
 				return `${symbol}| ${price}| ${change}`;

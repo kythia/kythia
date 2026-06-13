@@ -160,6 +160,14 @@
 					"s2": "You regularly helped social foundations.",
 					"s3": "There was a report of fund misuse, your reputation dropped a bit."
 				}
+			},
+			"police_officer": {
+				"name": "Police Officer",
+				"scenarios": {
+					"s1": "You caught a notorious thief and received a promotion and bonus!",
+					"s2": "Today's patrol was safe and peaceful.",
+					"s3": "A criminal outsmarted you, and your salary was cut for negligence."
+				}
 			}
 		},
 		"shop": {

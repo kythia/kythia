@@ -17,12 +17,12 @@ module.exports = {
 			.addStringOption((option) =>
 				option
 					.setName('mode')
-					.setDescription('Counting mode (base).')
+					.setDescription('The number format to use.')
 					.addChoices(
-						{ name: 'Decimal (Base 10)', value: 'decimal' },
-						{ name: 'Binary (Base 2)', value: 'binary' },
-						{ name: 'Hexadecimal (Base 16)', value: 'hex' },
-						{ name: 'Roman Numerals', value: 'roman' },
+						{ name: 'Normal Numbers (1, 2, 3...)', value: 'decimal' },
+						{ name: 'Roman Numerals (I, II, III, IV...)', value: 'roman' },
+						{ name: 'Binary / Hacker (1, 10, 11, 100...)', value: 'binary' },
+						{ name: 'Hexadecimal (1...9, A, B, C...)', value: 'hex' },
 					),
 			)
 			.addStringOption((option) =>
@@ -43,7 +43,10 @@ module.exports = {
 			.addBooleanOption((option) =>
 				option
 					.setName('strict')
-					.setDescription('Reset the count to 0 when a mistake is made.'),
+					.setDescription(
+						'Enable strict counting. if 1 user false, count will reset to 0.',
+					)
+					.setRequired(false),
 			),
 
 	/**

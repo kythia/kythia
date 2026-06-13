@@ -12,6 +12,38 @@ const app = new Hono();
 // Helper to get models
 const getModels = (c) => c.get('client').container.models;
 
+const sanitizeCountingPayload = (body) => {
+	const sanitized = { ...body };
+
+	if (sanitized.math !== undefined) {
+		sanitized.mathEnabled = sanitized.math;
+		delete sanitized.math;
+	}
+	if (sanitized.strict !== undefined) {
+		sanitized.strictEnabled = sanitized.strict;
+		delete sanitized.strict;
+	}
+	if (sanitized.success_reaction !== undefined) {
+		sanitized.successReaction = sanitized.success_reaction;
+		delete sanitized.success_reaction;
+	}
+	if (sanitized.fail_reaction !== undefined) {
+		sanitized.failReaction = sanitized.fail_reaction;
+		delete sanitized.fail_reaction;
+	}
+
+	if (
+		sanitized.mode &&
+		!['decimal', 'roman', 'binary', 'hex'].includes(sanitized.mode)
+	) {
+		throw new Error(
+			'Invalid mode. Must be one of: decimal, roman, binary, hex',
+		);
+	}
+
+	return sanitized;
+};
+
 // GET /api/counting - List all counting configurations
 app.get('/', async (c) => {
 	const { Counting } = getModels(c);
@@ -61,8 +93,17 @@ app.post('/', async (c) => {
 		);
 	}
 
+	let sanitizedBody;
 	try {
-		const existing = await Counting.getCache({ guildId: body.guildId });
+		sanitizedBody = sanitizeCountingPayload(body);
+	} catch (err) {
+		return c.json({ success: false, error: err.message }, 400);
+	}
+
+	try {
+		const existing = await Counting.getCache({
+			guildId: sanitizedBody.guildId,
+		});
 		if (existing) {
 			return c.json(
 				{
@@ -73,7 +114,7 @@ app.post('/', async (c) => {
 			);
 		}
 
-		const result = await Counting.create(body);
+		const result = await Counting.create(sanitizedBody);
 		await result.save();
 
 		return c.json({ success: true, data: result });
@@ -88,6 +129,13 @@ app.patch('/:guildId', async (c) => {
 	const guildId = c.req.param('guildId');
 	const body = await c.req.json();
 
+	let sanitizedBody;
+	try {
+		sanitizedBody = sanitizeCountingPayload(body);
+	} catch (err) {
+		return c.json({ success: false, error: err.message }, 400);
+	}
+
 	try {
 		const result = await Counting.getCache({ guildId: guildId });
 		if (!result)
@@ -96,7 +144,7 @@ app.patch('/:guildId', async (c) => {
 				404,
 			);
 
-		await result.update(body);
+		await result.update(sanitizedBody);
 
 		await result.save();
 
