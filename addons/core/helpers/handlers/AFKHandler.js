@@ -49,9 +49,9 @@ class AFKHandler {
 		const { convertColor } = helpers.color;
 
 		try {
-			const afkSince = afkData.timestamp;
+			const afkSinceVal = afkData.timestamp || afkData.created_at || new Date();
 			const duration = await formatDuration(
-				Date.now() - afkSince.getTime(),
+				Date.now() - new Date(afkSinceVal).getTime(),
 				message,
 			);
 

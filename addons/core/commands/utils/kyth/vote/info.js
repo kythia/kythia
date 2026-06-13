@@ -36,11 +36,13 @@ module.exports = {
 			const voterRecord = await KythiaVoter.getCache({ userId: targetUser.id });
 
 			const points = userRecord?.votePoints || 0;
-			const lastVoted = voterRecord?.votedAt
-				? `<t:${Math.floor(voterRecord.votedAt.getTime() / 1000)}:R>`
+			const votedAtVal = voterRecord?.votedAt;
+			const lastVoted = votedAtVal
+				? `<t:${Math.floor(new Date(votedAtVal).getTime() / 1000)}:R>`
 				: 'Never';
-			const expiresAt = userRecord?.voteExpiresAt
-				? `<t:${Math.floor(userRecord.voteExpiresAt.getTime() / 1000)}:R>`
+			const voteExpiresAtVal = userRecord?.voteExpiresAt;
+			const expiresAt = voteExpiresAtVal
+				? `<t:${Math.floor(new Date(voteExpiresAtVal).getTime() / 1000)}:R>`
 				: 'N/A';
 			const hasVotedStatus = userRecord?.isVoted ? '✅ Yes' : '❌ No';
 

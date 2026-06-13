@@ -185,12 +185,16 @@ module.exports = {
 				else if (daysNum <= 14) binSizeMs = 1000 * 60 * 60 * 4;
 				else if (daysNum === 365) binSizeMs = 1000 * 60 * 60 * 24 * 4;
 
+				let firstDateVal =
+					allTrades[0].createdAt || allTrades[0].created_at || new Date();
 				let currentBinStart =
-					Math.floor(allTrades[0].createdAt.getTime() / binSizeMs) * binSizeMs;
+					Math.floor(new Date(firstDateVal).getTime() / binSizeMs) * binSizeMs;
 				let currentBin = [];
 
 				for (const trade of allTrades) {
-					const tradeTime = trade.createdAt.getTime();
+					const tradeDateVal =
+						trade.createdAt || trade.created_at || new Date();
+					const tradeTime = new Date(tradeDateVal).getTime();
 					if (tradeTime < currentBinStart + binSizeMs) {
 						currentBin.push(trade.price);
 					} else {

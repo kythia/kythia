@@ -46,8 +46,9 @@ module.exports = {
 		const getMainMenu = async () => {
 			let currentPremiumText = 'No active premium.';
 			if (kythiaUser.isPremium !== 'none') {
-				const expireDate = kythiaUser.premiumExpiresAt
-					? `<t:${Math.floor(kythiaUser.premiumExpiresAt.getTime() / 1000)}:R>`
+				const expireDateVal = kythiaUser.premiumExpiresAt;
+				const expireDate = expireDateVal
+					? `<t:${Math.floor(new Date(expireDateVal).getTime() / 1000)}:R>`
 					: 'Permanent';
 				currentPremiumText = `Active Tier: **${kythiaUser.isPremium.toUpperCase()}** (Expires: ${expireDate})`;
 			}
@@ -199,10 +200,9 @@ module.exports = {
 
 					// Update Premium
 					kythiaUser.isPremium = selectedTier;
-					const now = kythiaUser.premiumExpiresAt
-						? new Date(
-								Math.max(Date.now(), kythiaUser.premiumExpiresAt.getTime()),
-							)
+					const expireDateVal = kythiaUser.premiumExpiresAt;
+					const now = expireDateVal
+						? new Date(Math.max(Date.now(), new Date(expireDateVal).getTime()))
 						: new Date();
 					now.setDate(now.getDate() + selectedDuration);
 					kythiaUser.premiumExpiresAt = now;
