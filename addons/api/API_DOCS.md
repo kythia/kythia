@@ -10054,15 +10054,8 @@ Binds the user's premium benefits to a new server.
 - `200 OK`: Server bound successfully.
 - `400 Bad Request`: Validation failure (e.g. invalid guildId, no premium tier, slot limit reached, already bound).
 
-#### `DELETE /api/users/:userId/premium-servers`
+#### `DELETE /api/users/:userId/premium-servers/:guildId`
 Unbinds the user's premium benefits from a server, freeing up a slot.
-
-**Body:**
-```json
-{
-  "guildId": "123456789012345678"
-}
-```
 
 **Responses:**
 - `200 OK`: Server unbound successfully.

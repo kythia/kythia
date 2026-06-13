@@ -353,6 +353,133 @@ module.exports = async (bot, guild) => {
 		}
 	}
 
+	// ─── DM the Inviter ──────────────────────────────────────────────────────
+	try {
+		const auditLogs = await guild
+			.fetchAuditLogs({ type: 28, limit: 1 })
+			.catch(() => null);
+		const botLog = auditLogs?.entries?.find(
+			(entry) => entry.targetId === bot.client.user.id,
+		);
+
+		if (botLog?.executor && !botLog.executor.bot) {
+			const inviter = botLog.executor;
+			const fakeInteraction = {
+				client: bot.client,
+				guild: guild,
+				user: bot.client.user,
+			};
+			const accentColor = convertColor(kythiaConfig.bot.color, {
+				from: 'hex',
+				to: 'decimal',
+			});
+
+			const dmContainer = new ContainerBuilder()
+				.setAccentColor(accentColor)
+				.addTextDisplayComponents(
+					new TextDisplayBuilder().setContent(
+						await t(
+							guild,
+							'core.events.guildCreate.events.guild.create.dm.title',
+						),
+					),
+				)
+				.addSeparatorComponents(
+					new SeparatorBuilder()
+						.setSpacing(SeparatorSpacingSize.Small)
+						.setDivider(true),
+				)
+				.addMediaGalleryComponents(
+					new MediaGalleryBuilder().addItems([
+						new MediaGalleryItemBuilder().setURL(
+							kythiaConfig.settings.bannerImage,
+						),
+					]),
+				)
+				.addSeparatorComponents(
+					new SeparatorBuilder()
+						.setSpacing(SeparatorSpacingSize.Small)
+						.setDivider(true),
+				)
+				.addTextDisplayComponents(
+					new TextDisplayBuilder().setContent(
+						await t(
+							guild,
+							'core.events.guildCreate.events.guild.create.dm.desc',
+							{
+								user: inviter.username,
+								bot: bot.client.user.username,
+								guild: guild.name,
+								dashboard: kythiaConfig.settings.kythiaWeb,
+							},
+						),
+					),
+				)
+				.addSeparatorComponents(
+					new SeparatorBuilder()
+						.setSpacing(SeparatorSpacingSize.Small)
+						.setDivider(true),
+				)
+				.addActionRowComponents(
+					new ActionRowBuilder().addComponents(
+						new ButtonBuilder()
+							.setLabel('Dashboard')
+							.setStyle(ButtonStyle.Link)
+							.setURL(kythiaConfig.settings.kythiaWeb)
+							.setEmoji('🌸'),
+						new ButtonBuilder()
+							.setLabel('Support Server')
+							.setStyle(ButtonStyle.Link)
+							.setURL(kythiaConfig.settings.supportServer)
+							.setEmoji('🎂'),
+						new ButtonBuilder()
+							.setLabel("Owner's Web")
+							.setStyle(ButtonStyle.Link)
+							.setURL(kythiaConfig.settings.ownerWeb)
+							.setEmoji('❄️'),
+					),
+				)
+				.addSeparatorComponents(
+					new SeparatorBuilder()
+						.setSpacing(SeparatorSpacingSize.Small)
+						.setDivider(true),
+				)
+				.addTextDisplayComponents(
+					new TextDisplayBuilder().setContent(
+						await t(fakeInteraction, 'common.container.footer', {
+							username: bot.client.user.username,
+						}),
+					),
+				);
+
+			await inviter
+				.send({
+					components: [dmContainer],
+					flags: MessageFlags.IsComponentsV2,
+				})
+				.catch(async () => {
+					await inviter
+						.send(
+							await t(
+								guild,
+								'core.events.guildCreate.events.guild.create.dm.fallback',
+								{
+									user: inviter.username,
+									bot: bot.client.user.username,
+									guild: guild.name,
+									dashboard: kythiaConfig.settings.kythiaWeb,
+								},
+							),
+						)
+						.catch(() => {});
+				});
+		}
+	} catch (err) {
+		logger.error(`Failed to DM inviter: ${err.message}`, {
+			label: 'guildCreate:dm',
+		});
+	}
+
 	// ─── Bot Growth Snapshot ─────────────────────────────────────────────────
 	try {
 		if (BotGrowthSnapshot) {

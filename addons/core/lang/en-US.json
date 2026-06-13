@@ -1724,6 +1724,11 @@
 								"desc": "## 🎉 Thank you for inviting me!\nHello everyone! I'm **{bot}** and I'm ready to help your server!\n\nHere are some steps to get started:\n• Use `/help` to see all my features and commands.\n• Configure your server settings with `/set view` (admin only).\n• Visit my website at [kythia.my.id](https://kythia.my.id/commands) for documentation and more info.\n\nIf you need help, just mention me or contact my owner `kenndeclouv`!\n",
 								"fallback": "## 🎉 Thank you for inviting me!\nHello everyone! I'm **{bot}** and I'm ready to help your server!\n\nHere are some steps to get started:\n• Use `/help` to see all my features and commands.\n• Configure your server settings with `/set view` (admin only).\n• Visit my website at [kythia.my.id](https://kythia.my.id/commands) for documentation and more info.\n\nIf you need help, just mention me or contact my owner `kenndeclouv`!\n"
 							},
+							"dm": {
+								"title": "## 🎉 Thank you for inviting me!",
+								"desc": "Hello {user}! Thank you so much for adding **{bot}** to your server **{guild}**!\n\nI'm so excited to be part of your community! Here are some quick links to help you get started:\n• Head to our **[Dashboard]({dashboard})** to easily configure everything.\n• Use `/help` in the server to see all my features and commands.\n\nIf you have any questions or need help setting me up, feel free to join my support server or contact my owner!\n\nWith lots of love, {bot} 💖",
+								"fallback": "## 🎉 Thank you for inviting me!\nHello {user}! Thank you so much for adding **{bot}** to your server **{guild}**!\n\nI'm so excited to be part of your community! Here are some quick links to help you get started:\n• Head to our **Dashboard** ({dashboard}) to easily configure everything.\n• Use `/help` in the server to see all my features and commands.\n\nIf you have any questions or need help setting me up, feel free to join my support server or contact my owner!\n\nWith lots of love, {bot} 💖"
+							},
 							"min": {
 								"members": "## {bot} Leave!\nSorry, I only join servers with at least **{threshold} members**.\nFeel free to invite me back once your server has grown — I'd love to be part of your community!"
 							}

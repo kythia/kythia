@@ -429,11 +429,14 @@ app.get('/chart', async (c) => {
 		// Retrieve the latest raw transactions to build the chart
 		// For a complete TradingView style OHLC chart, the frontend or backend would group by time intervals.
 		// We return the raw data points here to allow maximum flexibility.
-		const transactions = await MarketTransaction.getAllCache({
+		let transactions = await MarketTransaction.getAllCache({
 			where: { assetId: 'KYTH' },
-			order: [['createdAt', 'ASC']],
+			order: [['createdAt', 'DESC']],
 			limit: limitNum,
 		});
+
+		// Reverse to make it chronological (oldest to newest) for the chart
+		transactions = transactions.reverse();
 
 		// Format to standard chart data points
 		const dataPoints = transactions.map((tx) => ({

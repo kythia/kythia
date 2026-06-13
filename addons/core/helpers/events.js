@@ -19,6 +19,7 @@ const EVENT_SCENARIOS = {
 	[Events.ChannelUpdate]: ['name-change', 'topic-change', 'nsfw-toggle'],
 	[Events.VoiceStateUpdate]: ['join', 'leave', 'mute', 'unmute', 'deafen'],
 	[Events.PresenceUpdate]: ['online', 'idle', 'dnd', 'offline'],
+	[Events.GuildCreate]: ['default', 'mock-dm'],
 	// Add more as needed
 };
 
@@ -142,6 +143,29 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 
 		// Guild events
 		case Events.GuildCreate:
+			if (type === 'mock-dm') {
+				const mockGuild = Object.assign(
+					Object.create(Object.getPrototypeOf(guild)),
+					guild,
+				);
+				mockGuild.fetchAuditLogs = async () => ({
+					entries: new Collection([
+						[
+							'mock_id',
+							{
+								targetId: client.user.id,
+								executor: user,
+								executorId: user.id,
+							},
+						],
+					]),
+				});
+				// Mock memberCount to avoid minimum members check exit
+				mockGuild.memberCount = 100;
+				return [mockGuild];
+			}
+			return [guild];
+
 		case Events.GuildDelete:
 		case Events.GuildUnavailable:
 		case Events.GuildAvailable:
