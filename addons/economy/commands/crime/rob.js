@@ -353,7 +353,7 @@ module.exports = {
 					? await t(interaction, 'economy.rob.rob.fail.guard.text')
 					: '',
 				poison: poison
-					? await t(interaction, 'economy.rob.rob.fail.poison')
+					? await t(interaction, 'economy.rob.rob.fail.poison.text')
 					: '',
 			})}${smokeMsg}${lawyerMsg}${lockpickMsg}`;
 			const components = await simpleContainer(interaction, msg, {
