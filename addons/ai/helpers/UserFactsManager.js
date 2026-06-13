@@ -225,8 +225,9 @@ class UserFactsManager {
 				return;
 			}
 
-			const GEMINI_API_KEY =
-				this.config.addons.ai.geminiApiKeys.split(',')[tokenIdx];
+			const GEMINI_API_KEY = (this.config.addons.ai.geminiApiKeys || '').split(
+				',',
+			)[tokenIdx];
 			const GEMINI_MODEL = this.config.addons.ai.model;
 			const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 

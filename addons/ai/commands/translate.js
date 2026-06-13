@@ -54,7 +54,8 @@ module.exports = {
 
 		await interaction.deferReply();
 
-		const totalTokens = kythiaConfig.addons.ai.geminiApiKeys.split(',').length;
+		const apiKeysStr = kythiaConfig.addons.ai.geminiApiKeys || '';
+		const totalTokens = apiKeysStr ? apiKeysStr.split(',').length : 0;
 		let success = false;
 		let finalResponse = null;
 		let lastError = null;
@@ -76,8 +77,7 @@ module.exports = {
 				});
 			}
 
-			const GEMINI_API_KEY =
-				kythiaConfig.addons.ai.geminiApiKeys.split(',')[tokenIdx];
+			const GEMINI_API_KEY = apiKeysStr.split(',')[tokenIdx];
 			if (!GEMINI_API_KEY) {
 				logger.warn(`Token index ${tokenIdx} is invalid. Skipping.`, {
 					label: 'ai',

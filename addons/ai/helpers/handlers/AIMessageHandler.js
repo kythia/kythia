@@ -82,7 +82,7 @@ class AIMessageHandler {
 		this.mediaProcessor = new MediaProcessor({
 			tempDir: path.join(__dirname, '..', 'temp'),
 			logger: this.logger,
-			geminiApiKey: this.aiConfig.geminiApiKeys.split(',')[0],
+			geminiApiKey: (this.aiConfig.geminiApiKeys || '').split(',')[0],
 		});
 
 		this.userCooldowns = new Map();
@@ -486,7 +486,9 @@ class AIMessageHandler {
 				break;
 			}
 
-			const apiKey = this.aiConfig.geminiApiKeys.split(',')[tokenIdx]?.trim();
+			const apiKey = (this.aiConfig.geminiApiKeys || '')
+				.split(',')
+				[tokenIdx]?.trim();
 			if (!apiKey) continue;
 
 			const genAI = new GoogleGenAI({ apiKey });

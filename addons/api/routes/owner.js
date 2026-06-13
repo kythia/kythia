@@ -17,7 +17,7 @@ const app = new Hono();
 // Owner-only middleware
 // All routes on this router require:
 //   1. Global Bearer token (handled by server.js)
-//   2. X-Owner-Id header set to a Discord user ID in kythiaConfig.bot.owners
+//   2. X-Owner-Id header set to a Discord user ID in kythiaConfig.owner.ids
 // ---------------------------------------------------------------------------
 app.use('*', ownerGuard());
 

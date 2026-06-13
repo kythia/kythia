@@ -53,27 +53,9 @@ module.exports = {
 	 */
 	async execute(interaction, container) {
 		await interaction.deferReply();
-		const { t, models, helpers, kythiaConfig } = container;
+		const { t, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { MessageFlags } = require('discord.js');
-
-		// If the command handler doesn't naturally support ownerOnly flag, we can do a manual check against kythiaConfig.
-		const isOwner = kythiaConfig.bot.owners.includes(interaction.user.id);
-		if (!isOwner) {
-			const msg = await t(
-				interaction,
-				'economy.guild_stock.central_bank.error.owner',
-			);
-			const components = await simpleContainer(
-				interaction,
-				`## ❌ Access Denied\n${msg}`,
-				{ color: 'Red' },
-			);
-			return interaction.editReply({
-				components,
-				flags: MessageFlags.IsComponentsV2,
-			});
-		}
 
 		const { KythLiquidityPool } = models;
 		const pool = await KythLiquidityPool.getCache({ id: 1 });

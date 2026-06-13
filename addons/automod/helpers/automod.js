@@ -746,6 +746,8 @@ async function checkLinks(message, setting) {
 
 function cleanupCaches() {
 	const now = Date.now();
+	const CACHE_EXPIRATION_TIME =
+		kythiaConfig.settings.cacheExpirationTime || 15 * 60 * 1000;
 	for (const [key, value] of userCache.entries()) {
 		const lastActive = value.lastActivity || value.lastCheck;
 		if (lastActive && now - lastActive > CACHE_EXPIRATION_TIME) {

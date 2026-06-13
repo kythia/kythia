@@ -77,7 +77,11 @@ module.exports = {
 			}
 
 			const replyContainer = new ContainerBuilder()
-				.setAccentColor(parseInt(kythiaConfig.bot.color.replace('#', ''), 16))
+				.setAccentColor(
+					kythiaConfig.bot.color
+						? parseInt(kythiaConfig.bot.color.replace('#', ''), 16)
+						: undefined,
+				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(listText),
 				);

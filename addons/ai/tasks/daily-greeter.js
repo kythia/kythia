@@ -41,7 +41,8 @@ module.exports = {
 	execute: async (container) => {
 		const { logger, client, kythiaConfig } = container;
 
-		if (kythiaConfig.addons.ai.geminiApiKeys.length === 0) return;
+		const apiKeysStr = kythiaConfig.addons.ai.geminiApiKeys || '';
+		if (!apiKeysStr) return;
 
 		try {
 			// Runs on all shards, but each shard only processes its own local guilds.cache.
@@ -69,8 +70,7 @@ module.exports = {
 						return;
 					}
 
-					const GEMINI_API_KEY =
-						kythiaConfig.addons.ai.geminiApiKeys.split(',')[tokenIdx];
+					const GEMINI_API_KEY = apiKeysStr.split(',')[tokenIdx];
 					const genAI = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 					const response = await genAI.models.generateContent({
