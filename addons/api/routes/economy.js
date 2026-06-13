@@ -433,6 +433,7 @@ app.get('/chart', async (c) => {
 			where: { assetId: 'KYTH' },
 			order: [['createdAt', 'DESC']],
 			limit: limitNum,
+			ttl: 5 * 60 * 1000,
 		});
 
 		// Reverse to make it chronological (oldest to newest) for the chart

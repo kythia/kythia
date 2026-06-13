@@ -28,6 +28,7 @@ app.get('/leaderboard', async (c) => {
 			},
 			order: [['votePoints', 'DESC']],
 			limit: 100, // Fetch up to 100 top voters
+			ttl: 5 * 60 * 1000,
 		});
 
 		// Resolve Discord user information

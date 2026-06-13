@@ -66,7 +66,7 @@ module.exports = class TestEventCommand {
 				const scenarios = getEventScenarios(eventName);
 				const filtered = scenarios
 					.filter((choice) =>
-						choice.toLowerCase().includes(focused.value.toLowerCase()),
+						choice.toLowerCase().includes(focusedValue.toLowerCase()),
 					)
 					.slice(0, 10);
 
