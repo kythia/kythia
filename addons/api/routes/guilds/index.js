@@ -52,12 +52,16 @@ app.get('/:id', async (c) => {
 			? guild
 			: { id: guild.id, name: guild.name, icon: guild.icon };
 
+	const { getGuildPremiumTier } = container.helpers.premiumServer;
+	const kythiaPremiumTier = await getGuildPremiumTier(guildId, models);
+
 	return c.json({
 		guild: responseGuild,
 		settings,
 		channels,
 		roles,
 		botUser,
+		kythiaPremiumTier,
 	});
 });
 

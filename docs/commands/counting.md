@@ -20,9 +20,9 @@
 
 **Options for this subcommand:**
 - **`mode`**
-  - **Description:** Counting mode (base).
+  - **Description:** The number format to use.
   - **Type:** Text
-  - **Choices:** `Decimal (Base 10)` (`decimal`), `Binary (Base 2)` (`binary`), `Hexadecimal (Base 16)` (`hex`), `Roman Numerals` (`roman`)
+  - **Choices:** `Normal Numbers (1, 2, 3...)` (`decimal`), `Roman Numerals (I, II, III, IV...)` (`roman`), `Binary / Hacker (1, 10, 11, 100...)` (`binary`), `Hexadecimal (1...9, A, B, C...)` (`hex`)
 - **`success_reaction`**
   - **Description:** Emoji to react with when the number is correct.
   - **Type:** Text
@@ -33,7 +33,7 @@
   - **Description:** Allow math expressions (decimal mode only).
   - **Type:** Boolean
 - **`strict`**
-  - **Description:** Reset the count to 0 when a mistake is made.
+  - **Description:** Enable strict counting. if 1 user false, count will reset to 0.
   - **Type:** Boolean
 **`/counting disable`**
 > Disable the counting channel.
@@ -55,9 +55,9 @@
   - **Description:** The channel to use for counting.
   - **Type:** Channel
 - **`mode`**
-  - **Description:** Counting mode (base).
+  - **Description:** The number format to use.
   - **Type:** Text
-  - **Choices:** `Decimal (Base 10)` (`decimal`), `Binary (Base 2)` (`binary`), `Hexadecimal (Base 16)` (`hex`), `Roman Numerals` (`roman`)
+  - **Choices:** `Normal Numbers (1, 2, 3...)` (`decimal`), `Roman Numerals (I, II, III, IV...)` (`roman`), `Binary / Hacker (1, 10, 11, 100...)` (`binary`), `Hexadecimal (1...9, A, B, C...)` (`hex`)
 - **`success_reaction`**
   - **Description:** Emoji to react with when the number is correct.
   - **Type:** Text

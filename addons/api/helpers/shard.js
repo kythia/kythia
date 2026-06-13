@@ -396,7 +396,12 @@ async function broadcastGetUsers(client, userIds) {
 	if (!client.shard) {
 		const found = [];
 		for (const id of userIds) {
-			const u = client.users.cache.get(id);
+			let u = client.users.cache.get(id);
+			if (!u) {
+				try {
+					u = await client.users.fetch(id).catch(() => null);
+				} catch (_e) {}
+			}
 			if (u) {
 				found.push({
 					id: u.id,
@@ -409,10 +414,15 @@ async function broadcastGetUsers(client, userIds) {
 	}
 
 	const results = await client.shard.broadcastEval(
-		(c, { ids }) => {
+		async (c, { ids }) => {
 			const localFound = [];
 			for (const id of ids) {
-				const u = c.users.cache.get(id);
+				let u = c.users.cache.get(id);
+				if (!u) {
+					try {
+						u = await c.users.fetch(id).catch(() => null);
+					} catch (_e) {}
+				}
 				if (u) {
 					localFound.push({
 						id: u.id,

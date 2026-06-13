@@ -177,6 +177,21 @@ function requireVote() {
 			return await next();
 		}
 
+		// Check Server Premium bypass
+		const guildId = c.req.param('guildId') || c.req.param('id');
+		if (guildId) {
+			try {
+				const { getGuildPremiumTier } = container.helpers.premiumServer;
+				const guildTier = await getGuildPremiumTier(guildId, container.models);
+				if (guildTier) return await next(); // Server is premium!
+			} catch (err) {
+				container.logger.error(
+					`Error checking guild premium tier in API: ${err.message}`,
+					{ label: 'api' },
+				);
+			}
+		}
+
 		// Check Top.gg vote cache
 		const voteCacheKey = `kythia:topgg:vote:${userId}`;
 		const isVoted = await redis.get(voteCacheKey);

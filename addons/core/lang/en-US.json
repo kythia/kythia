@@ -647,6 +647,25 @@
 				}
 			}
 		},
+		"premium_server": {
+			"no_server_id": "You must specify a `server_id` if you are not running this command inside a server.",
+			"access_denied": "❌ **Access Denied**\nYou do not have an eligible Premium Tier (`Yours` or `Ecosystem`) to bind servers.",
+			"bind": {
+				"limit_reached": "❌ **Slot Limit Reached**\nYou have used all your available slots (**{used}/{max}**). Unbind a server first.",
+				"already_bound_self": "⚠️ This server is **already bound** by you.",
+				"already_bound_other": "❌ This server is already bound by another Premium user.",
+				"success": "✅ **Success!**\nYou have bound your **{tier}** tier to server `{guildId}`."
+			},
+			"unbind": {
+				"not_bound_self": "❌ This server is **not bound** by you.",
+				"success": "✅ **Success!**\nYou have unbound your Premium tier from server `{guildId}`. The slot is now free."
+			},
+			"list": {
+				"header": "**Your Premium Server Slots ({tier})**\nUsage: **{used} / {max}** slots used.\n\n",
+				"empty": "*You have not bound any servers yet.*",
+				"item": "**{index}.** Server ID: `{guildId}`\n"
+			}
+		},
 		"tools": {
 			"avatar": {
 				"embed": {

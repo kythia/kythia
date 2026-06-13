@@ -907,14 +907,14 @@ app.get('/premium', async (c) => {
 		const now = new Date();
 		const total = await KythiaUser.countWithCache({
 			where: {
-				premiumTier: { [Op.notIn]: ['none', null] },
+				premiumTier: { [Op.notIn]: ['none'] },
 				premiumExpiresAt: { [Op.gt]: now },
 			},
 		});
 
 		const users = await KythiaUser.getAllCache({
 			where: {
-				premiumTier: { [Op.notIn]: ['none', null] },
+				premiumTier: { [Op.notIn]: ['none'] },
 				premiumExpiresAt: { [Op.gt]: now },
 			},
 			order: [['premiumExpiresAt', 'ASC']],
@@ -1038,18 +1038,13 @@ app.post('/premium', async (c) => {
 
 		const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 
-		let user = await KythiaUser.getCache({ userId });
-		if (user) {
-			user.premiumTier = tier;
-			user.premiumExpiresAt = expiresAt;
-			await user.save();
-		} else {
-			user = await KythiaUser.create({
-				userId,
+		await KythiaUser.updateOrCreateCache(
+			{ userId },
+			{
 				premiumTier: tier,
 				premiumExpiresAt: expiresAt,
-			});
-		}
+			},
+		);
 
 		getLogger(c).info(
 			`Premium granted to user ${userId} for ${days} days (Tier: ${tier}) via API.`,
@@ -1092,9 +1087,13 @@ app.delete('/premium/:userId', async (c) => {
 			);
 		}
 
-		user.premiumTier = 'none';
-		user.premiumExpiresAt = null;
-		await user.save();
+		await KythiaUser.updateOrCreateCache(
+			{ userId },
+			{
+				premiumTier: 'none',
+				premiumExpiresAt: null,
+			},
+		);
 
 		getLogger(c).info(`Premium revoked from user ${userId} via API.`, {
 			label: 'api',

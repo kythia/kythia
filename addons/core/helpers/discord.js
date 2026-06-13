@@ -540,6 +540,23 @@ async function voteLocked(interaction, container) {
 	}
 	if (isTeamMember) return true;
 
+	// Skip vote lock if the Server is Premium bound
+	if (interaction.guildId) {
+		try {
+			const { getGuildPremiumTier } = container.helpers.premiumServer;
+			const guildTier = await getGuildPremiumTier(
+				interaction.guildId,
+				container.models,
+			);
+			if (guildTier) return true; // Server is premium, everyone bypasses vote locks!
+		} catch (err) {
+			container.logger.error(
+				`Error checking guild premium tier: ${err.message}`,
+				{ label: 'discord-helper' },
+			);
+		}
+	}
+
 	// Skip vote lock if user is premium
 	const premiumCacheKey = `kythia:middleware:premium:${interaction.user.id}`;
 	let isPremiumUser = await redis.get(premiumCacheKey);

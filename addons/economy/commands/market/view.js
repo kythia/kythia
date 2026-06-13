@@ -185,7 +185,7 @@ module.exports = {
 				else if (daysNum <= 14) binSizeMs = 1000 * 60 * 60 * 4;
 				else if (daysNum === 365) binSizeMs = 1000 * 60 * 60 * 24 * 4;
 
-				let firstDateVal =
+				const firstDateVal =
 					allTrades[0].createdAt || allTrades[0].created_at || new Date();
 				let currentBinStart =
 					Math.floor(new Date(firstDateVal).getTime() / binSizeMs) * binSizeMs;

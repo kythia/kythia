@@ -317,7 +317,7 @@ app.get('/growth', async (c) => {
 // =============================================================================
 app.get('/premium-tiers', (c) => {
 	try {
-		const TIERS = require('../../core/helpers/premium-tiers');
+		const TIERS = require('@coreHelpers/premium-tiers');
 		// Convert BigInts to strings so JSON.stringify doesn't crash
 		const serializedTiers = {};
 		for (const [key, data] of Object.entries(TIERS)) {

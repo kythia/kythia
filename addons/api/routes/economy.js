@@ -156,9 +156,11 @@ app.get('/leaderboard', async (c) => {
 				[Op.or]: [
 					{ kythHolding: { [Op.gt]: 0 } },
 					{ kythStaked: { [Op.gt]: 0 } },
+					{ kythiaCoin: { [Op.gt]: 0 } },
+					{ kythiaBank: { [Op.gt]: 0 } },
 				],
 			},
-			order: [['kythHolding', 'DESC']],
+			order: [['kythiaCoin', 'DESC']],
 			page: pageNum,
 			pageSize: limitNum,
 		});
@@ -185,11 +187,15 @@ app.get('/leaderboard', async (c) => {
 				kythHolding: u.kythHolding || 0,
 				kythStaked: u.kythStaked || 0,
 				totalKyth,
+				kythiaCoin: u.kythiaCoin || 0,
+				kythiaBank: u.kythiaBank || 0,
+				kythiaRuby: u.kythiaRuby || 0,
+				totalCoins: (u.kythiaCoin || 0) + (u.kythiaBank || 0),
 			};
 		});
 
-		// Sort by totalKyth in memory for the current page since literal order might fail on some DBs
-		data.sort((a, b) => b.totalKyth - a.totalKyth);
+		// Sort by totalCoins in memory for the current page since literal order might fail on some DBs
+		data.sort((a, b) => b.totalCoins - a.totalCoins);
 
 		// Recalculate rank after memory sort
 		data.forEach((item, i) => {

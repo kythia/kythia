@@ -37,9 +37,7 @@ class CountingQueue {
 		const task = this.queue.shift();
 		try {
 			await task();
-		} catch (e) {
-			console.error(e);
-		}
+		} catch (_e) {}
 		this.isProcessing = false;
 		this.processNext();
 	}

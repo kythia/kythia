@@ -172,4 +172,167 @@ app.get('/:userId/premium', async (c) => {
 	}
 });
 
+// =============================================================================
+// GET /api/users/:userId/premium-servers
+// Lists all bound premium servers for a user and their quota.
+// =============================================================================
+app.get('/:userId/premium-servers', async (c) => {
+	const userId = c.req.param('userId');
+	const container = c.get('container') ?? c.get('client')?.container;
+	const { models, helpers } = container;
+	const { KythiaUser, PremiumServerBind } = models;
+
+	try {
+		let maxSlots = 0;
+		const isOwner = helpers?.discord?.isOwner(userId) ?? false;
+		let activeTier = 'none';
+
+		if (isOwner) {
+			maxSlots = 100; // Owners basically have unlimited slots
+			activeTier = 'yours';
+		} else {
+			const user = await KythiaUser.getCache({ userId });
+			if (
+				user?.premiumTier &&
+				user?.premiumExpiresAt &&
+				new Date(user.premiumExpiresAt) > new Date()
+			) {
+				activeTier = user.premiumTier;
+				if (activeTier === 'yours') maxSlots = 1;
+				if (activeTier === 'ecosystem') maxSlots = 3;
+			}
+		}
+
+		if (!PremiumServerBind) {
+			return c.json({ success: true, maxSlots, boundServers: [] });
+		}
+
+		const binds = await PremiumServerBind.getAllCache({ where: { userId } });
+
+		return c.json({
+			success: true,
+			activeTier,
+			maxSlots,
+			usedSlots: binds.length,
+			boundServers: binds.map((b) => b.guildId),
+		});
+	} catch (err) {
+		return c.json({ success: false, error: err.message }, 500);
+	}
+});
+
+// =============================================================================
+// POST /api/users/:userId/premium-servers
+// Binds a new server to the user's premium slots.
+// =============================================================================
+app.post('/:userId/premium-servers', async (c) => {
+	const userId = c.req.param('userId');
+	const { guildId } = await c.req.json();
+	const container = c.get('container') ?? c.get('client')?.container;
+	const { models, helpers, logger } = container;
+	const { KythiaUser, PremiumServerBind } = models;
+
+	if (!guildId) {
+		return c.json({ success: false, error: 'guildId is required' }, 400);
+	}
+
+	try {
+		let maxSlots = 0;
+		const isOwner = helpers?.discord?.isOwner(userId) ?? false;
+
+		if (isOwner) {
+			maxSlots = 100;
+		} else {
+			const user = await KythiaUser.getCache({ userId });
+			if (
+				user?.premiumTier &&
+				user?.premiumExpiresAt &&
+				new Date(user.premiumExpiresAt) > new Date()
+			) {
+				if (user.premiumTier === 'yours') maxSlots = 1;
+				if (user.premiumTier === 'ecosystem') maxSlots = 3;
+			}
+		}
+
+		if (maxSlots === 0) {
+			return c.json(
+				{
+					success: false,
+					error:
+						'User does not have an eligible premium tier for server binding',
+				},
+				403,
+			);
+		}
+
+		const existingBinds = await PremiumServerBind.getAllCache({
+			where: { userId },
+		});
+		if (existingBinds.length >= maxSlots) {
+			return c.json(
+				{ success: false, error: `Maximum slot limit reached (${maxSlots})` },
+				403,
+			);
+		}
+
+		// Check if guild is already bound by someone else
+		const existingGuildBind = await PremiumServerBind.getCache({ guildId });
+		if (existingGuildBind) {
+			if (existingGuildBind.userId === userId) {
+				return c.json(
+					{ success: false, error: 'Server is already bound by you' },
+					400,
+				);
+			}
+			return c.json(
+				{ success: false, error: 'Server is already bound by another user' },
+				400,
+			);
+		}
+
+		await PremiumServerBind.create({ guildId, userId });
+
+		logger.info(`User ${userId} bound premium to guild ${guildId}`, {
+			label: 'api',
+		});
+
+		return c.json({ success: true, guildId });
+	} catch (err) {
+		return c.json({ success: false, error: err.message }, 500);
+	}
+});
+
+// =============================================================================
+// DELETE /api/users/:userId/premium-servers/:guildId
+// Unbinds a server from the user's premium slots.
+// =============================================================================
+app.delete('/:userId/premium-servers/:guildId', async (c) => {
+	const userId = c.req.param('userId');
+	const guildId = c.req.param('guildId');
+	const container = c.get('container') ?? c.get('client')?.container;
+	const { models, logger } = container;
+	const { PremiumServerBind } = models;
+
+	try {
+		const bind = await PremiumServerBind.getCache({ guildId, userId });
+		if (!bind) {
+			return c.json(
+				{ success: false, error: 'Server is not bound by this user' },
+				404,
+			);
+		}
+
+		await bind.destroy();
+		PremiumServerBind.invalidateCache({ guildId, userId });
+
+		logger.info(`User ${userId} unbound premium from guild ${guildId}`, {
+			label: 'api',
+		});
+
+		return c.json({ success: true });
+	} catch (err) {
+		return c.json({ success: false, error: err.message }, 500);
+	}
+});
+
 module.exports = app;

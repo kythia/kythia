@@ -22,6 +22,7 @@ The **Kythia API** is an internal REST API addon that acts as the bridge between
 - [GET /api/metrics](#get-apimetrics)
 - [GET /api/meta/stats](#get-apimetastats)
 - [GET /api/meta/growth](#get-apimetagrowth)
+- [GET /api/meta/premium-tiers](#get-apimetapremium-tiers)
 - [GET /api/meta/commands](#get-apimetacommands)
 - [GET /api/meta/changelog](#get-apimetachangelog)
 - [GET /api/meta/shards](#get-apimetashards)
@@ -172,6 +173,8 @@ The **Kythia API** is an internal REST API addon that acts as the bridge between
     - [Cancel Schedule](#delete-apiownerrestart)
     - [Trigger Restart](#post-apiownerrestart)
   - [Global Profile](#global-profile-apiownerprofile)
+- [User API (`/api/users`)](#user-api-apiusers)
+  - [Premium Servers](#premium-servers-apiusersuseridpremium-servers)
 - [Economy API (`/api/economy`)](#economy-api-apieconomy)
   - [Pool Status](#pool-status-apieconomypool)
   - [Global Stats](#global-stats-apieconomystats)
@@ -502,6 +505,45 @@ Returns historical bot growth statistics (guild joins, leaves, and total servers
 | `chart[].leaves`      | `number`  | Leaves in this bucket                                     |
 | `chart[].net`         | `number`  | Net growth in this bucket                                 |
 | `chart[].totalGuilds` | `number`  | Latest recorded running total server count in this bucket |
+
+---
+
+### `GET /api/meta/premium-tiers`
+
+Returns the serialized list of all available Premium Tiers and their prices from the core helpers.
+
+**Authentication:** Bearer token required.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "cute": {
+      "level": 1,
+      "name": "Cute Tier",
+      "description": "...",
+      "benefits": ["Double Dailies", "20% Cooldown Reduction"],
+      "color": "#ffb6c1",
+      "emoji": "🌸",
+      "prices": {
+        "30": "199",
+        "90": "549",
+        "365": "1999"
+      }
+    }
+  }
+}
+```
+
+| Field                       | Type     | Description                                |
+| --------------------------- | -------- | ------------------------------------------ |
+| `data`                      | `object` | Key-value object of all premium tiers      |
+| `data[tierId].level`        | `number` | The hierarchy level of the tier (1 = lowest) |
+| `data[tierId].name`         | `string` | Human-readable name of the tier            |
+| `data[tierId].benefits`     | `array`  | List of string benefits                    |
+| `data[tierId].prices`       | `object` | Prices mapped by days (e.g. "30": "199")   |
 
 ---
 
@@ -9472,7 +9514,7 @@ Grant premium to a user.
 | -------- | -------- | -------- | -------------------------------------- |
 | `userId` | `string` | Yes      | Discord user ID                        |
 | `days`   | `number` | No       | Number of premium days (default: `30`) |
-| `tier`   | `string` | No       | Premium tier: `cute` or `powerful` (default: `powerful`) |
+| `tier`   | `string` | No       | Premium tier: `cute`, `powerful`, `yours`, or `ecosystem` (default: `powerful`) |
 
 **Response (201):**
 
@@ -9976,6 +10018,58 @@ Update the main bot's global profile.
 
 ---
 
+## User API (`/api/users`)
+
+The User API allows the dashboard to manage individual user settings and configurations, such as Premium Server Bindings.
+
+### Premium Servers (`/api/users/:userId/premium-servers`)
+
+Allows premium users to assign and unassign their active subscription benefits to specific Discord servers. The amount of servers a user can bind is determined by their Premium Tier (e.g. `Yours` = 1, `Ecosystem` = 3).
+
+#### `GET /api/users/:userId/premium-servers`
+Fetches the user's currently bound servers and their maximum slot limits based on their Premium Tier.
+
+**Response:**
+```json
+{
+  "success": true,
+  "activeTier": "ecosystem",
+  "maxSlots": 3,
+  "usedSlots": 1,
+  "boundServers": ["123456789012345678"]
+}
+```
+
+#### `POST /api/users/:userId/premium-servers`
+Binds the user's premium benefits to a new server.
+
+**Body:**
+```json
+{
+  "guildId": "123456789012345678"
+}
+```
+
+**Responses:**
+- `200 OK`: Server bound successfully.
+- `400 Bad Request`: Validation failure (e.g. invalid guildId, no premium tier, slot limit reached, already bound).
+
+#### `DELETE /api/users/:userId/premium-servers`
+Unbinds the user's premium benefits from a server, freeing up a slot.
+
+**Body:**
+```json
+{
+  "guildId": "123456789012345678"
+}
+```
+
+**Responses:**
+- `200 OK`: Server unbound successfully.
+- `404 Not Found`: The specified server is not currently bound by this user.
+
+---
+
 ## Economy API (`/api/economy`)
 
 The Kyth Economy API exposes detailed data about the KYTH AMM Liquidity Pool, ecosystem stats, user holdings, market transactions, and a specialized endpoint for trading charts.
@@ -10059,7 +10153,7 @@ Get global Kyth ecosystem statistics.
 
 ### `GET /api/economy/leaderboard`
 
-Get a paginated leaderboard of users sorted by total Kyth (holding + staked).
+Get a paginated leaderboard of users sorted by their total Kythia economy wealth (Kythia Coin + Kythia Bank). Includes KYTH token holdings as well.
 
 **Query Parameters:**
 
@@ -10084,7 +10178,11 @@ Get a paginated leaderboard of users sorted by total Kyth (holding + staked).
       "avatar": "https://cdn.discordapp.com/...",
       "kythHolding": 500000,
       "kythStaked": 1000000,
-      "totalKyth": 1500000
+      "totalKyth": 1500000,
+      "kythiaCoin": 50000,
+      "kythiaBank": 100000,
+      "kythiaRuby": 5,
+      "totalCoins": 150000
     }
   ]
 }

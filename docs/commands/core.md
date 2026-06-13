@@ -1,5 +1,37 @@
 ## Command Category: Core
 
+### `/premium-server`
+
+**Description:** 💎 Manage your Server Premium bindings
+
+### Usage
+
+`/premium-server bind [server_id]`
+`/premium-server list`
+`/premium-server unbind [server_id]`
+
+### Subcommands
+
+**`/premium-server bind [<server_id>]`**
+> Bind your Premium tier to a server.
+
+**Options for this subcommand:**
+- **`server_id`**
+  - **Description:** The ID of the server (leave empty to bind current server)
+  - **Type:** Text
+**`/premium-server list`**
+> List all servers bound to your Premium tier.
+
+
+**`/premium-server unbind [<server_id>]`**
+> Unbind your Premium tier from a server.
+
+**Options for this subcommand:**
+- **`server_id`**
+  - **Description:** The ID of the server (leave empty to unbind current server)
+  - **Type:** Text
+
+
 ### `/set`
 
 **Description:** ⚙️ Settings bot configuration

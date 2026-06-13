@@ -88,6 +88,7 @@ const {
 } = require('@coreHelpers/time');
 
 const { getHelpData, buildHelpReply } = require('@coreHelpers/help-utils');
+const { getGuildPremiumTier } = require('@coreHelpers/premium-server');
 
 // ===== 3. Load Additional Utilities =====
 const { convertColor } = require('kythia-core').utils;
@@ -143,6 +144,7 @@ const dependencies = {
 		color: { convertColor },
 		time: { checkCooldown, formatDuration, parseDuration },
 		helpUtils: { getHelpData, buildHelpReply },
+		premiumServer: { getGuildPremiumTier },
 	},
 	appRoot: __dirname,
 };
