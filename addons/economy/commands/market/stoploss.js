@@ -9,12 +9,9 @@ const { MessageFlags } = require('discord.js');
 const { ASSET_IDS } = require('../../helpers/market');
 const { TOP_STOCKS } = require('../../helpers/stock');
 
-const { BaseCommand } = require('kythia-core');
-
-class StoplossCommand extends BaseCommand {
-	subcommand = true;
-
-	slashCommand = (subcommand) =>
+module.exports = {
+	subcommand: true,
+	slashCommand: (subcommand) =>
 		subcommand
 			.setName('stoploss')
 			.setDescription(
@@ -40,7 +37,7 @@ class StoplossCommand extends BaseCommand {
 					.setDescription('The price at which to trigger the sell order')
 					.setRequired(true)
 					.setMinValue(0.01),
-			);
+			),
 
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused().toLowerCase();
@@ -58,10 +55,9 @@ class StoplossCommand extends BaseCommand {
 				.slice(0, 25)
 				.map((choice) => ({ name: choice, value: choice.toLowerCase() })),
 		);
-	}
+	},
 
-	async execute(interaction) {
-		const container = this.container;
+	async execute(interaction, container) {
 		const { t, models, kythiaConfig, helpers, logger } = container;
 		const { KythiaUser, MarketPortfolio, MarketOrder } = models;
 		const { simpleContainer } = helpers.discord;
@@ -182,7 +178,5 @@ class StoplossCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	}
-}
-
-exports.default = StoplossCommand;
+	},
+};

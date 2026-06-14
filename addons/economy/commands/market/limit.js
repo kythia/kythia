@@ -10,12 +10,9 @@ const { ASSET_IDS } = require('../../helpers/market');
 const { TOP_STOCKS } = require('../../helpers/stock');
 const { toBigIntSafe } = require('../../helpers/bigint');
 
-const { BaseCommand } = require('kythia-core');
-
-class LimitCommand extends BaseCommand {
-	subcommand = true;
-
-	slashCommand = (subcommand) =>
+module.exports = {
+	subcommand: true,
+	slashCommand: (subcommand) =>
 		subcommand
 			.setName('limit')
 			.setDescription(
@@ -51,7 +48,7 @@ class LimitCommand extends BaseCommand {
 					.setDescription('The price at which to place the order')
 					.setRequired(true)
 					.setMinValue(0.01),
-			);
+			),
 
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused().toLowerCase();
@@ -69,10 +66,9 @@ class LimitCommand extends BaseCommand {
 				.slice(0, 25)
 				.map((choice) => ({ name: choice, value: choice.toLowerCase() })),
 		);
-	}
+	},
 
-	async execute(interaction) {
-		const container = this.container;
+	async execute(interaction, container) {
 		const { t, models, kythiaConfig, helpers, logger } = container;
 		const { KythiaUser, MarketPortfolio, MarketOrder } = models;
 		const { simpleContainer } = helpers.discord;
@@ -246,7 +242,5 @@ class LimitCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	}
-}
-
-exports.default = LimitCommand;
+	},
+};
