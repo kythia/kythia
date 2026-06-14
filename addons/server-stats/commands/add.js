@@ -7,10 +7,10 @@
  */
 
 const {
-	SlashCommandBuilder,
 	ChannelType,
-	PermissionFlagsBits,
 	MessageFlags,
+	PermissionFlagsBits,
+	SlashCommandBuilder,
 } = require('discord.js');
 const { updateStats } = require('../helpers/stats');
 
@@ -90,7 +90,7 @@ class AddCommand extends BaseCommand {
 		const guildId = interaction.guild.id;
 		const guildName = interaction.guild.name;
 
-		const [serverSetting, created] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting, created] = await ServerSetting.findOrCreateCache({
 			where: { guildId: guildId },
 			defaults: { guildId: guildId, guildName: guildName },
 		});

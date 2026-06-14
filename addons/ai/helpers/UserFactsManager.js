@@ -153,16 +153,15 @@ class UserFactsManager {
 		const type = this.classifyFact(fact);
 
 		try {
-			const [_factInstance, created] =
-				await this.UserFact.findOrCreateWithCache({
-					where: {
-						userId: userId,
-						fact: fact.trim(),
-					},
-					defaults: {
-						type: type,
-					},
-				});
+			const [_factInstance, created] = await this.UserFact.findOrCreateCache({
+				where: {
+					userId: userId,
+					fact: fact.trim(),
+				},
+				defaults: {
+					type: type,
+				},
+			});
 
 			return created ? 'added' : 'duplicate';
 		} catch (error) {

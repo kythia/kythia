@@ -298,10 +298,10 @@ app.get('/:guildId/:userId', async (c) => {
 		const { curve, multiplier } = await getGuildLevelingConfig(guildId, models);
 
 		// Total members
-		const rank = await User.countWithCache({
+		const rank = await User.countCache({
 			where: { guildId },
 		});
-		const aboveCount = await User.countWithCache({
+		const aboveCount = await User.countCache({
 			where: {
 				guildId,
 				[require('sequelize').Op.or]: [

@@ -30,7 +30,7 @@ class KickOnTimeoutCommand extends BaseCommand {
 
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-		const [config] = await VerificationConfig.findOrCreateWithCache({
+		const [config] = await VerificationConfig.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId },
 		});

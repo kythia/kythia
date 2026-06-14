@@ -13,9 +13,11 @@ const uiHelper = require('../../helpers/ui');
 // Helpers extracted to addons/pet/helpers/ui.js
 
 class ListCommand extends BaseCommand {
+	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand.setName('list').setDescription('Show all pets in the system');
-	subcommand = true;
+
 	teamOnly = true;
 	async execute(interaction) {
 		const container = this.container;
@@ -100,4 +102,5 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = ListCommand;

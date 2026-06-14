@@ -7,9 +7,9 @@
  */
 
 const {
-	InteractionContextType,
 	PermissionFlagsBits,
 	SlashCommandBuilder,
+	InteractionContextType,
 } = require('discord.js');
 const { Op } = require('sequelize');
 

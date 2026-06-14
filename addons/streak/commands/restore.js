@@ -13,6 +13,7 @@ const { BaseCommand } = require('kythia-core');
 
 class RestoreCommand extends BaseCommand {
 	subcommand = true;
+	voteLocked = true;
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -20,8 +21,6 @@ class RestoreCommand extends BaseCommand {
 			.setDescription(
 				'🔄 Restore your lost streak back to what it was before the reset.',
 			);
-
-	voteLocked = true;
 
 	async execute(interaction) {
 		const container = this.container;

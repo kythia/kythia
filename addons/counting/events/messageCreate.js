@@ -184,7 +184,7 @@ class MessageCreateEvent extends BaseEvent {
 
 			// Helper to fetch/create user stats
 			const getUserStats = async (userId) => {
-				const [userStat] = await CountingUser.findOrCreateWithCache({
+				const [userStat] = await CountingUser.findOrCreateCache({
 					where: { guildId, userId },
 					defaults: { correctCounts: 0, ruinedCounts: 0 },
 				});

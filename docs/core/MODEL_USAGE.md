@@ -82,21 +82,21 @@ const { rows, count, totalPages, currentPage } = await Member.paginateCache({
 
 ```js
 // Returns: number
-const total = await Member.countWithCache({ where: { guildId: '123' } });
-const total = await Member.countWithCache({ where: { guildId: '123' }, noCache: true });
+const total = await Member.countCache({ where: { guildId: '123' } });
+const total = await Member.countCache({ where: { guildId: '123' }, noCache: true });
 
 // Returns: boolean
 const isMember = await Member.existsCache({ userId: '123', guildId: '456' });
 
 // Returns: any (raw findAll result, cached as plain JSON)
-const leaderboard = await Member.aggregateWithCache({
+const leaderboard = await Member.aggregateCache({
     where: { guildId: '123' },
     attributes: ['userId', [fn('SUM', col('xp')), 'totalXp']],
     group: ['userId'],
 });
 
 // With noCache:
-const leaderboard = await Member.aggregateWithCache({
+const leaderboard = await Member.aggregateCache({
     where: { guildId: '123' },
     noCache: true,
     attributes: ['userId', [fn('SUM', col('xp')), 'totalXp']],
@@ -112,7 +112,7 @@ const leaderboard = await Member.aggregateWithCache({
 
 ```js
 // Find + merge defaults onto existing if values differ, or create
-const [user, created] = await User.findOrCreateWithCache({
+const [user, created] = await User.findOrCreateCache({
     where: { userId: '123', guildId: '456' },
     defaults: { coins: 0, level: 1 },
 });

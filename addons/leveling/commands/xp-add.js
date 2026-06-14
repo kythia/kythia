@@ -6,8 +6,8 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
-const { calculateLevelAndXp, levelUpXp } = require('../helpers');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
+const { levelUpXp, calculateLevelAndXp } = require('../helpers');
 
 const { BaseCommand } = require('kythia-core');
 

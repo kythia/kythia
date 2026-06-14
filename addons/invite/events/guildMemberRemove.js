@@ -46,7 +46,7 @@ class GuildMemberRemoveEvent extends BaseEvent {
 			history.status = 'left';
 			await history.save();
 
-			const [inviterStats] = await Invite.findOrCreateWithCache({
+			const [inviterStats] = await Invite.findOrCreateCache({
 				where: { guildId: guild.id, userId: history.inviterId },
 				defaults: { guildId: guild.id, userId: history.inviterId },
 			});

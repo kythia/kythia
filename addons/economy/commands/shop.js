@@ -21,6 +21,7 @@ const allItems = Object.values(shopData).flat();
 
 class ShopCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('shop')
@@ -266,4 +267,5 @@ class ShopCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = ShopCommand;

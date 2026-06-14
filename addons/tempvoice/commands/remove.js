@@ -5,7 +5,7 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const { MessageFlags, ChannelType } = require('discord.js');
+const { ChannelType, MessageFlags } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 

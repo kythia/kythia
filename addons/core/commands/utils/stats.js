@@ -12,9 +12,9 @@ const {
 	ContainerBuilder,
 	SeparatorBuilder,
 	TextDisplayBuilder,
+	MediaGalleryBuilder,
 	SlashCommandBuilder,
 	SeparatorSpacingSize,
-	MediaGalleryBuilder,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 const os = require('node:os');
@@ -25,6 +25,7 @@ const statsHelper = require('../../helpers/stats');
 
 class StatsCommand extends BaseCommand {
 	aliases = ['s', '📊'];
+
 	slashCommand = new SlashCommandBuilder()
 		.setName('stats')
 		.setDescription(`📊 Displays kythia statistics.`);
@@ -220,4 +221,5 @@ class StatsCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = StatsCommand;

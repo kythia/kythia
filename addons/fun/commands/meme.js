@@ -7,7 +7,10 @@
  */
 
 const {
+	ButtonStyle,
 	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
 	ContainerBuilder,
 	SeparatorBuilder,
 	TextDisplayBuilder,
@@ -15,9 +18,6 @@ const {
 	SlashCommandBuilder,
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	ActionRowBuilder,
 } = require('discord.js');
 const axios = require('axios');
 const { BaseCommand } = require('kythia-core');
@@ -149,4 +149,5 @@ class MemeCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = MemeCommand;

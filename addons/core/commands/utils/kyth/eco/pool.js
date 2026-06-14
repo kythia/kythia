@@ -8,8 +8,8 @@
 
 const { MessageFlags } = require('discord.js');
 const {
-	formatPoolStats,
 	getSpotPrice,
+	formatPoolStats,
 } = require('../../../../../economy/helpers/kyth-amm');
 
 const { BaseCommand } = require('kythia-core');

@@ -15,6 +15,7 @@ const uiHelper = require('../helpers/ui');
 
 class ListCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
@@ -140,4 +141,5 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = ListCommand;

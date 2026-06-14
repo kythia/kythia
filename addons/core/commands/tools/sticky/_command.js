@@ -7,14 +7,17 @@
  */
 
 const {
-	SlashCommandBuilder,
 	PermissionFlagsBits,
+	SlashCommandBuilder,
 	InteractionContextType,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class ToolsCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ManageMessages;
+	botPermissions = PermissionFlagsBits.ManageMessages;
+
 	slashCommand = new SlashCommandBuilder()
 		.setName('sticky')
 		.setDescription('📌 Manage sticky messages in a channel.')
@@ -22,8 +25,6 @@ class ToolsCommand extends BaseCommand {
 		.setContexts(InteractionContextType.Guild);
 
 	guildOnly = true;
-	permissions = PermissionFlagsBits.ManageMessages;
-	botPermissions = PermissionFlagsBits.ManageMessages;
 }
 
 exports.default = ToolsCommand;

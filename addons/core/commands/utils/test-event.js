@@ -8,10 +8,10 @@
 
 const {
 	Events,
-	SlashCommandBuilder,
-	PermissionFlagsBits,
-	InteractionContextType,
 	MessageFlags,
+	PermissionFlagsBits,
+	SlashCommandBuilder,
+	InteractionContextType,
 } = require('discord.js');
 
 module.exports = class TestEventCommand {

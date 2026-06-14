@@ -24,7 +24,7 @@ async function getChecklistAndItems({
 	const { Checklist } = models;
 	let checklist;
 	if (createIfNotExist) {
-		[checklist] = await Checklist.findOrCreateWithCache({
+		[checklist] = await Checklist.findOrCreateCache({
 			where: { guildId, userId },
 			defaults: { items: '[]' },
 		});

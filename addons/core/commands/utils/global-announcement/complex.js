@@ -7,17 +7,18 @@
  */
 
 const {
+	MessageFlags,
 	ModalBuilder,
 	TextInputStyle,
-	TextInputBuilder,
 	ActionRowBuilder,
-	MessageFlags,
+	TextInputBuilder,
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 const announcementHelper = require('../../../helpers/announcement');
 
 class ComplexCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('complex')
@@ -86,4 +87,5 @@ class ComplexCommand extends BaseCommand {
 		await announcementHelper.sendToAllGuilds(container, modalSubmit, payload);
 	}
 }
+
 exports.default = ComplexCommand;

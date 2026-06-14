@@ -712,7 +712,7 @@ app.put('/247/:guildId', async (c) => {
 	}
 
 	try {
-		const [config, created] = await Music247.findOrCreateWithCache({
+		const [config, created] = await Music247.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, textChannelId, voiceChannelId },
 		});

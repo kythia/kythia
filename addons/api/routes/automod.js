@@ -89,7 +89,7 @@ app.get('/:guildId', async (c) => {
 	const { ServerSetting } = getModels(c);
 	const { guildId } = c.req.param();
 	try {
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: {
 				guildId,
@@ -136,7 +136,7 @@ app.patch('/:guildId', async (c) => {
 	}
 
 	try {
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId },
 		});
@@ -190,7 +190,7 @@ app.post('/:guildId/badwords', async (c) => {
 		return c.json({ status: 'error', error: 'words array is required' }, 400);
 
 	try {
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId },
 		});
@@ -225,7 +225,7 @@ app.delete('/:guildId/badwords', async (c) => {
 	}
 
 	try {
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId },
 		});
@@ -283,7 +283,7 @@ app.post('/:guildId/whitelist', async (c) => {
 	if (!incoming.length)
 		return c.json({ status: 'error', error: 'ids array is required' }, 400);
 	try {
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId },
 		});
@@ -304,7 +304,7 @@ app.delete('/:guildId/whitelist/:id', async (c) => {
 	const { ServerSetting } = getModels(c);
 	const { guildId, id } = c.req.param();
 	try {
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId },
 		});
@@ -363,7 +363,7 @@ app.post('/:guildId/ignored-channels', async (c) => {
 			400,
 		);
 	try {
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId },
 		});
@@ -387,7 +387,7 @@ app.delete('/:guildId/ignored-channels/:channelId', async (c) => {
 	const { ServerSetting } = getModels(c);
 	const { guildId, channelId } = c.req.param();
 	try {
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId },
 		});
@@ -542,7 +542,7 @@ const {
 async function getANConfig(c) {
 	const { ServerSetting } = getModels(c);
 	const { guildId } = c.req.param();
-	const [setting] = await ServerSetting.findOrCreateWithCache({
+	const [setting] = await ServerSetting.findOrCreateCache({
 		where: { guildId },
 		defaults: { guildId },
 	});

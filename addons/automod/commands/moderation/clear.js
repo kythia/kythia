@@ -18,6 +18,9 @@ const {
 const { BaseCommand } = require('kythia-core');
 
 class ClearCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ManageMessages;
+	botPermissions = PermissionFlagsBits.ManageMessages;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('clear')
@@ -28,9 +31,6 @@ class ClearCommand extends BaseCommand {
 					.setDescription('Amount of messages to delete (0 = all)')
 					.setRequired(true),
 			);
-
-	permissions = PermissionFlagsBits.ManageMessages;
-	botPermissions = PermissionFlagsBits.ManageMessages;
 
 	async execute(interaction) {
 		const container = this.container;

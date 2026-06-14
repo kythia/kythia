@@ -8,8 +8,8 @@
 
 const {
 	MessageFlags,
-	SeparatorBuilder,
 	ContainerBuilder,
+	SeparatorBuilder,
 	TextDisplayBuilder,
 	SlashCommandBuilder,
 	SeparatorSpacingSize,
@@ -20,12 +20,14 @@ const pingHelper = require('../../helpers/ping');
 // Helpers extracted to addons/core/helpers/ping.js
 
 class PingCommand extends BaseCommand {
+	aliases = ['p', 'pong', '🏓'];
+
 	slashCommand = new SlashCommandBuilder()
 		.setName('ping')
 		.setDescription(
 			"🔍 Checks the bot's, Discord API's, database and cache/redis connection speed.",
 		);
-	aliases = ['p', 'pong', '🏓'];
+
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
@@ -168,4 +170,5 @@ class PingCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = PingCommand;

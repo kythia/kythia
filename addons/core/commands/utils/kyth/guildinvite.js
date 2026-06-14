@@ -7,8 +7,8 @@
  */
 
 const {
-	MessageFlags,
 	ChannelType,
+	MessageFlags,
 	PermissionFlagsBits,
 } = require('discord.js');
 

@@ -7,11 +7,11 @@
  */
 
 const {
-	AttachmentBuilder,
-	ContainerBuilder,
 	FileBuilder,
 	MessageFlags,
+	ContainerBuilder,
 	SeparatorBuilder,
+	AttachmentBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
 

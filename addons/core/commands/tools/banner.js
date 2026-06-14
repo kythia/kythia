@@ -7,8 +7,8 @@
  */
 
 const {
-	SlashCommandBuilder,
 	MessageFlags,
+	SlashCommandBuilder,
 	ApplicationCommandType,
 	ContextMenuCommandBuilder,
 } = require('discord.js');

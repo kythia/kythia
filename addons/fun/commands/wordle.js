@@ -6,15 +6,15 @@
  * @version 26.0.0-rc.1
  */
 const {
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
-	ComponentType,
 	MessageFlags,
 	ModalBuilder,
-	SlashCommandBuilder,
-	TextInputBuilder,
+	ButtonBuilder,
+	ComponentType,
 	TextInputStyle,
+	ActionRowBuilder,
+	TextInputBuilder,
+	SlashCommandBuilder,
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 const wordleHelper = require('../helpers/wordle');
@@ -176,4 +176,5 @@ class WordleCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = WordleCommand;

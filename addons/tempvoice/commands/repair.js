@@ -7,14 +7,14 @@
  */
 
 const {
-	SeparatorSpacingSize,
-	TextDisplayBuilder,
+	ButtonStyle,
+	MessageFlags,
+	ButtonBuilder,
 	ActionRowBuilder,
 	ContainerBuilder,
 	SeparatorBuilder,
-	ButtonBuilder,
-	MessageFlags,
-	ButtonStyle,
+	TextDisplayBuilder,
+	SeparatorSpacingSize,
 } = require('discord.js');
 const { buildInterface } = require('../helpers/interface');
 

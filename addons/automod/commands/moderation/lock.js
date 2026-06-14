@@ -6,11 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class LockCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ManageChannels;
+	botPermissions = PermissionFlagsBits.ManageChannels;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('lock')
@@ -21,9 +24,6 @@ class LockCommand extends BaseCommand {
 					.setDescription('Reason for locking the channel')
 					.setRequired(false),
 			);
-
-	permissions = PermissionFlagsBits.ManageChannels;
-	botPermissions = PermissionFlagsBits.ManageChannels;
 
 	async execute(interaction) {
 		const container = this.container;

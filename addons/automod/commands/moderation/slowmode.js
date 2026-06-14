@@ -6,11 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class SlowmodeCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ManageChannels;
+	botPermissions = PermissionFlagsBits.ManageChannels;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('slowmode')
@@ -27,9 +30,6 @@ class SlowmodeCommand extends BaseCommand {
 					.setDescription('Reason for changing slowmode')
 					.setRequired(false),
 			);
-
-	permissions = PermissionFlagsBits.ManageChannels;
-	botPermissions = PermissionFlagsBits.ManageChannels;
 
 	async execute(interaction) {
 		const container = this.container;

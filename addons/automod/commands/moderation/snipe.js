@@ -13,6 +13,9 @@ const snipeuiHelper = require('../../helpers/snipe-ui');
 // Helpers extracted to addons/automod/helpers/snipe-ui.js
 
 class SnipeCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ManageMessages;
+	botPermissions = PermissionFlagsBits.SendMessages;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('snipe')
@@ -27,8 +30,7 @@ class SnipeCommand extends BaseCommand {
 					.setMinValue(1)
 					.setMaxValue(20),
 			);
-	permissions = PermissionFlagsBits.ManageMessages;
-	botPermissions = PermissionFlagsBits.SendMessages;
+
 	async execute(interaction) {
 		const container = this.container;
 		const { helpers, redis } = container;
@@ -134,4 +136,5 @@ class SnipeCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = SnipeCommand;

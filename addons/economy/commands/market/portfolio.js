@@ -9,12 +9,12 @@
 const {
 	MessageFlags,
 	ContainerBuilder,
-	TextDisplayBuilder,
 	SeparatorBuilder,
+	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-const { getMarketData, ASSET_IDS } = require('../../helpers/market');
-const { getTopStocksData, getStockData } = require('../../helpers/stock');
+const { ASSET_IDS, getMarketData } = require('../../helpers/market');
+const { getStockData, getTopStocksData } = require('../../helpers/stock');
 const { getSpotPrice } = require('../../helpers/kyth-amm');
 const { BaseCommand } = require('kythia-core');
 const marketuiHelper = require('../../helpers/market-ui');
@@ -23,6 +23,7 @@ const marketuiHelper = require('../../helpers/market-ui');
 
 class PortfolioCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('portfolio')
@@ -259,4 +260,5 @@ class PortfolioCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = PortfolioCommand;

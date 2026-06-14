@@ -14,6 +14,7 @@ const { BaseCommand } = require('kythia-core');
 
 class TimezoneCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -26,8 +27,6 @@ class TimezoneCommand extends BaseCommand {
 					.setRequired(true)
 					.addChoices(...require('../../helpers/constants').COMMON_TIMEZONES),
 			);
-
-	permissions = [PermissionFlagsBits.ManageGuild];
 
 	async execute(interaction) {
 		const container = this.container;
@@ -56,7 +55,7 @@ class TimezoneCommand extends BaseCommand {
 			});
 		}
 
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, guildName },
 		});

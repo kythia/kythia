@@ -6,11 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class WarningsCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ModerateMembers;
+	botPermissions = PermissionFlagsBits.ModerateMembers;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('warnings')
@@ -21,9 +24,6 @@ class WarningsCommand extends BaseCommand {
 					.setDescription('The user to view warnings for')
 					.setRequired(true),
 			);
-
-	permissions = PermissionFlagsBits.ModerateMembers;
-	botPermissions = PermissionFlagsBits.ModerateMembers;
 
 	async execute(interaction) {
 		const container = this.container;

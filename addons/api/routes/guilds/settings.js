@@ -14,7 +14,7 @@ app.get('/:guildId', async (c) => {
 	const client = c.get('client');
 	const container = client.container;
 	const { ServerSetting } = container.models;
-	const [settings] = await ServerSetting.findOrCreateWithCache({
+	const [settings] = await ServerSetting.findOrCreateCache({
 		where: { guildId },
 		defaults: {
 			guildId,
@@ -36,7 +36,7 @@ app.patch('/:guildId', async (c) => {
 	const body = await c.req.json();
 
 	try {
-		const [settings] = await ServerSetting.findOrCreateWithCache({
+		const [settings] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: {
 				guildId,

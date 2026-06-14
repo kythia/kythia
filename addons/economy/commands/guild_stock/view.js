@@ -63,7 +63,7 @@ class ViewCommand extends BaseCommand {
 		const price = pool.kythReserve / pool.tokenReserve;
 		const marketCap = price * pool.tokenReserve;
 
-		const holdersCount = await GuildTokenHolding.countWithCache({
+		const holdersCount = await GuildTokenHolding.countCache({
 			where: { guildId: pool.guildId },
 		});
 

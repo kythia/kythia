@@ -10,8 +10,8 @@
 // Sorting from shortest letter to longest letter
 const {
 	MessageFlags,
-	SeparatorBuilder,
 	ContainerBuilder,
+	SeparatorBuilder,
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
@@ -25,8 +25,10 @@ const achievementuiHelper = require('../../helpers/achievement-ui');
 // space 1 line
 class ListCommand extends BaseCommand {
 	// all command property before slashCommand
-	subcommand = true;
+
 	// must (subcommand) on subcommand case, dont (sub) or (subcmd) etc..
+	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')

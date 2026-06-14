@@ -7,21 +7,22 @@
  */
 
 const {
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
-	SeparatorSpacingSize,
-	ModalBuilder,
 	MessageFlags,
+	ModalBuilder,
 	TextInputStyle,
-	TextInputBuilder,
 	ActionRowBuilder,
+	ContainerBuilder,
+	SeparatorBuilder,
+	TextInputBuilder,
+	TextDisplayBuilder,
+	SeparatorSpacingSize,
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 const announcementHelper = require('../../../helpers/announcement');
 
 class SimpleCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('simple')
@@ -119,4 +120,5 @@ class SimpleCommand extends BaseCommand {
 		await announcementHelper.sendToAllGuilds(container, modalSubmit, payload);
 	}
 }
+
 exports.default = SimpleCommand;

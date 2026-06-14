@@ -9,8 +9,8 @@
 const { MessageFlags } = require('discord.js');
 const {
 	getSpotPrice,
-	calcSellOutput,
 	calcBuyOutput,
+	calcSellOutput,
 	formatPoolStats,
 } = require('../../../../../economy/helpers/kyth-amm');
 const { BaseCommand } = require('kythia-core');
@@ -18,6 +18,7 @@ const kythecoHelper = require('../../../../helpers/kyth-eco');
 
 class EventCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('event')
@@ -295,4 +296,5 @@ class EventCommand extends BaseCommand {
 		}
 	}
 }
+
 exports.default = EventCommand;

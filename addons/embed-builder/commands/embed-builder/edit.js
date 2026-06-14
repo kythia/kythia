@@ -7,13 +7,13 @@
  */
 
 const {
-	SlashCommandSubcommandBuilder,
 	EmbedBuilder,
+	MessageFlags,
 	ModalBuilder,
-	TextInputBuilder,
 	TextInputStyle,
 	ActionRowBuilder,
-	MessageFlags,
+	TextInputBuilder,
+	SlashCommandSubcommandBuilder,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');

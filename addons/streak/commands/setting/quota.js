@@ -10,10 +10,11 @@ const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
-const { MIN_QUOTA, MAX_QUOTA } = require('../../helpers/constants');
+const { MAX_QUOTA, MIN_QUOTA } = require('../../helpers/constants');
 
 class QuotaCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -32,8 +33,6 @@ class QuotaCommand extends BaseCommand {
 					.setRequired(true),
 			);
 
-	permissions = [PermissionFlagsBits.ManageGuild];
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
@@ -46,7 +45,7 @@ class QuotaCommand extends BaseCommand {
 		const guildName = interaction.guild.name;
 		const quota = interaction.options.getInteger('quota');
 
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, guildName },
 		});

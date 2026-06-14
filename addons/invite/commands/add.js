@@ -12,6 +12,10 @@ const { BaseCommand } = require('kythia-core');
 
 class AddCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [
+		PermissionFlagsBits.ManageGuild,
+		PermissionFlagsBits.Administrator,
+	];
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -23,11 +27,6 @@ class AddCommand extends BaseCommand {
 			.addIntegerOption((option) =>
 				option.setName('number').setDescription('Amount').setRequired(true),
 			);
-
-	permissions = [
-		PermissionFlagsBits.ManageGuild,
-		PermissionFlagsBits.Administrator,
-	];
 
 	async execute(interaction) {
 		const container = this.container;
@@ -42,7 +41,7 @@ class AddCommand extends BaseCommand {
 		const number = interaction.options.getInteger('number');
 		const amountToAdd = Math.abs(number);
 
-		const [row] = await Invite.findOrCreateWithCache({
+		const [row] = await Invite.findOrCreateCache({
 			where: { guildId, userId: target.id },
 			defaults: { invites: 0, guildId, userId: target.id },
 		});

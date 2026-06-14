@@ -10,9 +10,9 @@ const {
 	MessageFlags,
 	ContainerBuilder,
 	AttachmentBuilder,
-	SlashCommandBuilder,
 	TextDisplayBuilder,
 	MediaGalleryBuilder,
+	SlashCommandBuilder,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 const { GoogleGenAI } = require('@google/genai');

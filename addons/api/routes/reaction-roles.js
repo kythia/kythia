@@ -97,7 +97,7 @@ app.post('/', async (c) => {
 		}
 
 		// Upsert — find existing or create new
-		const [rr, created] = await ReactionRole.findOrCreateWithCache({
+		const [rr, created] = await ReactionRole.findOrCreateCache({
 			where: { guildId, messageId, emoji },
 			defaults: { guildId, channelId, messageId, emoji, roleId },
 		});
@@ -715,7 +715,7 @@ app.post('/panels/:id/emoji', async (c) => {
 			return c.json({ success: false, error: `Invalid emoji: ${emoji}` }, 400);
 		}
 
-		const [rr, created] = await ReactionRole.findOrCreateWithCache({
+		const [rr, created] = await ReactionRole.findOrCreateCache({
 			where: { guildId: panel.guildId, messageId: panel.messageId, emoji },
 			defaults: {
 				guildId: panel.guildId,

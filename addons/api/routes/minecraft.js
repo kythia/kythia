@@ -51,7 +51,7 @@ app.get('/status/:guildId', async (c) => {
 	const guildId = c.req.param('guildId');
 
 	try {
-		const [settings] = await ServerSetting.findOrCreateWithCache({
+		const [settings] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: {
 				guildId,
@@ -91,7 +91,7 @@ app.get('/settings/:guildId', async (c) => {
 	const guildId = c.req.param('guildId');
 
 	try {
-		const [settings] = await ServerSetting.findOrCreateWithCache({
+		const [settings] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: {
 				guildId,
@@ -139,7 +139,7 @@ app.patch('/settings/:guildId', async (c) => {
 	];
 
 	try {
-		const [settings] = await ServerSetting.findOrCreateWithCache({
+		const [settings] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId },
 		});
@@ -280,7 +280,7 @@ app.post('/autosetup/:guildId', async (c) => {
 		}
 
 		// 4. Save to ServerSetting
-		const [settings] = await ServerSetting.findOrCreateWithCache({
+		const [settings] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, guildName: setupResult.guildName },
 		});

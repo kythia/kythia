@@ -230,7 +230,7 @@ app.get('/stats', async (c) => {
 		const pool = await KythLiquidityPool.getCache({ id: 1 });
 		const price = pool ? pool.coinReserve / pool.kythReserve : 0;
 
-		const sumAgg = await KythiaUser.aggregateWithCache({
+		const sumAgg = await KythiaUser.aggregateCache({
 			attributes: [
 				[fn('SUM', col('kythHolding')), 'holding'],
 				[fn('SUM', col('kythStaked')), 'staked'],
@@ -239,10 +239,10 @@ app.get('/stats', async (c) => {
 		});
 		const totalCirculating = Number(sumAgg[0]?.holding || 0);
 		const totalStaked = Number(sumAgg[0]?.staked || 0);
-		const totalHolders = await KythiaUser.countWithCache({
+		const totalHolders = await KythiaUser.countCache({
 			where: { kythHolding: { [Op.gt]: 0 } },
 		});
-		const totalStakers = await KythiaUser.countWithCache({
+		const totalStakers = await KythiaUser.countCache({
 			where: { kythStaked: { [Op.gt]: 0 } },
 		});
 

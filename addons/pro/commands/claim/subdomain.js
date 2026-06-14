@@ -61,7 +61,7 @@ class SubdomainCommand extends BaseCommand {
 			});
 		}
 
-		const userSubdomains = await Subdomain.countWithCache({
+		const userSubdomains = await Subdomain.countCache({
 			where: { userId: interaction.user.id },
 		});
 		if (userSubdomains >= MAX_SUBDOMAINS) {

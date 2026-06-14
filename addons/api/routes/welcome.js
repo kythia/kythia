@@ -132,7 +132,7 @@ app.patch('/:guildId', async (c) => {
 		}
 
 		// Auto-create WelcomeSetting if it doesn't exist yet
-		const [setting] = await WelcomeSetting.findOrCreateWithCache({
+		const [setting] = await WelcomeSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId },
 		});

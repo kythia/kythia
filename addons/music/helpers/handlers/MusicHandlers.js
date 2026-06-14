@@ -2358,7 +2358,7 @@ class MusicHandlers {
 		const playlistName = interaction.options.getString('name');
 		const userId = interaction.user.id;
 
-		const playlistCount = await this.Playlist.countWithCache({
+		const playlistCount = await this.Playlist.countCache({
 			where: { userId },
 		});
 		const userIsPremium = await this.isPremium(this.container, userId);
@@ -3330,7 +3330,7 @@ class MusicHandlers {
 				newPlaylistName = `${newPlaylistName} (Share)`;
 			}
 
-			const playlistCount = await this.Playlist.countWithCache({
+			const playlistCount = await this.Playlist.countCache({
 				userId: userId,
 			});
 			const userIsPremium = await this.isPremium(this.container, userId);
@@ -3612,7 +3612,7 @@ class MusicHandlers {
 				}
 			});
 		} else {
-			const playlistCount = await this.Playlist.countWithCache({
+			const playlistCount = await this.Playlist.countCache({
 				userId: userId,
 			});
 			const userIsPremium = await this.isPremium(this.container, userId);
@@ -4088,7 +4088,7 @@ class MusicHandlers {
 
 		if (newState === true) {
 			try {
-				await this.Music247.findOrCreateWithCache({
+				await this.Music247.findOrCreateCache({
 					where: { guildId: guild.id },
 					defaults: {
 						guildId: guild.id,

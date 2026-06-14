@@ -6,14 +6,14 @@
  * @version 26.0.0-rc.1
  */
 const {
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
-	ContainerBuilder,
 	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
+	ContainerBuilder,
 	SeparatorBuilder,
-	SeparatorSpacingSize,
 	TextDisplayBuilder,
+	SeparatorSpacingSize,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');

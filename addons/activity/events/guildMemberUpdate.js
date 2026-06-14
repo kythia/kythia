@@ -15,16 +15,14 @@ const { BaseEvent } = require('kythia-core');
 
 class GuildMemberUpdateEvent extends BaseEvent {
 	async execute(oldMember, newMember) {
-		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
 		if (!newMember?.user || newMember.user.bot) return;
-
 		// Detect boost start: was not boosting before, now is
 		const startedBoosting = !oldMember.premiumSince && newMember.premiumSince;
 		if (!startedBoosting) return;
 
-		const { models } = this.container;
+		const container = this.container;
+
+		const { models } = container;
 		const { ServerSetting } = models;
 
 		const guildId = newMember.guild.id;
@@ -34,6 +32,7 @@ class GuildMemberUpdateEvent extends BaseEvent {
 		if (!serverSetting?.activityOn) return;
 
 		const { checkAndUnlock } = require('../helpers/achievementChecker');
+
 		checkAndUnlock('special', {
 			guildId,
 			userId,

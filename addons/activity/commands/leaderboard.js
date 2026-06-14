@@ -7,7 +7,7 @@
  */
 
 const { MessageFlags } = require('discord.js');
-const { Op, fn, col, literal } = require('sequelize');
+const { fn, Op, col, literal } = require('sequelize');
 
 const { BaseCommand } = require('kythia-core');
 

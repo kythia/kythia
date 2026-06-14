@@ -114,7 +114,7 @@ app.post('/facts/:userId', async (c) => {
 	const resolvedType = type || manager.classifyFact(fact.trim());
 
 	try {
-		const [factInstance, created] = await UserFact.findOrCreateWithCache({
+		const [factInstance, created] = await UserFact.findOrCreateCache({
 			where: { userId, fact: fact.trim() },
 			defaults: { userId, fact: fact.trim(), type: resolvedType },
 		});
@@ -238,7 +238,7 @@ app.patch('/personality/:userId', async (c) => {
 	}
 
 	try {
-		const [user] = await KythiaUser.findOrCreateWithCache({
+		const [user] = await KythiaUser.findOrCreateCache({
 			where: { userId },
 			defaults: { userId },
 		});

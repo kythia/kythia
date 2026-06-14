@@ -7,13 +7,26 @@
  */
 const {
 	PermissionFlagsBits,
-	InteractionContextType,
 	SlashCommandBuilder,
+	InteractionContextType,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class MusicCommand extends BaseCommand {
+	permissions = [
+		PermissionFlagsBits.Speak,
+		PermissionFlagsBits.Connect,
+		PermissionFlagsBits.ViewChannel,
+		PermissionFlagsBits.SendMessages,
+	];
+	botPermissions = [
+		PermissionFlagsBits.Speak,
+		PermissionFlagsBits.Connect,
+		PermissionFlagsBits.SendMessages,
+	];
+	aliases = ['m'];
+
 	slashCommand = new SlashCommandBuilder()
 		.setName('music')
 		.setDescription('🎵 Full music command suite using Lavalink')
@@ -21,20 +34,6 @@ class MusicCommand extends BaseCommand {
 
 	cooldown = 15;
 
-	permissions = [
-		PermissionFlagsBits.Speak,
-		PermissionFlagsBits.Connect,
-		PermissionFlagsBits.ViewChannel,
-		PermissionFlagsBits.SendMessages,
-	];
-
-	botPermissions = [
-		PermissionFlagsBits.Speak,
-		PermissionFlagsBits.Connect,
-		PermissionFlagsBits.SendMessages,
-	];
-
-	aliases = ['m'];
 	defaultArgument = 'play:search';
 }
 

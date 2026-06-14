@@ -8,8 +8,8 @@
 
 const {
 	MessageFlags,
-	SlashCommandBuilder,
 	PermissionFlagsBits,
+	SlashCommandBuilder,
 	ApplicationCommandType,
 	ContextMenuCommandBuilder,
 } = require('discord.js');
@@ -19,6 +19,9 @@ const grabHelper = require('../../helpers/grab');
 // Helpers extracted to addons/core/helpers/grab.js
 
 class GrabCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ManageGuildExpressions;
+	botPermissions = PermissionFlagsBits.ManageGuildExpressions;
+
 	slashCommand = new SlashCommandBuilder()
 		.setName('grab')
 		.setDescription('🛍️ grab stickers or emojis from messages.')
@@ -68,8 +71,7 @@ class GrabCommand extends BaseCommand {
 		.setName('Grab Sticker/Emoji')
 		.setType(ApplicationCommandType.Message);
 	contextMenuDescription = '🛍️ Grab sticker or emoji from this message.';
-	permissions = PermissionFlagsBits.ManageGuildExpressions;
-	botPermissions = PermissionFlagsBits.ManageGuildExpressions;
+
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
@@ -456,4 +458,5 @@ class GrabCommand extends BaseCommand {
 		}
 	}
 }
+
 exports.default = GrabCommand;

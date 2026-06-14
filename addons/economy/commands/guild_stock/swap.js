@@ -42,8 +42,8 @@ class SwapCommand extends BaseCommand {
 	async execute(interaction) {
 		const container = this.container;
 		await interaction.deferReply();
-		const { t, models, helpers } = container;
-		const { KythiaUser, GuildLiquidityPool, GuildTokenHolding } = models;
+		const { t, models, GuildLiquidityPool, helpers } = container;
+		const { KythiaUser, GuildTokenHolding } = models;
 		const { simpleContainer } = helpers.discord;
 		const { MessageFlags } = require('discord.js');
 
@@ -91,12 +91,12 @@ class SwapCommand extends BaseCommand {
 			});
 		}
 
-		const [userEco] = await KythiaUser.findOrCreateWithCache({
+		const [userEco] = await KythiaUser.findOrCreateCache({
 			where: { userId },
 			defaults: { userId },
 		});
 
-		const [userHolding] = await GuildTokenHolding.findOrCreateWithCache({
+		const [userHolding] = await GuildTokenHolding.findOrCreateCache({
 			where: { userId, guildId: pool.guildId },
 			defaults: { userId, guildId: pool.guildId, balance: 0 },
 		});

@@ -5,7 +5,7 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const { MessageFlags, ChannelType } = require('discord.js');
+const { ChannelType, MessageFlags } = require('discord.js');
 const { buildInterface } = require('../helpers/interface');
 
 const { BaseCommand } = require('kythia-core');
@@ -131,7 +131,7 @@ class SetupCommand extends BaseCommand {
 			});
 		}
 
-		await TempVoiceConfig.findOrCreateWithCache({
+		await TempVoiceConfig.findOrCreateCache({
 			where: { guildId: guildId },
 			defaults: {
 				guildId: guildId,

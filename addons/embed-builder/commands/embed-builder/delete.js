@@ -7,9 +7,9 @@
  */
 
 const {
-	SlashCommandSubcommandBuilder,
 	EmbedBuilder,
 	MessageFlags,
+	SlashCommandSubcommandBuilder,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');

@@ -7,10 +7,10 @@
  */
 
 const {
-	MessageFlags,
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
+	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');

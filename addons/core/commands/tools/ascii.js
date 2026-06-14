@@ -6,13 +6,15 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 const figletFonts = require('@coreHelpers/figlet-fonts');
 const figlet = require('figlet');
 
 const { BaseCommand } = require('kythia-core');
 
 class AsciiCommand extends BaseCommand {
+	voteLocked = true;
+
 	slashCommand = new SlashCommandBuilder()
 		.setName('ascii')
 		.setDescription('🎨 Generate ASCII art from your text using figlet.')
@@ -39,7 +41,6 @@ class AsciiCommand extends BaseCommand {
 		);
 
 	cooldown = 15;
-	voteLocked = true;
 
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused(true)?.value || '';

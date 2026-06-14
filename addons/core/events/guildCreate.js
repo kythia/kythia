@@ -113,7 +113,7 @@ class GuildCreateEvent extends BaseEvent {
 		}
 
 		const locale = guild.preferredLocale || 'en';
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: { guildId: guild.id },
 			defaults: {
 				guildId: guild.id,

@@ -14,6 +14,7 @@ const factsuiHelper = require('../../helpers/facts-ui');
 
 class FactsCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('facts')
@@ -103,4 +104,5 @@ class FactsCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = FactsCommand;

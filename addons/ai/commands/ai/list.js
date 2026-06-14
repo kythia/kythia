@@ -14,6 +14,7 @@ const listuiHelper = require('../../helpers/list-ui');
 
 class ListCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
@@ -25,7 +26,7 @@ class ListCommand extends BaseCommand {
 		const { ServerSetting } = models;
 		const { generateAIListContainer } = listuiHelper;
 		await interaction.deferReply();
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: {
 				guildId: interaction.guild.id,
 			},
@@ -119,4 +120,5 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = ListCommand;

@@ -12,6 +12,7 @@ const { BaseCommand } = require('kythia-core');
 
 class RolerewardCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -37,8 +38,6 @@ class RolerewardCommand extends BaseCommand {
 					.setRequired(true),
 			);
 
-	permissions = [PermissionFlagsBits.ManageGuild];
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
@@ -53,7 +52,7 @@ class RolerewardCommand extends BaseCommand {
 		const level = interaction.options.getInteger('level');
 		const action = interaction.options.getString('action');
 
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, guildName },
 		});

@@ -11,9 +11,10 @@ const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 
 class DisableCommand extends BaseCommand {
+	guildOnly = true;
+
 	subcommand = true;
 	aliases = ['aioff'];
-	guildOnly = true;
 	permissions = [PermissionFlagsBits.ManageChannels];
 
 	slashCommand = (subcommand) =>
@@ -30,7 +31,7 @@ class DisableCommand extends BaseCommand {
 		const channelId = interaction.channel.id;
 		const guildId = interaction.guild.id;
 
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: {
 				guildId,
 			},

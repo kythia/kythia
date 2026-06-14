@@ -75,7 +75,7 @@ app.patch('/settings/:guildId', async (c) => {
 			if (Object.hasOwn(body, field)) settingUpdates[field] = body[field];
 		}
 		if (Object.keys(settingUpdates).length > 0) {
-			const [setting] = await InviteSetting.findOrCreateWithCache({
+			const [setting] = await InviteSetting.findOrCreateCache({
 				where: { guildId },
 				defaults: { guildId },
 			});
@@ -89,7 +89,7 @@ app.patch('/settings/:guildId', async (c) => {
 			if (Object.hasOwn(body, field)) serverUpdates[field] = body[field];
 		}
 		if (Object.keys(serverUpdates).length > 0) {
-			const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+			const [serverSetting] = await ServerSetting.findOrCreateCache({
 				where: { guildId },
 				defaults: { guildId },
 			});
@@ -254,7 +254,7 @@ app.patch('/:guildId/user/:userId', async (c) => {
 	const ALLOWED = ['invites', 'bonus', 'fake', 'leaves', 'rejoins'];
 
 	try {
-		const [row] = await Invite.findOrCreateWithCache({
+		const [row] = await Invite.findOrCreateCache({
 			where: { guildId, userId },
 			defaults: {
 				guildId,
@@ -484,7 +484,7 @@ app.post('/:guildId/milestones', async (c) => {
 		return c.json({ success: false, error: 'Missing invites or roleId' }, 400);
 
 	try {
-		const [setting] = await InviteSetting.findOrCreateWithCache({
+		const [setting] = await InviteSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, milestoneRoles: [] },
 		});

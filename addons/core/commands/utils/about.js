@@ -10,12 +10,12 @@ const {
 	ButtonStyle,
 	MessageFlags,
 	ButtonBuilder,
-	ContainerBuilder,
 	ActionRowBuilder,
+	ContainerBuilder,
 	SeparatorBuilder,
 	TextDisplayBuilder,
-	SlashCommandBuilder,
 	MediaGalleryBuilder,
+	SlashCommandBuilder,
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
@@ -23,11 +23,11 @@ const {
 const { BaseCommand } = require('kythia-core');
 
 class AboutCommand extends BaseCommand {
+	aliases = ['abt', '🌸'];
+
 	slashCommand = new SlashCommandBuilder()
 		.setName('about')
 		.setDescription(`😋 A brief introduction about kythia`);
-
-	aliases = ['abt', '🌸'];
 
 	async execute(interaction) {
 		const container = this.container;

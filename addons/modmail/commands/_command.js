@@ -7,21 +7,21 @@
  */
 
 const {
-	InteractionContextType,
 	PermissionFlagsBits,
 	SlashCommandBuilder,
+	InteractionContextType,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class ModmailCommand extends BaseCommand {
+	permissions = [PermissionFlagsBits.ManageGuild];
+
 	slashCommand = new SlashCommandBuilder()
 		.setName('modmail')
 		.setDescription('📬 All commands related to the Modmail system.')
 		.setContexts(InteractionContextType.Guild)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
-
-	permissions = [PermissionFlagsBits.ManageGuild];
 }
 
 exports.default = ModmailCommand;

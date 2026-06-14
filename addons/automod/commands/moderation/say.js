@@ -6,11 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class SayCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.Administrator;
+	botPermissions = PermissionFlagsBits.ManageMessages;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('say')
@@ -22,8 +25,6 @@ class SayCommand extends BaseCommand {
 					.setRequired(true),
 			);
 
-	permissions = PermissionFlagsBits.Administrator;
-	botPermissions = PermissionFlagsBits.ManageMessages;
 	isOwner = true;
 
 	async execute(interaction) {

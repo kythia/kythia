@@ -37,7 +37,7 @@ app.get('/:id', async (c) => {
 		return c.json({ error: 'Bot is not in this guild' }, 404);
 	}
 
-	const [settings] = await ServerSetting.findOrCreateWithCache({
+	const [settings] = await ServerSetting.findOrCreateCache({
 		where: { guildId },
 		defaults: {
 			guildId,

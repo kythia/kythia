@@ -7,9 +7,9 @@
  */
 
 const {
-	InteractionContextType,
 	PermissionFlagsBits,
 	SlashCommandBuilder,
+	InteractionContextType,
 } = require('discord.js');
 
 const { EMBEDDED } = require('../../helpers/server');
@@ -17,22 +17,22 @@ const { EMBEDDED } = require('../../helpers/server');
 const { BaseCommand } = require('kythia-core');
 
 class CommandsCommand extends BaseCommand {
+	aliases = ['srv'];
+	voteLocked = true;
+	permissions = PermissionFlagsBits.ManageGuild;
+	botPermissions = [
+		PermissionFlagsBits.ManageGuild,
+		PermissionFlagsBits.ManageChannels,
+		PermissionFlagsBits.ManageRoles,
+	];
+
 	slashCommand = new SlashCommandBuilder()
 		.setName('server')
 		.setDescription('⚙️ Discord server management tools')
 		.setContexts(InteractionContextType.Guild)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
 
-	aliases = ['srv'];
 	guildOnly = true;
-	voteLocked = true;
-	permissions = PermissionFlagsBits.ManageGuild;
-
-	botPermissions = [
-		PermissionFlagsBits.ManageGuild,
-		PermissionFlagsBits.ManageChannels,
-		PermissionFlagsBits.ManageRoles,
-	];
 
 	autocomplete(interaction) {
 		const sub = interaction.options.getSubcommand();

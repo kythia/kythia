@@ -7,8 +7,8 @@
  */
 
 const {
-	SlashCommandBuilder,
 	PermissionFlagsBits,
+	SlashCommandBuilder,
 	InteractionContextType,
 } = require('discord.js');
 

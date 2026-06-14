@@ -5,7 +5,7 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const { ContainerBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags, ContainerBuilder } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 

@@ -6,10 +6,10 @@
  * @version 26.0.0-rc.1
  */
 const {
-	MessageFlags,
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
+	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
 } = require('discord.js');
 const { toBigIntSafe } = require('../../helpers/bigint');
 

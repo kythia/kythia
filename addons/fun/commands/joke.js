@@ -7,15 +7,15 @@
  */
 
 const {
+	ButtonStyle,
 	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
 	ContainerBuilder,
 	SeparatorBuilder,
 	TextDisplayBuilder,
 	SlashCommandBuilder,
 	SeparatorSpacingSize,
-	ButtonBuilder,
-	ButtonStyle,
-	ActionRowBuilder,
 } = require('discord.js');
 const axios = require('axios');
 

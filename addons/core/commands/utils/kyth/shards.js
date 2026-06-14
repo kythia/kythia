@@ -14,11 +14,13 @@ const shardsuiHelper = require('../../../helpers/shards-ui');
 
 class ShardsCommand extends BaseCommand {
 	subcommand = true;
+	aliases = ['shards'];
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('shards')
 			.setDescription('🧩 List all bot shards and their info');
-	aliases = ['shards'];
+
 	async execute(interaction) {
 		const container = this.container;
 		const { t } = container;
@@ -142,4 +144,5 @@ class ShardsCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = ShardsCommand;

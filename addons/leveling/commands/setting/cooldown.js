@@ -12,6 +12,7 @@ const { BaseCommand } = require('kythia-core');
 
 class CooldownCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -23,8 +24,6 @@ class CooldownCommand extends BaseCommand {
 					.setDescription('Cooldown in seconds')
 					.setRequired(true),
 			);
-
-	permissions = [PermissionFlagsBits.ManageGuild];
 
 	async execute(interaction) {
 		const container = this.container;
@@ -38,7 +37,7 @@ class CooldownCommand extends BaseCommand {
 		const guildName = interaction.guild.name;
 		const cooldown = interaction.options.getInteger('cooldown');
 
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, guildName },
 		});

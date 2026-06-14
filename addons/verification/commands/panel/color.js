@@ -47,7 +47,7 @@ class ColorCommand extends BaseCommand {
 		}
 		if (!hex.startsWith('#')) hex = `#${hex}`;
 
-		const [config] = await VerificationConfig.findOrCreateWithCache({
+		const [config] = await VerificationConfig.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId },
 		});

@@ -10,26 +10,26 @@ const {
 	ChannelType,
 	MessageFlags,
 	SectionBuilder,
+	ContainerBuilder,
 	SeparatorBuilder,
 	ThumbnailBuilder,
-	ContainerBuilder,
 	TextDisplayBuilder,
 	PermissionFlagsBits,
 	SeparatorSpacingSize,
 } = require('discord.js');
 
 const {
-	searchYouTubeChannels,
 	fetchLatestVideo,
+	searchYouTubeChannels,
 } = require('../helpers/youtube');
 const {
+	lookupTikTokUser,
 	fetchLatestTikTok,
 	getTikTokAccessToken,
-	lookupTikTokUser,
 } = require('../helpers/tiktok');
 const {
-	validateInstagramUser,
 	fetchLatestInstagram,
+	validateInstagramUser,
 } = require('../helpers/instagram');
 const {
 	TIKTOK_LOGO_URL,

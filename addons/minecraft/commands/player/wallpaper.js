@@ -20,8 +20,8 @@ const { BaseCommand } = require('kythia-core');
 
 const {
 	WALLPAPERS,
-	MULTI_PLAYER_WALLPAPERS,
 	USERNAME_REGEX,
+	MULTI_PLAYER_WALLPAPERS,
 } = require('../../helpers/constants');
 
 const SKIN_API_BASE =

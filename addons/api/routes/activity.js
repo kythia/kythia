@@ -64,7 +64,7 @@ app.patch('/:guildId/toggle', async (c) => {
 	}
 
 	try {
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: {
 				guildId,
@@ -97,7 +97,7 @@ app.get('/:guildId/analytics', async (c) => {
 	try {
 		// Daily: last 30 days
 		const startDate = getPeriodStart('monthly');
-		const daily = await ActivityLog.aggregateWithCache({
+		const daily = await ActivityLog.aggregateCache({
 			where: { guildId, date: { [Op.gte]: startDate } },
 			attributes: [
 				'date',
@@ -110,7 +110,7 @@ app.get('/:guildId/analytics', async (c) => {
 		});
 
 		// Hourly: overall
-		const hourly = await ActivityHourly.aggregateWithCache({
+		const hourly = await ActivityHourly.aggregateCache({
 			where: { guildId },
 			attributes: [
 				'dayOfWeek',
@@ -170,7 +170,7 @@ app.get('/:guildId', async (c) => {
 			const startDate = getPeriodStart(period);
 			const logColumn = sortKey === 'voice' ? 'voiceTime' : 'messages';
 
-			rows = await ActivityLog.aggregateWithCache({
+			rows = await ActivityLog.aggregateCache({
 				where: { guildId, date: { [Op.gte]: startDate } },
 				attributes: [
 					'userId',
@@ -248,7 +248,7 @@ app.get('/:guildId/id/:userId', async (c) => {
 			totalVoiceTime = stat.totalVoiceTime ?? 0;
 		} else {
 			const startDate = getPeriodStart(period);
-			const [row] = await ActivityLog.aggregateWithCache({
+			const [row] = await ActivityLog.aggregateCache({
 				where: { guildId, userId, date: { [Op.gte]: startDate } },
 				attributes: [
 					[fn('SUM', col('messages')), 'totalMessages'],

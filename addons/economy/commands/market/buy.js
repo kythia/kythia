@@ -6,21 +6,21 @@
  * @version 26.0.0-rc.1
  */
 const {
-	MessageFlags,
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
+	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
 } = require('discord.js');
 const {
-	getMarketData,
 	ASSET_IDS,
+	getMarketData,
 	KYTH_ASSET_ID,
 } = require('../../helpers/market');
-const { getStockData, TOP_STOCKS } = require('../../helpers/stock');
+const { TOP_STOCKS, getStockData } = require('../../helpers/stock');
 const {
+	calcMinOut,
 	calcBuyOutput,
 	getImpactLevel,
-	calcMinOut,
 } = require('../../helpers/kyth-amm');
 const { toBigIntSafe } = require('../../helpers/bigint');
 const { BaseCommand } = require('kythia-core');
@@ -32,6 +32,7 @@ const kythtradeHelper = require('../../helpers/kyth-trade');
 
 class BuyCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('buy')
@@ -463,4 +464,5 @@ class BuyCommand extends BaseCommand {
 		}
 	}
 }
+
 exports.default = BuyCommand;

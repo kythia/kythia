@@ -7,9 +7,9 @@
  */
 
 const {
-	getOrCreateStreak,
 	updateNickname,
 	syncStreakRoles,
+	getOrCreateStreak,
 } = require('../helpers');
 const { MessageFlags } = require('discord.js');
 

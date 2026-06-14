@@ -12,6 +12,7 @@ const { BaseCommand } = require('kythia-core');
 
 class ChannelCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -23,8 +24,6 @@ class ChannelCommand extends BaseCommand {
 					.setDescription('Channel for level up messages')
 					.setRequired(true),
 			);
-
-	permissions = [PermissionFlagsBits.ManageGuild];
 
 	async execute(interaction) {
 		const container = this.container;
@@ -38,7 +37,7 @@ class ChannelCommand extends BaseCommand {
 		const guildName = interaction.guild.name;
 		const targetChannel = interaction.options.getChannel('channel');
 
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, guildName },
 		});

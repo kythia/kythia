@@ -116,4 +116,5 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = ListCommand;

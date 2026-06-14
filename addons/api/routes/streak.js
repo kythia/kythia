@@ -222,7 +222,7 @@ app.get('/:guildId/:userId', async (c) => {
 			);
 		}
 
-		const aboveCount = await Streak.countWithCache({
+		const aboveCount = await Streak.countCache({
 			where: {
 				guildId,
 				[Op.or]: [
@@ -234,7 +234,7 @@ app.get('/:guildId/:userId', async (c) => {
 				],
 			},
 		});
-		const totalMembers = await Streak.countWithCache({ where: { guildId } });
+		const totalMembers = await Streak.countCache({ where: { guildId } });
 
 		const client = c.get('client');
 		const { broadcastGetUsers } = require('../helpers/shard');

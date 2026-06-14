@@ -11,6 +11,8 @@ const { MessageFlags } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 
 class AddCommand extends BaseCommand {
+	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
@@ -53,7 +55,6 @@ class AddCommand extends BaseCommand {
 					.setRequired(true),
 			);
 
-	subcommand = true;
 	teamOnly = true;
 
 	async execute(interaction) {

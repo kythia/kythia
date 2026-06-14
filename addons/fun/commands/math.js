@@ -7,13 +7,13 @@
  */
 
 const {
-	ActionRowBuilder,
-	ComponentType,
 	MessageFlags,
 	ModalBuilder,
-	SlashCommandBuilder,
-	TextInputBuilder,
+	ComponentType,
 	TextInputStyle,
+	ActionRowBuilder,
+	TextInputBuilder,
+	SlashCommandBuilder,
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 const mathHelper = require('../helpers/math');
@@ -214,4 +214,5 @@ class MathCommand extends BaseCommand {
 		}
 	}
 }
+
 exports.default = MathCommand;

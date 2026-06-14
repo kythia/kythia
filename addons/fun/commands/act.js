@@ -210,4 +210,5 @@ class ActCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = ActCommand;

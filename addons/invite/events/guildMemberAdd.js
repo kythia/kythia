@@ -101,7 +101,7 @@ class GuildMemberAddEvent extends BaseEvent {
 				isFake = accountAgeDays < fakeThreshold;
 
 				try {
-					const [inviteData] = await Invite.findOrCreateWithCache({
+					const [inviteData] = await Invite.findOrCreateCache({
 						where: { guildId: guild.id, userId: inviterId },
 						defaults: {
 							guildId: guild.id,

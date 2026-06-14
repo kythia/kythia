@@ -136,7 +136,7 @@ class RrPanelAddEmojiModal extends BaseModal {
 			}
 
 			// Upsert the binding
-			const [rr, created] = await ReactionRole.findOrCreateWithCache({
+			const [rr, created] = await ReactionRole.findOrCreateCache({
 				where: {
 					guildId: interaction.guildId,
 					messageId: panel.messageId,

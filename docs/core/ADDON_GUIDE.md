@@ -799,7 +799,7 @@ const { UserData } = models;
 const user = await UserData.getCache({ where: { userId: interaction.user.id } });
 
 // Find or create with cache
-const [user, created] = await UserData.findOrCreateWithCache({
+const [user, created] = await UserData.findOrCreateCache({
   where: { userId: interaction.user.id },
   defaults: { points: 0, level: 1 },
 });
@@ -814,7 +814,7 @@ const topUsers = await UserData.getAllCache({
 });
 
 // Count with cache
-const totalUsers = await UserData.countWithCache({ where: { level: { [Op.gte]: 10 } } });
+const totalUsers = await UserData.countCache({ where: { level: { [Op.gte]: 10 } } });
 ```
 
 ### Defining Associations

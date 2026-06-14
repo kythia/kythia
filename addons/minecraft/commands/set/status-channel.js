@@ -11,8 +11,9 @@ const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 
 class StatusChannelCommand extends BaseCommand {
-	subcommand = true;
 	guildOnly = true;
+
+	subcommand = true;
 	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
@@ -36,7 +37,7 @@ class StatusChannelCommand extends BaseCommand {
 
 		const channel = interaction.options.getChannel('channel');
 
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId: interaction.guild.id },
 			defaults: {
 				guildId: interaction.guild.id,

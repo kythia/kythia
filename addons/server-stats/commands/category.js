@@ -7,9 +7,9 @@
  */
 
 const {
-	SlashCommandBuilder,
 	ChannelType,
 	MessageFlags,
+	SlashCommandBuilder,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
@@ -36,7 +36,7 @@ class CategoryCommand extends BaseCommand {
 		const guildId = interaction.guild.id;
 		const guildName = interaction.guild.name;
 
-		const [serverSetting, created] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting, created] = await ServerSetting.findOrCreateCache({
 			where: { guildId: guildId },
 			defaults: { guildId: guildId, guildName: guildName },
 		});

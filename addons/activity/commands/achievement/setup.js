@@ -17,8 +17,9 @@ const {
 const { BaseCommand } = require('kythia-core');
 
 class SetupCommand extends BaseCommand {
-	subcommand = true;
 	defaultMemberPermissions = PermissionFlagsBits.ManageGuild;
+
+	subcommand = true;
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -45,7 +46,7 @@ class SetupCommand extends BaseCommand {
 		const channel = interaction.options.getChannel('channel');
 		const guildId = interaction.guildId;
 
-		const [setting] = await ServerSetting.findOrCreateWithCache({
+		const [setting] = await ServerSetting.findOrCreateCache({
 			where: {
 				guildId,
 			},

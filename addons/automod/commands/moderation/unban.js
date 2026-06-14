@@ -6,11 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class UnbanCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.BanMembers;
+	botPermissions = PermissionFlagsBits.BanMembers;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unban')
@@ -21,9 +24,6 @@ class UnbanCommand extends BaseCommand {
 					.setDescription('The ID of the user to unban')
 					.setRequired(true),
 			);
-
-	permissions = PermissionFlagsBits.BanMembers;
-	botPermissions = PermissionFlagsBits.BanMembers;
 
 	async execute(interaction) {
 		const container = this.container;

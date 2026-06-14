@@ -7,8 +7,8 @@
  */
 
 const {
-	ComponentType,
 	MessageFlags,
+	ComponentType,
 	SlashCommandBuilder,
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
@@ -211,4 +211,5 @@ class TictactoeCommand extends BaseCommand {
 		runGame(game, interaction);
 	}
 }
+
 exports.default = TictactoeCommand;

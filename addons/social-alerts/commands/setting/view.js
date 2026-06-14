@@ -9,8 +9,8 @@
 const {
 	MessageFlags,
 	ContainerBuilder,
-	TextDisplayBuilder,
 	SeparatorBuilder,
+	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
@@ -20,6 +20,7 @@ const constantsHelper = require('../../helpers/constants');
 
 class ViewCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('view')
@@ -68,4 +69,5 @@ class ViewCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = ViewCommand;

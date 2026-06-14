@@ -11,8 +11,9 @@ const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 
 class PortCommand extends BaseCommand {
-	subcommand = true;
 	guildOnly = true;
+
+	subcommand = true;
 	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
@@ -38,7 +39,7 @@ class PortCommand extends BaseCommand {
 
 		const port = interaction.options.getInteger('port');
 
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId: interaction.guild.id },
 			defaults: {
 				guildId: interaction.guild.id,

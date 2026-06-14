@@ -7,9 +7,9 @@
  */
 
 const {
+	ButtonStyle,
 	MessageFlags,
 	ButtonBuilder,
-	ButtonStyle,
 	ActionRowBuilder,
 	ContainerBuilder,
 	SeparatorBuilder,

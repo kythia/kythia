@@ -5,11 +5,14 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class AnnounceCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ManageMessages;
+	botPermissions = PermissionFlagsBits.ManageMessages;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('announce')
@@ -26,9 +29,6 @@ class AnnounceCommand extends BaseCommand {
 					.setDescription('Title for the announcement')
 					.setRequired(false),
 			);
-
-	permissions = PermissionFlagsBits.ManageMessages;
-	botPermissions = PermissionFlagsBits.ManageMessages;
 
 	async execute(interaction) {
 		const container = this.container;

@@ -497,9 +497,9 @@ flowchart LR
 | `attachHooksToAllModels(sequelize, client)` | Register cache-invalidation hooks on all models |
 | `getCache(query)` | Find one with cache |
 | `getAllCache(query)` | Find all with cache |
-| `findOrCreateWithCache(options)` | Find or create with cache |
-| `countWithCache(options)` | Count with cache |
-| `aggregateWithCache(options)` | Aggregate with cache |
+| `findOrCreateCache(options)` | Find or create with cache |
+| `countCache(options)` | Count with cache |
+| `aggregateCache(options)` | Aggregate with cache |
 | `invalidateByTags(tags)` | Manually bust cache for specific tags |
 | `clearCache(key)` | Manually bust a specific cache key |
 

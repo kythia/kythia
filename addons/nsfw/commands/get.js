@@ -16,6 +16,7 @@ const { BaseCommand } = require('kythia-core');
 
 class GetCommand extends BaseCommand {
 	subcommand = true;
+	voteLocked = true;
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -46,8 +47,6 @@ class GetCommand extends BaseCommand {
 					.setMaxValue(3)
 					.setRequired(false),
 			);
-
-	voteLocked = true;
 
 	async execute(interaction) {
 		const container = this.container;

@@ -9,27 +9,27 @@
 const {
 	MessageFlags,
 	ContainerBuilder,
-	TextDisplayBuilder,
 	SeparatorBuilder,
-	SeparatorSpacingSize,
-	MediaGalleryBuilder,
-	MediaGalleryItemBuilder,
 	AttachmentBuilder,
+	TextDisplayBuilder,
+	MediaGalleryBuilder,
+	SeparatorSpacingSize,
+	MediaGalleryItemBuilder,
 } = require('discord.js');
 const {
-	getMarketData,
 	ASSET_IDS,
+	getMarketData,
+	KYTH_ASSET_ID,
 	getChartBuffer,
 	renderChartFromData,
-	KYTH_ASSET_ID,
 } = require('../../helpers/market');
 const {
-	getStockData,
-	getStockChartBuffer,
-	getTopStocksData,
 	TOP_STOCKS,
+	getStockData,
+	getTopStocksData,
+	getStockChartBuffer,
 } = require('../../helpers/stock');
-const { formatPoolStats, getSpotPrice } = require('../../helpers/kyth-amm');
+const { getSpotPrice, formatPoolStats } = require('../../helpers/kyth-amm');
 const { Op } = require('sequelize');
 const { BaseCommand } = require('kythia-core');
 const marketuiHelper = require('../../helpers/market-ui');
@@ -38,6 +38,7 @@ const marketuiHelper = require('../../helpers/market-ui');
 
 class ViewCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('view')
@@ -471,4 +472,5 @@ class ViewCommand extends BaseCommand {
 		}
 	}
 }
+
 exports.default = ViewCommand;

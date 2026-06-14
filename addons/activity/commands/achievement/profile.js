@@ -8,8 +8,8 @@
 
 const {
 	MessageFlags,
-	SeparatorBuilder,
 	ContainerBuilder,
+	SeparatorBuilder,
 	TextDisplayBuilder,
 	MediaGalleryBuilder,
 	SeparatorSpacingSize,
@@ -46,7 +46,7 @@ class ProfileCommand extends BaseCommand {
 		const guildId = interaction.guild.id;
 		const userId = targetUser.id;
 
-		const unlockedCount = await UserAchievement.countWithCache({
+		const unlockedCount = await UserAchievement.countCache({
 			where: {
 				guildId,
 				userId,

@@ -72,7 +72,7 @@ class DebugCommand extends BaseCommand {
 				res: [playlist, created],
 				time: tInit,
 			} = await t(() =>
-				Playlist.findOrCreateWithCache({
+				Playlist.findOrCreateCache({
 					where: { userId, name: testName },
 					defaults: {
 						userId,
@@ -85,7 +85,7 @@ class DebugCommand extends BaseCommand {
 
 			addLog(
 				'✅',
-				`**Step ${step++}: Base Setup (findOrCreateWithCache)** -> ${tInit}ms`,
+				`**Step ${step++}: Base Setup (findOrCreateCache)** -> ${tInit}ms`,
 			);
 			addLog('├─', `Playlist ID: \`${playlistId}\` | Created: ${created}`);
 
@@ -188,11 +188,11 @@ class DebugCommand extends BaseCommand {
 			);
 
 			const { res: count, time: tCount } = await t(() =>
-				PlaylistTrack.countWithCache({ where: { playlistId } }),
+				PlaylistTrack.countCache({ where: { playlistId } }),
 			);
 			addLog(
 				'🔢',
-				`**Step ${step++}: countWithCache** -> ${tCount}ms (Count: ${count})`,
+				`**Step ${step++}: countCache** -> ${tCount}ms (Count: ${count})`,
 			);
 
 			const { res: exists, time: tExists } = await t(() =>

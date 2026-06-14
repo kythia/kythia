@@ -12,6 +12,7 @@ const { BaseCommand } = require('kythia-core');
 
 class MinimumCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -23,8 +24,6 @@ class MinimumCommand extends BaseCommand {
 					.setDescription('Minimum streak')
 					.setRequired(true),
 			);
-
-	permissions = [PermissionFlagsBits.ManageGuild];
 
 	async execute(interaction) {
 		const container = this.container;
@@ -38,7 +37,7 @@ class MinimumCommand extends BaseCommand {
 		const guildName = interaction.guild.name;
 		const minimum = interaction.options.getInteger('minimum');
 
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, guildName },
 		});

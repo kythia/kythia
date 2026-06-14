@@ -6,11 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class WarnCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ModerateMembers;
+	botPermissions = PermissionFlagsBits.ModerateMembers;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('warn')
@@ -27,9 +30,6 @@ class WarnCommand extends BaseCommand {
 					.setDescription('Reason for the warning')
 					.setRequired(false),
 			);
-
-	permissions = PermissionFlagsBits.ModerateMembers;
-	botPermissions = PermissionFlagsBits.ModerateMembers;
 
 	async execute(interaction) {
 		const container = this.container;
@@ -58,7 +58,7 @@ class WarnCommand extends BaseCommand {
 		}
 
 		try {
-			const [userRecord] = await User.findOrCreateWithCache({
+			const [userRecord] = await User.findOrCreateCache({
 				where: { userId: targetUser.id, guildId: interaction.guild.id },
 				defaults: {
 					userId: targetUser.id,

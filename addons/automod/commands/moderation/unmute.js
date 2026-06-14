@@ -6,11 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class UnmuteCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.MuteMembers;
+	botPermissions = PermissionFlagsBits.MuteMembers;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unmute')
@@ -21,9 +24,6 @@ class UnmuteCommand extends BaseCommand {
 					.setDescription('The user to unmute')
 					.setRequired(true),
 			);
-
-	permissions = PermissionFlagsBits.MuteMembers;
-	botPermissions = PermissionFlagsBits.MuteMembers;
 
 	async execute(interaction) {
 		const container = this.container;

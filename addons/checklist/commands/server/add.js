@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const { getChecklistAndItems, getScopeMeta } = require('../../helpers');
+const { getScopeMeta, getChecklistAndItems } = require('../../helpers');
 const { MessageFlags } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');

@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 const crypto = require('node:crypto');
 
 const { BaseCommand } = require('kythia-core');

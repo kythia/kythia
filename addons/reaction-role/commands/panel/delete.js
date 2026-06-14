@@ -6,8 +6,8 @@
  * @version 26.0.0-rc.1
  */
 const {
-	ContainerBuilder,
 	MessageFlags,
+	ContainerBuilder,
 	TextDisplayBuilder,
 } = require('discord.js');
 

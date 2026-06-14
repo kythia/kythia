@@ -19,11 +19,11 @@ const {
 const { BaseCommand } = require('kythia-core');
 
 const {
-	SKIN_API_BASE,
-	RENDER_TYPES,
-	RENDER_CHOICES_1,
 	CROP_CHOICES,
+	RENDER_TYPES,
+	SKIN_API_BASE,
 	USERNAME_REGEX,
+	RENDER_CHOICES_1,
 } = require('../../helpers/constants');
 
 class PoseCommand extends BaseCommand {

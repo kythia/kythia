@@ -905,7 +905,7 @@ app.get('/premium', async (c) => {
 		const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
 
 		const now = new Date();
-		const total = await KythiaUser.countWithCache({
+		const total = await KythiaUser.countCache({
 			where: {
 				premiumTier: { [Op.notIn]: ['none'] },
 				premiumExpiresAt: { [Op.gt]: now },

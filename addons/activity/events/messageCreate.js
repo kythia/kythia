@@ -17,12 +17,11 @@ const { BaseEvent } = require('kythia-core');
 
 class MessageCreateEvent extends BaseEvent {
 	async execute(message) {
-		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
 		if (!message.author || message.author.bot || !message.guild) return;
 
-		const { models } = this.container;
+		const container = this.container;
+
+		const { models } = container;
 		const { ServerSetting, ActivityStat, ActivityLog, ActivityHourly } = models;
 
 		const guildId = message.guild.id;

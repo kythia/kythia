@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 

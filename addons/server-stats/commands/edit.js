@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const { SlashCommandBuilder, MessageFlags } = require('discord.js');
+const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 const { updateStats } = require('../helpers/stats');
 
 const { BaseCommand } = require('kythia-core');
@@ -124,7 +124,7 @@ class EditCommand extends BaseCommand {
 		const guildId = interaction.guild.id;
 		const guildName = interaction.guild.name;
 
-		const [serverSetting, created] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting, created] = await ServerSetting.findOrCreateCache({
 			where: { guildId: guildId },
 			defaults: { guildId: guildId, guildName: guildName },
 		});

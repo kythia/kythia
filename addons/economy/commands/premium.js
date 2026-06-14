@@ -29,7 +29,7 @@ class PremiumCommand extends BaseCommand {
 		await interaction.deferReply();
 
 		// Fetch user
-		const [kythiaUser] = await KythiaUser.findOrCreateWithCache({
+		const [kythiaUser] = await KythiaUser.findOrCreateCache({
 			where: { userId: interaction.user.id },
 			defaults: {
 				userId: interaction.user.id,

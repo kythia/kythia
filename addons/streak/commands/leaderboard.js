@@ -14,6 +14,7 @@ const leaderboardHelper = require('../helpers/leaderboard');
 
 class LeaderboardCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leaderboard')
@@ -135,4 +136,5 @@ class LeaderboardCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = LeaderboardCommand;

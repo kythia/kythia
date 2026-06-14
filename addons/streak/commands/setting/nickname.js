@@ -12,6 +12,7 @@ const { BaseCommand } = require('kythia-core');
 
 class NicknameCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -28,8 +29,6 @@ class NicknameCommand extends BaseCommand {
 					),
 			);
 
-	permissions = [PermissionFlagsBits.ManageGuild];
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
@@ -42,7 +41,7 @@ class NicknameCommand extends BaseCommand {
 		const guildName = interaction.guild.name;
 		const status = interaction.options.getString('status');
 
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, guildName },
 		});

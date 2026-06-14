@@ -6,11 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class KickCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.KickMembers;
+	botPermissions = PermissionFlagsBits.KickMembers;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('kick')
@@ -27,9 +30,6 @@ class KickCommand extends BaseCommand {
 					.setDescription('Reason for the kick')
 					.setRequired(false),
 			);
-
-	permissions = PermissionFlagsBits.KickMembers;
-	botPermissions = PermissionFlagsBits.KickMembers;
 
 	async execute(interaction) {
 		const container = this.container;

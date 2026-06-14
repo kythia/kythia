@@ -7,11 +7,11 @@
  */
 
 const {
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
-	ComponentType,
 	MessageFlags,
+	ButtonBuilder,
+	ComponentType,
+	ActionRowBuilder,
 	SlashCommandBuilder,
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
@@ -299,4 +299,5 @@ class RpsCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = RpsCommand;

@@ -12,6 +12,7 @@ const { BaseCommand } = require('kythia-core');
 
 class ImageCommand extends BaseCommand {
 	guildOnly = false;
+
 	voteLocked = true;
 
 	slashCommand = new SlashCommandBuilder()

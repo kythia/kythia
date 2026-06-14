@@ -7,13 +7,13 @@
  */
 
 const {
-	SlashCommandBuilder,
-	MessageFlags,
-	PermissionFlagsBits,
-	ApplicationCommandOptionType,
 	ChannelType,
+	MessageFlags,
 	ContainerBuilder,
 	TextDisplayBuilder,
+	PermissionFlagsBits,
+	SlashCommandBuilder,
+	ApplicationCommandOptionType,
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 const testallmockHelper = require('../../helpers/testall-mock');
@@ -72,9 +72,9 @@ class TestallCommand extends BaseCommand {
 
 		// Patch KythiaModel to prevent testall tight-loop pendingQueries race conditions
 		const KythiaModel = Object.getPrototypeOf(container.models.ServerSetting);
-		const origFindOrCreate = KythiaModel.findOrCreateWithCache;
+		const origFindOrCreate = KythiaModel.findOrCreateCache;
 		if (origFindOrCreate) {
-			KythiaModel.findOrCreateWithCache = async function (options) {
+			KythiaModel.findOrCreateCache = async function (options) {
 				const res = await origFindOrCreate.call(this, options);
 				// If a race causes it to return just the instance instead of [instance, created]
 				if (res && typeof res === 'object' && !Array.isArray(res)) {
@@ -232,7 +232,7 @@ class TestallCommand extends BaseCommand {
 
 		// Restore KythiaModel
 		if (origFindOrCreate) {
-			KythiaModel.findOrCreateWithCache = origFindOrCreate;
+			KythiaModel.findOrCreateCache = origFindOrCreate;
 		}
 
 		// ── Build a beautiful Components V2 report ────────────────────────────
@@ -403,4 +403,5 @@ class TestallCommand extends BaseCommand {
 			);
 	}
 }
+
 exports.default = TestallCommand;

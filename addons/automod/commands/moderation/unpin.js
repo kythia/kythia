@@ -6,11 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class UnpinCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ManageMessages;
+	botPermissions = PermissionFlagsBits.ManageMessages;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unpin')
@@ -21,9 +24,6 @@ class UnpinCommand extends BaseCommand {
 					.setDescription('The ID of the message to unpin')
 					.setRequired(true),
 			);
-
-	permissions = PermissionFlagsBits.ManageMessages;
-	botPermissions = PermissionFlagsBits.ManageMessages;
 
 	async execute(interaction) {
 		const container = this.container;

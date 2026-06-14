@@ -6,9 +6,9 @@
  * @version 26.0.0-rc.1
  */
 const {
-	InteractionContextType,
-	SlashCommandBuilder,
 	PermissionFlagsBits,
+	SlashCommandBuilder,
+	InteractionContextType,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');

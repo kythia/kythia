@@ -12,6 +12,7 @@ const { BaseCommand } = require('kythia-core');
 
 class XpCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -23,8 +24,6 @@ class XpCommand extends BaseCommand {
 					.setDescription('XP gained per message')
 					.setRequired(true),
 			);
-
-	permissions = [PermissionFlagsBits.ManageGuild];
 
 	async execute(interaction) {
 		const container = this.container;
@@ -38,7 +37,7 @@ class XpCommand extends BaseCommand {
 		const guildName = interaction.guild.name;
 		const xp = interaction.options.getInteger('xp');
 
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, guildName },
 		});

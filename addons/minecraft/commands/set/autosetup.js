@@ -7,12 +7,12 @@
  */
 
 const {
-	MessageFlags,
-	PermissionFlagsBits,
 	ChannelType,
+	MessageFlags,
 	ContainerBuilder,
-	TextDisplayBuilder,
 	SeparatorBuilder,
+	TextDisplayBuilder,
+	PermissionFlagsBits,
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { fetchMcStatus } = require('../../helpers/mcstats');
@@ -22,14 +22,13 @@ const { BaseCommand } = require('kythia-core');
 const { HOST_REGEX } = require('../../helpers/constants');
 
 class AutosetupCommand extends BaseCommand {
-	subcommand = true;
 	guildOnly = true;
 
+	subcommand = true;
 	permissions = [
 		PermissionFlagsBits.ManageGuild,
 		PermissionFlagsBits.ManageChannels,
 	];
-
 	botPermissions = [PermissionFlagsBits.ManageChannels];
 
 	slashCommand = (subcommand) =>
@@ -159,7 +158,7 @@ class AutosetupCommand extends BaseCommand {
 		}
 
 		// ── 4. Save to ServerSetting ────────────────────────────────────
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId: guild.id },
 			defaults: { guildId: guild.id, guildName: guild.name },
 		});

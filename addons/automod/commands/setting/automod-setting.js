@@ -6,15 +6,15 @@
  * @version 26.0.0-rc.1
  */
 const {
-	SlashCommandBuilder,
-	PermissionFlagsBits,
-	InteractionContextType,
 	MessageFlags,
+	PermissionFlagsBits,
+	SlashCommandBuilder,
+	InteractionContextType,
 } = require('discord.js');
 const {
-	getAntiNukeConfig,
-	serializeConfig,
 	DEFAULT_CONFIG,
+	serializeConfig,
+	getAntiNukeConfig,
 } = require('../../helpers/antinuke');
 
 const { BaseCommand } = require('kythia-core');
@@ -60,6 +60,10 @@ const automodFeatureMap = {
 };
 
 class AutomodSettingCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ManageGuild;
+	botPermissions = PermissionFlagsBits.ManageGuild;
+	voteLocked = true;
+
 	slashCommand = new SlashCommandBuilder()
 		.setName('automod')
 		.setDescription('🛡️ Automod settings')
@@ -403,10 +407,6 @@ class AutomodSettingCommand extends BaseCommand {
 				),
 		);
 
-	permissions = PermissionFlagsBits.ManageGuild;
-	botPermissions = PermissionFlagsBits.ManageGuild;
-	voteLocked = true;
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, models } = container;
@@ -422,7 +422,7 @@ class AutomodSettingCommand extends BaseCommand {
 		const target = interaction.options.getMentionable?.('target') ?? null;
 		const channel = interaction.options.getChannel?.('channel') ?? null;
 
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, guildName },
 		});

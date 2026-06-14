@@ -8,11 +8,11 @@
 
 const {
 	MessageFlags,
+	SectionBuilder,
 	ContainerBuilder,
 	SeparatorBuilder,
-	SeparatorSpacingSize,
-	SectionBuilder,
 	ThumbnailBuilder,
+	SeparatorSpacingSize,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');

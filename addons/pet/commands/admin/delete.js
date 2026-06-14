@@ -11,6 +11,8 @@ const { MessageFlags } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 
 class DeleteCommand extends BaseCommand {
+	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('delete')
@@ -22,7 +24,6 @@ class DeleteCommand extends BaseCommand {
 					.setRequired(true),
 			);
 
-	subcommand = true;
 	teamOnly = true;
 
 	async execute(interaction) {

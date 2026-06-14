@@ -6,11 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class BanCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.BanMembers;
+	botPermissions = PermissionFlagsBits.BanMembers;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('ban')
@@ -27,9 +30,6 @@ class BanCommand extends BaseCommand {
 					.setDescription('Reason for the ban')
 					.setRequired(false),
 			);
-
-	permissions = PermissionFlagsBits.BanMembers;
-	botPermissions = PermissionFlagsBits.BanMembers;
 
 	async execute(interaction) {
 		const container = this.container;

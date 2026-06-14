@@ -70,7 +70,7 @@ app.post('/configs', async (c) => {
 	}
 
 	try {
-		const [config, created] = await QuestConfig.findOrCreateWithCache({
+		const [config, created] = await QuestConfig.findOrCreateCache({
 			where: { guildId },
 			defaults: {
 				guildId,
@@ -192,7 +192,7 @@ app.post('/logs', async (c) => {
 	}
 
 	try {
-		const [log, created] = await QuestGuildLog.findOrCreateWithCache({
+		const [log, created] = await QuestGuildLog.findOrCreateCache({
 			where: { guildId, questId },
 			defaults: { guildId, questId, sentAt: new Date() },
 		});

@@ -14,6 +14,7 @@ const serversuiHelper = require('../../../helpers/servers-ui');
 
 class ServersCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('servers')
@@ -133,4 +134,5 @@ class ServersCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = ServersCommand;

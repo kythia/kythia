@@ -336,7 +336,7 @@ Always use the cache-wrapped methods provided by `KythiaModel`:
 
 - `Model.getCache({ where: { id: 1 }, ttl: 5 * 60 * 1000 })`
 - `Model.getAllCache({ where: { status: 'active' }, limit: 10, order: [['createdAt', 'DESC']] })`
-- `const [instance] = await Model.findOrCreateWithCache({ where: { id: 1 }, defaults: { name: 'test' } })`
+- `const [instance] = await Model.findOrCreateCache({ where: { id: 1 }, defaults: { name: 'test' } })`
 
 **Rule 4: Cache Invalidation**
 Cache is invalidated automatically via Sequelize hooks (`afterSave`, `afterDestroy`).

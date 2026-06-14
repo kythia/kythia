@@ -6,10 +6,10 @@
  * @version 26.0.0-rc.1
  */
 const {
-	InteractionContextType,
-	SlashCommandBuilder,
-	PermissionFlagsBits,
 	MessageFlags,
+	PermissionFlagsBits,
+	SlashCommandBuilder,
+	InteractionContextType,
 } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -91,6 +91,9 @@ const featureMap = {
 };
 const toggleableFeatures = Object.keys(featureMap);
 class SettingCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ManageGuild;
+	botPermissions = PermissionFlagsBits.ManageGuild;
+
 	slashCommand = new SlashCommandBuilder()
 		.setName('set')
 		.setDescription('⚙️ Settings bot configuration')
@@ -145,8 +148,7 @@ class SettingCommand extends BaseCommand {
 			}
 			return group;
 		});
-	permissions = PermissionFlagsBits.ManageGuild;
-	botPermissions = PermissionFlagsBits.ManageGuild;
+
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, models, logger } = container;
@@ -160,7 +162,7 @@ class SettingCommand extends BaseCommand {
 		const sub = interaction.options.getSubcommand();
 		const guildId = interaction.guild.id;
 		const guildName = interaction.guild.name;
-		const [serverSetting, created] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting, created] = await ServerSetting.findOrCreateCache({
 			where: {
 				guildId: guildId,
 			},
@@ -273,4 +275,5 @@ class SettingCommand extends BaseCommand {
 		}
 	}
 }
+
 exports.default = SettingCommand;

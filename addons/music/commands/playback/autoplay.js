@@ -11,8 +11,9 @@ const { GuildMember, MessageFlags } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 
 class AutoplayCommand extends BaseCommand {
-	subcommand = true;
 	premiumLocked = 'cute';
+
+	subcommand = true;
 
 	slashCommand = (subcommand) =>
 		subcommand

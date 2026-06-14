@@ -7,7 +7,7 @@
  */
 
 const { MessageFlags } = require('discord.js');
-const { EMBEDDED, runTemplate, resetServer } = require('../../helpers/server');
+const { EMBEDDED, resetServer, runTemplate } = require('../../helpers/server');
 
 const { BaseCommand } = require('kythia-core');
 

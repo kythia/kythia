@@ -10,8 +10,8 @@ const { BaseCommand } = require('kythia-core');
 
 // Hardcoded listing requirements
 const {
-	REQUIRED_MEMBERS,
 	LISTING_FEE_KYTH,
+	REQUIRED_MEMBERS,
 } = require('../../helpers/constants');
 
 class CreateCommand extends BaseCommand {
@@ -49,8 +49,9 @@ class CreateCommand extends BaseCommand {
 	async execute(interaction) {
 		const container = this.container;
 		await interaction.deferReply();
-		const { t, models, helpers, kythiaConfig, logger } = container;
-		const { KythiaUser, GuildLiquidityPool, GuildTokenHolding } = models;
+		const { t, models, helpers, kythiaConfig, GuildLiquidityPool, logger } =
+			container;
+		const { KythiaUser, GuildTokenHolding } = models;
 		const { simpleContainer } = helpers.discord;
 		const { MessageFlags } = require('discord.js');
 		const guildId = interaction.guild.id;
@@ -141,7 +142,7 @@ class CreateCommand extends BaseCommand {
 		const totalCost = LISTING_FEE_KYTH + initialKyth;
 
 		// 4. Check owner's KYTH balance
-		const [userEco] = await KythiaUser.findOrCreateWithCache({
+		const [userEco] = await KythiaUser.findOrCreateCache({
 			where: { userId },
 			defaults: { userId },
 		});

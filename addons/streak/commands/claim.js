@@ -7,13 +7,13 @@
  */
 
 const {
+	ButtonStyle,
 	MessageFlags,
 	ButtonBuilder,
-	ButtonStyle,
 	ActionRowBuilder,
 	ContainerBuilder,
-	TextDisplayBuilder,
 	SeparatorBuilder,
+	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { claimStreak, restoreStreak } = require('../helpers');

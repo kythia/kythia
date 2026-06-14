@@ -11,8 +11,9 @@ const { GuildMember, MessageFlags } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 
 class Music247Command extends BaseCommand {
-	subcommand = true;
 	premiumLocked = 'powerful';
+
+	subcommand = true;
 
 	slashCommand = (subcommand) =>
 		subcommand

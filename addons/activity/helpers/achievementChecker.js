@@ -120,7 +120,7 @@ async function checkAndUnlock(triggerType, ctx) {
 
 		const getAchievementCount = async () => {
 			if (achievementCount !== null) return achievementCount;
-			achievementCount = await UserAchievement.countWithCache({
+			achievementCount = await UserAchievement.countCache({
 				where: { guildId, userId },
 			});
 			return achievementCount;

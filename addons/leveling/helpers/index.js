@@ -177,7 +177,7 @@ const addXp = async (guildId, userId, xpToAdd, message, channel) => {
 	if (isImageEnabled) {
 		try {
 			const rank =
-				(await User.countWithCache({
+				(await User.countCache({
 					where: {
 						guildId,
 						[Op.or]: [

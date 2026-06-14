@@ -6,11 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class UnlockCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ManageChannels;
+	botPermissions = PermissionFlagsBits.ManageChannels;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unlock')
@@ -21,9 +24,6 @@ class UnlockCommand extends BaseCommand {
 					.setDescription('Reason for unlocking the channel')
 					.setRequired(false),
 			);
-
-	permissions = PermissionFlagsBits.ManageChannels;
-	botPermissions = PermissionFlagsBits.ManageChannels;
 
 	async execute(interaction) {
 		const container = this.container;

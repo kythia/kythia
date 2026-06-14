@@ -7,9 +7,9 @@
  */
 
 const {
-	SlashCommandBuilder,
-	AttachmentBuilder,
 	MessageFlags,
+	AttachmentBuilder,
+	SlashCommandBuilder,
 } = require('discord.js');
 const JavaScriptObfuscator = require('javascript-obfuscator');
 const axios = require('axios');

@@ -6,10 +6,10 @@
  * @version 26.0.0-rc.1
  */
 const {
-	TextDisplayBuilder,
-	ContainerBuilder,
-	MessageFlags,
 	ChannelType,
+	MessageFlags,
+	ContainerBuilder,
+	TextDisplayBuilder,
 } = require('discord.js');
 
 const { refreshReactionRoleMessage } = require('../helpers/index.js');

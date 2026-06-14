@@ -9,8 +9,8 @@
 const {
 	MessageFlags,
 	ContainerBuilder,
-	TextDisplayBuilder,
 	SeparatorBuilder,
+	TextDisplayBuilder,
 } = require('discord.js');
 const { Op } = require('sequelize');
 

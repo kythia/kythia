@@ -79,7 +79,7 @@ app.patch('/:guildId', async (c) => {
 			await broadcastEditMember(client, guildId, updatePayload);
 		}
 
-		const [settings] = await ServerSetting.findOrCreateWithCache({
+		const [settings] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: {
 				guildId,

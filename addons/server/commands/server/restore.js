@@ -6,12 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
-const { MessageFlags, ChannelType } = require('discord.js');
+const { ChannelType, MessageFlags } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 const restoreHelper = require('../../helpers/restore');
 
 class RestoreCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('restore')
@@ -408,4 +409,5 @@ class RestoreCommand extends BaseCommand {
 		}
 	}
 }
+
 exports.default = RestoreCommand;

@@ -6,22 +6,21 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class ResetCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [
+		PermissionFlagsBits.ManageGuild,
+		PermissionFlagsBits.Administrator,
+	];
 
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('reset')
 			.setDescription('Reset all invites for this server (Admin only)');
-
-	permissions = [
-		PermissionFlagsBits.ManageGuild,
-		PermissionFlagsBits.Administrator,
-	];
 
 	async execute(interaction) {
 		const container = this.container;

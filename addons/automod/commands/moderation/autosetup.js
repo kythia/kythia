@@ -15,13 +15,13 @@ const {
 const { BaseCommand } = require('kythia-core');
 
 class AutosetupCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.Administrator;
+	botPermissions = PermissionFlagsBits.Administrator;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('autosetup')
 			.setDescription('🤖 Automatically setup moderation channels and roles.');
-
-	permissions = PermissionFlagsBits.Administrator;
-	botPermissions = PermissionFlagsBits.Administrator;
 
 	async execute(interaction) {
 		const container = this.container;

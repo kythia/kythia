@@ -12,6 +12,7 @@ const { BaseCommand } = require('kythia-core');
 
 class EmojiCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -20,8 +21,6 @@ class EmojiCommand extends BaseCommand {
 			.addStringOption((opt) =>
 				opt.setName('emoji').setDescription('Emoji').setRequired(true),
 			);
-
-	permissions = [PermissionFlagsBits.ManageGuild];
 
 	async execute(interaction) {
 		const container = this.container;
@@ -35,7 +34,7 @@ class EmojiCommand extends BaseCommand {
 		const guildName = interaction.guild.name;
 		const emoji = interaction.options.getString('emoji');
 
-		const [serverSetting] = await ServerSetting.findOrCreateWithCache({
+		const [serverSetting] = await ServerSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId, guildName },
 		});

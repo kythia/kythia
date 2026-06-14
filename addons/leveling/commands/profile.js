@@ -7,13 +7,13 @@
  */
 
 const {
-	MediaGalleryItemBuilder,
-	SeparatorSpacingSize,
-	MediaGalleryBuilder,
-	TextDisplayBuilder,
+	MessageFlags,
 	ContainerBuilder,
 	SeparatorBuilder,
-	MessageFlags,
+	TextDisplayBuilder,
+	MediaGalleryBuilder,
+	SeparatorSpacingSize,
+	MediaGalleryItemBuilder,
 } = require('discord.js');
 
 const { levelUpXp } = require('../helpers');
@@ -124,7 +124,7 @@ class ProfileCommand extends BaseCommand {
 
 		const rank =
 			Number(
-				await User.countWithCache({
+				await User.countCache({
 					where: {
 						guildId,
 						[Op.or]: [

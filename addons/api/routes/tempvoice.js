@@ -136,7 +136,7 @@ app.post('/setup', async (c) => {
 		}
 
 		// Save to database
-		const [config] = await TempVoiceConfig.findOrCreateWithCache({
+		const [config] = await TempVoiceConfig.findOrCreateCache({
 			where: { guildId: guildId },
 			defaults: {
 				guildId: guildId,
@@ -275,7 +275,7 @@ app.post('/configs', async (c) => {
 	}
 
 	try {
-		const [config, created] = await TempVoiceConfig.findOrCreateWithCache({
+		const [config, created] = await TempVoiceConfig.findOrCreateCache({
 			where: { guildId },
 			defaults: {
 				guildId,

@@ -97,7 +97,7 @@ app.patch('/:guildId', async (c) => {
 		}
 
 		// Auto-create BoosterSetting if it doesn't exist yet
-		const [setting] = await BoosterSetting.findOrCreateWithCache({
+		const [setting] = await BoosterSetting.findOrCreateCache({
 			where: { guildId },
 			defaults: { guildId },
 		});

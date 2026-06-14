@@ -14,8 +14,9 @@ const constantsHelper = require('../../helpers/constants');
 // PERSONALITIES extracted to addons/ai/helpers/constants.js
 
 class PersonalityCommand extends BaseCommand {
-	subcommand = true;
 	premiumLocked = 'powerful';
+
+	subcommand = true;
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -50,7 +51,7 @@ class PersonalityCommand extends BaseCommand {
 			constantsHelper.PERSONALITIES.default;
 
 		// Get or create user
-		const [user] = await KythiaUser.findOrCreateWithCache({
+		const [user] = await KythiaUser.findOrCreateCache({
 			where: { userId: interaction.user.id },
 			defaults: {
 				userId: interaction.user.id,

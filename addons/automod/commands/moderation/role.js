@@ -6,11 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class RoleCommand extends BaseCommand {
+	permissions = PermissionFlagsBits.ManageRoles;
+	botPermissions = PermissionFlagsBits.ManageRoles;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('role')
@@ -27,9 +30,6 @@ class RoleCommand extends BaseCommand {
 					.setDescription('The role to add or remove')
 					.setRequired(true),
 			);
-
-	permissions = PermissionFlagsBits.ManageRoles;
-	botPermissions = PermissionFlagsBits.ManageRoles;
 
 	async execute(interaction) {
 		const container = this.container;
