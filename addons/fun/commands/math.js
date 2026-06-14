@@ -15,8 +15,8 @@ const {
 	TextInputBuilder,
 	TextInputStyle,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const mathHelper = require('../helpers/math');
 
 // Helpers extracted to addons/fun/helpers/math.js
 
@@ -34,14 +34,12 @@ class MathCommand extends BaseCommand {
 				.setName('leaderboard')
 				.setDescription('🏆 View the global math leaderboard'),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t } = container;
 		const sub = interaction.options.getSubcommand();
 
-		const { helpers } = container;
-		const mathHelpers = helpers.fun.math;
+		const mathHelpers = mathHelper;
 
 		// ── Leaderboard ──────────────────────────────────────────────────────
 		if (sub === 'leaderboard') {
@@ -59,13 +57,11 @@ class MathCommand extends BaseCommand {
 		const userId = interaction.user.id;
 		let score = 0;
 		let { question, answer } = mathHelpers.generateQuestion(score);
-
 		const footer = await t(interaction, 'fun.math.footer.play');
 		const questionText = await t(interaction, 'fun.math.question', {
 			question,
 			score,
 		});
-
 		const questionContainer = await mathHelpers.buildMathContainer(
 			interaction,
 			{
@@ -73,9 +69,7 @@ class MathCommand extends BaseCommand {
 				footer,
 			},
 		);
-
 		const row = mathHelpers.buildAnswerRow(false);
-
 		const message = await interaction.reply({
 			components: [questionContainer, row],
 			flags: MessageFlags.IsComponentsV2,
@@ -94,12 +88,10 @@ class MathCommand extends BaseCommand {
 					max: 1,
 					filter: (i) => i.user.id === userId && i.customId === 'math_answer',
 				});
-
 				collector.on('collect', async (i) => {
 					const modal = new ModalBuilder()
 						.setCustomId(`math_modal_${userId}`)
 						.setTitle(await t(i, 'fun.math.modal.title'));
-
 					modal.addComponents(
 						new ActionRowBuilder().addComponents(
 							new TextInputBuilder()
@@ -110,14 +102,13 @@ class MathCommand extends BaseCommand {
 								.setMaxLength(12),
 						),
 					);
-
 					await i.showModal(modal);
-
 					try {
-						const submitted = await i.awaitModalSubmit({ time: 30_000 });
+						const submitted = await i.awaitModalSubmit({
+							time: 30_000,
+						});
 						const raw = submitted.fields.getTextInputValue('math_input').trim();
 						const parsed = Number(raw);
-
 						if (Number.isNaN(parsed) || !Number.isFinite(parsed)) {
 							await submitted.reply({
 								content: '❌ Please enter a valid number.',
@@ -130,19 +121,29 @@ class MathCommand extends BaseCommand {
 							});
 							return;
 						}
-
 						const correct = Math.round(parsed) === answer;
 						await submitted.deferUpdate();
-						resolve({ correct, timedOut: false, forcedAnswer: answer });
+						resolve({
+							correct,
+							timedOut: false,
+							forcedAnswer: answer,
+						});
 					} catch {
 						// Modal timed out
-						resolve({ correct: false, timedOut: true, forcedAnswer: answer });
+						resolve({
+							correct: false,
+							timedOut: true,
+							forcedAnswer: answer,
+						});
 					}
 				});
-
 				collector.on('end', (collected, reason) => {
 					if (reason === 'time' && collected.size === 0) {
-						resolve({ correct: false, timedOut: true, forcedAnswer: answer });
+						resolve({
+							correct: false,
+							timedOut: true,
+							forcedAnswer: answer,
+						});
 					}
 				});
 			});
@@ -152,7 +153,6 @@ class MathCommand extends BaseCommand {
 		let running = true;
 		while (running) {
 			const { correct, timedOut, forcedAnswer } = await runRound();
-
 			if (correct) {
 				score++;
 
@@ -160,7 +160,6 @@ class MathCommand extends BaseCommand {
 				const next = mathHelpers.generateQuestion(score);
 				question = next.question;
 				answer = next.answer;
-
 				const nextText = await t(interaction, 'fun.math.question', {
 					question,
 					score,
@@ -174,7 +173,6 @@ class MathCommand extends BaseCommand {
 						accentColor: '#2ecc71',
 					},
 				);
-
 				await interaction.editReply({
 					components: [nextContainer, mathHelpers.buildAnswerRow(false)],
 					flags: MessageFlags.IsComponentsV2,
@@ -182,14 +180,12 @@ class MathCommand extends BaseCommand {
 			} else {
 				// Game over
 				running = false;
-
 				const record = await mathHelpers.saveScore(
 					container,
 					userId,
 					interaction.user.username,
 					score,
 				);
-
 				const isNewBest = score > 0 && score >= (record.bestScore ?? 0);
 				const endReason = timedOut
 					? await t(interaction, 'fun.math.timeout', {
@@ -200,17 +196,16 @@ class MathCommand extends BaseCommand {
 							answer: forcedAnswer,
 							score,
 						});
-
 				const bonusLine = isNewBest
-					? `\n${await t(interaction, 'fun.math.new_best', { score })}`
+					? `\n${await t(interaction, 'fun.math.new_best', {
+							score,
+						})}`
 					: '';
-
 				const endContainer = await mathHelpers.buildMathContainer(interaction, {
 					body: `${endReason}${bonusLine}`,
 					footer: await t(interaction, 'fun.math.footer.end'),
 					accentColor: '#e74c3c',
 				});
-
 				await interaction.editReply({
 					components: [endContainer, mathHelpers.buildAnswerRow(true)],
 					flags: MessageFlags.IsComponentsV2,
@@ -219,5 +214,4 @@ class MathCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = MathCommand;

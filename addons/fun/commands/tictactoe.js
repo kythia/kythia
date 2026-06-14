@@ -11,8 +11,8 @@ const {
 	MessageFlags,
 	SlashCommandBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const tictactoeHelper = require('../helpers/tictactoe');
 
 // Helpers extracted to addons/fun/helpers/tictactoe.js
 
@@ -36,20 +36,26 @@ class TictactoeCommand extends BaseCommand {
 				)
 				.setRequired(false)
 				.addChoices(
-					{ name: 'Easy', value: 'bot_easy' },
-					{ name: 'Medium', value: 'bot_medium' },
-					{ name: 'Hard (Unbeatable)', value: 'bot_hard' },
+					{
+						name: 'Easy',
+						value: 'bot_easy',
+					},
+					{
+						name: 'Medium',
+						value: 'bot_medium',
+					},
+					{
+						name: 'Hard (Unbeatable)',
+						value: 'bot_hard',
+					},
 				),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
-		const { t, helpers } = container;
-		const tttHelpers = helpers.fun.tictactoe;
-
+		const { t } = container;
+		const tttHelpers = tictactoeHelper;
 		const opponent = interaction.options.getUser('opponent');
 		let mode = 'player';
-
 		if (opponent.bot) {
 			mode = interaction.options.getString('difficulty') || 'bot_hard';
 		} else if (opponent.id === interaction.user.id) {
@@ -58,12 +64,13 @@ class TictactoeCommand extends BaseCommand {
 				components: await simpleContainer(
 					interaction,
 					`${await t(interaction, 'fun.tictactoe.error.title')}\n${await t(interaction, 'fun.tictactoe.error.self')}`,
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const runGame = async (gameInstance, currentInteraction) => {
 			const initialComponents = await tttHelpers.buildGameUI(gameInstance);
 			if (currentInteraction.deferred || currentInteraction.replied) {
@@ -78,13 +85,11 @@ class TictactoeCommand extends BaseCommand {
 					fetchReply: true,
 				});
 			}
-
 			const message = await currentInteraction.fetchReply();
 			const collector = message.createMessageComponentCollector({
 				componentType: ComponentType.Button,
 				time: 120_000,
 			});
-
 			collector.on('collect', async (i) => {
 				if (i.customId === 'tictactoe_rematch') {
 					if (
@@ -96,7 +101,9 @@ class TictactoeCommand extends BaseCommand {
 							components: await simpleContainer(
 								i,
 								`${await t(i, 'fun.tictactoe.error.title')}\n${await t(i, 'fun.tictactoe.error.rematch')}`,
-								{ color: 'Yellow' },
+								{
+									color: 'Yellow',
+								},
 							),
 							flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 						});
@@ -107,25 +114,23 @@ class TictactoeCommand extends BaseCommand {
 					await runGame(newGame, i);
 					return;
 				}
-
 				if (i.user.id !== gameInstance.currentPlayer.id) {
 					const { simpleContainer } = container.helpers.discord;
 					return i.reply({
 						components: await simpleContainer(
 							i,
 							`${await t(i, 'fun.tictactoe.error.title')}\n${await t(i, 'fun.tictactoe.error.turn')}`,
-							{ color: 'Yellow' },
+							{
+								color: 'Yellow',
+							},
 						),
 						flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 					});
 				}
-
 				await i.deferUpdate();
-
 				const index = parseInt(i.customId.split('_')[1], 10);
 				const playerSymbol = gameInstance.symbols[i.user.id];
 				gameInstance.board[index] = playerSymbol;
-
 				if (tttHelpers.checkWin(gameInstance.board, playerSymbol)) {
 					gameInstance.isGameOver = true;
 					gameInstance.statusMessage = await t(i, 'fun.tictactoe.win', {
@@ -148,12 +153,10 @@ class TictactoeCommand extends BaseCommand {
 					});
 					return;
 				}
-
 				gameInstance.currentPlayer =
 					gameInstance.currentPlayer.id === gameInstance.playerX.id
 						? gameInstance.playerO
 						: gameInstance.playerX;
-
 				if (gameInstance.botDifficulty) {
 					tttHelpers.botMove(gameInstance);
 					if (tttHelpers.checkWin(gameInstance.board, 'O')) {
@@ -180,17 +183,14 @@ class TictactoeCommand extends BaseCommand {
 					}
 					gameInstance.currentPlayer = gameInstance.playerX;
 				}
-
 				const updatedComponents = await tttHelpers.buildGameUI(gameInstance);
 				await interaction.editReply({
 					components: updatedComponents,
 					embeds: [],
 				});
 			});
-
 			collector.on('end', async (_collected, reason) => {
 				if (reason === 'rematch') return;
-
 				if (!gameInstance.isGameOver) {
 					gameInstance.isGameOver = true;
 					if (reason === 'time') {
@@ -200,18 +200,15 @@ class TictactoeCommand extends BaseCommand {
 						);
 					}
 				}
-
 				const finalComponents = await tttHelpers.buildGameUI(gameInstance);
 				await interaction.editReply({
 					components: finalComponents,
 				});
 			});
 		};
-
 		await interaction.deferReply();
 		const game = tttHelpers.createGame(interaction, opponent, mode);
 		runGame(game, interaction);
 	}
 }
-
 exports.default = TictactoeCommand;

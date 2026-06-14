@@ -7,10 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const itemsDataFile = require('../helpers/items');
-
 const { BaseCommand } = require('kythia-core');
+const shopuiHelper = require('../helpers/shop-ui');
 
 const shopData = itemsDataFile.items;
 const allItems = Object.values(shopData).flat();
@@ -19,11 +18,14 @@ const allItems = Object.values(shopData).flat();
 
 class ShopCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('shop')
-			.setNameLocalizations({ id: 'toko', fr: 'boutique', ja: 'ショップ' })
+			.setNameLocalizations({
+				id: 'toko',
+				fr: 'boutique',
+				ja: 'ショップ',
+			})
 			.setDescription('🛒 Buy items from the adventure shop!')
 			.setDescriptionLocalizations({
 				id: '🛒 Beli item petualangan di toko',
@@ -35,7 +37,10 @@ class ShopCommand extends BaseCommand {
 					.setName('category')
 					.setDescription('The category of items to show')
 					.addChoices(
-						{ name: 'All', value: 'all' },
+						{
+							name: 'All',
+							value: 'all',
+						},
 						...Object.keys(shopData).map((cat) => ({
 							name: cat.charAt(0).toUpperCase() + cat.slice(1),
 							value: cat,
@@ -43,7 +48,6 @@ class ShopCommand extends BaseCommand {
 					)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, logger } = container;
@@ -52,12 +56,12 @@ class ShopCommand extends BaseCommand {
 			generateShopContainer,
 			generateShopComponentRows,
 			getItemsInCategory,
-		} = helpers.adventure['shop-ui'];
+		} = shopuiHelper;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-		const user = await UserAdventure.getCache({ userId: interaction.user.id });
-
+		const user = await UserAdventure.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
 			const msg = await t(interaction, 'adventure.no.character');
 			const components = await simpleContainer(interaction, msg, {
@@ -68,7 +72,6 @@ class ShopCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const category = interaction.options.getString('category') || 'equipment';
 		let currentPage = 1;
 		const { items: pageItems, totalPages } = getItemsInCategory(
@@ -76,7 +79,6 @@ class ShopCommand extends BaseCommand {
 			currentPage,
 			5,
 		);
-
 		const components = await generateShopComponentRows(
 			interaction,
 			currentPage,
@@ -92,28 +94,23 @@ class ShopCommand extends BaseCommand {
 			pageItems,
 			components,
 		);
-
 		const replyMessage = await interaction.editReply({
 			components: [shopContainer],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
-
 		const filter = (i) => i.user.id === interaction.user.id;
 		const collector = replyMessage.createMessageComponentCollector({
 			filter,
 			time: 300000,
 		});
-
 		collector.on('collect', async (i) => {
 			try {
 				await i.deferUpdate();
-
 				let currentCategory = category;
 				let userForUpdate = await UserAdventure.getCache({
 					userId: interaction.user.id,
 				});
-
 				if (i.isStringSelectMenu()) {
 					if (i.customId === 'adventure_shop_category') {
 						currentCategory = i.values[0].replace('shop_category_', '');
@@ -121,7 +118,6 @@ class ShopCommand extends BaseCommand {
 					} else if (i.customId === 'adventure_shop_select_item') {
 						const itemId = i.values[0];
 						const item = allItems.find((it) => it.id === itemId);
-
 						if (!item) {
 							return i.followUp({
 								components: await simpleContainer(
@@ -134,7 +130,6 @@ class ShopCommand extends BaseCommand {
 								flags: MessageFlags.IsComponentsV2,
 							});
 						}
-
 						if (userForUpdate.gold < item.price) {
 							return i.followUp({
 								components: await simpleContainer(
@@ -148,21 +143,22 @@ class ShopCommand extends BaseCommand {
 								flags: MessageFlags.IsComponentsV2,
 							});
 						}
-
 						userForUpdate.gold -= item.price;
 						await userForUpdate.save();
-
 						const [existingItem, created] =
 							await InventoryAdventure.getOrCreateCache(
-								{ userId: userForUpdate.userId, itemName: item.id },
-								{ quantity: 1 },
+								{
+									userId: userForUpdate.userId,
+									itemName: item.id,
+								},
+								{
+									quantity: 1,
+								},
 							);
-
 						if (!created) {
 							existingItem.quantity += 1;
 							await existingItem.save();
 						}
-
 						await i.followUp({
 							components: await simpleContainer(
 								interaction,
@@ -173,7 +169,6 @@ class ShopCommand extends BaseCommand {
 							),
 							flags: MessageFlags.IsComponentsV2,
 						});
-
 						userForUpdate = await UserAdventure.getCache({
 							userId: interaction.user.id,
 						});
@@ -186,11 +181,9 @@ class ShopCommand extends BaseCommand {
 						currentPage = currentPage + 1;
 					}
 				}
-
 				const { items: newPageItems, totalPages: newTotalPages } =
 					getItemsInCategory(currentCategory, currentPage, 5);
 				currentPage = Math.max(1, Math.min(currentPage, newTotalPages));
-
 				const newComponents = await generateShopComponentRows(
 					interaction,
 					currentPage,
@@ -206,7 +199,6 @@ class ShopCommand extends BaseCommand {
 					newPageItems,
 					newComponents,
 				);
-
 				await i.editReply({
 					components: [newContainer],
 					flags: MessageFlags.IsComponentsV2,
@@ -227,15 +219,17 @@ class ShopCommand extends BaseCommand {
 				}
 			}
 		});
-
 		collector.on('end', () => {
-			replyMessage.edit({ components: [] }).catch((err) =>
-				logger.error(`Error: ${err.message || err}`, {
-					label: 'adventure',
-				}),
-			);
+			replyMessage
+				.edit({
+					components: [],
+				})
+				.catch((err) =>
+					logger.error(`Error: ${err.message || err}`, {
+						label: 'adventure',
+					}),
+				);
 		});
 	}
 }
-
 exports.default = ShopCommand;

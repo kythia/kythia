@@ -7,14 +7,13 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const leaderboardHelper = require('../helpers/leaderboard');
 
 // Helpers extracted to addons/streak/helpers/leaderboard.js
 
 class LeaderboardCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leaderboard')
@@ -22,20 +21,20 @@ class LeaderboardCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { t, models, helpers } = container;
+		const { t, models } = container;
 		const { ServerSetting, Streak } = models;
-		const { generateLeaderboardContainer } = helpers.streak.leaderboard;
-
+		const { generateLeaderboardContainer } = leaderboardHelper;
 		const MAX_USERS = 100;
 		const guildId = interaction.guild.id;
-
-		const serverSetting = await ServerSetting.getCache({ guildId });
+		const serverSetting = await ServerSetting.getCache({
+			guildId,
+		});
 		const streakEmoji = serverSetting.streakEmoji || '🔥';
-
 		await interaction.deferReply();
-
 		const allStreaks = await Streak.getAllCache({
-			where: { guildId },
+			where: {
+				guildId,
+			},
 			order: [
 				['currentStreak', 'DESC'],
 				['highestStreak', 'DESC'],
@@ -43,10 +42,8 @@ class LeaderboardCommand extends BaseCommand {
 			limit: MAX_USERS,
 			cacheTags: [`Streak:leaderboard`],
 		});
-
 		const totalUsers = allStreaks.length;
 		let currentPage = 1;
-
 		if (totalUsers === 0) {
 			const { leaderboardContainer } = await generateLeaderboardContainer(
 				interaction,
@@ -64,7 +61,6 @@ class LeaderboardCommand extends BaseCommand {
 				},
 			});
 		}
-
 		const { leaderboardContainer, totalPages } =
 			await generateLeaderboardContainer(
 				interaction,
@@ -73,7 +69,6 @@ class LeaderboardCommand extends BaseCommand {
 				totalUsers,
 				streakEmoji,
 			);
-
 		const message = await interaction.editReply({
 			components: [leaderboardContainer],
 			flags: MessageFlags.IsComponentsV2,
@@ -82,11 +77,10 @@ class LeaderboardCommand extends BaseCommand {
 				parse: [],
 			},
 		});
-
 		if (totalPages <= 1) return;
-
-		const collector = message.createMessageComponentCollector({ time: 300000 });
-
+		const collector = message.createMessageComponentCollector({
+			time: 300000,
+		});
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -94,7 +88,6 @@ class LeaderboardCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			if (i.customId === 'leaderboard_first') {
 				currentPage = 1;
 			} else if (i.customId === 'leaderboard_prev') {
@@ -104,7 +97,6 @@ class LeaderboardCommand extends BaseCommand {
 			} else if (i.customId === 'leaderboard_last') {
 				currentPage = totalPages;
 			}
-
 			const { leaderboardContainer: newLeaderboardContainer } =
 				await generateLeaderboardContainer(
 					i,
@@ -113,7 +105,6 @@ class LeaderboardCommand extends BaseCommand {
 					totalUsers,
 					streakEmoji,
 				);
-
 			await i.update({
 				components: [newLeaderboardContainer],
 				flags: MessageFlags.IsComponentsV2,
@@ -122,7 +113,6 @@ class LeaderboardCommand extends BaseCommand {
 				},
 			});
 		});
-
 		collector.on('end', async () => {
 			try {
 				const { leaderboardContainer: finalContainer } =
@@ -134,7 +124,6 @@ class LeaderboardCommand extends BaseCommand {
 						streakEmoji,
 						true,
 					);
-
 				await message.edit({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
@@ -146,5 +135,4 @@ class LeaderboardCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = LeaderboardCommand;

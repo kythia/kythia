@@ -8,14 +8,13 @@
 
 const { MessageFlags } = require('discord.js');
 const { Op, fn, col } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
+const leaderboardHelper = require('../helpers/leaderboard');
 
 // Helpers extracted to addons/activity/helpers/leaderboard.js
 
 class StatsCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('stats')
@@ -35,42 +34,57 @@ class StatsCommand extends BaseCommand {
 					.setDescription('Time period to show. Defaults to all time.')
 					.setRequired(false)
 					.addChoices(
-						{ name: '🕰️ All Time', value: 'all' },
-						{ name: '📅 Today', value: 'daily' },
-						{ name: '📆 This Week', value: 'weekly' },
-						{ name: '🗓️ This Month', value: 'monthly' },
+						{
+							name: '🕰️ All Time',
+							value: 'all',
+						},
+						{
+							name: '📅 Today',
+							value: 'daily',
+						},
+						{
+							name: '📆 This Week',
+							value: 'weekly',
+						},
+						{
+							name: '🗓️ This Month',
+							value: 'monthly',
+						},
 					),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { ActivityStat, ActivityLog } = models;
-
 		await interaction.deferReply();
-
 		const targetUser = interaction.options.getUser('user') || interaction.user;
 		const guildId = interaction.guild.id;
 		const userId = targetUser.id;
 		const period = interaction.options.getString('period') || 'all';
-
 		const periodLabel = await t(
 			interaction,
 			`activity.leaderboard.activity.leaderboard.period.${period}`,
 		);
-
 		let totalMessages = 0;
 		let totalVoiceTime = 0;
-
 		if (period === 'all') {
-			const stat = await ActivityStat.getCache({ guildId, userId });
+			const stat = await ActivityStat.getCache({
+				guildId,
+				userId,
+			});
 			totalMessages = stat ? Number(BigInt(stat.totalMessages)) : 0;
 			totalVoiceTime = stat ? Number(BigInt(stat.totalVoiceTime)) : 0;
 		} else {
-			const startDate = helpers.activity.leaderboard.getPeriodStart(period);
+			const startDate = leaderboardHelper.getPeriodStart(period);
 			const [row] = await ActivityLog.getAllCache({
-				where: { guildId, userId, date: { [Op.gte]: startDate } },
+				where: {
+					guildId,
+					userId,
+					date: {
+						[Op.gte]: startDate,
+					},
+				},
 				attributes: [
 					[fn('SUM', col('messages')), 'totalMessages'],
 					[fn('SUM', col('voiceTime')), 'totalVoiceTime'],
@@ -80,24 +94,22 @@ class StatsCommand extends BaseCommand {
 			totalMessages = row?.totalMessages ? Number(row.totalMessages) : 0;
 			totalVoiceTime = row?.totalVoiceTime ? Number(row.totalVoiceTime) : 0;
 		}
-
 		const title = `## ${await t(interaction, 'activity.stats.activity.stats.title')} — ${periodLabel}`;
 		const desc = await t(interaction, 'activity.stats.activity.stats.desc', {
 			username: targetUser.username,
 			messages: totalMessages.toLocaleString(),
-			voiceTime: helpers.activity.leaderboard.formatDuration(totalVoiceTime),
+			voiceTime: leaderboardHelper.formatDuration(totalVoiceTime),
 		});
-
 		const components = await simpleContainer(interaction, `${title}\n${desc}`, {
 			color: kythiaConfig.bot.color,
 		});
-
 		await interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
-			allowedMentions: { parse: [] },
+			allowedMentions: {
+				parse: [],
+			},
 		});
 	}
 }
-
 exports.default = StatsCommand;

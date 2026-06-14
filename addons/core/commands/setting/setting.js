@@ -11,15 +11,13 @@ const {
 	PermissionFlagsBits,
 	MessageFlags,
 } = require('discord.js');
-
 const fs = require('node:fs');
 const path = require('node:path');
-
 const { BaseCommand } = require('kythia-core');
+const settinguiHelper = require('../../helpers/setting-ui');
 
 const langDir = path.join(__dirname, '../../lang');
 let availableLanguages = [];
-
 try {
 	const files = fs.readdirSync(langDir);
 	availableLanguages = files
@@ -71,11 +69,16 @@ const createToggleOption = () => {
 			.setDescription('Select status')
 			.setRequired(true)
 			.addChoices(
-				{ name: 'Enable', value: 'enable' },
-				{ name: 'Disable', value: 'disable' },
+				{
+					name: 'Enable',
+					value: 'enable',
+				},
+				{
+					name: 'Disable',
+					value: 'disable',
+				},
 			);
 };
-
 const featureMap = {
 	activity: ['activityOn', 'Activity'],
 	'server-stats': ['serverStatsOn', 'Server Stats'],
@@ -86,9 +89,7 @@ const featureMap = {
 	invites: ['invitesOn', 'Invites'],
 	'boost-log': ['boostLogOn', 'Boost Log'],
 };
-
 const toggleableFeatures = Object.keys(featureMap);
-
 class SettingCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('set')
@@ -130,7 +131,6 @@ class SettingCommand extends BaseCommand {
 			group
 				.setName('features')
 				.setDescription('🔄 Enable or disable a specific feature');
-
 			for (const [subcommandName, [, featureDisplayName]] of Object.entries(
 				featureMap,
 			)) {
@@ -143,42 +143,47 @@ class SettingCommand extends BaseCommand {
 						.addStringOption(createToggleOption()),
 				);
 			}
-
 			return group;
 		});
-
 	permissions = PermissionFlagsBits.ManageGuild;
 	botPermissions = PermissionFlagsBits.ManageGuild;
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, models, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		// const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const group = interaction.options.getSubcommandGroup(false);
 		const sub = interaction.options.getSubcommand();
 		const guildId = interaction.guild.id;
 		const guildName = interaction.guild.name;
-
 		const [serverSetting, created] = await ServerSetting.findOrCreateWithCache({
-			where: { guildId: guildId },
-			defaults: { guildId: guildId, guildName: guildName },
+			where: {
+				guildId: guildId,
+			},
+			defaults: {
+				guildId: guildId,
+				guildName: guildName,
+			},
 		});
-
 		if (created) {
-			await ServerSetting.clearNegativeCache({ where: { guildId: guildId } });
+			await ServerSetting.clearNegativeCache({
+				where: {
+					guildId: guildId,
+				},
+			});
 			logger.info(
 				`[CACHE] Cleared negative cache for new ServerSetting: ${guildId}`,
-				{ label: 'core' },
+				{
+					label: 'core',
+				},
 			);
 		}
-
 		if (sub === 'view') {
-			await helpers.core['setting-ui'].handleViewSettings(
+			await settinguiHelper.handleViewSettings(
 				interaction,
 				serverSetting,
 				t,
@@ -187,43 +192,42 @@ class SettingCommand extends BaseCommand {
 			);
 			return;
 		}
-
 		if (toggleableFeatures.includes(sub)) {
 			const status = interaction.options.getString('status');
 			const [settingKey, featureName] = featureMap[sub];
-
 			serverSetting[settingKey] = status === 'enable';
 			await serverSetting.save();
-
 			const isEnabled = status === 'enable';
 			const translationKey = isEnabled
 				? 'core.setting.setting.feature.enabled'
 				: 'core.setting.setting.feature.disabled';
-
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, translationKey, { feature: featureName }),
-				{ color: isEnabled ? 'Green' : 'Red' },
+				await t(interaction, translationKey, {
+					feature: featureName,
+				}),
+				{
+					color: isEnabled ? 'Green' : 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		switch (group) {
 			case 'features': {
 				if (toggleableFeatures.includes(sub)) {
 					const status = interaction.options.getString('status');
 					const [settingKey, featureName] = featureMap[sub];
-
 					serverSetting[settingKey] = status === 'enable';
 					await serverSetting.save();
-
 					const components = await simpleContainer(
 						interaction,
 						`✅ Fitur **${featureName}** telah **di-${status === 'enable' ? 'aktifkan' : 'nonaktifkan'}**.`,
-						{ color: status === 'enable' ? 'Green' : 'Red' },
+						{
+							color: status === 'enable' ? 'Green' : 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -239,8 +243,12 @@ class SettingCommand extends BaseCommand {
 					await serverSetting.save();
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.setting.setting.language.set', { lang }),
-						{ color: 'Green' },
+						await t(interaction, 'core.setting.setting.language.set', {
+							lang,
+						}),
+						{
+							color: 'Green',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -253,7 +261,9 @@ class SettingCommand extends BaseCommand {
 				const components = await simpleContainer(
 					interaction,
 					await t(interaction, 'core.setting.setting.command.not.found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -263,5 +273,4 @@ class SettingCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = SettingCommand;

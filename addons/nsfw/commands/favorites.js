@@ -7,14 +7,13 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const uiHelper = require('../helpers/ui');
 
 // Helpers extracted to addons/nsfw/helpers/ui.js
 
 class FavoritesCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('favorites')
@@ -25,45 +24,42 @@ class FavoritesCommand extends BaseCommand {
 					.setDescription('Make the message private?')
 					.setRequired(false),
 			);
-
 	voteLocked = true;
-
 	async execute(interaction) {
 		const container = this.container;
-		const { models, helpers } = container;
+		const { models } = container;
 		const { NsfwUser } = models;
-		const { generateFavContainer } = helpers.nsfw.ui;
+		const { generateFavContainer } = uiHelper;
 
 		// Default to true (private) since it's an NSFW personal list
 		const ephemeral = interaction.options.getBoolean('private') ?? true;
-		await interaction.deferReply({ ephemeral });
-
-		const user = await NsfwUser.getCache({ userId: interaction.user.id });
+		await interaction.deferReply({
+			ephemeral,
+		});
+		const user = await NsfwUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user?.nsfwFav || user.nsfwFav.length === 0) {
 			return interaction.editReply({
 				content: "You haven't favorited any NSFW images yet! 💔",
 			});
 		}
-
 		const allFavorites = user.nsfwFav;
 		let currentPage = 1;
-
 		const { containerBody, totalPages } = await generateFavContainer(
 			interaction,
 			currentPage,
 			allFavorites,
 		);
-
 		const message = await interaction.editReply({
 			components: [containerBody],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
-
 		if (totalPages <= 1) return;
-
-		const collector = message.createMessageComponentCollector({ time: 300000 });
-
+		const collector = message.createMessageComponentCollector({
+			time: 300000,
+		});
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -71,26 +67,22 @@ class FavoritesCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			if (i.customId === 'nsfw_fav_first') currentPage = 1;
 			else if (i.customId === 'nsfw_fav_prev')
 				currentPage = Math.max(1, currentPage - 1);
 			else if (i.customId === 'nsfw_fav_next')
 				currentPage = Math.min(totalPages, currentPage + 1);
 			else if (i.customId === 'nsfw_fav_last') currentPage = totalPages;
-
 			const { containerBody: newContainer } = await generateFavContainer(
 				i,
 				currentPage,
 				allFavorites,
 			);
-
 			await i.update({
 				components: [newContainer],
 				flags: MessageFlags.IsComponentsV2,
 			});
 		});
-
 		collector.on('end', async () => {
 			try {
 				const { containerBody: finalContainer } = await generateFavContainer(
@@ -99,7 +91,6 @@ class FavoritesCommand extends BaseCommand {
 					allFavorites,
 					true,
 				);
-
 				await interaction.editReply({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
@@ -108,5 +99,4 @@ class FavoritesCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = FavoritesCommand;

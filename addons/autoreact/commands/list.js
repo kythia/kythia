@@ -7,29 +7,25 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const uiHelper = require('../helpers/ui');
 
 // Helpers extracted to addons/autoreact/helpers/ui.js
 
 class ListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) => {
 		return subcommand
 			.setName('list')
 			.setDescription('📜 List all auto-reactions in this server.');
 	};
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, helpers, kythiaConfig } = container;
 		const { AutoReact } = models;
 		const { convertColor } = helpers.color;
-		const { generateListContainer } = helpers.autoreact.ui;
-
+		const { generateListContainer } = uiHelper;
 		await interaction.deferReply();
-
 		const reacts = await AutoReact.getAllCache({
 			where: {
 				guildId: interaction.guild.id,
@@ -39,32 +35,27 @@ class ListCommand extends BaseCommand {
 				['trigger', 'ASC'],
 			],
 		});
-
 		const colorInput = kythiaConfig.bot.color || '#5865F2';
 		const accentColor = convertColor(colorInput, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		let currentPage = 1;
-
 		const { listContainer, totalPages } = await generateListContainer(
 			interaction,
 			currentPage,
 			reacts,
 			accentColor,
 		);
-
 		const message = await interaction.editReply({
 			components: [listContainer],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
-
 		if (totalPages <= 1) return;
-
-		const collector = message.createMessageComponentCollector({ time: 300000 });
-
+		const collector = message.createMessageComponentCollector({
+			time: 300000,
+		});
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -72,7 +63,6 @@ class ListCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			if (i.customId === 'autoreact_list_first') {
 				currentPage = 1;
 			} else if (i.customId === 'autoreact_list_prev') {
@@ -82,20 +72,17 @@ class ListCommand extends BaseCommand {
 			} else if (i.customId === 'autoreact_list_last') {
 				currentPage = totalPages;
 			}
-
 			const { listContainer: newContainer } = await generateListContainer(
 				i,
 				currentPage,
 				reacts,
 				accentColor,
 			);
-
 			await i.update({
 				components: [newContainer],
 				flags: MessageFlags.IsComponentsV2,
 			});
 		});
-
 		collector.on('end', async () => {
 			try {
 				const { listContainer: finalContainer } = await generateListContainer(
@@ -105,7 +92,6 @@ class ListCommand extends BaseCommand {
 					accentColor,
 					true,
 				);
-
 				await message.edit({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
@@ -114,5 +100,4 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ListCommand;

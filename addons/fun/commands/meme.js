@@ -20,8 +20,8 @@ const {
 	ActionRowBuilder,
 } = require('discord.js');
 const axios = require('axios');
-
 const { BaseCommand } = require('kythia-core');
+const constantsHelper = require('../helpers/constants');
 
 class MemeCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
@@ -33,31 +33,47 @@ class MemeCommand extends BaseCommand {
 				.setDescription('Choose a subreddit to pull the meme from')
 				.setRequired(false)
 				.addChoices(
-					{ name: '😂 Memes', value: 'memes' },
-					{ name: '🔥 Dank Memes', value: 'dankmemes' },
-					{ name: '🪞 Me IRL', value: 'me_irl' },
-					{ name: '🐸 Advice Animals', value: 'AdviceAnimals' },
-					{ name: '😄 Funny', value: 'funny' },
-					{ name: '💻 Programmer Humor', value: 'ProgrammerHumor' },
+					{
+						name: '😂 Memes',
+						value: 'memes',
+					},
+					{
+						name: '🔥 Dank Memes',
+						value: 'dankmemes',
+					},
+					{
+						name: '🪞 Me IRL',
+						value: 'me_irl',
+					},
+					{
+						name: '🐸 Advice Animals',
+						value: 'AdviceAnimals',
+					},
+					{
+						name: '😄 Funny',
+						value: 'funny',
+					},
+					{
+						name: '💻 Programmer Humor',
+						value: 'ProgrammerHumor',
+					},
 				),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
-
 		await interaction.deferReply();
-
-		const subreddits = helpers.fun.constants.SUBREDDITS;
+		const subreddits = constantsHelper.SUBREDDITS;
 		const subreddit =
 			interaction.options.getString('subreddit') ??
 			subreddits[Math.floor(Math.random() * subreddits.length)];
-
 		let meme;
 		try {
 			const response = await axios.get(
 				`https://meme-api.com/gimme/${subreddit}`,
-				{ timeout: 8000 },
+				{
+					timeout: 8000,
+				},
 			);
 			meme = response.data;
 		} catch {
@@ -66,19 +82,16 @@ class MemeCommand extends BaseCommand {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		if (!meme?.url || meme.nsfw) {
 			return interaction.editReply({
 				content: await t(interaction, 'fun.meme.error.nsfw'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const memeContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
@@ -136,5 +149,4 @@ class MemeCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = MemeCommand;

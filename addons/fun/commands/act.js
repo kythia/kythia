@@ -16,8 +16,8 @@ const {
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 const axios = require('axios');
-
 const { BaseCommand } = require('kythia-core');
+const constantsHelper = require('../helpers/constants');
 
 // Constants extracted to addons/fun/helpers/constants.js
 
@@ -31,27 +31,90 @@ class ActCommand extends BaseCommand {
 				.setDescription('The action to perform')
 				.setRequired(true)
 				.addChoices(
-					{ name: 'Hug', value: 'hug' },
-					{ name: 'Kiss', value: 'kiss' },
-					{ name: 'Pat', value: 'pat' },
-					{ name: 'Slap', value: 'slap' },
-					{ name: 'Cuddle', value: 'cuddle' },
-					{ name: 'Wave', value: 'wave' },
-					{ name: 'High Five', value: 'highfive' },
-					{ name: 'Handhold', value: 'handhold' },
-					{ name: 'Bite', value: 'bite' },
-					{ name: 'Bonk', value: 'bonk' },
-					{ name: 'Yeet', value: 'yeet' },
-					{ name: 'Dance', value: 'dance' },
-					{ name: 'Poke', value: 'poke' },
-					{ name: 'Wink', value: 'wink' },
-					{ name: 'Smile', value: 'smile' },
-					{ name: 'Blush', value: 'blush' },
-					{ name: 'Happy', value: 'happy' },
-					{ name: 'Cry', value: 'cry' },
-					{ name: 'Nom', value: 'nom' },
-					{ name: 'Kick', value: 'kick' },
-					{ name: 'Smug', value: 'smug' },
+					{
+						name: 'Hug',
+						value: 'hug',
+					},
+					{
+						name: 'Kiss',
+						value: 'kiss',
+					},
+					{
+						name: 'Pat',
+						value: 'pat',
+					},
+					{
+						name: 'Slap',
+						value: 'slap',
+					},
+					{
+						name: 'Cuddle',
+						value: 'cuddle',
+					},
+					{
+						name: 'Wave',
+						value: 'wave',
+					},
+					{
+						name: 'High Five',
+						value: 'highfive',
+					},
+					{
+						name: 'Handhold',
+						value: 'handhold',
+					},
+					{
+						name: 'Bite',
+						value: 'bite',
+					},
+					{
+						name: 'Bonk',
+						value: 'bonk',
+					},
+					{
+						name: 'Yeet',
+						value: 'yeet',
+					},
+					{
+						name: 'Dance',
+						value: 'dance',
+					},
+					{
+						name: 'Poke',
+						value: 'poke',
+					},
+					{
+						name: 'Wink',
+						value: 'wink',
+					},
+					{
+						name: 'Smile',
+						value: 'smile',
+					},
+					{
+						name: 'Blush',
+						value: 'blush',
+					},
+					{
+						name: 'Happy',
+						value: 'happy',
+					},
+					{
+						name: 'Cry',
+						value: 'cry',
+					},
+					{
+						name: 'Nom',
+						value: 'nom',
+					},
+					{
+						name: 'Kick',
+						value: 'kick',
+					},
+					{
+						name: 'Smug',
+						value: 'smug',
+					},
 				),
 		)
 		.addUserOption((option) =>
@@ -60,22 +123,18 @@ class ActCommand extends BaseCommand {
 				.setDescription('The user to perform the action on')
 				.setRequired(false),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
-
 		const action = interaction.options.getString('action');
 		const targetUser = interaction.options.getUser('user');
 		const author = interaction.user;
-
-		if (!helpers.fun.constants.VALID_ACTIONS.includes(action)) {
+		if (!constantsHelper.VALID_ACTIONS.includes(action)) {
 			return interaction.reply({
 				content: await t(interaction, 'fun.act.errors.invalid_action'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		const apis = [
 			async () =>
 				(await axios.get(`https://api.waifu.pics/sfw/${action}`)).data?.url,
@@ -83,7 +142,6 @@ class ActCommand extends BaseCommand {
 				(await axios.get(`https://nekos.best/api/v2/${action}`)).data
 					?.results?.[0]?.url,
 		];
-
 		let gifUrl;
 		for (const fetchApi of apis) {
 			try {
@@ -91,11 +149,9 @@ class ActCommand extends BaseCommand {
 				if (gifUrl) break;
 			} catch (_e) {}
 		}
-
 		if (!gifUrl) {
 			throw new Error('No GIF URL received from API');
 		}
-
 		let actionText;
 		if (targetUser) {
 			if (targetUser.id === author.id) {
@@ -118,7 +174,6 @@ class ActCommand extends BaseCommand {
 				user: author.toString(),
 			});
 		}
-
 		const actionContainer = new ContainerBuilder()
 			.setAccentColor(
 				helpers.color.convertColor(kythiaConfig.bot.color, {
@@ -149,12 +204,10 @@ class ActCommand extends BaseCommand {
 					}),
 				),
 			);
-
 		await interaction.reply({
 			components: [actionContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = ActCommand;

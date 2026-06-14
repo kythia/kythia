@@ -7,29 +7,23 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const shardsuiHelper = require('../../../helpers/shards-ui');
 
 // Helpers extracted to addons/core/helpers/shards-ui.js
 
 class ShardsCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('shards')
 			.setDescription('🧩 List all bot shards and their info');
-
 	aliases = ['shards'];
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t } = container;
-
 		await interaction.deferReply();
-
 		let shards = [];
-
 		if (interaction.client.shard) {
 			const results = await interaction.client.shard.broadcastEval((c) => ({
 				id: c.shard.ids[0],
@@ -57,40 +51,43 @@ class ShardsCommand extends BaseCommand {
 
 		// Sort by ID ascending
 		shards.sort((a, b) => a.id - b.id);
-
 		const totalShards = shards.length;
 		let currentPage = 1;
-
 		if (totalShards === 0) {
-			const { containerStr } = await container.helpers.core[
-				'shards-ui'
-			].generateShardsContainer(interaction, 1, [], 0, true);
+			const { containerStr } = await shardsuiHelper.generateShardsContainer(
+				interaction,
+				1,
+				[],
+				0,
+				true,
+			);
 			return interaction.editReply({
 				components: [containerStr],
 				flags: MessageFlags.IsComponentsV2,
-				allowedMentions: { parse: [] },
+				allowedMentions: {
+					parse: [],
+				},
 			});
 		}
-
 		const { containerStr: initContainer, totalPages: initPages } =
-			await container.helpers.core['shards-ui'].generateShardsContainer(
+			await shardsuiHelper.generateShardsContainer(
 				interaction,
 				currentPage,
 				shards,
 				totalShards,
 			);
-
 		const message = await interaction.editReply({
 			components: [initContainer],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
-			allowedMentions: { parse: [] },
+			allowedMentions: {
+				parse: [],
+			},
 		});
-
 		if (initPages <= 1) return;
-
-		const collector = message.createMessageComponentCollector({ time: 300000 });
-
+		const collector = message.createMessageComponentCollector({
+			time: 300000,
+		});
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -100,7 +97,6 @@ class ShardsCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			if (i.customId === 'kyth_shards_first') {
 				currentPage = 1;
 			} else if (i.customId === 'kyth_shards_prev') {
@@ -110,38 +106,40 @@ class ShardsCommand extends BaseCommand {
 			} else if (i.customId === 'kyth_shards_last') {
 				currentPage = initPages;
 			}
-
-			const { containerStr: newContainer } = await container.helpers.core[
-				'shards-ui'
-			].generateShardsContainer(i, currentPage, shards, totalShards);
-
-			await i.update({
-				components: [newContainer],
-				flags: MessageFlags.IsComponentsV2,
-				allowedMentions: { parse: [] },
-			});
-		});
-
-		collector.on('end', async () => {
-			try {
-				const { containerStr: finalContainer } = await container.helpers.core[
-					'shards-ui'
-				].generateShardsContainer(
-					interaction,
+			const { containerStr: newContainer } =
+				await shardsuiHelper.generateShardsContainer(
+					i,
 					currentPage,
 					shards,
 					totalShards,
-					true,
 				);
-
+			await i.update({
+				components: [newContainer],
+				flags: MessageFlags.IsComponentsV2,
+				allowedMentions: {
+					parse: [],
+				},
+			});
+		});
+		collector.on('end', async () => {
+			try {
+				const { containerStr: finalContainer } =
+					await shardsuiHelper.generateShardsContainer(
+						interaction,
+						currentPage,
+						shards,
+						totalShards,
+						true,
+					);
 				await interaction.editReply({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
-					allowedMentions: { parse: [] },
+					allowedMentions: {
+						parse: [],
+					},
 				});
 			} catch (_e) {}
 		});
 	}
 }
-
 exports.default = ShardsCommand;

@@ -351,6 +351,14 @@
 				"privatejet_vehicle": {
 					"name": "Private Jet",
 					"description": "The ultimate end-game luxury item. Fly anywhere in style."
+				},
+				"policecruiser_item": {
+					"name": "Police Cruiser",
+					"description": "A robust police vehicle used for patrolling and pursuing criminals."
+				},
+				"taser_item": {
+					"name": "Taser",
+					"description": "A non-lethal weapon used by police officers to subdue suspects."
 				}
 			}
 		},

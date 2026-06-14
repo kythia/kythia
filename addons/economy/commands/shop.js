@@ -13,6 +13,7 @@ const {
 const shopData = require('../helpers/items');
 const { toBigIntSafe } = require('../helpers/bigint');
 const { BaseCommand } = require('kythia-core');
+const shopHelper = require('../helpers/shop');
 
 const allItems = Object.values(shopData).flat();
 
@@ -20,22 +21,22 @@ const allItems = Object.values(shopData).flat();
 
 class ShopCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('shop')
 			.setDescription('🛒 Look and buy items from the shop.');
-
 	async execute(interaction) {
-		const { t, kythiaConfig, models, helpers } = interaction.client.container;
+		const { t, kythiaConfig, models } = interaction.client.container;
 		const { KythiaUser, Inventory } = models;
 		const {
 			generateShopComponentRows,
 			generateShopContainer,
 			safeLocaleString,
-		} = helpers.economy.shop;
+		} = shopHelper;
 		await interaction.deferReply();
-		let user = await KythiaUser.getCache({ userId: interaction.user.id });
+		let user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
 			const errShopContainer = new ContainerBuilder()
 				.setAccentColor(
@@ -54,7 +55,6 @@ class ShopCommand extends BaseCommand {
 				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 			});
 		}
-
 		let currentPage = 1;
 		let currentCategory = 'all';
 		const itemsToShow =
@@ -63,7 +63,6 @@ class ShopCommand extends BaseCommand {
 				: (shopData[currentCategory] || []).filter((item) => item.buyable);
 		let totalPages = Math.max(1, Math.ceil(itemsToShow.length / 5));
 		let pageItems = itemsToShow.slice(0, 5);
-
 		const components = await generateShopComponentRows(
 			interaction,
 			currentPage,
@@ -80,15 +79,14 @@ class ShopCommand extends BaseCommand {
 			pageItems,
 			components,
 		);
-
 		const message = await interaction.editReply({
 			components: [shopContainer],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
-
-		const collector = message.createMessageComponentCollector({ time: 300000 });
-
+		const collector = message.createMessageComponentCollector({
+			time: 300000,
+		});
 		collector.on('collect', async (i) => {
 			const { t } = interaction.client.container;
 			if (i.user.id !== interaction.user.id) {
@@ -109,7 +107,6 @@ class ShopCommand extends BaseCommand {
 				});
 			}
 			await i.deferUpdate();
-
 			if (i.customId === 'select_category') {
 				const selected = i.values[0];
 				currentCategory = selected.replace('shop_category_', '');
@@ -134,7 +131,6 @@ class ShopCommand extends BaseCommand {
 			} else if (i.customId === 'buy_item') {
 				const itemId = i.values[0];
 				const selectedItem = allItems.find((item) => item.id === itemId);
-
 				if (!selectedItem) {
 					const errShopContainer = new ContainerBuilder()
 						.setAccentColor(
@@ -152,12 +148,11 @@ class ShopCommand extends BaseCommand {
 						flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 					});
 				}
-
 				const translatedItemName = await t(interaction, selectedItem.nameKey);
 				const itemNameWithEmoji = `${selectedItem.emoji} ${translatedItemName}`;
-
-				user = await KythiaUser.getCache({ userId: interaction.user.id });
-
+				user = await KythiaUser.getCache({
+					userId: interaction.user.id,
+				});
 				if (
 					!user ||
 					typeof user.kythiaCoin !== 'number' ||
@@ -181,11 +176,9 @@ class ShopCommand extends BaseCommand {
 						flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 					});
 				}
-
 				const actualPrice = Math.floor(
 					selectedItem.price * (user.bankType === 'zenith_commerce' ? 0.95 : 1),
 				);
-
 				if (user.kythiaCoin < actualPrice) {
 					const errShopContainer = new ContainerBuilder()
 						.setAccentColor(
@@ -205,19 +198,14 @@ class ShopCommand extends BaseCommand {
 						flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 					});
 				}
-
 				user.kythiaCoin =
 					toBigIntSafe(user.kythiaCoin) - toBigIntSafe(actualPrice);
-
 				user.changed('kythiaCoin', true);
-
 				await user.save();
-
 				await Inventory.create({
 					userId: user.userId,
 					itemName: itemNameWithEmoji,
 				});
-
 				const priceStr = safeLocaleString(actualPrice, '?');
 				const successShopContainer = new ContainerBuilder()
 					.setAccentColor(
@@ -238,7 +226,6 @@ class ShopCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const itemsToShow =
 				currentCategory === 'all'
 					? allItems.filter((item) => item.buyable)
@@ -247,7 +234,6 @@ class ShopCommand extends BaseCommand {
 			currentPage = Math.max(1, Math.min(currentPage, totalPages));
 			const startIndex = (currentPage - 1) * 5;
 			pageItems = itemsToShow.slice(startIndex, startIndex + 5);
-
 			const newComponents = await generateShopComponentRows(
 				interaction,
 				currentPage,
@@ -258,7 +244,9 @@ class ShopCommand extends BaseCommand {
 			);
 			const { shopContainer: newShopContainer } = await generateShopContainer(
 				interaction,
-				await KythiaUser.getCache({ userId: interaction.user.id }),
+				await KythiaUser.getCache({
+					userId: interaction.user.id,
+				}),
 				currentCategory,
 				currentPage,
 				pageItems,
@@ -269,13 +257,13 @@ class ShopCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		});
-
 		collector.on('end', async () => {
 			try {
-				await interaction.editReply({ components: [] });
+				await interaction.editReply({
+					components: [],
+				});
 			} catch {}
 		});
 	}
 }
-
 exports.default = ShopCommand;

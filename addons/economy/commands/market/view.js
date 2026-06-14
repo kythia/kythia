@@ -31,14 +31,13 @@ const {
 } = require('../../helpers/stock');
 const { formatPoolStats, getSpotPrice } = require('../../helpers/kyth-amm');
 const { Op } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
+const marketuiHelper = require('../../helpers/market-ui');
 
 // Helpers extracted to addons/economy/helpers/market-ui.js
 
 class ViewCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('view')
@@ -58,33 +57,48 @@ class ViewCommand extends BaseCommand {
 					.setDescription('The time range for the chart (default: 7 Days)')
 					.setRequired(false)
 					.addChoices(
-						{ name: '1 Day', value: '1' },
-						{ name: '7 Days', value: '7' },
-						{ name: '14 Days', value: '14' },
-						{ name: '30 Days', value: '30' },
-						{ name: '90 Days', value: '90' },
-						{ name: '365 Days', value: '365' },
+						{
+							name: '1 Day',
+							value: '1',
+						},
+						{
+							name: '7 Days',
+							value: '7',
+						},
+						{
+							name: '14 Days',
+							value: '14',
+						},
+						{
+							name: '30 Days',
+							value: '30',
+						},
+						{
+							name: '90 Days',
+							value: '90',
+						},
+						{
+							name: '365 Days',
+							value: '365',
+						},
 					),
 			);
-
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused().toLowerCase();
 		const combined = [
 			...ASSET_IDS.map((id) => id.toUpperCase()),
 			...TOP_STOCKS,
 		];
-
 		const filtered = combined.filter((choice) =>
 			choice.toLowerCase().includes(focusedValue),
 		);
-
 		await interaction.respond(
-			filtered
-				.slice(0, 25)
-				.map((choice) => ({ name: choice, value: choice.toLowerCase() })),
+			filtered.slice(0, 25).map((choice) => ({
+				name: choice,
+				value: choice.toLowerCase(),
+			})),
 		);
 	}
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
@@ -92,10 +106,10 @@ class ViewCommand extends BaseCommand {
 			models;
 		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
-
 		await interaction.deferReply();
-
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
 			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
 			const components = await simpleContainer(interaction, msg, {
@@ -106,7 +120,6 @@ class ViewCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const assetId = interaction.options.getString('asset');
 		const timeframe = interaction.options.getString('timeframe') || '7';
 		const files = [];
@@ -114,31 +127,37 @@ class ViewCommand extends BaseCommand {
 		// ─── KYTH AMM View ─────────────────────────────────────────────────────────
 		if (assetId === KYTH_ASSET_ID) {
 			const pool = await KythLiquidityPool.getCache(
-				{ id: 1 },
-				{ noCache: true },
+				{
+					id: 1,
+				},
+				{
+					noCache: true,
+				},
 			);
 			const userKyth = Number(user.kythHolding) || 0;
 			const userStaked = Number(user.kythStaked) || 0;
-
 			if (!pool) {
 				const components = await simpleContainer(
 					interaction,
 					'## ❌ KYTH Pool Not Found\nThe AMM has not been initialized.',
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const stats = formatPoolStats(pool);
 			const spotPrice = getSpotPrice(pool);
 
 			// Recent trades for 24h change simulation
 			const recentTrades =
 				(await MarketTransaction.getAllCache({
-					where: { assetId: 'kyth' },
+					where: {
+						assetId: 'kyth',
+					},
 					order: [['createdAt', 'DESC']],
 					limit: 50,
 				})) ?? [];
@@ -155,32 +174,29 @@ class ViewCommand extends BaseCommand {
 				parseFloat(stats.kDriftPct) > 0.1
 					? `\n> ⚠️ **K Drift:** ${stats.kDriftPct}% (admin recalc recommended)`
 					: '';
-
 			const dataPoints = [];
 			const daysNum = parseInt(timeframe, 10) || 7;
 			const startDate = new Date();
 			startDate.setDate(startDate.getDate() - daysNum);
-
 			const allTrades = await MarketTransaction.getAllCache({
 				where: {
 					assetId: 'kyth',
-					createdAt: { [Op.gte]: startDate },
+					createdAt: {
+						[Op.gte]: startDate,
+					},
 				},
 				order: [['createdAt', 'ASC']],
 			});
-
 			if (allTrades.length > 0) {
 				let binSizeMs = 1000 * 60 * 60 * 24;
 				if (daysNum === 1) binSizeMs = 1000 * 60 * 30;
 				else if (daysNum <= 14) binSizeMs = 1000 * 60 * 60 * 4;
 				else if (daysNum === 365) binSizeMs = 1000 * 60 * 60 * 24 * 4;
-
 				const firstDateVal =
 					allTrades[0].createdAt || allTrades[0].created_at || new Date();
 				let currentBinStart =
 					Math.floor(new Date(firstDateVal).getTime() / binSizeMs) * binSizeMs;
 				let currentBin = [];
-
 				for (const trade of allTrades) {
 					const tradeDateVal =
 						trade.createdAt || trade.created_at || new Date();
@@ -211,7 +227,6 @@ class ViewCommand extends BaseCommand {
 					});
 				}
 			}
-
 			let mediaUrl = null;
 			if (dataPoints.length > 0) {
 				const chartBuffer = await renderChartFromData(
@@ -227,7 +242,6 @@ class ViewCommand extends BaseCommand {
 					mediaUrl = 'attachment://kyth-chart.png';
 				}
 			}
-
 			const description = [
 				`## 💎 KYTH Coin — AMM Market Data`,
 				`*Powered by Kythia's on-chain Automated Market Maker (X×Y=K)*`,
@@ -252,18 +266,23 @@ class ViewCommand extends BaseCommand {
 				`\`\`\``,
 				``,
 				`**💎 Your KYTH**`,
-				`Wallet: **${userKyth.toFixed(6)} KYTH** ≈ 🪙 ${(userKyth * spotPrice).toLocaleString(undefined, { maximumFractionDigits: 2 })} Coin`,
+				`Wallet: **${userKyth.toFixed(6)} KYTH** ≈ 🪙 ${(
+					userKyth * spotPrice
+				).toLocaleString(undefined, {
+					maximumFractionDigits: 2,
+				})} Coin`,
 				`Staked: **${userStaked.toFixed(6)} KYTH**${kDriftWarning}`,
 			].join('\n');
-
 			const viewContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(description),
 				);
-
 			if (mediaUrl) {
 				viewContainer
 					.addSeparatorComponents(
@@ -277,7 +296,6 @@ class ViewCommand extends BaseCommand {
 						]),
 					);
 			}
-
 			viewContainer
 				.addSeparatorComponents(
 					new SeparatorBuilder()
@@ -291,50 +309,34 @@ class ViewCommand extends BaseCommand {
 						}),
 					),
 				);
-
 			return interaction.editReply({
 				components: [viewContainer],
 				files: files,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const marketData = await getMarketData();
-
 		if (assetId) {
 			const isCrypto = ASSET_IDS.includes(assetId);
 			// const isStock = !isCrypto;
 
 			let data, price, percent, emoji, assetName;
-
 			if (isCrypto) {
 				data = marketData[assetId];
 				if (!data)
-					return helpers.economy['market-ui'].assetNotFound(
-						interaction,
-						assetId,
-						t,
-						helpers,
-					);
+					return marketuiHelper.assetNotFound(interaction, assetId, t, helpers);
 				price = data.usd;
 				percent = data.usd_24h_change;
 				assetName = assetId.toUpperCase();
 			} else {
 				data = await getStockData(assetId);
 				if (!data)
-					return helpers.economy['market-ui'].assetNotFound(
-						interaction,
-						assetId,
-						t,
-						helpers,
-					);
+					return marketuiHelper.assetNotFound(interaction, assetId, t, helpers);
 				price = data.price;
 				percent = data.changePercent;
 				assetName = data.symbol;
 			}
-
-			emoji = helpers.economy['market-ui'].getChangeEmoji(percent);
-
+			emoji = marketuiHelper.getChangeEmoji(percent);
 			let description = `## ${await t(
 				interaction,
 				'economy.market.view.chart.title',
@@ -343,10 +345,14 @@ class ViewCommand extends BaseCommand {
 					timeframe: timeframe,
 				},
 			)}\n\n`;
-
-			description += `**${await t(interaction, 'economy.market.view.price.label')}:** $${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n`;
+			description += `**${await t(interaction, 'economy.market.view.price.label')}:** $${price.toLocaleString(
+				'en-US',
+				{
+					minimumFractionDigits: 2,
+					maximumFractionDigits: 2,
+				},
+			)}\n`;
 			description += `**${await t(interaction, 'economy.market.view.24h.change.label')}:** ${emoji} ${percent.toFixed(2)}%\n`;
-
 			const openOrders = await MarketOrder.getAllCache({
 				where: {
 					userId: interaction.user.id,
@@ -357,7 +363,6 @@ class ViewCommand extends BaseCommand {
 					`MarketOrder:open:byUser:${interaction.user.id}:byAsset:${assetId}`,
 				],
 			});
-
 			if (openOrders.length > 0) {
 				const orderSummary = openOrders
 					.map((order) => {
@@ -366,11 +371,9 @@ class ViewCommand extends BaseCommand {
 					.join('\n');
 				description += `\n**${await t(interaction, 'economy.market.view.open.orders.label')}:**\n${orderSummary}`;
 			}
-
 			const chartBuffer = isCrypto
 				? await getChartBuffer(kythiaConfig, assetId, timeframe)
 				: await getStockChartBuffer(kythiaConfig, assetId, timeframe);
-
 			let mediaUrl = null;
 			if (chartBuffer) {
 				const attachment = new AttachmentBuilder(chartBuffer, {
@@ -379,15 +382,16 @@ class ViewCommand extends BaseCommand {
 				files.push(attachment);
 				mediaUrl = 'attachment://market-chart.png';
 			}
-
 			const viewContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(description),
 				);
-
 			if (mediaUrl) {
 				viewContainer
 					.addSeparatorComponents(
@@ -401,7 +405,6 @@ class ViewCommand extends BaseCommand {
 						]),
 					);
 			}
-
 			viewContainer
 				.addSeparatorComponents(
 					new SeparatorBuilder()
@@ -415,7 +418,6 @@ class ViewCommand extends BaseCommand {
 						}),
 					),
 				);
-
 			await interaction.editReply({
 				components: [viewContainer],
 				files: files,
@@ -434,12 +436,10 @@ class ViewCommand extends BaseCommand {
 				})}`.padEnd(15);
 				const changeVal = data.usd_24h_change || 0;
 				const percent = changeVal.toFixed(2);
-				const emoji = helpers.economy['market-ui'].getChangeEmoji(changeVal);
+				const emoji = marketuiHelper.getChangeEmoji(changeVal);
 				const change = `${emoji} ${percent}%`;
-
 				return `${symbol}| ${price}| ${change}`;
 			});
-
 			const topStocksData = await getTopStocksData();
 			const stockRows = TOP_STOCKS.map((id) => {
 				const data = topStocksData[id];
@@ -451,17 +451,12 @@ class ViewCommand extends BaseCommand {
 				})}`.padEnd(15);
 				const changeVal = data.changePercent || 0;
 				const percent = changeVal.toFixed(2);
-				const emoji = helpers.economy['market-ui'].getChangeEmoji(changeVal);
+				const emoji = marketuiHelper.getChangeEmoji(changeVal);
 				const change = `${emoji} ${percent}%`;
-
 				return `${symbol}| ${price}| ${change}`;
 			}).filter(Boolean);
-
-			const cryptoTable =
-				helpers.economy['market-ui'].formatMarketTable(assetRows);
-			const stockTable =
-				helpers.economy['market-ui'].formatMarketTable(stockRows);
-
+			const cryptoTable = marketuiHelper.formatMarketTable(assetRows);
+			const stockTable = marketuiHelper.formatMarketTable(stockRows);
 			const msg =
 				`## ${await t(interaction, 'economy.market.view.all.title')}\n` +
 				`**Top Crypto**\n${cryptoTable}\n` +
@@ -469,7 +464,6 @@ class ViewCommand extends BaseCommand {
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
-
 			await interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -477,5 +471,4 @@ class ViewCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = ViewCommand;

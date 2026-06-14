@@ -7,36 +7,34 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const factsuiHelper = require('../../helpers/facts-ui');
 
 // Helpers extracted to addons/ai/helpers/facts-ui.js
 
 class FactsCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('facts')
 			.setDescription('View all facts/memories AI has learned about you');
-
 	async execute(interaction) {
 		const container = this.container;
-		const { t, models, helpers } = container;
+		const { t, models } = container;
 		const { UserFact } = models;
-		const { generateFactsContainer } = helpers.ai['facts-ui'];
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		const { generateFactsContainer } = factsuiHelper;
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const allFacts = await UserFact.getAllCache({
-			where: { userId: interaction.user.id },
+			where: {
+				userId: interaction.user.id,
+			},
 			order: [['createdAt', 'DESC']],
 			cacheTags: [`UserFact:byUser:${interaction.user.id}`],
 		});
-
 		const totalFacts = allFacts.length;
 		let currentPage = 1;
-
 		if (totalFacts === 0) {
 			const { factsContainer } = await generateFactsContainer(
 				interaction,
@@ -50,24 +48,21 @@ class FactsCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const { factsContainer, totalPages } = await generateFactsContainer(
 			interaction,
 			currentPage,
 			allFacts,
 			totalFacts,
 		);
-
 		const message = await interaction.editReply({
 			components: [factsContainer],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
-
 		if (totalPages <= 1) return;
-
-		const collector = message.createMessageComponentCollector({ time: 300000 });
-
+		const collector = message.createMessageComponentCollector({
+			time: 300000,
+		});
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -75,7 +70,6 @@ class FactsCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			if (i.customId === 'ai_facts_first') {
 				currentPage = 1;
 			} else if (i.customId === 'ai_facts_prev') {
@@ -85,16 +79,13 @@ class FactsCommand extends BaseCommand {
 			} else if (i.customId === 'ai_facts_last') {
 				currentPage = totalPages;
 			}
-
 			const { factsContainer: newFactsContainer } =
 				await generateFactsContainer(i, currentPage, allFacts, totalFacts);
-
 			await i.update({
 				components: [newFactsContainer],
 				flags: MessageFlags.IsComponentsV2,
 			});
 		});
-
 		collector.on('end', async () => {
 			try {
 				const { factsContainer: finalContainer } = await generateFactsContainer(
@@ -104,7 +95,6 @@ class FactsCommand extends BaseCommand {
 					totalFacts,
 					true,
 				);
-
 				await message.edit({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
@@ -113,5 +103,4 @@ class FactsCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = FactsCommand;

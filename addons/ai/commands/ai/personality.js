@@ -9,6 +9,7 @@
 const { MessageFlags } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
+const constantsHelper = require('../../helpers/constants');
 
 // PERSONALITIES extracted to addons/ai/helpers/constants.js
 
@@ -26,12 +27,12 @@ class PersonalityCommand extends BaseCommand {
 					.setDescription('Choose conversation style')
 					.setRequired(true)
 					.addChoices(
-						...Object.entries(
-							require('../../helpers/constants').PERSONALITIES,
-						).map(([key, value]) => ({
-							name: `${value.description}`,
-							value: key,
-						})),
+						...Object.entries(constantsHelper.PERSONALITIES).map(
+							([key, value]) => ({
+								name: `${value.description}`,
+								value: key,
+							}),
+						),
 					),
 			);
 
@@ -45,8 +46,8 @@ class PersonalityCommand extends BaseCommand {
 
 		const personality = interaction.options.getString('style') || 'default';
 		const personalityData =
-			helpers.ai.constants.PERSONALITIES[personality] ||
-			helpers.ai.constants.PERSONALITIES.default;
+			constantsHelper.PERSONALITIES[personality] ||
+			constantsHelper.PERSONALITIES.default;
 
 		// Get or create user
 		const [user] = await KythiaUser.findOrCreateWithCache({

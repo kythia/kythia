@@ -15,8 +15,8 @@ const {
 	ContainerBuilder,
 	TextDisplayBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const testallmockHelper = require('../../helpers/testall-mock');
 
 // Constants extracted to addons/core/helpers/testall-mock.js
 
@@ -29,39 +29,34 @@ class TestallCommand extends BaseCommand {
 			'🛠️ Developer Tool: Test all registered commands (DRY RUN-ish).',
 		)
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
-
 	ownerOnly = true;
 	mainGuildOnly = true;
-
 	async execute(interaction) {
 		const container = this.container;
 		const { logger, helpers, kythiaConfig: cfg } = container;
 
 		// Acknowledge immediately so the interaction token stays alive
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const results = {
 			success: [],
 			failed: [],
 			skipped: [],
 		};
-
 		const schema = interaction.client.applicationCommandsData;
 		if (!schema || schema.length === 0) {
 			return interaction.editReply('❌ No command schema found to test.');
 		}
-
 		let totalCommands = 0;
 		// Count all testable endpoints
 		const countEndpoints = (cmd) => {
 			if (cmd.type === 2 || cmd.type === 3) return 1; // context menu
 			if (!cmd.options || cmd.options.length === 0) return 1;
-
 			const hasSubcommands = cmd.options.some(
 				(opt) => opt.type === 1 || opt.type === 2,
 			);
 			if (!hasSubcommands) return 1;
-
 			let count = 0;
 			for (const opt of cmd.options) {
 				if (opt.type === 1) count++; // subcommand
@@ -72,7 +67,6 @@ class TestallCommand extends BaseCommand {
 			}
 			return count;
 		};
-
 		totalCommands = schema.reduce((acc, cmd) => acc + countEndpoints(cmd), 0);
 		let processed = 0;
 
@@ -89,7 +83,6 @@ class TestallCommand extends BaseCommand {
 				return res;
 			};
 		}
-
 		await interaction.editReply(
 			`🔄 Starting test of ${totalCommands} commands...`,
 		);
@@ -102,13 +95,11 @@ class TestallCommand extends BaseCommand {
 			subcommandName = null,
 		) => {
 			processed++;
-
 			const fullPath = [rootName, groupName, subcommandName]
 				.filter(Boolean)
 				.join(' ');
-
 			if (
-				helpers.core.BLACKLIST_COMMANDS.some((blacklisted) =>
+				testallmockHelper.BLACKLIST_COMMANDS.some((blacklisted) =>
 					fullPath.startsWith(blacklisted),
 				)
 			) {
@@ -118,11 +109,9 @@ class TestallCommand extends BaseCommand {
 
 			// Retrieve the actual command handler from the client collection
 			let commandModule = interaction.client.commands.get(fullPath);
-
 			if (!commandModule && (groupName || subcommandName)) {
 				commandModule = interaction.client.commands.get(rootName);
 			}
-
 			if (!commandModule?.execute) {
 				results.skipped.push(`${fullPath} (no handler/execute)`);
 				return;
@@ -135,7 +124,6 @@ class TestallCommand extends BaseCommand {
 					const optName = opt.name;
 					const optType = opt.type;
 					const guild = interaction.guild;
-
 					if (opt.choices && opt.choices.length > 0) {
 						optionsData[optName] = opt.choices[0].value;
 					} else if (optType === ApplicationCommandOptionType.Role) {
@@ -180,41 +168,43 @@ class TestallCommand extends BaseCommand {
 					}
 				}
 			}
-
 			try {
-				const mock = helpers.core.createForwardingMockInteraction(
+				const mock = testallmockHelper.createForwardingMockInteraction(
 					interaction,
 					rootName,
 					optionsData,
 					groupName,
 					subcommandName,
 				);
-				logger.info(`🧪 Testing command: ${fullPath}`, { label: 'core' });
-
+				logger.info(`🧪 Testing command: ${fullPath}`, {
+					label: 'core',
+				});
 				await commandModule.execute(mock, container);
-
 				if (mock._hasReplied() || mock._isDeferred()) {
 					results.success.push(fullPath);
 				} else {
-					results.failed.push({ name: fullPath, reason: 'no reply' });
+					results.failed.push({
+						name: fullPath,
+						reason: 'no reply',
+					});
 				}
 			} catch (err) {
 				logger.error(`Test failed for ${fullPath}: ${err.message || err}`, {
 					label: 'testall',
 				});
-				results.failed.push({ name: fullPath, reason: err.message });
+				results.failed.push({
+					name: fullPath,
+					reason: err.message,
+				});
 			}
-
 			await new Promise((r) => setTimeout(r, 100));
 		};
-
 		for (const cmd of schema) {
 			// Traverse context menus and simple slash commands
 			if (cmd.type === 2 || cmd.type === 3) {
 				await testCommandNode(cmd, cmd.name);
 				continue;
 			}
-
 			const hasSubcommands = cmd.options?.some(
 				(opt) => opt.type === 1 || opt.type === 2,
 			);
@@ -284,7 +274,6 @@ class TestallCommand extends BaseCommand {
 				);
 			}
 		};
-
 		const successRate =
 			totalCommands > 0
 				? Math.round(
@@ -317,7 +306,6 @@ class TestallCommand extends BaseCommand {
 			),
 		);
 		await sendContainer(successHeaderContainer);
-
 		for (const line of chunk(results.success)) {
 			const successContainer = new ContainerBuilder().setAccentColor(
 				accentColor,
@@ -363,7 +351,6 @@ class TestallCommand extends BaseCommand {
 				),
 			);
 			await sendContainer(headerContainer);
-
 			for (const chunk of failedChunks) {
 				const failedContainer = new ContainerBuilder().setAccentColor(
 					accentColor,
@@ -386,7 +373,6 @@ class TestallCommand extends BaseCommand {
 				),
 			);
 			await sendContainer(skippedHeaderContainer);
-
 			for (const line of chunk(results.skipped)) {
 				const skippedContainer = new ContainerBuilder().setAccentColor(
 					accentColor,
@@ -406,9 +392,10 @@ class TestallCommand extends BaseCommand {
 			),
 		);
 		await sendContainer(footerContainer);
-
 		await interaction
-			.editReply({ content: '✅ Done! Results posted above.' })
+			.editReply({
+				content: '✅ Done! Results posted above.',
+			})
 			.catch((err) =>
 				logger.warn(`testall editReply failed: ${err.message || err}`, {
 					label: 'core',
@@ -416,5 +403,4 @@ class TestallCommand extends BaseCommand {
 			);
 	}
 }
-
 exports.default = TestallCommand;

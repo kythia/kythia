@@ -8,45 +8,41 @@
 
 const { MessageFlags } = require('discord.js');
 const { Op } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
+const premiumlistuiHelper = require('../../../../helpers/premium-list-ui');
 
 // Helpers extracted to addons/core/helpers/premium-list-ui.js
 
 class ListCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand.setName('list').setDescription('View list of premium users');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models } = container;
 		const { KythiaUser } = models;
-
 		await interaction.deferReply();
-
 		const now = new Date();
 		const allPremiumUsers = await KythiaUser.getAllCache({
 			where: {
 				isPremium: true,
-				premiumExpiresAt: { [Op.gt]: now },
+				premiumExpiresAt: {
+					[Op.gt]: now,
+				},
 			},
 			order: [['premiumExpiresAt', 'ASC']],
 			cacheTags: ['KythiaUser:premium:list'],
 		});
-
 		const totalUsers = allPremiumUsers.length;
 		let currentPage = 1;
-
 		if (totalUsers === 0) {
-			const { premiumListContainer } = await container.helpers.core[
-				'premium-list-ui'
-			].generatePremiumListContainer(
-				interaction,
-				1,
-				[],
-				0,
-				/*navDisabled*/ true,
-			);
+			const { premiumListContainer } =
+				await premiumlistuiHelper.generatePremiumListContainer(
+					interaction,
+					1,
+					[],
+					0,
+					/*navDisabled*/ true,
+				);
 			return interaction.editReply({
 				components: [premiumListContainer],
 				flags: MessageFlags.IsComponentsV2,
@@ -55,16 +51,13 @@ class ListCommand extends BaseCommand {
 				},
 			});
 		}
-
-		const { premiumListContainer, totalPages } = await container.helpers.core[
-			'premium-list-ui'
-		].generatePremiumListContainer(
-			interaction,
-			currentPage,
-			allPremiumUsers,
-			totalUsers,
-		);
-
+		const { premiumListContainer, totalPages } =
+			await premiumlistuiHelper.generatePremiumListContainer(
+				interaction,
+				currentPage,
+				allPremiumUsers,
+				totalUsers,
+			);
 		const message = await interaction.editReply({
 			components: [premiumListContainer],
 			flags: MessageFlags.IsComponentsV2,
@@ -73,11 +66,10 @@ class ListCommand extends BaseCommand {
 				parse: [],
 			},
 		});
-
 		if (totalPages <= 1) return;
-
-		const collector = message.createMessageComponentCollector({ time: 300000 });
-
+		const collector = message.createMessageComponentCollector({
+			time: 300000,
+		});
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -85,7 +77,6 @@ class ListCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			if (i.customId === 'premium_list_first') {
 				currentPage = 1;
 			} else if (i.customId === 'premium_list_prev') {
@@ -95,36 +86,28 @@ class ListCommand extends BaseCommand {
 			} else if (i.customId === 'premium_list_last') {
 				currentPage = totalPages;
 			}
-
 			const { premiumListContainer: newPremiumListContainer } =
-				await container.helpers.core[
-					'premium-list-ui'
-				].generatePremiumListContainer(
+				await premiumlistuiHelper.generatePremiumListContainer(
 					i,
 					currentPage,
 					allPremiumUsers,
 					totalUsers,
 				);
-
 			await i.update({
 				components: [newPremiumListContainer],
 				flags: MessageFlags.IsComponentsV2,
 			});
 		});
-
 		collector.on('end', async () => {
 			try {
 				const { premiumListContainer: finalContainer } =
-					await container.helpers.core[
-						'premium-list-ui'
-					].generatePremiumListContainer(
+					await premiumlistuiHelper.generatePremiumListContainer(
 						interaction,
 						currentPage,
 						allPremiumUsers,
 						totalUsers,
 						true,
 					);
-
 				await message.edit({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
@@ -133,5 +116,4 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ListCommand;

@@ -8,21 +8,17 @@
 
 const {
 	MessageFlags,
+	SeparatorBuilder,
 	ContainerBuilder,
 	TextDisplayBuilder,
-	SeparatorBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
-const achievementDefs = require('../../helpers/achievements');
-
 const { BaseCommand } = require('kythia-core');
-
-// Constants extracted to addons/activity/helpers/achievement-ui.js
+const achievementDefs = require('../../helpers/achievements');
+const achievementuiHelper = require('../../helpers/achievement-ui');
 
 class ListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
@@ -33,15 +29,42 @@ class ListCommand extends BaseCommand {
 					.setDescription('Filter by category.')
 					.setRequired(false)
 					.addChoices(
-						{ name: '💬 Messages (All-Time)', value: 'messages' },
-						{ name: '📅 Messages (Daily)', value: 'messages_daily' },
-						{ name: '📆 Messages (Weekly)', value: 'messages_weekly' },
-						{ name: '🎙️ Voice Hours', value: 'voice' },
-						{ name: '🔔 Voice Joins', value: 'voice_joins' },
-						{ name: '😄 Reactions', value: 'reactions' },
-						{ name: '📅 Server Age', value: 'server_age' },
-						{ name: '🏅 Collectors', value: 'collector' },
-						{ name: '⭐ Special', value: 'special' },
+						{
+							name: '💬 Messages (All-Time)',
+							value: 'messages',
+						},
+						{
+							name: '📅 Messages (Daily)',
+							value: 'messages_daily',
+						},
+						{
+							name: '📆 Messages (Weekly)',
+							value: 'messages_weekly',
+						},
+						{
+							name: '🎙️ Voice Hours',
+							value: 'voice',
+						},
+						{
+							name: '🔔 Voice Joins',
+							value: 'voice_joins',
+						},
+						{
+							name: '😄 Reactions',
+							value: 'reactions',
+						},
+						{
+							name: '📅 Server Age',
+							value: 'server_age',
+						},
+						{
+							name: '🏅 Collectors',
+							value: 'collector',
+						},
+						{
+							name: '⭐ Special',
+							value: 'special',
+						},
 					),
 			)
 			.addUserOption((option) =>
@@ -49,15 +72,12 @@ class ListCommand extends BaseCommand {
 					.setName('user')
 					.setDescription('The user to check. Defaults to yourself.'),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, kythiaConfig, helpers } = container;
 		const { UserAchievement } = models;
 		const { convertColor } = helpers.color;
-
 		await interaction.deferReply();
-
 		const targetUser = interaction.options.getUser('user') || interaction.user;
 		const guildId = interaction.guild.id;
 		const userId = targetUser.id;
@@ -65,7 +85,10 @@ class ListCommand extends BaseCommand {
 
 		// Load unlocked achievement IDs for this user
 		const unlockedRows = await UserAchievement.getAllCache({
-			where: { guildId, userId },
+			where: {
+				guildId,
+				userId,
+			},
 			attributes: ['achievementId'],
 			raw: true,
 		});
@@ -75,7 +98,6 @@ class ListCommand extends BaseCommand {
 		const categories = categoryFilter
 			? [[categoryFilter, achievementDefs[categoryFilter] ?? []]]
 			: Object.entries(achievementDefs);
-
 		const accentColorDecimal = convertColor(
 			kythiaConfig.bot.color || '#5865F2',
 			{
@@ -83,19 +105,14 @@ class ListCommand extends BaseCommand {
 				to: 'decimal',
 			},
 		);
-
 		const lines = [];
-
 		for (const [catKey, achievements] of categories) {
 			if (!achievements || achievements.length === 0) continue;
-			const label =
-				helpers.activity['achievement-ui'].CATEGORY_LABELS[catKey] ?? catKey;
+			const label = achievementuiHelper.CATEGORY_LABELS[catKey] ?? catKey;
 			lines.push(`### ${label}`);
-
 			for (const a of achievements) {
 				const unlocked = unlockedSet.has(a.id);
-				const rarityEmoji =
-					helpers.activity['achievement-ui'].RARITY_EMOJI[a.rarity] ?? '⚪';
+				const rarityEmoji = achievementuiHelper.RARITY_EMOJI[a.rarity] ?? '⚪';
 				const status = unlocked ? '✅' : '🔒';
 				const localizedName = await container.t(interaction, a.nameKey);
 				const localizedDesc = await container.t(interaction, a.descKey);
@@ -103,7 +120,6 @@ class ListCommand extends BaseCommand {
 					`${status} ${rarityEmoji} **${localizedName}** — ${localizedDesc}`,
 				);
 			}
-
 			lines.push('');
 		}
 
@@ -111,7 +127,6 @@ class ListCommand extends BaseCommand {
 		const totalCount = Object.values(achievementDefs).flat().length;
 		const unlockedCount = unlockedSet.size;
 		const header = `## 📋 Achievements — ${targetUser.username}\n✅ **${unlockedCount}/${totalCount}** unlocked`;
-
 		const listContainer = new ContainerBuilder()
 			.setAccentColor(accentColorDecimal)
 			.addTextDisplayComponents(new TextDisplayBuilder().setContent(header))
@@ -125,12 +140,10 @@ class ListCommand extends BaseCommand {
 					lines.join('\n').slice(0, 3800) || '_No achievements found._',
 				),
 			);
-
 		await interaction.editReply({
 			components: [listContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = ListCommand;

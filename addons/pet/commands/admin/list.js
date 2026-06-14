@@ -7,63 +7,58 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const uiHelper = require('../../helpers/ui');
 
 // Helpers extracted to addons/pet/helpers/ui.js
 
 class ListCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand.setName('list').setDescription('Show all pets in the system');
-
 	subcommand = true;
 	teamOnly = true;
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { Pet } = models;
-		const { generatePetListContainer } = helpers.pet.ui;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		const { generatePetListContainer } = uiHelper;
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const allPets = await Pet.getAllCache({
 			cacheTags: ['Pet:all'],
 		});
-
 		const totalPets = allPets.length;
 		let currentPage = 1;
-
 		if (totalPets === 0) {
 			const components = await simpleContainer(
 				interaction,
 				`## ${await t(interaction, 'pet.admin.list.list.empty.title')}\n${await t(interaction, 'pet.admin.list.list.empty.desc')}`,
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const { petListContainer, totalPages } = await generatePetListContainer(
 			interaction,
 			currentPage,
 			allPets,
 			totalPets,
 		);
-
 		const message = await interaction.editReply({
 			components: [petListContainer],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
-
 		if (totalPages <= 1) return;
-
-		const collector = message.createMessageComponentCollector({ time: 300000 });
-
+		const collector = message.createMessageComponentCollector({
+			time: 300000,
+		});
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -71,7 +66,6 @@ class ListCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			if (i.customId === 'pets_first') {
 				currentPage = 1;
 			} else if (i.customId === 'pets_prev') {
@@ -81,16 +75,13 @@ class ListCommand extends BaseCommand {
 			} else if (i.customId === 'pets_last') {
 				currentPage = totalPages;
 			}
-
 			const { petListContainer: newPetListContainer } =
 				await generatePetListContainer(i, currentPage, allPets, totalPets);
-
 			await i.update({
 				components: [newPetListContainer],
 				flags: MessageFlags.IsComponentsV2,
 			});
 		});
-
 		collector.on('end', async () => {
 			try {
 				const { petListContainer: finalContainer } =
@@ -101,7 +92,6 @@ class ListCommand extends BaseCommand {
 						totalPets,
 						true,
 					);
-
 				await message.edit({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
@@ -110,5 +100,4 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ListCommand;

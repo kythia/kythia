@@ -14,8 +14,8 @@ const {
 	MessageFlags,
 	SlashCommandBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const rpsHelper = require('../helpers/rps');
 
 // Helpers extracted to addons/fun/helpers/rps.js
 
@@ -29,13 +29,11 @@ class RpsCommand extends BaseCommand {
 				.setDescription('Challenge a friend (leave empty to play vs bot)')
 				.setRequired(false),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
-		const { t, helpers } = container;
-		const rpsHelpers = helpers.fun.rps;
+		const { t } = container;
+		const rpsHelpers = rpsHelper;
 		const { CHOICES, EMOJI } = rpsHelpers;
-
 		const challenger = interaction.user;
 		const opponent = interaction.options.getUser('opponent');
 		const vsBot = !opponent || opponent.bot;
@@ -47,14 +45,12 @@ class RpsCommand extends BaseCommand {
 			const playGame = async (iCtx, isUpdate = false) => {
 				const botChoice = CHOICES[Math.floor(Math.random() * 3)];
 				const title = await t(iCtx, 'fun.rps.title');
-
 				const questionContainer = await rpsHelpers.buildRPSContainer(iCtx, {
 					title,
 					body: await t(iCtx, 'fun.rps.choose'),
 					footer: await t(iCtx, 'fun.rps.footer.play'),
 					row: rpsHelpers.buildChoiceRow(false),
 				});
-
 				let message;
 				if (isUpdate) {
 					await iCtx.update({
@@ -69,7 +65,6 @@ class RpsCommand extends BaseCommand {
 						fetchReply: true,
 					});
 				}
-
 				const collector = message.createMessageComponentCollector({
 					componentType: ComponentType.Button,
 					time: 60_000,
@@ -77,15 +72,12 @@ class RpsCommand extends BaseCommand {
 						i.user.id === challenger.id &&
 						['rps_rock', 'rps_paper', 'rps_scissors'].includes(i.customId),
 				});
-
 				collector.on('collect', async (i) => {
 					const playerChoice = i.customId.replace('rps_', '');
 					const result = rpsHelpers.getResult(playerChoice, botChoice);
 					const botName = interaction.client.user.username;
-
 					let body;
 					let accentColor;
-
 					if (result === 'draw') {
 						body = await t(i, 'fun.rps.result.draw', {
 							choice: `${EMOJI[playerChoice]} **${playerChoice}**`,
@@ -106,7 +98,6 @@ class RpsCommand extends BaseCommand {
 						});
 						accentColor = '#e74c3c';
 					}
-
 					const resultContainer = await rpsHelpers.buildRPSContainer(i, {
 						title: `${title}\n> ${challenger.toString()} ${EMOJI[playerChoice]} vs ${EMOJI[botChoice]} ${botName}`,
 						body,
@@ -114,14 +105,12 @@ class RpsCommand extends BaseCommand {
 						accentColor,
 						row: rpsHelpers.buildRematchRow(await t(i, 'fun.rps.rematch')),
 					});
-
 					await i.update({
 						components: [resultContainer],
 						flags: MessageFlags.IsComponentsV2,
 					});
 					collector.stop('picked');
 				});
-
 				collector.on('end', async (collected, reason) => {
 					if (reason === 'time' && collected.size === 0) {
 						const disabledContainer = await rpsHelpers.buildRPSContainer(
@@ -149,13 +138,11 @@ class RpsCommand extends BaseCommand {
 						i.customId === 'rps_rematch_bot' && i.user.id === challenger.id,
 					time: 300_000,
 				});
-
 				rematchCollector.on('collect', async (i) => {
 					rematchCollector.stop();
 					await playGame(i, true);
 				});
 			};
-
 			return playGame(interaction, false);
 		}
 
@@ -168,21 +155,20 @@ class RpsCommand extends BaseCommand {
 				components: await simpleContainer(
 					interaction,
 					"❌ You can't challenge yourself!",
-					{ color: '#e74c3c' },
+					{
+						color: '#e74c3c',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const title = await t(interaction, 'fun.rps.title');
-
 		const pickRow = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('rps_duel_pick')
 				.setLabel('⚔️ Make Your Pick!')
 				.setStyle(ButtonStyle.Primary),
 		);
-
 		const waitingContainer = await rpsHelpers.buildRPSContainer(interaction, {
 			title: `${title}\n> ⚔️ ${challenger.toString()} vs ${opponent.toString()}`,
 			body: await t(interaction, 'fun.rps.waiting', {
@@ -191,15 +177,12 @@ class RpsCommand extends BaseCommand {
 			footer: await t(interaction, 'fun.rps.footer.play'),
 			row: pickRow,
 		});
-
 		const message = await interaction.reply({
 			components: [waitingContainer],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
-
 		const picks = {};
-
 		const collector = message.createMessageComponentCollector({
 			componentType: ComponentType.Button,
 			time: 60_000,
@@ -207,7 +190,6 @@ class RpsCommand extends BaseCommand {
 				i.customId === 'rps_duel_pick' &&
 				(i.user.id === challenger.id || i.user.id === opponent.id),
 		});
-
 		collector.on('collect', async (i) => {
 			if (picks[i.user.id]) {
 				return i.reply({
@@ -215,7 +197,6 @@ class RpsCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			const epRow = new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
 					.setCustomId('rps_duel_rock')
@@ -230,13 +211,11 @@ class RpsCommand extends BaseCommand {
 					.setLabel('✂️ Scissors')
 					.setStyle(ButtonStyle.Secondary),
 			);
-
 			await i.reply({
 				content: '🤫 Pick your weapon — only you can see this!',
 				components: [epRow],
 				flags: MessageFlags.Ephemeral,
 			});
-
 			const epCollector = i.channel.createMessageComponentCollector({
 				componentType: ComponentType.Button,
 				time: 60_000,
@@ -247,26 +226,21 @@ class RpsCommand extends BaseCommand {
 						b.customId,
 					),
 			});
-
 			epCollector.on('collect', async (b) => {
 				picks[b.user.id] = b.customId.replace('rps_duel_', '');
 				await b.update({
 					content: `✅ Locked in: **${EMOJI[picks[b.user.id]]}** — waiting for the other player!`,
 					components: [],
 				});
-
 				if (picks[challenger.id] && picks[opponent.id]) {
 					collector.stop('both_picked');
 				}
 			});
 		});
-
 		collector.on('end', async (_, reason) => {
 			const cPick = picks[challenger.id];
 			const oPick = picks[opponent.id];
-
 			const headerTitle = `${title}\n> ⚔️ ${challenger.toString()} vs ${opponent.toString()}`;
-
 			if (reason === 'time' && (!cPick || !oPick)) {
 				const missing = !cPick ? challenger.toString() : opponent.toString();
 				const timedOutContainer = await rpsHelpers.buildRPSContainer(
@@ -287,15 +261,12 @@ class RpsCommand extends BaseCommand {
 					})
 					.catch(() => {});
 			}
-
 			const result = rpsHelpers.getResult(cPick, oPick);
 			const revealText =
 				`\n> ${challenger.toString()}: ${EMOJI[cPick]} **${cPick}**` +
 				`\n> ${opponent.toString()}: ${EMOJI[oPick]} **${oPick}**`;
-
 			let body;
 			let accentColor;
-
 			if (result === 'draw') {
 				body = await t(interaction, 'fun.rps.result.draw', {
 					choice: `${EMOJI[cPick]} **${cPick}**`,
@@ -313,14 +284,12 @@ class RpsCommand extends BaseCommand {
 				});
 				accentColor = result === 'win' ? '#2ecc71' : '#e74c3c';
 			}
-
 			const resultContainer = await rpsHelpers.buildRPSContainer(interaction, {
 				title: headerTitle + revealText,
 				body,
 				footer: await t(interaction, 'fun.rps.footer.end'),
 				accentColor,
 			});
-
 			await interaction
 				.editReply({
 					components: [resultContainer],
@@ -330,5 +299,4 @@ class RpsCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = RpsCommand;

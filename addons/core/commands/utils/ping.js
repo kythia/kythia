@@ -14,8 +14,8 @@ const {
 	SlashCommandBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const pingHelper = require('../../helpers/ping');
 
 // Helpers extracted to addons/core/helpers/ping.js
 
@@ -25,17 +25,13 @@ class PingCommand extends BaseCommand {
 		.setDescription(
 			"🔍 Checks the bot's, Discord API's, database and cache/redis connection speed.",
 		);
-
 	aliases = ['p', 'pong', '🏓'];
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
-
 		const start = Date.now();
 		await interaction.deferReply();
-
 		const deferTime = Date.now() - start;
 		const timestampDiff = Math.max(
 			0,
@@ -45,19 +41,18 @@ class PingCommand extends BaseCommand {
 		// If deferTime > 5ms, it's a real REST API call (Slash Command). We use this to bypass Discord's interaction queue delay.
 		// If < 5ms, it was mocked locally (Prefix Command), so we use the standard timestamp diff.
 		const botLatency = deferTime > 5 ? deferTime : timestampDiff;
-
 		const apiLatency = Math.round(interaction.client.ws.ping);
-
 		const [lavalinkNodes, dbPingInfo, redisNodes] = await Promise.all([
-			helpers.core.ping.getLavalinkNodesPings(interaction.client),
-			helpers.core.ping.getDbPing(container),
-			helpers.core.ping.getRedisPings(container),
+			pingHelper.getLavalinkNodesPings(interaction.client),
+			pingHelper.getDbPing(container),
+			pingHelper.getRedisPings(container),
 		]);
-
 		const embedContainer = new ContainerBuilder().setAccentColor(
-			convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+			convertColor(kythiaConfig.bot.color, {
+				from: 'hex',
+				to: 'decimal',
+			}),
 		);
-
 		embedContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
 				await t(interaction, 'core.utils.ping.embed.title'),
@@ -68,7 +63,6 @@ class PingCommand extends BaseCommand {
 				.setSpacing(SeparatorSpacingSize.Small)
 				.setDivider(true),
 		);
-
 		embedContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
 				`**${await t(interaction, 'core.utils.ping.field.bot.latency')}**\n\`\`\`${botLatency}ms\`\`\``,
@@ -86,21 +80,12 @@ class PingCommand extends BaseCommand {
 		);
 		embedContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`**${await t(interaction, 'core.utils.ping.field.db.latency')}**\n\`\`\`${
-					dbPingInfo.status === 'connected'
-						? `${dbPingInfo.ping}ms`
-						: dbPingInfo.status === 'not_configured'
-							? 'Not Configured'
-							: dbPingInfo.status === 'error'
-								? 'Error'
-								: 'Unknown'
-				}\`\`\`` +
+				`**${await t(interaction, 'core.utils.ping.field.db.latency')}**\n\`\`\`${dbPingInfo.status === 'connected' ? `${dbPingInfo.ping}ms` : dbPingInfo.status === 'not_configured' ? 'Not Configured' : dbPingInfo.status === 'error' ? 'Error' : 'Unknown'}\`\`\`` +
 					(dbPingInfo.status === 'error' && dbPingInfo.error
 						? `\n\`\`\`Error: ${dbPingInfo.error}\`\`\``
 						: ''),
 			),
 		);
-
 		if (redisNodes.length > 0) {
 			embedContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
@@ -129,7 +114,6 @@ class PingCommand extends BaseCommand {
 				);
 			}
 		}
-
 		if (lavalinkNodes.length > 0) {
 			embedContainer.addSeparatorComponents(
 				new SeparatorBuilder()
@@ -166,7 +150,6 @@ class PingCommand extends BaseCommand {
 				);
 			}
 		}
-
 		embedContainer.addSeparatorComponents(
 			new SeparatorBuilder()
 				.setSpacing(SeparatorSpacingSize.Small)
@@ -179,12 +162,10 @@ class PingCommand extends BaseCommand {
 				}),
 			),
 		);
-
 		await interaction.editReply({
 			components: [embedContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = PingCommand;

@@ -23,14 +23,12 @@ const {
 	calcMinOut,
 } = require('../../helpers/kyth-amm');
 const { toBigIntSafe } = require('../../helpers/bigint');
-
 const { BaseCommand } = require('kythia-core');
-
 const { SLIPPAGE_TOLERANCE_PCT } = require('../../helpers/constants');
+const kythtradeHelper = require('../../helpers/kyth-trade');
 
 class SellCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('sell')
@@ -53,25 +51,22 @@ class SellCommand extends BaseCommand {
 					.setRequired(true)
 					.setMinValue(0.000001),
 			);
-
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused().toLowerCase();
 		const combined = [
 			...ASSET_IDS.map((id) => id.toUpperCase()),
 			...TOP_STOCKS,
 		];
-
 		const filtered = combined.filter((choice) =>
 			choice.toLowerCase().includes(focusedValue),
 		);
-
 		await interaction.respond(
-			filtered
-				.slice(0, 25)
-				.map((choice) => ({ name: choice, value: choice.toLowerCase() })),
+			filtered.slice(0, 25).map((choice) => ({
+				name: choice,
+				value: choice.toLowerCase(),
+			})),
 		);
 	}
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers, logger } = container;
@@ -82,13 +77,12 @@ class SellCommand extends BaseCommand {
 			KythLiquidityPool,
 		} = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const assetId = interaction.options.getString('asset');
 		const sellQuantity = interaction.options.getNumber('quantity');
-
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
 			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
 			const components = await simpleContainer(interaction, msg, {
@@ -107,23 +101,30 @@ class SellCommand extends BaseCommand {
 				const components = await simpleContainer(
 					interaction,
 					`## ❌ Insufficient KYTH\nYou only have **${userKyth.toFixed(6)} KYTH**. Cannot sell **${sellQuantity.toFixed(6)} KYTH**.`,
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const pool = await KythLiquidityPool.getCache(
-				{ id: 1 },
-				{ noCache: true },
+				{
+					id: 1,
+				},
+				{
+					noCache: true,
+				},
 			);
 			if (!pool) {
 				const components = await simpleContainer(
 					interaction,
 					'## ❌ AMM Unavailable\nThe KYTH liquidity pool is not initialized.',
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -136,21 +137,21 @@ class SellCommand extends BaseCommand {
 				const components = await simpleContainer(
 					interaction,
 					await t(interaction, 'economy.market.sell.error.trading_halted.desc'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const poolSnapshot = {
 				coinReserve: Number(pool.coinReserve),
 				kythReserve: Number(pool.kythReserve),
 				kConstant: Number(pool.kConstant),
 				feeRate: Number(pool.feeRatePct ?? 2) / 100, // Admin-controlled
 			};
-
 			let result;
 			try {
 				result = calcSellOutput(sellQuantity, poolSnapshot);
@@ -161,19 +162,22 @@ class SellCommand extends BaseCommand {
 						interaction,
 						'economy.market.sell.error.invalid_parameters.desc',
 					),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (result.coinOut <= 0) {
 				const components = await simpleContainer(
 					interaction,
 					'## ❌ Insufficient Pool Liquidity\nThe pool does not have enough Coin to fill your sell order.',
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -184,29 +188,32 @@ class SellCommand extends BaseCommand {
 			// For sells, slippage means we want at least minOut Coin
 			const minCoinOut = calcMinOut(result.coinOut, SLIPPAGE_TOLERANCE_PCT);
 			const impactLevel = getImpactLevel(result.priceImpactPct); // negative for sells
-			const impactEmoji = { safe: '🟢', warning: '⚠️', danger: '🚨' }[
-				impactLevel
-			];
-
+			const impactEmoji = {
+				safe: '🟢',
+				warning: '⚠️',
+				danger: '🚨',
+			}[impactLevel];
 			const kythFeeAmt = result.kythFee.toFixed(6);
 			const priceAfter = (
 				result.newCoinReserve / result.newKythReserve
 			).toFixed(6);
-
 			const previewLines = [
 				`## 💰 KYTH Sell Preview`,
 				``,
 				`**You Sell:**  💎 ${sellQuantity.toFixed(6)} KYTH`,
 				`**Protocol Fee (${(result.feeRate * 100).toFixed(1)}%):**  💎 ${kythFeeAmt} KYTH`,
-				`**You Receive:** 🪙 ${result.coinOut.toLocaleString(undefined, { maximumFractionDigits: 2 })} Coin`,
+				`**You Receive:** 🪙 ${result.coinOut.toLocaleString(undefined, {
+					maximumFractionDigits: 2,
+				})} Coin`,
 				``,
 				`**Mid Price:** ${result.midPrice.toFixed(6)} Coin/KYTH`,
 				`**Execution Price:** ${result.executionPrice.toFixed(6)} Coin/KYTH`,
 				`**Price After:** ${priceAfter} Coin/KYTH`,
 				`${impactEmoji} **Price Impact:** ${result.priceImpactPct.toFixed(2)}%`,
-				`**Min. Received:** 🪙 ${minCoinOut.toLocaleString(undefined, { maximumFractionDigits: 2 })} (0.5% slippage tol.)`,
+				`**Min. Received:** 🪙 ${minCoinOut.toLocaleString(undefined, {
+					maximumFractionDigits: 2,
+				})} (0.5% slippage tol.)`,
 			];
-
 			const warningNote = {
 				safe: '',
 				warning:
@@ -215,9 +222,8 @@ class SellCommand extends BaseCommand {
 					'\n\n🚨 **EXTREME DUMP WARNING!** This sell will crash the KYTH price significantly. Are you sure?',
 			}[impactLevel];
 			if (warningNote) previewLines.push(warningNote);
-
 			if (impactLevel === 'safe') {
-				return helpers.economy['kyth-trade'].executeSellKyth({
+				return kythtradeHelper.executeSellKyth({
 					interactionOrI: interaction,
 					t,
 					user,
@@ -228,7 +234,6 @@ class SellCommand extends BaseCommand {
 					logger,
 				});
 			}
-
 			const row = new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
 					.setCustomId('kyth_sell_confirm')
@@ -241,27 +246,26 @@ class SellCommand extends BaseCommand {
 					.setLabel('Cancel')
 					.setStyle(ButtonStyle.Secondary),
 			);
-
 			const components = await simpleContainer(
 				interaction,
 				previewLines.join('\n'),
-				{ color: impactLevel === 'danger' ? 'Red' : 'Yellow' },
+				{
+					color: impactLevel === 'danger' ? 'Red' : 'Yellow',
+				},
 			);
 			const message = await interaction.editReply({
 				components: [...components, row],
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			const filter = (i) => i.user.id === interaction.user.id;
 			const collector = message.createMessageComponentCollector({
 				filter,
 				time: 30_000,
 				max: 1,
 			});
-
 			collector.on('collect', async (i) => {
 				if (i.customId === 'kyth_sell_confirm') {
-					return helpers.economy['kyth-trade'].executeSellKyth({
+					return kythtradeHelper.executeSellKyth({
 						interactionOrI: i,
 						t,
 						user,
@@ -284,13 +288,14 @@ class SellCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			});
-
 			collector.on('end', async (collected) => {
 				if (collected.size === 0) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'economy.market.sell.timeout.desc'),
-						{ color: kythiaConfig.bot.color },
+						{
+							color: kythiaConfig.bot.color,
+						},
 					);
 					await interaction.editReply({
 						components,
@@ -298,7 +303,6 @@ class SellCommand extends BaseCommand {
 					});
 				}
 			});
-
 			return;
 		}
 
@@ -307,12 +311,13 @@ class SellCommand extends BaseCommand {
 			userId: interaction.user.id,
 			assetId,
 		});
-
 		if (!holding || holding.quantity < sellQuantity) {
 			const msg = await t(
 				interaction,
 				'economy.market.sell.insufficient.asset.desc',
-				{ asset: assetId.toUpperCase() },
+				{
+					asset: assetId.toUpperCase(),
+				},
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
@@ -322,10 +327,8 @@ class SellCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const isCrypto = ASSET_IDS.includes(assetId);
 		let currentPrice;
-
 		if (isCrypto) {
 			const marketData = await getMarketData();
 			const assetData = marketData[assetId];
@@ -363,7 +366,6 @@ class SellCommand extends BaseCommand {
 		const grossReceived = sellQuantity * currentPrice;
 		const feeAmount = grossReceived * 0.02;
 		const totalReceived = grossReceived - feeAmount;
-
 		try {
 			const avgBuyPrice = holding.avgBuyPrice;
 			const newQuantity = holding.quantity - sellQuantity;
@@ -373,7 +375,6 @@ class SellCommand extends BaseCommand {
 			} else {
 				await holding.destroy();
 			}
-
 			await MarketTransaction.create({
 				userId: interaction.user.id,
 				assetId,
@@ -381,16 +382,13 @@ class SellCommand extends BaseCommand {
 				quantity: sellQuantity,
 				price: currentPrice,
 			});
-
 			user.kythiaCoin =
 				toBigIntSafe(user.kythiaCoin) + toBigIntSafe(Math.round(totalReceived));
 			user.changed('kythiaCoin', true);
 			await user.save();
-
 			const pnl = (currentPrice - avgBuyPrice) * sellQuantity;
 			const pnlSign = pnl >= 0 ? '+' : '';
 			const pnlEmoji = pnl >= 0 ? '📈' : '📉';
-
 			const msg = `## ${await t(interaction, 'economy.market.sell.success.title')}\n${await t(
 				interaction,
 				'economy.market.sell.success.desc',
@@ -408,7 +406,9 @@ class SellCommand extends BaseCommand {
 					}),
 					pnlEmoji,
 					pnlSign,
-					pnl: pnl.toLocaleString(undefined, { maximumFractionDigits: 2 }),
+					pnl: pnl.toLocaleString(undefined, {
+						maximumFractionDigits: 2,
+					}),
 				},
 			)}`;
 			const components = await simpleContainer(interaction, msg, {
@@ -433,5 +433,4 @@ class SellCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = SellCommand;

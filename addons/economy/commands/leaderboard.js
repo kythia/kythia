@@ -7,25 +7,22 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const leaderboardHelper = require('../helpers/leaderboard');
 
 // Helpers extracted to addons/economy/helpers/leaderboard.js
 
 class LeaderboardCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leaderboard')
 			.setDescription('🏆 View the global economy leaderboard.');
-
 	async execute(interaction) {
 		const container = this.container;
-		const { t, models, helpers } = container;
+		const { t, models } = container;
 		const { KythiaUser } = models;
-		const { generateLeaderboardContainer } = helpers.economy.leaderboard;
-
+		const { generateLeaderboardContainer } = leaderboardHelper;
 		const MAX_USERS = 100;
 		await interaction.deferReply();
 
@@ -38,10 +35,8 @@ class LeaderboardCommand extends BaseCommand {
 			limit: MAX_USERS,
 			cacheTags: ['KythiaUser:leaderboard'],
 		});
-
 		const totalUsers = allUsers.length;
 		let currentPage = 1;
-
 		if (totalUsers === 0) {
 			const { leaderboardContainer } = await generateLeaderboardContainer(
 				interaction,
@@ -55,7 +50,6 @@ class LeaderboardCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const { leaderboardContainer, totalPages } =
 			await generateLeaderboardContainer(
 				interaction,
@@ -63,7 +57,6 @@ class LeaderboardCommand extends BaseCommand {
 				allUsers,
 				totalUsers,
 			);
-
 		const message = await interaction.editReply({
 			components: [leaderboardContainer],
 			flags: MessageFlags.IsComponentsV2,
@@ -72,9 +65,9 @@ class LeaderboardCommand extends BaseCommand {
 
 		// Only add collector if there are multiple pages
 		if (totalPages <= 1) return;
-
-		const collector = message.createMessageComponentCollector({ time: 300000 });
-
+		const collector = message.createMessageComponentCollector({
+			time: 300000,
+		});
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -93,7 +86,6 @@ class LeaderboardCommand extends BaseCommand {
 			} else if (i.customId === 'leaderboard_last') {
 				currentPage = totalPages;
 			}
-
 			const { leaderboardContainer: newLeaderboardContainer } =
 				await generateLeaderboardContainer(
 					i,
@@ -101,13 +93,11 @@ class LeaderboardCommand extends BaseCommand {
 					allUsers,
 					totalUsers,
 				);
-
 			await i.update({
 				components: [newLeaderboardContainer],
 				flags: MessageFlags.IsComponentsV2,
 			});
 		});
-
 		collector.on('end', async () => {
 			try {
 				const { leaderboardContainer: finalContainer } =
@@ -118,7 +108,6 @@ class LeaderboardCommand extends BaseCommand {
 						totalUsers,
 						true,
 					);
-
 				await message.edit({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
@@ -127,5 +116,4 @@ class LeaderboardCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = LeaderboardCommand;

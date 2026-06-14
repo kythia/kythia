@@ -7,44 +7,38 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const listuiHelper = require('../../helpers/list-ui');
 
 // Helpers extracted to addons/ai/helpers/list-ui.js
 
 class ListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
 			.setDescription('View list of AI-enabled channels');
-
 	guildOnly = true;
-
 	async execute(interaction) {
 		const container = this.container;
-		const { t, models, helpers } = container;
+		const { t, models } = container;
 		const { ServerSetting } = models;
-		const { generateAIListContainer } = helpers.ai['list-ui'];
-
+		const { generateAIListContainer } = listuiHelper;
 		await interaction.deferReply();
-
 		const [setting] = await ServerSetting.findOrCreateWithCache({
-			where: { guildId: interaction.guild.id },
+			where: {
+				guildId: interaction.guild.id,
+			},
 			defaults: {
 				guildId: interaction.guild.id,
 				guildName: interaction.guild.name,
 			},
 		});
-
 		const aiChannelIds = Array.isArray(setting?.aiChannelIds)
 			? [...setting.aiChannelIds]
 			: [];
-
 		const totalChannels = aiChannelIds.length;
 		let currentPage = 1;
-
 		if (totalChannels === 0) {
 			const { aiListContainer } = await generateAIListContainer(
 				interaction,
@@ -61,14 +55,12 @@ class ListCommand extends BaseCommand {
 				},
 			});
 		}
-
 		const { aiListContainer, totalPages } = await generateAIListContainer(
 			interaction,
 			currentPage,
 			aiChannelIds,
 			totalChannels,
 		);
-
 		const message = await interaction.editReply({
 			components: [aiListContainer],
 			flags: MessageFlags.IsComponentsV2,
@@ -77,11 +69,10 @@ class ListCommand extends BaseCommand {
 				parse: [],
 			},
 		});
-
 		if (totalPages <= 1) return;
-
-		const collector = message.createMessageComponentCollector({ time: 300000 });
-
+		const collector = message.createMessageComponentCollector({
+			time: 300000,
+		});
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -89,7 +80,6 @@ class ListCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			if (i.customId === 'ai_list_first') {
 				currentPage = 1;
 			} else if (i.customId === 'ai_list_prev') {
@@ -99,7 +89,6 @@ class ListCommand extends BaseCommand {
 			} else if (i.customId === 'ai_list_last') {
 				currentPage = totalPages;
 			}
-
 			const { aiListContainer: newAIListContainer } =
 				await generateAIListContainer(
 					i,
@@ -107,13 +96,11 @@ class ListCommand extends BaseCommand {
 					aiChannelIds,
 					totalChannels,
 				);
-
 			await i.update({
 				components: [newAIListContainer],
 				flags: MessageFlags.IsComponentsV2,
 			});
 		});
-
 		collector.on('end', async () => {
 			try {
 				const { aiListContainer: finalContainer } =
@@ -124,7 +111,6 @@ class ListCommand extends BaseCommand {
 						totalChannels,
 						true,
 					);
-
 				await message.edit({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
@@ -133,5 +119,4 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ListCommand;

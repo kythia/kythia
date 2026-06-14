@@ -10,6 +10,7 @@ const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const axios = require('axios');
 
 const { BaseCommand } = require('kythia-core');
+const cryptoHelper = require('../../helpers/crypto');
 
 class CrackHashCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
@@ -22,7 +23,7 @@ class CrackHashCommand extends BaseCommand {
 				.setName('algorithm')
 				.setDescription('The hash algorithm to lookup')
 				.setRequired(true)
-				.addChoices(...require('../../helpers/crypto').SUPPORTED_HASHES),
+				.addChoices(...cryptoHelper.SUPPORTED_HASHES),
 		)
 		.addStringOption((option) =>
 			option
@@ -60,7 +61,7 @@ class CrackHashCommand extends BaseCommand {
 			});
 		}
 
-		const { SUPPORTED_HASHES } = helpers.core.crypto;
+		const { SUPPORTED_HASHES } = cryptoHelper;
 		const algoObj = SUPPORTED_HASHES.find((a) => a.value === algorithm);
 
 		let resultText = await t(interaction, 'core.tools.crackhash.not.found');

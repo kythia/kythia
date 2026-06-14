@@ -13,8 +13,8 @@ const {
 	ApplicationCommandType,
 	ContextMenuCommandBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const grabHelper = require('../../helpers/grab');
 
 // Helpers extracted to addons/core/helpers/grab.js
 
@@ -64,20 +64,16 @@ class GrabCommand extends BaseCommand {
 				),
 		)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuildExpressions);
-
 	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('Grab Sticker/Emoji')
 		.setType(ApplicationCommandType.Message);
-
 	contextMenuDescription = '🛍️ Grab sticker or emoji from this message.';
 	permissions = PermissionFlagsBits.ManageGuildExpressions;
 	botPermissions = PermissionFlagsBits.ManageGuildExpressions;
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		if (
 			interaction.isChatInputCommand?.() &&
 			interaction.commandName === 'grab'
@@ -92,39 +88,42 @@ class GrabCommand extends BaseCommand {
 						const components = await simpleContainer(
 							interaction,
 							await t(interaction, 'core.utils.grab.sticker.not.found'),
-							{ color: 'Red' },
+							{
+								color: 'Red',
+							},
 						);
 						return interaction.editReply({
 							components,
 							flags: MessageFlags.IsComponentsV2,
 						});
 					}
-
 					if (!interaction.guild?.stickers?.create) {
 						const components = await simpleContainer(
 							interaction,
 							await t(interaction, 'core.utils.grab.no.perm.sticker'),
-							{ color: 'Red' },
+							{
+								color: 'Red',
+							},
 						);
 						return interaction.editReply({
 							components,
 							flags: MessageFlags.IsComponentsV2,
 						});
 					}
-
 					const url = sticker.url || sticker.asset;
 					if (!url) {
 						const components = await simpleContainer(
 							interaction,
 							await t(interaction, 'core.utils.grab.sticker.no.url'),
-							{ color: 'Red' },
+							{
+								color: 'Red',
+							},
 						);
 						return interaction.editReply({
 							components,
 							flags: MessageFlags.IsComponentsV2,
 						});
 					}
-
 					try {
 						const created = await interaction.guild.stickers.create({
 							file: url,
@@ -136,7 +135,9 @@ class GrabCommand extends BaseCommand {
 							await t(interaction, 'core.utils.grab.sticker.success', {
 								name: created.name,
 							}),
-							{ color: 'Green' },
+							{
+								color: 'Green',
+							},
 						);
 						return interaction.editReply({
 							components,
@@ -156,13 +157,14 @@ class GrabCommand extends BaseCommand {
 			} else if (sub === 'emoji') {
 				await interaction.deferReply();
 				const emojiInput = interaction.options.getString('emoji');
-
 				const match = emojiInput.match(/<?a?:?(\w+):(\d+)>?/);
 				if (!match) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'core.utils.grab.emoji.invalid'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -187,7 +189,9 @@ class GrabCommand extends BaseCommand {
 						await t(interaction, 'core.utils.grab.emoji.success', {
 							name: created.name,
 						}),
-						{ color: 'Green' },
+						{
+							color: 'Green',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -203,7 +207,6 @@ class GrabCommand extends BaseCommand {
 				await interaction.deferReply();
 				const messageId = interaction.options.getString('message_id');
 				const stickerName = interaction.options.getString('name');
-
 				let targetMessage;
 				try {
 					targetMessage = await interaction.channel.messages.fetch(messageId);
@@ -211,21 +214,20 @@ class GrabCommand extends BaseCommand {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'core.utils.grab.image.message.not_found'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
 						flags: MessageFlags.IsComponentsV2,
 					});
 				}
-
 				const attachment = targetMessage?.attachments?.find((a) =>
 					a.contentType?.startsWith('image/'),
 				);
-
 				let url;
 				let fallbackName;
-
 				if (attachment) {
 					url = attachment.url;
 					fallbackName = (
@@ -239,21 +241,20 @@ class GrabCommand extends BaseCommand {
 						fallbackName = 'grabbed_link';
 					}
 				}
-
 				if (!url) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'core.utils.grab.image.not_found'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
 						flags: MessageFlags.IsComponentsV2,
 					});
 				}
-
 				const finalName = (stickerName || fallbackName).slice(0, 30);
-
 				try {
 					if (!interaction.guild?.stickers?.create)
 						throw new Error('No permission');
@@ -267,7 +268,9 @@ class GrabCommand extends BaseCommand {
 						await t(interaction, 'core.utils.grab.sticker.success', {
 							name: created.name,
 						}),
-						{ color: 'Green' },
+						{
+							color: 'Green',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -281,18 +284,20 @@ class GrabCommand extends BaseCommand {
 				}
 			}
 		}
-
 		if (interaction.isMessageContextMenuCommand?.()) {
-			await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+			await interaction.deferReply({
+				flags: MessageFlags.Ephemeral,
+			});
 			const message = interaction.targetMessage;
-
 			if (message?.stickers && message.stickers.size > 0) {
 				const sticker = message.stickers.first();
 				if (!sticker) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'core.utils.grab.sticker.not.found'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -304,14 +309,15 @@ class GrabCommand extends BaseCommand {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'core.utils.grab.sticker.no.url'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
 						flags: MessageFlags.IsComponentsV2,
 					});
 				}
-
 				try {
 					if (!interaction.guild?.stickers?.create)
 						throw new Error('No permission');
@@ -325,7 +331,9 @@ class GrabCommand extends BaseCommand {
 						await t(interaction, 'core.utils.grab.sticker.success', {
 							name: created.name,
 						}),
-						{ color: 'Green' },
+						{
+							color: 'Green',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -338,16 +346,17 @@ class GrabCommand extends BaseCommand {
 					});
 				}
 			}
-
 			const emojiRegex = /<a?:\w+:\d+>/g;
 			const found = message?.content?.match?.(emojiRegex);
 			if (found && found.length > 0) {
-				const emojiData = helpers.core.grab.parseCustomEmoji(found[0]);
+				const emojiData = grabHelper.parseCustomEmoji(found[0]);
 				if (!emojiData) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'core.utils.grab.emoji.invalid'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -371,7 +380,9 @@ class GrabCommand extends BaseCommand {
 						await t(interaction, 'core.utils.grab.emoji.success', {
 							name: created.name,
 						}),
-						{ color: 'Green' },
+						{
+							color: 'Green',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -389,10 +400,8 @@ class GrabCommand extends BaseCommand {
 			const attachment = message?.attachments?.find((a) =>
 				a.contentType?.startsWith('image/'),
 			);
-
 			let imageUrl;
 			let imageFileName;
-
 			if (attachment) {
 				imageUrl = attachment.url;
 				imageFileName = `grabbed_${attachment.name.split('.')[0]}`.slice(0, 30);
@@ -404,24 +413,23 @@ class GrabCommand extends BaseCommand {
 					imageFileName = 'grabbed_link';
 				}
 			}
-
 			if (imageUrl) {
 				try {
 					if (!interaction.guild?.stickers?.create)
 						throw new Error('No permission');
-
 					const created = await interaction.guild.stickers.create({
 						file: imageUrl,
 						name: imageFileName,
 						tags: 'grabbed',
 					});
-
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'core.utils.grab.sticker.success', {
 							name: created.name,
 						}),
-						{ color: 'Green' },
+						{
+							color: 'Green',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -434,11 +442,12 @@ class GrabCommand extends BaseCommand {
 					});
 				}
 			}
-
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.utils.grab.sticker.or.emoji.not.found'),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -447,5 +456,4 @@ class GrabCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = GrabCommand;

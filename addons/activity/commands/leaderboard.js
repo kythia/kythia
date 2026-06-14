@@ -8,14 +8,13 @@
 
 const { MessageFlags } = require('discord.js');
 const { Op, fn, col, literal } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
+const leaderboardHelper = require('../helpers/leaderboard');
 
 // Helpers extracted to addons/activity/helpers/leaderboard.js
 
 class LeaderboardCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leaderboard')
@@ -26,8 +25,14 @@ class LeaderboardCommand extends BaseCommand {
 					.setDescription('Sort by messages or voice time.')
 					.setRequired(false)
 					.addChoices(
-						{ name: '📨 Messages', value: 'messages' },
-						{ name: '🎙️ Voice Time', value: 'voice' },
+						{
+							name: '📨 Messages',
+							value: 'messages',
+						},
+						{
+							name: '🎙️ Voice Time',
+							value: 'voice',
+						},
 					),
 			)
 			.addStringOption((option) =>
@@ -36,37 +41,45 @@ class LeaderboardCommand extends BaseCommand {
 					.setDescription('Time period to show. Defaults to all time.')
 					.setRequired(false)
 					.addChoices(
-						{ name: '🕰️ All Time', value: 'all' },
-						{ name: '📅 Today', value: 'daily' },
-						{ name: '📆 This Week', value: 'weekly' },
-						{ name: '🗓️ This Month', value: 'monthly' },
+						{
+							name: '🕰️ All Time',
+							value: 'all',
+						},
+						{
+							name: '📅 Today',
+							value: 'daily',
+						},
+						{
+							name: '📆 This Week',
+							value: 'weekly',
+						},
+						{
+							name: '🗓️ This Month',
+							value: 'monthly',
+						},
 					),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
-		const { t, models, helpers } = container;
+		const { t, models } = container;
 		const { ActivityStat, ActivityLog } = models;
 		const { getPeriodStart, generateLeaderboardContainer, MAX_USERS } =
-			helpers.activity.leaderboard;
-
+			leaderboardHelper;
 		const guildId = interaction.guild.id;
 		const type = interaction.options.getString('type') || 'messages';
 		const period = interaction.options.getString('period') || 'all';
 		const orderColumn = type === 'voice' ? 'totalVoiceTime' : 'totalMessages';
-
 		const periodLabel = await t(
 			interaction,
 			`activity.leaderboard.activity.leaderboard.period.${period}`,
 		);
-
 		await interaction.deferReply();
-
 		let allStats;
-
 		if (period === 'all') {
 			allStats = await ActivityStat.getAllCache({
-				where: { guildId },
+				where: {
+					guildId,
+				},
 				order: [[orderColumn, 'DESC']],
 				limit: MAX_USERS,
 				cacheTags: [`ActivityStat:leaderboard:${type}:${guildId}`],
@@ -74,9 +87,13 @@ class LeaderboardCommand extends BaseCommand {
 		} else {
 			const startDate = getPeriodStart(period);
 			const logColumn = type === 'voice' ? 'voiceTime' : 'messages';
-
 			allStats = await ActivityLog.getAllCache({
-				where: { guildId, date: { [Op.gte]: startDate } },
+				where: {
+					guildId,
+					date: {
+						[Op.gte]: startDate,
+					},
+				},
 				attributes: ['userId', [fn('SUM', col(logColumn)), orderColumn]],
 				group: ['userId'],
 				order: [[literal(orderColumn), 'DESC']],
@@ -84,10 +101,8 @@ class LeaderboardCommand extends BaseCommand {
 				raw: true,
 			});
 		}
-
 		const totalUsers = allStats.length;
 		let currentPage = 1;
-
 		if (totalUsers === 0) {
 			const { leaderboardContainer } = await generateLeaderboardContainer(
 				interaction,
@@ -101,10 +116,11 @@ class LeaderboardCommand extends BaseCommand {
 			return interaction.editReply({
 				components: [leaderboardContainer],
 				flags: MessageFlags.IsComponentsV2,
-				allowedMentions: { parse: [] },
+				allowedMentions: {
+					parse: [],
+				},
 			});
 		}
-
 		const { leaderboardContainer, totalPages } =
 			await generateLeaderboardContainer(
 				interaction,
@@ -114,20 +130,18 @@ class LeaderboardCommand extends BaseCommand {
 				type,
 				periodLabel,
 			);
-
 		const message = await interaction.editReply({
 			components: [leaderboardContainer],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
-			allowedMentions: { parse: [] },
+			allowedMentions: {
+				parse: [],
+			},
 		});
-
 		if (totalPages <= 1) return;
-
 		const collector = message.createMessageComponentCollector({
 			time: 300_000,
 		});
-
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -138,7 +152,6 @@ class LeaderboardCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			if (i.customId === 'activity_lb_first') {
 				currentPage = 1;
 			} else if (i.customId === 'activity_lb_prev') {
@@ -148,7 +161,6 @@ class LeaderboardCommand extends BaseCommand {
 			} else if (i.customId === 'activity_lb_last') {
 				currentPage = totalPages;
 			}
-
 			const { leaderboardContainer: newContainer } =
 				await generateLeaderboardContainer(
 					i,
@@ -158,14 +170,14 @@ class LeaderboardCommand extends BaseCommand {
 					type,
 					periodLabel,
 				);
-
 			await i.update({
 				components: [newContainer],
 				flags: MessageFlags.IsComponentsV2,
-				allowedMentions: { parse: [] },
+				allowedMentions: {
+					parse: [],
+				},
 			});
 		});
-
 		collector.on('end', async () => {
 			try {
 				const { leaderboardContainer: finalContainer } =
@@ -178,15 +190,15 @@ class LeaderboardCommand extends BaseCommand {
 						periodLabel,
 						true,
 					);
-
 				await message.edit({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
-					allowedMentions: { parse: [] },
+					allowedMentions: {
+						parse: [],
+					},
 				});
 			} catch (_e) {}
 		});
 	}
 }
-
 exports.default = LeaderboardCommand;

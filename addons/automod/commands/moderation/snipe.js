@@ -7,8 +7,8 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const snipeuiHelper = require('../../helpers/snipe-ui');
 
 // Helpers extracted to addons/automod/helpers/snipe-ui.js
 
@@ -27,67 +27,62 @@ class SnipeCommand extends BaseCommand {
 					.setMinValue(1)
 					.setMaxValue(20),
 			);
-
 	permissions = PermissionFlagsBits.ManageMessages;
 	botPermissions = PermissionFlagsBits.SendMessages;
-
 	async execute(interaction) {
 		const container = this.container;
 		const { helpers, redis } = container;
-
 		await interaction.deferReply();
-
 		if (redis?.status !== 'ready') {
 			const reply = await helpers.discord.simpleContainer(
 				interaction,
 				'❌ Redis is not available, unable to fetch snipes.',
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const snipeKey = `snipe:${interaction.channelId}`;
 		const rawSnipes = await redis.lrange(snipeKey, 0, -1);
-
 		if (!rawSnipes || rawSnipes.length === 0) {
 			const reply = await helpers.discord.simpleContainer(
 				interaction,
 				'❌ There is nothing to snipe!',
-				{ color: 'Orange' },
+				{
+					color: 'Orange',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const snipes = rawSnipes.map((s) => JSON.parse(s));
 		const totalSnipes = snipes.length;
 		let currentPage = interaction.options.getInteger('index') || 1;
-
-		const { generateSnipeContainer } = helpers.automod['snipe-ui'];
-
+		const { generateSnipeContainer } = snipeuiHelper;
 		const { snipeContainer, totalPages } = generateSnipeContainer(
 			interaction,
 			currentPage,
 			snipes,
 			totalSnipes,
 		);
-
 		const message = await interaction.editReply({
 			components: [snipeContainer],
-			allowedMentions: { parse: [] },
+			allowedMentions: {
+				parse: [],
+			},
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
-
 		if (totalPages <= 1) return;
-
-		const collector = message.createMessageComponentCollector({ time: 120000 });
-
+		const collector = message.createMessageComponentCollector({
+			time: 120000,
+		});
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -95,7 +90,6 @@ class SnipeCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			if (i.customId === 'snipe_first') {
 				currentPage = 1;
 			} else if (i.customId === 'snipe_prev') {
@@ -105,21 +99,20 @@ class SnipeCommand extends BaseCommand {
 			} else if (i.customId === 'snipe_last') {
 				currentPage = totalPages;
 			}
-
 			const { snipeContainer: newContainer } = await generateSnipeContainer(
 				i,
 				currentPage,
 				snipes,
 				totalSnipes,
 			);
-
 			await i.update({
 				components: [newContainer],
-				allowedMentions: { parse: [] },
+				allowedMentions: {
+					parse: [],
+				},
 				flags: MessageFlags.IsComponentsV2,
 			});
 		});
-
 		collector.on('end', async () => {
 			const { snipeContainer: disabledContainer } =
 				await generateSnipeContainer(
@@ -132,12 +125,13 @@ class SnipeCommand extends BaseCommand {
 			await interaction
 				.editReply({
 					components: [disabledContainer],
-					allowedMentions: { parse: [] },
+					allowedMentions: {
+						parse: [],
+					},
 					flags: MessageFlags.IsComponentsV2,
 				})
 				.catch(() => {});
 		});
 	}
 }
-
 exports.default = SnipeCommand;

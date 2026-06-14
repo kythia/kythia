@@ -7,40 +7,35 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const leaderboardHelper = require('../helpers/leaderboard');
 
 // Helpers extracted to addons/invite/helpers/leaderboard.js
 
 class LeaderboardCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leaderboard')
 			.setDescription('View top inviters leaderboard');
-
 	async execute(interaction) {
 		const container = this.container;
-		const { t, models, helpers } = container;
+		const { t, models } = container;
 		const { Invite } = models;
-		const { generateLeaderboardContainer } = helpers.invite.leaderboard;
-
+		const { generateLeaderboardContainer } = leaderboardHelper;
 		const MAX_USERS = 100;
 		const guildId = interaction.guild.id;
-
 		await interaction.deferReply();
-
 		const allInviters = await Invite.getAllCache({
-			where: { guildId: guildId },
+			where: {
+				guildId: guildId,
+			},
 			order: [['invites', 'DESC']],
 			limit: MAX_USERS,
 			cacheTags: [`Invite:leaderboard:${guildId}`],
 		});
-
 		const totalUsers = allInviters.length;
 		let currentPage = 1;
-
 		if (totalUsers === 0) {
 			const { leaderboardContainer } = await generateLeaderboardContainer(
 				interaction,
@@ -54,7 +49,6 @@ class LeaderboardCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const { leaderboardContainer, totalPages } =
 			await generateLeaderboardContainer(
 				interaction,
@@ -62,17 +56,15 @@ class LeaderboardCommand extends BaseCommand {
 				allInviters,
 				totalUsers,
 			);
-
 		const message = await interaction.editReply({
 			components: [leaderboardContainer],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
-
 		if (totalPages <= 1) return;
-
-		const collector = message.createMessageComponentCollector({ time: 300000 });
-
+		const collector = message.createMessageComponentCollector({
+			time: 300000,
+		});
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -80,7 +72,6 @@ class LeaderboardCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			if (i.customId === 'leaderboard_first') {
 				currentPage = 1;
 			} else if (i.customId === 'leaderboard_prev') {
@@ -90,7 +81,6 @@ class LeaderboardCommand extends BaseCommand {
 			} else if (i.customId === 'leaderboard_last') {
 				currentPage = totalPages;
 			}
-
 			const { leaderboardContainer: newContainer } =
 				await generateLeaderboardContainer(
 					i,
@@ -98,13 +88,11 @@ class LeaderboardCommand extends BaseCommand {
 					allInviters,
 					totalUsers,
 				);
-
 			await i.update({
 				components: [newContainer],
 				flags: MessageFlags.IsComponentsV2,
 			});
 		});
-
 		collector.on('end', async () => {
 			try {
 				const { leaderboardContainer: finalContainer } =
@@ -115,7 +103,6 @@ class LeaderboardCommand extends BaseCommand {
 						totalUsers,
 						true,
 					);
-
 				await message.edit({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
@@ -124,5 +111,4 @@ class LeaderboardCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = LeaderboardCommand;

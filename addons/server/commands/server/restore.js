@@ -7,12 +7,11 @@
  */
 
 const { MessageFlags, ChannelType } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
+const restoreHelper = require('../../helpers/restore');
 
 class RestoreCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('restore')
@@ -29,50 +28,50 @@ class RestoreCommand extends BaseCommand {
 					.setDescription('Delete all channels & roles first?')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, logger, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { guild } = interaction;
-
 		await interaction.deferReply();
-
 		let components = await simpleContainer(
 			interaction,
 			`## ${await t(interaction, 'server.server.restore.progress.start')}`,
-			{ color: kythiaConfig.bot.color },
+			{
+				color: kythiaConfig.bot.color,
+			},
 		);
 		await interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-
 		const file = interaction.options.getAttachment('file');
 		if (!file?.name.endsWith('.json')) {
 			components = await simpleContainer(
 				interaction,
 				`## ${await t(interaction, 'server.server.restore.file.invalid')}`,
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const fetchAssetBuffer = async (url) => {
 			if (!url) return null;
 			try {
 				const { default: fetch } = await import('node-fetch');
-				const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
+				const res = await fetch(url, {
+					signal: AbortSignal.timeout(15000),
+				});
 				if (!res.ok) return null;
 				return Buffer.from(await res.arrayBuffer());
 			} catch {
 				return null;
 			}
 		};
-
 		const updateStatus = async (text) => {
 			const comps = await simpleContainer(interaction, `## ${text}`, {
 				color: kythiaConfig.bot.color,
@@ -84,18 +83,18 @@ class RestoreCommand extends BaseCommand {
 				})
 				.catch(() => {});
 		};
-
 		try {
 			const { default: fetch } = await import('node-fetch');
 			const res = await fetch(file.url);
 			const backup = await res.json();
 			const clearBefore = interaction.options.getBoolean('clear') ?? false;
-
 			if (!backup?.metadata) {
 				components = await simpleContainer(
 					interaction,
 					`## ${await t(interaction, 'server.server.restore.data.invalid')}`,
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -145,7 +144,6 @@ class RestoreCommand extends BaseCommand {
 			const iconBuffer = await fetchAssetBuffer(settings.iconURL);
 			const bannerBuffer = await fetchAssetBuffer(settings.bannerURL);
 			const splashBuffer = await fetchAssetBuffer(settings.splashURL);
-
 			await guild
 				.edit({
 					name: settings.name,
@@ -153,9 +151,15 @@ class RestoreCommand extends BaseCommand {
 					explicitContentFilter: settings.explicitContentFilter,
 					defaultMessageNotifications: settings.defaultMessageNotifications,
 					preferredLocale: settings.preferredLocale,
-					...(iconBuffer && { icon: iconBuffer }),
-					...(bannerBuffer && { banner: bannerBuffer }),
-					...(splashBuffer && { splash: splashBuffer }),
+					...(iconBuffer && {
+						icon: iconBuffer,
+					}),
+					...(bannerBuffer && {
+						banner: bannerBuffer,
+					}),
+					...(splashBuffer && {
+						splash: splashBuffer,
+					}),
 					afkTimeout: settings.afkTimeout,
 					premiumProgressBarEnabled: settings.premiumProgressBarEnabled,
 					description: settings.description ?? null,
@@ -185,7 +189,6 @@ class RestoreCommand extends BaseCommand {
 
 				// Try to download role icon
 				const roleIconBuffer = await fetchAssetBuffer(roleData.icon);
-
 				const created = await guild.roles
 					.create({
 						name: roleData.name,
@@ -194,15 +197,17 @@ class RestoreCommand extends BaseCommand {
 						permissions: BigInt(roleData.permissions),
 						mentionable: roleData.mentionable,
 						reason: 'Restore backup',
-						...(roleIconBuffer && { icon: roleIconBuffer }),
+						...(roleIconBuffer && {
+							icon: roleIconBuffer,
+						}),
 						...(roleData.unicodeEmoji &&
-							!roleIconBuffer && { unicodeEmoji: roleData.unicodeEmoji }),
+							!roleIconBuffer && {
+								unicodeEmoji: roleData.unicodeEmoji,
+							}),
 					})
 					.catch(() => null);
-
 				if (created) roleMap.set(roleData.id, created);
 				roleIdx++;
-
 				if (roleIdx % 5 === 0 || roleIdx === roleList.length) {
 					await updateStatus(
 						await t(interaction, 'server.server.restore.roles.progress', {
@@ -225,10 +230,9 @@ class RestoreCommand extends BaseCommand {
 			const categories = (backup.channels ?? []).filter(
 				(c) => c.type === ChannelType.GuildCategory,
 			);
-
 			let catIdx = 0;
 			for (const catData of categories) {
-				const permOverwrites = helpers.server.restore.buildPermOverwrites(
+				const permOverwrites = restoreHelper.buildPermOverwrites(
 					catData.permissionOverwrites,
 					roleMap,
 				);
@@ -240,10 +244,8 @@ class RestoreCommand extends BaseCommand {
 						permissionOverwrites: permOverwrites,
 					})
 					.catch(() => null);
-
 				if (created) channelMap.set(catData.id, created);
 				catIdx++;
-
 				if (catIdx % 3 === 0 || catIdx === categories.length) {
 					await updateStatus(
 						await t(interaction, 'server.server.restore.categories.progress', {
@@ -258,19 +260,16 @@ class RestoreCommand extends BaseCommand {
 			const nonCatChannels = (backup.channels ?? []).filter(
 				(c) => c.type !== ChannelType.GuildCategory,
 			);
-
 			let chIdx = 0;
 			for (const chanData of nonCatChannels) {
 				// Resolve parent category
 				const parentChannel = chanData.parentId
 					? channelMap.get(chanData.parentId)
 					: null;
-
-				const permOverwrites = helpers.server.restore.buildPermOverwrites(
+				const permOverwrites = restoreHelper.buildPermOverwrites(
 					chanData.permissionOverwrites,
 					roleMap,
 				);
-
 				const createOptions = {
 					name: chanData.name,
 					type: chanData.type,
@@ -318,12 +317,10 @@ class RestoreCommand extends BaseCommand {
 						}));
 					}
 				}
-
 				const created = await guild.channels
 					.create(createOptions)
 					.catch(() => null);
 				if (created) channelMap.set(chanData.id, created);
-
 				chIdx++;
 				if (chIdx % 5 === 0 || chIdx === nonCatChannels.length) {
 					await updateStatus(
@@ -336,7 +333,7 @@ class RestoreCommand extends BaseCommand {
 			}
 
 			// Restore special channels on the guild after channels are created
-			await helpers.server.restore.restoreSpecialChannels(
+			await restoreHelper.restoreSpecialChannels(
 				guild,
 				backup.settings,
 				channelMap,
@@ -345,19 +342,20 @@ class RestoreCommand extends BaseCommand {
 
 			// ──────────────────────────── EMOJIS & STICKERS ──────────────────────────
 			await updateStatus(await t(interaction, 'server.server.restore.assets'));
-
 			for (const emoji of backup.emojis ?? []) {
 				const buffer = await fetchAssetBuffer(emoji.url);
 				if (!buffer) continue;
 				await guild.emojis
-					.create({ name: emoji.name, attachment: buffer })
+					.create({
+						name: emoji.name,
+						attachment: buffer,
+					})
 					.catch((e) =>
 						logger.warn(`Failed to restore emoji ${emoji.name}: ${e.message}`, {
 							label: 'restore',
 						}),
 					);
 			}
-
 			for (const sticker of backup.stickers ?? []) {
 				const buffer = await fetchAssetBuffer(sticker.url);
 				if (!buffer) continue;
@@ -381,8 +379,12 @@ class RestoreCommand extends BaseCommand {
 			// ─────────────────────────── DONE ─────────────────────────
 			components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'server.server.restore.success', { name: backup.metadata.guildName })}`,
-				{ color: 'Green' },
+				`## ${await t(interaction, 'server.server.restore.success', {
+					name: backup.metadata.guildName,
+				})}`,
+				{
+					color: 'Green',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -395,7 +397,9 @@ class RestoreCommand extends BaseCommand {
 			components = await simpleContainer(
 				interaction,
 				`## ${await t(interaction, 'server.server.restore.failed')}`,
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -404,5 +408,4 @@ class RestoreCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = RestoreCommand;
