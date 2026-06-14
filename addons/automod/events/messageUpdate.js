@@ -5,33 +5,40 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-
 const { automodSystem } = require('../helpers/automod');
 
-module.exports = async (bot, _oldMessage, newMessage) => {
-	const client = bot.client;
-	const container = client.container;
-	const { helpers } = container;
-	const { isOwner } = helpers.discord;
+const { BaseEvent } = require('kythia-core');
 
-	if (!newMessage?.author || !newMessage.guild) return;
-	if (!newMessage.author || newMessage.author.bot) return;
+class MessageUpdateEvent extends BaseEvent {
+	async execute(_oldMessage, newMessage) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
 
-	if (
-		isOwner(newMessage.author.id) ||
-		newMessage.member?.permissions.has(['Administrator', 'ManageGuild'])
-	) {
-		return;
+		const client = this.client;
+		const { helpers } = container;
+		const { isOwner } = helpers.discord;
+
+		if (!newMessage?.author || !newMessage.guild) return;
+		if (!newMessage.author || newMessage.author.bot) return;
+
+		if (
+			isOwner(newMessage.author.id) ||
+			newMessage.member?.permissions.has(['Administrator', 'ManageGuild'])
+		) {
+			return;
+		}
+
+		try {
+			await automodSystem(newMessage, client);
+		} catch (error) {
+			container.logger.error(
+				`Error in messageUpdate handler:${error.message || error}`,
+				{
+					label: 'Automod',
+				},
+			);
+		}
 	}
+}
 
-	try {
-		await automodSystem(newMessage, client);
-	} catch (error) {
-		container.logger.error(
-			`Error in messageUpdate handler:${error.message || error}`,
-			{
-				label: 'Automod',
-			},
-		);
-	}
-};
+module.exports = MessageUpdateEvent;

@@ -5,34 +5,43 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-
 /**
  * @param {import('kythia-core').Kythia} bot
  * @param {import('discord.js').GuildMember} oldMember
  * @param {import('discord.js').GuildMember} newMember
  */
-module.exports = async (bot, oldMember, newMember) => {
-	if (!newMember?.user || newMember.user.bot) return;
 
-	// Detect boost start: was not boosting before, now is
-	const startedBoosting = !oldMember.premiumSince && newMember.premiumSince;
-	if (!startedBoosting) return;
+const { BaseEvent } = require('kythia-core');
 
-	const { models } = bot.client.container;
-	const { ServerSetting } = models;
+class GuildMemberUpdateEvent extends BaseEvent {
+	async execute(oldMember, newMember) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
 
-	const guildId = newMember.guild.id;
-	const userId = newMember.id;
+		if (!newMember?.user || newMember.user.bot) return;
 
-	const serverSetting = await ServerSetting.getCache({ guildId });
-	if (!serverSetting?.activityOn) return;
+		// Detect boost start: was not boosting before, now is
+		const startedBoosting = !oldMember.premiumSince && newMember.premiumSince;
+		if (!startedBoosting) return;
 
-	const { checkAndUnlock } = require('../helpers/achievementChecker');
-	checkAndUnlock('special', {
-		guildId,
-		userId,
-		guild: newMember.guild,
-		container: bot.client.container,
-		specialFlags: ['server_booster'],
-	}).catch(() => null);
-};
+		const { models } = this.container;
+		const { ServerSetting } = models;
+
+		const guildId = newMember.guild.id;
+		const userId = newMember.id;
+
+		const serverSetting = await ServerSetting.getCache({ guildId });
+		if (!serverSetting?.activityOn) return;
+
+		const { checkAndUnlock } = require('../helpers/achievementChecker');
+		checkAndUnlock('special', {
+			guildId,
+			userId,
+			guild: newMember.guild,
+			container: this.container,
+			specialFlags: ['server_booster'],
+		}).catch(() => null);
+	}
+}
+
+module.exports = GuildMemberUpdateEvent;

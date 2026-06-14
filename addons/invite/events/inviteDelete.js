@@ -5,12 +5,19 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-
 const { getGuildInviteCache } = require('../helpers');
 
-module.exports = (_bot, invite) => {
-	try {
-		const cache = getGuildInviteCache(invite.guild.id);
-		cache.delete(invite.code);
-	} catch {}
-};
+const { BaseEvent } = require('kythia-core');
+
+class InviteDeleteEvent extends BaseEvent {
+	async execute(invite) {
+		const container = this.container;
+
+		try {
+			const cache = getGuildInviteCache(invite.guild.id);
+			cache.delete(invite.code);
+		} catch {}
+	}
+}
+
+module.exports = InviteDeleteEvent;

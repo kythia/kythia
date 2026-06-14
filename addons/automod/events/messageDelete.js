@@ -6,45 +6,45 @@
  * @version 26.0.0-rc.1
  */
 
-const { automodDeletedMessages } = require('../helpers/automod');
 const {
+	MessageFlags,
+	SeparatorBuilder,
 	ContainerBuilder,
 	TextDisplayBuilder,
-	SeparatorBuilder,
 	SeparatorSpacingSize,
-	MessageFlags,
-} = require('kythia-core');
+} = require('discord.js');
 
-module.exports = {
-	name: 'messageDelete',
-	async execute(message, bot) {
+const { BaseEvent } = require('kythia-core');
+
+const { automodDeletedMessages } = require('../helpers/automod');
+
+class MessageDeleteEvent extends BaseEvent {
+	async execute(message) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
+		const { models } = container;
+		const { ServerSetting } = models;
+
 		if (!message.guild || !message.author || message.author.bot) return;
 
-		// Ignore messages deleted by the bot's own automod
 		if (automodDeletedMessages.has(message.id)) {
 			automodDeletedMessages.delete(message.id);
 			return;
 		}
 
-		// Check if it's a ghost ping (contains mentions)
 		const mentionCount =
 			message.mentions.users.size + message.mentions.roles.size;
 		if (mentionCount === 0) return;
 
-		// Check if antiGhostPing is enabled
-		const container = bot.client.container;
-		const { ServerSetting } = container.models;
 		const settings = await ServerSetting.getCache({
 			guildId: message.guild.id,
 		});
 
 		if (!settings?.antiGhostPingOn) return;
 
-		// Optional: Only count as ghost ping if deleted within 5 minutes of sending
 		const ageMs = Date.now() - message.createdTimestamp;
 		if (ageMs > 5 * 60 * 1000) return;
 
-		// Ghost Ping Detected
 		const channelId = settings.auditLogChannelId || settings.modLogChannelId;
 		if (!channelId) return;
 
@@ -55,7 +55,7 @@ module.exports = {
 
 		const components = [
 			new ContainerBuilder()
-				.setAccentColor(0xffaa00) // Orange warning
+				.setAccentColor(0xffaa00)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
 						`**Ghost Ping Detected**\n\n` +
@@ -81,10 +81,12 @@ module.exports = {
 			.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
-				allowedMentions: { parse: [] }, // Don't ping people again
+				allowedMentions: {
+					parse: [],
+				},
 			})
 			.catch(() => null);
+	}
+}
 
-		// Note: We could timeout the user here if desired, but logging is the safest default for ghost pings.
-	},
-};
+module.exports = MessageDeleteEvent;

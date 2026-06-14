@@ -5,7 +5,6 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-
 const { addXp } = require('../helpers');
 
 /**
@@ -149,25 +148,35 @@ const startTick = (botClient) => {
  * @param {import('discord.js').VoiceState} oldState
  * @param {import('discord.js').VoiceState} newState
  */
-module.exports = (bot, oldState, newState) => {
-	const member = newState.member || oldState.member;
-	if (!member || member.user.bot) return;
 
-	const guildId = (newState.guild || oldState.guild)?.id;
-	if (!guildId) return;
+const { BaseEvent } = require('kythia-core');
 
-	const userId = member.id;
-	const key = `${guildId}-${userId}`;
-	const now = Date.now();
+class VoiceStateUpdateEvent extends BaseEvent {
+	async execute(oldState, newState) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
 
-	const isJoin = !oldState.channelId && newState.channelId;
-	const isLeave = oldState.channelId && !newState.channelId;
+		const member = newState.member || oldState.member;
+		if (!member || member.user.bot) return;
 
-	if (isJoin) {
-		voiceSessions.set(key, { joinedAt: now, lastXpAt: now });
-		startTick(bot.client);
-	} else if (isLeave) {
-		voiceSessions.delete(key);
+		const guildId = (newState.guild || oldState.guild)?.id;
+		if (!guildId) return;
+
+		const userId = member.id;
+		const key = `${guildId}-${userId}`;
+		const now = Date.now();
+
+		const isJoin = !oldState.channelId && newState.channelId;
+		const isLeave = oldState.channelId && !newState.channelId;
+
+		if (isJoin) {
+			voiceSessions.set(key, { joinedAt: now, lastXpAt: now });
+			startTick(this.client);
+		} else if (isLeave) {
+			voiceSessions.delete(key);
+		}
+		// Switches between channels: session stays active, no reset
 	}
-	// Switches between channels: session stays active, no reset
-};
+}
+
+module.exports = VoiceStateUpdateEvent;

@@ -7,14 +7,17 @@
  */
 
 const {
-	ActionRowBuilder,
-	StringSelectMenuBuilder,
 	MessageFlags,
-	ContainerBuilder,
-	TextDisplayBuilder,
 	SeparatorBuilder,
+	ContainerBuilder,
+	ActionRowBuilder,
+	TextDisplayBuilder,
 	SeparatorSpacingSize,
+	StringSelectMenuBuilder,
 } = require('discord.js');
+
+const { BaseEvent } = require('kythia-core');
+
 const {
 	createModmailThread,
 	relayUserMessage,
@@ -27,53 +30,15 @@ const pendingSelections = new Map();
 const DEFAULT_COOLDOWN_MS = 5 * 60 * 1000;
 
 // ─── Note prefix ──────────────────────────────────────────────────────────────
-// Messages starting with this are staff-only notes — NOT relayed to user.
 const NOTE_PREFIX = '>';
 
-module.exports = async (bot, message) => {
-	const container = bot.client.container;
-	const client = bot.client;
-
-	if (!(client.modmailActiveDMs instanceof Set)) {
-		client.modmailActiveDMs = new Set();
-	}
-
-	if (!message.author || message.author.bot) return;
-
-	// ─── CASE 1: User DM ──────────────────────────────────────────────────────
-	if (!message.guild) {
-		await handleUserDM(
-			message,
-			container,
-			client,
-			pendingCreations,
-			pendingSelections,
-		);
-		return;
-	}
-
-	// ─── CASE 2: Guild message in a modmail thread ────────────────────────────
-	await handleGuildMessage(message, container, client);
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// handleGuildMessage
-// ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * Handles messages typed by staff inside a modmail thread.
- * - Prefix '>' → internal note, left in thread as-is (just add a 📝 reaction)
- * - All others → delete message, Components V2 relay to thread + DM user
- */
 async function handleGuildMessage(message, container, client) {
 	const { models, logger } = container;
 	const { Modmail } = models;
 
 	try {
-		// Only act on private threads (modmail threads are PrivateThread, type 12)
 		if (message.channel.type !== 12 /* PrivateThread */) return;
 
-		// Check if this thread is an active modmail
 		const modmail = await Modmail.getCache({
 			threadChannelId: message.channel.id,
 			status: 'open',
@@ -84,25 +49,18 @@ async function handleGuildMessage(message, container, client) {
 		const content = message.content?.trim() || '';
 		const hasAttachments = message.attachments.size > 0;
 
-		// ── Internal note: prefix > ──────────────────────────────────────────
 		if (content.startsWith(NOTE_PREFIX)) {
-			// Add a 👁 reaction to confirm it's an internal note, don't relay
 			try {
 				await message.react('👁️');
 			} catch (_e) {}
 			return;
 		}
 
-		// ── Must have some content or attachments ─────────────────────────────
 		if (!content && !hasAttachments) return;
 
-		// ── Delete original message, relay to user ────────────────────────────
-		// Delete first (gracefully) so the thread stays clean
 		try {
 			await message.delete();
-		} catch (_e) {
-			// No MANAGE_MESSAGES — skip deletion, still relay
-		}
+		} catch (_e) {}
 
 		await relayGuildReply(message, modmail, false, content, container, client);
 	} catch (error) {
@@ -111,10 +69,6 @@ async function handleGuildMessage(message, container, client) {
 		});
 	}
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// handleUserDM
-// ─────────────────────────────────────────────────────────────────────────────
 
 async function handleUserDM(
 	message,
@@ -135,10 +89,8 @@ async function handleUserDM(
 
 		const userId = message.author.id;
 
-		// ── Creation lock ─────────────────────────────────────────────────────
 		if (pendingCreations.has(userId)) return;
 
-		// ── Fast path: relay to existing open modmail ─────────────────────────
 		const existingModmails = await Modmail.getAllCache({
 			userId,
 			status: 'open',
@@ -149,10 +101,8 @@ async function handleUserDM(
 			return;
 		}
 
-		// ── Drop if in server-picker flow ─────────────────────────────────────
 		if (pendingSelections.has(userId)) return;
 
-		// ── Reopen cooldown ───────────────────────────────────────────────────
 		const cooldownMs =
 			kythiaConfig.addons?.modmail?.reopenCooldownMs ?? DEFAULT_COOLDOWN_MS;
 		if (cooldownMs > 0 && !isOwner(userId)) {
@@ -187,7 +137,6 @@ async function handleUserDM(
 			}
 		}
 
-		// ── Find eligible guilds ──────────────────────────────────────────────
 		const allConfigs = await ModmailConfig.getAllCache({});
 		if (!allConfigs || allConfigs.length === 0) return;
 
@@ -213,7 +162,6 @@ async function handleUserDM(
 			locale: kythiaConfig.bot.locale || 'en-US',
 		};
 
-		// ── Single guild → create ─────────────────────────────────────────────
 		if (eligibleConfigs.length === 1) {
 			pendingCreations.add(userId);
 			client.modmailActiveDMs.add(userId);
@@ -231,7 +179,6 @@ async function handleUserDM(
 			return;
 		}
 
-		// ── Multiple guilds → server picker ───────────────────────────────────
 		client.modmailActiveDMs.add(userId);
 		pendingSelections.set(userId, {
 			content,
@@ -259,7 +206,6 @@ async function handleUserDM(
 						.setSpacing(SeparatorSpacingSize.Small)
 						.setDivider(true),
 				)
-
 				.addActionRowComponents(
 					new ActionRowBuilder().addComponents(
 						new StringSelectMenuBuilder()
@@ -286,7 +232,7 @@ async function handleUserDM(
 
 		await message.author
 			.send({
-				components: components,
+				components,
 				flags: MessageFlags.IsComponentsV2,
 			})
 			.catch(() => null);
@@ -310,5 +256,33 @@ async function handleUserDM(
 	}
 }
 
+class MessageCreateEvent extends BaseEvent {
+	async execute(message) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
+		const client = this.client;
+
+		if (!(client.modmailActiveDMs instanceof Set)) {
+			client.modmailActiveDMs = new Set();
+		}
+
+		if (!message.author || message.author.bot) return;
+
+		if (!message.guild) {
+			await handleUserDM(
+				message,
+				container,
+				client,
+				pendingCreations,
+				pendingSelections,
+			);
+			return;
+		}
+
+		await handleGuildMessage(message, container, client);
+	}
+}
+
+module.exports = MessageCreateEvent;
 module.exports.pendingCreations = pendingCreations;
 module.exports.pendingSelections = pendingSelections;

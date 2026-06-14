@@ -5,7 +5,6 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-
 const {
 	MessageFlags,
 	ContainerBuilder,
@@ -15,125 +14,135 @@ const {
 } = require('discord.js');
 const Sentry = require('@sentry/node');
 
-module.exports = async (bot, oldState, newState) => {
-	const container = bot.client.container;
-	const { helpers, models, t, logger } = container;
-	const { convertColor } = helpers.color;
-	const { ServerSetting } = models;
+const { BaseEvent } = require('kythia-core');
 
-	const guild = newState.guild || oldState.guild;
-	const guildId = guild.id;
+class VoiceStateUpdateEvent extends BaseEvent {
+	async execute(oldState, newState) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
 
-	try {
-		if (!guild) return;
+		const { helpers, models, t, logger } = container;
+		const { convertColor } = helpers.color;
+		const { ServerSetting } = models;
 
-		// Get member (might be partial/null if left)
-		const member = newState.member || oldState.member;
-		if (!member) return;
-		// If bot, usually we might want to log it, but sometimes ignored.
-		// Let's keep bots for now unless user wants to ignore.
-		if (!member.user || member.user.bot) return;
+		const guild = newState.guild || oldState.guild;
+		const guildId = guild.id;
 
-		// Determine the type of action
-		// 1. Join: oldState.channelId is null, newState.channelId is set
-		// 2. Leave: oldState.channelId is set, newState.channelId is null
-		// 3. Switch: Both set, but different
-		// 4. Update (mute/deafen/stream): channelId is same. Ignore for now or maybe log specifically?
-		//    The prompt said "event that not logged yet". Usually refers to movement.
+		try {
+			if (!guild) return;
 
-		let action = '';
-		let description = '';
-		let color = 'Blurple'; // Default
-		// We'll track change type
-		const isJoin = !oldState.channelId && newState.channelId;
-		const isLeave = oldState.channelId && !newState.channelId;
-		const isSwitch =
-			oldState.channelId &&
-			newState.channelId &&
-			oldState.channelId !== newState.channelId;
+			// Get member (might be partial/null if left)
+			const member = newState.member || oldState.member;
+			if (!member) return;
+			// If bot, usually we might want to log it, but sometimes ignored.
+			// Let's keep bots for now unless user wants to ignore.
+			if (!member.user || member.user.bot) return;
 
-		if (!isJoin && !isLeave && !isSwitch) return; // Ignore state updates like self-mute for now
+			// Determine the type of action
+			// 1. Join: oldState.channelId is null, newState.channelId is set
+			// 2. Leave: oldState.channelId is set, newState.channelId is null
+			// 3. Switch: Both set, but different
+			// 4. Update (mute/deafen/stream): channelId is same. Ignore for now or maybe log specifically?
+			//    The prompt said "event that not logged yet". Usually refers to movement.
 
-		if (isJoin) {
-			action = 'Voice Channel Joined';
-			description = `📥 **Joined:** <#${newState.channelId}>`;
-			color = 'Green';
-		} else if (isLeave) {
-			action = 'Voice Channel Left';
-			description = `📤 **Left:** <#${oldState.channelId}>`;
-			color = 'Red';
-		} else if (isSwitch) {
-			action = 'Voice Channel Switched';
-			description = `🔄 **Moved:** <#${oldState.channelId}> ➔ <#${newState.channelId}>`;
-			color = 'Yellow'; // Or Orange
-		}
+			let action = '';
+			let description = '';
+			let color = 'Blurple'; // Default
+			// We'll track change type
+			const isJoin = !oldState.channelId && newState.channelId;
+			const isLeave = oldState.channelId && !newState.channelId;
+			const isSwitch =
+				oldState.channelId &&
+				newState.channelId &&
+				oldState.channelId !== newState.channelId;
 
-		// Get audit log settings
-		const settings = await ServerSetting.getCache({
-			guildId: guild.id,
-		});
-		if (!settings?.auditLogChannelId) return;
+			if (!isJoin && !isLeave && !isSwitch) return; // Ignore state updates like self-mute for now
 
-		const logChannel = await guild.channels
-			.fetch(settings.auditLogChannelId)
-			.catch(() => null);
-		if (!logChannel?.isTextBased()) return;
-		if (
-			!logChannel
-				.permissionsFor(bot.client.user)
-				?.has(['ViewChannel', 'SendMessages'])
-		)
-			return;
+			if (isJoin) {
+				action = 'Voice Channel Joined';
+				description = `📥 **Joined:** <#${newState.channelId}>`;
+				color = 'Green';
+			} else if (isLeave) {
+				action = 'Voice Channel Left';
+				description = `📤 **Left:** <#${oldState.channelId}>`;
+				color = 'Red';
+			} else if (isSwitch) {
+				action = 'Voice Channel Switched';
+				description = `🔄 **Moved:** <#${oldState.channelId}> ➔ <#${newState.channelId}>`;
+				color = 'Yellow'; // Or Orange
+			}
 
-		const components = [
-			new ContainerBuilder()
-				.setAccentColor(convertColor(color, { from: 'discord', to: 'decimal' }))
-				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(
-						`🎙️ **${action}** by <@${member.id}>\n\n${description}`,
+			// Get audit log settings
+			const settings = await ServerSetting.getCache({
+				guildId: guild.id,
+			});
+			if (!settings?.auditLogChannelId) return;
+
+			const logChannel = await guild.channels
+				.fetch(settings.auditLogChannelId)
+				.catch(() => null);
+			if (!logChannel?.isTextBased()) return;
+			if (
+				!logChannel
+					.permissionsFor(this.client.user)
+					?.has(['ViewChannel', 'SendMessages'])
+			)
+				return;
+
+			const components = [
+				new ContainerBuilder()
+					.setAccentColor(
+						convertColor(color, { from: 'discord', to: 'decimal' }),
+					)
+					.addTextDisplayComponents(
+						new TextDisplayBuilder().setContent(
+							`🎙️ **${action}** by <@${member.id}>\n\n${description}`,
+						),
+					)
+					.addSeparatorComponents(
+						new SeparatorBuilder()
+							.setSpacing(SeparatorSpacingSize.Small)
+							.setDivider(true),
+					)
+					.addTextDisplayComponents(
+						new TextDisplayBuilder().setContent(
+							`👤 **User:** ${member.user.tag} (${member.id})\n` +
+								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
+						),
+					)
+					.addSeparatorComponents(
+						new SeparatorBuilder()
+							.setSpacing(SeparatorSpacingSize.Small)
+							.setDivider(true),
+					)
+					.addTextDisplayComponents(
+						new TextDisplayBuilder().setContent(
+							await t({ guildId }, 'common.container.footer', {
+								username: this.client.user.username,
+							}),
+						),
 					),
-				)
-				.addSeparatorComponents(
-					new SeparatorBuilder()
-						.setSpacing(SeparatorSpacingSize.Small)
-						.setDivider(true),
-				)
-				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(
-						`👤 **User:** ${member.user.tag} (${member.id})\n` +
-							`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-					),
-				)
-				.addSeparatorComponents(
-					new SeparatorBuilder()
-						.setSpacing(SeparatorSpacingSize.Small)
-						.setDivider(true),
-				)
-				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(
-						await t({ guildId }, 'common.container.footer', {
-							username: bot.client.user.username,
-						}),
-					),
-				),
-		];
+			];
 
-		await logChannel.send({
-			components,
-			flags: MessageFlags.IsComponentsV2,
-			allowedMentions: {
-				parse: [],
-			},
-		});
-	} catch (err) {
-		logger.error(
-			`Error in voiceStateUpdate event handler: ${err.message || err}`,
-			{
-				label: 'core:events:voiceStateUpdate',
-			},
-		);
-		if (bot.config?.sentry?.dsn) {
-			Sentry.captureException(err);
+			await logChannel.send({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+				allowedMentions: {
+					parse: [],
+				},
+			});
+		} catch (err) {
+			logger.error(
+				`Error in voiceStateUpdate event handler: ${err.message || err}`,
+				{
+					label: 'core:events:voiceStateUpdate',
+				},
+			);
+			if (bot.config?.sentry?.dsn) {
+				Sentry.captureException(err);
+			}
 		}
 	}
-};
+}
+
+module.exports = VoiceStateUpdateEvent;

@@ -5,7 +5,6 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-
 const {
 	MessageFlags,
 	ContainerBuilder,
@@ -15,122 +14,131 @@ const {
 } = require('discord.js');
 const Sentry = require('@sentry/node');
 
-module.exports = async (bot, oldUser, newUser) => {
-	const container = bot.client.container;
-	const { helpers, models, logger, t } = container;
-	const { convertColor } = helpers.color;
-	const { ServerSetting } = models;
+const { BaseEvent } = require('kythia-core');
 
-	// Check if relevant changes occurred
-	const usernameChanged = oldUser.username !== newUser.username;
-	const discriminatorChanged = oldUser.discriminator !== newUser.discriminator;
-	const avatarChanged = oldUser.avatar !== newUser.avatar;
+class UserUpdateEvent extends BaseEvent {
+	async execute(oldUser, newUser) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
 
-	if (!usernameChanged && !discriminatorChanged && !avatarChanged) return;
+		const { helpers, models, logger, t } = container;
+		const { convertColor } = helpers.color;
+		const { ServerSetting } = models;
 
-	try {
-		// Prepare changes list
-		const changes = [];
-		if (usernameChanged) {
-			changes.push(
-				`**Username:** \`${oldUser.username}\` ➔ \`${newUser.username}\``,
-			);
-		}
-		if (discriminatorChanged && newUser.discriminator !== '0') {
-			// Ignore '0' for new system
-			changes.push(
-				`**Discriminator:** \`#${oldUser.discriminator}\` ➔ \`#${newUser.discriminator}\``,
-			);
-		}
-		if (avatarChanged) {
-			changes.push(
-				`**Avatar:** [Old](${oldUser.displayAvatarURL()}) ➔ [New](${newUser.displayAvatarURL()})`,
-			);
-		}
+		// Check if relevant changes occurred
+		const usernameChanged = oldUser.username !== newUser.username;
+		const discriminatorChanged =
+			oldUser.discriminator !== newUser.discriminator;
+		const avatarChanged = oldUser.avatar !== newUser.avatar;
 
-		if (changes.length === 0) return;
+		if (!usernameChanged && !discriminatorChanged && !avatarChanged) return;
 
-		const description =
-			`👤 **User Updated Profile**\n\n` +
-			`**User:** ${newUser.tag} (<@${newUser.id}>)\n\n` +
-			`**Changes:**\n${changes.join('\n')}`;
+		try {
+			// Prepare changes list
+			const changes = [];
+			if (usernameChanged) {
+				changes.push(
+					`**Username:** \`${oldUser.username}\` ➔ \`${newUser.username}\``,
+				);
+			}
+			if (discriminatorChanged && newUser.discriminator !== '0') {
+				// Ignore '0' for new system
+				changes.push(
+					`**Discriminator:** \`#${oldUser.discriminator}\` ➔ \`#${newUser.discriminator}\``,
+				);
+			}
+			if (avatarChanged) {
+				changes.push(
+					`**Avatar:** [Old](${oldUser.displayAvatarURL()}) ➔ [New](${newUser.displayAvatarURL()})`,
+				);
+			}
 
-		// Find mutual guilds where the user is a member.
-		// Each shard iterates only its own guilds.cache — this is correct shard behavior:
-		// the userUpdate event fires on every shard that has the user cached.
-		for (const guild of bot.client.guilds.cache.values()) {
-			if (guild.members.cache.has(newUser.id)) {
-				const guildId = guild.id;
-				// User is in this guild. Check if logging is enabled.
-				try {
-					const settings = await ServerSetting.getCache({
-						guildId: guild.id,
-					});
+			if (changes.length === 0) return;
 
-					// Optional: Check if we should log user updates to this server?
-					// Usually servers might find this spammy. But if audit log is set, we send it.
-					// Ideally there would be a finer grain setting, but for now we follow general audit log.
+			const description =
+				`👤 **User Updated Profile**\n\n` +
+				`**User:** ${newUser.tag} (<@${newUser.id}>)\n\n` +
+				`**Changes:**\n${changes.join('\n')}`;
 
-					if (!settings?.auditLogChannelId) continue;
+			// Find mutual guilds where the user is a member.
+			// Each shard iterates only its own guilds.cache — this is correct shard behavior:
+			// the userUpdate event fires on every shard that has the user cached.
+			for (const guild of this.client.guilds.cache.values()) {
+				if (guild.members.cache.has(newUser.id)) {
+					const guildId = guild.id;
+					// User is in this guild. Check if logging is enabled.
+					try {
+						const settings = await ServerSetting.getCache({
+							guildId: guild.id,
+						});
 
-					const logChannel = await guild.channels
-						.fetch(settings.auditLogChannelId)
-						.catch(() => null);
+						// Optional: Check if we should log user updates to this server?
+						// Usually servers might find this spammy. But if audit log is set, we send it.
+						// Ideally there would be a finer grain setting, but for now we follow general audit log.
 
-					if (!logChannel?.isTextBased()) continue;
+						if (!settings?.auditLogChannelId) continue;
 
-					const components = [
-						new ContainerBuilder()
-							.setAccentColor(
-								convertColor('Blurple', { from: 'discord', to: 'decimal' }),
-							)
-							.addTextDisplayComponents(
-								new TextDisplayBuilder().setContent(description),
-							)
-							.addSeparatorComponents(
-								new SeparatorBuilder()
-									.setSpacing(SeparatorSpacingSize.Small)
-									.setDivider(true),
-							)
-							.addTextDisplayComponents(
-								new TextDisplayBuilder().setContent(
-									`👤 **User:** ${newUser.tag} (${newUser.id})\n` +
-										`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
+						const logChannel = await guild.channels
+							.fetch(settings.auditLogChannelId)
+							.catch(() => null);
+
+						if (!logChannel?.isTextBased()) continue;
+
+						const components = [
+							new ContainerBuilder()
+								.setAccentColor(
+									convertColor('Blurple', { from: 'discord', to: 'decimal' }),
+								)
+								.addTextDisplayComponents(
+									new TextDisplayBuilder().setContent(description),
+								)
+								.addSeparatorComponents(
+									new SeparatorBuilder()
+										.setSpacing(SeparatorSpacingSize.Small)
+										.setDivider(true),
+								)
+								.addTextDisplayComponents(
+									new TextDisplayBuilder().setContent(
+										`👤 **User:** ${newUser.tag} (${newUser.id})\n` +
+											`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
+									),
+								)
+								.addSeparatorComponents(
+									new SeparatorBuilder()
+										.setSpacing(SeparatorSpacingSize.Small)
+										.setDivider(true),
+								)
+								.addTextDisplayComponents(
+									new TextDisplayBuilder().setContent(
+										await t({ guildId }, 'common.container.footer', {
+											username: this.client.user.username,
+										}),
+									),
 								),
-							)
-							.addSeparatorComponents(
-								new SeparatorBuilder()
-									.setSpacing(SeparatorSpacingSize.Small)
-									.setDivider(true),
-							)
-							.addTextDisplayComponents(
-								new TextDisplayBuilder().setContent(
-									await t({ guildId }, 'common.container.footer', {
-										username: bot.client.user.username,
-									}),
-								),
-							),
-					];
+						];
 
-					await logChannel.send({
-						components,
-						flags: MessageFlags.IsComponentsV2,
-						allowedMentions: {
-							parse: [],
-						},
-					});
-				} catch (_e) {
-					// Ignore individual guild errors to keep loop running
-					// continue;
+						await logChannel.send({
+							components,
+							flags: MessageFlags.IsComponentsV2,
+							allowedMentions: {
+								parse: [],
+							},
+						});
+					} catch (_e) {
+						// Ignore individual guild errors to keep loop running
+						// continue;
+					}
 				}
 			}
-		}
-	} catch (err) {
-		logger.error(`Error: ${err.message || err}`, {
-			label: 'userUpdate',
-		});
-		if (bot.config?.sentry?.dsn) {
-			Sentry.captureException(err);
+		} catch (err) {
+			logger.error(`Error: ${err.message || err}`, {
+				label: 'userUpdate',
+			});
+			if (bot.config?.sentry?.dsn) {
+				Sentry.captureException(err);
+			}
 		}
 	}
-};
+}
+
+module.exports = UserUpdateEvent;

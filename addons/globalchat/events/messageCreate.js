@@ -5,22 +5,29 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-
 const { handleGlobalChat } = require('../helpers/handleGlobalChat');
 
-module.exports = async (bot, message) => {
-	if (!message.guild) return;
-	const { container } = bot;
-	const { models } = container;
-	const { GlobalChat } = models;
+const { BaseEvent } = require('kythia-core');
 
-	const registeredChannel = await GlobalChat.getCache({
-		globalChannelId: message.channel.id,
-	});
+class MessageCreateEvent extends BaseEvent {
+	async execute(message) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
 
-	if (!registeredChannel || registeredChannel.guildId !== message.guild.id) {
-		return;
+		if (!message.guild) return;
+		const { models } = container;
+		const { GlobalChat } = models;
+
+		const registeredChannel = await GlobalChat.getCache({
+			globalChannelId: message.channel.id,
+		});
+
+		if (!registeredChannel || registeredChannel.guildId !== message.guild.id) {
+			return;
+		}
+
+		await handleGlobalChat(message, this.container);
 	}
+}
 
-	await handleGlobalChat(message, bot.container);
-};
+module.exports = MessageCreateEvent;

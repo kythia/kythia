@@ -6,35 +6,44 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = async (bot, message) => {
-	const { models } = bot.client.container;
-	const { AutoReact } = models;
+const { BaseEvent } = require('kythia-core');
 
-	if (!message.author || message.author.bot || !message.guild) return;
+class MessageCreateEvent extends BaseEvent {
+	async execute(message) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
 
-	const allReactions = await AutoReact.getAllCache({
-		where: { guildId: message.guild.id },
-	});
+		const { models } = this.container;
+		const { AutoReact } = models;
 
-	if (!allReactions.length) return;
+		if (!message.author || message.author.bot || !message.guild) return;
 
-	const content = message.content.toLowerCase();
-	const reactions = allReactions.filter(({ type, trigger }) => {
-		if (type === 'channel') return trigger === message.channel.id;
-		if (type === 'text') {
-			const escaped = trigger.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-			return new RegExp(`\\b${escaped}\\b`, 'i').test(content);
-		}
-		return false;
-	});
+		const allReactions = await AutoReact.getAllCache({
+			where: { guildId: message.guild.id },
+		});
 
-	if (reactions.length === 0) return;
+		if (!allReactions.length) return;
 
-	for (const reaction of reactions) {
-		try {
-			await message.react(reaction.emoji);
-		} catch (_e) {
-			// Ignore failed reactions (e.g. invalid emoji, blocked, etc.)
+		const content = message.content.toLowerCase();
+		const reactions = allReactions.filter(({ type, trigger }) => {
+			if (type === 'channel') return trigger === message.channel.id;
+			if (type === 'text') {
+				const escaped = trigger.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+				return new RegExp(`\\b${escaped}\\b`, 'i').test(content);
+			}
+			return false;
+		});
+
+		if (reactions.length === 0) return;
+
+		for (const reaction of reactions) {
+			try {
+				await message.react(reaction.emoji);
+			} catch (_e) {
+				// Ignore failed reactions (e.g. invalid emoji, blocked, etc.)
+			}
 		}
 	}
-};
+}
+
+module.exports = MessageCreateEvent;

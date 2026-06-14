@@ -5,7 +5,6 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-
 const {
 	MessageFlags,
 	ContainerBuilder,
@@ -15,90 +14,100 @@ const {
 } = require('discord.js');
 const Sentry = require('@sentry/node');
 
-module.exports = async (bot, reaction) => {
-	const container = bot.client.container;
-	const { helpers, models, logger, t } = container;
-	const { convertColor } = helpers.color;
-	const { ServerSetting } = models;
-	const guildId = reaction.message.guild?.id;
+const { BaseEvent } = require('kythia-core');
 
-	const message = reaction.message;
+class MessageReactionRemoveEmojiEvent extends BaseEvent {
+	async execute(reaction) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
 
-	if (!message.guild) return;
+		const { helpers, models, logger, t } = container;
+		const { convertColor } = helpers.color;
+		const { ServerSetting } = models;
+		const guildId = reaction.message.guild?.id;
 
-	try {
-		const settings = await ServerSetting.getCache({
-			guildId: message.guild.id,
-		});
-		if (!settings?.auditLogChannelId) return;
+		const message = reaction.message;
 
-		const logChannel = await message.guild.channels
-			.fetch(settings.auditLogChannelId)
-			.catch(() => null);
-		if (!logChannel?.isTextBased()) return;
-		if (
-			!logChannel
-				.permissionsFor(bot.client.user)
-				?.has(['ViewChannel', 'SendMessages'])
-		)
-			return;
+		if (!message.guild) return;
 
-		// No specific audit log type for removing a SPECIFIC emoji usually, but it might fall under MessageReactionRemoveEmoji if triggered by a user/bot?
-		// Actually there isn't a direct audit log for this specific action often, it's usually just manual removal.
-		// We'll skip deep audit log association here unless we find one matching.
+		try {
+			const settings = await ServerSetting.getCache({
+				guildId: message.guild.id,
+			});
+			if (!settings?.auditLogChannelId) return;
 
-		const emojiDisplay = reaction.emoji.id
-			? `<:${reaction.emoji.name}:${reaction.emoji.id}>`
-			: reaction.emoji.name;
+			const logChannel = await message.guild.channels
+				.fetch(settings.auditLogChannelId)
+				.catch(() => null);
+			if (!logChannel?.isTextBased()) return;
+			if (
+				!logChannel
+					.permissionsFor(this.client.user)
+					?.has(['ViewChannel', 'SendMessages'])
+			)
+				return;
 
-		const components = [
-			new ContainerBuilder()
-				.setAccentColor(convertColor('Red', { from: 'discord', to: 'decimal' }))
-				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(
-						`🗑️ **Reaction Emoji Removed** in <#${message.channelId}>\n\n` +
-							`**Emoji:** ${emojiDisplay}\n` +
-							`**Message:** [Jump to Message](${message.url})`,
+			// No specific audit log type for removing a SPECIFIC emoji usually, but it might fall under MessageReactionRemoveEmoji if triggered by a user/bot?
+			// Actually there isn't a direct audit log for this specific action often, it's usually just manual removal.
+			// We'll skip deep audit log association here unless we find one matching.
+
+			const emojiDisplay = reaction.emoji.id
+				? `<:${reaction.emoji.name}:${reaction.emoji.id}>`
+				: reaction.emoji.name;
+
+			const components = [
+				new ContainerBuilder()
+					.setAccentColor(
+						convertColor('Red', { from: 'discord', to: 'decimal' }),
+					)
+					.addTextDisplayComponents(
+						new TextDisplayBuilder().setContent(
+							`🗑️ **Reaction Emoji Removed** in <#${message.channelId}>\n\n` +
+								`**Emoji:** ${emojiDisplay}\n` +
+								`**Message:** [Jump to Message](${message.url})`,
+						),
+					)
+					.addSeparatorComponents(
+						new SeparatorBuilder()
+							.setSpacing(SeparatorSpacingSize.Small)
+							.setDivider(true),
+					)
+					.addTextDisplayComponents(
+						new TextDisplayBuilder().setContent(
+							`📝 **Message ID:** ${message.id}\n` +
+								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
+						),
+					)
+					.addSeparatorComponents(
+						new SeparatorBuilder()
+							.setSpacing(SeparatorSpacingSize.Small)
+							.setDivider(true),
+					)
+					.addTextDisplayComponents(
+						new TextDisplayBuilder().setContent(
+							await t({ guildId }, 'common.container.footer', {
+								username: this.client.user.username,
+							}),
+						),
 					),
-				)
-				.addSeparatorComponents(
-					new SeparatorBuilder()
-						.setSpacing(SeparatorSpacingSize.Small)
-						.setDivider(true),
-				)
-				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(
-						`📝 **Message ID:** ${message.id}\n` +
-							`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-					),
-				)
-				.addSeparatorComponents(
-					new SeparatorBuilder()
-						.setSpacing(SeparatorSpacingSize.Small)
-						.setDivider(true),
-				)
-				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(
-						await t({ guildId }, 'common.container.footer', {
-							username: bot.client.user.username,
-						}),
-					),
-				),
-		];
+			];
 
-		await logChannel.send({
-			components,
-			flags: MessageFlags.IsComponentsV2,
-			allowedMentions: {
-				parse: [],
-			},
-		});
-	} catch (err) {
-		logger.error(`Error: ${err.message || err}`, {
-			label: 'messageReactionRemoveEmoji',
-		});
-		if (bot.config?.sentry?.dsn) {
-			Sentry.captureException(err);
+			await logChannel.send({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+				allowedMentions: {
+					parse: [],
+				},
+			});
+		} catch (err) {
+			logger.error(`Error: ${err.message || err}`, {
+				label: 'messageReactionRemoveEmoji',
+			});
+			if (bot.config?.sentry?.dsn) {
+				Sentry.captureException(err);
+			}
 		}
 	}
-};
+}
+
+module.exports = MessageReactionRemoveEmojiEvent;

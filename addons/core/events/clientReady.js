@@ -5,7 +5,6 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-
 const { ActivityType } = require('discord.js');
 
 function setBotPresence(client) {
@@ -46,6 +45,15 @@ function setBotPresence(client) {
 	}
 }
 
-module.exports = (_bot, client) => {
-	setBotPresence(client);
-};
+const { BaseEvent } = require('kythia-core');
+
+class ClientReadyEvent extends BaseEvent {
+	async execute(client) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
+
+		setBotPresence(client);
+	}
+}
+
+module.exports = ClientReadyEvent;

@@ -5,54 +5,61 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-
 const { AuditLogEvent } = require('discord.js');
 const { checkInstant, revertTampering } = require('../helpers/antinuke');
 
-module.exports = async (bot, oldGuild, newGuild) => {
-	try {
-		if (!newGuild.members.me?.permissions?.has('ViewAuditLog')) return;
+const { BaseEvent } = require('kythia-core');
 
-		const nameChanged = oldGuild.name !== newGuild.name;
-		const iconChanged = oldGuild.icon !== newGuild.icon;
-		const vanityChanged = oldGuild.vanityURLCode !== newGuild.vanityURLCode;
+class GuildUpdateEvent extends BaseEvent {
+	async execute(oldGuild, newGuild) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
 
-		if (!nameChanged && !iconChanged && !vanityChanged) return;
+		try {
+			if (!newGuild.members.me?.permissions?.has('ViewAuditLog')) return;
 
-		const audit = await newGuild
-			.fetchAuditLogs({
-				type: AuditLogEvent.GuildUpdate,
-				limit: 1,
-			})
-			.catch(() => null);
-		if (!audit) return;
-		const entry = audit.entries.find(
-			(e) =>
-				e.target?.id === newGuild.id && e.createdTimestamp > Date.now() - 5000,
-		);
-		if (!entry?.executor || entry.executor.bot) return;
+			const nameChanged = oldGuild.name !== newGuild.name;
+			const iconChanged = oldGuild.icon !== newGuild.icon;
+			const vanityChanged = oldGuild.vanityURLCode !== newGuild.vanityURLCode;
 
-		let detail = 'Tampering detected: ';
-		if (nameChanged) detail += `Name (${oldGuild.name} -> ${newGuild.name}). `;
-		if (iconChanged) detail += `Icon changed. `;
-		if (vanityChanged) detail += `Vanity URL changed. `;
+			if (!nameChanged && !iconChanged && !vanityChanged) return;
 
-		// Revert changes
-		await revertTampering(newGuild, oldGuild, 'guild');
+			const audit = await newGuild
+				.fetchAuditLogs({
+					type: AuditLogEvent.GuildUpdate,
+					limit: 1,
+				})
+				.catch(() => null);
+			if (!audit) return;
+			const entry = audit.entries.find(
+				(e) =>
+					e.target?.id === newGuild.id &&
+					e.createdTimestamp > Date.now() - 5000,
+			);
+			if (!entry?.executor || entry.executor.bot) return;
 
-		await checkInstant({
-			bot,
-			guild: newGuild,
-			executor: entry.executor,
-			moduleName: 'serverUpdate',
-			detail: detail.trim(),
-		});
-	} catch (err) {
-		bot.client.container.logger.error(
-			`guildUpdate error: ${err.message || err}`,
-			{
+			let detail = 'Tampering detected: ';
+			if (nameChanged)
+				detail += `Name (${oldGuild.name} -> ${newGuild.name}). `;
+			if (iconChanged) detail += `Icon changed. `;
+			if (vanityChanged) detail += `Vanity URL changed. `;
+
+			// Revert changes
+			await revertTampering(newGuild, oldGuild, 'guild');
+
+			await checkInstant({
+				bot,
+				guild: newGuild,
+				executor: entry.executor,
+				moduleName: 'serverUpdate',
+				detail: detail.trim(),
+			});
+		} catch (err) {
+			this.container.logger.error(`guildUpdate error: ${err.message || err}`, {
 				label: 'antinuke',
-			},
-		);
+			});
+		}
 	}
-};
+}
+
+module.exports = GuildUpdateEvent;

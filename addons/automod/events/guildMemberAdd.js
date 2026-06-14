@@ -15,22 +15,20 @@ const {
 	_resetCount,
 } = require('../helpers/antinuke');
 
-function isGibberish(username) {
-	// A simple heuristic for "ngawur" usernames:
-	// 1. Contains 5 or more consecutive digits (e.g., jhondoe12345)
-	if (/\d{5,}/.test(username)) return true;
-	// 2. Contains 5 or more consecutive consonants (e.g., jklmzq)
-	if (/[bcdfghjklmnpqrstvwxyz]{5,}/i.test(username)) return true;
+const { BaseEvent } = require('kythia-core');
 
+function isGibberish(username) {
+	if (/\d{5,}/.test(username)) return true;
+	if (/[bcdfghjklmnpqrstvwxyz]{5,}/i.test(username)) return true;
 	return false;
 }
 
-module.exports = {
-	name: 'guildMemberAdd',
-	async execute(member, bot) {
-		const container = bot.client.container;
-		const { ServerSetting } = container.models;
-		const { logger } = container;
+class GuildMemberAddEvent extends BaseEvent {
+	async execute(member) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
+		const { models, logger } = container;
+		const { ServerSetting } = models;
 
 		try {
 			const settings = await ServerSetting.getCache({
@@ -47,13 +45,10 @@ module.exports = {
 			if (member.user.bot) {
 				const botMod = config.modules.botAdd;
 				if (botMod?.enabled) {
-					// Kick the bot immediately
 					if (member.kickable)
 						await member.kick('AntiNuke: botAdd module triggered');
 
-					// Try to find who added the bot
 					try {
-						// Wait a tiny bit to ensure audit logs are ready
 						await new Promise((r) => setTimeout(r, 1500));
 						const logs = await member.guild.fetchAuditLogs({
 							type: AuditLogEvent.BotAdd,
@@ -66,13 +61,12 @@ module.exports = {
 							entry.target?.id === member.user.id &&
 							entry.executor
 						) {
-							// Found the executor! Punish them
 							const executor = entry.executor;
 							const isWhitelisted = config.whitelistedUsers?.includes(
 								executor.id,
 							);
 
-							if (!isWhitelisted && executor.id !== bot.user.id) {
+							if (!isWhitelisted && executor.id !== this.client.user.id) {
 								const executorMember = await member.guild.members
 									.fetch(executor.id)
 									.catch(() => null);
@@ -98,7 +92,7 @@ module.exports = {
 						logger.error(`Failed to punish executor for botAdd: ${e.message}`);
 					}
 				}
-				return; // Stop processing further for bots
+				return;
 			}
 
 			// ==========================================
@@ -125,7 +119,7 @@ module.exports = {
 					if (actioned) {
 						await sendAlert(member.guild, config, settings, {
 							moduleName: 'massJoin',
-							executor: bot.user, // System executed
+							executor: this.client.user,
 							action: massMod.action,
 							detail: `Triggered by ${count} joins within ${massMod.window / 1000}s. Server Verification Level is now Highest.`,
 						});
@@ -139,28 +133,22 @@ module.exports = {
 			const mod = config.modules.fakeAccount;
 			if (!mod?.enabled) return;
 
-			// Ensure user data is fully fetched (especially banner)
 			await member.user.fetch(true).catch(() => null);
 
-			// Criteria 1: Account Age
 			const ageMs = Date.now() - member.user.createdTimestamp;
 			const minAgeMs = (mod.minAgeDays || 7) * 24 * 60 * 60 * 1000;
 			const isTooNew = ageMs < minAgeMs;
 
-			// Criteria 2: No Profile Picture & No Banner (if configured)
 			const hasNoAvatar = !member.user.avatar;
 			const hasNoBanner = !member.user.banner;
 			const avatarMatch = mod.requireNoAvatar ? hasNoAvatar : true;
 			const bannerMatch = mod.requireNoBanner ? hasNoBanner : true;
 
-			// Criteria 3: Gibberish/Random Username (if configured)
 			const usernameNgawur = isGibberish(member.user.username);
 			const gibberishMatch = mod.detectGibberish ? usernameNgawur : true;
 
 			if (isTooNew && avatarMatch && bannerMatch && gibberishMatch) {
 				const reason = `[AntiNuke] fakeAccount: Account detected as fake on join.`;
-
-				// Execute configured action
 				const actioned = await executeAction(
 					member.guild,
 					member,
@@ -169,7 +157,6 @@ module.exports = {
 				);
 
 				if (actioned) {
-					// Log the action
 					const detail = `User joined with age ${Math.floor(ageMs / (1000 * 60 * 60 * 24))} days, no avatar/banner, and username "${member.user.username}".`;
 					await sendAlert(member.guild, config, settings, {
 						moduleName: 'fakeAccount',
@@ -187,5 +174,7 @@ module.exports = {
 				},
 			);
 		}
-	},
-};
+	}
+}
+
+module.exports = GuildMemberAddEvent;

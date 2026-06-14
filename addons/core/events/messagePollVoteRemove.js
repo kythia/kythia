@@ -5,7 +5,6 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-
 const {
 	MessageFlags,
 	ContainerBuilder,
@@ -15,86 +14,96 @@ const {
 } = require('discord.js');
 const Sentry = require('@sentry/node');
 
-module.exports = async (bot, pollAnswer, userId) => {
-	const container = bot.client.container;
-	const { helpers, models, logger, t } = container;
-	const { convertColor } = helpers.color;
-	const { ServerSetting } = models;
+const { BaseEvent } = require('kythia-core');
 
-	const message = pollAnswer.poll.message;
-	const guild = message.guild;
-	const guildId = guild?.id;
+class MessagePollVoteRemoveEvent extends BaseEvent {
+	async execute(pollAnswer, userId) {
+		const container = this.container;
+		const bot = { client: this.client, container: this.container };
 
-	if (!guild) return;
+		const { helpers, models, logger, t } = container;
+		const { convertColor } = helpers.color;
+		const { ServerSetting } = models;
 
-	try {
-		const settings = await ServerSetting.getCache({
-			guildId: guild.id,
-		});
-		if (!settings?.auditLogChannelId) return;
+		const message = pollAnswer.poll.message;
+		const guild = message.guild;
+		const guildId = guild?.id;
 
-		const logChannel = await guild.channels
-			.fetch(settings.auditLogChannelId)
-			.catch(() => null);
-		if (!logChannel?.isTextBased()) return;
-		if (
-			!logChannel
-				.permissionsFor(bot.client.user)
-				?.has(['ViewChannel', 'SendMessages'])
-		)
-			return;
+		if (!guild) return;
 
-		const user = await bot.client.users.fetch(userId).catch(() => null);
+		try {
+			const settings = await ServerSetting.getCache({
+				guildId: guild.id,
+			});
+			if (!settings?.auditLogChannelId) return;
 
-		const components = [
-			new ContainerBuilder()
-				.setAccentColor(convertColor('Red', { from: 'discord', to: 'decimal' }))
-				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(
-						`📊 **Poll Vote Removed** in <#${message.channelId}>\n\n` +
-							`**User:** ${user ? `${user.tag} (<@${user.id}>)` : `Unknown User (${userId})`}\n` +
-							`**Option:** ${pollAnswer.text || '(Image Only)'} (ID: ${pollAnswer.id})\n` +
-							`**Message:** [Jump to Message](${message.url})`,
+			const logChannel = await guild.channels
+				.fetch(settings.auditLogChannelId)
+				.catch(() => null);
+			if (!logChannel?.isTextBased()) return;
+			if (
+				!logChannel
+					.permissionsFor(this.client.user)
+					?.has(['ViewChannel', 'SendMessages'])
+			)
+				return;
+
+			const user = await this.client.users.fetch(userId).catch(() => null);
+
+			const components = [
+				new ContainerBuilder()
+					.setAccentColor(
+						convertColor('Red', { from: 'discord', to: 'decimal' }),
+					)
+					.addTextDisplayComponents(
+						new TextDisplayBuilder().setContent(
+							`📊 **Poll Vote Removed** in <#${message.channelId}>\n\n` +
+								`**User:** ${user ? `${user.tag} (<@${user.id}>)` : `Unknown User (${userId})`}\n` +
+								`**Option:** ${pollAnswer.text || '(Image Only)'} (ID: ${pollAnswer.id})\n` +
+								`**Message:** [Jump to Message](${message.url})`,
+						),
+					)
+					.addSeparatorComponents(
+						new SeparatorBuilder()
+							.setSpacing(SeparatorSpacingSize.Small)
+							.setDivider(true),
+					)
+					.addTextDisplayComponents(
+						new TextDisplayBuilder().setContent(
+							`👤 **User:** ${user?.tag || 'Unknown'} (${userId})\n` +
+								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
+						),
+					)
+					.addSeparatorComponents(
+						new SeparatorBuilder()
+							.setSpacing(SeparatorSpacingSize.Small)
+							.setDivider(true),
+					)
+					.addTextDisplayComponents(
+						new TextDisplayBuilder().setContent(
+							await t({ guildId }, 'common.container.footer', {
+								username: this.client.user.username,
+							}),
+						),
 					),
-				)
-				.addSeparatorComponents(
-					new SeparatorBuilder()
-						.setSpacing(SeparatorSpacingSize.Small)
-						.setDivider(true),
-				)
-				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(
-						`👤 **User:** ${user?.tag || 'Unknown'} (${userId})\n` +
-							`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-					),
-				)
-				.addSeparatorComponents(
-					new SeparatorBuilder()
-						.setSpacing(SeparatorSpacingSize.Small)
-						.setDivider(true),
-				)
-				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(
-						await t({ guildId }, 'common.container.footer', {
-							username: bot.client.user.username,
-						}),
-					),
-				),
-		];
+			];
 
-		await logChannel.send({
-			components,
-			flags: MessageFlags.IsComponentsV2,
-			allowedMentions: {
-				parse: [],
-			},
-		});
-	} catch (err) {
-		logger.error(`Error: ${err.message || err}`, {
-			label: 'messagePollVoteRemove',
-		});
-		if (bot.config?.sentry?.dsn) {
-			Sentry.captureException(err);
+			await logChannel.send({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+				allowedMentions: {
+					parse: [],
+				},
+			});
+		} catch (err) {
+			logger.error(`Error: ${err.message || err}`, {
+				label: 'messagePollVoteRemove',
+			});
+			if (bot.config?.sentry?.dsn) {
+				Sentry.captureException(err);
+			}
 		}
 	}
-};
+}
+
+module.exports = MessagePollVoteRemoveEvent;
