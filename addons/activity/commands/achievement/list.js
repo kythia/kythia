@@ -5,7 +5,9 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-
+// space 1 line
+// discord.js import on top of another import
+// Sorting from shortest letter to longest letter
 const {
 	MessageFlags,
 	SeparatorBuilder,
@@ -13,16 +15,23 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
+// space 1 line
+// kythia core import after discord.js import
 const { BaseCommand } = require('kythia-core');
+// space 1 line
+// addons import after kythia core import
 const achievementDefs = require('../../helpers/achievements');
 const achievementuiHelper = require('../../helpers/achievement-ui');
-
+// space 1 line
 class ListCommand extends BaseCommand {
+	// all command property before slashCommand
 	subcommand = true;
+	// must (subcommand) on subcommand case, dont (sub) or (subcmd) etc..
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
 			.setDescription('📋 Browse achievements by category.')
+			// must (option) dont (opt) or (op) etc..
 			.addStringOption((option) =>
 				option
 					.setName('category')
@@ -72,18 +81,29 @@ class ListCommand extends BaseCommand {
 					.setName('user')
 					.setDescription('The user to check. Defaults to yourself.'),
 			);
+	// space 1 line
 	async execute(interaction) {
+		// must const container = this.container before use it on file
 		const container = this.container;
-		const { models, kythiaConfig, helpers } = container;
+		// extract only what you need from container with this style
+		const { t, models, kythiaConfig, helpers } = container;
+		// then models destructure if any
 		const { UserAchievement } = models;
+		// then helpers destructure if any, or kythiaConfig destructure if any, etc..
 		const { convertColor } = helpers.color;
+		// space 1 line
+		// add deferReply when doing some DB query or something else
 		await interaction.deferReply();
+		// space 1 line
+		// get the command input with const declaration, then assign value
 		const targetUser = interaction.options.getUser('user') || interaction.user;
+		const categoryFilter = interaction.options.getString('category');
+		// then guildId or userId or something else with const declaration
 		const guildId = interaction.guild.id;
 		const userId = targetUser.id;
-		const categoryFilter = interaction.options.getString('category');
 
-		// Load unlocked achievement IDs for this user
+		// database query, MUST use custom cache function, dont use findOne/findAll/findByPk
+		// instead use getCache/getAllCache read <this project>/docs/core/MODEL_USAGE.md
 		const unlockedRows = await UserAchievement.getAllCache({
 			where: {
 				guildId,
@@ -92,20 +112,16 @@ class ListCommand extends BaseCommand {
 			attributes: ['achievementId'],
 			raw: true,
 		});
+
 		const unlockedSet = new Set(unlockedRows.map((r) => r.achievementId));
 
 		// Build category list
 		const categories = categoryFilter
 			? [[categoryFilter, achievementDefs[categoryFilter] ?? []]]
 			: Object.entries(achievementDefs);
-		const accentColorDecimal = convertColor(
-			kythiaConfig.bot.color || '#5865F2',
-			{
-				from: 'hex',
-				to: 'decimal',
-			},
-		);
+
 		const lines = [];
+
 		for (const [catKey, achievements] of categories) {
 			if (!achievements || achievements.length === 0) continue;
 			const label = achievementuiHelper.CATEGORY_LABELS[catKey] ?? catKey;
@@ -126,9 +142,20 @@ class ListCommand extends BaseCommand {
 		// Count summary
 		const totalCount = Object.values(achievementDefs).flat().length;
 		const unlockedCount = unlockedSet.size;
-		const header = `## 📋 Achievements — ${targetUser.username}\n✅ **${unlockedCount}/${totalCount}** unlocked`;
+		// always use t for translation for command string in the command files
+		// and put the translation in the addon lang/en-US.json file
+		const header = await t(interaction, 'activity.achievement.list.header', {
+			username: targetUser.username,
+			unlockedCount,
+			totalCount,
+		});
+
+		// using containerbuilder
 		const listContainer = new ContainerBuilder()
-			.setAccentColor(accentColorDecimal)
+			// always use convert color helper if need to convert color for the components v2
+			.setAccentColor(
+				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+			)
 			.addTextDisplayComponents(new TextDisplayBuilder().setContent(header))
 			.addSeparatorComponents(
 				new SeparatorBuilder()
@@ -137,13 +164,20 @@ class ListCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					lines.join('\n').slice(0, 3800) || '_No achievements found._',
+					lines.join('\n').slice(0, 3800) ||
+						(await t(interaction, 'activity.achievement.list.empty')),
 				),
 			);
+
+		// edit reply cuz we use deferReply at the beginning
 		await interaction.editReply({
+			// must on array for components v2 []
 			components: [listContainer],
+			// flags is mandatory for Components V2
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
+// space 1 line
+// export at the end of the file
 exports.default = ListCommand;

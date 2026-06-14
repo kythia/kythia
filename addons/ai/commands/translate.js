@@ -12,10 +12,11 @@ const {
 	ApplicationCommandType,
 	ContextMenuCommandBuilder,
 } = require('discord.js');
-const { getAndUseNextAvailableToken } = require('../helpers/gemini');
 const { GoogleGenAI } = require('@google/genai');
 
 const { BaseCommand } = require('kythia-core');
+
+const { getAndUseNextAvailableToken } = require('../helpers/gemini');
 
 class TranslateCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
@@ -85,7 +86,6 @@ class TranslateCommand extends BaseCommand {
 			}
 
 			const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-
 			const prompt = `Translate the following text to ${lang}:\n\n${text}\n\nOnly return the translated text, no explanation.`;
 
 			try {
@@ -117,9 +117,7 @@ class TranslateCommand extends BaseCommand {
 				} else {
 					logger.error(
 						`Error in /translate (non-429): ${error.message || error}`,
-						{
-							label: 'translate',
-						},
+						{ label: 'translate' },
 					);
 					break;
 				}
@@ -151,6 +149,7 @@ class TranslateCommand extends BaseCommand {
 			});
 			await interaction.editReply({
 				components,
+				flags: MessageFlags.IsComponentsV2,
 			});
 		}
 	}

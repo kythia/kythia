@@ -16,7 +16,11 @@ class RecallCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('recall')
-			.setNameLocalizations({ id: 'kembali', fr: 'retour', ja: 'リコール' })
+			.setNameLocalizations({
+				id: 'kembali',
+				fr: 'retour',
+				ja: 'リコール',
+			})
 			.setDescription('🏙️ Get back to the city!')
 			.setDescriptionLocalizations({
 				id: '🏙️ kembali ke kota',
@@ -31,7 +35,12 @@ class RecallCommand extends BaseCommand {
 		const { simpleContainer } = helpers.discord;
 
 		await interaction.deferReply();
-		const user = await UserAdventure.getCache({ userId: interaction.user.id });
+
+		const userId = interaction.user.id;
+
+		const user = await UserAdventure.getCache({
+			userId,
+		});
 
 		if (!user) {
 			const msg = await t(interaction, 'adventure.no.character');
@@ -51,10 +60,12 @@ class RecallCommand extends BaseCommand {
 		user.monsterGoldDrop = 0;
 		user.monsterXpDrop = 0;
 		await user.save();
+
 		const msg = await t(interaction, 'adventure.recall.recalled');
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,
 		});
+
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,

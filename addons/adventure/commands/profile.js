@@ -15,9 +15,10 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-const characters = require('../helpers/characters');
 
 const { BaseCommand } = require('kythia-core');
+
+const characters = require('../helpers/characters');
 
 class ProfileCommand extends BaseCommand {
 	subcommand = true;
@@ -25,7 +26,11 @@ class ProfileCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('profile')
-			.setNameLocalizations({ id: 'profil', fr: 'profil', ja: 'プロフィール' })
+			.setNameLocalizations({
+				id: 'profil',
+				fr: 'profil',
+				ja: 'プロフィール',
+			})
 			.setDescription('📑 Look at your Adventure stats')
 			.setDescriptionLocalizations({
 				id: '📑 Lihat Statistik petualanganmu',
@@ -37,15 +42,19 @@ class ProfileCommand extends BaseCommand {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { UserAdventure } = models;
-		const { createContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 
 		await interaction.deferReply();
-		const user = await UserAdventure.getCache({ userId: interaction.user.id });
+
+		const userId = interaction.user.id;
+
+		const user = await UserAdventure.getCache({
+			userId,
+		});
 
 		if (!user) {
 			const msg = await t(interaction, 'adventure.no.character');
-			const components = await createContainer(interaction, {
+			const components = await helpers.discord.createContainer(interaction, {
 				description: msg,
 				color: 'Red',
 			});
@@ -61,26 +70,10 @@ class ProfileCommand extends BaseCommand {
 			'█'.repeat(Math.round(20 * xpProgress)) +
 			'░'.repeat(20 - Math.round(20 * xpProgress));
 
-		const colorInput = kythiaConfig.bot.color;
-		const defaultAccent = convertColor(colorInput, {
+		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-		let accentColor = defaultAccent;
-
-		const isHex = /^#?([0-9A-Fa-f]{6})$/.test(colorInput);
-		if (isHex) {
-			accentColor = convertColor(colorInput, { from: 'hex', to: 'decimal' });
-		} else {
-			try {
-				accentColor = convertColor(colorInput, {
-					from: 'discord',
-					to: 'decimal',
-				});
-			} catch (_e) {
-				accentColor = defaultAccent;
-			}
-		}
 
 		const profileContainer = new ContainerBuilder().setAccentColor(accentColor);
 
@@ -171,6 +164,7 @@ class ProfileCommand extends BaseCommand {
 				.setSpacing(SeparatorSpacingSize.Small)
 				.setDivider(true),
 		);
+
 		profileContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
 				await t(interaction, 'common.container.footer', {

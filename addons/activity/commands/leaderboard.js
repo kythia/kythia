@@ -8,13 +8,14 @@
 
 const { MessageFlags } = require('discord.js');
 const { Op, fn, col, literal } = require('sequelize');
-const { BaseCommand } = require('kythia-core');
-const leaderboardHelper = require('../helpers/leaderboard');
 
-// Helpers extracted to addons/activity/helpers/leaderboard.js
+const { BaseCommand } = require('kythia-core');
+
+const leaderboardHelper = require('../helpers/leaderboard');
 
 class LeaderboardCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leaderboard')
@@ -59,22 +60,28 @@ class LeaderboardCommand extends BaseCommand {
 						},
 					),
 			);
+
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models } = container;
 		const { ActivityStat, ActivityLog } = models;
 		const { getPeriodStart, generateLeaderboardContainer, MAX_USERS } =
 			leaderboardHelper;
+
+		await interaction.deferReply();
+
 		const guildId = interaction.guild.id;
 		const type = interaction.options.getString('type') || 'messages';
 		const period = interaction.options.getString('period') || 'all';
+
 		const orderColumn = type === 'voice' ? 'totalVoiceTime' : 'totalMessages';
 		const periodLabel = await t(
 			interaction,
 			`activity.leaderboard.activity.leaderboard.period.${period}`,
 		);
-		await interaction.deferReply();
+
 		let allStats;
+
 		if (period === 'all') {
 			allStats = await ActivityStat.getAllCache({
 				where: {
@@ -101,8 +108,10 @@ class LeaderboardCommand extends BaseCommand {
 				raw: true,
 			});
 		}
+
 		const totalUsers = allStats.length;
 		let currentPage = 1;
+
 		if (totalUsers === 0) {
 			const { leaderboardContainer } = await generateLeaderboardContainer(
 				interaction,
@@ -111,16 +120,15 @@ class LeaderboardCommand extends BaseCommand {
 				0,
 				type,
 				periodLabel,
-				/*navDisabled*/ true,
+				true,
 			);
+
 			return interaction.editReply({
 				components: [leaderboardContainer],
 				flags: MessageFlags.IsComponentsV2,
-				allowedMentions: {
-					parse: [],
-				},
 			});
 		}
+
 		const { leaderboardContainer, totalPages } =
 			await generateLeaderboardContainer(
 				interaction,
@@ -130,18 +138,19 @@ class LeaderboardCommand extends BaseCommand {
 				type,
 				periodLabel,
 			);
+
 		const message = await interaction.editReply({
 			components: [leaderboardContainer],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
-			allowedMentions: {
-				parse: [],
-			},
 		});
+
 		if (totalPages <= 1) return;
+
 		const collector = message.createMessageComponentCollector({
 			time: 300_000,
 		});
+
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
@@ -152,6 +161,7 @@ class LeaderboardCommand extends BaseCommand {
 					flags: MessageFlags.Ephemeral,
 				});
 			}
+
 			if (i.customId === 'activity_lb_first') {
 				currentPage = 1;
 			} else if (i.customId === 'activity_lb_prev') {
@@ -161,6 +171,7 @@ class LeaderboardCommand extends BaseCommand {
 			} else if (i.customId === 'activity_lb_last') {
 				currentPage = totalPages;
 			}
+
 			const { leaderboardContainer: newContainer } =
 				await generateLeaderboardContainer(
 					i,
@@ -170,14 +181,13 @@ class LeaderboardCommand extends BaseCommand {
 					type,
 					periodLabel,
 				);
+
 			await i.update({
 				components: [newContainer],
 				flags: MessageFlags.IsComponentsV2,
-				allowedMentions: {
-					parse: [],
-				},
 			});
 		});
+
 		collector.on('end', async () => {
 			try {
 				const { leaderboardContainer: finalContainer } =
@@ -190,15 +200,14 @@ class LeaderboardCommand extends BaseCommand {
 						periodLabel,
 						true,
 					);
+
 				await message.edit({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
-					allowedMentions: {
-						parse: [],
-					},
 				});
 			} catch (_e) {}
 		});
 	}
 }
+
 exports.default = LeaderboardCommand;

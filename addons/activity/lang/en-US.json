@@ -39,6 +39,10 @@
 			}
 		},
 		"achievement": {
+			"list": {
+				"header": "## 📋 Achievements — {username}\n✅ **{unlockedCount}/{totalCount}** unlocked",
+				"empty": "_No achievements found._"
+			},
 			"messages_250": {
 				"name": "250 Messages Sent",
 				"desc": "Send 250 messages total."

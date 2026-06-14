@@ -15,12 +15,15 @@ const {
 	SeparatorBuilder,
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
+	StringSelectMenuBuilder,
+	StringSelectMenuOptionBuilder,
 } = require('discord.js');
-const { getRandomMonster } = require('../helpers/monster');
-const characters = require('../helpers/characters');
-const { getItemById } = require('../helpers/items');
 
 const { BaseCommand } = require('kythia-core');
+
+const { getRandomMonster } = require('../helpers/monster');
+const { getItemById } = require('../helpers/items');
+const characters = require('../helpers/characters');
 
 class BattleCommand extends BaseCommand {
 	subcommand = true;
@@ -28,7 +31,11 @@ class BattleCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('battle')
-			.setNameLocalizations({ id: 'bertarung', fr: 'combat', ja: 'たたかう' })
+			.setNameLocalizations({
+				id: 'bertarung',
+				fr: 'combat',
+				ja: 'たたかう',
+			})
 			.setDescription('⚔️ Fight a monster in the dungeon!')
 			.setDescriptionLocalizations({
 				id: '⚔️ Bertarung melawan monster di dimensi lain!',
@@ -44,12 +51,15 @@ class BattleCommand extends BaseCommand {
 		const { convertColor } = helpers.color;
 
 		await interaction.deferReply();
-		const user = await UserAdventure.getCache({ userId: interaction.user.id });
+
 		const userId = interaction.user.id;
+
+		const user = await UserAdventure.getCache({
+			userId,
+		});
 
 		if (!user) {
 			const msg = await t(interaction, 'adventure.no.character');
-
 			const components = await createContainer(interaction, {
 				description: msg,
 				color: 'Red',
@@ -79,7 +89,6 @@ class BattleCommand extends BaseCommand {
 
 			const userStrength = user.strength + (sword ? 10 : 0);
 			const userDefense = user.defense + (shield ? 10 : 0) + (armor ? 15 : 0);
-
 			const char = user.characterId
 				? characters.getChar(user.characterId)
 				: null;
@@ -93,7 +102,6 @@ class BattleCommand extends BaseCommand {
 				1,
 				monsterRaw + Math.floor(Math.random() * 4),
 			);
-
 			const monsterMaxHp =
 				user.monsterHp > 0 ? user.monsterHp + playerDamage : 1;
 
@@ -126,6 +134,7 @@ class BattleCommand extends BaseCommand {
 				if (revival) {
 					user.hp = user.maxHp;
 					await user.save();
+
 					if (revival.quantity > 1) {
 						revival.quantity -= 1;
 						await revival.save();
@@ -142,7 +151,6 @@ class BattleCommand extends BaseCommand {
 					const msg = await t(interaction, 'adventure.battle.revive', {
 						hp: user.hp,
 					});
-
 					const continueButton = new ActionRowBuilder().addComponents(
 						new ButtonBuilder()
 							.setCustomId('adventure_continue')
@@ -151,7 +159,6 @@ class BattleCommand extends BaseCommand {
 							)
 							.setStyle(ButtonStyle.Primary),
 					);
-
 					const containerMsg = await createContainer(interaction, {
 						description: msg,
 						components: [continueButton],
@@ -174,7 +181,6 @@ class BattleCommand extends BaseCommand {
 				const msg = await t(interaction, 'adventure.battle.lose', {
 					hp: user.hp,
 				});
-
 				const containerMsg = await createContainer(interaction, {
 					description: msg,
 					color: 'Red',
@@ -189,6 +195,7 @@ class BattleCommand extends BaseCommand {
 			if (user.monsterHp <= 0) {
 				let goldEarned = user.monsterGoldDrop;
 				let xpEarned = user.monsterXpDrop;
+
 				if (char) {
 					if (char.goldBonusPercent)
 						goldEarned = Math.floor(
@@ -197,11 +204,10 @@ class BattleCommand extends BaseCommand {
 					if (char.xpBonusPercent)
 						xpEarned = Math.floor(xpEarned * (1 + char.xpBonusPercent / 100));
 				}
-				const monsterName = user.monsterName;
 
+				const monsterName = user.monsterName;
 				user.xp += xpEarned;
 				user.gold += goldEarned;
-
 				user.monsterName = null;
 				user.monsterHp = 0;
 				user.monsterStrength = 0;
@@ -216,9 +222,7 @@ class BattleCommand extends BaseCommand {
 					user.level++;
 					user.strength += 5;
 					user.defense += 3;
-
 					user.maxHp = Math.ceil(user.maxHp * 1.1);
-
 					user.hp = user.maxHp;
 					levelUp = true;
 				}
@@ -231,12 +235,10 @@ class BattleCommand extends BaseCommand {
 						hp: user.hp,
 						maxHp: user.maxHp,
 					});
-
 					const containerMsg = await createContainer(interaction, {
 						description: msg,
 						color: 'Gold',
 					});
-
 					return {
 						components: containerMsg,
 						end: true,
@@ -248,7 +250,6 @@ class BattleCommand extends BaseCommand {
 					gold: goldEarned,
 					xp: xpEarned,
 				});
-
 				const containerMsg = await createContainer(interaction, {
 					description: msg,
 				});
@@ -331,7 +332,9 @@ class BattleCommand extends BaseCommand {
 		}
 
 		const items = await InventoryAdventure.getAllCache({
-			where: { userId: userId },
+			where: {
+				userId,
+			},
 			cacheTags: [`InventoryAdventure:inventory:byUser:${userId}`],
 		});
 
@@ -345,32 +348,23 @@ class BattleCommand extends BaseCommand {
 
 		if (result.end) return;
 
-		const filter = (i) =>
-			(i.customId === 'adventure_continue' ||
-				i.customId === 'adventure_use_item' ||
-				i.customId === 'adventure_item_select') &&
-			i.user.id === interaction.user.id;
-
 		const collector = reply.createMessageComponentCollector({
-			filter,
+			filter: (i) =>
+				(i.customId === 'adventure_continue' ||
+					i.customId === 'adventure_use_item' ||
+					i.customId === 'adventure_item_select') &&
+				i.user.id === interaction.user.id,
 			time: 60_000,
 		});
 
 		collector.on('collect', async (i) => {
 			if (i.customId === 'adventure_use_item') {
-				const { StringSelectMenuBuilder, StringSelectMenuOptionBuilder } =
-					require('discord.js');
-
 				const consumablesMap = {};
 				for (const item of items) {
 					const def = getItemById(item.itemName);
 					if (def && def.type === 'consumable') {
 						if (!consumablesMap[def.id]) {
-							consumablesMap[def.id] = {
-								count: 0,
-								def: def,
-								dbId: item.id,
-							};
+							consumablesMap[def.id] = { count: 0, def, dbId: item.id };
 						}
 						consumablesMap[def.id].count += item.quantity
 							? Number(item.quantity)
@@ -435,7 +429,6 @@ class BattleCommand extends BaseCommand {
 					});
 
 					const selectedItemId = selection.values[0];
-
 					const targetItem = getItemById(selectedItemId);
 					let used = false;
 					let resultMsg = '';
@@ -517,7 +510,6 @@ class BattleCommand extends BaseCommand {
 							items,
 							true,
 						);
-
 						await interaction.editReply({
 							components: nextResult.components,
 							flags: MessageFlags.IsComponentsV2,
@@ -541,12 +533,12 @@ class BattleCommand extends BaseCommand {
 				} catch (e) {
 					logger.error(`Error: ${e.message || e}`, { label: 'adventure' });
 				}
+
 				return;
 			}
 
 			await i.deferUpdate();
 			const nextResult = await handleBattleRound(i, user, items, true);
-
 			await interaction.editReply({
 				components: nextResult.components,
 				flags: MessageFlags.IsComponentsV2,
@@ -569,8 +561,6 @@ class BattleCommand extends BaseCommand {
 				});
 			}
 		});
-
-		return;
 	}
 }
 

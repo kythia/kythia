@@ -22,13 +22,13 @@ class OptoutCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { logger, models, helpers, t } = container;
+		const { t, models, helpers, logger } = container;
 		const { KythiaUser, UserFact } = models;
 		const { simpleContainer } = helpers.discord;
 
-		const userId = interaction.user.id;
+		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-		await interaction.deferReply({ ephemeral: true });
+		const userId = interaction.user.id;
 
 		try {
 			if (!KythiaUser) {
@@ -42,23 +42,24 @@ class OptoutCommand extends BaseCommand {
 				});
 			}
 
-			// Find the current user record
-			const userRecord = await KythiaUser.getCache({ userId });
-
-			// Toggle the opt-out status (default to false if doesn't exist)
+			const userRecord = await KythiaUser.getCache({
+				userId,
+			});
 			const newOptOutStatus = !(userRecord?.isAiOptOut ?? false);
 
-			// Update record for this user and cache automatically
 			await KythiaUser.updateOrCreateCache(
 				{ userId },
 				{ isAiOptOut: newOptOutStatus },
 			);
 
 			if (newOptOutStatus) {
-				// User opted out
 				try {
 					if (UserFact) {
-						await UserFact.destroy({ where: { userId } });
+						await UserFact.destroy({
+							where: {
+								userId,
+							},
+						});
 					}
 				} catch (e) {
 					logger.warn(`[AI OptOut] Failed to clear facts: ${e.message}`, {
@@ -75,7 +76,6 @@ class OptoutCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			} else {
-				// User opted back in
 				const msg = await t(interaction, 'ai.ai.optout.revert');
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Green',

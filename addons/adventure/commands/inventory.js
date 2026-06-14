@@ -12,9 +12,10 @@ const {
 	ButtonBuilder,
 	ActionRowBuilder,
 } = require('discord.js');
-const { items } = require('../helpers/items');
 
 const { BaseCommand } = require('kythia-core');
+
+const { items } = require('../helpers/items');
 
 class InventoryCommand extends BaseCommand {
 	subcommand = true;
@@ -41,8 +42,12 @@ class InventoryCommand extends BaseCommand {
 		const { createContainer } = helpers.discord;
 
 		await interaction.deferReply();
+
 		const userId = interaction.user.id;
-		const user = await UserAdventure.getCache({ userId: userId });
+
+		const user = await UserAdventure.getCache({
+			userId,
+		});
 
 		if (!user) {
 			const msg = await t(interaction, 'adventure.no.character');
@@ -57,7 +62,9 @@ class InventoryCommand extends BaseCommand {
 		}
 
 		const rawInventory = await InventoryAdventure.getAllCache({
-			where: { userId: userId },
+			where: {
+				userId,
+			},
 			cacheTags: [`InventoryAdventure:inventory:byUser:${userId}`],
 		});
 
@@ -67,7 +74,6 @@ class InventoryCommand extends BaseCommand {
 				description: msg,
 				color: kythiaConfig.bot.color,
 			});
-
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -85,9 +91,8 @@ class InventoryCommand extends BaseCommand {
 		}
 
 		const processedInventory = Object.values(inventoryMap).map((itemData) => {
-			let itemDef = null;
 			const allItems = Object.values(items).flat();
-			itemDef = allItems.find((i) => i.id === itemData.id);
+			const itemDef = allItems.find((i) => i.id === itemData.id);
 
 			return {
 				id: itemData.id,
@@ -108,7 +113,6 @@ class InventoryCommand extends BaseCommand {
 			const itemsPerPage = 10;
 			const totalPages = Math.ceil(processedInventory.length / itemsPerPage);
 			const currentPage = Math.max(1, Math.min(page, totalPages));
-
 			const startIdx = (currentPage - 1) * itemsPerPage;
 			const pageItems = processedInventory.slice(
 				startIdx,
@@ -120,7 +124,6 @@ class InventoryCommand extends BaseCommand {
 				const name = item.nameKey
 					? await t(interaction, item.nameKey)
 					: item.id;
-
 				description += `${item.emoji} **${name}** — \`x${item.count}\`\n`;
 			}
 
@@ -146,11 +149,11 @@ class InventoryCommand extends BaseCommand {
 				title: await t(interaction, 'adventure.inventory.title', {
 					username: interaction.user.username,
 				}),
-				description: description,
+				description,
 				color: kythiaConfig.bot.color,
 				footer: await t(interaction, 'adventure.inventory.footer', {
 					page: currentPage,
-					totalPages: totalPages,
+					totalPages,
 					totalItems: processedInventory.length,
 				}),
 				components: buttons,
@@ -170,9 +173,8 @@ class InventoryCommand extends BaseCommand {
 
 		if (pageData.totalPages <= 1) return;
 
-		const filter = (i) => i.user.id === interaction.user.id;
 		const collector = reply.createMessageComponentCollector({
-			filter,
+			filter: (i) => i.user.id === interaction.user.id,
 			time: 120_000,
 		});
 
@@ -195,7 +197,6 @@ class InventoryCommand extends BaseCommand {
 		collector.on('end', async () => {
 			try {
 				const finalPage = await generatePage(currentPage, false);
-
 				await interaction.editReply({
 					components: finalPage.components,
 					flags: MessageFlags.IsComponentsV2,

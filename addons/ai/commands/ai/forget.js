@@ -10,6 +10,8 @@ const { MessageFlags } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
+const AIMessageHandler = require('../../helpers/handlers/AIMessageHandler');
+
 class ForgetCommand extends BaseCommand {
 	subcommand = true;
 
@@ -25,12 +27,6 @@ class ForgetCommand extends BaseCommand {
 
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-		// Get the conversation manager from the AI message handler
-		// We need to access the singleton instance
-		const AIMessageHandler = require('../../helpers/handlers/AIMessageHandler');
-
-		// The handler is lazily initialized in messageCreate.js
-		// We'll create a temporary instance just to delete the conversation
 		const tempHandler = new AIMessageHandler(container);
 		tempHandler.conversationManager.deleteConversation(interaction.channel.id);
 

@@ -34,11 +34,14 @@ class FactDeleteCommand extends BaseCommand {
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 		const factNumber = interaction.options.getInteger('number');
+		const userId = interaction.user.id;
 
 		const allFacts = await UserFact.getAllCache({
-			where: { userId: interaction.user.id },
+			where: {
+				userId,
+			},
 			order: [['createdAt', 'DESC']],
-			cacheTags: [`UserFact:byUser:${interaction.user.id}`],
+			cacheTags: [`UserFact:byUser:${userId}`],
 		});
 
 		if (allFacts.length === 0) {
@@ -66,7 +69,6 @@ class FactDeleteCommand extends BaseCommand {
 		}
 
 		const factToDelete = allFacts[factNumber - 1];
-
 		await factToDelete.destroy();
 
 		const msg = await t(interaction, 'ai.ai.fact_delete.success', {

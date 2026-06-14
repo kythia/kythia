@@ -8,16 +8,17 @@
 
 const {
 	MessageFlags,
-	MediaGalleryBuilder,
-	MediaGalleryItemBuilder,
-	TextDisplayBuilder,
-	ContainerBuilder,
 	SeparatorBuilder,
+	ContainerBuilder,
+	TextDisplayBuilder,
+	MediaGalleryBuilder,
 	SeparatorSpacingSize,
+	MediaGalleryItemBuilder,
 } = require('discord.js');
-const { ALL_ACHIEVEMENTS } = require('../../helpers/achievementChecker');
 
 const { BaseCommand } = require('kythia-core');
+
+const { ALL_ACHIEVEMENTS } = require('../../helpers/achievementChecker');
 
 class ProfileCommand extends BaseCommand {
 	subcommand = true;
@@ -41,15 +42,18 @@ class ProfileCommand extends BaseCommand {
 		await interaction.deferReply();
 
 		const targetUser = interaction.options.getUser('user') || interaction.user;
+
 		const guildId = interaction.guild.id;
 		const userId = targetUser.id;
 
-		// Count unlocked achievements
 		const unlockedCount = await UserAchievement.countWithCache({
-			where: { guildId, userId },
+			where: {
+				guildId,
+				userId,
+			},
 		});
-		const totalCount = ALL_ACHIEVEMENTS.length;
 
+		const totalCount = ALL_ACHIEVEMENTS.length;
 		const imageName = 'achievement-profile.png';
 
 		const job = await queueManager.dispatch(
@@ -83,16 +87,10 @@ class ProfileCommand extends BaseCommand {
 		const result = await queueManager.waitFor(job, 'kythia-image-queue');
 		const buffer = Buffer.from(result.data);
 
-		const accentColorDecimal = convertColor(
-			kythiaConfig.bot.color || '#5865F2',
-			{
-				from: 'hex',
-				to: 'decimal',
-			},
-		);
-
 		const profileContainer = new ContainerBuilder()
-			.setAccentColor(accentColorDecimal)
+			.setAccentColor(
+				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
 					`## 🏆 Achievement Profile — ${targetUser.username}`,
@@ -116,7 +114,12 @@ class ProfileCommand extends BaseCommand {
 
 		await interaction.editReply({
 			components: [profileContainer],
-			files: [{ attachment: buffer, name: imageName }],
+			files: [
+				{
+					attachment: buffer,
+					name: imageName,
+				},
+			],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}

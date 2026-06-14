@@ -5,6 +5,7 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
+
 const { SlashCommandBuilder } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');

@@ -12,9 +12,9 @@ const {
 	StringSelectMenuBuilder,
 } = require('discord.js');
 
-const { getItemById } = require('../helpers/items');
-
 const { BaseCommand } = require('kythia-core');
+
+const { getItemById } = require('../helpers/items');
 
 class UseCommand extends BaseCommand {
 	subcommand = true;
@@ -24,12 +24,17 @@ class UseCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { t, models, helpers, kythiaConfig, logger } = container;
+		const { t, models, kythiaConfig, helpers, logger } = container;
 		const { UserAdventure, InventoryAdventure } = models;
 		const { createContainer } = helpers.discord;
 
 		await interaction.deferReply();
-		const user = await UserAdventure.getCache({ userId: interaction.user.id });
+
+		const userId = interaction.user.id;
+
+		const user = await UserAdventure.getCache({
+			userId,
+		});
 
 		if (!user) {
 			const msg = await t(interaction, 'adventure.no.character');
@@ -44,15 +49,16 @@ class UseCommand extends BaseCommand {
 		}
 
 		const rawInventory = await InventoryAdventure.getAllCache({
-			where: { userId: interaction.user.id },
-			cacheTags: [`InventoryAdventure:inventory:byUser:${interaction.user.id}`],
+			where: {
+				userId,
+			},
+			cacheTags: [`InventoryAdventure:inventory:byUser:${userId}`],
 		});
 
 		const usableItemsMap = {};
 
 		for (const dbItem of rawInventory) {
 			const itemDef = getItemById(dbItem.itemName);
-
 			if (itemDef && itemDef.type === 'consumable') {
 				if (!usableItemsMap[dbItem.itemName]) {
 					usableItemsMap[dbItem.itemName] = {
@@ -110,24 +116,20 @@ class UseCommand extends BaseCommand {
 			flags: MessageFlags.IsComponentsV2,
 		});
 
-		const filter = (i) =>
-			i.customId === 'use_item_select' && i.user.id === interaction.user.id;
-
 		try {
 			const selection = await reply.awaitMessageComponent({
-				filter,
-				time: 60000,
+				filter: (i) =>
+					i.customId === 'use_item_select' && i.user.id === interaction.user.id,
+				time: 60_000,
 			});
 
 			const selectedItemId = selection.values[0];
-
 			let resultMsg = '';
 			let success = false;
 
 			const targetItem = getItemById(selectedItemId);
-
 			const freshUser = await UserAdventure.getCache({
-				userId: interaction.user.id,
+				userId,
 			});
 
 			if (!targetItem) {
@@ -139,7 +141,6 @@ class UseCommand extends BaseCommand {
 					} else {
 						const healAmount = targetItem.amount || 0;
 						const oldHp = freshUser.hp;
-
 						freshUser.hp = Math.min(freshUser.hp + healAmount, freshUser.maxHp);
 						await freshUser.save();
 
@@ -183,7 +184,7 @@ class UseCommand extends BaseCommand {
 
 			if (success) {
 				const itemToDelete = await InventoryAdventure.getCache({
-					userId: interaction.user.id,
+					userId,
 					itemName: selectedItemId,
 				});
 
@@ -194,7 +195,7 @@ class UseCommand extends BaseCommand {
 					} else {
 						await itemToDelete.destroy();
 						await InventoryAdventure.clearCache({
-							userId: interaction.user.id,
+							userId,
 						});
 					}
 				}

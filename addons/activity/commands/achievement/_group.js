@@ -10,6 +10,7 @@ const { BaseCommand } = require('kythia-core');
 
 class GroupCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (group) =>
 		group
 			.setName('achievement')

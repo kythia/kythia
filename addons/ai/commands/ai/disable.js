@@ -12,13 +12,12 @@ const { BaseCommand } = require('kythia-core');
 
 class DisableCommand extends BaseCommand {
 	subcommand = true;
+	aliases = ['aioff'];
+	guildOnly = true;
+	permissions = [PermissionFlagsBits.ManageChannels];
 
 	slashCommand = (subcommand) =>
 		subcommand.setName('disable').setDescription('Disable AI in this channel');
-
-	permissions = [PermissionFlagsBits.ManageChannels];
-	aliases = ['aioff'];
-	guildOnly = true;
 
 	async execute(interaction) {
 		const container = this.container;
@@ -29,10 +28,14 @@ class DisableCommand extends BaseCommand {
 		await interaction.deferReply();
 
 		const channelId = interaction.channel.id;
+		const guildId = interaction.guild.id;
+
 		const [setting] = await ServerSetting.findOrCreateWithCache({
-			where: { guildId: interaction.guild.id },
+			where: {
+				guildId,
+			},
 			defaults: {
-				guildId: interaction.guild.id,
+				guildId,
 				guildName: interaction.guild.name,
 			},
 		});
@@ -62,6 +65,7 @@ class DisableCommand extends BaseCommand {
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Green',
 		});
+
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,

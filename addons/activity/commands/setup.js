@@ -8,9 +8,9 @@
 
 const {
 	MessageFlags,
-	PermissionFlagsBits,
 	ContainerBuilder,
 	TextDisplayBuilder,
+	PermissionFlagsBits,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
@@ -18,6 +18,7 @@ const { BaseCommand } = require('kythia-core');
 class SetupCommand extends BaseCommand {
 	subcommand = true;
 	premiumLocked = 'cute';
+	defaultMemberPermissions = PermissionFlagsBits.ManageGuild;
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -30,11 +31,9 @@ class SetupCommand extends BaseCommand {
 					.setRequired(true),
 			);
 
-	defaultMemberPermissions = PermissionFlagsBits.ManageGuild;
-
 	async execute(interaction) {
 		const container = this.container;
-		const { models, helpers, kythiaConfig } = container;
+		const { models, kythiaConfig, helpers } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 
@@ -43,27 +42,24 @@ class SetupCommand extends BaseCommand {
 		const enabled = interaction.options.getBoolean('enabled', true);
 		const guildId = interaction.guildId;
 
-		const [setting] = await ServerSetting.firstOrCreateCache(
-			{ guildId },
-			{ activityOn: false },
-		);
+		const [setting] = await ServerSetting.findOrCreateWithCache({
+			where: {
+				guildId,
+			},
+			defaults: {
+				guildId,
+				activityOn: false,
+			},
+		});
 
 		setting.activityOn = enabled;
 		setting.changed('activityOn', true);
 		await setting.save();
 
-		// await ServerSetting.clearCache({ guildId });
-
-		const accentColorDecimal = convertColor(
-			kythiaConfig.bot.color || '#5865F2',
-			{
-				from: 'hex',
-				to: 'decimal',
-			},
-		);
-
 		const successContainer = new ContainerBuilder()
-			.setAccentColor(accentColorDecimal)
+			.setAccentColor(
+				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
 					`✅ **Activity Tracking** has been **${enabled ? 'enabled' : 'disabled'}** for this server.`,

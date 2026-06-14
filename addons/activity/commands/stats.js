@@ -8,13 +8,14 @@
 
 const { MessageFlags } = require('discord.js');
 const { Op, fn, col } = require('sequelize');
-const { BaseCommand } = require('kythia-core');
-const leaderboardHelper = require('../helpers/leaderboard');
 
-// Helpers extracted to addons/activity/helpers/leaderboard.js
+const { BaseCommand } = require('kythia-core');
+
+const leaderboardHelper = require('../helpers/leaderboard');
 
 class StatsCommand extends BaseCommand {
 	subcommand = true;
+
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('stats')
@@ -52,22 +53,29 @@ class StatsCommand extends BaseCommand {
 						},
 					),
 			);
+
 	async execute(interaction) {
 		const container = this.container;
-		const { t, models, helpers, kythiaConfig } = container;
-		const { simpleContainer } = helpers.discord;
+		const { t, models, kythiaConfig, helpers } = container;
 		const { ActivityStat, ActivityLog } = models;
+		const { simpleContainer } = helpers.discord;
+
 		await interaction.deferReply();
+
 		const targetUser = interaction.options.getUser('user') || interaction.user;
+		const period = interaction.options.getString('period') || 'all';
+
 		const guildId = interaction.guild.id;
 		const userId = targetUser.id;
-		const period = interaction.options.getString('period') || 'all';
+
 		const periodLabel = await t(
 			interaction,
 			`activity.leaderboard.activity.leaderboard.period.${period}`,
 		);
+
 		let totalMessages = 0;
 		let totalVoiceTime = 0;
+
 		if (period === 'all') {
 			const stat = await ActivityStat.getCache({
 				guildId,
@@ -94,15 +102,18 @@ class StatsCommand extends BaseCommand {
 			totalMessages = row?.totalMessages ? Number(row.totalMessages) : 0;
 			totalVoiceTime = row?.totalVoiceTime ? Number(row.totalVoiceTime) : 0;
 		}
+
 		const title = `## ${await t(interaction, 'activity.stats.activity.stats.title')} — ${periodLabel}`;
 		const desc = await t(interaction, 'activity.stats.activity.stats.desc', {
 			username: targetUser.username,
 			messages: totalMessages.toLocaleString(),
 			voiceTime: leaderboardHelper.formatDuration(totalVoiceTime),
 		});
+
 		const components = await simpleContainer(interaction, `${title}\n${desc}`, {
 			color: kythiaConfig.bot.color,
 		});
+
 		await interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
@@ -112,4 +123,5 @@ class StatsCommand extends BaseCommand {
 		});
 	}
 }
+
 exports.default = StatsCommand;

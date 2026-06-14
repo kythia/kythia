@@ -8,18 +8,18 @@
 
 const {
 	MessageFlags,
-	SlashCommandBuilder,
-	AttachmentBuilder,
 	ContainerBuilder,
+	AttachmentBuilder,
+	SlashCommandBuilder,
 	TextDisplayBuilder,
 	MediaGalleryBuilder,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 const { GoogleGenAI } = require('@google/genai');
 const fs = require('node:fs').promises;
+const http = require('node:http');
 const path = require('node:path');
 const https = require('node:https');
-const http = require('node:http');
 
 const { BaseCommand } = require('kythia-core');
 
@@ -51,7 +51,6 @@ async function checkAndUseLimit(userId, limit) {
 
 	if (!data[userId]) data[userId] = { date: today, count: 0 };
 
-	// Reset if different day
 	if (data[userId].date !== today) {
 		data[userId] = { date: today, count: 0 };
 	}
@@ -65,11 +64,6 @@ async function checkAndUseLimit(userId, limit) {
 	return true;
 }
 
-/**
- * Fetches a URL and returns the response body as a base64-encoded string.
- * @param {string} url
- * @returns {Promise<string>}
- */
 function fetchUrlAsBase64(url) {
 	return new Promise((resolve, reject) => {
 		const client = url.startsWith('https') ? https : http;
@@ -116,7 +110,6 @@ class ImagenCommand extends BaseCommand {
 		const prompt = interaction.options.getString('prompt');
 		const imageAttachment = interaction.options.getAttachment('image');
 
-		// Must provide at least a prompt or an image
 		if (!prompt && !imageAttachment) {
 			return interaction.reply({
 				content: await t(interaction, 'ai.imagen.no_input'),
@@ -124,7 +117,6 @@ class ImagenCommand extends BaseCommand {
 			});
 		}
 
-		// Validate attachment is an image
 		if (imageAttachment && !imageAttachment.contentType?.startsWith('image/')) {
 			return interaction.reply({
 				content: await t(interaction, 'ai.imagen.invalid_attachment'),
@@ -136,7 +128,6 @@ class ImagenCommand extends BaseCommand {
 
 		const userId = interaction.user.id;
 		const limit = kythiaConfig.addons.ai.imagenLimit || 2;
-
 		const canUse = await checkAndUseLimit(userId, limit);
 
 		if (!canUse && !isOwner(userId)) {
@@ -155,21 +146,21 @@ class ImagenCommand extends BaseCommand {
 			{ label: 'ai' },
 		);
 
-		// Send initial loading message using simpleContainer
 		const initMsg = imageAttachment
 			? await t(interaction, 'ai.imagen.loading_transform', {
 					prompt: prompt || '',
 				})
 			: await t(interaction, 'ai.imagen.loading');
+
 		const initComponents = await simpleContainer(interaction, initMsg);
 		await interaction.editReply({
 			components: initComponents,
 			flags: MessageFlags.IsComponentsV2,
 		});
 
-		// Fetch the source image if provided
 		let sourceImageBase64 = null;
 		let sourceImageMimeType = null;
+
 		if (imageAttachment) {
 			try {
 				sourceImageBase64 = await fetchUrlAsBase64(imageAttachment.url);
@@ -190,7 +181,6 @@ class ImagenCommand extends BaseCommand {
 			}
 		}
 
-		// Resolve the API key pool: dedicated imagenApiKeys > fallback to geminiApiKeys
 		const rawImagenKeys = kythiaConfig.addons.ai.imagenApiKeys;
 		const rawFallbackKeys = kythiaConfig.addons.ai.geminiApiKeys;
 		const imagenKeys = (rawImagenKeys || rawFallbackKeys || '')
@@ -218,15 +208,14 @@ class ImagenCommand extends BaseCommand {
 			if (!GEMINI_API_KEY) continue;
 
 			const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-
-			// Build prompt contents
 			const contents = [];
+
 			if (prompt) {
 				contents.push({ text: prompt });
 			} else if (sourceImageBase64) {
-				// No prompt but image provided — ask for a recreated/enhanced version
 				contents.push({ text: 'Recreate or enhance this image.' });
 			}
+
 			if (sourceImageBase64) {
 				contents.push({
 					inlineData: {
@@ -258,9 +247,7 @@ class ImagenCommand extends BaseCommand {
 				if (success) {
 					logger.debug(
 						`✅ AI imagen request successful on attempt ${attempt + 1}`,
-						{
-							label: 'ai',
-						},
+						{ label: 'ai' },
 					);
 					break;
 				} else {
@@ -274,7 +261,6 @@ class ImagenCommand extends BaseCommand {
 					`Error in /imagen attempt ${attempt + 1}: ${error.message || error}`,
 					{ label: 'ai' },
 				);
-				// Stop retrying if the error is safety-related
 				if (
 					error.message &&
 					(error.message.includes('safety') ||
@@ -289,12 +275,12 @@ class ImagenCommand extends BaseCommand {
 			const attachment = new AttachmentBuilder(finalBuffer, {
 				name: 'imagen.png',
 			});
-
 			const msgContent = imageAttachment
 				? await t(interaction, 'ai.imagen.result_transform', {
 						prompt: prompt || '',
 					})
 				: await t(interaction, 'ai.imagen.result', { prompt: prompt || '' });
+
 			const finalComponents = [
 				new ContainerBuilder()
 					.setAccentColor(
@@ -319,7 +305,6 @@ class ImagenCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		} else {
-			// Refund limit if failed
 			try {
 				const data = JSON.parse(await fs.readFile(usageFilePath, 'utf-8'));
 				if (data[userId] && data[userId].count > 0) {

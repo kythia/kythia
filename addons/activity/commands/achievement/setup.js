@@ -7,17 +7,18 @@
  */
 
 const {
-	MessageFlags,
-	PermissionFlagsBits,
 	ChannelType,
+	MessageFlags,
 	ContainerBuilder,
 	TextDisplayBuilder,
+	PermissionFlagsBits,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
 class SetupCommand extends BaseCommand {
 	subcommand = true;
+	defaultMemberPermissions = PermissionFlagsBits.ManageGuild;
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -33,11 +34,9 @@ class SetupCommand extends BaseCommand {
 					.setRequired(false),
 			);
 
-	defaultMemberPermissions = PermissionFlagsBits.ManageGuild;
-
 	async execute(interaction) {
 		const container = this.container;
-		const { models, helpers, kythiaConfig } = container;
+		const { models, kythiaConfig, helpers } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 
@@ -46,31 +45,28 @@ class SetupCommand extends BaseCommand {
 		const channel = interaction.options.getChannel('channel');
 		const guildId = interaction.guildId;
 
-		const [setting] = await ServerSetting.firstOrCreateCache(
-			{ guildId },
-			{ achievementChannelId: null },
-		);
+		const [setting] = await ServerSetting.findOrCreateWithCache({
+			where: {
+				guildId,
+			},
+			defaults: {
+				guildId,
+				achievementChannelId: null,
+			},
+		});
 
 		setting.achievementChannelId = channel ? channel.id : null;
 		setting.changed('achievementChannelId', true);
 		await setting.save();
-
-		// await ServerSetting.clearCache({ guildId });
-
-		const accentColorDecimal = convertColor(
-			kythiaConfig.bot.color || '#5865F2',
-			{
-				from: 'hex',
-				to: 'decimal',
-			},
-		);
 
 		const message = channel
 			? `✅ **Achievement Notifications** will now be sent to <#${channel.id}>.`
 			: `✅ **Achievement Notifications** have been **disabled** (no channel set).`;
 
 		const successContainer = new ContainerBuilder()
-			.setAccentColor(accentColorDecimal)
+			.setAccentColor(
+				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+			)
 			.addTextDisplayComponents(new TextDisplayBuilder().setContent(message));
 
 		await interaction.editReply({

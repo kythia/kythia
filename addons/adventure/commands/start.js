@@ -10,15 +10,15 @@ const {
 	MessageFlags,
 	SectionBuilder,
 	ContainerBuilder,
-	ThumbnailBuilder,
 	SeparatorBuilder,
+	ThumbnailBuilder,
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
 
-const characters = require('../helpers/characters');
-
 const { BaseCommand } = require('kythia-core');
+
+const characters = require('../helpers/characters');
 
 class StartCommand extends BaseCommand {
 	subcommand = true;
@@ -27,7 +27,11 @@ class StartCommand extends BaseCommand {
 		const chars = characters.getAllCharacters();
 		return subcommand
 			.setName('start')
-			.setNameLocalizations({ id: 'mulai', fr: 'demarrer', ja: 'スタート' })
+			.setNameLocalizations({
+				id: 'mulai',
+				fr: 'demarrer',
+				ja: 'スタート',
+			})
 			.setDescription('🛩️ Start your journey now!')
 			.setDescriptionLocalizations({
 				id: '🛩️ Mulai petualanganmu sekarang!',
@@ -57,13 +61,14 @@ class StartCommand extends BaseCommand {
 
 		await interaction.deferReply();
 
+		const userId = interaction.user.id;
+
 		const existing = await UserAdventure.getCache({
-			userId: interaction.user.id,
+			userId,
 		});
 
 		if (existing) {
 			const msg = await t(interaction, 'adventure.start.already.have');
-
 			const components = await createContainer(interaction, {
 				description: msg,
 				color: 'Red',
@@ -101,7 +106,7 @@ class StartCommand extends BaseCommand {
 		baseHp = Math.floor(baseHp * (1 + (selected.hpBonusPercent || 0) / 100));
 
 		await UserAdventure.create({
-			userId: interaction.user.id,
+			userId,
 			level,
 			xp,
 			hp: baseHp,
@@ -124,26 +129,10 @@ class StartCommand extends BaseCommand {
 			},
 		);
 
-		const colorInput = kythiaConfig.bot.color;
-		const defaultAccent = convertColor(colorInput, {
+		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-		let accentColor = defaultAccent;
-
-		const isHex = /^#?([0-9A-Fa-f]{6})$/.test(colorInput);
-		if (isHex) {
-			accentColor = convertColor(colorInput, { from: 'hex', to: 'decimal' });
-		} else {
-			try {
-				accentColor = convertColor(colorInput, {
-					from: 'discord',
-					to: 'decimal',
-				});
-			} catch (_e) {
-				accentColor = defaultAccent;
-			}
-		}
 
 		const startContainer = new ContainerBuilder().setAccentColor(accentColor);
 
