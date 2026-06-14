@@ -12,7 +12,7 @@ const { BaseEvent } = require('kythia-core');
 
 class ChannelUpdateEvent extends BaseEvent {
 	async execute(oldChannel, newChannel) {
-		const container = this.container;
+		const _container = this.container;
 		const bot = { client: this.client, container: this.container };
 
 		const guild = newChannel.guild;

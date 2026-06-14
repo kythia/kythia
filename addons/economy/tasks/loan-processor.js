@@ -82,4 +82,4 @@ class LoanProcessorTask extends BaseTask {
 	}
 }
 
-module.exports = LoanProcessorTask;
+exports.default = LoanProcessorTask;

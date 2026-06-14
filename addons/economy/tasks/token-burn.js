@@ -112,4 +112,4 @@ class TokenBurnTask extends BaseTask {
 	}
 }
 
-module.exports = TokenBurnTask;
+exports.default = TokenBurnTask;

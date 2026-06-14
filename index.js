@@ -87,8 +87,8 @@ const {
 	formatDuration,
 } = require('@coreHelpers/time');
 
-const { getHelpData, buildHelpReply } = require('@coreHelpers/help-utils');
-const { getGuildPremiumTier } = require('@coreHelpers/premium-server');
+const { getHelpData, buildHelpReply } = require('@coreHelpers/helpUtils');
+const { getGuildPremiumTier } = require('@coreHelpers/premiumServer');
 
 // ===== 3. Load Additional Utilities =====
 const { convertColor } = require('kythia-core').utils;

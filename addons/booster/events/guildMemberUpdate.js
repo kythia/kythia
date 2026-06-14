@@ -25,7 +25,7 @@ const { BaseEvent } = require('kythia-core');
 class GuildMemberUpdateEvent extends BaseEvent {
 	async execute(oldMember, newMember) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+		const _bot = { client: this.client, container: this.container };
 
 		if (
 			oldMember.premiumSinceTimestamp !== null ||

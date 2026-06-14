@@ -7,7 +7,7 @@ const {
 } = require('discord.js');
 const { toBigIntSafe } = require('./bigint');
 const banks = require('./banks');
-const TIERS = require('@coreHelpers/premium-tiers');
+const TIERS = require('@coreHelpers/premiumTiers');
 
 async function buildPremiumMainMenu(container, interaction, kythiaUser) {
 	const { simpleContainer } = container.helpers.discord;

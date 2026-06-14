@@ -8,7 +8,7 @@
 
 const { MessageFlags } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
-const stickyuiHelper = require('../../../helpers/sticky-ui');
+const stickyuiHelper = require('../../../helpers/stickyUi');
 
 // Helpers extracted to addons/core/helpers/sticky-ui.js
 

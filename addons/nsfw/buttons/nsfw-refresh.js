@@ -87,4 +87,4 @@ class NsfwRefreshButton extends BaseButton {
 	}
 }
 
-module.exports = NsfwRefreshButton;
+exports.default = NsfwRefreshButton;

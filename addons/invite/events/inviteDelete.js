@@ -10,8 +10,8 @@ const { getGuildInviteCache } = require('../helpers');
 const { BaseEvent } = require('kythia-core');
 
 class InviteDeleteEvent extends BaseEvent {
-	async execute(invite) {
-		const container = this.container;
+	execute(invite) {
+		const _container = this.container;
 
 		try {
 			const cache = getGuildInviteCache(invite.guild.id);

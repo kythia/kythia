@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_invite.js
+ * @namespace: addons/tempvoice/buttons/tv_unblock.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
@@ -15,38 +15,32 @@ const {
 
 const { BaseButton } = require('kythia-core');
 
-class TvInviteButton extends BaseButton {
+class TvUnblockButton extends BaseButton {
 	button = {};
 
 	async execute(interaction) {
 		const container = this.container;
 
 		const { models, t, helpers, kythiaConfig } = container;
-		const { TempVoiceChannel } = models;
 		const { convertColor } = helpers.color;
-		const { simpleContainer } = helpers.discord;
+		const { TempVoiceChannel } = models;
 
 		const activeChannel = await TempVoiceChannel.getCache({
 			ownerId: interaction.user.id,
 			guildId: interaction.guild.id,
 		});
-
 		if (!activeChannel) {
 			return interaction.reply({
-				components: await simpleContainer(
-					interaction,
-					await t(interaction, 'tempvoice.invite.no_active_channel'),
-					{
-						color: 'Red',
-					},
-				),
-				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
+				content: await t(interaction, 'tempvoice.unblock.no_active_channel'),
+				flags: MessageFlags.Ephemeral,
 			});
 		}
 
 		const selectMenu = new UserSelectMenuBuilder()
-			.setCustomId(`tv_invite_menu:${activeChannel.channelId}`)
-			.setPlaceholder(await t(interaction, 'tempvoice.invite.menu.placeholder'))
+			.setCustomId(`tv_unblock_menu:${activeChannel.channelId}`)
+			.setPlaceholder(
+				await t(interaction, 'tempvoice.unblock.menu.placeholder'),
+			)
 			.setMinValues(1)
 			.setMaxValues(10);
 
@@ -60,7 +54,7 @@ class TvInviteButton extends BaseButton {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'tempvoice.invite.menu.content'),
+					await t(interaction, 'tempvoice.unblock.menu.content'),
 				),
 			)
 			.addActionRowComponents(row);
@@ -72,4 +66,4 @@ class TvInviteButton extends BaseButton {
 	}
 }
 
-module.exports = TvInviteButton;
+exports.default = TvUnblockButton;

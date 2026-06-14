@@ -12,7 +12,7 @@ const { BaseEvent } = require('kythia-core');
 
 class ChannelDeleteEvent extends BaseEvent {
 	async execute(channel) {
-		const container = this.container;
+		const _container = this.container;
 		const bot = { client: this.client, container: this.container };
 
 		if (!channel.guild) return;

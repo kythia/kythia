@@ -120,4 +120,4 @@ class RrPanelAddEmojiShowButton extends BaseButton {
 	}
 }
 
-module.exports = RrPanelAddEmojiShowButton;
+exports.default = RrPanelAddEmojiShowButton;

@@ -181,7 +181,7 @@ const endSession = (key) => {
 class VoiceStateUpdateEvent extends BaseEvent {
 	async execute(oldState, newState) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+		const _bot = { client: this.client, container: this.container };
 
 		const member = newState.member || oldState.member;
 		if (!member?.user || member.user.bot) return;

@@ -13,7 +13,7 @@ const { logger: honoLogger } = require('hono/logger');
 const fs = require('node:fs');
 const path = require('node:path');
 const { Server } = require('socket.io');
-const addonGuard = require('./helpers/addon-guard');
+const addonGuard = require('./helpers/addonGuard');
 // const { rateLimit } = require('./helpers/rateLimit');
 const { broadcastGetMeta } = require('./helpers/shard');
 

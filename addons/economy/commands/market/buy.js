@@ -21,14 +21,14 @@ const {
 	calcMinOut,
 	calcBuyOutput,
 	getImpactLevel,
-} = require('../../helpers/kyth-amm');
+} = require('../../helpers/kythAmm');
 const { toBigIntSafe } = require('../../helpers/bigint');
 const { BaseCommand } = require('kythia-core');
 
 // Minimum 0.5% slippage tolerance — if pool moves while user is confirming,
 // and they'd receive < minOut, we reject the trade.
 const { SLIPPAGE_TOLERANCE_PCT } = require('../../helpers/constants');
-const kythtradeHelper = require('../../helpers/kyth-trade');
+const kythtradeHelper = require('../../helpers/kythTrade');
 
 class BuyCommand extends BaseCommand {
 	subcommand = true;

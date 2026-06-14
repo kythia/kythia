@@ -7,10 +7,10 @@
  */
 
 const { MessageFlags } = require('discord.js');
-const { formatPoolStats } = require('../../../../../economy/helpers/kyth-amm');
+const { formatPoolStats } = require('../../../../../economy/helpers/kythAmm');
 
 const { BaseCommand } = require('kythia-core');
-const kythEcoHelper = require('../../../../helpers/kyth-eco');
+const kythEcoHelper = require('../../../../helpers/kythEco');
 
 // Helpers extracted to addons/core/helpers/kyth-eco.js
 

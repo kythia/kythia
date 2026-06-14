@@ -21,8 +21,8 @@ const { BaseEvent } = require('kythia-core');
 
 class MessageReactionAddEvent extends BaseEvent {
 	async execute(reaction, user) {
-		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+		const _container = this.container;
+		const _bot = { client: this.client, container: this.container };
 
 		if (!user || user.bot || !reaction.message.guild) return;
 

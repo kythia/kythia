@@ -284,4 +284,4 @@ class PollerTask extends BaseTask {
 	}
 }
 
-module.exports = PollerTask;
+exports.default = PollerTask;

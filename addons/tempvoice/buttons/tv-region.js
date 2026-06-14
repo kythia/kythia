@@ -84,4 +84,4 @@ class TvRegionButton extends BaseButton {
 	}
 }
 
-module.exports = TvRegionButton;
+exports.default = TvRegionButton;

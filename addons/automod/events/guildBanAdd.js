@@ -12,7 +12,7 @@ const { BaseEvent } = require('kythia-core');
 
 class GuildBanAddEvent extends BaseEvent {
 	async execute(ban) {
-		const container = this.container;
+		const _container = this.container;
 		const bot = { client: this.client, container: this.container };
 
 		if (!ban.guild) return;

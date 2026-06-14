@@ -12,7 +12,7 @@ const { BaseEvent } = require('kythia-core');
 
 class EmojiUpdateEvent extends BaseEvent {
 	async execute(oldEmoji, newEmoji) {
-		const container = this.container;
+		const _container = this.container;
 		const bot = { client: this.client, container: this.container };
 
 		const guild = newEmoji.guild;

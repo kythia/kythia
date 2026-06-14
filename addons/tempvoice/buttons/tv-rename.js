@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_limit.js
+ * @namespace: addons/tempvoice/buttons/tv_rename.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
@@ -15,7 +15,7 @@ const {
 
 const { BaseButton } = require('kythia-core');
 
-class TvLimitButton extends BaseButton {
+class TvRenameButton extends BaseButton {
 	button = {};
 
 	async execute(interaction) {
@@ -23,38 +23,38 @@ class TvLimitButton extends BaseButton {
 
 		const { models, t } = container;
 		const { TempVoiceChannel } = models;
-		const ownerId = interaction.user.id;
 
 		const activeChannel = await TempVoiceChannel.getCache({
-			ownerId: ownerId,
+			ownerId: interaction.user.id,
 			guildId: interaction.guild.id,
 		});
 
 		if (!activeChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.limit.no_active_channel'),
+				content: await t(interaction, 'tempvoice.rename.no_active_channel'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
 
-		const channelId = activeChannel.channelId;
-
 		const modal = new ModalBuilder()
-			.setCustomId(`tv_limit_modal:${channelId}`)
-			.setTitle(await t(interaction, 'tempvoice.limit.modal_title'));
+			.setCustomId(`tv_rename_modal:${activeChannel.channelId}`)
+			.setTitle(await t(interaction, 'tempvoice.rename.modal_title'));
 
-		const limitInput = new TextInputBuilder()
-			.setCustomId('user_limit')
-			.setLabel(await t(interaction, 'tempvoice.limit.label'))
+		const nameInput = new TextInputBuilder()
+			.setCustomId('channel_name')
+			.setLabel(await t(interaction, 'tempvoice.rename.input_label'))
 			.setStyle(TextInputStyle.Short)
-			.setPlaceholder(await t(interaction, 'tempvoice.limit.placeholder'))
-			.setRequired(true);
+			.setPlaceholder(
+				await t(interaction, 'tempvoice.rename.input_placeholder'),
+			)
+			.setRequired(true)
+			.setMaxLength(100);
 
-		const row = new ActionRowBuilder().addComponents(limitInput);
+		const row = new ActionRowBuilder().addComponents(nameInput);
 		modal.addComponents(row);
 
 		await interaction.showModal(modal);
 	}
 }
 
-module.exports = TvLimitButton;
+exports.default = TvRenameButton;

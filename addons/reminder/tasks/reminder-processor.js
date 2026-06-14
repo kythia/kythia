@@ -9,11 +9,14 @@
 const { MessageFlags } = require('discord.js');
 const { Op } = require('sequelize');
 
-module.exports = {
-	taskName: 'reminder-processor',
-	schedule: '* * * * *', // Every minute
-	active: true,
-	execute: async (container) => {
+const { BaseTask } = require('kythia-core');
+
+class ReminderProcessorTask extends BaseTask {
+	taskName = 'reminder-processor';
+	schedule = '* * * * *'; // Every minute
+	active = true;
+
+	async execute(container) {
 		const { logger, client, models, helpers, t } = container;
 		const { KythiaReminder } = models;
 		const { getTextChannelSafe } = helpers.discord;
@@ -154,5 +157,7 @@ module.exports = {
 				},
 			);
 		}
-	},
-};
+	}
+}
+
+exports.default = ReminderProcessorTask;

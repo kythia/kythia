@@ -26,7 +26,7 @@ const { BaseEvent } = require('kythia-core');
 class GuildMemberRemoveEvent extends BaseEvent {
 	async execute(member) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+		const _bot = { client: this.client, container: this.container };
 
 		if (!member.guild) return;
 		const { models, helpers, kythiaConfig, logger } = container;

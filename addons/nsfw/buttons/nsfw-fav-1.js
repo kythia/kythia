@@ -20,4 +20,4 @@ class NsfwFav1Button extends BaseButton {
 	}
 }
 
-module.exports = NsfwFav1Button;
+exports.default = NsfwFav1Button;

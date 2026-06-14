@@ -152,9 +152,9 @@ const startTick = (botClient) => {
 const { BaseEvent } = require('kythia-core');
 
 class VoiceStateUpdateEvent extends BaseEvent {
-	async execute(oldState, newState) {
-		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+	execute(oldState, newState) {
+		const _container = this.container;
+		const _bot = { client: this.client, container: this.container };
 
 		const member = newState.member || oldState.member;
 		if (!member || member.user.bot) return;

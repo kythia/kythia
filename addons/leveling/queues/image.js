@@ -6,10 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
+const { BaseQueue } = require('kythia-core');
 const path = require('node:path');
 
-module.exports = {
-	queueName: 'kythia-image-queue',
-	processorPath: path.join(__dirname, 'processors', 'imageProcessor.js'),
-	concurrency: 2,
-};
+class ImageQueue extends BaseQueue {
+	queueName = 'kythia-image-queue';
+	processorPath = path.join(__dirname, 'processors', 'image-processor.js');
+	concurrency = 2;
+}
+
+exports.default = ImageQueue;

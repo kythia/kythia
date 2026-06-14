@@ -17,7 +17,7 @@ const { BaseEvent } = require('kythia-core');
 class GuildMemberAddEvent extends BaseEvent {
 	async execute(member) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+		const _bot = { client: this.client, container: this.container };
 
 		if (!member?.guild) return;
 		const guild = member.guild;

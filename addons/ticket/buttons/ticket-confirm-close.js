@@ -19,4 +19,4 @@ class TicketConfirmCloseButton extends BaseButton {
 	}
 }
 
-module.exports = TicketConfirmCloseButton;
+exports.default = TicketConfirmCloseButton;

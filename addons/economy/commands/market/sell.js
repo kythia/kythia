@@ -21,11 +21,11 @@ const {
 	calcMinOut,
 	calcSellOutput,
 	getImpactLevel,
-} = require('../../helpers/kyth-amm');
+} = require('../../helpers/kythAmm');
 const { toBigIntSafe } = require('../../helpers/bigint');
 const { BaseCommand } = require('kythia-core');
 const { SLIPPAGE_TOLERANCE_PCT } = require('../../helpers/constants');
-const kythtradeHelper = require('../../helpers/kyth-trade');
+const kythtradeHelper = require('../../helpers/kythTrade');
 
 class SellCommand extends BaseCommand {
 	subcommand = true;

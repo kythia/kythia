@@ -21,4 +21,4 @@ class MmCloseReasonSubmitModal extends BaseModal {
 	}
 }
 
-module.exports = MmCloseReasonSubmitModal;
+exports.default = MmCloseReasonSubmitModal;

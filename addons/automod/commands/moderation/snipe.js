@@ -8,7 +8,7 @@
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
-const snipeuiHelper = require('../../helpers/snipe-ui');
+const snipeuiHelper = require('../../helpers/snipeUi');
 
 // Helpers extracted to addons/automod/helpers/snipe-ui.js
 

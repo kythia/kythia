@@ -27,4 +27,4 @@ class McstatsUpdaterTask extends BaseTask {
 	}
 }
 
-module.exports = McstatsUpdaterTask;
+exports.default = McstatsUpdaterTask;

@@ -7,8 +7,8 @@
  */
 
 const { Collection, PermissionsBitField } = require('discord.js');
-const sendLogsWarning = require('./send-logs');
-const leetMap = require('./leet-map');
+const sendLogsWarning = require('./sendLogs');
+const leetMap = require('./leetMap');
 const kythiaConfig = require('../../../kythia.config');
 
 const automodDeletedMessages = new Set();

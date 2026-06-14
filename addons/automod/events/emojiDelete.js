@@ -12,7 +12,7 @@ const { BaseEvent } = require('kythia-core');
 
 class EmojiDeleteEvent extends BaseEvent {
 	async execute(emoji) {
-		const container = this.container;
+		const _container = this.container;
 		const bot = { client: this.client, container: this.container };
 
 		const guild = emoji.guild;

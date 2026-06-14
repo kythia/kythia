@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const setupTopGGPoster = require('./helpers/topgg-poster.js');
+const setupTopGGPoster = require('./helpers/topggPoster');
 const { loadFonts } = require('kythia-arts');
 
 const path = require('node:path');

@@ -97,4 +97,4 @@ class FleaProcessorTask extends BaseTask {
 	}
 }
 
-module.exports = FleaProcessorTask;
+exports.default = FleaProcessorTask;

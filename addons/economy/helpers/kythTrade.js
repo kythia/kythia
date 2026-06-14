@@ -1,6 +1,6 @@
 const { MessageFlags } = require('discord.js');
 const { toBigIntSafe } = require('./bigint');
-const { calcBuyOutput, calcSellOutput } = require('./kyth-amm');
+const { calcBuyOutput, calcSellOutput } = require('./kythAmm');
 const { waitAndAcquireLock, releaseLock } = require('./lock');
 
 const LOCK_KEY = 'kythia:locks:amm_pool';

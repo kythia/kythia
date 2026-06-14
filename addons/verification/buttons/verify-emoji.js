@@ -14,11 +14,13 @@ const {
 	buildCaptchaPayload,
 } = require('../helpers/verify');
 
-module.exports = {
-	customId: 'verify-emoji',
+const { BaseButton } = require('kythia-core');
 
-	async execute(interaction, bot) {
-		const { models, logger } = bot.client.container;
+class VerifyEmojiButton extends BaseButton {
+	async execute(interaction) {
+		const container = this.container;
+		const { client } = this;
+		const { models, logger } = container;
 		const { VerificationConfig } = models;
 
 		try {
@@ -49,8 +51,8 @@ module.exports = {
 			if (!config) return;
 
 			const guild =
-				bot.client.guilds.cache.get(guildId) ||
-				(await bot.client.guilds.fetch(guildId).catch(() => null));
+				client.guilds.cache.get(guildId) ||
+				(await client.guilds.fetch(guildId).catch(() => null));
 			if (!guild) return;
 
 			const member = await guild.members
@@ -60,7 +62,7 @@ module.exports = {
 
 			if (result === 'correct') {
 				await handleSuccess(member, config);
-				const { simpleContainer } = bot.client.container.helpers.discord;
+				const { simpleContainer } = container.helpers.discord;
 				const comps = await simpleContainer(
 					interaction,
 					`✅ <@${interaction.user.id}> Correct! You're now verified. Welcome to **${guild.name}**! 🎉`,
@@ -102,5 +104,7 @@ module.exports = {
 				label: 'verification',
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = VerifyEmojiButton;

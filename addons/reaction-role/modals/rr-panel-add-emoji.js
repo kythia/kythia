@@ -196,4 +196,4 @@ class RrPanelAddEmojiModal extends BaseModal {
 	}
 }
 
-module.exports = RrPanelAddEmojiModal;
+exports.default = RrPanelAddEmojiModal;

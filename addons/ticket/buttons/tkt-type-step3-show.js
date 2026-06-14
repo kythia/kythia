@@ -125,4 +125,4 @@ class TktTypeStep3ShowButton extends BaseButton {
 	}
 }
 
-module.exports = TktTypeStep3ShowButton;
+exports.default = TktTypeStep3ShowButton;

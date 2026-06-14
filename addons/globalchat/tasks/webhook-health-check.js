@@ -195,4 +195,4 @@ class WebhookHealthCheckTask extends BaseTask {
 	}
 }
 
-module.exports = WebhookHealthCheckTask;
+exports.default = WebhookHealthCheckTask;

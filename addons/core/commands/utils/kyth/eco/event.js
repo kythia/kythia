@@ -12,9 +12,9 @@ const {
 	calcBuyOutput,
 	calcSellOutput,
 	formatPoolStats,
-} = require('../../../../../economy/helpers/kyth-amm');
+} = require('../../../../../economy/helpers/kythAmm');
 const { BaseCommand } = require('kythia-core');
-const kythecoHelper = require('../../../../helpers/kyth-eco');
+const kythecoHelper = require('../../../../helpers/kythEco');
 
 class EventCommand extends BaseCommand {
 	subcommand = true;

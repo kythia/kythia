@@ -13,7 +13,7 @@ const { BaseEvent } = require('kythia-core');
 class InteractionCreateEvent extends BaseEvent {
 	async execute(interaction) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+		const _bot = { client: this.client, container: this.container };
 
 		if (!interaction.isButton()) return;
 		if (interaction.customId !== 'verify_panel_btn') return;

@@ -28,4 +28,4 @@ class MmCancelCloseButton extends BaseButton {
 	}
 }
 
-module.exports = MmCancelCloseButton;
+exports.default = MmCancelCloseButton;

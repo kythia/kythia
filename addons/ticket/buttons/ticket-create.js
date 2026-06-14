@@ -71,4 +71,4 @@ class TicketCreateButton extends BaseButton {
 	}
 }
 
-module.exports = TicketCreateButton;
+exports.default = TicketCreateButton;

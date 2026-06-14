@@ -14,9 +14,9 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-const { generateMathCaptcha } = require('./captcha-math');
-const { generateEmojiCaptcha } = require('./captcha-emoji');
-const { generateImageCaptcha } = require('./captcha-image');
+const { generateMathCaptcha } = require('./captchaMath');
+const { generateEmojiCaptcha } = require('./captchaEmoji');
+const { generateImageCaptcha } = require('./captchaImage');
 const { createSession, clearSession } = require('./session');
 
 // ---------------------------------------------------------------------------

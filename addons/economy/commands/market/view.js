@@ -29,10 +29,10 @@ const {
 	getTopStocksData,
 	getStockChartBuffer,
 } = require('../../helpers/stock');
-const { getSpotPrice, formatPoolStats } = require('../../helpers/kyth-amm');
+const { getSpotPrice, formatPoolStats } = require('../../helpers/kythAmm');
 const { Op } = require('sequelize');
 const { BaseCommand } = require('kythia-core');
-const marketuiHelper = require('../../helpers/market-ui');
+const marketuiHelper = require('../../helpers/marketUi');
 
 // Helpers extracted to addons/economy/helpers/market-ui.js
 

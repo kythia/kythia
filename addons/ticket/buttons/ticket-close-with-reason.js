@@ -64,4 +64,4 @@ class TicketCloseWithReasonButton extends BaseButton {
 	}
 }
 
-module.exports = TicketCloseWithReasonButton;
+exports.default = TicketCloseWithReasonButton;

@@ -8,7 +8,7 @@
 
 const { MessageFlags } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
-const shardsuiHelper = require('../../../helpers/shards-ui');
+const shardsuiHelper = require('../../../helpers/shardsUi');
 
 // Helpers extracted to addons/core/helpers/shards-ui.js
 

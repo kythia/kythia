@@ -140,4 +140,4 @@ class TvDeleteButton extends BaseButton {
 	}
 }
 
-module.exports = TvDeleteButton;
+exports.default = TvDeleteButton;

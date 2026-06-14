@@ -177,4 +177,4 @@ class TvWaitingButton extends BaseButton {
 	}
 }
 
-module.exports = TvWaitingButton;
+exports.default = TvWaitingButton;

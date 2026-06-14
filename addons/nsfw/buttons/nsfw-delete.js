@@ -34,4 +34,4 @@ class NsfwDeleteButton extends BaseButton {
 	}
 }
 
-module.exports = NsfwDeleteButton;
+exports.default = NsfwDeleteButton;

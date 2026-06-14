@@ -108,4 +108,4 @@ class TktTypeModalShowButton extends BaseButton {
 	}
 }
 
-module.exports = TktTypeModalShowButton;
+exports.default = TktTypeModalShowButton;

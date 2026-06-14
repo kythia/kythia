@@ -7,7 +7,7 @@
  */
 
 // const { generateCommandSchema } = require('./helpers/command-schema');
-const promptBuilder = require('./helpers/prompt-builder');
+const promptBuilder = require('./helpers/promptBuilder');
 const geminiHelper = require('./helpers/gemini');
 
 module.exports = {

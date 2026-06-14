@@ -102,4 +102,4 @@ class DailyGreeterTask extends BaseTask {
 	}
 }
 
-module.exports = DailyGreeterTask;
+exports.default = DailyGreeterTask;

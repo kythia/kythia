@@ -166,4 +166,4 @@ class FriendButton extends BaseButton {
 	}
 }
 
-module.exports = FriendButton;
+exports.default = FriendButton;

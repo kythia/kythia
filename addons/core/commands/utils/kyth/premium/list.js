@@ -9,7 +9,7 @@
 const { MessageFlags } = require('discord.js');
 const { Op } = require('sequelize');
 const { BaseCommand } = require('kythia-core');
-const premiumlistuiHelper = require('../../../../helpers/premium-list-ui');
+const premiumlistuiHelper = require('../../../../helpers/premiumListUi');
 
 // Helpers extracted to addons/core/helpers/premium-list-ui.js
 

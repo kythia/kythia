@@ -12,7 +12,7 @@ const { BaseEvent } = require('kythia-core');
 
 class RoleDeleteEvent extends BaseEvent {
 	async execute(role) {
-		const container = this.container;
+		const _container = this.container;
 		const bot = { client: this.client, container: this.container };
 
 		if (!role.guild) return;

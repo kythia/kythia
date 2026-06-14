@@ -97,4 +97,4 @@ class TktPanelModalShowButton extends BaseButton {
 	}
 }
 
-module.exports = TktPanelModalShowButton;
+exports.default = TktPanelModalShowButton;

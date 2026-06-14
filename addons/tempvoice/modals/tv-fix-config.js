@@ -111,4 +111,4 @@ class TvFixConfigModal extends BaseModal {
 	}
 }
 
-module.exports = TvFixConfigModal;
+exports.default = TvFixConfigModal;

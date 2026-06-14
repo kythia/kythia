@@ -70,4 +70,4 @@ class McRButton extends BaseButton {
 	}
 }
 
-module.exports = McRButton;
+exports.default = McRButton;

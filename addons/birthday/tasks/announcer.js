@@ -261,4 +261,4 @@ class AnnouncerTask extends BaseTask {
 	}
 }
 
-module.exports = AnnouncerTask;
+exports.default = AnnouncerTask;

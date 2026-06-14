@@ -6,10 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
+const { BaseQueue } = require('kythia-core');
 const path = require('node:path');
 
-module.exports = {
-	queueName: 'kythia-birthday-queue',
-	processorPath: path.join(__dirname, 'processors', 'bannerProcessor.js'),
-	concurrency: 2,
-};
+class BannerQueue extends BaseQueue {
+	queueName = 'kythia-birthday-queue';
+	processorPath = path.join(__dirname, 'processors', 'banner-processor.js');
+	concurrency = 2;
+}
+
+exports.default = BannerQueue;

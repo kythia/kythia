@@ -23,7 +23,7 @@ const { BaseEvent } = require('kythia-core');
 class VoiceStateUpdateEvent extends BaseEvent {
 	async execute(oldState, newState) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+		const _bot = { client: this.client, container: this.container };
 
 		const { models, logger, client, t } = container;
 		const { TempVoiceConfig, TempVoiceChannel } = models;

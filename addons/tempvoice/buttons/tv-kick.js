@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_untrust.js
+ * @namespace: addons/tempvoice/buttons/tv_kick.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
@@ -15,47 +15,43 @@ const {
 
 const { BaseButton } = require('kythia-core');
 
-class TvUntrustButton extends BaseButton {
+class TvKickButton extends BaseButton {
 	button = {};
 
 	async execute(interaction) {
 		const container = this.container;
 
 		const { models, t, helpers, kythiaConfig } = container;
-		const { convertColor } = helpers.color;
 		const { TempVoiceChannel } = models;
+		const { convertColor } = helpers.color;
 
 		const activeChannel = await TempVoiceChannel.getCache({
 			ownerId: interaction.user.id,
 			guildId: interaction.guild.id,
 		});
+
 		if (!activeChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.untrust.no_active_channel'),
+				content: await t(interaction, 'tempvoice.kick.no_active_channel'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
 
 		const selectMenu = new UserSelectMenuBuilder()
-			.setCustomId(`tv_untrust_menu:${activeChannel.channelId}`)
-			.setPlaceholder(
-				await t(interaction, 'tempvoice.untrust.menu.placeholder'),
-			)
+			.setCustomId(`tv_kick_menu:${activeChannel.channelId}`)
+			.setPlaceholder(await t(interaction, 'tempvoice.kick.menu.placeholder'))
 			.setMinValues(1)
-			.setMaxValues(10);
+			.setMaxValues(1);
 
 		const row = new ActionRowBuilder().addComponents(selectMenu);
 
-		const accentColor = convertColor(kythiaConfig.bot.color, {
-			from: 'hex',
-			to: 'decimal',
-		});
-
 		const containerComponent = new ContainerBuilder()
-			.setAccentColor(accentColor)
+			.setAccentColor(
+				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'tempvoice.untrust.menu.content'),
+					await t(interaction, 'tempvoice.kick.menu.content'),
 				),
 			)
 			.addActionRowComponents(row);
@@ -67,4 +63,4 @@ class TvUntrustButton extends BaseButton {
 	}
 }
 
-module.exports = TvUntrustButton;
+exports.default = TvKickButton;

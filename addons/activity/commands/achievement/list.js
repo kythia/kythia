@@ -21,7 +21,7 @@ const { BaseCommand } = require('kythia-core');
 // space 1 line
 // addons import after kythia core import
 const achievementDefs = require('../../helpers/achievements');
-const achievementuiHelper = require('../../helpers/achievement-ui');
+const achievementuiHelper = require('../../helpers/achievementUi');
 // space 1 line
 class ListCommand extends BaseCommand {
 	// all command property before slashCommand

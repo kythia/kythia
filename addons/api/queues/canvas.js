@@ -6,10 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
+const { BaseQueue } = require('kythia-core');
 const path = require('node:path');
 
-module.exports = {
-	queueName: 'kythia-api-canvas-queue',
-	processorPath: path.join(__dirname, 'processors', 'canvasProcessor.js'),
-	concurrency: 4, // Higher concurrency for API requests
-};
+class CanvasQueue extends BaseQueue {
+	queueName = 'kythia-api-canvas-queue';
+	processorPath = path.join(__dirname, 'processors', 'canvas-processor.js');
+	concurrency = 4;
+	// Higher concurrency for API requests;
+}
+
+exports.default = CanvasQueue;

@@ -21,7 +21,7 @@ const { automodDeletedMessages } = require('../helpers/automod');
 class MessageDeleteEvent extends BaseEvent {
 	async execute(message) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+		const _bot = { client: this.client, container: this.container };
 		const { models } = container;
 		const { ServerSetting } = models;
 

@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_kick.js
+ * @namespace: addons/tempvoice/buttons/tv_transfer.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
@@ -15,7 +15,7 @@ const {
 
 const { BaseButton } = require('kythia-core');
 
-class TvKickButton extends BaseButton {
+class TvTransferButton extends BaseButton {
 	button = {};
 
 	async execute(interaction) {
@@ -29,29 +29,32 @@ class TvKickButton extends BaseButton {
 			ownerId: interaction.user.id,
 			guildId: interaction.guild.id,
 		});
-
 		if (!activeChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.kick.no_active_channel'),
+				content: await t(interaction, 'tempvoice.transfer.no_active_channel'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
 
 		const selectMenu = new UserSelectMenuBuilder()
-			.setCustomId(`tv_kick_menu:${activeChannel.channelId}`)
-			.setPlaceholder(await t(interaction, 'tempvoice.kick.menu.placeholder'))
+			.setCustomId(`tv_transfer_menu:${activeChannel.channelId}`)
+			.setPlaceholder(
+				await t(interaction, 'tempvoice.transfer.menu.placeholder'),
+			)
 			.setMinValues(1)
 			.setMaxValues(1);
 
 		const row = new ActionRowBuilder().addComponents(selectMenu);
+		const accentColor = convertColor(kythiaConfig.bot.color, {
+			from: 'hex',
+			to: 'decimal',
+		});
 
 		const containerComponent = new ContainerBuilder()
-			.setAccentColor(
-				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
-			)
+			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'tempvoice.kick.menu.content'),
+					await t(interaction, 'tempvoice.transfer.menu.content'),
 				),
 			)
 			.addActionRowComponents(row);
@@ -63,4 +66,4 @@ class TvKickButton extends BaseButton {
 	}
 }
 
-module.exports = TvKickButton;
+exports.default = TvTransferButton;

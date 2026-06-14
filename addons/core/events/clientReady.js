@@ -48,9 +48,9 @@ function setBotPresence(client) {
 const { BaseEvent } = require('kythia-core');
 
 class ClientReadyEvent extends BaseEvent {
-	async execute(client) {
-		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+	execute(client) {
+		const _container = this.container;
+		const _bot = { client: this.client, container: this.container };
 
 		setBotPresence(client);
 	}

@@ -88,4 +88,4 @@ class TicketCloseButton extends BaseButton {
 	}
 }
 
-module.exports = TicketCloseButton;
+exports.default = TicketCloseButton;

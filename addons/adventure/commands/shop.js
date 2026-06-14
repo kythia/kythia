@@ -11,7 +11,7 @@ const { MessageFlags } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 
 const itemsDataFile = require('../helpers/items');
-const shopuiHelper = require('../helpers/shop-ui');
+const shopuiHelper = require('../helpers/shopUi');
 
 const shopData = itemsDataFile.items;
 const allItems = Object.values(shopData).flat();

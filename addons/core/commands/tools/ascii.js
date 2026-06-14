@@ -7,7 +7,7 @@
  */
 
 const { MessageFlags, SlashCommandBuilder } = require('discord.js');
-const figletFonts = require('@coreHelpers/figlet-fonts');
+const figletFonts = require('@coreHelpers/figletFonts');
 const figlet = require('figlet');
 
 const { BaseCommand } = require('kythia-core');

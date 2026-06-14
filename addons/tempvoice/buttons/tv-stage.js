@@ -110,4 +110,4 @@ class TvStageButton extends BaseButton {
 	}
 }
 
-module.exports = TvStageButton;
+exports.default = TvStageButton;

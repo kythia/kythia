@@ -9,7 +9,7 @@
 const { Hono } = require('hono');
 const { ActivityType, MessageFlags } = require('discord.js');
 const { Op } = require('sequelize');
-const ownerGuard = require('../helpers/owner-guard');
+const ownerGuard = require('../helpers/ownerGuard');
 
 const app = new Hono();
 
@@ -1736,7 +1736,7 @@ app.patch('/config', async (c) => {
 		);
 
 		// Trigger hot reload instead of restarting
-		const { reloadConfig } = require('@coreHelpers/reload-config');
+		const { reloadConfig } = require('@coreHelpers/reloadConfig');
 		reloadConfig();
 
 		return c.json({

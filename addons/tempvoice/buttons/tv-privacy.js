@@ -126,4 +126,4 @@ class TvPrivacyButton extends BaseButton {
 	}
 }
 
-module.exports = TvPrivacyButton;
+exports.default = TvPrivacyButton;

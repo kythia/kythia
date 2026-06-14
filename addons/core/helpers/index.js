@@ -6,10 +6,10 @@
  * @version 26.0.0-rc.1
  */
 
-const rolePrefix = require('./role-prefix');
-const roleUnprefix = require('./role-unprefix');
-const figletFonts = require('./figlet-fonts');
-const helpUtils = require('./help-utils');
+const rolePrefix = require('./rolePrefix');
+const roleUnprefix = require('./roleUnprefix');
+const figletFonts = require('./figletFonts');
+const helpUtils = require('./helpUtils');
 const {
 	EVENT_SCENARIOS,
 	createMockEventArgs,

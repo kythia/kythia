@@ -122,4 +122,4 @@ class TktTypeStep2SubmitModal extends BaseModal {
 	}
 }
 
-module.exports = TktTypeStep2SubmitModal;
+exports.default = TktTypeStep2SubmitModal;

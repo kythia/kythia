@@ -228,4 +228,4 @@ class RrPanelCreateModal extends BaseModal {
 	}
 }
 
-module.exports = RrPanelCreateModal;
+exports.default = RrPanelCreateModal;

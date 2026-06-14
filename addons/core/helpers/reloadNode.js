@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const { reloadConfig } = require('./reload-config');
+const { reloadConfig } = require('./reloadConfig');
 
 async function reloadLavalinkNodes(client) {
 	const { logger, kythiaConfig } = client.container;

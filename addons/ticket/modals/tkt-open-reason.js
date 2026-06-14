@@ -64,4 +64,4 @@ class TktOpenReasonModal extends BaseModal {
 	}
 }
 
-module.exports = TktOpenReasonModal;
+exports.default = TktOpenReasonModal;

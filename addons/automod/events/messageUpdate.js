@@ -12,7 +12,7 @@ const { BaseEvent } = require('kythia-core');
 class MessageUpdateEvent extends BaseEvent {
 	async execute(_oldMessage, newMessage) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+		const _bot = { client: this.client, container: this.container };
 
 		const client = this.client;
 		const { helpers } = container;

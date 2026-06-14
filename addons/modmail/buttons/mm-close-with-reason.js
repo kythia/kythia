@@ -46,4 +46,4 @@ class MmCloseWithReasonButton extends BaseButton {
 	}
 }
 
-module.exports = MmCloseWithReasonButton;
+exports.default = MmCloseWithReasonButton;

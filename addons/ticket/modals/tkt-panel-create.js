@@ -168,4 +168,4 @@ class TktPanelCreateModal extends BaseModal {
 	}
 }
 
-module.exports = TktPanelCreateModal;
+exports.default = TktPanelCreateModal;

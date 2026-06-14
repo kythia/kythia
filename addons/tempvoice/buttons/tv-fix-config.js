@@ -163,4 +163,4 @@ class TvFixConfigButton extends BaseButton {
 	}
 }
 
-module.exports = TvFixConfigButton;
+exports.default = TvFixConfigButton;

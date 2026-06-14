@@ -89,4 +89,4 @@ class MmCloseButton extends BaseButton {
 	}
 }
 
-module.exports = MmCloseButton;
+exports.default = MmCloseButton;

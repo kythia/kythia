@@ -8,7 +8,7 @@
 
 const { MessageFlags } = require('discord.js');
 
-const TIERS = require('@coreHelpers/premium-tiers');
+const TIERS = require('@coreHelpers/premiumTiers');
 
 const { BaseCommand } = require('kythia-core');
 

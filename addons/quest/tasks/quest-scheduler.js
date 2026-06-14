@@ -253,4 +253,4 @@ class QuestSchedulerTask extends BaseTask {
 	}
 }
 
-module.exports = QuestSchedulerTask;
+exports.default = QuestSchedulerTask;

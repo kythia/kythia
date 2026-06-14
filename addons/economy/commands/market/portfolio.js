@@ -15,9 +15,9 @@ const {
 } = require('discord.js');
 const { ASSET_IDS, getMarketData } = require('../../helpers/market');
 const { getStockData, getTopStocksData } = require('../../helpers/stock');
-const { getSpotPrice } = require('../../helpers/kyth-amm');
+const { getSpotPrice } = require('../../helpers/kythAmm');
 const { BaseCommand } = require('kythia-core');
-const marketuiHelper = require('../../helpers/market-ui');
+const marketuiHelper = require('../../helpers/marketUi');
 
 // Helpers extracted to addons/economy/helpers/market-ui.js
 

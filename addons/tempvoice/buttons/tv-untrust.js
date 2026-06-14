@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_transfer.js
+ * @namespace: addons/tempvoice/buttons/tv_untrust.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
@@ -15,15 +15,15 @@ const {
 
 const { BaseButton } = require('kythia-core');
 
-class TvTransferButton extends BaseButton {
+class TvUntrustButton extends BaseButton {
 	button = {};
 
 	async execute(interaction) {
 		const container = this.container;
 
 		const { models, t, helpers, kythiaConfig } = container;
-		const { TempVoiceChannel } = models;
 		const { convertColor } = helpers.color;
+		const { TempVoiceChannel } = models;
 
 		const activeChannel = await TempVoiceChannel.getCache({
 			ownerId: interaction.user.id,
@@ -31,20 +31,21 @@ class TvTransferButton extends BaseButton {
 		});
 		if (!activeChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.transfer.no_active_channel'),
+				content: await t(interaction, 'tempvoice.untrust.no_active_channel'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
 
 		const selectMenu = new UserSelectMenuBuilder()
-			.setCustomId(`tv_transfer_menu:${activeChannel.channelId}`)
+			.setCustomId(`tv_untrust_menu:${activeChannel.channelId}`)
 			.setPlaceholder(
-				await t(interaction, 'tempvoice.transfer.menu.placeholder'),
+				await t(interaction, 'tempvoice.untrust.menu.placeholder'),
 			)
 			.setMinValues(1)
-			.setMaxValues(1);
+			.setMaxValues(10);
 
 		const row = new ActionRowBuilder().addComponents(selectMenu);
+
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
@@ -54,7 +55,7 @@ class TvTransferButton extends BaseButton {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'tempvoice.transfer.menu.content'),
+					await t(interaction, 'tempvoice.untrust.menu.content'),
 				),
 			)
 			.addActionRowComponents(row);
@@ -66,4 +67,4 @@ class TvTransferButton extends BaseButton {
 	}
 }
 
-module.exports = TvTransferButton;
+exports.default = TvUntrustButton;

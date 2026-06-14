@@ -127,4 +127,4 @@ class KythDividendTask extends BaseTask {
 	}
 }
 
-module.exports = KythDividendTask;
+exports.default = KythDividendTask;

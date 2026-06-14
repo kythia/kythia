@@ -13,7 +13,7 @@ const {
 } = require('@google/genai');
 const { ChannelType } = require('discord.js');
 const { utils } = require('kythia-core');
-const { buildSystemInstruction } = require('../prompt-builder');
+const { buildSystemInstruction } = require('../promptBuilder');
 const { getAndUseNextAvailableToken } = require('../gemini');
 const wait = require('node:timers/promises').setTimeout;
 

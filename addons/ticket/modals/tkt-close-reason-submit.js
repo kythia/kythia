@@ -43,4 +43,4 @@ class TktCloseReasonSubmitModal extends BaseModal {
 	}
 }
 
-module.exports = TktCloseReasonSubmitModal;
+exports.default = TktCloseReasonSubmitModal;

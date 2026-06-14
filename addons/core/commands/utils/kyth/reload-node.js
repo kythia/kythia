@@ -12,7 +12,7 @@ const {
 	SlashCommandBuilder,
 	InteractionContextType,
 } = require('discord.js');
-const { reloadLavalinkNodes } = require('../../../helpers/reload-node');
+const { reloadLavalinkNodes } = require('../../../helpers/reloadNode');
 
 const { BaseCommand } = require('kythia-core');
 

@@ -14,7 +14,7 @@ const {
 const fs = require('node:fs');
 const path = require('node:path');
 const { BaseCommand } = require('kythia-core');
-const settinguiHelper = require('../../helpers/setting-ui');
+const settinguiHelper = require('../../helpers/settingUi');
 
 const langDir = path.join(__dirname, '../../lang');
 let availableLanguages = [];

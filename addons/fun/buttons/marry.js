@@ -168,4 +168,4 @@ class MarryButton extends BaseButton {
 	}
 }
 
-module.exports = MarryButton;
+exports.default = MarryButton;

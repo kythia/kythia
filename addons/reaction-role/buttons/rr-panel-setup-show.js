@@ -130,4 +130,4 @@ class RrPanelSetupShowButton extends BaseButton {
 	}
 }
 
-module.exports = RrPanelSetupShowButton;
+exports.default = RrPanelSetupShowButton;

@@ -9,7 +9,7 @@
 const { toBigIntSafe } = require('./bigint');
 const { getMarketData, ASSET_IDS } = require('./market');
 const { getStockData } = require('./stock');
-const { getSpotPrice } = require('./kyth-amm');
+const { getSpotPrice } = require('./kythAmm');
 
 async function processOrders(bot) {
 	const { models, logger } = bot.container;

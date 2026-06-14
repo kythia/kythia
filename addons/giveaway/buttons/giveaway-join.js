@@ -146,4 +146,4 @@ class GiveawayJoinButton extends BaseButton {
 	}
 }
 
-module.exports = GiveawayJoinButton;
+exports.default = GiveawayJoinButton;

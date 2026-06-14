@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/modals/tv_limit_modal.js
+ * @namespace: addons/tempvoice/modals/tv_rename_modal.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
@@ -10,7 +10,7 @@ const { MessageFlags } = require('discord.js');
 
 const { BaseModal } = require('kythia-core');
 
-class TvLimitModalModal extends BaseModal {
+class TvRenameModalModal extends BaseModal {
 	modal = {};
 
 	async execute(interaction) {
@@ -19,22 +19,12 @@ class TvLimitModalModal extends BaseModal {
 		const { models, t, client, logger, helpers } = container;
 		const { TempVoiceChannel } = models;
 		const { simpleContainer } = helpers.discord;
-		const newLimitStr = interaction.fields.getTextInputValue('user_limit');
-		const newLimit = parseInt(newLimitStr, 10);
-		const channelId = interaction.customId.split(':')[1];
+		const newName = interaction.fields.getTextInputValue('channel_name');
 
-		if (Number.isNaN(newLimit) || newLimit < 0 || newLimit > 99) {
-			return interaction.reply({
-				content: await t(interaction, 'tempvoice.limit.modal.invalid_input'),
-				flags: MessageFlags.Ephemeral,
-			});
-		}
+		const channelId = interaction.customId.split(':')[1];
 		if (!channelId) {
 			return interaction.reply({
-				content: await t(
-					interaction,
-					'tempvoice.limit.modal.channel_id_not_found',
-				),
+				content: await t(interaction, 'tempvoice.rename.modal.error.no_id'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -45,7 +35,7 @@ class TvLimitModalModal extends BaseModal {
 		});
 		if (!activeChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.limit.modal.not_owner'),
+				content: await t(interaction, 'tempvoice.rename.modal.error.not_owner'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -68,27 +58,23 @@ class TvLimitModalModal extends BaseModal {
 				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 			});
 		}
+
 		if (!channel) {
 			return interaction.reply({
-				content: await t(
-					interaction,
-					'tempvoice.limit.modal.channel_not_found',
-				),
+				content: await t(interaction, 'tempvoice.rename.modal.error.not_found'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
 
-		await channel.setUserLimit(newLimit);
+		await channel.setName(newName);
+
 		await interaction.reply({
-			content: await t(interaction, 'tempvoice.limit.modal.success', {
-				limit:
-					newLimit === 0
-						? await t(interaction, 'tempvoice.limit.modal.unlimited')
-						: newLimit,
+			content: await t(interaction, 'tempvoice.rename.modal.success', {
+				newName,
 			}),
 			flags: MessageFlags.Ephemeral,
 		});
 	}
 }
 
-module.exports = TvLimitModalModal;
+exports.default = TvRenameModalModal;

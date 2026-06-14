@@ -16,7 +16,7 @@ const {
 	ApplicationCommandOptionType,
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
-const testallmockHelper = require('../../helpers/testall-mock');
+const testallmockHelper = require('../../helpers/testallMock');
 
 // Constants extracted to addons/core/helpers/testall-mock.js
 

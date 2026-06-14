@@ -11,7 +11,7 @@ const { BaseEvent } = require('kythia-core');
 class MessageReactionAddEvent extends BaseEvent {
 	async execute(reaction, user) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+		const _bot = { client: this.client, container: this.container };
 
 		const { models, logger } = container;
 		const { ReactionRole, ReactionRolePanel } = models;

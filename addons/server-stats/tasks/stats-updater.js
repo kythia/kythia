@@ -27,4 +27,4 @@ class StatsUpdaterTask extends BaseTask {
 	}
 }
 
-module.exports = StatsUpdaterTask;
+exports.default = StatsUpdaterTask;

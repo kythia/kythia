@@ -10,7 +10,7 @@ const { MessageFlags } = require('discord.js');
 const {
 	getSpotPrice,
 	formatPoolStats,
-} = require('../../../../../economy/helpers/kyth-amm');
+} = require('../../../../../economy/helpers/kythAmm');
 
 const { BaseCommand } = require('kythia-core');
 

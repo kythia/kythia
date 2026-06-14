@@ -22,4 +22,4 @@ class MmConfirmCloseButton extends BaseButton {
 	}
 }
 
-module.exports = MmConfirmCloseButton;
+exports.default = MmConfirmCloseButton;

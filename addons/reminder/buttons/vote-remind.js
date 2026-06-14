@@ -8,8 +8,11 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class VoteRemindButton extends BaseButton {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, kythiaConfig } = container;
 		const { KythiaReminder } = models;
 		const { simpleContainer } = helpers.discord;
@@ -39,5 +42,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = VoteRemindButton;

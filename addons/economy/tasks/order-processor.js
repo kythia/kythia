@@ -42,4 +42,4 @@ class OrderProcessorTask extends BaseTask {
 	}
 }
 
-module.exports = OrderProcessorTask;
+exports.default = OrderProcessorTask;

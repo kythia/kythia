@@ -10,7 +10,7 @@ const { ActivityType, MessageFlags } = require('discord.js');
 const {
 	STATUS_OPTIONS,
 	ACTIVITY_TYPE_OPTIONS,
-} = require('../../../../helpers/presence-constants');
+} = require('../../../../helpers/presenceConstants');
 
 const { BaseCommand } = require('kythia-core');
 

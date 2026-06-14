@@ -7,8 +7,11 @@
  */
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class HelpBtnButton extends BaseButton {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers } = container;
 		const { getHelpData, buildHelpReply } = helpers.helpUtils;
 
@@ -67,5 +70,7 @@ module.exports = {
 			helpData,
 		);
 		await interaction.editReply(updatedReply).catch(() => {});
-	},
-};
+	}
+}
+
+exports.default = HelpBtnButton;

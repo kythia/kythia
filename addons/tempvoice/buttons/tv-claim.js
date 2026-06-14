@@ -128,4 +128,4 @@ class TvClaimButton extends BaseButton {
 	}
 }
 
-module.exports = TvClaimButton;
+exports.default = TvClaimButton;

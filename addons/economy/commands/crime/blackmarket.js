@@ -18,8 +18,8 @@ const {
 const {
 	getItem,
 	BLACKMARKET_ITEMS,
-} = require('../../helpers/blackmarket-items');
-const { getSpotPrice } = require('../../helpers/kyth-amm');
+} = require('../../helpers/blackmarketItems');
+const { getSpotPrice } = require('../../helpers/kythAmm');
 
 const { BaseCommand } = require('kythia-core');
 
