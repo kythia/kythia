@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class CommandIdCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('command-id')
 			.setDescription("🔍 Find a command's ID and generate its mention.")
@@ -19,13 +22,10 @@ module.exports = {
 					.setName('name')
 					.setDescription('The name of the command to look up')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -60,5 +60,7 @@ module.exports = {
 				mention,
 			}),
 		});
-	},
-};
+	}
+}
+
+exports.default = CommandIdCommand;

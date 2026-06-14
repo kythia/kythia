@@ -7,10 +7,15 @@
  */
 const { SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	guildOnly: true,
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class ReactionRoleCommand extends BaseCommand {
+	guildOnly = true;
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('reaction-role')
 		.setDescription('🎭 Manage reaction roles for your server.')
-		.setDMPermission(false),
-};
+		.setDMPermission(false);
+}
+
+exports.default = ReactionRoleCommand;

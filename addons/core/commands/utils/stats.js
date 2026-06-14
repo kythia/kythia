@@ -22,6 +22,8 @@ const path = require('node:path');
 const fs = require('node:fs');
 const os = require('node:os');
 
+const { BaseCommand } = require('kythia-core');
+
 function getKythiaCoreVersion() {
 	try {
 		const corePkgPath = require.resolve('kythia-core/package.json');
@@ -66,17 +68,15 @@ function getGitCommitId() {
 	return undefined;
 }
 
-module.exports = {
-	aliases: ['s', '📊'],
-	slashCommand: new SlashCommandBuilder()
-		.setName('stats')
-		.setDescription(`📊 Displays kythia statistics.`),
+class StatsCommand extends BaseCommand {
+	aliases = ['s', '📊'];
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	slashCommand = new SlashCommandBuilder()
+		.setName('stats')
+		.setDescription(`📊 Displays kythia statistics.`);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers, models, sequelize } = container;
 		const { convertColor } = helpers.color;
 
@@ -277,5 +277,7 @@ module.exports = {
 			components: [mainContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = StatsCommand;

@@ -16,6 +16,8 @@ const {
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const SKIN_API_BASE =
 	'https://starlightskins.lunareclipse.studio/render/wallpaper';
 
@@ -33,9 +35,10 @@ const MULTI_PLAYER_WALLPAPERS = new Set(['quick_hide']);
 // Valid usernames: 3-16 chars, alphanumeric + underscore
 const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,16}$/;
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class WallpaperCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('wallpaper')
 			.setDescription(
@@ -57,13 +60,10 @@ module.exports = {
 					.setRequired(true)
 					.setMinLength(3)
 					.setMaxLength(128),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -200,5 +200,7 @@ module.exports = {
 			components: [container_],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = WallpaperCommand;

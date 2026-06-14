@@ -7,18 +7,18 @@
  */
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RemoveCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
-			.setDescription('Stop receiving Discord Quest notifications.'),
+			.setDescription('Stop receiving Discord Quest notifications.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { QuestConfig } = models;
@@ -47,5 +47,7 @@ module.exports = {
 			components: await simpleContainer(interaction, content, { color: 'Red' }),
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = RemoveCommand;

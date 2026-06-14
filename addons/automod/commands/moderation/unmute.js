@@ -8,8 +8,10 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class UnmuteCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unmute')
 			.setDescription('🔊 Unmutes a user in voice channels.')
@@ -18,15 +20,13 @@ module.exports = {
 					.setName('user')
 					.setDescription('The user to unmute')
 					.setRequired(true),
-			),
-	permissions: PermissionFlagsBits.MuteMembers,
-	botPermissions: PermissionFlagsBits.MuteMembers,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.MuteMembers;
+	botPermissions = PermissionFlagsBits.MuteMembers;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
 
@@ -78,5 +78,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = UnmuteCommand;

@@ -9,10 +9,13 @@
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 const { calculateLevelAndXp, levelUpXp } = require('../helpers');
 
-module.exports = {
-	subcommand: true,
-	permissions: [PermissionFlagsBits.ManageGuild],
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class XpAddCommand extends BaseCommand {
+	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('xp-add')
 			.setDescription('Add XP to a user.')
@@ -27,13 +30,10 @@ module.exports = {
 					.setName('xp')
 					.setDescription('The amount of XP to add.')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { User, LevelingSetting } = models;
@@ -107,5 +107,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = XpAddCommand;

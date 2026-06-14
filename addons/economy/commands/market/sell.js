@@ -24,11 +24,14 @@ const {
 } = require('../../helpers/kyth-amm');
 const { toBigIntSafe } = require('../../helpers/bigint');
 
+const { BaseCommand } = require('kythia-core');
+
 const SLIPPAGE_TOLERANCE_PCT = 0.5;
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class SellCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('sell')
 			.setDescription('💰 Sell an asset to the global market.')
@@ -49,7 +52,7 @@ module.exports = {
 					)
 					.setRequired(true)
 					.setMinValue(0.000001),
-			),
+			);
 
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused().toLowerCase();
@@ -67,9 +70,10 @@ module.exports = {
 				.slice(0, 25)
 				.map((choice) => ({ name: choice, value: choice.toLowerCase() })),
 		);
-	},
+	}
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers, logger } = container;
 		const {
 			KythiaUser,
@@ -433,8 +437,10 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = SellCommand;
 
 async function _executeSellKyth({
 	interactionOrI,

@@ -6,20 +6,20 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class TopCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('top')
 			.setDescription(
 				'🌐 View the top Guild Stocks by Market Cap (The Kythia S&P 500).',
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		await interaction.deferReply();
 		const { t, models, helpers } = container;
 		const { GuildLiquidityPool } = models;
@@ -81,5 +81,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = TopCommand;

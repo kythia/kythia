@@ -7,20 +7,21 @@
  */
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AdoptCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('adopt')
 			.setDescription('Adopt a random pet')
 			.addStringOption((option) =>
 				option.setName('name').setDescription('Pet name').setRequired(true),
-			),
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+			);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { KythiaUser, UserPet, Pet } = models;
@@ -100,5 +101,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = AdoptCommand;

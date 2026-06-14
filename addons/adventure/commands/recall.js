@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RecallCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('recall')
 			.setNameLocalizations({ id: 'kembali', fr: 'retour', ja: 'リコール' })
@@ -19,13 +22,10 @@ module.exports = {
 				id: '🏙️ kembali ke kota',
 				fr: '🏙️ Retourne en ville !',
 				ja: '🏙️ 街へ戻ろう！',
-			}),
+			});
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { UserAdventure } = models;
 		const { simpleContainer } = helpers.discord;
@@ -59,5 +59,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = RecallCommand;

@@ -12,12 +12,17 @@ const {
 	SlashCommandBuilder,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class BoosterCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('booster')
 		.setDescription('🚀 Configure the server booster system')
 		.setContexts(InteractionContextType.Guild)
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
-	guildOnly: true,
-	permissions: [PermissionFlagsBits.ManageGuild],
-};
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+
+	guildOnly = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
+}
+
+exports.default = BoosterCommand;

@@ -155,6 +155,7 @@ function chunkTextDisplay(content, limit = 3999) {
  * @param {string} content - Main response text
  * @param {object} [options={}] - Extra options
  * @param {string} [options.color] - Accent color (hex/discord)
+ * @param {boolean} [options.withFooter=false] - Whether to include footer
  * @returns {Promise<object>} - Discord reply obj ({ components, flags })
  */
 async function simpleContainer(interaction, content, options = {}) {

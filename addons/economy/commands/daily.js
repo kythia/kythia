@@ -10,19 +10,19 @@ const { MessageFlags } = require('discord.js');
 const banks = require('../helpers/banks');
 const { toBigIntSafe } = require('../helpers/bigint');
 
-module.exports = {
-	subcommand: true,
-	aliases: ['daily'],
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class DailyCommand extends BaseCommand {
+	subcommand = true;
+	aliases = ['daily'];
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('daily')
-			.setDescription('💰 Collect your daily kythia coin.'),
+			.setDescription('💰 Collect your daily kythia coin.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
@@ -96,5 +96,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = DailyCommand;

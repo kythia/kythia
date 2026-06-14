@@ -9,9 +9,12 @@
 const { getChecklistAndItems, getScopeMeta } = require('../../helpers');
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ToggleCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('toggle')
 			.setDescription('Toggle personal checklist item complete/incomplete')
@@ -20,13 +23,10 @@ module.exports = {
 					.setName('index')
 					.setDescription('Item number to toggle')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		// Dependency
 		const { t, helpers } = container;
 		const { createContainer } = helpers.discord;
@@ -140,5 +140,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ToggleCommand;

@@ -13,8 +13,10 @@ const {
 	ContextMenuCommandBuilder,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class AvatarCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('avatar')
 		.setDescription('🖼️ Show user avatar.')
 		.addUserOption((option) =>
@@ -22,19 +24,16 @@ module.exports = {
 				.setName('user')
 				.setDescription('The user whose avatar you want to see.')
 				.setRequired(false),
-		),
+		);
 
-	contextMenuCommand: new ContextMenuCommandBuilder()
+	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('User Avatar')
-		.setType(ApplicationCommandType.User),
+		.setType(ApplicationCommandType.User);
 
-	contextMenuDescription: '🖼️ Show user avatar.',
+	contextMenuDescription = '🖼️ Show user avatar.';
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { createContainer } = helpers.discord;
 
@@ -60,5 +59,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = AvatarCommand;

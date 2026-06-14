@@ -14,18 +14,18 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class HelpCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('help')
-			.setDescription('📖 View all Minecraft addon commands and features'),
+			.setDescription('📖 View all Minecraft addon commands and features');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
@@ -134,5 +134,7 @@ module.exports = {
 			components: [responseContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = HelpCommand;

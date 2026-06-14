@@ -17,18 +17,18 @@ const {
 
 const { createTicketTranscript } = require('../helpers');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class TranscriptCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('transcript')
-			.setDescription('Get the transcript of the ticket.'),
+			.setDescription('Get the transcript of the ticket.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, t, kythiaConfig, helpers, logger } = container;
 		const { Ticket, TicketConfig } = models;
 		const { convertColor } = helpers.color;
@@ -168,5 +168,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = TranscriptCommand;

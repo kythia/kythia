@@ -17,9 +17,12 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class CloseCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('close')
 			.setDescription('Close this modmail thread and generate a transcript.')
@@ -31,13 +34,10 @@ module.exports = {
 					)
 					.setRequired(false)
 					.setMaxLength(500),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, t, helpers, kythiaConfig } = container;
 		const { Modmail } = models;
 		const { simpleContainer } = helpers.discord;
@@ -121,5 +121,7 @@ module.exports = {
 			components: [confirmContainer],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+exports.default = CloseCommand;

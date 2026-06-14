@@ -323,7 +323,6 @@ app.delete('/:userId/premium-servers/:guildId', async (c) => {
 		}
 
 		await bind.destroy();
-		PremiumServerBind.invalidateCache({ guildId, userId });
 
 		logger.info(`User ${userId} unbound premium from guild ${guildId}`, {
 			label: 'api',

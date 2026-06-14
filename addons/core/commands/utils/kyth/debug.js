@@ -8,20 +8,20 @@
 
 const { MessageFlags, AttachmentBuilder } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class DebugCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('debug-cache')
 			.setDescription(
 				'🛠️ [DEV] Run comprehensive diagnostic tests on all KythiaModel caching methods.',
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { logger, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const Playlist = models.Playlist;
@@ -391,5 +391,7 @@ module.exports = {
 				}
 			}
 		}
-	},
-};
+	}
+}
+
+exports.default = DebugCommand;

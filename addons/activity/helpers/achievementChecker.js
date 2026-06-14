@@ -174,21 +174,25 @@ async function checkAndUnlock(triggerType, ctx) {
 			if (type === 'special') {
 				qualifies = specialFlags.includes(flag);
 			} else if (type === 'messages_total') {
-				qualifies = stat ? Number(BigInt(stat.totalMessages)) >= value : false;
+				qualifies = stat
+					? Number(BigInt(stat.totalMessages || 0)) >= value
+					: false;
 			} else if (type === 'messages_daily') {
 				qualifies = (await getDaily()) >= value;
 			} else if (type === 'messages_weekly') {
 				qualifies = (await getWeekly()) >= value;
 			} else if (type === 'voice_hours') {
 				qualifies = stat
-					? Number(BigInt(stat.totalVoiceTime)) >= value * 3600
+					? Number(BigInt(stat.totalVoiceTime || 0)) >= value * 3600
 					: false;
 			} else if (type === 'voice_joins') {
 				qualifies = stat
-					? Number(BigInt(stat.totalVoiceJoins)) >= value
+					? Number(BigInt(stat.totalVoiceJoins || 0)) >= value
 					: false;
 			} else if (type === 'reactions_total') {
-				qualifies = stat ? Number(BigInt(stat.totalReactions)) >= value : false;
+				qualifies = stat
+					? Number(BigInt(stat.totalReactions || 0)) >= value
+					: false;
 			} else if (type === 'achievements_count') {
 				qualifies = (await getAchievementCount()) >= value;
 			} else if (type === 'server_age_days') {
@@ -210,9 +214,6 @@ async function checkAndUnlock(triggerType, ctx) {
 				),
 			),
 		);
-
-		// Invalidate achievement count cache after bulk insert
-		// await UserAchievement.clearCache({ queryType: 'count', where: { guildId, userId } });
 
 		// Get total count for the banner counter
 		const totalCount = ALL_ACHIEVEMENTS.length;

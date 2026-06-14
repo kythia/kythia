@@ -9,21 +9,22 @@
 const { MessageFlags } = require('discord.js');
 const { restoreLastStreak } = require('../helpers');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RestoreCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('restore')
 			.setDescription(
 				'🔄 Restore your lost streak back to what it was before the reset.',
-			),
+			);
 
-	voteLocked: true,
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	voteLocked = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
@@ -128,5 +129,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = RestoreCommand;

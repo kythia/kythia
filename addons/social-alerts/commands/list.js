@@ -15,20 +15,20 @@ const {
 	ThumbnailBuilder,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ListCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
 			.setDescription(
 				'📋 View all active social alert subscriptions for this server.',
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, kythiaConfig, t } = container;
 		const { SocialAlertSubscription, SocialAlertSetting } = models;
 		const { simpleContainer, chunkTextDisplay } = helpers.discord;
@@ -140,5 +140,7 @@ module.exports = {
 			components: [builder],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

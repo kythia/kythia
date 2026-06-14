@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ButtonCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('button')
 			.setDescription('Set the text on the verification panel button')
@@ -19,8 +22,10 @@ module.exports = {
 					.setName('label')
 					.setDescription('Button text (e.g. Verify Me)')
 					.setRequired(true),
-			),
-	async execute(interaction, container) {
+			);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { VerificationConfig } = models;
@@ -53,5 +58,7 @@ module.exports = {
 			components: comps,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ButtonCommand;

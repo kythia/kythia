@@ -7,9 +7,14 @@
  */
 const { SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class CommandsCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('premium-server')
-		.setDescription('💎 Manage your Server Premium bindings'),
-};
+		.setDescription('💎 Manage your Server Premium bindings');
+}
+
+exports.default = CommandsCommand;

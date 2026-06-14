@@ -8,8 +8,10 @@
 
 const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class LastseenCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('lastseen')
 		.setDescription('👀 Check when a user last sent a message in this server.')
 		.addUserOption((option) =>
@@ -17,13 +19,10 @@ module.exports = {
 				.setName('user')
 				.setDescription('The user to check')
 				.setRequired(true),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers } = container;
 		const { User } = models;
 		const { simpleContainer } = helpers.discord;
@@ -76,5 +75,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = LastseenCommand;

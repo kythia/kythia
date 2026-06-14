@@ -6,8 +6,10 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class InfoCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('info')
 			.setDescription('View vote information for a user')
@@ -16,13 +18,10 @@ module.exports = {
 					.setName('user')
 					.setDescription('The user to view vote info for')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { KythiaVoter, KythiaUser } = models;
@@ -71,5 +70,7 @@ module.exports = {
 			);
 			await interaction.editReply({ components });
 		}
-	},
-};
+	}
+}
+
+exports.default = InfoCommand;

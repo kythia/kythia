@@ -14,16 +14,16 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
-		subcommand.setName('help').setDescription('Learn how to use AI features'),
+const { BaseCommand } = require('kythia-core');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+class HelpCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
+		subcommand.setName('help').setDescription('Learn how to use AI features');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
 
@@ -103,5 +103,7 @@ module.exports = {
 			components: [helpContainer],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+exports.default = HelpCommand;

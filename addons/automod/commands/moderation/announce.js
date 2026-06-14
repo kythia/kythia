@@ -7,8 +7,10 @@
  */
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AnnounceCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('announce')
 			.setDescription('📢 Sends an announcement to the current channel.')
@@ -23,15 +25,13 @@ module.exports = {
 					.setName('title')
 					.setDescription('Title for the announcement')
 					.setRequired(false),
-			),
-	permissions: PermissionFlagsBits.ManageMessages,
-	botPermissions: PermissionFlagsBits.ManageMessages,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.ManageMessages;
+	botPermissions = PermissionFlagsBits.ManageMessages;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
 
@@ -80,5 +80,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = AnnounceCommand;

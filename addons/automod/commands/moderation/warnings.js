@@ -8,8 +8,10 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class WarningsCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('warnings')
 			.setDescription('⚠️ View warnings for a user.')
@@ -18,10 +20,13 @@ module.exports = {
 					.setName('user')
 					.setDescription('The user to view warnings for')
 					.setRequired(true),
-			),
-	permissions: PermissionFlagsBits.ModerateMembers,
-	botPermissions: PermissionFlagsBits.ModerateMembers,
-	async execute(interaction, container) {
+			);
+
+	permissions = PermissionFlagsBits.ModerateMembers;
+	botPermissions = PermissionFlagsBits.ModerateMembers;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, models, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
 		const { User } = models;
@@ -82,5 +87,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = WarningsCommand;

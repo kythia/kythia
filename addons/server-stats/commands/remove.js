@@ -9,8 +9,10 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { updateStats } = require('../helpers/stats');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class RemoveCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('remove')
 		.setDescription('📈 Delete the stat and its channel')
 		.addStringOption((opt) =>
@@ -19,7 +21,7 @@ module.exports = {
 				.setDescription('Select the stat to delete')
 				.setRequired(true)
 				.setAutocomplete(true),
-		),
+		);
 
 	async autocomplete(interaction) {
 		const container = interaction.client.container;
@@ -53,13 +55,10 @@ module.exports = {
 		}
 
 		await interaction.respond(choices);
-	},
+	}
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, models, logger } = container;
 		const { getChannelSafe, simpleContainer } = helpers.discord;
 		const { ServerSetting } = models;
@@ -114,5 +113,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = RemoveCommand;

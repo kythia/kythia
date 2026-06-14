@@ -8,9 +8,12 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class LoopCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('loop')
 			.setDescription('🔁 Set repeat mode')
@@ -24,9 +27,10 @@ module.exports = {
 						{ name: '🔂 Track', value: 'track' },
 						{ name: '🔁 Queue', value: 'queue' },
 					),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -58,5 +62,7 @@ module.exports = {
 		}
 
 		return musicHandlers.handleLoop(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = LoopCommand;

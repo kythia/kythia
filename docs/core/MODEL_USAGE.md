@@ -11,22 +11,38 @@
 | `const x =` | Returns the value directly |
 | `const [x] =` | Returns a **tuple** — destructure to get the instance |
 | `const [x, created] =` | Returns **[instance, wasCreated]** |
-| `await` only | Returns `void` or result you don't need to capture |
+| `await` only | `incrementCache`, `save`, `clearCache`, `invalidateByTags`, `scheduleAdd/Remove/Clear` |
 
 ---
 
 ## 🔍 Read — Single Record
 
+`getCache` is a **full drop-in replacement for `findOne`** — it supports all Sequelize query options.
+
 ```js
-// Returns: Model | null
+// Simple where (no wrapper needed):
 const user = await User.getCache({ userId: '123', guildId: '456' });
+
+// Explicit where with associations:
 const user = await User.getCache({ where: { userId: '123' }, include: [Profile] });
 
-// Returns: Model | null (force DB, skip cache)
+// Without where clause (order, limit, etc.):
+const latest = await User.getCache({ order: [['createdAt', 'DESC']] });
+
+// Custom cache key:
+const user = await User.getCache({ userId: '123' }, { customCacheKey: 'latest-user' });
+
+// Custom TTL:
+const user = await User.getCache({ userId: '123' }, { ttl: 30_000 });
+
+// Force DB, skip cache:
 const user = await User.getCache({ userId: '123' }, { noCache: true });
 
-// Force re-fetch from DB and overwrite cache
-// Returns: Model | null
+// Paranoid / raw / transaction:
+const user = await User.getCache({ userId: '123', paranoid: false });
+const user = await User.getCache({ userId: '123', raw: true });
+
+// Force re-fetch from DB and overwrite cache:
 const user = await User.refreshCache({ userId: '123', guildId: '456' });
 ```
 
@@ -41,6 +57,9 @@ const members = await Member.getAllCache({ where: { guildId: '123' } });
 // Returns: Model[] — by PK array, per-item cached
 const users = await User.bulkGetCache(['111', '222', '333']);
 const users = await User.bulkGetCache(['111', '222'], { include: [Profile] });
+
+// You can also pass an array to getCache (delegates to bulkGetCache):
+const users = await User.getCache(['111', '222', '333']);
 ```
 
 ---
@@ -64,13 +83,22 @@ const { rows, count, totalPages, currentPage } = await Member.paginateCache({
 ```js
 // Returns: number
 const total = await Member.countWithCache({ where: { guildId: '123' } });
+const total = await Member.countWithCache({ where: { guildId: '123' }, noCache: true });
 
 // Returns: boolean
 const isMember = await Member.existsCache({ userId: '123', guildId: '456' });
 
-// Returns: any (raw findAll result)
+// Returns: any (raw findAll result, cached as plain JSON)
 const leaderboard = await Member.aggregateWithCache({
     where: { guildId: '123' },
+    attributes: ['userId', [fn('SUM', col('xp')), 'totalXp']],
+    group: ['userId'],
+});
+
+// With noCache:
+const leaderboard = await Member.aggregateWithCache({
+    where: { guildId: '123' },
+    noCache: true,
     attributes: ['userId', [fn('SUM', col('xp')), 'totalXp']],
     group: ['userId'],
 });
@@ -154,6 +182,9 @@ await user.save(); // saves to DB + updates cache
 await User.clearCache({ userId: '123', guildId: '456' });
 await User.clearCache('custom-raw-key');
 
+// Clear negative cache explicitly
+await User.clearNegativeCache({ userId: '123', guildId: '456' });
+
 // Sniper invalidation by tags
 await User.invalidateByTags([`User`, `User:userId:123`]);
 
@@ -187,11 +218,51 @@ await Reminder.scheduleClear('active');
 ```js
 class Member extends KythiaModel {
     static table = 'members';
-    static CACHE_TTL = 30 * 60 * 1000;       // 30 min
+    static CACHE_TTL = 30 * 60 * 1000;            // 30 min (positive cache)
+    static NEGATIVE_CACHE_TTL = 30 * 1000;         // 30s (record-not-found cache)
+    
+    // 🛡️ Laravel-style mass assignment protection
     static fillable = ['coins', 'level', 'xp'];
+    // OR static guarded = ['id', 'is_admin'];
+
     static cacheKeys = [['guildId', 'userId'], ['guildId']];
     static customInvalidationTags = ['leaderboard'];
+    
+    // Probabilistic background self-healing (verifies cache against DB)
+    static DRIFT_CHECK_ENABLED = true;             // Opt-in (default is true)
+    static DRIFT_CHECK_RATE = 0.05;                // 5% sampling rate
 }
+
+// 🔄 Auto-touch parent timestamp when child updates (Laravel's $touches)
+// This will automatically update `updatedAt` on Guild when Member is saved/destroyed.
+// Usually called after model associations are defined:
+Member.setupParentTouch('guildId', Guild, 'updatedAt');
+```
+
+---
+
+## 🔬 Cache Diagnostics & Metrics
+
+KythiaModel includes a non-blocking, fire-and-forget **Self-Healing Drift Checker**. When enabled, a small percentage of cache hits (`DRIFT_CHECK_RATE`) will silently fetch fresh data from the database in the background to verify the cache integrity. If drift (stale data) is detected, it logs a warning and automatically heals the cache.
+
+```js
+// View drift statistics for a model
+console.log(Member.getCacheDriftStats());
+// Output:
+// {
+//   checked: 412,     // Number of cache hits that were verified against DB
+//   drifted: 2,       // Number of times stale data was detected
+//   healed: 2,        // Number of times the cache was auto-healed
+//   errors: 0,        // DB/Redis errors during background check
+//   rate: 0.05,       // Current sampling rate
+//   enabled: true     // Whether drift checker is active
+// }
+
+// View global aggregated cache stats across ALL registered KythiaModels
+const globalStats = KythiaModel.getGlobalCacheStats(sequelize.models);
+console.log(globalStats);
+// Output:
+// { redisHits: 4201, mapHits: 0, misses: 312, sets: 4513, clears: 82, errors: 0 }
 ```
 
 ---
@@ -200,9 +271,17 @@ class Member extends KythiaModel {
 
 All query methods accept these extra options:
 
-| Option | Type | Description |
-|---|---|---|
-| `noCache` | `boolean` | Skip cache read/write entirely |
-| `ttl` | `number` | Override cache TTL in ms for this call |
-| `include` | `Model[]` | Sequelize associations to eager-load |
-| `where` | `object` | Explicit where clause |
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `noCache` | `boolean` | `false` | Skip cache read/write entirely |
+| `ttl` | `number` | `CACHE_TTL` | Override cache TTL in ms for this call |
+| `customCacheKey` | `string` | auto | Override the auto-generated cache key |
+| `include` | `Model[]` | — | Sequelize associations to eager-load |
+| `where` | `object` | — | Explicit where clause |
+| `order` | `any[][]` | — | Sort order |
+| `limit` | `number` | — | Max records |
+| `offset` | `number` | — | Skip records |
+| `attributes` | `string[]` | — | Select specific columns |
+| `paranoid` | `boolean` | `true` | Include soft-deleted records |
+| `raw` | `boolean` | `false` | Return plain objects |
+| `transaction` | `Transaction` | — | Run within a transaction |

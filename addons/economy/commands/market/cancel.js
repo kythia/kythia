@@ -8,9 +8,12 @@
 const { MessageFlags } = require('discord.js');
 const { toBigIntSafe } = require('../../helpers/bigint');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class CancelCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('cancel')
 			.setDescription('Cancel an open order.')
@@ -19,9 +22,10 @@ module.exports = {
 					.setName('order_id')
 					.setDescription('The ID of the order to cancel')
 					.setRequired(true),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, logger } = container;
 		const { KythiaUser, MarketPortfolio, MarketOrder } = models;
 		const { simpleContainer } = helpers.discord;
@@ -104,5 +108,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = CancelCommand;

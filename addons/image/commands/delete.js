@@ -9,9 +9,12 @@
 const { MessageFlags } = require('discord.js');
 const { deleteFromR2 } = require('../services/r2');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class DeleteCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('delete')
 			.setDescription('Delete an image by its code')
@@ -20,13 +23,10 @@ module.exports = {
 					.setName('code')
 					.setDescription('The code of the image to delete')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, t, kythiaConfig, helpers } = container;
 		const { Image } = models;
 		const { simpleContainer } = helpers.discord;
@@ -84,5 +84,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = DeleteCommand;

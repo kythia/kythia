@@ -8,10 +8,15 @@
 
 const { InteractionContextType, SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class StreakCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('streak')
 		.setDescription('All commands related to the streak system.')
-		.setContexts(InteractionContextType.Guild),
-	guildOnly: true,
-};
+		.setContexts(InteractionContextType.Guild);
+
+	guildOnly = true;
+}
+
+exports.default = StreakCommand;

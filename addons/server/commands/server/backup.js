@@ -15,18 +15,18 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class BackupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('backup')
-			.setDescription('Backup server structure to a JSON file sent to your DM'),
+			.setDescription('Backup server structure to a JSON file sent to your DM');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, logger, kythiaConfig } = container;
 		const { simpleContainer, chunkTextDisplay } = helpers.discord;
 		const { convertColor } = helpers.color;
@@ -310,5 +310,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = BackupCommand;

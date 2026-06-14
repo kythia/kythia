@@ -17,6 +17,8 @@ const {
 	ButtonStyle,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const PETS_PER_PAGE = 10;
 
 async function buildNavButtons(
@@ -129,17 +131,15 @@ async function generatePetListContainer(
 	return { petListContainer, page, totalPages };
 }
 
-module.exports = {
-	slashCommand: (subcommand) =>
-		subcommand.setName('list').setDescription('Show all pets in the system'),
-	subcommand: true,
-	teamOnly: true,
+class ListCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
+		subcommand.setName('list').setDescription('Show all pets in the system');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	subcommand = true;
+	teamOnly = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { Pet } = models;
@@ -226,5 +226,7 @@ module.exports = {
 				});
 			} catch (_e) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

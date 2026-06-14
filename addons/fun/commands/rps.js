@@ -19,6 +19,8 @@ const {
 	TextDisplayBuilder,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const CHOICES = ['rock', 'paper', 'scissors'];
 
 const EMOJI = {
@@ -104,8 +106,8 @@ function buildRematchRow(label) {
 	);
 }
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class RpsCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('rps')
 		.setDescription('✂️ Play Rock Paper Scissors — against the bot or a friend!')
 		.addUserOption((o) =>
@@ -113,9 +115,10 @@ module.exports = {
 				.setName('opponent')
 				.setDescription('Challenge a friend (leave empty to play vs bot)')
 				.setRequired(false),
-		),
+		);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t } = container;
 		const challenger = interaction.user;
 		const opponent = interaction.options.getUser('opponent');
@@ -406,5 +409,7 @@ module.exports = {
 				})
 				.catch(() => {});
 		});
-	},
-};
+	}
+}
+
+exports.default = RpsCommand;

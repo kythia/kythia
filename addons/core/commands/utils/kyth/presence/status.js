@@ -9,9 +9,12 @@
 const { MessageFlags } = require('discord.js');
 const { STATUS_OPTIONS } = require('./_group');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class StatusCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('status')
 			.setDescription('📊 Set bot status only')
@@ -21,13 +24,10 @@ module.exports = {
 					.setDescription('Bot status')
 					.setRequired(true)
 					.addChoices(...STATUS_OPTIONS),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -62,5 +62,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = StatusCommand;

@@ -8,16 +8,15 @@
 
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
-		.setName('cache')
-		.setDescription('Shows cache statistics.'),
+const { BaseCommand } = require('kythia-core');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+class CacheCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
+		.setName('cache')
+		.setDescription('Shows cache statistics.');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { helpers, models, sequelize } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -88,5 +87,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = CacheCommand;

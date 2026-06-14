@@ -9,9 +9,12 @@
 const { ActivityType, MessageFlags } = require('discord.js');
 const { STATUS_OPTIONS, ACTIVITY_TYPE_OPTIONS } = require('./_group');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SetCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('set')
 			.setDescription('🔄 Set bot presence (status + activity)')
@@ -42,13 +45,10 @@ module.exports = {
 						'Streaming URL (Twitch/YouTube, required for streaming)',
 					)
 					.setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -118,5 +118,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = SetCommand;

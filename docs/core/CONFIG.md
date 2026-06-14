@@ -1,6 +1,6 @@
 # Kythia Core — Configuration Reference
 
-> Complete reference for `kythia.config.js` — every field, its type, default value, and example — **v0.13.1-beta**
+> Complete reference for `kythia.config.js` — every field, its type, default value, and example — **v26.1.0**
 
 ---
 
@@ -211,6 +211,7 @@ module.exports = {
 | `language` | `string` | ✅ | `'en'` | Default locale fallback (BCP-47 code, e.g. `'en'`, `'ja'`, `'id'`) |
 | `locale` | `string` | ✅ | `'en-US'` | Full locale code (e.g. `'en-US'`, `'ja-JP'`) |
 | `timezone` | `string` | ✅ | `'UTC'` | IANA timezone string (e.g. `'Asia/Jakarta'`) |
+| `hasActivityEntryPoint` | `boolean` | — | `false` | Set `true` if your app has an Activity (type-4) Entry Point command. Kythia will auto-detect and re-inject it on global deploys to avoid the Discord bulk overwrite error. |
 
 ---
 
@@ -362,7 +363,7 @@ legal: {
 licenseKey: process.env.LICENSE_KEY,  // e.g. 'KY-XXXX-XXXX-XXXX-XXXX'
 ```
 
-The license key is verified by `KythiaOptimizer` against the Kythia license server during boot. If verification fails (invalid key or repeated network errors), `process.exit(1)` is called.
+The license key is verified by `KythiaEngine` against the Kythia license server during boot. If verification fails (invalid key or repeated network errors), `process.exit(1)` is called.
 
 ---
 

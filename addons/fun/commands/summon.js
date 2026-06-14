@@ -18,8 +18,10 @@ const {
 } = require('discord.js');
 const { Op } = require('sequelize');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class SummonCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('summon')
 		.setDescription('🔔 Summon a friend to your current channel')
 		.addUserOption((option) =>
@@ -27,9 +29,10 @@ module.exports = {
 				.setName('user')
 				.setDescription('The friend you want to summon')
 				.setRequired(true),
-		),
+		);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Friend } = models;
 		const { convertColor } = helpers.color;
@@ -125,5 +128,7 @@ module.exports = {
 				}),
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = SummonCommand;

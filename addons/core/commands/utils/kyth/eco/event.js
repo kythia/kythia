@@ -14,9 +14,12 @@ const {
 	formatPoolStats,
 } = require('../../../../../economy/helpers/kyth-amm');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class EventCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('event')
 			.setDescription('🌪️ Trigger KYTH market shock events.')
@@ -65,9 +68,10 @@ module.exports = {
 						'[announce] Channel ID to broadcast to (leave blank to use config)',
 					)
 					.setRequired(false),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, kythiaConfig, helpers } = container;
 		const { KythLiquidityPool } = models;
 		const { simpleContainer } = helpers.discord;
@@ -296,8 +300,10 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = EventCommand;
 
 /**
  * Broadcasts a message to the configured KYTH announcement channel.

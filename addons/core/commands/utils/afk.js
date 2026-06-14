@@ -8,8 +8,10 @@
 
 const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class AfkCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('afk')
 		.setDescription('💤 Set your Away From Keyboard (AFK) status.')
 		.addStringOption((option) =>
@@ -17,13 +19,10 @@ module.exports = {
 				.setName('reason')
 				.setDescription('The reason for being AFK.')
 				.setRequired(false),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { UserAFK } = models;
 		const { simpleContainer } = helpers.discord;
@@ -62,5 +61,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = AfkCommand;

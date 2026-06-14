@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class BindCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('bind')
 			.setDescription('Bind your Premium tier to a server.')
@@ -21,9 +24,10 @@ module.exports = {
 						'The ID of the server (leave empty to bind current server)',
 					)
 					.setRequired(false),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { helpers, models, translator } = container;
 		const { simpleContainer } = helpers.discord;
 		const { KythiaUser, PremiumServerBind } = models;
@@ -119,5 +123,7 @@ module.exports = {
 			{ color: 'Green' },
 		);
 		return interaction.editReply({ components });
-	},
-};
+	}
+}
+
+exports.default = BindCommand;

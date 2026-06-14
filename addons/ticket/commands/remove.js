@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RemoveCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
 			.setDescription('Remove a user from the ticket channel')
@@ -19,13 +22,10 @@ module.exports = {
 					.setName('user')
 					.setDescription('User to remove')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -41,5 +41,7 @@ module.exports = {
 			components: await simpleContainer(interaction, desc, { color: 'Green' }),
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+exports.default = RemoveCommand;

@@ -8,9 +8,12 @@
 
 const { relayStaffReply } = require('../helpers');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AreplyCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('areply')
 			.setDescription(
@@ -22,14 +25,13 @@ module.exports = {
 					.setDescription('The anonymous message to send to the user.')
 					.setRequired(true)
 					.setMaxLength(2000),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	execute(interaction, container) {
+	execute(interaction) {
+		const container = this.container;
 		const content = interaction.options.getString('message');
 		return relayStaffReply(interaction, content, true, container);
-	},
-};
+	}
+}
+
+exports.default = AreplyCommand;

@@ -12,9 +12,12 @@ const {
 	PermissionFlagsBits,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class EditCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('edit')
 			.setDescription('✍️ Edit birthday settings.')
@@ -55,13 +58,10 @@ module.exports = {
 				option
 					.setName('image')
 					.setDescription('🖼️ Background/Banner Image URL.'),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { BirthdaySetting } = models;
 		const { simpleContainer } = helpers.discord;
@@ -163,5 +163,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = EditCommand;

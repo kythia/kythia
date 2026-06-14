@@ -9,15 +9,16 @@ const { checkCooldown } = require('@coreHelpers/time');
 const { MessageFlags } = require('discord.js');
 const { Op } = require('sequelize');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
-		subcommand.setName('gacha').setDescription('Gacha your pet!'),
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+const { BaseCommand } = require('kythia-core');
+
+class GachaCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
+		subcommand.setName('gacha').setDescription('Gacha your pet!');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { User, UserPet, Pet } = models;
@@ -136,5 +137,7 @@ module.exports = {
 					return currentRarity;
 			}
 		}
-	},
-};
+	}
+}
+
+exports.default = GachaCommand;

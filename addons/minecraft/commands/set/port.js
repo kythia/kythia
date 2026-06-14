@@ -8,11 +8,14 @@
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	guildOnly: true,
-	permissions: [PermissionFlagsBits.ManageGuild],
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class PortCommand extends BaseCommand {
+	subcommand = true;
+	guildOnly = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('port')
 			.setDescription('🔌 Set the Minecraft server port for this guild')
@@ -23,13 +26,10 @@ module.exports = {
 					.setRequired(true)
 					.setMinValue(1)
 					.setMaxValue(65535),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, models } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
@@ -59,5 +59,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = PortCommand;

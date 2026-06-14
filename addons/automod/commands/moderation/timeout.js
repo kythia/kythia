@@ -8,8 +8,10 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class TimeoutCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('timeout')
 			.setDescription('⏳ Timeouts a user.')
@@ -30,15 +32,13 @@ module.exports = {
 					.setName('reason')
 					.setDescription('Reason for the timeout')
 					.setRequired(false),
-			),
-	permissions: PermissionFlagsBits.ModerateMembers,
-	botPermissions: PermissionFlagsBits.ModerateMembers,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.ModerateMembers;
+	botPermissions = PermissionFlagsBits.ModerateMembers;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
 
@@ -84,5 +84,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = TimeoutCommand;

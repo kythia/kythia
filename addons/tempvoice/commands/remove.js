@@ -7,18 +7,18 @@
  */
 const { MessageFlags, ChannelType } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RemoveCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
-			.setDescription('Disable the tempvoice system and remove the panel.'),
+			.setDescription('Disable the tempvoice system and remove the panel.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, logger, client, helpers, t } = container;
 		const { TempVoiceConfig, TempVoiceChannel } = models;
 		const { simpleContainer } = helpers.discord;
@@ -180,5 +180,7 @@ module.exports = {
 			),
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+exports.default = RemoveCommand;

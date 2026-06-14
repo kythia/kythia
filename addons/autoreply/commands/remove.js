@@ -9,9 +9,12 @@
 const { MessageFlags } = require('discord.js');
 const { Op } = require('sequelize');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) => {
+const { BaseCommand } = require('kythia-core');
+
+class RemoveCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) => {
 		return subcommand
 			.setName('remove')
 			.setDescription('➖ Remove an auto-reply.')
@@ -22,13 +25,10 @@ module.exports = {
 					.setRequired(true)
 					.setAutocomplete(true),
 			);
-	},
+	};
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async autocomplete(interaction, container) {
+	async autocomplete(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { AutoReply } = models;
 		const focusedValue = interaction.options.getFocused();
@@ -50,13 +50,10 @@ module.exports = {
 				value: `id:${choice.id}`,
 			})),
 		);
-	},
+	}
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { AutoReply } = models;
 		const { simpleContainer } = helpers.discord;
@@ -108,5 +105,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = RemoveCommand;

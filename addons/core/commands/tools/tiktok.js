@@ -9,8 +9,10 @@
 const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 const fetch = require('node-fetch');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class TiktokCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('tiktok')
 		.setDescription('🎬 Get and play a TikTok video by link.')
 		.addStringOption((option) =>
@@ -18,13 +20,10 @@ module.exports = {
 				.setName('link')
 				.setDescription('The TikTok video link')
 				.setRequired(true),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const tiktokUrl = interaction.options.getString('link');
@@ -128,5 +127,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = TiktokCommand;

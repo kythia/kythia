@@ -16,6 +16,8 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const USERS_PER_PAGE = 10;
 const MAX_USERS = 100;
 
@@ -151,18 +153,16 @@ async function generateLeaderboardContainer(
 	return { leaderboardContainer, page, totalPages };
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class LeaderboardCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leaderboard')
-			.setDescription('View top inviters leaderboard'),
+			.setDescription('View top inviters leaderboard');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models } = container;
 		const { Invite } = models;
 		const guildId = interaction.guild.id;
@@ -260,5 +260,7 @@ module.exports = {
 				});
 			} catch (_error) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = LeaderboardCommand;

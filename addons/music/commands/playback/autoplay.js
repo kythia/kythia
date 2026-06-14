@@ -8,10 +8,13 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	premiumLocked: 'cute',
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AutoplayCommand extends BaseCommand {
+	subcommand = true;
+	premiumLocked = 'cute';
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('autoplay')
 			.setDescription('🔄 Enable or disable autoplay')
@@ -23,9 +26,10 @@ module.exports = {
 						{ name: 'Enable', value: 'enable' },
 						{ name: 'Disable', value: 'disable' },
 					),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -57,5 +61,7 @@ module.exports = {
 		}
 
 		return musicHandlers.handleAutoplay(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = AutoplayCommand;

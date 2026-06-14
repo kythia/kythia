@@ -8,11 +8,14 @@
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	guildOnly: true,
-	permissions: [PermissionFlagsBits.ManageGuild],
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class IpCommand extends BaseCommand {
+	subcommand = true;
+	guildOnly = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('ip')
 			.setDescription('🖥️ Set the Minecraft server IP for this guild')
@@ -21,13 +24,10 @@ module.exports = {
 					.setName('ip')
 					.setDescription('Minecraft server IP address')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, models } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
@@ -57,5 +57,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = IpCommand;

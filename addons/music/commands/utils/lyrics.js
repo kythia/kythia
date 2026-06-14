@@ -8,14 +8,18 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class LyricsCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('lyrics')
-			.setDescription('🎤 Show the lyrics of the currently playing song'),
+			.setDescription('🎤 Show the lyrics of the currently playing song');
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -47,5 +51,7 @@ module.exports = {
 		}
 
 		return musicHandlers.handleLyrics(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = LyricsCommand;

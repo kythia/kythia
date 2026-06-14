@@ -13,18 +13,18 @@ const {
 	TextDisplayBuilder,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ListCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
-			.setDescription('📜 List all reaction role panels in this server.'),
+			.setDescription('📜 List all reaction role panels in this server.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, kythiaConfig, logger } = container;
 		const { ReactionRolePanel, ReactionRole } = models;
 		const { convertColor } = helpers.color;
@@ -114,5 +114,7 @@ module.exports = {
 				content: 'An error occurred while listing panels.',
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

@@ -9,17 +9,16 @@
 const { MessageFlags } = require('discord.js');
 const { Op } = require('sequelize');
 
+const { BaseCommand } = require('kythia-core');
+
 const KISS_COOLDOWN = 3600;
 
-module.exports = {
-	slashCommand: (subcommand) =>
-		subcommand.setName('kiss').setDescription('😘 Kiss your partner'),
+class KissCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
+		subcommand.setName('kiss').setDescription('😘 Kiss your partner');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Marriage } = models;
 		const userId = interaction.user.id;
@@ -97,5 +96,7 @@ module.exports = {
 		);
 
 		await interaction.reply({ components, flags: MessageFlags.IsComponentsV2 });
-	},
-};
+	}
+}
+
+exports.default = KissCommand;

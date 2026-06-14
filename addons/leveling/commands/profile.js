@@ -19,9 +19,12 @@ const {
 const { levelUpXp } = require('../helpers');
 const { Op } = require('sequelize');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ProfileCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('profile')
 			.setDescription("Check your or another user's level profile.")
@@ -29,13 +32,10 @@ module.exports = {
 				option
 					.setName('user')
 					.setDescription('The user whose profile you want to see.'),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers, queueManager } = container;
 		const { User, LevelingSetting } = models;
 		const { convertColor } = helpers.color;
@@ -233,5 +233,7 @@ module.exports = {
 			files: [{ attachment: buffer, name: imageName }],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ProfileCommand;

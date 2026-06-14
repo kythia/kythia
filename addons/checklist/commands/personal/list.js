@@ -9,16 +9,16 @@
 const { getChecklistAndItems, getScopeMeta } = require('../../helpers');
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
-		subcommand.setName('list').setDescription('View all personal checklist'),
+const { BaseCommand } = require('kythia-core');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+class ListCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
+		subcommand.setName('list').setDescription('View all personal checklist');
+
+	async execute(interaction) {
+		const container = this.container;
 		// Dependency
 		const { t, helpers } = container;
 		const { createContainer } = helpers.discord;
@@ -76,5 +76,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

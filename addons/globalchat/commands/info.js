@@ -17,20 +17,20 @@ const {
 } = require('discord.js');
 const fetch = require('node-fetch');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class InfoCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('info')
 			.setDescription(
 				'Show stats and information for the Kythia Global Chat network!',
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { kythiaConfig, helpers, logger } = container;
 		const { convertColor } = helpers.color;
 		const apiUrl = kythiaConfig?.addons?.globalchat?.apiUrl;
@@ -144,5 +144,7 @@ module.exports = {
 			components: components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = InfoCommand;

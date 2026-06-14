@@ -18,9 +18,12 @@ const {
 
 const characters = require('../helpers/characters');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) => {
+const { BaseCommand } = require('kythia-core');
+
+class StartCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) => {
 		const chars = characters.getAllCharacters();
 		return subcommand
 			.setName('start')
@@ -43,13 +46,10 @@ module.exports = {
 						})),
 					),
 			);
-	},
+	};
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { UserAdventure } = models;
 		const { createContainer } = helpers.discord;
@@ -201,5 +201,7 @@ module.exports = {
 			components: [startContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = StartCommand;

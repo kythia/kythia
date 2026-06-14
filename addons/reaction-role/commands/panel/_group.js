@@ -6,10 +6,15 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommandGroup) =>
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommandGroup) =>
 		subcommandGroup
 			.setName('panel')
-			.setDescription('📋 Manage reaction role panels.'),
-};
+			.setDescription('📋 Manage reaction role panels.');
+}
+
+exports.default = GroupCommand;

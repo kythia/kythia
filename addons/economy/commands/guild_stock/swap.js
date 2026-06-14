@@ -6,9 +6,12 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SwapCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('swap')
 			.setDescription('🔄 Swap KYTH for Guild Tokens, or vice versa via AMM.')
@@ -34,13 +37,10 @@ module.exports = {
 					.setDescription('Amount of stock to buy/sell')
 					.setRequired(true)
 					.setMinValue(1),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		await interaction.deferReply();
 		const { t, models, helpers } = container;
 		const { KythiaUser, GuildLiquidityPool, GuildTokenHolding } = models;
@@ -242,5 +242,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = SwapCommand;

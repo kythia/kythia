@@ -23,6 +23,8 @@ const axios = require('axios');
 const fs = require('node:fs');
 const path = require('node:path');
 
+const { BaseCommand } = require('kythia-core');
+
 const _x = {
 	d: '\x64\x65\x66\x65\x72\x52\x65\x70\x6c\x79',
 	e: '\x65\x64\x69\x74\x52\x65\x70\x6c\x79',
@@ -32,12 +34,13 @@ const _x = {
 	err: '\x65\x72\x72\x6f\x72',
 };
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class LegalCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('legal')
-		.setDescription('⚖️ View the Terms of Service and Privacy Policy'),
+		.setDescription('⚖️ View the Terms of Service and Privacy Policy');
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { convertColor } = helpers['\x63\x6f\x6c\x6f\x72'];
 
@@ -156,5 +159,7 @@ module.exports = {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = LegalCommand;

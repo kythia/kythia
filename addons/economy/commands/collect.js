@@ -9,18 +9,18 @@
 const { MessageFlags } = require('discord.js');
 const { toBigIntSafe } = require('../helpers/bigint');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class CollectCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('collect')
-			.setDescription('🏦 Collect daily passive income from your assets'),
+			.setDescription('🏦 Collect daily passive income from your assets');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser, Inventory } = models;
 		const { simpleContainer } = helpers.discord;
@@ -116,5 +116,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = CollectCommand;

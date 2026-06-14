@@ -14,20 +14,20 @@ const {
 } = require('discord.js');
 const { reloadLavalinkNodes } = require('../../../helpers/reload-node');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class ReloadNodeCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('reloadnode')
 		.setDescription('🔄️ Reload Lavalink nodes and configuration')
 		.setContexts(InteractionContextType.Guild)
-		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
-	ownerOnly: true,
-	mainGuildOnly: true,
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	ownerOnly = true;
+	mainGuildOnly = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { logger } = container;
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
@@ -46,5 +46,7 @@ module.exports = {
 				content: `❌ Failed to reload nodes: ${error.message}`,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = ReloadNodeCommand;

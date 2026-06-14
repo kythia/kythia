@@ -7,9 +7,14 @@
  */
 const { SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class EconomyCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('eco')
-		.setDescription('💰 Get your money and become rich'),
-};
+		.setDescription('💰 Get your money and become rich');
+}
+
+exports.default = EconomyCommand;

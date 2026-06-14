@@ -18,17 +18,18 @@ const {
 } = require('discord.js');
 const { buildInterface } = require('../helpers/interface');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RepairCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('repair')
-			.setDescription('Repair TempVoice configuration.'),
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+			.setDescription('Repair TempVoice configuration.');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { models, t, helpers, kythiaConfig } = container;
 		const { TempVoiceConfig, TempVoiceChannel } = models;
 		const { convertColor } = helpers.color;
@@ -215,5 +216,7 @@ module.exports = {
 			components: [finalContainer],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+exports.default = RepairCommand;

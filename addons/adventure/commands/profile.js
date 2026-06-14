@@ -17,9 +17,12 @@ const {
 } = require('discord.js');
 const characters = require('../helpers/characters');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ProfileCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('profile')
 			.setNameLocalizations({ id: 'profil', fr: 'profil', ja: 'プロフィール' })
@@ -28,13 +31,10 @@ module.exports = {
 				id: '📑 Lihat Statistik petualanganmu',
 				fr: "📑 Tes statistiques d'aventure",
 				ja: '📑 冒険のステータスを確認しよう',
-			}),
+			});
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { UserAdventure } = models;
 		const { createContainer } = helpers.discord;
@@ -183,5 +183,7 @@ module.exports = {
 			components: [profileContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ProfileCommand;

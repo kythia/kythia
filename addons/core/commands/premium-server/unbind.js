@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class UnbindCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unbind')
 			.setDescription('Unbind your Premium tier from a server.')
@@ -21,9 +24,10 @@ module.exports = {
 						'The ID of the server (leave empty to unbind current server)',
 					)
 					.setRequired(false),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { helpers, models, translator } = container;
 		const { simpleContainer } = helpers.discord;
 		const { PremiumServerBind } = models;
@@ -58,7 +62,6 @@ module.exports = {
 		}
 
 		await bind.destroy();
-		PremiumServerBind.invalidateCache({ guildId: targetGuildId, userId });
 
 		const components = await simpleContainer(
 			interaction,
@@ -68,5 +71,7 @@ module.exports = {
 			{ color: 'Green' },
 		);
 		return interaction.editReply({ components });
-	},
-};
+	}
+}
+
+exports.default = UnbindCommand;

@@ -23,6 +23,8 @@ const {
 
 const kythiaConfig = require('../../../kythia.config');
 
+const { BaseCommand } = require('kythia-core');
+
 const WORD_LIST = kythiaConfig.addons.fun.wordle.words;
 
 const EMOJI_CORRECT = '🟩';
@@ -132,12 +134,13 @@ async function buildGameEmbed(interaction, game, actionRow = null) {
 	return container;
 }
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class WordleCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('wordle')
-		.setDescription('🔡 Play Wordle! Guess the 5-letter word in 6 tries.'),
+		.setDescription('🔡 Play Wordle! Guess the 5-letter word in 6 tries.');
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t } = container;
 
 		const userId = interaction.user.id;
@@ -284,5 +287,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		});
-	},
-};
+	}
+}
+
+exports.default = WordleCommand;

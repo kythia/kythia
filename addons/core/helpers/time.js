@@ -115,4 +115,47 @@ async function formatDuration(ms, interaction) {
 	return parts.join(', ');
 }
 
-module.exports = { parseDuration, checkCooldown, formatDuration };
+const TIMEZONES = {
+	// UTC MINUS
+	'Pacific/Midway': 'UTC-11 — Pacific/Midway',
+	'Pacific/Honolulu': 'UTC-10 — Pacific/Honolulu',
+	'America/Anchorage': 'UTC-9 — America/Anchorage',
+	'America/Los_Angeles': 'UTC-8 — America/Los_Angeles (PT)',
+	'America/Denver': 'UTC-7 — America/Denver (MT)',
+	'America/Chicago': 'UTC-6 — America/Chicago (CT)',
+	'America/New_York': 'UTC-5 — America/New_York (ET)',
+	'America/Halifax': 'UTC-4 — America/Halifax',
+	'America/Sao_Paulo': 'UTC-3 — America/Sao_Paulo',
+	'Atlantic/South_Georgia': 'UTC-2 — Atlantic/South_Georgia',
+	'Atlantic/Cape_Verde': 'UTC-1 — Atlantic/Cape_Verde',
+
+	// --- UTC Zero ---
+	UTC: 'UTC+0 — Coordinated Universal Time',
+	'Europe/London': 'UTC+0 — Europe/London (GMT)',
+
+	// --- UTC Plus (Europe, Africa, Asia, Oceania) ---
+	'Europe/Paris': 'UTC+1 — Europe/Paris (CET)',
+	'Europe/Berlin': 'UTC+1 — Europe/Berlin (CET)',
+	'Africa/Cairo': 'UTC+2 — Africa/Cairo',
+	'Europe/Moscow': 'UTC+3 — Europe/Moscow',
+	'Asia/Dubai': 'UTC+4 — Asia/Dubai',
+	'Asia/Karachi': 'UTC+5 — Asia/Karachi',
+	'Asia/Kolkata': 'UTC+5:30 — Asia/Kolkata',
+	'Asia/Kathmandu': 'UTC+5:45 — Asia/Kathmandu',
+	'Asia/Dhaka': 'UTC+6 — Asia/Dhaka',
+	'Asia/Jakarta': 'UTC+7 — Asia/Jakarta (WIB)',
+	'Asia/Bangkok': 'UTC+7 — Asia/Bangkok',
+	'Asia/Makassar': 'UTC+8 — Asia/Makassar (WITA)',
+	'Asia/Singapore': 'UTC+8 — Asia/Singapore',
+	'Asia/Kuala_Lumpur': 'UTC+8 — Asia/Kuala_Lumpur',
+	'Asia/Manila': 'UTC+8 — Asia/Manila',
+	'Asia/Jayapura': 'UTC+9 — Asia/Jayapura (WIT)',
+	'Asia/Tokyo': 'UTC+9 — Asia/Tokyo',
+	'Asia/Seoul': 'UTC+9 — Asia/Seoul',
+	'Australia/Adelaide': 'UTC+9:30 — Australia/Adelaide',
+	'Australia/Sydney': 'UTC+10 — Australia/Sydney',
+	'Pacific/Noumea': 'UTC+11 — Pacific/Noumea',
+	'Pacific/Auckland': 'UTC+12 — Pacific/Auckland',
+};
+
+module.exports = { parseDuration, checkCooldown, formatDuration, TIMEZONES };

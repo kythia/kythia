@@ -8,8 +8,10 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class BanCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('ban')
 			.setDescription('🔨 Bans a user from the server.')
@@ -24,15 +26,13 @@ module.exports = {
 					.setName('reason')
 					.setDescription('Reason for the ban')
 					.setRequired(false),
-			),
-	permissions: PermissionFlagsBits.BanMembers,
-	botPermissions: PermissionFlagsBits.BanMembers,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.BanMembers;
+	botPermissions = PermissionFlagsBits.BanMembers;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
 
@@ -71,5 +71,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = BanCommand;

@@ -9,9 +9,12 @@
 const { getChecklistAndItems, getScopeMeta } = require('../../helpers');
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RemoveCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
 			.setDescription('Remove item from server checklist')
@@ -20,13 +23,10 @@ module.exports = {
 					.setName('index')
 					.setDescription('Item number to remove')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -123,5 +123,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = RemoveCommand;

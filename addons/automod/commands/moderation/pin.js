@@ -8,8 +8,10 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class PinCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('pin')
 			.setDescription('📌 Pins a message in the channel.')
@@ -18,15 +20,13 @@ module.exports = {
 					.setName('message_id')
 					.setDescription('The ID of the message to pin')
 					.setRequired(true),
-			),
-	permissions: PermissionFlagsBits.ManageMessages,
-	botPermissions: PermissionFlagsBits.ManageMessages,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.ManageMessages;
+	botPermissions = PermissionFlagsBits.ManageMessages;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
 
@@ -87,5 +87,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = PinCommand;

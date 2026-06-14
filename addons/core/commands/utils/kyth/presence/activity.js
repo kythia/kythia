@@ -9,9 +9,12 @@
 const { ActivityType, MessageFlags } = require('discord.js');
 const { ACTIVITY_TYPE_OPTIONS } = require('./_group');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ActivityCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('activity')
 			.setDescription('🎮 Set bot activity only')
@@ -33,13 +36,10 @@ module.exports = {
 					.setName('url')
 					.setDescription('Streaming URL (Twitch/YouTube)')
 					.setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -89,5 +89,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = ActivityCommand;

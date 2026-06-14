@@ -19,16 +19,15 @@ const {
 } = require('discord.js');
 const axios = require('axios');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
-		.setName('quote')
-		.setDescription('✨ Get a random inspirational quote'),
+const { BaseCommand } = require('kythia-core');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+class QuoteCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
+		.setName('quote')
+		.setDescription('✨ Get a random inspirational quote');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 
 		await interaction.deferReply();
@@ -121,5 +120,7 @@ module.exports = {
 				/* silently ignore re-fetch errors */
 			}
 		});
-	},
-};
+	}
+}
+
+exports.default = QuoteCommand;

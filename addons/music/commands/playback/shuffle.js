@@ -8,12 +8,16 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
-		subcommand.setName('shuffle').setDescription('🔀 Shuffle the queue order'),
+const { BaseCommand } = require('kythia-core');
 
-	async execute(interaction, container) {
+class ShuffleCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
+		subcommand.setName('shuffle').setDescription('🔀 Shuffle the queue order');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -45,5 +49,7 @@ module.exports = {
 		}
 
 		return musicHandlers.handleShuffle(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = ShuffleCommand;

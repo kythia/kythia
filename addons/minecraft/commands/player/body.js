@@ -16,12 +16,15 @@ const {
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const SKIN_API_BASE = 'https://starlightskins.lunareclipse.studio/render';
 const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,16}$/;
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class BodyCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('body')
 			.setDescription(
@@ -34,13 +37,10 @@ module.exports = {
 					.setRequired(true)
 					.setMinLength(3)
 					.setMaxLength(16),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 
 		const playerName = interaction.options.getString('player');
@@ -97,5 +97,7 @@ module.exports = {
 			components: [container_],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = BodyCommand;

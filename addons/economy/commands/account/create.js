@@ -8,9 +8,12 @@
 const { MessageFlags } = require('discord.js');
 const banks = require('../../helpers/banks');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class CreateCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('create')
 			.setDescription('👤 Create an account and choose a bank type.')
@@ -27,8 +30,10 @@ module.exports = {
 							value: bank.id,
 						})),
 					),
-			),
-	async execute(interaction, container) {
+			);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
@@ -68,5 +73,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = CreateCommand;

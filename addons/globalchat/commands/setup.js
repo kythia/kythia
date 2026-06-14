@@ -13,9 +13,12 @@ const {
 } = require('discord.js');
 const fetch = require('node-fetch');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SetupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('setup')
 			.setDescription(
@@ -27,13 +30,10 @@ module.exports = {
 					.setDescription('Select a channel for global chat (optional)')
 					.addChannelTypes(ChannelType.GuildText)
 					.setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers, logger, client } = container;
 		const { GlobalChat } = models;
 		const { simpleContainer, getChannelSafe } = helpers.discord;
@@ -238,5 +238,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = SetupCommand;

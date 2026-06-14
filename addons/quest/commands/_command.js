@@ -11,10 +11,14 @@ const {
 	PermissionFlagsBits,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class QuestCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('quest')
 		.setDescription('🎁 Manage the Discord Quest Notifier system.')
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
-		.setContexts(InteractionContextType.Guild),
-};
+		.setContexts(InteractionContextType.Guild);
+}
+
+exports.default = QuestCommand;

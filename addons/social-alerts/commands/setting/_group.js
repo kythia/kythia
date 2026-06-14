@@ -6,10 +6,15 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (group) =>
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (group) =>
 		group
 			.setName('setting')
-			.setDescription('⚙️ Configure Social Alerts addon settings.'),
-};
+			.setDescription('⚙️ Configure Social Alerts addon settings.');
+}
+
+exports.default = GroupCommand;

@@ -15,9 +15,12 @@ const {
 const banks = require('../../helpers/banks');
 const { toBigIntSafe } = require('../../helpers/bigint');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class TransferCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('transfer')
 			.setDescription('Transfer your money to another user.')
@@ -32,13 +35,10 @@ module.exports = {
 					.setName('amount')
 					.setDescription('Amount of money to transfer')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers, logger } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer, createContainer } = helpers.discord;
@@ -226,5 +226,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = TransferCommand;

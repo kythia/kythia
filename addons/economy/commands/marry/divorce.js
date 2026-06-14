@@ -9,20 +9,19 @@
 const { MessageFlags } = require('discord.js');
 const { Op } = require('sequelize');
 
+const { BaseCommand } = require('kythia-core');
+
 const divorceConfirmations = new Map();
 const DIVORCE_CONFIRM_EXPIRE = 1000 * 60 * 2;
 
-module.exports = {
-	slashCommand: (subcommand) =>
+class DivorceCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('divorce')
-			.setDescription('💔 End your current marriage'),
+			.setDescription('💔 End your current marriage');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Marriage } = models;
 		const { simpleContainer } = helpers.discord;
@@ -185,5 +184,7 @@ module.exports = {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = DivorceCommand;

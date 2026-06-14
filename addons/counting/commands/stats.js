@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class StatsCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('stats')
 			.setDescription("View a user's counting statistics.")
@@ -19,13 +22,10 @@ module.exports = {
 					.setName('user')
 					.setDescription('The user to view stats for.')
 					.setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, t, helpers } = container;
 		const { CountingUser } = models;
 		const { simpleContainer } = helpers.discord;
@@ -56,5 +56,7 @@ module.exports = {
 			}),
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = StatsCommand;

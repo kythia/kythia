@@ -10,6 +10,8 @@ const { MessageFlags } = require('discord.js');
 const { buildComponentRows } = require('../helpers/buttons.js');
 const { fetchContent } = require('../helpers/api.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const ALLOWED_CATEGORIES = [
 	'hass',
 	'hmidriff',
@@ -38,9 +40,10 @@ const ALLOWED_CATEGORIES = [
 	'yaoi',
 ];
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class GetCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('get')
 			.setDescription('🌶️ Get random mature content (only in 18+ channels)')
@@ -66,14 +69,12 @@ module.exports = {
 					.setMinValue(1)
 					.setMaxValue(3)
 					.setRequired(false),
-			),
-	voteLocked: true,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	voteLocked = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { helpers, models, logger } = container;
 		const { NsfwUser } = models;
 
@@ -151,5 +152,7 @@ module.exports = {
 
 		// Send initial content
 		await sendContent();
-	},
-};
+	}
+}
+
+exports.default = GetCommand;

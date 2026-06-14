@@ -19,8 +19,10 @@ const {
 } = require('discord.js');
 const axios = require('axios');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class JokeCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('joke')
 		.setDescription('😂 Get a random joke with a hidden punchline')
 		.addStringOption((option) =>
@@ -38,13 +40,10 @@ module.exports = {
 					{ name: '🎭 Spooky', value: 'spooky' },
 					{ name: '🎄 Christmas', value: 'christmas' },
 				),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 
 		await interaction.deferReply();
@@ -146,5 +145,7 @@ module.exports = {
 			});
 			collector.stop();
 		});
-	},
-};
+	}
+}
+
+exports.default = JokeCommand;

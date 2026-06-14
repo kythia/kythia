@@ -8,8 +8,10 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SayCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('say')
 			.setDescription('🗣️ Makes the bot say something.')
@@ -18,16 +20,14 @@ module.exports = {
 					.setName('message')
 					.setDescription('The message to say')
 					.setRequired(true),
-			),
-	permissions: PermissionFlagsBits.Administrator,
-	botPermissions: PermissionFlagsBits.ManageMessages,
-	isOwner: true,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.Administrator;
+	botPermissions = PermissionFlagsBits.ManageMessages;
+	isOwner = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -60,5 +60,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = SayCommand;

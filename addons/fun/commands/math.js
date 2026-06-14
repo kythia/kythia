@@ -22,6 +22,8 @@ const {
 	TextInputStyle,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Question generator — scales with streak
 // ─────────────────────────────────────────────────────────────────────────────
@@ -199,12 +201,8 @@ async function saveScore(container, userId, username, score) {
 	return record;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// COMMAND
-// ─────────────────────────────────────────────────────────────────────────────
-
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class MathCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('math')
 		.setDescription(
 			'🔢 Speed math quiz — answer streaks build your leaderboard score!',
@@ -216,9 +214,10 @@ module.exports = {
 			sub
 				.setName('leaderboard')
 				.setDescription('🏆 View the global math leaderboard'),
-		),
+		);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t } = container;
 		const sub = interaction.options.getSubcommand();
 
@@ -387,5 +386,7 @@ module.exports = {
 				});
 			}
 		}
-	},
-};
+	}
+}
+
+exports.default = MathCommand;

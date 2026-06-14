@@ -8,10 +8,13 @@
 const { MessageFlags, ChannelType } = require('discord.js');
 const { buildInterface } = require('../helpers/interface');
 
-module.exports = {
-	subcommand: true,
-	voteLocked: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SetupCommand extends BaseCommand {
+	subcommand = true;
+	voteLocked = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('setup')
 			.setDescription(
@@ -43,12 +46,10 @@ module.exports = {
 					)
 					.setRequired(false)
 					.addChannelTypes(ChannelType.GuildText),
-			),
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+			);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { models, logger, client, helpers, t } = container;
 		const { TempVoiceConfig } = models;
 		const { simpleContainer } = helpers.discord;
@@ -157,5 +158,7 @@ module.exports = {
 			}),
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+exports.default = SetupCommand;

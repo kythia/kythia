@@ -8,8 +8,10 @@
 
 const { Op } = require('sequelize');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ResetCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('reset')
 			.setDescription('Reset vote points for a user or all users')
@@ -20,13 +22,10 @@ module.exports = {
 						'The user to reset points for (leave empty for ALL users)',
 					)
 					.setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { KythiaUser } = models;
@@ -77,5 +76,7 @@ module.exports = {
 			);
 			await interaction.editReply({ components });
 		}
-	},
-};
+	}
+}
+
+exports.default = ResetCommand;

@@ -17,18 +17,22 @@ const {
 } = require('discord.js');
 const { fetchMcStatus } = require('../../helpers/mcstats');
 
+const { BaseCommand } = require('kythia-core');
+
 const HOST_REGEX = /^[a-zA-Z0-9._-]+(:\d{1,5})?$/;
 
-module.exports = {
-	subcommand: true,
-	guildOnly: true,
-	permissions: [
+class AutosetupCommand extends BaseCommand {
+	subcommand = true;
+	guildOnly = true;
+
+	permissions = [
 		PermissionFlagsBits.ManageGuild,
 		PermissionFlagsBits.ManageChannels,
-	],
-	botPermissions: [PermissionFlagsBits.ManageChannels],
+	];
 
-	slashCommand: (subcommand) =>
+	botPermissions = [PermissionFlagsBits.ManageChannels];
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('autosetup')
 			.setDescription('⚙️ Auto-create all Minecraft stat channels in one go')
@@ -55,13 +59,10 @@ module.exports = {
 						'Name for the new category (default: ⛏️ Minecraft Server)',
 					)
 					.setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, models, kythiaConfig } = container;
 		const { ServerSetting } = models;
 
@@ -229,5 +230,7 @@ module.exports = {
 			components: [responseContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = AutosetupCommand;

@@ -16,6 +16,8 @@ const {
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const SKIN_API_BASE = 'https://starlightskins.lunareclipse.studio/render';
 
 // Map each render type → its valid crops (first = default)
@@ -88,9 +90,10 @@ const CROP_CHOICES = [
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,16}$/;
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class PoseCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('pose')
 			.setDescription('🎭 Render a player in any Starlight Skins pose')
@@ -115,13 +118,10 @@ module.exports = {
 					.setDescription('Crop type (auto-selects best if omitted)')
 					.setRequired(false)
 					.addChoices(...CROP_CHOICES),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 
 		const playerName = interaction.options.getString('player');
@@ -201,5 +201,7 @@ module.exports = {
 			components: [responseContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = PoseCommand;

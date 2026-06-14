@@ -17,6 +17,8 @@ const {
 } = require('discord.js');
 const axios = require('axios');
 
+const { BaseCommand } = require('kythia-core');
+
 const VALID_ACTIONS = [
 	'hug',
 	'kiss',
@@ -41,8 +43,8 @@ const VALID_ACTIONS = [
 	'smug',
 ];
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class ActCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('act')
 		.setDescription('🤗 Perform an anime action with a user')
 		.addStringOption((option) =>
@@ -79,9 +81,10 @@ module.exports = {
 				.setName('user')
 				.setDescription('The user to perform the action on')
 				.setRequired(false),
-		),
+		);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 
 		const action = interaction.options.getString('action');
@@ -173,5 +176,7 @@ module.exports = {
 			components: [actionContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ActCommand;

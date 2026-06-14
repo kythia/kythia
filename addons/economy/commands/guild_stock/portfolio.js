@@ -6,18 +6,18 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class PortfolioCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('portfolio')
-			.setDescription('📈 View all the Guild Stocks you currently own.'),
+			.setDescription('📈 View all the Guild Stocks you currently own.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		await interaction.deferReply();
 		const { t, models, helpers } = container;
 		const { GuildTokenHolding, GuildLiquidityPool } = models;
@@ -81,5 +81,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = PortfolioCommand;

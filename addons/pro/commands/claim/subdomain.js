@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SubdomainCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('subdomain')
 			.setDescription('🌐 Claim a new .kyth.me subdomain (Max 5).')
@@ -19,13 +22,10 @@ module.exports = {
 					.setName('name')
 					.setDescription('Unique subdomain name (e.g.: kythia-cool)')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { logger, kythiaConfig, models, helpers, t } = container;
 		const { KythiaUser, Subdomain } = models;
 		const { simpleContainer } = helpers.discord;
@@ -158,5 +158,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = SubdomainCommand;

@@ -13,9 +13,12 @@ const {
 const { toBigIntSafe } = require('../../helpers/bigint');
 const { Op } = require('sequelize');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class WantedCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('wanted')
 			.setDescription('🤠 View the most wanted criminals or claim a bounty.')
@@ -24,9 +27,10 @@ module.exports = {
 					.setName('target')
 					.setDescription('The user you want to capture')
 					.setRequired(false),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
@@ -178,5 +182,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = WantedCommand;

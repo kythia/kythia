@@ -18,6 +18,8 @@ const {
 } = require('discord.js');
 const { toBigIntSafe } = require('../helpers/bigint');
 
+const { BaseCommand } = require('kythia-core');
+
 const USERS_PER_PAGE = 10;
 const MAX_USERS = 100;
 
@@ -157,18 +159,16 @@ async function generateLeaderboardContainer(
 	return { leaderboardContainer, page, totalPages };
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class LeaderboardCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leaderboard')
-			.setDescription('🏆 View the global economy leaderboard.'),
+			.setDescription('🏆 View the global economy leaderboard.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models } = container;
 		const { KythiaUser } = models;
 
@@ -270,5 +270,7 @@ module.exports = {
 				});
 			} catch (_error) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = LeaderboardCommand;

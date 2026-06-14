@@ -13,6 +13,8 @@ const {
 	ButtonStyle,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const IMAGES_PER_PAGE = 4;
 
 function buildNavButtons(page, totalPages, allDisabled = false) {
@@ -78,9 +80,10 @@ async function generateFavContainer(
 	return { containerBody: container, page, totalPages };
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class FavoritesCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('favorites')
 			.setDescription('🌶️ View your favorited mature images')
@@ -89,14 +92,12 @@ module.exports = {
 					.setName('private')
 					.setDescription('Make the message private?')
 					.setRequired(false),
-			),
-	voteLocked: true,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	voteLocked = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { NsfwUser } = models;
 
@@ -172,5 +173,7 @@ module.exports = {
 				});
 			} catch (_e) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = FavoritesCommand;

@@ -17,9 +17,12 @@ const {
 } = require('discord.js');
 const { ALL_ACHIEVEMENTS } = require('../../helpers/achievementChecker');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ProfileCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('profile')
 			.setDescription('🏆 View your achievement profile banner.')
@@ -27,13 +30,10 @@ module.exports = {
 				option
 					.setName('user')
 					.setDescription('The user to view. Defaults to yourself.'),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, kythiaConfig, helpers, queueManager } = container;
 		const { UserAchievement } = models;
 		const { convertColor } = helpers.color;
@@ -119,5 +119,7 @@ module.exports = {
 			files: [{ attachment: buffer, name: imageName }],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ProfileCommand;

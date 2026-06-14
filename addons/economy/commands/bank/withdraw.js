@@ -10,9 +10,12 @@ const { MessageFlags } = require('discord.js');
 const banks = require('../../helpers/banks');
 const { toBigIntSafe } = require('../../helpers/bigint');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class WithdrawCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('withdraw')
 			.setDescription('Withdraw your kythia coin from kythia bank.')
@@ -21,13 +24,10 @@ module.exports = {
 					.setName('amount')
 					.setDescription('Amount to withdraw')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers, logger } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
@@ -103,5 +103,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = WithdrawCommand;

@@ -32,14 +32,17 @@ const {
 	fetchLatestInstagram,
 } = require('../helpers/instagram');
 
+const { BaseCommand } = require('kythia-core');
+
 const TIKTOK_LOGO_URL =
 	'https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/tiktok/webapp/main/webapp-desktop/8152caf0c8e8bc67ae0d.png';
 
 const MAX_SUBSCRIPTIONS_PER_GUILD = 25;
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class AddCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
 			.setDescription(
@@ -78,9 +81,10 @@ module.exports = {
 					.setDescription(
 						'✉️ Custom alert message. Variables: {title}, {url}, {channel}',
 					),
-			),
+			);
 
-	async autocomplete(interaction, container) {
+	async autocomplete(interaction) {
+		const container = this.container;
 		const { kythiaConfig, logger } = container;
 
 		const platform = interaction.options.getString('platform');
@@ -260,13 +264,10 @@ module.exports = {
 			});
 			await interaction.respond([]);
 		}
-	},
+	}
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, logger, kythiaConfig, t } = container;
 		const { SocialAlertSubscription } = models;
 		const { simpleContainer } = helpers.discord;
@@ -402,8 +403,10 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = AddCommand;
 
 // ── YouTube handler ─────────────────────────────────────────────────────────────
 async function handleYouTubeAdd({

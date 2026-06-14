@@ -17,6 +17,8 @@ const {
 	ButtonStyle,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const GUILDS_PER_PAGE = 10;
 
 async function buildNavButtons(
@@ -127,18 +129,16 @@ async function generateServersContainer(
 	return { containerStr, page, totalPages };
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class ServersCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('servers')
-			.setDescription('🌐 List all servers the bot is in'),
+			.setDescription('🌐 List all servers the bot is in');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t } = container;
 
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
@@ -251,5 +251,7 @@ module.exports = {
 				});
 			} catch (_e) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = ServersCommand;

@@ -8,8 +8,10 @@
 
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class EightballCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('8ball')
 		.setDescription('🔮 Ask the magic 8 ball anything')
 		.addStringOption((option) =>
@@ -17,13 +19,10 @@ module.exports = {
 				.setName('question')
 				.setDescription('What do you want to ask?')
 				.setRequired(true),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -68,5 +67,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}, 2000);
-	},
-};
+	}
+}
+
+exports.default = EightballCommand;

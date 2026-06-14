@@ -17,6 +17,8 @@ const {
 } = require('discord.js');
 const { Op, fn, col, literal } = require('sequelize');
 
+const { BaseCommand } = require('kythia-core');
+
 const USERS_PER_PAGE = 10;
 const MAX_USERS = 100;
 
@@ -222,9 +224,10 @@ async function generateLeaderboardContainer(
 	return { leaderboardContainer, page, totalPages };
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class LeaderboardCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leaderboard')
 			.setDescription('📊 Activity leaderboard for this server.')
@@ -249,13 +252,10 @@ module.exports = {
 						{ name: '📆 This Week', value: 'weekly' },
 						{ name: '🗓️ This Month', value: 'monthly' },
 					),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models } = container;
 		const { ActivityStat, ActivityLog } = models;
 
@@ -395,5 +395,7 @@ module.exports = {
 				});
 			} catch (_e) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = LeaderboardCommand;

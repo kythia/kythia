@@ -90,6 +90,21 @@ app.post('/topgg', async (c) => {
 				color: config.bot.color,
 			});
 
+			components[0]
+				.addSeparatorComponents(
+					new SeparatorBuilder()
+						.setSpacing(SeparatorSpacingSize.Small)
+						.setDivider(true),
+				)
+				.addActionRowComponents(
+					new ActionRowBuilder().addComponents(
+						new ButtonBuilder()
+							.setCustomId('vote_remind')
+							.setLabel('Remind me in 12h')
+							.setStyle(ButtonStyle.Primary),
+					),
+				);
+
 			await discordUser.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -118,6 +133,22 @@ app.post('/topgg', async (c) => {
 
 				const voteContainer = new ContainerBuilder()
 					.setAccentColor(accentColor)
+					.addSectionComponents(
+						new SectionBuilder()
+							.addTextDisplayComponents(
+								new TextDisplayBuilder().setContent(`## New Vote!`),
+							)
+							.setThumbnailAccessory(
+								new ThumbnailBuilder()
+									.setDescription(user.username)
+									.setURL(user.displayAvatarURL()),
+							),
+					)
+					.addSeparatorComponents(
+						new SeparatorBuilder()
+							.setSpacing(SeparatorSpacingSize.Small)
+							.setDivider(true),
+					)
 					.addMediaGalleryComponents(
 						new MediaGalleryBuilder().addItems([
 							new MediaGalleryItemBuilder().setURL(
@@ -134,7 +165,7 @@ app.post('/topgg', async (c) => {
 						new SectionBuilder()
 							.addTextDisplayComponents(
 								new TextDisplayBuilder().setContent(
-									`## New Vote!\n<@${userId}> (${user.username})\njust gave their love and support to **${config.bot.name}** on Top.gg!\n\nYou're very cool >,<! thank youu very muchh, Dont forget **${config.bot.name}** tomorrow!\n-# psttt look at my dm!`,
+									`<@${userId}> (${user.username})\njust gave their love and support to **${config.bot.name}** on Top.gg!\n\nYou're very cool >,<! thank youu very muchh, Dont forget **${config.bot.name}** tomorrow!\n-# psttt look at my dm!`,
 								),
 							)
 							.setThumbnailAccessory(
@@ -170,7 +201,7 @@ app.post('/topgg', async (c) => {
 				const payload = {
 					flags: MessageFlags.IsComponentsV2,
 					components: [voteContainer.toJSON()],
-					allowedMentions: {
+					allowed_mentions: {
 						parse: [],
 					},
 				};

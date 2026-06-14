@@ -17,6 +17,8 @@ const {
 	DEFAULT_CONFIG,
 } = require('../../helpers/antinuke');
 
+const { BaseCommand } = require('kythia-core');
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -57,12 +59,8 @@ const automodFeatureMap = {
 	'anti-zalgo': ['antiZalgoOn', 'Anti-Zalgo'],
 };
 
-// ---------------------------------------------------------------------------
-// Slash command definition
-// ---------------------------------------------------------------------------
-
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class AutomodSettingCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('automod')
 		.setDescription('🛡️ Automod settings')
 		.setContexts(InteractionContextType.Guild)
@@ -403,16 +401,14 @@ module.exports = {
 						.setName('status')
 						.setDescription('View current AntiNuke configuration'),
 				),
-		),
-	permissions: PermissionFlagsBits.ManageGuild,
-	botPermissions: PermissionFlagsBits.ManageGuild,
-	voteLocked: true,
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.ManageGuild;
+	botPermissions = PermissionFlagsBits.ManageGuild;
+	voteLocked = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers, models } = container;
 		const { getChannelSafe, simpleContainer } = helpers.discord;
 		const { ServerSetting } = models;
@@ -1113,5 +1109,7 @@ module.exports = {
 				});
 			}
 		}
-	},
-};
+	}
+}
+
+exports.default = AutomodSettingCommand;

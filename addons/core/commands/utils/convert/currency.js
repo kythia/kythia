@@ -9,9 +9,12 @@
 const { MessageFlags } = require('discord.js');
 const { convertCurrency } = require('./_helpers');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class CurrencyCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('currency')
 			.setDescription('💰 Convert currency (e.g. USD to IDR)')
@@ -36,13 +39,10 @@ module.exports = {
 					.setName('amount')
 					.setDescription('Amount to convert')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -98,5 +98,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = CurrencyCommand;

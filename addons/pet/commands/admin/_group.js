@@ -6,12 +6,18 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (group) =>
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (group) =>
 		group
 			.setName('admin')
-			.setDescription('Administrative pet management commands.'),
-	mainGuild: true,
-	teamOnly: true,
-};
+			.setDescription('Administrative pet management commands.');
+
+	mainGuild = true;
+	teamOnly = true;
+}
+
+exports.default = GroupCommand;

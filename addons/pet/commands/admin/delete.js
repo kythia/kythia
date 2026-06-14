@@ -8,8 +8,10 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class DeleteCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('delete')
 			.setDescription('Delete a pet from the system')
@@ -18,15 +20,13 @@ module.exports = {
 					.setName('name')
 					.setDescription('Name of the pet to delete')
 					.setRequired(true),
-			),
-	subcommand: true,
-	teamOnly: true,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	subcommand = true;
+	teamOnly = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { Pet } = models;
@@ -56,5 +56,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = DeleteCommand;

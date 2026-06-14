@@ -20,9 +20,12 @@ const { getRandomMonster } = require('../helpers/monster');
 const characters = require('../helpers/characters');
 const { getItemById } = require('../helpers/items');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class BattleCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('battle')
 			.setNameLocalizations({ id: 'bertarung', fr: 'combat', ja: 'たたかう' })
@@ -31,13 +34,10 @@ module.exports = {
 				id: '⚔️ Bertarung melawan monster di dimensi lain!',
 				fr: '⚔️ Combats un monstre dans le donjon !',
 				ja: '⚔️ ダンジョンでモンスターと戦おう！',
-			}),
+			});
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers, logger } = container;
 		const { UserAdventure, InventoryAdventure } = models;
 		const { createContainer } = helpers.discord;
@@ -571,5 +571,7 @@ module.exports = {
 		});
 
 		return;
-	},
-};
+	}
+}
+
+exports.default = BattleCommand;

@@ -8,17 +8,21 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	premiumLocked: 'powerful',
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class Music247Command extends BaseCommand {
+	subcommand = true;
+	premiumLocked = 'powerful';
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('247')
 			.setDescription(
 				'🎧 Enable or disable 24/7 mode to keep the bot in the voice channel.',
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers } = container;
 
@@ -32,5 +36,7 @@ module.exports = {
 		const player = client.poru.players.get(guild.id);
 
 		return musicHandlers.handle247(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = Music247Command;

@@ -8,12 +8,16 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
-		subcommand.setName('back').setDescription('⏮️ Play the previous song'),
+const { BaseCommand } = require('kythia-core');
 
-	async execute(interaction, container) {
+class BackCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
+		subcommand.setName('back').setDescription('⏮️ Play the previous song');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -45,5 +49,7 @@ module.exports = {
 		}
 
 		return musicHandlers.handleBack(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = BackCommand;

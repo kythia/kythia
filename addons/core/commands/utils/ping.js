@@ -15,6 +15,8 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 /**
  * Get Lavalink nodes ping/latency information
  * @param {object} client - Discord client instance
@@ -166,19 +168,17 @@ async function getRedisPings(container) {
 	return nodes;
 }
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class PingCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('ping')
 		.setDescription(
 			"🔍 Checks the bot's, Discord API's, database and cache/redis connection speed.",
-		),
-	aliases: ['p', 'pong', '🏓'],
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	aliases = ['p', 'pong', '🏓'];
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
 
@@ -333,5 +333,7 @@ module.exports = {
 			components: [embedContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = PingCommand;

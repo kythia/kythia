@@ -13,14 +13,18 @@ const {
 } = require('discord.js');
 const { toBigIntSafe } = require('../../helpers/bigint');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class UpgradeCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('upgrade')
-			.setDescription('🏦 Upgrade your maximum bank capacity.'),
+			.setDescription('🏦 Upgrade your maximum bank capacity.');
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer, createContainer } = helpers.discord;
@@ -128,5 +132,7 @@ module.exports = {
 				});
 			}
 		});
-	},
-};
+	}
+}
+
+exports.default = UpgradeCommand;

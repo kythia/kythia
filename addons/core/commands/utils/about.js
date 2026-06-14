@@ -20,17 +20,17 @@ const {
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
-		.setName('about')
-		.setDescription(`😋 A brief introduction about kythia`),
-	aliases: ['abt', '🌸'],
+const { BaseCommand } = require('kythia-core');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+class AboutCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
+		.setName('about')
+		.setDescription(`😋 A brief introduction about kythia`);
+
+	aliases = ['abt', '🌸'];
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
 
@@ -112,5 +112,7 @@ module.exports = {
 			components: components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = AboutCommand;

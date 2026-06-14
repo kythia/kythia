@@ -8,8 +8,10 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AddCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
 			.setDescription('Add a user to premium')
@@ -24,13 +26,10 @@ module.exports = {
 					.setName('days')
 					.setDescription('Number of premium days (default 30)')
 					.setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
@@ -68,5 +67,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = AddCommand;

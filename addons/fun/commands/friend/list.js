@@ -14,11 +14,14 @@ const {
 } = require('discord.js');
 const { Op } = require('sequelize');
 
-module.exports = {
-	slashCommand: (subcommand) =>
-		subcommand.setName('list').setDescription('🤝 List your friends'),
+const { BaseCommand } = require('kythia-core');
 
-	async execute(interaction, container) {
+class ListCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
+		subcommand.setName('list').setDescription('🤝 List your friends');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Friend } = models;
 		const { convertColor } = helpers.color;
@@ -74,5 +77,7 @@ module.exports = {
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			components: [listContainer],
 		});
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

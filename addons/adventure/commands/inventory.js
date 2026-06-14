@@ -14,9 +14,12 @@ const {
 } = require('discord.js');
 const { items } = require('../helpers/items');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class InventoryCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('inventory')
 			.setNameLocalizations({
@@ -29,13 +32,10 @@ module.exports = {
 				id: '🎒 Lihat inventaris yang kamu punya',
 				fr: '🎒 Ton inventaire',
 				ja: '🎒 所持品を確認しよう',
-			}),
+			});
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { UserAdventure, InventoryAdventure } = models;
 		const { createContainer } = helpers.discord;
@@ -202,5 +202,7 @@ module.exports = {
 				});
 			} catch (_e) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = InventoryCommand;

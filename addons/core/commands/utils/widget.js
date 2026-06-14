@@ -14,9 +14,12 @@ const {
 	ButtonStyle,
 } = require('discord.js');
 
-module.exports = {
-	aliases: ['wdg'],
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class WidgetCommand extends BaseCommand {
+	aliases = ['wdg'];
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('widget')
 		.setDescription('🛠️ Manage your Kythia Profile Widget on Discord.')
 		.addSubcommand((subcommand) =>
@@ -30,13 +33,10 @@ module.exports = {
 			subcommand
 				.setName('refresh')
 				.setDescription('Refresh your Kythia Profile Widget data on Discord.'),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { kythiaConfig, models, helpers, logger } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
@@ -187,5 +187,7 @@ module.exports = {
 				});
 			}
 		}
-	},
-};
+	}
+}
+
+exports.default = WidgetCommand;

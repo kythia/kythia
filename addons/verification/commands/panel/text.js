@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class TextCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('text')
 			.setDescription(
@@ -24,8 +27,10 @@ module.exports = {
 					.setName('description')
 					.setDescription('Panel description')
 					.setRequired(true),
-			),
-	async execute(interaction, container) {
+			);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { VerificationConfig } = models;
@@ -59,5 +64,7 @@ module.exports = {
 			components: comps,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = TextCommand;

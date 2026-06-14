@@ -19,6 +19,8 @@ const {
 const shopData = require('../helpers/items');
 const { toBigIntSafe } = require('../helpers/bigint');
 
+const { BaseCommand } = require('kythia-core');
+
 const allItems = Object.values(shopData).flat();
 
 /**
@@ -220,16 +222,14 @@ async function generateShopComponentRows(
 	return [categoryRow, buyRow, navigationRow];
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class ShopCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('shop')
-			.setDescription('🛒 Look and buy items from the shop.'),
+			.setDescription('🛒 Look and buy items from the shop.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 */
 	async execute(interaction) {
 		const { t, kythiaConfig, models } = interaction.client.container;
 		const { KythiaUser, Inventory } = models;
@@ -474,5 +474,7 @@ module.exports = {
 				await interaction.editReply({ components: [] });
 			} catch {}
 		});
-	},
-};
+	}
+}
+
+exports.default = ShopCommand;

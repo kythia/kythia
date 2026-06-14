@@ -6,9 +6,12 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ViewCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('view')
 			.setDescription("📊 View the live market data for a server's stock.")
@@ -19,13 +22,10 @@ module.exports = {
 						"The 2-4 letter stock ticker (leave blank for this server's stock)",
 					)
 					.setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		await interaction.deferReply();
 		const { t, models, helpers } = container;
 		const { GuildLiquidityPool, GuildTokenHolding } = models;
@@ -107,5 +107,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ViewCommand;

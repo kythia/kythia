@@ -8,9 +8,12 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class DownloadCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('download')
 			.setDescription('📥 Download the current song')
@@ -21,9 +24,10 @@ module.exports = {
 						'The song to download (optional, if not specified, the current song will be downloaded)',
 					)
 					.setRequired(false),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers } = container;
 
@@ -37,5 +41,7 @@ module.exports = {
 		const player = client.poru.players.get(guild.id);
 
 		return musicHandlers.handleDownload(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = DownloadCommand;

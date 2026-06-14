@@ -8,6 +8,8 @@
 
 const { ActivityType, PresenceUpdateStatus } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const STATUS_OPTIONS = Object.entries(PresenceUpdateStatus)
 	.filter(([_k, v]) => typeof v === 'string')
 	.map(([k]) => ({ name: k, value: k }));
@@ -16,13 +18,21 @@ const ACTIVITY_TYPE_OPTIONS = Object.entries(ActivityType)
 	.filter(([_k, v]) => typeof v === 'number')
 	.map(([k]) => ({ name: k, value: k }));
 
-module.exports = {
-	subcommandGroup: true,
-	slashCommand: (group) =>
+class GroupCommand extends BaseCommand {
+	subcommandGroup = true;
+
+	slashCommand = (group) =>
 		group
 			.setName('presence')
-			.setDescription('🔄 Manage bot client user settings'),
-	// Export shared constants for use by subcommands
-	STATUS_OPTIONS,
-	ACTIVITY_TYPE_OPTIONS,
-};
+			.setDescription('🔄 Manage bot client user settings');
+
+	STATUS_OPTIONS = STATUS_OPTIONS;
+	ACTIVITY_TYPE_OPTIONS = ACTIVITY_TYPE_OPTIONS;
+}
+
+exports.default = GroupCommand;
+
+// Also export constants directly so sibling commands can destructure them:
+// const { ACTIVITY_TYPE_OPTIONS } = require('./_group');
+exports.STATUS_OPTIONS = STATUS_OPTIONS;
+exports.ACTIVITY_TYPE_OPTIONS = ACTIVITY_TYPE_OPTIONS;

@@ -16,6 +16,8 @@ const {
 	TextDisplayBuilder,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const BLACKLIST_COMMANDS = [
 	'mod',
 	'testall', // Prevent recursion
@@ -376,6 +378,7 @@ function createMockInteraction(
 		awaitModalSubmit: async () => ({
 			customId: 'mock_modal_id',
 			deferUpdate: async () => {},
+			deferReply: async () => _mockMessage,
 			update: async () => {},
 			reply: async () => _mockMessage,
 			editReply: async () => _mockMessage,
@@ -466,6 +469,12 @@ function createForwardingMockInteraction(
 		channel: Object.assign(Object.create(realChannel || {}), {
 			createMessageComponentCollector: (_opts) => mockCollector,
 			createReactionCollector: (_opts) => mockCollector,
+			permissionOverwrites: {
+				edit: async () => {},
+				delete: async () => {},
+				create: async () => {},
+			},
+			send: async () => createMockMessage(realChannel),
 		}),
 		deferReply: (options) => {
 			void options;
@@ -487,21 +496,20 @@ function createForwardingMockInteraction(
 		_isDeferred: () => _deferred,
 	};
 }
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+
+class TestallCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('testall')
 		.setDescription(
 			'🛠️ Developer Tool: Test all registered commands (DRY RUN-ish).',
 		)
-		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 
-	ownerOnly: true,
-	mainGuildOnly: true,
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	ownerOnly = true;
+	mainGuildOnly = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { logger } = container;
 
 		// Acknowledge immediately so the interaction token stays alive
@@ -737,7 +745,7 @@ module.exports = {
 		// Helper: send a ContainerBuilder and swallow errors
 		const sendContainer = async (container) => {
 			try {
-				await interaction.channel.send({
+				await interaction.followUp({
 					components: [container],
 					flags: MessageFlags.IsComponentsV2,
 				});
@@ -880,5 +888,7 @@ module.exports = {
 					label: 'core',
 				}),
 			);
-	},
-};
+	}
+}
+
+exports.default = TestallCommand;

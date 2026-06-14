@@ -8,10 +8,15 @@
 
 const { InteractionContextType, SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	guildOnly: true,
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class ActivityCommand extends BaseCommand {
+	guildOnly = true;
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('activity')
 		.setDescription('📊 All commands related to activity statistics.')
-		.setContexts(InteractionContextType.Guild),
-};
+		.setContexts(InteractionContextType.Guild);
+}
+
+exports.default = ActivityCommand;

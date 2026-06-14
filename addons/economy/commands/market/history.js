@@ -7,14 +7,18 @@
  */
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class HistoryCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('history')
-			.setDescription('View your transaction history.'),
+			.setDescription('View your transaction history.');
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers, logger } = container;
 		const { KythiaUser, MarketTransaction } = models;
 		const { simpleContainer } = helpers.discord;
@@ -85,5 +89,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = HistoryCommand;

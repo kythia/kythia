@@ -15,9 +15,12 @@ const {
 const { toBigIntSafe } = require('../helpers/bigint');
 const { Op } = require('sequelize');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class FleaCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('flea')
 			.setDescription('📦 Advanced Player-to-player Grand Auction House.')
@@ -54,9 +57,10 @@ module.exports = {
 						{ name: 'Buy It Now (BIN)', value: 'bin' },
 						{ name: 'Auction (24h)', value: 'auction' },
 					),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser, Inventory, FleaMarketListing } = models;
 		const { simpleContainer, createContainer } = helpers.discord;
@@ -539,5 +543,7 @@ module.exports = {
 				}
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = FleaCommand;

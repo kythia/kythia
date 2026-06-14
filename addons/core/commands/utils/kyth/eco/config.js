@@ -9,6 +9,8 @@
 const { MessageFlags } = require('discord.js');
 const { formatPoolStats } = require('../../../../../economy/helpers/kyth-amm');
 
+const { BaseCommand } = require('kythia-core');
+
 // ── Human-readable config display ─────────────────────────────────────────────
 function fmtBool(val) {
 	return val ? '✅ Active' : '⏸️ Paused';
@@ -98,9 +100,10 @@ const CONFIG_PARAMS = {
 	},
 };
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class ConfigCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('config')
 			.setDescription('⚙️ View and change all KYTH AMM runtime settings.')
@@ -123,9 +126,10 @@ module.exports = {
 						'New value: use "true"/"false" for toggles, a number for numeric params',
 					)
 					.setRequired(false),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, kythiaConfig, helpers } = container;
 		const { KythLiquidityPool } = models;
 		const { simpleContainer } = helpers.discord;
@@ -285,5 +289,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ConfigCommand;

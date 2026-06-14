@@ -8,9 +8,12 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class VolumeCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('volume')
 			.setDescription('🔊 Set music volume')
@@ -21,9 +24,10 @@ module.exports = {
 					.setRequired(true)
 					.setMinValue(1)
 					.setMaxValue(1000),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -55,5 +59,7 @@ module.exports = {
 		}
 
 		return musicHandlers.handleVolume(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = VolumeCommand;

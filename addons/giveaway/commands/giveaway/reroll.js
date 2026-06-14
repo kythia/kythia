@@ -6,9 +6,12 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RerollCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('reroll')
 			.setDescription('Reroll winners for a finished giveaway')
@@ -18,15 +21,14 @@ module.exports = {
 					.setDescription('Search ended giveaway')
 					.setAutocomplete(true)
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	execute(interaction, container) {
+	execute(interaction) {
+		const container = this.container;
 		const { giveawayManager } = container;
 		const messageId = interaction.options.getString('giveaway');
 		return giveawayManager.rerollGiveaway(messageId, interaction);
-	},
-};
+	}
+}
+
+exports.default = RerollCommand;

@@ -9,9 +9,12 @@
 const { MessageFlags } = require('discord.js');
 const { toBigIntSafe } = require('../helpers/bigint');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class UseCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('use')
 			.setDescription('🎒 Use a consumable item from your inventory.')
@@ -25,13 +28,10 @@ module.exports = {
 						{ name: '🥫 Energy Drink', value: 'energydrink_item' },
 						{ name: '🎫 Lottery Ticket', value: 'lotteryticket_item' },
 					),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser, Inventory } = models;
 		const { simpleContainer } = helpers.discord;
@@ -122,5 +122,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = UseCommand;

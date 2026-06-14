@@ -8,9 +8,12 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SeekCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('seek')
 			.setDescription('⏩ Seeks to a specific time in the current song.')
@@ -19,9 +22,10 @@ module.exports = {
 					.setName('time')
 					.setDescription('The time to seek to. eg. 10, 2:30, 1:20:30')
 					.setRequired(true),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -53,5 +57,7 @@ module.exports = {
 		}
 
 		return musicHandlers.handleSeek(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = SeekCommand;

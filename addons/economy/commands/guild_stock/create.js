@@ -1,3 +1,5 @@
+const { BaseCommand } = require('kythia-core');
+
 /**
  * @namespace: addons/economy/commands/guild_stock/create.js
  * @type: Command
@@ -10,9 +12,10 @@
 const REQUIRED_MEMBERS = 1000;
 const LISTING_FEE_KYTH = 50;
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class CreateCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('create')
 			.setDescription(
@@ -37,14 +40,12 @@ module.exports = {
 					.setDescription('Initial supply of your Guild Token to deposit')
 					.setRequired(true)
 					.setMinValue(100),
-			),
-	userPermissions: ['Administrator'],
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	userPermissions = ['Administrator'];
+
+	async execute(interaction) {
+		const container = this.container;
 		await interaction.deferReply();
 		const { t, models, helpers, kythiaConfig, logger } = container;
 		const { KythiaUser, GuildLiquidityPool, GuildTokenHolding } = models;
@@ -246,5 +247,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = CreateCommand;

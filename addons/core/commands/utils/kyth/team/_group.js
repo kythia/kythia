@@ -6,8 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommandGroup: true,
-	slashCommand: (group) =>
-		group.setName('team').setDescription('Manage Kythia Team members'),
-};
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	subcommandGroup = true;
+
+	slashCommand = (group) =>
+		group.setName('team').setDescription('Manage Kythia Team members');
+}
+
+exports.default = GroupCommand;

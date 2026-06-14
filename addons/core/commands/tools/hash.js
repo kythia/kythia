@@ -9,6 +9,8 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const crypto = require('node:crypto');
 
+const { BaseCommand } = require('kythia-core');
+
 const SUPPORTED_ALGOS = [
 	{ name: 'MD5', value: 'md5' },
 	{ name: 'SHA1', value: 'sha1' },
@@ -21,8 +23,8 @@ const SUPPORTED_ALGOS = [
 	{ name: 'RIPEMD160', value: 'ripemd160' },
 ];
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class HashCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('hash')
 		.setDescription(
 			'🔒 Hash a text string using MD5, SHA, or other algorithms.',
@@ -39,13 +41,10 @@ module.exports = {
 				.setName('text')
 				.setDescription('The text to hash')
 				.setRequired(true),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { createContainer } = helpers.discord;
 
@@ -106,5 +105,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = HashCommand;

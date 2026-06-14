@@ -8,8 +8,10 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class MuteCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('mute')
 			.setDescription('🔇 Mutes a user in voice channels.')
@@ -24,15 +26,13 @@ module.exports = {
 					.setName('reason')
 					.setDescription('Reason for the mute')
 					.setRequired(false),
-			),
-	permissions: PermissionFlagsBits.MuteMembers,
-	botPermissions: PermissionFlagsBits.MuteMembers,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.MuteMembers;
+	botPermissions = PermissionFlagsBits.MuteMembers;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers } = container;
 		const { createContainer } = helpers.discord;
 
@@ -53,5 +53,7 @@ module.exports = {
 			components: reply,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = MuteCommand;

@@ -21,8 +21,10 @@ const {
 
 const { Op } = require('sequelize');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class UserInfoCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('userinfo')
 		.setDescription('📄 Displays information about a user.')
 		.addUserOption((option) =>
@@ -31,20 +33,17 @@ module.exports = {
 				.setDescription('User to get info about')
 				.setRequired(false),
 		)
-		.setContexts(InteractionContextType.Guild),
+		.setContexts(InteractionContextType.Guild);
 
-	contextMenuCommand: new ContextMenuCommandBuilder()
+	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('User Info')
 		.setType(ApplicationCommandType.User)
-		.setContexts(InteractionContextType.Guild),
+		.setContexts(InteractionContextType.Guild);
 
-	contextMenuDescription: '📄 Displays information about a user.',
+	contextMenuDescription = '📄 Displays information about a user.';
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers, models } = container;
 		const { convertColor } = helpers.color;
 		const { Marriage } = models;
@@ -225,5 +224,7 @@ module.exports = {
 			components: [containerBuilder],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = UserInfoCommand;

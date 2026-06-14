@@ -19,8 +19,10 @@ const {
 } = require('discord.js');
 const { Op } = require('sequelize');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AddCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
 			.setDescription('🤝 Add someone as a friend')
@@ -29,9 +31,10 @@ module.exports = {
 					.setName('user')
 					.setDescription('The user you want to add as a friend')
 					.setRequired(true),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Friend } = models;
 		const { convertColor } = helpers.color;
@@ -174,5 +177,7 @@ module.exports = {
 			flags: MessageFlags.IsComponentsV2,
 			components: [addContainer],
 		});
-	},
-};
+	}
+}
+
+exports.default = AddCommand;

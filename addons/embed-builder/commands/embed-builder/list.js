@@ -12,16 +12,15 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandSubcommandBuilder()
-		.setName('list')
-		.setDescription('📋 List all saved embeds for this server'),
+const { BaseCommand } = require('kythia-core');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+class ListCommand extends BaseCommand {
+	slashCommand = new SlashCommandSubcommandBuilder()
+		.setName('list')
+		.setDescription('📋 List all saved embeds for this server');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { EmbedBuilder: EmbedModel } = models;
 
@@ -72,5 +71,7 @@ module.exports = {
 					}),
 			],
 		});
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

@@ -12,9 +12,12 @@ const {
 	getSpotPrice,
 } = require('../../../../../economy/helpers/kyth-amm');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class PoolCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('pool')
 			.setDescription('🏊 Manage the KYTH AMM liquidity pool.')
@@ -48,9 +51,10 @@ module.exports = {
 						'[inject/set] KYTH token amount (can be negative to reduce)',
 					)
 					.setRequired(false),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, kythiaConfig, helpers } = container;
 		const { KythLiquidityPool } = models;
 		const { simpleContainer } = helpers.discord;
@@ -209,5 +213,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = PoolCommand;

@@ -8,15 +8,19 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	aliases: ['join'],
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class JoinCommand extends BaseCommand {
+	subcommand = true;
+	aliases = ['join'];
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('join')
-			.setDescription('🌸 Make Kythia Join the voice channel'),
+			.setDescription('🌸 Make Kythia Join the voice channel');
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers } = container;
 
@@ -30,5 +34,7 @@ module.exports = {
 		const player = client.poru.players.get(guild.id);
 
 		return musicHandlers.handleJoin(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = JoinCommand;

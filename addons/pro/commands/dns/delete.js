@@ -8,10 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
+const { BaseCommand } = require('kythia-core');
 
-	slashCommand: (subcommand) =>
+class DeleteCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('delete')
 			.setDescription('🌐 Delete a DNS record from your subdomain.')
@@ -21,13 +23,10 @@ module.exports = {
 					.setDescription('Select the record you want to delete')
 					.setRequired(true)
 					.setAutocomplete(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').AutocompleteInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async autocomplete(interaction, container) {
+	async autocomplete(interaction) {
+		const container = this.container;
 		const { models, logger, kythiaConfig } = container;
 		const { Subdomain, DnsRecord } = models;
 		const focusedValue =
@@ -95,13 +94,10 @@ module.exports = {
 				{ name: 'Error loading DNS records.', value: 'none' },
 			]);
 		}
-	},
+	}
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { logger, kythiaConfig, models, helpers, t } = container;
 		const cloudflareApi = container.services.cloudflare;
 		const { Subdomain, DnsRecord } = models;
@@ -226,5 +222,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = DeleteCommand;

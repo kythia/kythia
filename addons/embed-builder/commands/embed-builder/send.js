@@ -12,8 +12,10 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandSubcommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class SendCommand extends BaseCommand {
+	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('send')
 		.setDescription('📤 Send a saved embed to a channel')
 		.addStringOption((o) =>
@@ -43,13 +45,10 @@ module.exports = {
 					{ name: '👤 Users only', value: 'users' },
 					{ name: '🔕 No mentions', value: 'none' },
 				),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { EmbedBuilder: EmbedModel } = models;
 
@@ -181,5 +180,7 @@ module.exports = {
 				],
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = SendCommand;

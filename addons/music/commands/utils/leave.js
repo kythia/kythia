@@ -8,15 +8,19 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	aliases: ['leave'],
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class LeaveCommand extends BaseCommand {
+	subcommand = true;
+	aliases = ['leave'];
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leave')
-			.setDescription('🌸 Make Kythia Leave the voice channel'),
+			.setDescription('🌸 Make Kythia Leave the voice channel');
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -48,5 +52,7 @@ module.exports = {
 		}
 
 		return musicHandlers.handleLeave(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = LeaveCommand;

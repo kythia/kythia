@@ -8,21 +8,21 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class UserCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('user')
 			.setDescription('Check user invites')
 			.addUserOption((option) =>
 				option.setName('user').setDescription('User').setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		await interaction.deferReply();
 		const guildId = interaction.guild.id;
 		const { t, models, helpers, kythiaConfig } = container;
@@ -57,5 +57,7 @@ module.exports = {
 			components: containers,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = UserCommand;

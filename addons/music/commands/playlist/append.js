@@ -8,9 +8,12 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AppendCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('append')
 			.setDescription('Adds songs from a playlist to the current queue.')
@@ -20,9 +23,10 @@ module.exports = {
 					.setDescription('The name of the playlist to append.')
 					.setRequired(true)
 					.setAutocomplete(true),
-			),
+			);
 
-	async autocomplete(interaction, container) {
+	async autocomplete(interaction) {
+		const container = this.container;
 		const run = async () => {
 			const { models } = container;
 			const { Playlist } = models;
@@ -56,9 +60,10 @@ module.exports = {
 			if (error.code === 10062 || error.message === 'Unknown interaction')
 				return;
 		}
-	},
+	}
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers } = container;
 
@@ -73,5 +78,7 @@ module.exports = {
 			interaction,
 			client.poru.players.get(guild.id),
 		);
-	},
-};
+	}
+}
+
+exports.default = AppendCommand;

@@ -12,10 +12,14 @@ const {
 	InteractionContextType,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class VerificationCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('verification')
 		.setDescription('🛡️ Verification system management')
 		.setContexts(InteractionContextType.Guild)
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
-};
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+}
+
+exports.default = VerificationCommand;

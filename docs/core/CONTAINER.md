@@ -1,6 +1,6 @@
 # Kythia Core — KythiaContainer Reference
 
-> Complete reference for the `KythiaContainer` interface — every property, when it is available, and how to use it — **v0.13.1-beta**
+> Complete reference for the `KythiaContainer` interface — every property, when it is available, and how to use it — **v26.1.0**
 
 ---
 
@@ -16,9 +16,9 @@
   - [kythiaConfig](#kythiaconfig)
   - [helpers](#helpers)
   - [appRoot](#approot)
-  - [optimizer](#optimizer)
+  - [engine](#engine)
   - [metrics](#metrics)
-  - [optimizerToken](#optimizertoken)
+  - [engineToken](#enginetoken)
   - [translator](#translator)
   - [t (Translate Function)](#t-translate-function)
   - [models](#models)
@@ -60,7 +60,7 @@ KythiaContainer
  ├── t             (translation function)
  ├── translator    (TranslatorManager)
  ├── metrics       (MetricsManager / prom-client)
- ├── optimizer     (KythiaOptimizer — license system)
+ ├── engine      (KythiaEngine — license system)
  ├── addonManager
  ├── interactionManager
  ├── eventManager
@@ -265,9 +265,9 @@ const langDir = path.join(appRoot, 'lang');
 
 ---
 
-### `optimizer`
+### `engine`
 
-**Type:** `KythiaOptimizer`  
+**Type:** `KythiaEngine`  
 **Available:** From constructor  
 
 The internal license verification system. **Do not use directly in addon code.** It is populated automatically during `kythia.start()`.
@@ -295,7 +295,7 @@ See [METRICS.md](./METRICS.md) for a full list of tracked metrics and Grafana qu
 
 ---
 
-### `optimizerToken`
+### `engineToken`
 
 **Type:** `string | null`  
 **Available:** After `kythia.start()` completes license validation  
@@ -483,7 +483,7 @@ Internal flag used by the license system. **Do not read or modify.** When `true`
 | `models` | After `bootModels()` (use `addDbReadyHook`) |
 | `helpers` | Constructor |
 | `appRoot` | Constructor |
-| `optimizer` | Constructor |
+| `engine` | Constructor |
 | `metrics` | Constructor |
 | `translator` | After addon lang files loaded |
 | `t` | After translator initialized |
@@ -492,7 +492,7 @@ Internal flag used by the license system. **Do not read or modify.** When `true`
 | `middlewareManager` | After `MiddlewareManager` init |
 | `interactionManager` | After `InteractionManager.initialize()` |
 | `shutdownManager` | After `ShutdownManager.initialize()` |
-| `optimizerToken` | After license validated |
+| `engineToken` | After license validated |
 
 ---
 
@@ -503,16 +503,18 @@ Internal flag used by the license system. **Do not read or modify.** When `true`
 ```javascript
 // addons/myaddon/commands/profile.js
 const { SlashCommandBuilder } = require('discord.js');
+const { BaseCommand } = require('kythia-core');
 
-module.exports = {
-  data: new SlashCommandBuilder()
+class ProfileCommand extends BaseCommand {
+  slashCommand = new SlashCommandBuilder()
     .setName('profile')
-    .setDescription('View your profile'),
+    .setDescription('View your profile');
 
-  cooldown: 3000,
+  cooldown = 3000;
 
   async execute(interaction) {
-    const { logger, models, t, kythiaConfig } = interaction.client.container;
+    const container = this.container;
+    const { logger, models, t, kythiaConfig } = container;
     const { User } = models;
 
     const user = await User.getCache({ where: { userId: interaction.user.id } });
@@ -526,8 +528,10 @@ module.exports = {
     logger.info(`Profile viewed: ${interaction.user.tag}`);
 
     await interaction.reply({ content: title });
-  },
-};
+  }
+}
+
+exports.default = ProfileCommand;
 ```
 
 ### In Event Handlers
@@ -621,16 +625,16 @@ module.exports = async function register({ addonManager, container }) {
 const kythia = new Kythia({ client, config, sequelize, redis });
 
 // DB ready: define model associations
-kythia.addDbReadyHook((seq) => {
-  const { User, Profile, Streak } = seq.models;
+kythia.addDbReadyHook((container) => {
+  const { User, Profile, Streak } = container.models;
   User.hasOne(Profile, { foreignKey: 'userId' });
   Profile.belongsTo(User, { foreignKey: 'userId' });
   User.hasMany(Streak, { foreignKey: 'userId' });
 });
 
 // Client ready: bot is logged in
-kythia.addClientReadyHook(async (client) => {
-  const { logger } = client.container;
+kythia.addClientReadyHook(async (container) => {
+  const { logger, client } = container;
   logger.info(`✅ Logged in as ${client.user.tag}`);
 });
 
@@ -711,11 +715,15 @@ const { discord } = helpers;
 
 ```javascript
 // ✅ CORRECT — use DI container
-module.exports = {
+const { BaseCommand } = require('kythia-core');
+
+class MyCommand extends BaseCommand {
   async execute(interaction) {
-    const { logger, models, t } = interaction.client.container;
-  },
-};
+    const container = this.container;
+    const { logger, models, t } = container;
+  }
+}
+exports.default = MyCommand;
 
 // ❌ INCORRECT — creates tight coupling and bypasses container
 const KythiaModel = require('kythia-core/dist/database/KythiaModel');

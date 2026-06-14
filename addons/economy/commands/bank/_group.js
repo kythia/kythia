@@ -6,8 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (group) =>
-		group.setName('bank').setDescription('Manage your kythia bank.'),
-};
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (group) =>
+		group.setName('bank').setDescription('Manage your kythia bank.');
+}
+
+exports.default = GroupCommand;

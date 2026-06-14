@@ -12,8 +12,10 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class CategoryCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('category')
 		.setDescription('📈 Set category for server stats channels')
 		.addChannelOption((opt) =>
@@ -21,13 +23,10 @@ module.exports = {
 				.setName('category')
 				.setDescription('Category channel')
 				.setRequired(true),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, models, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const { ServerSetting } = models;
@@ -78,5 +77,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = CategoryCommand;

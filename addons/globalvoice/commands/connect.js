@@ -20,23 +20,23 @@ const { MessageFlags } = require('discord.js');
 const { PassThrough } = require('node:stream');
 const KythiaRelayClient = require('../utils/VoiceClient');
 
+const { BaseCommand } = require('kythia-core');
+
 const nexusInstances = new Map();
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class ConnectCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('connect')
 			.setDescription('Connect to a global voice room or create a room')
 			.addStringOption((option) =>
 				option.setName('room').setDescription('Room ID').setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, kythiaConfig, logger } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -192,5 +192,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = ConnectCommand;

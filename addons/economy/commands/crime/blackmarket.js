@@ -21,16 +21,20 @@ const {
 } = require('../../helpers/blackmarket-items');
 const { getSpotPrice } = require('../../helpers/kyth-amm');
 
+const { BaseCommand } = require('kythia-core');
+
 const ITEMS_PER_PAGE = 5;
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class BlackmarketCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('blackmarket')
-			.setDescription('🕶️ The underground Black Market. Accepts KYTH only.'),
+			.setDescription('🕶️ The underground Black Market. Accepts KYTH only.');
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser, KythLiquidityPool, Inventory } = models;
 		const { simpleContainer } = helpers.discord;
@@ -231,5 +235,7 @@ module.exports = {
 				});
 			}
 		});
-	},
-};
+	}
+}
+
+exports.default = BlackmarketCommand;

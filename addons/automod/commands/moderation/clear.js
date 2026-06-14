@@ -15,8 +15,10 @@ const {
 	PermissionFlagsBits,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ClearCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('clear')
 			.setDescription('🗑️ Delete messages from a channel.')
@@ -25,16 +27,13 @@ module.exports = {
 					.setName('amount')
 					.setDescription('Amount of messages to delete (0 = all)')
 					.setRequired(true),
-			),
+			);
 
-	permissions: PermissionFlagsBits.ManageMessages,
-	botPermissions: PermissionFlagsBits.ManageMessages,
+	permissions = PermissionFlagsBits.ManageMessages;
+	botPermissions = PermissionFlagsBits.ManageMessages;
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -96,8 +95,10 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = ClearCommand;
 
 // Show options for clear (Nuke/Bulk)
 async function showClearOptions(interaction, t, container) {

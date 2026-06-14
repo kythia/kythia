@@ -8,15 +8,16 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
-		subcommand.setName('flush').setDescription('💥 Flush Redis Cache (Global)'),
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+const { BaseCommand } = require('kythia-core');
+
+class FlushCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
+		subcommand.setName('flush').setDescription('💥 Flush Redis Cache (Global)');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { logger, redis, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -76,5 +77,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = FlushCommand;

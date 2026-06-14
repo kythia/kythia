@@ -24,18 +24,18 @@ const {
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class ServerInfoCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('serverinfo')
 		.setDescription('📰 Displays detailed information about the server.')
-		.setContexts(InteractionContextType.Guild),
-	guildOnly: true,
+		.setContexts(InteractionContextType.Guild);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	guildOnly = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		await interaction.deferReply();
 
 		const { t, helpers, kythiaConfig } = container;
@@ -521,5 +521,7 @@ module.exports = {
 			},
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ServerInfoCommand;

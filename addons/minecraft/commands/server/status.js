@@ -18,6 +18,8 @@ const {
 } = require('discord.js');
 const axios = require('axios');
 
+const { BaseCommand } = require('kythia-core');
+
 const HOST_REGEX = /^[a-zA-Z0-9._-]+(:\d{1,5})?$/;
 
 /**
@@ -141,9 +143,10 @@ async function buildStatusComponents(
 	return [serverContainer];
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class StatusCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('status')
 			.setDescription('Check the status of a Minecraft server')
@@ -164,13 +167,14 @@ module.exports = {
 						{ name: '☕ Java Edition', value: 'java' },
 						{ name: '🪨 Bedrock Edition', value: 'bedrock' },
 					),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	buildStatusComponents = buildStatusComponents;
+	fetchServerStatus = fetchServerStatus;
+	parseAddress = parseAddress;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 
 		const rawHost = interaction.options.getString('host').trim();
@@ -214,10 +218,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
+	}
+}
 
-	// Export helpers so the button handler can reuse them
-	buildStatusComponents,
-	fetchServerStatus,
-	parseAddress,
-};
+exports.default = StatusCommand;

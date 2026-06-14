@@ -7,9 +7,12 @@
  */
 const { SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	guildOnly: false,
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class AdventureCommand extends BaseCommand {
+	guildOnly = false;
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('adventure')
 		.setNameLocalizations({
 			id: 'petualangan',
@@ -21,5 +24,7 @@ module.exports = {
 			id: '⚔️ Mulai petualanganmu di dimensi RPG!',
 			fr: '⚔️ Commence ton aventure dans la dimension RPG !',
 			ja: '⚔️ RPGの世界で冒険を始めよう！',
-		}),
-};
+		});
+}
+
+exports.default = AdventureCommand;

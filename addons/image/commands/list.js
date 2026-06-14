@@ -14,16 +14,16 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
-		subcommand.setName('list').setDescription('List all your uploaded images'),
+const { BaseCommand } = require('kythia-core');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+class ListCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
+		subcommand.setName('list').setDescription('List all your uploaded images');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, t, kythiaConfig } = container;
 		const { Image } = models;
 		const { convertColor } = helpers.color;
@@ -125,5 +125,7 @@ module.exports = {
 				});
 			}
 		}
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

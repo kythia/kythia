@@ -12,18 +12,18 @@ const {
 	InteractionContextType,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class UtilsCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('kyth')
 		.setDescription('🛠️ Manage All Kythia related config')
 		.setContexts(InteractionContextType.Guild)
-		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
-	ownerOnly: true,
-	mainGuildOnly: true,
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 
-	/**
-	 * @param {import('discord.js').AutocompleteInteraction} interaction
-	 */
+	ownerOnly = true;
+	mainGuildOnly = true;
+
 	async autocomplete(interaction) {
 		const focusedOption = interaction.options.getFocused(true);
 		if (focusedOption.name === 'guild_id') {
@@ -56,5 +56,7 @@ module.exports = {
 
 			await interaction.respond(choices);
 		}
-	},
-};
+	}
+}
+
+exports.default = UtilsCommand;

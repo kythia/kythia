@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class GuildRemoveCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('guild-remove')
 			.setDescription('Remove a guild from the blacklist')
@@ -19,13 +22,10 @@ module.exports = {
 					.setName('guild_id')
 					.setDescription('Guild ID to remove from blacklist')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, logger, helpers } = container;
 		const { KythiaBlacklist } = models;
 		const { createContainer } = helpers.discord;
@@ -97,5 +97,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = GuildRemoveCommand;

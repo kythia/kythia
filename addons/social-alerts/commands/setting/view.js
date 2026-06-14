@@ -14,20 +14,20 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const MAX_SUBSCRIPTIONS_PER_GUILD = 25;
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class ViewCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('view')
-			.setDescription('👁️ View current Social Alerts settings for this server.'),
+			.setDescription('👁️ View current Social Alerts settings for this server.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, kythiaConfig, t } = container;
 		const { SocialAlertSetting, SocialAlertSubscription } = models;
 		const { convertColor } = helpers.color;
@@ -71,5 +71,7 @@ module.exports = {
 			components: [builder],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ViewCommand;

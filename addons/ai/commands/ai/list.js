@@ -17,6 +17,8 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const CHANNELS_PER_PAGE = 10;
 
 async function buildNavButtons(
@@ -123,18 +125,18 @@ async function generateAIListContainer(
 	return { aiListContainer, page, totalPages };
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class ListCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
-			.setDescription('View list of AI-enabled channels'),
-	guildOnly: true,
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+			.setDescription('View list of AI-enabled channels');
+
+	guildOnly = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models } = container;
 		const { ServerSetting } = models;
 
@@ -241,5 +243,7 @@ module.exports = {
 				});
 			} catch (_e) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

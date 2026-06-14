@@ -8,6 +8,8 @@
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 // IANA timezone list (common ones — enough for a select menu)
 const COMMON_TIMEZONES = [
 	{ name: 'UTC+0 — UTC', value: 'UTC' },
@@ -37,9 +39,10 @@ const COMMON_TIMEZONES = [
 	{ name: 'UTC+5:45 — Asia/Kathmandu', value: 'Asia/Kathmandu' },
 ];
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class TimezoneCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('timezone')
 			.setDescription('🌐 Set the timezone used for streak day resets')
@@ -49,14 +52,12 @@ module.exports = {
 					.setDescription('Timezone for streak day calculations')
 					.setRequired(true)
 					.addChoices(...COMMON_TIMEZONES),
-			),
-	permissions: [PermissionFlagsBits.ManageGuild],
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = [PermissionFlagsBits.ManageGuild];
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
@@ -101,5 +102,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = TimezoneCommand;

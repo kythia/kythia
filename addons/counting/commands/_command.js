@@ -12,11 +12,16 @@ const {
 	SlashCommandBuilder,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class CountingCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('counting')
 		.setDescription('🔢 Manage the counting channel.')
 		.setContexts(InteractionContextType.Guild)
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
-	guildOnly: true,
-};
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels);
+
+	guildOnly = true;
+}
+
+exports.default = CountingCommand;

@@ -8,10 +8,13 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	permissions: [PermissionFlagsBits.ManageGuild],
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SetCommand extends BaseCommand {
+	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('set')
 			.setDescription("Set a user's level to a specific value.")
@@ -26,13 +29,10 @@ module.exports = {
 					.setName('level')
 					.setDescription('The level to set.')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { User } = models;
@@ -78,5 +78,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = SetCommand;

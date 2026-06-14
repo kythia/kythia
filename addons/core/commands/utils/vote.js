@@ -20,17 +20,17 @@ const {
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 
-module.exports = {
-	aliases: ['v'],
-	slashCommand: new SlashCommandBuilder()
-		.setName('vote')
-		.setDescription(`❤️ Vote for kythia on top.gg!`),
+const { BaseCommand } = require('kythia-core');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+class VoteCommand extends BaseCommand {
+	aliases = ['v'];
+
+	slashCommand = new SlashCommandBuilder()
+		.setName('vote')
+		.setDescription(`❤️ Vote for kythia on top.gg!`);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
 
@@ -107,5 +107,7 @@ module.exports = {
 			components: [mainContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = VoteCommand;

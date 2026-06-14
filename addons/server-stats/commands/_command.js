@@ -12,12 +12,17 @@ const {
 	InteractionContextType,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class ServerStatsCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('server-stats')
 		.setDescription('📈 Server statistics settings')
 		.setContexts(InteractionContextType.Guild)
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
-	permissions: PermissionFlagsBits.ManageGuild,
-	botPermissions: PermissionFlagsBits.ManageGuild,
-};
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+
+	permissions = PermissionFlagsBits.ManageGuild;
+	botPermissions = PermissionFlagsBits.ManageGuild;
+}
+
+exports.default = ServerStatsCommand;

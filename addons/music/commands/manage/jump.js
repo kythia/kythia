@@ -8,9 +8,12 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class JumpCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('jump')
 			.setDescription('🐇 Jump to a specific song in the queue')
@@ -20,9 +23,10 @@ module.exports = {
 					.setDescription('The position in the queue to jump to')
 					.setRequired(true)
 					.setMinValue(1),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -54,5 +58,7 @@ module.exports = {
 		}
 
 		return musicHandlers.handleJump(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = JumpCommand;

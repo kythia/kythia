@@ -17,18 +17,18 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class CreateCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('create')
-			.setDescription('Creates a new ticket type (interactive setup)'),
+			.setDescription('Creates a new ticket type (interactive setup)');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
 
@@ -84,5 +84,7 @@ module.exports = {
 			flags: MessageFlags.IsComponentsV2,
 		});
 		return;
-	},
-};
+	}
+}
+
+exports.default = CreateCommand;

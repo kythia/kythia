@@ -8,9 +8,12 @@
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AddCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
 			.setDescription('Add invites to a user (Admin only)')
@@ -19,17 +22,15 @@ module.exports = {
 			)
 			.addIntegerOption((option) =>
 				option.setName('number').setDescription('Amount').setRequired(true),
-			),
-	permissions: [
+			);
+
+	permissions = [
 		PermissionFlagsBits.ManageGuild,
 		PermissionFlagsBits.Administrator,
-	],
+	];
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, t } = container;
 		const { simpleContainer } = helpers.discord;
 		const { Invite } = models;
@@ -66,5 +67,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = AddCommand;

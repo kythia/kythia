@@ -8,12 +8,15 @@
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const MIN_QUOTA = 0; // 0 = disable restores entirely
 const MAX_QUOTA = 30;
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class QuotaCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('quota')
 			.setDescription(
@@ -28,14 +31,12 @@ module.exports = {
 					.setMinValue(MIN_QUOTA)
 					.setMaxValue(MAX_QUOTA)
 					.setRequired(true),
-			),
-	permissions: [PermissionFlagsBits.ManageGuild],
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = [PermissionFlagsBits.ManageGuild];
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
@@ -70,5 +71,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = QuotaCommand;

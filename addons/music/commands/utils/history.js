@@ -8,14 +8,18 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class HistoryCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('history')
-			.setDescription('📜 Show the history of played songs'),
+			.setDescription('📜 Show the history of played songs');
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, music } = container;
 
@@ -29,5 +33,7 @@ module.exports = {
 		const player = client.poru.players.get(guild.id);
 
 		return musicHandlers.handleHistory(interaction, player, music.guildStates);
-	},
-};
+	}
+}
+
+exports.default = HistoryCommand;

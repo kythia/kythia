@@ -8,8 +8,10 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class EditCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('edit')
 			.setDescription('Edit a premium user')
@@ -18,13 +20,10 @@ module.exports = {
 					.setName('user')
 					.setDescription('User to edit premium access')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
@@ -56,5 +55,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = EditCommand;

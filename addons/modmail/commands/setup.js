@@ -16,6 +16,8 @@ const {
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 /** Validate a hex color string like #RRGGBB or #RGB */
 function isValidHex(str) {
 	return /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(str.trim());
@@ -26,9 +28,10 @@ function hexToDecimal(hex) {
 	return parseInt(hex.replace('#', ''), 16);
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class SetupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('setup')
 			.setDescription('Configure the modmail system for this server.')
@@ -123,13 +126,10 @@ module.exports = {
 					)
 					.setRequired(false)
 					.setMaxLength(512),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, t, helpers, kythiaConfig, logger } = container;
 		const { ModmailConfig } = models;
 		const { simpleContainer } = helpers.discord;
@@ -297,5 +297,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = SetupCommand;

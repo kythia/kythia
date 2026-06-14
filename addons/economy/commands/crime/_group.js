@@ -6,10 +6,15 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (group) =>
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (group) =>
 		group
 			.setName('crime')
-			.setDescription('Commit crimes, bounties, and blackmarket.'),
-};
+			.setDescription('Commit crimes, bounties, and blackmarket.');
+}
+
+exports.default = GroupCommand;

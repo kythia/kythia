@@ -427,4 +427,9 @@ async function resetServer(interaction) {
 	});
 }
 
-module.exports = { EMBEDDED, runTemplate, resetServer, sleep };
+module.exports = {
+	EMBEDDED,
+	runTemplate,
+	resetServer,
+	sleep,
+};

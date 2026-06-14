@@ -6,10 +6,15 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommandGroup) =>
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommandGroup) =>
 		subcommandGroup
 			.setName('player')
-			.setDescription('View Minecraft: Java Edition player visuals'),
-};
+			.setDescription('View Minecraft: Java Edition player visuals');
+}
+
+exports.default = GroupCommand;

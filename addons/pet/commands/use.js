@@ -10,15 +10,16 @@ const { checkCooldown } = require('@coreHelpers/time');
 const { updatePetStatus } = require('../helpers/status');
 const { toBigIntSafe } = require('@addons/economy/helpers/bigint');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
-		subcommand.setName('use').setDescription('Use your pet and get a bonus!'),
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+const { BaseCommand } = require('kythia-core');
+
+class UseCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
+		subcommand.setName('use').setDescription('Use your pet and get a bonus!');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { KythiaUser, UserPet, Pet } = models;
@@ -135,5 +136,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = UseCommand;

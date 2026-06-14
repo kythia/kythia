@@ -19,8 +19,10 @@ const {
 } = require('discord.js');
 const { Op } = require('sequelize');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ProposeCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('propose')
 			.setDescription('💍 Propose to another user')
@@ -29,13 +31,10 @@ module.exports = {
 					.setName('user')
 					.setDescription('The user you want to propose to')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Marriage } = models;
 		const { convertColor } = helpers.color;
@@ -178,5 +177,7 @@ module.exports = {
 			flags: MessageFlags.IsComponentsV2,
 			components: [proposeContainer],
 		});
-	},
-};
+	}
+}
+
+exports.default = ProposeCommand;

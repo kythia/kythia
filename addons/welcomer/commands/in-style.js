@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class InStyleCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('in-style')
 			.setDescription(
@@ -25,13 +28,10 @@ module.exports = {
 						{ name: '🖼️ Components V2 card (default)', value: 'components-v2' },
 						{ name: '💬 Plain text only', value: 'plain-text' },
 					),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { WelcomeSetting } = models;
 		const { simpleContainer } = helpers.discord;
@@ -63,5 +63,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = InStyleCommand;

@@ -14,22 +14,22 @@ const {
 } = require('discord.js');
 const { reloadConfig } = require('../../../helpers/reload-config');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class ReloadConfigCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('reloadconfig')
 		.setDescription(
 			'🔄️ Hot-reload Kythia configuration from .env and config file',
 		)
 		.setContexts(InteractionContextType.Guild)
-		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
-	ownerOnly: true,
-	mainGuildOnly: true,
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	ownerOnly = true;
+	mainGuildOnly = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { logger } = container;
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
@@ -48,5 +48,7 @@ module.exports = {
 				content: `❌ Failed to reload configuration: ${error.message}`,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = ReloadConfigCommand;

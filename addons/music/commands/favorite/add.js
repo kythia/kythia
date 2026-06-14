@@ -8,9 +8,12 @@
 
 const { formatTrackDuration } = require('../../helpers');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AddCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
 			.setDescription('💖 Add a song to your favorites.')
@@ -20,9 +23,10 @@ module.exports = {
 					.setDescription('The song title or URL to add.')
 					.setRequired(true)
 					.setAutocomplete(true),
-			),
+			);
 
-	async autocomplete(interaction, container) {
+	async autocomplete(interaction) {
+		const container = this.container;
 		const run = async () => {
 			const { client, kythiaConfig } = container;
 			const focusedOption = interaction.options.getFocused(true);
@@ -107,9 +111,10 @@ module.exports = {
 			if (error.code === 10062 || error.message === 'Unknown interaction')
 				return;
 		}
-	},
+	}
 
-	execute(interaction, container) {
+	execute(interaction) {
+		const container = this.container;
 		const { client, guild } = interaction;
 		const { musicHandlers } = container;
 
@@ -117,5 +122,7 @@ module.exports = {
 			interaction,
 			client.poru.players.get(guild.id),
 		);
-	},
-};
+	}
+}
+
+exports.default = AddCommand;

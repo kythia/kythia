@@ -14,6 +14,8 @@ const {
 	ContextMenuCommandBuilder,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 function parseCustomEmoji(str) {
 	const match = str.match(/<?a?:?(\w+):(\d+)>?/);
 	if (!match) return null;
@@ -22,8 +24,8 @@ function parseCustomEmoji(str) {
 	return { name, id, isAnimated };
 }
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class GrabCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('grab')
 		.setDescription('🛍️ grab stickers or emojis from messages.')
 		.addSubcommand((sub) =>
@@ -67,22 +69,18 @@ module.exports = {
 						.setRequired(false),
 				),
 		)
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuildExpressions),
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuildExpressions);
 
-	contextMenuCommand: new ContextMenuCommandBuilder()
+	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('Grab Sticker/Emoji')
-		.setType(ApplicationCommandType.Message),
+		.setType(ApplicationCommandType.Message);
 
-	contextMenuDescription: '🛍️ Grab sticker or emoji from this message.',
+	contextMenuDescription = '🛍️ Grab sticker or emoji from this message.';
+	permissions = PermissionFlagsBits.ManageGuildExpressions;
+	botPermissions = PermissionFlagsBits.ManageGuildExpressions;
 
-	permissions: PermissionFlagsBits.ManageGuildExpressions,
-	botPermissions: PermissionFlagsBits.ManageGuildExpressions,
-
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -453,5 +451,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = GrabCommand;

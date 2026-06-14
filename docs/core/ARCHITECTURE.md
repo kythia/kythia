@@ -1,6 +1,6 @@
 # Kythia Core — Architecture Documentation
 
-> Complete system architecture, design patterns, data flow, and internal components for **v0.13.1-beta**
+> Complete system architecture, design patterns, data flow, and internal components for **v26.1.0**
 
 **Related docs:**
 - [CONTAINER.md](./CONTAINER.md) — Full `KythiaContainer` property reference
@@ -17,7 +17,7 @@
 - [Boot Sequence](#boot-sequence)
 - [Core Components](#core-components)
   - [Kythia Orchestrator](#kythia-orchestrator)
-  - [KythiaOptimizer (License System)](#kythiaoptimizer-license-system)
+  - [KythiaEngine (License System)](#kythiaengine-license-system)
   - [AddonManager](#addonmanager)
   - [InteractionManager](#interactionmanager)
   - [EventManager](#eventmanager)
@@ -45,7 +45,7 @@ Kythia Core is built on a **layered architecture** with **dependency injection**
 3. **Plugin (Addon) Architecture** — Extensible through the addon system
 4. **Fail-Safe Design** — Graceful degradation (Redis → LRU fallback)
 5. **Event-Driven** — React to Discord gateway events efficiently
-6. **License-Protected** — Built-in license verification via `KythiaOptimizer`
+6. **License-Protected** — Built-in license verification via `KythiaEngine`
 
 ---
 
@@ -68,7 +68,7 @@ graph TB
             SM["ShutdownManager\n─────────────\n SIGINT/SIGTERM\n Interval Tracking\n Memory Monitor\n Master Uptime\n Graceful Stop"]
             TM["TranslatorManager\n─────────────\n i18n Locales\n Variable Interpolation"]
             MM["MetricsManager\n─────────────\n prom-client\n Command Counters\n Cache Hit/Miss\n CPU/Memory"]
-            OPT["KythiaOptimizer\n─────────────\n License Verification\n Telemetry\n Pulse Heartbeat\n Anti-tamper"]
+            OPT["KythiaEngine\n─────────────\n License Verification\n Telemetry\n Pulse Heartbeat\n Anti-tamper\n Sacred Boundary"]
             SHARD["ShardingManager\n─────────────\n Shard Spawn\n Crash Loop Detection\n OOM Kill Detection\n Lifetime Restart Tracking"]
         end
     end
@@ -115,14 +115,15 @@ The `start()` method follows a strict, ordered initialization sequence:
 flowchart TD
     A([kythia.start]) --> B[Print ANSI Banner\nfiglet + cli-color]
     B --> C[Check Discord Client\nIntents & Partials]
-    C --> D{legalConfig set?\naccepTOS + dataCollection}
+    C --> D{legalConfig set?\nacceptTOS + dataCollection}
     D -- No --> EXIT1([process.exit 1])
     D -- Yes --> E[Init Sentry\nif sentry.dsn configured]
     E --> F[checkRequiredConfig\nbot.token, bot.clientId,\nbot.clientSecret, db.*]
-    F --> G[performLicenseValidation\nKythiaOptimizer.optimize]
+    F --> F2[Sacred Boundary + integrity check\nKythiaEngine.js — botVersion + bootSalt validation]
+    F2 --> G[License validation\nKythiaEngine.ignite]
     G --> H{License Valid?}
     H -- No --> EXIT2([terminateUnauthorizedProcess])
-    H -- Yes --> I[optimizer.startPulse\noptimizer.startAutoOptimization]
+    H -- Yes --> I[engine.startPulse\nengine.startAutoOptimization\nattach webhook transport]
     I --> J[Load Translator\ncore/lang + appRoot/lang]
     J --> K[new AddonManager\nload all addons → CommandData]
     K --> L{sequelize provided?}
@@ -137,9 +138,9 @@ flowchart TD
     S --> T{--dev flag?}
     T -- No --> U[deployCommands\nglobal + mainGuild + devGuild cleanup]
     T -- Yes --> V
-    U --> V[new ShutdownManager\nregister SIGINT/SIGTERM hooks]
+    U --> V[new ShutdownManager\nregister signal handlers\nmemory monitor + heartbeat]
     V --> W[client.login\nDiscord Gateway]
-    W --> X[clientReady event\nexecute clientReadyHooks\nstartRuntimeValidation loop]
+    W --> X[clientReady event\nfetch announcements → DM owners\nexecute clientReadyHooks]
     X --> Z([Bot Running])
 
     style EXIT1 fill:#c0392b,color:#fff
@@ -163,6 +164,8 @@ The central class that wires together the entire framework. It acts as the DI co
 new Kythia({
   client: Client;          // ✅ Required — Discord.js Client
   config: KythiaConfig;    // ✅ Required — kythia.config.js object
+  botVersion: string;      // ✅ Required — Must start with '26.' (Sacred Boundary)
+  bootSalt: number;        // ✅ Required — Must be a finite number (e.g. Date.now())
   logger?: KythiaLogger;   // Optional — defaults to built-in Winston logger
   redis?: Redis;           // Optional — ioredis instance for cache
   sequelize?: Sequelize;   // Optional — Sequelize instance for DB
@@ -174,6 +177,8 @@ new Kythia({
 ```
 
 > **Note:** `translator` and `dbDependencies` are **NOT** constructor parameters. `TranslatorManager` is initialized internally. There is no `dbDependencies` property.
+>
+> **Sacred Boundary:** `botVersion` and `bootSalt` are mandatory. If `botVersion` doesn't start with `'26.'` or `bootSalt` is not a finite number, the engine calls `process.exit(1)` immediately.
 
 #### Public API
 
@@ -191,7 +196,7 @@ new Kythia({
 ```typescript
 kythia.client      // IKythiaClient (Discord.js Client + container)
 kythia.container   // KythiaContainer (all services)
-kythia.optimizer   // KythiaOptimizer (license system)
+kythia.engine      // KythiaEngine (license system)
 kythia.metricsManager  // MetricsManager (prom-client)
 kythia.addonManager    // IAddonManager
 kythia.eventManager    // IEventManager
@@ -202,9 +207,9 @@ kythia.translator         // ITranslatorManager
 
 ---
 
-### KythiaOptimizer (License System)
+### KythiaEngine (License System)
 
-**File:** `src/managers/KythiaOptimizer.ts`
+**File:** `src/managers/KythiaEngine.ts`
 
 Handles license verification, telemetry reporting, and anti-tamper protection. This is an **internal** system — users interact with it via `kythia.config.js` (`licenseKey` field).
 
@@ -213,25 +218,43 @@ Handles license verification, telemetry reporting, and anti-tamper protection. T
 ```mermaid
 sequenceDiagram
     participant K as Kythia.start()
-    participant OPTIMIZER as KythiaOptimizer
+    participant SB as Sacred Boundary
+    participant ENG as KythiaEngine
     participant LS as License Server
     participant P as Process
 
-    K->>OPTIMIZER: optimize()
-    OPTIMIZER->>OPTIMIZER: _sSpec() — collect HWID\n(CPU, RAM, hostname, platform)
-    OPTIMIZER->>LS: POST /license/verify\n{ key, clientId, hwid, config }
-    LS-->>OPTIMIZER: 200 { valid: true } → OPTIMAL
-    alt License Invalid (401/403)
-        LS-->>OPTIMIZER: 401/403 → SUBOPTIMAL
-        OPTIMIZER-->>K: null token
-        K->>P: _terminateUnauthorizedProcess()
-    else Network Error
-        LS-->>OPTIMIZER: NET_ERR (allows 6 failures)
+    K->>SB: Validate botVersion starts with '26.'\nValidate bootSalt is finite number
+    alt Sacred Boundary Failed
+        SB->>P: process.exit(1)
     end
-    OPTIMIZER-->>K: encrypted token (AES-256-CBC)
-    K->>OPTIMIZER: startPulse() — heartbeat every 10–20 min
-    K->>OPTIMIZER: startAutoOptimization() — flush telemetry every 5 min
+    K->>ENG: ignite()
+    ENG->>ENG: HMAC integrity check\n(critical method sources)
+    ENG->>ENG: _sSpec() — collect HWID\n(CPU, RAM, hostname, platform)
+    ENG->>ENG: _sanitizeConfig() — redact secrets
+    ENG->>LS: POST /license/verify\n{ clientId, hwid, sanitized config }\nHeader: X-Kythia-License
+    LS-->>ENG: 200 { valid: true } → OPTIMAL
+    alt License Invalid (401/403)
+        LS-->>ENG: 401/403 → SUBOPTIMAL
+        ENG-->>K: null token
+        K->>P: terminateUnauthorizedProcess()
+    else Network/Server Error
+        LS-->>ENG: NET_ERR or SRV_ERR
+        Note over ENG: tolerates 2 NET_ERR failures before killing
+        Note over ENG: SUBOPTIMAL kills on first occurrence
+    end
+    ENG-->>K: encrypted token (AES-256-CBC, random IV)
+    K->>ENG: startPulse() — randomized interval 10–20 min
+    K->>ENG: startAutoOptimization() — flush telemetry every 5 min
 ```
+
+**Security Model:** `KythiaEngine` employs multiple layers of hardening:
+- **Sacred Boundary**: Constructor-level version handshake (`botVersion` must be `26.*`, `bootSalt` must be finite)
+- **File integrity**: SHA-256 hash of `KythiaEngine.js` injected as sentinel before obfuscation
+- **HMAC method guards**: Key methods are HMAC-signed at construction and re-verified on every pulse
+- **Prototype lockdown**: All critical methods are frozen (`writable:false, configurable:false`) at module load
+- **Instance sealing**: `Object.seal(this)` prevents runtime property injection
+- **Native HTTPS only**: Uses `node:https` directly — not patchable via `axios`/`fetch` monkey-patching
+- **Fail-closed**: Missing sentinel hash → all auth blocked, not bypassed
 
 **Telemetry:** Events (startup, errors, crashes) are queued and flushed in batches to the telemetry server. This data is linked to your license key.
 
@@ -390,8 +413,12 @@ flowchart TD
 - Patches global `setInterval` / `clearInterval` to track all active intervals
 - Automatically clears tracked intervals on shutdown
 - Allows addons to register their own cleanup hooks
-- **Memory pressure monitor** — polls every 5 minutes; warns at 80% and errors at 95% of the V8 `heap_size_limit` (the actual hard ceiling, not `heapTotal`)
-- **Master uptime tracking** — `getMasterUptime()` returns seconds since the master process started, surviving shard restarts
+- **Memory pressure monitor** — polls every 5 minutes; warns at 80% and attempts GC; at 95% sends webhook alert, notifies master via IPC, and initiates a controlled graceful restart (counted as a memory restart, not a crash loop death)
+- **Master uptime tracking** — `getMasterUptime()` returns a human-readable string (e.g. `"2h 34m 17s"`) based on master process start time, surviving shard restarts
+- **Shutdown history log** — appends a log entry to `logs/shutdown_history*.log` on every startup, shutdown, and crash
+- **Lifecycle webhooks** — sends a Discord V2 Components webhook (startup/shutdown/crash) to `api.webhookErrorLogs`
+- **IPC heartbeat** — when running as a shard, sends periodic heartbeats to the master process to enable zombie shard detection
+- **Collector safety** — patches `Message.prototype.createMessageComponentCollector` to auto-apply a 15-minute safety timeout to collectors without one
 
 ---
 
@@ -473,7 +500,8 @@ flowchart LR
 | `findOrCreateWithCache(options)` | Find or create with cache |
 | `countWithCache(options)` | Count with cache |
 | `aggregateWithCache(options)` | Aggregate with cache |
-| `invalidateCache()` | Manually bust cache for this model |
+| `invalidateByTags(tags)` | Manually bust cache for specific tags |
+| `clearCache(key)` | Manually bust a specific cache key |
 
 ---
 
@@ -675,6 +703,39 @@ sequenceDiagram
     KM->>LRU: Delete all matching entries
 ```
 
+### Self-Healing Cache Drift Checker
+
+To ensure cache consistency against edge cases, `KythiaModel` implements a probabilistic **Self-Healing Drift Checker**.
+
+```mermaid
+sequenceDiagram
+    participant CODE as Your Code
+    participant KM as KythiaModel
+    participant REDIS as Redis
+    participant DB as Database
+    participant LOG as Logger
+
+    CODE->>KM: getCache(query)
+    KM->>REDIS: GET cache key
+    REDIS-->>KM: cache HIT (data)
+    KM-->>CODE: return data immediately (non-blocking)
+    
+    Note over KM: 1% chance (Math.random() < DRIFT_CHECK_RATE)
+    KM->>DB: _performDriftCheck (background): findOne(query)
+    DB-->>KM: fresh row
+    KM->>KM: deep field diff (cached vs fresh)
+    
+    alt Drift Detected (Stale Data)
+        KM->>LOG: warn("🔬 DRIFT DETECTED: field X differs")
+        KM->>REDIS: overwrite cache with fresh data (Self-Heal)
+        KM->>KM: increment driftStats.drifted & healed
+    else No Drift
+        KM->>KM: Silent exit
+    end
+```
+
+This ensures that even if an unknown edge case causes stale data, the framework detects it and heals itself organically over time without manual intervention.
+
 ### Event Dispatch Flow
 
 ```mermaid
@@ -720,7 +781,7 @@ Each manager owns a single domain. `Kythia.ts` orchestrates them but doesn't imp
 | `ShutdownManager` | Process lifecycle and cleanup |
 | `TranslatorManager` | i18n and localization |
 | `MetricsManager` | Performance observability |
-| `KythiaOptimizer` | License verification and telemetry |
+| `KythiaEngine` | License verification, telemetry, and Sacred Boundary enforcement |
 
 ### 3. Strategy Pattern (Caching)
 
@@ -735,15 +796,16 @@ Developer code → same API either way
 ### 4. Middleware Chain
 
 ```javascript
-// In your command module object:
-module.exports = {
-  data: new SlashCommandBuilder().setName('ban'),
-  botPermissions: ['BanMembers'],
-  userPermissions: ['BanMembers'],
-  cooldown: 10000,
-  ownerOnly: false,
+// In your command module:
+const { BaseCommand } = require('kythia-core');
+class BanCommand extends BaseCommand {
+  slashCommand = new SlashCommandBuilder().setName('ban');
+  botPermissions = ['BanMembers'];
+  userPermissions = ['BanMembers'];
+  cooldown = 10000;
+  ownerOnly = false;
   async execute(interaction) { /* ... */ }
-};
+}
 ```
 
 ### 5. Observer Pattern (Events)
@@ -772,14 +834,18 @@ module.exports = {
 
 ### Monitoring
 
-- **KythiaOptimizer** — error telemetry sent to Kythia license server
+- **KythiaEngine** — error telemetry sent to Kythia license server
 - **Sentry integration** — application-level error tracking
 - **Winston logging** — file + console transport with daily rotation
 - **prom-client metrics** — Prometheus-compatible scraping endpoint
-- **DiscordWebhookTransport** — `warn` and `error` logs forwarded to a Discord webhook in real-time (attach via `attachWebhookTransport(logger, url, client)`)
+- **DiscordWebhookTransport** — `warn` and `error` logs forwarded to a Discord webhook in real-time (attach via `attachWebhookTransport(logger, url, client)`, filterable via `settings.webhookLogFilter`)
 - **REST rate limit logging** — `rateLimited` and `invalidRequestWarning` events from the Discord REST manager are captured and forwarded to the webhook transport
-- **Memory pressure monitor** — per-shard heap monitoring every 5 minutes (80% warn, 95% error) inside `ShutdownManager`
-- **Crash loop alerts** — `ShardingManager` logs a distinctive alert and pauses respawning when a shard dies ≥ 3 times in 5 minutes
+- **Memory pressure monitor** — per-shard heap monitoring every 5 minutes (80% warn + GC attempt, 95% graceful self-restart) inside `ShutdownManager`
+- **Crash loop alerts** — `ShardingManager` logs a distinctive alert and pauses respawning the affected shard when it dies ≥ 3 times in 5 minutes (other shards continue unaffected)
+- **Zombie shard detection** — `ShardingManager` uses a two-phase ping/kill system: if a shard goes silent > 3 minutes, sends a `zombie_ping` IPC message; if no `zombie_pong` reply within 30 seconds, sends SIGKILL
+- **Lifecycle webhooks** — `ShutdownManager` sends a Discord V2 Components webhook on startup, shutdown, and crash
+- **Shutdown history file** — `ShutdownManager` appends to `logs/shutdown_history_shard_N_YYYY-MM.log` on every lifecycle event
+- **Shard death webhooks** — `ShardingManager` sends webhook embeds for shard deaths, OOM kills, crash loops, memory restarts, and zombie kills
 
 ---
 
@@ -792,7 +858,7 @@ module.exports = {
 | Rate limiting | `cooldown` middleware per user per command |
 | Input validation | Sanitize within `execute()` handlers |
 | Error containment | Never expose stack traces in Discord replies |
-| License protection | `KythiaOptimizer` with anti-tamper checks |
+| License protection | `KythiaEngine` with Sacred Boundary + anti-tamper checks |
 
 ---
 

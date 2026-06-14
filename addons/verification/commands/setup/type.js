@@ -8,15 +8,18 @@
 
 const { MessageFlags } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const CAPTCHA_TYPES = [
 	{ name: 'Math (multiple choice buttons)', value: 'math' },
 	{ name: 'Emoji click (buttons)', value: 'emoji' },
 	{ name: 'Image text (type the code)', value: 'image' },
 ];
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class TypeCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('type')
 			.setDescription('Captcha challenge type')
@@ -26,8 +29,10 @@ module.exports = {
 					.setDescription('Type of captcha')
 					.setRequired(true)
 					.addChoices(...CAPTCHA_TYPES),
-			),
-	async execute(interaction, container) {
+			);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer } = helpers.discord;
 		const { VerificationConfig } = models;
@@ -56,5 +61,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = TypeCommand;

@@ -1,6 +1,6 @@
 # Kythia Core — CLI Tools Reference
 
-> Complete reference for all command-line tools and utilities — **v0.13.1-beta**
+> Complete reference for all command-line tools and utilities — **v26.1.0**
 
 **Related docs:**
 - [ADDON_GUIDE.md](./ADDON_GUIDE.md) — Addon authoring guide (includes migration and seeder creation)
@@ -140,7 +140,7 @@ Creates: `addons/core/database/migrations/20250128120000_create_users_table.js`
 
 ```javascript
 module.exports = {
-  async up(queryInterface, DataTypes) {
+  up: async (queryInterface, DataTypes) => {
     await queryInterface.createTable('users', {
       id: {
         type: DataTypes.INTEGER,
@@ -153,7 +153,7 @@ module.exports = {
     });
   },
 
-  async down(queryInterface) {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('users');
   }
 };
@@ -536,7 +536,7 @@ npx kythia dev:namespace
  * @file <relative_path>
  * @namespace <addon_name>/<path>
  * @copyright © 2025 kenndeclouv
- * @version 0.12.9-beta
+ * @version 26.1.0
  */
 ```
 
@@ -608,11 +608,11 @@ npx kythia version:up
 
 #### Example
 
-If `package.json` has `"version": "0.12.9-beta"`:
+If `package.json` has `"version": "26.1.0"`:
 
 ```javascript
 /**
- * @version 0.12.9-beta  ← updated automatically
+ * @version 26.1.0  ← updated automatically
  */
 ```
 
@@ -622,11 +622,11 @@ If `package.json` has `"version": "0.12.9-beta"`:
 🔢 Version Sync
 ━━━━━━━━━━━━━━━━━━━━━━━━━
 
-package.json version: 0.12.9-beta
+package.json version: 26.1.0
 
 Updated files:
-✅ src/Kythia.ts (0.12.8 → 0.12.9-beta)
-✅ src/managers/AddonManager.ts (0.12.8 → 0.12.9-beta)
+✅ src/Kythia.ts (26.0.0 → 26.1.0)
+✅ src/managers/AddonManager.ts (26.0.0 → 26.1.0)
 
 Summary:
   50 files updated
@@ -646,13 +646,13 @@ npx kythia about
 
 ```
 ╔═══════════════════════════════════════════╗
-║         🚀 Kythia Core v0.12.9-beta       ║
+║         🚀 Kythia Core v26.1.0            ║
 ╚═══════════════════════════════════════════╝
 
 📦 Package Information
    Name:        kythia-core
-   Version:     0.12.9-beta
-   License:     CC BY NC 4.0
+   Version:     26.1.0
+   License:     KYTHIA-EULA-1.0
    Author:      kenndeclouv
 
 🏗️  Architecture

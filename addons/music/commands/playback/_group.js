@@ -6,8 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (group) =>
-		group.setName('playback').setDescription('Manage playback commands.'),
-};
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (group) =>
+		group.setName('playback').setDescription('Manage playback commands.');
+}
+
+exports.default = GroupCommand;

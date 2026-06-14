@@ -15,18 +15,18 @@ const {
 } = require('discord.js');
 const { sendToAllGuilds } = require('./_command');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ComplexCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('complex')
-			.setDescription('Send a complex announcement by pasting a JSON payload.'),
+			.setDescription('Send a complex announcement by pasting a JSON payload.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, logger } = container;
 
 		const modal = new ModalBuilder()
@@ -89,5 +89,7 @@ module.exports = {
 			});
 		}
 		await sendToAllGuilds(modalSubmit, payload);
-	},
-};
+	}
+}
+
+exports.default = ComplexCommand;

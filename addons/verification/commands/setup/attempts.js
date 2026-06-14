@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AttemptsCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('attempts')
 			.setDescription('Max wrong attempts before failing')
@@ -21,8 +24,10 @@ module.exports = {
 					.setRequired(true)
 					.setMinValue(1)
 					.setMaxValue(10),
-			),
-	async execute(interaction, container) {
+			);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer } = helpers.discord;
 		const { VerificationConfig } = models;
@@ -50,5 +55,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = AttemptsCommand;

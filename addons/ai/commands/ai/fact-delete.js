@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class FactDeleteCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('fact-delete')
 			.setDescription('Delete a specific fact about you')
@@ -20,13 +23,10 @@ module.exports = {
 					.setDescription('Fact number from /ai facts (1, 2, 3...)')
 					.setRequired(true)
 					.setMinValue(1),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { UserFact } = models;
 		const { simpleContainer } = helpers.discord;
@@ -69,8 +69,6 @@ module.exports = {
 
 		await factToDelete.destroy();
 
-		// await UserFact.invalidateCache([`UserFact:byUser:${interaction.user.id}`]);
-
 		const msg = await t(interaction, 'ai.ai.fact_delete.success', {
 			fact: factToDelete.fact,
 		});
@@ -82,5 +80,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = FactDeleteCommand;

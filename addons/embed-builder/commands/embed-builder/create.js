@@ -12,8 +12,10 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandSubcommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class CreateCommand extends BaseCommand {
+	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('create')
 		.setDescription('✨ Create a new saved embed')
 		.addStringOption((o) =>
@@ -34,13 +36,10 @@ module.exports = {
 					{ name: '📋 Classic Embed', value: 'embed' },
 					{ name: '🧩 Components V2', value: 'components_v2' },
 				),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { EmbedBuilder: EmbedModel } = models;
 
@@ -110,5 +109,7 @@ module.exports = {
 					),
 			],
 		});
-	},
-};
+	}
+}
+
+exports.default = CreateCommand;

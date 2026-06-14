@@ -18,17 +18,21 @@ const banks = require('../helpers/banks');
 
 const TIERS = require('@coreHelpers/premium-tiers');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand, utils } = require('kythia-core');
+
+class PremiumCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('premium')
-			.setDescription('💎 Enter the Premium Shop to buy Kythia Tiers.'),
+			.setDescription('💎 Enter the Premium Shop to buy Kythia Tiers.');
 
-	async execute(interaction, container) {
-		const { helpers, kythiaConfig, models, redis } = container;
+	async execute(interaction) {
+		const container = this.container;
+		const { helpers, kythiaConfig, models } = container;
 		const { simpleContainer } = helpers.discord;
-		const { formatNumber } = helpers.economy;
+		const { formatNumber } = utils;
 		const { KythiaUser } = models;
 		const { TransactionLog } = require('../helpers/transactions');
 
@@ -209,9 +213,6 @@ module.exports = {
 
 					await kythiaUser.save();
 
-					// Invalidate Cache
-					await redis.del(`kythia:premium:user:${interaction.user.id}`);
-
 					// Log Transaction
 					const tLogger = new TransactionLog(container);
 					await tLogger.log({
@@ -257,5 +258,7 @@ module.exports = {
 				message.edit({ components: [] }).catch(() => {});
 			}
 		});
-	},
-};
+	}
+}
+
+exports.default = PremiumCommand;

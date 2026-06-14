@@ -14,6 +14,8 @@ const {
 } = require('discord.js');
 const { updateStats } = require('../helpers/stats');
 
+const { BaseCommand } = require('kythia-core');
+
 const allowedPlaceholders = [
 	'{memberstotal}',
 	'{online}',
@@ -58,8 +60,8 @@ const allowedPlaceholders = [
 	'{member_join}',
 ];
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class AddCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('add')
 		.setDescription('📈 Add a new stat for a specific channel')
 		.addStringOption((opt) =>
@@ -75,13 +77,10 @@ module.exports = {
 					'📈 Select a channel to use as stat (if not selected, the bot will create a new channel)',
 				)
 				.setRequired(false),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, models, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const { ServerSetting } = models;
@@ -178,5 +177,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = AddCommand;

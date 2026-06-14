@@ -6,10 +6,15 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommandGroup) =>
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommandGroup) =>
 		subcommandGroup
 			.setName('type')
-			.setDescription('Manage ticket types (e.g., "Report", "Ask")'),
-};
+			.setDescription('Manage ticket types (e.g., "Report", "Ask")');
+}
+
+exports.default = GroupCommand;

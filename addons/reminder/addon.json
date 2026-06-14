@@ -1,0 +1,8 @@
+{
+	"name": "Reminder",
+	"featureName": "Reminder",
+	"featureFlag": "reminderOn",
+	"version": "1.0.0",
+	"description": "Advanced reminder system to notify users across timezone and channels.",
+	"author": "kenndeclouv"
+}

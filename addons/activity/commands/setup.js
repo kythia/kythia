@@ -13,10 +13,13 @@ const {
 	TextDisplayBuilder,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	premiumLocked: 'cute',
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SetupCommand extends BaseCommand {
+	subcommand = true;
+	premiumLocked = 'cute';
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('setup')
 			.setDescription('⚙️ Enable or disable activity tracking for this server.')
@@ -25,14 +28,12 @@ module.exports = {
 					.setName('enabled')
 					.setDescription('Turn activity tracking on or off.')
 					.setRequired(true),
-			),
-	defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {import('kythia-core').KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	defaultMemberPermissions = PermissionFlagsBits.ManageGuild;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, kythiaConfig } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
@@ -73,5 +74,7 @@ module.exports = {
 			components: [successContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = SetupCommand;

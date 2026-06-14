@@ -21,6 +21,8 @@ const {
 } = require('discord.js');
 const axios = require('axios');
 
+const { BaseCommand } = require('kythia-core');
+
 const SUBREDDITS = [
 	'memes',
 	'dankmemes',
@@ -30,8 +32,8 @@ const SUBREDDITS = [
 	'ProgrammerHumor',
 ];
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class MemeCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('meme')
 		.setDescription('😂 Get a random meme from Reddit')
 		.addStringOption((option) =>
@@ -47,13 +49,10 @@ module.exports = {
 					{ name: '😄 Funny', value: 'funny' },
 					{ name: '💻 Programmer Humor', value: 'ProgrammerHumor' },
 				),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 
 		await interaction.deferReply();
@@ -143,5 +142,7 @@ module.exports = {
 			components: [memeContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = MemeCommand;

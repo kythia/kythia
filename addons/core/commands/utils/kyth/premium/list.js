@@ -18,6 +18,8 @@ const {
 } = require('discord.js');
 const { Op } = require('sequelize');
 
+const { BaseCommand } = require('kythia-core');
+
 const USERS_PER_PAGE = 10;
 
 async function buildNavButtons(
@@ -130,15 +132,12 @@ async function generatePremiumListContainer(
 	return { premiumListContainer, page, totalPages };
 }
 
-module.exports = {
-	slashCommand: (subcommand) =>
-		subcommand.setName('list').setDescription('View list of premium users'),
+class ListCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
+		subcommand.setName('list').setDescription('View list of premium users');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models } = container;
 		const { KythiaUser } = models;
 
@@ -244,5 +243,7 @@ module.exports = {
 				});
 			} catch (_e) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

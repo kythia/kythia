@@ -7,10 +7,15 @@
  */
 const { InteractionContextType, SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	guildOnly: true,
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class PetCommand extends BaseCommand {
+	guildOnly = true;
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('pet')
 		.setDescription('🐾 All commands related to the pet system.')
-		.setContexts(InteractionContextType.Guild),
-};
+		.setContexts(InteractionContextType.Guild);
+}
+
+exports.default = PetCommand;

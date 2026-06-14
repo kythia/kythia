@@ -20,6 +20,8 @@ const {
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const SNIPES_PER_PAGE = 1;
 
 function buildNavButtons(page, totalPages, allDisabled = false) {
@@ -101,8 +103,8 @@ function generateSnipeContainer(
 	return { snipeContainer: mainContainer, totalPages };
 }
 
-module.exports = {
-	slashCommand: (subcommand) =>
+class SnipeCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('snipe')
 			.setDescription('👀 Snipe deleted messages in this channel.')
@@ -115,16 +117,13 @@ module.exports = {
 					.setRequired(false)
 					.setMinValue(1)
 					.setMaxValue(20),
-			),
+			);
 
-	permissions: PermissionFlagsBits.ManageMessages,
-	botPermissions: PermissionFlagsBits.SendMessages,
+	permissions = PermissionFlagsBits.ManageMessages;
+	botPermissions = PermissionFlagsBits.SendMessages;
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { helpers, redis } = container;
 
 		await interaction.deferReply();
@@ -227,5 +226,7 @@ module.exports = {
 				})
 				.catch(() => {});
 		});
-	},
-};
+	}
+}
+
+exports.default = SnipeCommand;

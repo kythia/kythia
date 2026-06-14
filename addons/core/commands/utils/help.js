@@ -8,15 +8,19 @@
 
 const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	aliases: ['h', 'ℹ️'],
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class HelpCommand extends BaseCommand {
+	aliases = ['h', 'ℹ️'];
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('help')
 		.setDescription(
 			'💡 Displays a list of bot commands with complete details.',
-		),
+		);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { helpers } = container;
 		const { getHelpData, buildHelpReply } = helpers.helpUtils;
 
@@ -39,5 +43,7 @@ module.exports = {
 			...initialReply,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = HelpCommand;

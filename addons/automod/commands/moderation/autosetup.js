@@ -12,19 +12,19 @@ const {
 	PermissionFlagsBits,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AutosetupCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('autosetup')
-			.setDescription('🤖 Automatically setup moderation channels and roles.'),
-	permissions: PermissionFlagsBits.Administrator,
-	botPermissions: PermissionFlagsBits.Administrator,
+			.setDescription('🤖 Automatically setup moderation channels and roles.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.Administrator;
+	botPermissions = PermissionFlagsBits.Administrator;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, models, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
 		const { ServerSetting } = models;
@@ -119,5 +119,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = AutosetupCommand;

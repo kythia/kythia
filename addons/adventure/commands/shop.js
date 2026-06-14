@@ -19,6 +19,9 @@ const {
 } = require('discord.js');
 
 const itemsDataFile = require('../helpers/items');
+
+const { BaseCommand } = require('kythia-core');
+
 const shopData = itemsDataFile.items;
 const allItems = Object.values(shopData).flat();
 
@@ -218,9 +221,10 @@ function getItemsInCategory(category, page = 1, itemsPerPage = 5) {
 	};
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class ShopCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('shop')
 			.setNameLocalizations({ id: 'toko', fr: 'boutique', ja: 'ショップ' })
@@ -242,13 +246,10 @@ module.exports = {
 						})),
 					)
 					.setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, logger } = container;
 		const { UserAdventure, InventoryAdventure } = models;
 		const { simpleContainer } = helpers.discord;
@@ -446,5 +447,7 @@ module.exports = {
 				}),
 			);
 		});
-	},
-};
+	}
+}
+
+exports.default = ShopCommand;

@@ -14,25 +14,26 @@ const {
 
 const { EMBEDDED } = require('./_helpers');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class CommandsCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('server')
 		.setDescription('⚙️ Discord server management tools')
 		.setContexts(InteractionContextType.Guild)
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
-	aliases: ['srv'],
-	guildOnly: true,
-	voteLocked: true,
-	permissions: PermissionFlagsBits.ManageGuild,
-	botPermissions: [
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+
+	aliases = ['srv'];
+	guildOnly = true;
+	voteLocked = true;
+	permissions = PermissionFlagsBits.ManageGuild;
+
+	botPermissions = [
 		PermissionFlagsBits.ManageGuild,
 		PermissionFlagsBits.ManageChannels,
 		PermissionFlagsBits.ManageRoles,
-	],
+	];
 
-	/**
-	 * @param {import('discord.js').AutocompleteInteraction} interaction
-	 */
 	autocomplete(interaction) {
 		const sub = interaction.options.getSubcommand();
 		const focused = interaction.options.getFocused();
@@ -61,5 +62,7 @@ module.exports = {
 		}
 
 		return interaction.respond([]);
-	},
-};
+	}
+}
+
+exports.default = CommandsCommand;

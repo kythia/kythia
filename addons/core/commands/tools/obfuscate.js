@@ -14,8 +14,10 @@ const {
 const JavaScriptObfuscator = require('javascript-obfuscator');
 const axios = require('axios');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class ObfuscateCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('obfuscate')
 		.setDescription(
 			'🔒 Obfuscate a Lua or JavaScript file and return it as an attachment.',
@@ -35,8 +37,10 @@ module.exports = {
 				.setName('file')
 				.setDescription('The script file to obfuscate')
 				.setRequired(true),
-		),
-	async execute(interaction, container) {
+		);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, logger } = container;
 
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
@@ -134,5 +138,7 @@ module.exports = {
 			flags: MessageFlags.Ephemeral,
 			files: [attachment],
 		});
-	},
-};
+	}
+}
+
+exports.default = ObfuscateCommand;

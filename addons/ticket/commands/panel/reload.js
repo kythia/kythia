@@ -9,8 +9,10 @@
 const { MessageFlags } = require('discord.js');
 const { refreshTicketPanel } = require('../../helpers');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ReloadCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('reload')
 			.setDescription('Refreshes a ticket panel (updates buttons & menus).')
@@ -20,9 +22,10 @@ module.exports = {
 					.setDescription('Select the panel to refresh.')
 					.setAutocomplete(true)
 					.setRequired(true),
-			),
+			);
 
-	async autocomplete(interaction, container) {
+	async autocomplete(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { TicketPanel } = models;
 
@@ -47,13 +50,10 @@ module.exports = {
 		}));
 
 		await interaction.respond(options);
-	},
+	}
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -83,5 +83,7 @@ module.exports = {
 				components: await simpleContainer(interaction, desc, { color: 'Red' }),
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = ReloadCommand;

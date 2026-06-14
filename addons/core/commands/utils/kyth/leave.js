@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class LeaveCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leave')
 			.setDescription('Force leave a specific guild by ID.')
@@ -27,13 +30,10 @@ module.exports = {
 					.setDescription(
 						'Comma-separated guild IDs to additionally protect from being left (Optional).',
 					),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { client } = interaction;
@@ -132,5 +132,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = LeaveCommand;

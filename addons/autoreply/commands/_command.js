@@ -8,10 +8,15 @@
 
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
-module.exports = {
-	guildOnly: true,
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class AutoreplyCommand extends BaseCommand {
+	guildOnly = true;
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('autoreply')
 		.setDescription('🤖 Manage custom auto-replies for your server.')
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
-};
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+}
+
+exports.default = AutoreplyCommand;

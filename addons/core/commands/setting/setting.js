@@ -19,6 +19,8 @@ const {
 const fs = require('node:fs');
 const path = require('node:path');
 
+const { BaseCommand } = require('kythia-core');
+
 const langDir = path.join(__dirname, '../../lang');
 let availableLanguages = [];
 
@@ -91,10 +93,8 @@ const featureMap = {
 
 const toggleableFeatures = Object.keys(featureMap);
 
-// const command =
-
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class SettingCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('set')
 		.setDescription('⚙️ Settings bot configuration')
 		.setContexts(InteractionContextType.Guild)
@@ -149,15 +149,13 @@ module.exports = {
 			}
 
 			return group;
-		}),
-	permissions: PermissionFlagsBits.ManageGuild,
-	botPermissions: PermissionFlagsBits.ManageGuild,
+		});
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.ManageGuild;
+	botPermissions = PermissionFlagsBits.ManageGuild;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers, models, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		// const { convertColor } = helpers.color;
@@ -521,5 +519,7 @@ module.exports = {
 				});
 			}
 		}
-	},
-};
+	}
+}
+
+exports.default = SettingCommand;

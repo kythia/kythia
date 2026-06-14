@@ -12,16 +12,20 @@ const {
 } = require('discord.js');
 const jobs = require('../../helpers/jobs');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ApplyCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('apply')
 			.setDescription(
 				'👨‍💼 Apply for a specific profession to focus your work.',
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer, createContainer } = helpers.discord;
@@ -118,5 +122,7 @@ module.exports = {
 				});
 			}
 		});
-	},
-};
+	}
+}
+
+exports.default = ApplyCommand;

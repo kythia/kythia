@@ -14,16 +14,16 @@ const {
 
 const { getItemById } = require('../helpers/items');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
-		subcommand.setName('use').setDescription('Use an item from your inventory'),
+const { BaseCommand } = require('kythia-core');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+class UseCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
+		subcommand.setName('use').setDescription('Use an item from your inventory');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, kythiaConfig, logger } = container;
 		const { UserAdventure, InventoryAdventure } = models;
 		const { createContainer } = helpers.discord;
@@ -215,5 +215,7 @@ module.exports = {
 		} catch (e) {
 			logger.error(`Error: ${e.message || e}`, { label: 'adventure' });
 		}
-	},
-};
+	}
+}
+
+exports.default = UseCommand;

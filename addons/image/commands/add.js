@@ -11,9 +11,12 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('node:path');
 const { uploadToR2 } = require('../services/r2');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AddCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
 			.setDescription('Add a new image')
@@ -22,13 +25,10 @@ module.exports = {
 					.setName('image')
 					.setDescription('The image to add')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, t, kythiaConfig } = container;
 		const { Image } = models;
 		const { simpleContainer } = helpers.discord;
@@ -115,5 +115,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = AddCommand;

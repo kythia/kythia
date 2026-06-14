@@ -9,6 +9,8 @@
 const { MessageFlags } = require('discord.js');
 const { Op, fn, col } = require('sequelize');
 
+const { BaseCommand } = require('kythia-core');
+
 /**
  * Returns the start date string (YYYY-MM-DD) for a given period.
  * Returns null for 'all'.
@@ -53,9 +55,10 @@ const formatDuration = (totalSeconds) => {
 	return parts.join(' ');
 };
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class StatsCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('stats')
 			.setDescription(
@@ -79,13 +82,10 @@ module.exports = {
 						{ name: '📆 This Week', value: 'weekly' },
 						{ name: '🗓️ This Month', value: 'monthly' },
 					),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { ActivityStat, ActivityLog } = models;
@@ -139,5 +139,7 @@ module.exports = {
 			flags: MessageFlags.IsComponentsV2,
 			allowedMentions: { parse: [] },
 		});
-	},
-};
+	}
+}
+
+exports.default = StatsCommand;

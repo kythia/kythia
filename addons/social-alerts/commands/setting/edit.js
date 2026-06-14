@@ -8,9 +8,12 @@
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class EditCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('edit')
 			.setDescription('✍️ Edit Social Alerts settings.')
@@ -20,13 +23,10 @@ module.exports = {
 					.setDescription(
 						'🔔 Role to mention in every alert. Leave empty to skip changes.',
 					),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, t } = container;
 		const { SocialAlertSetting } = models;
 		const { simpleContainer } = helpers.discord;
@@ -90,5 +90,7 @@ module.exports = {
 			components: await simpleContainer(interaction, desc, { color: 'Green' }),
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = EditCommand;

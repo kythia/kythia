@@ -6,10 +6,15 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (group) =>
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (group) =>
 		group
 			.setName('achievement')
-			.setDescription('🏆 View and track your achievements.'),
-};
+			.setDescription('🏆 View and track your achievements.');
+}
+
+exports.default = GroupCommand;

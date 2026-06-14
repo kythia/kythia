@@ -6,9 +6,12 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class DeleteCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('delete')
 			.setDescription('Deletes one of your playlists.')
@@ -18,9 +21,10 @@ module.exports = {
 					.setDescription('The name of the playlist to delete.')
 					.setRequired(true)
 					.setAutocomplete(true),
-			),
+			);
 
-	async autocomplete(interaction, container) {
+	async autocomplete(interaction) {
+		const container = this.container;
 		const run = async () => {
 			const { models } = container;
 			const { Playlist } = models;
@@ -54,9 +58,10 @@ module.exports = {
 			if (error.code === 10062 || error.message === 'Unknown interaction')
 				return;
 		}
-	},
+	}
 
-	execute(interaction, container) {
+	execute(interaction) {
+		const container = this.container;
 		const { client, guild } = interaction;
 		const { musicHandlers } = container;
 
@@ -64,5 +69,7 @@ module.exports = {
 			interaction,
 			client.poru.players.get(guild.id),
 		);
-	},
-};
+	}
+}
+
+exports.default = DeleteCommand;

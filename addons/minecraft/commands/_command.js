@@ -8,9 +8,14 @@
 
 const { SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	guildOnly: false,
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class MinecraftCommand extends BaseCommand {
+	guildOnly = false;
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('minecraft')
-		.setDescription('⛏️ Minecraft: Java Edition player lookup commands'),
-};
+		.setDescription('⛏️ Minecraft: Java Edition player lookup commands');
+}
+
+exports.default = MinecraftCommand;

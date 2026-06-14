@@ -8,14 +8,18 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ListCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
-			.setDescription('List all servers bound to your Premium tier.'),
+			.setDescription('List all servers bound to your Premium tier.');
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { helpers, models, translator } = container;
 		const { simpleContainer } = helpers.discord;
 		const { KythiaUser, PremiumServerBind } = models;
@@ -79,5 +83,7 @@ module.exports = {
 			color: '#00ffff',
 		});
 		return interaction.editReply({ components });
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

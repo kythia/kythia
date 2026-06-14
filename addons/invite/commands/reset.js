@@ -8,22 +8,23 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ResetCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('reset')
-			.setDescription('Reset all invites for this server (Admin only)'),
-	permissions: [
+			.setDescription('Reset all invites for this server (Admin only)');
+
+	permissions = [
 		PermissionFlagsBits.ManageGuild,
 		PermissionFlagsBits.Administrator,
-	],
+	];
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, t } = container;
 		const { simpleContainer } = helpers.discord;
 		const { Invite } = models;
@@ -48,15 +49,6 @@ module.exports = {
 		// Hapus dari DB
 		await Invite.destroy({ where: { guildId } });
 
-		// 🔥 Hapus Cache Manual karena destroy via where biasanya gak trigger hook single instance
-		// atau gunakan method clearCache kamu
-		if (Invite.isRedisConnected) {
-			// Invalidate tag leaderboard guild ini
-			await Invite.invalidateByTags([`Invite:leaderboard:${guildId}`]);
-		} else {
-			await Invite.clearCache(`Invite:leaderboard:${guildId}`);
-		}
-
 		const title = await t(interaction, 'invite.invite.command.title');
 		const successMsg = await t(
 			interaction,
@@ -72,5 +64,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ResetCommand;

@@ -15,9 +15,12 @@ const {
 const banks = require('../../helpers/banks');
 const { toBigIntSafe } = require('../../helpers/bigint');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class HackCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('hack')
 			.setDescription('💵 Hack another user (Initiates a hacking sequence).')
@@ -26,10 +29,12 @@ module.exports = {
 					.setName('target')
 					.setDescription('User you want to hack')
 					.setRequired(true),
-			),
-	guildOnly: true,
+			);
 
-	async execute(interaction, container) {
+	guildOnly = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser, Inventory } = models;
 		const { simpleContainer, createContainer } = helpers.discord;
@@ -291,5 +296,7 @@ module.exports = {
 				});
 			}
 		});
-	},
-};
+	}
+}
+
+exports.default = HackCommand;

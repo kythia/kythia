@@ -21,6 +21,8 @@ const path = require('node:path');
 const https = require('node:https');
 const http = require('node:http');
 
+const { BaseCommand } = require('kythia-core');
+
 const tempDirPath = path.join(__dirname, '..', 'temp');
 const usageFilePath = path.join(tempDirPath, 'imagen_usage.json');
 
@@ -82,9 +84,10 @@ function fetchUrlAsBase64(url) {
 	});
 }
 
-module.exports = {
-	voteLocked: true,
-	slashCommand: new SlashCommandBuilder()
+class ImagenCommand extends BaseCommand {
+	voteLocked = true;
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('imagen')
 		.setDescription(
 			'🎨 Generate an image from a prompt or transform an existing image using Gemini AI.',
@@ -102,13 +105,10 @@ module.exports = {
 				.setName('image')
 				.setDescription('Optional source image to transform (image-to-image).')
 				.setRequired(false),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers, logger } = container;
 		const { simpleContainer, isOwner } = helpers.discord;
 		const { convertColor } = helpers.color;
@@ -340,5 +340,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = ImagenCommand;

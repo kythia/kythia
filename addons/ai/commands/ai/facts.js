@@ -17,6 +17,8 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const FACTS_PER_PAGE = 10;
 
 async function buildNavButtons(
@@ -135,18 +137,16 @@ async function generateFactsContainer(
 	return { factsContainer, page, totalPages };
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class FactsCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('facts')
-			.setDescription('View all facts/memories AI has learned about you'),
+			.setDescription('View all facts/memories AI has learned about you');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models } = container;
 		const { UserFact } = models;
 
@@ -235,5 +235,7 @@ module.exports = {
 				});
 			} catch (_e) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = FactsCommand;

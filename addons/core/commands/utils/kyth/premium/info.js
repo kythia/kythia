@@ -7,8 +7,10 @@
  */
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class InfoCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('info')
 			.setDescription('View premium info for a user')
@@ -17,13 +19,10 @@ module.exports = {
 					.setName('user')
 					.setDescription('User to check')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers, models } = container;
 		const { createContainer } = helpers.discord;
 		const { KythiaUser } = models;
@@ -69,5 +68,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = InfoCommand;

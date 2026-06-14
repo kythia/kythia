@@ -8,9 +8,12 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SaveCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('save')
 			.setDescription('Saves the current queue as a new playlist.')
@@ -19,9 +22,10 @@ module.exports = {
 					.setName('name')
 					.setDescription('The name for your new playlist.')
 					.setRequired(true),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -56,5 +60,7 @@ module.exports = {
 			interaction,
 			client.poru.players.get(guild.id),
 		);
-	},
-};
+	}
+}
+
+exports.default = SaveCommand;

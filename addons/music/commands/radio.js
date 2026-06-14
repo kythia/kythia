@@ -8,9 +8,12 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RadioCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('radio')
 			.setDescription('📻 Search and play live radio stations worldwide')
@@ -22,9 +25,10 @@ module.exports = {
 					)
 					.setRequired(true)
 					.setAutocomplete(true),
-			),
+			);
 
-	async autocomplete(interaction, container) {
+	async autocomplete(interaction) {
+		const container = this.container;
 		const run = async () => {
 			const { client } = container;
 			const focusedOption = interaction.options.getFocused(true);
@@ -77,9 +81,10 @@ module.exports = {
 			if (error.code === 10062 || error.message === 'Unknown interaction')
 				return;
 		}
-	},
+	}
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers } = container;
 
@@ -94,5 +99,7 @@ module.exports = {
 			interaction,
 			client.poru.players.get(guild.id),
 		);
-	},
-};
+	}
+}
+
+exports.default = RadioCommand;

@@ -17,6 +17,8 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const ITEMS_PER_PAGE = 10;
 
 async function buildNavButtons(
@@ -128,18 +130,16 @@ async function generateListContainer(
 	return { listContainer, page, totalPages };
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class ListCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
-			.setDescription('📋 List all sticky messages in this server.'),
+			.setDescription('📋 List all sticky messages in this server.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, kythiaConfig } = container;
 		const { StickyMessage } = models;
 		const { convertColor } = helpers.color;
@@ -226,5 +226,7 @@ module.exports = {
 				});
 			} catch (_e) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

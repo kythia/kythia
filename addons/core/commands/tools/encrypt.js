@@ -9,12 +9,14 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const crypto = require('node:crypto');
 
+const { BaseCommand } = require('kythia-core');
+
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
 const _AUTH_TAG_LENGTH = 16;
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class EncryptCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('encrypt')
 		.setDescription('🔒 Encrypt a text with a secret key (two-way encryption).')
 		.addStringOption((option) =>
@@ -28,13 +30,10 @@ module.exports = {
 				.setName('secret-key')
 				.setDescription('A 32-character secret key for encryption')
 				.setRequired(true),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { createContainer } = helpers.discord;
 
@@ -84,5 +83,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = EncryptCommand;

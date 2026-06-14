@@ -9,9 +9,12 @@
 const { GuildMember, MessageFlags } = require('discord.js');
 const { formatTrackDuration } = require('../helpers');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class PlayCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('play')
 			.setDescription('🎶 Play a song or add it to the queue')
@@ -23,9 +26,10 @@ module.exports = {
 					)
 					.setRequired(true)
 					.setAutocomplete(true),
-			),
+			);
 
-	async autocomplete(interaction, container) {
+	async autocomplete(interaction) {
+		const container = this.container;
 		const run = async () => {
 			const { client, kythiaConfig } = container;
 			const focusedOption = interaction.options.getFocused(true);
@@ -110,9 +114,10 @@ module.exports = {
 			if (error.code === 10062 || error.message === 'Unknown interaction')
 				return;
 		}
-	},
+	}
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers } = container;
 
@@ -127,5 +132,7 @@ module.exports = {
 			interaction,
 			client.poru.players.get(guild.id),
 		);
-	},
-};
+	}
+}
+
+exports.default = PlayCommand;

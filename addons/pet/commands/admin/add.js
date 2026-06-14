@@ -8,8 +8,10 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AddCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
 			.setDescription('Add a new pet')
@@ -49,15 +51,13 @@ module.exports = {
 					.setName('bonus_value')
 					.setDescription('Bonus value')
 					.setRequired(true),
-			),
-	subcommand: true,
-	teamOnly: true,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	subcommand = true;
+	teamOnly = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { Pet } = models;
@@ -85,5 +85,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = AddCommand;

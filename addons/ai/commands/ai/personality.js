@@ -8,6 +8,8 @@
 
 const { MessageFlags } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const PERSONALITIES = {
 	default: {
 		name: 'Default',
@@ -46,10 +48,11 @@ const PERSONALITIES = {
 	},
 };
 
-module.exports = {
-	subcommand: true,
-	premiumLocked: 'powerful',
-	slashCommand: (subcommand) =>
+class PersonalityCommand extends BaseCommand {
+	subcommand = true;
+	premiumLocked = 'powerful';
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('personality')
 			.setDescription('Change AI personality/conversation style')
@@ -64,13 +67,10 @@ module.exports = {
 							value: key,
 						})),
 					),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
@@ -92,11 +92,6 @@ module.exports = {
 		user.aiPersonality = personality === 'default' ? null : personality;
 		await user.save();
 
-		// Invalidate cache
-		// await KythiaUser.invalidateCache([
-		// 	`KythiaUser:userId:${interaction.user.id}`,
-		// ]);
-
 		// Show appropriate message
 		let msg;
 		if (personality === 'default') {
@@ -116,5 +111,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = PersonalityCommand;

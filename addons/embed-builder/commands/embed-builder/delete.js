@@ -12,8 +12,10 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandSubcommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class DeleteCommand extends BaseCommand {
+	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('delete')
 		.setDescription('🗑️ Delete a saved embed')
 		.addStringOption((o) =>
@@ -30,13 +32,10 @@ module.exports = {
 					'Also delete the Discord message if the embed was sent (default: false)',
 				)
 				.setRequired(false),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { EmbedBuilder: EmbedModel } = models;
 
@@ -90,5 +89,7 @@ module.exports = {
 					),
 			],
 		});
-	},
-};
+	}
+}
+
+exports.default = DeleteCommand;

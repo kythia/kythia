@@ -19,20 +19,20 @@ const {
 } = require('discord.js');
 const { sendToAllGuilds } = require('./_command');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SimpleCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('simple')
 			.setDescription(
 				'Send a simple announcement using a simple components v2.',
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, logger, kythiaConfig, helpers } = container;
 
 		const modal = new ModalBuilder()
@@ -123,5 +123,7 @@ module.exports = {
 			flags: MessageFlags.IsComponentsV2,
 		};
 		await sendToAllGuilds(modalSubmit, payload);
-	},
-};
+	}
+}
+
+exports.default = SimpleCommand;

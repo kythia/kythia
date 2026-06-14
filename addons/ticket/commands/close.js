@@ -9,18 +9,18 @@
 const { MessageFlags } = require('discord.js');
 const { closeTicket } = require('../helpers');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class CloseCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('close')
-			.setDescription('Close the ticket and delete the ticket channel.'),
+			.setDescription('Close the ticket and delete the ticket channel.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, t, helpers } = container;
 		const { Ticket, TicketConfig } = models;
 		const { simpleContainer } = helpers.discord;
@@ -48,5 +48,7 @@ module.exports = {
 			});
 		}
 		await closeTicket(interaction, container);
-	},
-};
+	}
+}
+
+exports.default = CloseCommand;

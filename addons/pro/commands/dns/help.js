@@ -14,20 +14,20 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class HelpCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('help')
 			.setDescription(
 				'📖 Information and examples about each DNS record type.',
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { kythiaConfig, helpers, t } = container;
 		const { convertColor } = helpers.color;
 
@@ -96,5 +96,7 @@ module.exports = {
 			components: [mainContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = HelpCommand;

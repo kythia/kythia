@@ -12,9 +12,12 @@ const {
 	PermissionFlagsBits,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class GuildinviteCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('guildinvite')
 			.setDescription('Generate an invite link for a specific guild.')
@@ -24,13 +27,10 @@ module.exports = {
 					.setDescription('The ID of the guild to invite from')
 					.setRequired(true)
 					.setAutocomplete(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { helpers, logger, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const guildId = interaction.options.getString('guild_id', true);
@@ -160,5 +160,7 @@ module.exports = {
 			);
 			await interaction.editReply({ components: errComps });
 		}
-	},
-};
+	}
+}
+
+exports.default = GuildinviteCommand;

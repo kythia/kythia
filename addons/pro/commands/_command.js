@@ -7,9 +7,13 @@
  */
 const { InteractionContextType, SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class ProCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('pro')
 		.setDescription('🌸 All commands related to the Kythia Pro users.')
-		.setContexts(InteractionContextType.Guild),
-};
+		.setContexts(InteractionContextType.Guild);
+}
+
+exports.default = ProCommand;

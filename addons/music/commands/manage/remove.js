@@ -8,9 +8,12 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RemoveCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
 			.setDescription('🗑️ Remove a song from queue')
@@ -19,9 +22,10 @@ module.exports = {
 					.setName('position')
 					.setDescription('Position in queue to remove')
 					.setRequired(true),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -53,5 +57,7 @@ module.exports = {
 		}
 
 		return musicHandlers.handleRemove(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = RemoveCommand;

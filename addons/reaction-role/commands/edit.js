@@ -14,9 +14,12 @@ const {
 
 const { refreshReactionRoleMessage } = require('../helpers/index.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class EditCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('edit')
 			.setDescription('✏️ Edit an existing reaction role on a message.')
@@ -52,12 +55,10 @@ module.exports = {
 					)
 					.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
 					.setRequired(false),
-			),
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+			);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, logger } = container;
 		const { ReactionRole } = models;
 		const { convertColor } = helpers.color;
@@ -195,5 +196,7 @@ module.exports = {
 				content: await t(interaction, 'common.error.generic'),
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = EditCommand;

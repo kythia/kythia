@@ -19,16 +19,15 @@ const {
 } = require('discord.js');
 const { Op } = require('sequelize');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
-		.setName('vote-leaderboard')
-		.setDescription('🏆 View top voters for Kythia!'),
+const { BaseCommand } = require('kythia-core');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+class VoteLeaderboardCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
+		.setName('vote-leaderboard')
+		.setDescription('🏆 View top voters for Kythia!');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers, models } = container;
 		const { KythiaUser } = models;
 		const { convertColor } = helpers.color;
@@ -45,7 +44,7 @@ module.exports = {
 				},
 				order: [['votePoints', 'DESC']],
 				limit: 10,
-				// Optionally add cacheTags if core model invalidates them, e.g. cacheTags: ['KythiaUser:voteleaderboard']
+				ttl: 5 * 60 * 1000,
 			});
 
 			// Resolve User Mentions/Tags and convert into lines
@@ -122,5 +121,7 @@ module.exports = {
 			);
 			await interaction.editReply({ components });
 		}
-	},
-};
+	}
+}
+
+exports.default = VoteLeaderboardCommand;

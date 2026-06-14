@@ -12,11 +12,16 @@ const {
 	SlashCommandBuilder,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class TicketCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('ticket')
 		.setDescription('🎟️ All commands related to kythia ticket system.')
 		.setContexts(InteractionContextType.Guild)
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
-	permissions: [PermissionFlagsBits.ManageGuild],
-};
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+
+	permissions = [PermissionFlagsBits.ManageGuild];
+}
+
+exports.default = TicketCommand;

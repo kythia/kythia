@@ -17,11 +17,14 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 let restartTimer = null;
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class RestartCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('restart')
 			.setDescription('🔁 Restarts the bot with optional scheduler.')
@@ -53,13 +56,10 @@ module.exports = {
 					.setName('shard_id')
 					.setDescription('🔢 Specific shard ID to restart (Overrides target)')
 					.setMinValue(0),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
 		const { simpleContainer } = helpers.discord;
@@ -299,5 +299,7 @@ module.exports = {
 				});
 			}
 		});
-	},
-};
+	}
+}
+
+exports.default = RestartCommand;

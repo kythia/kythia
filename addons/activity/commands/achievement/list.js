@@ -15,6 +15,8 @@ const {
 } = require('discord.js');
 const achievementDefs = require('../../helpers/achievements');
 
+const { BaseCommand } = require('kythia-core');
+
 /** Emoji for each rarity tier */
 const RARITY_EMOJI = {
 	common: '⚪',
@@ -36,9 +38,10 @@ const CATEGORY_LABELS = {
 	special: '⭐ Special',
 };
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class ListCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
 			.setDescription('📋 Browse achievements by category.')
@@ -63,13 +66,10 @@ module.exports = {
 				option
 					.setName('user')
 					.setDescription('The user to check. Defaults to yourself.'),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, kythiaConfig, helpers } = container;
 		const { UserAchievement } = models;
 		const { convertColor } = helpers.color;
@@ -146,5 +146,7 @@ module.exports = {
 			components: [listContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

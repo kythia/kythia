@@ -1,0 +1,34 @@
+{
+	"reminder": {
+		"commands": {
+			"reminder": {
+				"set": {
+					"success": "## Reminder Set!\nAlright! I will remind you on **{time}** ({timezone}) in {target}.",
+					"invalid_time": "Sorry, I couldn't understand the time format. Try something like `10m`, `2h`, or `tomorrow at 3pm`."
+				},
+				"list": {
+					"empty": "You have no active reminders.",
+					"title": "## ⏱️ Your Active Reminders"
+				},
+				"remove": {
+					"success": "Reminder **#{id}** has been successfully removed.",
+					"not_found": "I couldn't find a reminder with that ID."
+				},
+				"timezone": {
+					"success": "Your preferred timezone has been updated to **{timezone}**."
+				}
+			}
+		},
+		"tasks": {
+			"processor": {
+				"title": "⏰ Reminder Alert!",
+				"desc": "{user}\n{reason}\n\n-# Set at: {createdAt}"
+			}
+		},
+		"buttons": {
+			"vote_remind": {
+				"success": "Thank you! I will remind you to vote again in **12 hours**!"
+			}
+		}
+	}
+}

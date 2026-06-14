@@ -8,8 +8,10 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class UnlockCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unlock')
 			.setDescription('🔓 Unlocks the current channel.')
@@ -18,15 +20,13 @@ module.exports = {
 					.setName('reason')
 					.setDescription('Reason for unlocking the channel')
 					.setRequired(false),
-			),
-	permissions: PermissionFlagsBits.ManageChannels,
-	botPermissions: PermissionFlagsBits.ManageChannels,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.ManageChannels;
+	botPermissions = PermissionFlagsBits.ManageChannels;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
 
@@ -85,5 +85,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = UnlockCommand;

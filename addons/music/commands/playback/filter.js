@@ -8,14 +8,18 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class FilterCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('filter')
-			.setDescription('🎧 Apply audio filter (equalizer)'),
+			.setDescription('🎧 Apply audio filter (equalizer)');
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -47,5 +51,7 @@ module.exports = {
 		}
 
 		return musicHandlers.handleFilter(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = FilterCommand;

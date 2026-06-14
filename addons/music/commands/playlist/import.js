@@ -6,9 +6,12 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ImportCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('import')
 			.setDescription(
@@ -19,9 +22,10 @@ module.exports = {
 					.setName('code')
 					.setDescription('Kythia playlist code or Spotify URL to import.')
 					.setRequired(true),
-			),
+			);
 
-	execute(interaction, container) {
+	execute(interaction) {
+		const container = this.container;
 		const { client, guild } = interaction;
 		const { musicHandlers } = container;
 
@@ -29,5 +33,7 @@ module.exports = {
 			interaction,
 			client.poru.players.get(guild.id),
 		);
-	},
-};
+	}
+}
+
+exports.default = ImportCommand;

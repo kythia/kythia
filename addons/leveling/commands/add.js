@@ -8,10 +8,13 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	permissions: [PermissionFlagsBits.ManageGuild],
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AddCommand extends BaseCommand {
+	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
 			.setDescription('Add levels to a user.')
@@ -26,13 +29,10 @@ module.exports = {
 					.setName('level')
 					.setDescription('The amount of levels to add.')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { User } = models;
@@ -79,5 +79,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = AddCommand;

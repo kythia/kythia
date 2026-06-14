@@ -8,8 +8,10 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class KickCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('kick')
 			.setDescription('👢 Kicks a user from the server.')
@@ -24,15 +26,13 @@ module.exports = {
 					.setName('reason')
 					.setDescription('Reason for the kick')
 					.setRequired(false),
-			),
-	permissions: PermissionFlagsBits.KickMembers,
-	botPermissions: PermissionFlagsBits.KickMembers,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.KickMembers;
+	botPermissions = PermissionFlagsBits.KickMembers;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, models, kythiaConfig } = container;
 		const { createContainer, simpleContainer, getTextChannelSafe } =
 			helpers.discord;
@@ -103,5 +103,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = KickCommand;

@@ -8,8 +8,10 @@
 
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RoleCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('role')
 			.setDescription('🎭 Manage roles for a user.')
@@ -24,15 +26,13 @@ module.exports = {
 					.setName('role')
 					.setDescription('The role to add or remove')
 					.setRequired(true),
-			),
-	permissions: PermissionFlagsBits.ManageRoles,
-	botPermissions: PermissionFlagsBits.ManageRoles,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = PermissionFlagsBits.ManageRoles;
+	botPermissions = PermissionFlagsBits.ManageRoles;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
 
@@ -92,5 +92,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = RoleCommand;

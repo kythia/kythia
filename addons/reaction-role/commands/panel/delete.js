@@ -11,9 +11,12 @@ const {
 	TextDisplayBuilder,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class DeleteCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('delete')
 			.setDescription('🗑️ Delete a reaction role panel and all its bindings.')
@@ -24,13 +27,10 @@ module.exports = {
 						'The ID of the panel to delete (from /rr panel list).',
 					)
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, logger } = container;
 		const { ReactionRolePanel, ReactionRole } = models;
 		const { convertColor } = helpers.color;
@@ -106,5 +106,7 @@ module.exports = {
 				content: 'An error occurred while deleting the panel.',
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = DeleteCommand;

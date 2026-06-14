@@ -18,6 +18,8 @@ const {
 } = require('discord.js');
 const { DateTime } = require('luxon');
 
+const { BaseCommand } = require('kythia-core');
+
 const USERS_PER_PAGE = 10;
 const MAX_BIRTHDAYS = 100;
 
@@ -167,18 +169,16 @@ async function generateUpcomingContainer(
 	return { container, page, totalPages };
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class ListCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
-			.setDescription('📅 See a list of upcoming birthdays.'),
+			.setDescription('📅 See a list of upcoming birthdays.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { UserBirthday } = models;
 
@@ -303,5 +303,7 @@ module.exports = {
 				});
 			} catch (_e) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

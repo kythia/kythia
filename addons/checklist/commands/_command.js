@@ -8,12 +8,17 @@
 
 const { SlashCommandBuilder, InteractionContextType } = require('discord.js');
 
-module.exports = {
-	guildOnly: true,
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class ChecklistCommand extends BaseCommand {
+	guildOnly = true;
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('checklist')
 		.setDescription(
 			'📝 Create checklists for you or your server to make life easier',
 		)
-		.setContexts(InteractionContextType.Guild),
-};
+		.setContexts(InteractionContextType.Guild);
+}
+
+exports.default = ChecklistCommand;

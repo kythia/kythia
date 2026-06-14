@@ -8,9 +8,12 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SetCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('set')
 			.setDescription('Sets a sticky message for this channel.')
@@ -19,13 +22,10 @@ module.exports = {
 					.setName('message')
 					.setDescription('The content of the sticky message.')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, models } = container;
 		const { simpleContainer } = helpers.discord;
 		const { StickyMessage } = models;
@@ -60,5 +60,7 @@ module.exports = {
 			content: await t(interaction, 'core.tools.sticky.set.success'),
 			flags: MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+exports.default = SetCommand;

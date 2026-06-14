@@ -9,6 +9,8 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const axios = require('axios');
 
+const { BaseCommand } = require('kythia-core');
+
 const SUPPORTED_HASHES = [
 	{ name: 'MD5', value: 'md5' },
 	{ name: 'SHA1', value: 'sha1' },
@@ -16,8 +18,8 @@ const SUPPORTED_HASHES = [
 	{ name: 'SHA512', value: 'sha512' },
 ];
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class CrackHashCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('crack-hash')
 		.setDescription(
 			'🔍 Try to lookup a hash from public databases (MD5, SHA1, SHA256, SHA512).',
@@ -34,13 +36,10 @@ module.exports = {
 				.setName('hash')
 				.setDescription('The hash to try to lookup')
 				.setRequired(true),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers, logger } = container;
 		const { createContainer } = helpers.discord;
 
@@ -116,5 +115,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = CrackHashCommand;

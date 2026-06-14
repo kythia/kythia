@@ -8,12 +8,16 @@
 
 const { GuildMember, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
-		subcommand.setName('skip').setDescription('⏭️ Skip the current song'),
+const { BaseCommand } = require('kythia-core');
 
-	async execute(interaction, container) {
+class SkipCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
+		subcommand.setName('skip').setDescription('⏭️ Skip the current song');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -45,5 +49,7 @@ module.exports = {
 		}
 
 		return musicHandlers.handleSkip(interaction, player);
-	},
-};
+	}
+}
+
+exports.default = SkipCommand;

@@ -7,10 +7,15 @@
  */
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
-module.exports = {
-	guildOnly: true,
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class AutoreactCommand extends BaseCommand {
+	guildOnly = true;
+
+	slashCommand = new SlashCommandBuilder()
 		.setName('autoreact')
 		.setDescription('🤖 Manage automatic reactions for the server.')
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
-};
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+}
+
+exports.default = AutoreactCommand;

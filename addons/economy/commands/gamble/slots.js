@@ -9,6 +9,8 @@
 const { MessageFlags } = require('discord.js');
 const { toBigIntSafe } = require('../../helpers/bigint');
 
+const { BaseCommand } = require('kythia-core');
+
 const symbols = {
 	'🍒': { weight: 25, payout: { two: 1.5, three: 5 } },
 	'🍋': { weight: 25, payout: { two: 1.5, three: 5 } },
@@ -36,9 +38,10 @@ function getRandomSymbol() {
 	}
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class SlotsCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('slots')
 			.setDescription(
@@ -50,14 +53,12 @@ module.exports = {
 					.setDescription('The amount of money to bet')
 					.setRequired(true)
 					.setMinValue(10),
-			),
-	cooldown: 20,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	cooldown = 20;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer, createContainer } = helpers.discord;
@@ -181,5 +182,7 @@ module.exports = {
 			components: resultComponents,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = SlotsCommand;

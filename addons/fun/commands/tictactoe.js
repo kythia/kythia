@@ -19,6 +19,8 @@ const {
 	TextDisplayBuilder,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 function createGame(interaction, opponent, mode) {
 	const playerX = interaction.user;
 	const playerO = opponent;
@@ -239,12 +241,8 @@ function checkWinBoard(board, playerSymbol) {
 	);
 }
 
-// =================================================================
-// COMMAND EXPORT
-// =================================================================
-
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+class TictactoeCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('tictactoe')
 		.setDescription('⭕ Play Tic Tac Toe with a friend or bot.')
 		.addUserOption((option) =>
@@ -267,9 +265,10 @@ module.exports = {
 					{ name: 'Medium', value: 'bot_medium' },
 					{ name: 'Hard (Unbeatable)', value: 'bot_hard' },
 				),
-		),
+		);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t } = container;
 
 		const opponent = interaction.options.getUser('opponent');
@@ -434,5 +433,7 @@ module.exports = {
 		await interaction.deferReply();
 		const game = createGame(interaction, opponent, mode);
 		runGame(game, interaction);
-	},
-};
+	}
+}
+
+exports.default = TictactoeCommand;

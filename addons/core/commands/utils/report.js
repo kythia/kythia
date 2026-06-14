@@ -14,8 +14,10 @@ const {
 	ContextMenuCommandBuilder,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class ReportCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('report')
 		.setDescription('🚨 Report a user to the moderators.')
 		.addUserOption((option) =>
@@ -27,21 +29,18 @@ module.exports = {
 				.setDescription('Reason for the report')
 				.setRequired(true),
 		)
-		.setContexts(InteractionContextType.Guild),
+		.setContexts(InteractionContextType.Guild);
 
-	contextMenuCommand: new ContextMenuCommandBuilder()
+	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('Report User')
 		.setType(ApplicationCommandType.User)
-		.setContexts(InteractionContextType.Guild),
+		.setContexts(InteractionContextType.Guild);
 
-	contextMenuDescription: '🚨 Report a user to the moderators.',
-	guildOnly: true,
+	contextMenuDescription = '🚨 Report a user to the moderators.';
+	guildOnly = true;
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, models } = container;
 		const { createContainer } = helpers.discord;
 		const { ServerSetting } = models;
@@ -100,5 +99,7 @@ module.exports = {
 			components: confirmComponents,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ReportCommand;

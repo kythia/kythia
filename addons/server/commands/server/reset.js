@@ -8,9 +8,12 @@
 
 const { resetServer } = require('./_helpers');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ResetCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('reset')
 			.setDescription('Reset server structure to default')
@@ -19,13 +22,12 @@ module.exports = {
 					.setName('clear')
 					.setDescription('Delete all channels & roles first?')
 					.setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 */
 	async execute(interaction) {
 		await interaction.deferReply();
 		await resetServer(interaction);
-	},
-};
+	}
+}
+
+exports.default = ResetCommand;

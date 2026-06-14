@@ -13,8 +13,10 @@ const {
 	ContextMenuCommandBuilder,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class BannerCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('banner')
 		.setDescription('🖼️ Show user banner.')
 		.addUserOption((option) =>
@@ -22,19 +24,16 @@ module.exports = {
 				.setName('user')
 				.setDescription('The user whose banner you want to see.')
 				.setRequired(false),
-		),
+		);
 
-	contextMenuCommand: new ContextMenuCommandBuilder()
+	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('User Banner')
-		.setType(ApplicationCommandType.User),
+		.setType(ApplicationCommandType.User);
 
-	contextMenuDescription: '🖼️ Show user banner.',
+	contextMenuDescription = '🖼️ Show user banner.';
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
 
@@ -77,5 +76,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = BannerCommand;

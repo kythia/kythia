@@ -20,15 +20,19 @@ const banks = require('../../helpers/banks');
 const jobs = require('../../helpers/jobs');
 const { toBigIntSafe } = require('../../helpers/bigint');
 
-module.exports = {
-	subcommand: true,
-	aliases: ['work'],
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class WorkCommand extends BaseCommand {
+	subcommand = true;
+	aliases = ['work'];
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('work')
-			.setDescription('⚒️ Work to earn money with various scenarios!'),
+			.setDescription('⚒️ Work to earn money with various scenarios!');
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser, Inventory } = models;
 		const { simpleContainer, createContainer } = helpers.discord;
@@ -387,5 +391,7 @@ module.exports = {
 			components: [resultContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = WorkCommand;

@@ -9,9 +9,12 @@
 const { MessageFlags } = require('discord.js');
 const { EMBEDDED, runTemplate, resetServer } = require('./_helpers');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AutobuildCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('autobuild')
 			.setDescription(
@@ -52,13 +55,10 @@ module.exports = {
 			)
 			.addStringOption((o) =>
 				o.setName('locale').setDescription('id/en').setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -138,5 +138,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = AutobuildCommand;

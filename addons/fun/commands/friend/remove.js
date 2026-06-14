@@ -14,8 +14,10 @@ const {
 } = require('discord.js');
 const { Op } = require('sequelize');
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RemoveCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
 			.setDescription('💔 Remove someone from your friends list')
@@ -24,9 +26,10 @@ module.exports = {
 					.setName('user')
 					.setDescription('The user you want to remove from your friends')
 					.setRequired(true),
-			),
+			);
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Friend } = models;
 		const { convertColor } = helpers.color;
@@ -90,5 +93,7 @@ module.exports = {
 			flags: MessageFlags.IsComponentsV2,
 			components: [removeContainer],
 		});
-	},
-};
+	}
+}
+
+exports.default = RemoveCommand;

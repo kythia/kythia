@@ -7,9 +7,12 @@
  */
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SetCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('set')
 			.setDescription('🌐 Create or update a DNS record.')
@@ -54,13 +57,10 @@ module.exports = {
 				option
 					.setName('priority')
 					.setDescription('For MX only. (Default: 10).'),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').AutocompleteInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async autocomplete(interaction, container) {
+	async autocomplete(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { Subdomain } = models;
 		const focusedValue = interaction.options.getFocused();
@@ -88,13 +88,10 @@ module.exports = {
 						: subdomain.name,
 			})),
 		);
-	},
+	}
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const cloudflareApi = container.services.cloudflare;
 		const { KythiaUser, Subdomain, DnsRecord } = models;
@@ -218,5 +215,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = SetCommand;

@@ -7,17 +7,18 @@
  */
 const { ContainerBuilder, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ListCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
-			.setDescription('📜 List all reaction roles in this server.'),
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+			.setDescription('📜 List all reaction roles in this server.');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, logger } = container;
 		const { ReactionRole } = models;
 		const { chunkTextDisplay } = helpers.discord;
@@ -87,5 +88,7 @@ module.exports = {
 				content: await t(interaction, 'common.error.generic'),
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

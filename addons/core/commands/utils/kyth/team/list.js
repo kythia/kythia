@@ -8,16 +8,16 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
-		subcommand.setName('list').setDescription('Show all Kythia Team members'),
+const { BaseCommand } = require('kythia-core');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+class ListCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
+		subcommand.setName('list').setDescription('Show all Kythia Team members');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, logger, helpers } = container;
 		const { KythiaTeam } = models;
 		const { createContainer } = helpers.discord;
@@ -111,5 +111,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

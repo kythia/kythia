@@ -8,9 +8,12 @@
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RemoveCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
 			.setDescription('➖ Unsubscribe from a social media creator alert.')
@@ -20,9 +23,10 @@ module.exports = {
 					.setDescription('Select the subscription to remove.')
 					.setAutocomplete(true)
 					.setRequired(true),
-			),
+			);
 
-	async autocomplete(interaction, container) {
+	async autocomplete(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { SocialAlertSubscription } = models;
 		const focused = interaction.options.getFocused();
@@ -52,13 +56,10 @@ module.exports = {
 		} catch {
 			await interaction.respond([]);
 		}
-	},
+	}
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, t, logger } = container;
 		const { SocialAlertSubscription } = models;
 		const { simpleContainer } = helpers.discord;
@@ -122,5 +123,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = RemoveCommand;

@@ -5,10 +5,16 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommandGroup) =>
+
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommandGroup) =>
 		subcommandGroup
 			.setName('dns')
-			.setDescription('Kelola DNS record untuk subdomain Pro-mu.'),
-};
+			.setDescription('Kelola DNS record untuk subdomain Pro-mu.');
+}
+
+exports.default = GroupCommand;

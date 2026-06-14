@@ -10,8 +10,10 @@ const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const figletFonts = require('@coreHelpers/figlet-fonts');
 const figlet = require('figlet');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class AsciiCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('ascii')
 		.setDescription('🎨 Generate ASCII art from your text using figlet.')
 		.addStringOption((option) =>
@@ -34,9 +36,11 @@ module.exports = {
 				.setName('allfonts')
 				.setDescription('Generate ASCII art with ALL fonts')
 				.setRequired(false),
-		),
-	cooldown: 15,
-	voteLocked: true,
+		);
+
+	cooldown = 15;
+	voteLocked = true;
+
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused(true)?.value || '';
 		const filteredFonts = figletFonts.filter((font) =>
@@ -48,13 +52,10 @@ module.exports = {
 				value: font.length > 100 ? font.slice(0, 100) : font,
 			})),
 		);
-	},
+	}
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer, createContainer } = helpers.discord;
 
@@ -169,5 +170,7 @@ module.exports = {
 				});
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = AsciiCommand;

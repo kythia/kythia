@@ -6,9 +6,12 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class CentralBankCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('central_bank')
 			.setDescription("🏦 (Owner) Control Kythia's Global Monetary Policy.")
@@ -41,17 +44,12 @@ module.exports = {
 					.setName('halt_trading')
 					.setDescription('Emergency kill switch to halt all market trading')
 					.setRequired(false),
-			),
-	// Restrict this command specifically to the bot owner using middleware or permissions
-	// Since there is no explicit owner guard inside economy addon, we rely on the X-Owner-Id or internal checks, but usually it's set in the global config.
-	// For Kythia, owner commands in economy should check if user is owner.
-	ownerOnly: true,
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	ownerOnly = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		await interaction.deferReply();
 		const { t, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
@@ -150,5 +148,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = CentralBankCommand;

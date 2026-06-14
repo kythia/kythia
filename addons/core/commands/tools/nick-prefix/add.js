@@ -9,18 +9,18 @@
 const { rolePrefix } = require('../../../helpers');
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class AddCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
-			.setDescription('📛 Adds the highest role prefix to member nicknames.'),
+			.setDescription('📛 Adds the highest role prefix to member nicknames.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -75,5 +75,7 @@ module.exports = {
 					.catch(() => {});
 			}
 		}
-	},
-};
+	}
+}
+
+exports.default = AddCommand;

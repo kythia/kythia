@@ -16,6 +16,8 @@ const {
 	ButtonStyle,
 } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const SHARDS_PER_PAGE = 10;
 
 async function buildNavButtons(
@@ -148,19 +150,18 @@ async function generateShardsContainer(
 	return { containerStr, page, totalPages };
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class ShardsCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('shards')
-			.setDescription('🧩 List all bot shards and their info'),
+			.setDescription('🧩 List all bot shards and their info');
 
-	aliases: ['shards'],
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	aliases = ['shards'];
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t } = container;
 
 		await interaction.deferReply();
@@ -283,5 +284,7 @@ module.exports = {
 				});
 			} catch (_e) {}
 		});
-	},
-};
+	}
+}
+
+exports.default = ShardsCommand;

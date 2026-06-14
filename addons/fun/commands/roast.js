@@ -16,8 +16,10 @@ const {
 } = require('discord.js');
 const axios = require('axios');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class RoastCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('roast')
 		.setDescription('🔥 Roast someone with a savage insult')
 		.addUserOption((option) =>
@@ -25,13 +27,10 @@ module.exports = {
 				.setName('user')
 				.setDescription('The user to roast')
 				.setRequired(false),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 
 		await interaction.deferReply();
@@ -102,5 +101,7 @@ module.exports = {
 			components: [roastContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = RoastCommand;

@@ -8,8 +8,12 @@
 
 const { SlashCommandSubcommandGroupBuilder } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandSubcommandGroupBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	slashCommand = new SlashCommandSubcommandGroupBuilder()
 		.setName('setup')
-		.setDescription('Configure the verification system'),
-};
+		.setDescription('Configure the verification system');
+}
+
+exports.default = GroupCommand;

@@ -9,9 +9,12 @@
 const { MessageFlags } = require('discord.js');
 const { DateTime } = require('luxon');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SetCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('set')
 			.setDescription('📅 Set your birthday.')
@@ -40,12 +43,10 @@ module.exports = {
 					.setRequired(false)
 					.setMinValue(1900)
 					.setMaxValue(new Date().getFullYear()),
-			),
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+			);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { UserBirthday } = models;
 		const { simpleContainer } = helpers.discord;
@@ -100,5 +101,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = SetCommand;

@@ -6,8 +6,10 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class RemoveCommand extends BaseCommand {
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
 			.setDescription('Remove vote points from a user')
@@ -23,13 +25,10 @@ module.exports = {
 					.setDescription('The number of points to remove')
 					.setRequired(true)
 					.setMinValue(1),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { KythiaUser } = models;
@@ -79,5 +78,7 @@ module.exports = {
 			);
 			await interaction.editReply({ components });
 		}
-	},
-};
+	}
+}
+
+exports.default = RemoveCommand;

@@ -8,8 +8,10 @@
 
 const { SlashCommandSubcommandBuilder, MessageFlags } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandSubcommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class CacheAuditCommand extends BaseCommand {
+	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('cache-audit')
 		.setDescription(
 			'Audit Redis cache against the database to detect stale data.',
@@ -28,8 +30,9 @@ module.exports = {
 					'Automatically flush the cache for any models found with stale data',
 				)
 				.setRequired(false),
-		),
-	ownerOnly: true,
+		);
+
+	ownerOnly = true;
 
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused();
@@ -41,13 +44,10 @@ module.exports = {
 			.slice(0, 25);
 
 		await interaction.respond(choices);
-	},
+	}
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -248,5 +248,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = CacheAuditCommand;

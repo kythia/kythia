@@ -8,19 +8,21 @@
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	voteLocked: true,
-	slashCommand: (subcommand) =>
-		subcommand.setName('enable').setDescription('Enable AI in this channel'),
-	permissions: [PermissionFlagsBits.ManageChannels],
-	aliases: ['aion'],
-	guildOnly: true,
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+const { BaseCommand } = require('kythia-core');
+
+class EnableCommand extends BaseCommand {
+	subcommand = true;
+	voteLocked = true;
+
+	slashCommand = (subcommand) =>
+		subcommand.setName('enable').setDescription('Enable AI in this channel');
+
+	permissions = [PermissionFlagsBits.ManageChannels];
+	aliases = ['aion'];
+	guildOnly = true;
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
@@ -65,5 +67,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = EnableCommand;

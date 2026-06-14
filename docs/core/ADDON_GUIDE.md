@@ -1,6 +1,6 @@
 # Kythia Core — Addon Authoring Guide
 
-> Complete step-by-step guide to creating, structuring, and publishing addons — **v0.13.1-beta**
+> Complete step-by-step guide to creating, structuring, and publishing addons — **v26.1.0**
 
 ---
 
@@ -22,6 +22,7 @@
 - [Modals](#modals)
 - [Select Menus](#select-menus)
 - [Tasks (Cron & Interval)](#tasks-cron--interval)
+- [Queues (BullMQ)](#queues-bullmq)
 - [register.js Hook](#registerjs-hook)
 - [Database Models](#database-models)
 - [Migrations](#migrations)
@@ -66,6 +67,7 @@ Addons are isolated from each other. They communicate through the shared `Kythia
 | `modals/<prefix>.js` | Modal submit handler | Filename (without `.js`) = `customId` prefix |
 | `select_menus/<prefix>.js` | Select menu handler | Filename (without `.js`) = `customId` prefix |
 | `tasks/<name>.js` | Scheduled task (cron or interval) | Filename = task name, `schedule` field drives timing |
+| `queues/*.js` | BullMQ queue processor contract | Auto-registers queue, worker, and events |
 | `database/models/*.js` | Sequelize models → `container.models` | Class name → model key |
 | `database/migrations/*.js` | Database migrations (via `npx kythia migrate`) | Timestamp prefix for ordering |
 | `database/seeders/*.js` | Database seeders (via `npx kythia db:seed`) | Class name |
@@ -93,12 +95,14 @@ For each addon (in resolved order):
    7. Scan modals/    ← auto-register modal handlers
    8. Scan select_menus/ ← auto-register select menu handlers
    9. Scan tasks/     ← auto-register cron/interval tasks
-  10. Scan lang/      ← merge locale JSON into TranslatorManager
-  11. Scan database/models/ ← load & sync Sequelize models
+  10. Scan queues/    ← auto-register BullMQ processors
+  11. Scan lang/      ← merge locale JSON into TranslatorManager
+  12. Scan database/models/ ← load & sync Sequelize models
 
-12. Deploy slash commands to Discord (global or guild-scoped)
-13. Initialize EventManager (attach all collected event listeners)
-14. Initialize InteractionManager (attach interactionCreate listener)
+13. Deploy slash commands to Discord (global or guild-scoped)
+14. Initialize EventManager (attach all collected event listeners)
+15. Initialize InteractionManager (attach interactionCreate listener)
+16. Initialize QueueManager (spin up BullMQ queues & workers)
 ```
 
 ### Component routing — how `customId` matching works
@@ -171,6 +175,11 @@ addons/my-feature/
 ├── tasks/
 │   └── daily-cleanup.js     # Scheduled task
 │
+├── queues/
+│   ├── image.js             # Queue contract
+│   └── processors/
+│       └── imageProcessor.js # Sandboxed worker
+│
 ├── lang/
 │   ├── en.json              # English translations (master)
 │   └── ja.json              # Japanese translations
@@ -233,24 +242,28 @@ The most common pattern — a single `.js` file in the `commands/` folder.
 ```javascript
 // addons/my-feature/commands/ping.js
 const { SlashCommandBuilder } = require('discord.js');
+const { BaseCommand } = require('kythia-core');
 
-module.exports = {
-  data: new SlashCommandBuilder()
+class PingCommand extends BaseCommand {
+  slashCommand = new SlashCommandBuilder()
     .setName('ping')
-    .setDescription('Check bot latency'),
+    .setDescription('Check bot latency');
 
   // Optional middleware properties
-  cooldown: 5000,      // 5s per-user cooldown
-  ownerOnly: false,
+  cooldown = 5000;      // 5s per-user cooldown
+  ownerOnly = false;
 
   async execute(interaction) {
-    const { logger } = interaction.client.container;
+    const container = this.container;
+    const { logger } = container;
     const latency = Date.now() - interaction.createdTimestamp;
 
     logger.info(`Ping: ${latency}ms`);
     await interaction.reply(`🏓 Pong! Latency: **${latency}ms**`);
-  },
-};
+  }
+}
+
+exports.default = PingCommand;
 ```
 
 ### Subcommands (Split Folder)
@@ -267,34 +280,47 @@ commands/user/
 ```javascript
 // addons/my-feature/commands/user/_command.js
 const { SlashCommandBuilder } = require('discord.js');
+const { BaseCommand } = require('kythia-core');
 
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('user')
-    .setDescription('User management commands'),
+class UserCommand extends BaseCommand {
+  subcommand = true;
+
+  slashCommand = (group) =>
+    group
+      .setName('user')
+      .setDescription('User management commands');
   // No execute() — parent commands are containers only
-};
+}
+
+exports.default = UserCommand;
 ```
 
 ```javascript
 // addons/my-feature/commands/user/profile.js
 const { SlashCommandBuilder } = require('discord.js');
+const { BaseCommand } = require('kythia-core');
 
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('profile')
-    .setDescription('View a user profile'),
+class ProfileCommand extends BaseCommand {
+  subcommand = true;
+
+  slashCommand = (subcommand) =>
+    subcommand
+      .setName('profile')
+      .setDescription('View a user profile');
 
   async execute(interaction) {
-    const { models, t } = interaction.client.container;
+    const container = this.container;
+    const { models, t } = container;
     const { User } = models;
 
     const user = await User.getCache({ where: { userId: interaction.user.id } });
     const title = await t(interaction, 'profile.title', { name: interaction.user.username });
 
     await interaction.reply({ content: title });
-  },
-};
+  }
+}
+
+exports.default = ProfileCommand;
 ```
 
 ### Subcommand Groups
@@ -312,12 +338,18 @@ commands/settings/
 ```javascript
 // commands/settings/privacy/_group.js
 const { SlashCommandBuilder } = require('discord.js');
+const { BaseCommand } = require('kythia-core');
 
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('privacy')
-    .setDescription('Privacy settings'),
-};
+class PrivacyGroupCommand extends BaseCommand {
+  subcommandGroup = true;
+
+  slashCommand = (group) =>
+    group
+      .setName('privacy')
+      .setDescription('Privacy settings');
+}
+
+exports.default = PrivacyGroupCommand;
 ```
 
 ### Context Menu Commands
@@ -327,17 +359,20 @@ Context menu commands (Right-click on User or Message) use the same `commands/` 
 ```javascript
 // addons/my-feature/commands/user-info.js
 const { ContextMenuCommandBuilder, ApplicationCommandType } = require('discord.js');
+const { BaseCommand } = require('kythia-core');
 
-module.exports = {
-  data: new ContextMenuCommandBuilder()
+class UserInfoCommand extends BaseCommand {
+  contextMenuCommand = new ContextMenuCommandBuilder()
     .setName('Get User Info')
-    .setType(ApplicationCommandType.User),
+    .setType(ApplicationCommandType.User);
 
   async execute(interaction) {
     const targetUser = interaction.targetUser;
     await interaction.reply({ content: `User: ${targetUser.tag}`, ephemeral: true });
-  },
-};
+  }
+}
+
+exports.default = UserInfoCommand;
 ```
 
 ### Autocomplete
@@ -345,13 +380,16 @@ module.exports = {
 Add an `autocomplete` method to any command module:
 
 ```javascript
-module.exports = {
-  data: new SlashCommandBuilder()
+const { SlashCommandBuilder } = require('discord.js');
+const { BaseCommand } = require('kythia-core');
+
+class PlayCommand extends BaseCommand {
+  slashCommand = new SlashCommandBuilder()
     .setName('play')
     .setDescription('Play a song')
     .addStringOption((opt) =>
       opt.setName('query').setDescription('Song name or URL').setAutocomplete(true)
-    ),
+    );
 
   async autocomplete(interaction) {
     const query = interaction.options.getFocused();
@@ -360,13 +398,15 @@ module.exports = {
     await interaction.respond(
       results.map((r) => ({ name: r.title, value: r.url })).slice(0, 25)
     );
-  },
+  }
 
   async execute(interaction) {
     const url = interaction.options.getString('query');
     // ...
-  },
-};
+  }
+}
+
+exports.default = PlayCommand;
 ```
 
 ### Command Middleware Properties
@@ -383,16 +423,23 @@ Add these properties to any command module to apply built-in middleware:
 | `mainGuildOnly` | `boolean` | Deploy command only to the main guild (not globally) |
 
 ```javascript
-module.exports = {
-  data: new SlashCommandBuilder().setName('ban').setDescription('Ban a user'),
+const { SlashCommandBuilder } = require('discord.js');
+const { BaseCommand } = require('kythia-core');
 
-  botPermissions: ['BanMembers'],
-  userPermissions: ['BanMembers'],
-  cooldown: 10000,
-  mainGuildOnly: true,
+class BanCommand extends BaseCommand {
+  slashCommand = new SlashCommandBuilder()
+    .setName('ban')
+    .setDescription('Ban a user');
 
-  async execute(interaction) { /* ... */ },
-};
+  botPermissions = ['BanMembers'];
+  userPermissions = ['BanMembers'];
+  cooldown = 10000;
+  mainGuildOnly = true;
+
+  async execute(interaction) { /* ... */ }
+}
+
+exports.default = BanCommand;
 ```
 
 ---
@@ -584,6 +631,62 @@ module.exports = {
 
 > **Cron string validation:** Kythia validates your cron string with `node-cron` at load time and logs an error if invalid.  
 > **Interval tracking:** Interval tasks are tracked by `ShutdownManager` and automatically cleared on graceful shutdown.
+
+---
+
+## Queues (BullMQ)
+
+Kythia Core features a plug-and-play BullMQ Queue Manager. To offload heavy or background operations (like generating images) without blocking the bot's event loop, you create a queue contract and a sandboxed processor.
+
+1. **Queue Contract File** (in `queues/` directory):
+
+```javascript
+// addons/leveling/queues/image.js
+const path = require('path');
+
+module.exports = {
+  queueName: 'kythia-image-queue',      // Required: Unique name for your queue
+  processorPath: path.join(__dirname, 'processors', 'imageProcessor.js'), // Required: Path to the sandboxed worker
+  concurrency: 2,                        // Optional: Defaults to 1
+};
+```
+
+2. **Sandboxed Worker File** (in `queues/processors/`):
+
+> Sandboxed workers run in separate Node.js threads, meaning they **cannot access the DI Container directly**. You must pass all required data inside the job payload.
+
+```javascript
+// addons/leveling/queues/processors/imageProcessor.js
+module.exports = async (job) => {
+  // Heavy computation goes here
+  const { type, userId, options } = job.data;
+  
+  if (type === 'profileImage') {
+    // Generate image buffer...
+    return buffer; // BullMQ converts this to { type: 'Buffer', data: [...] }
+  }
+};
+```
+
+3. **Dispatching and Waiting in a Command**:
+
+```javascript
+// Inside your execute(interaction) function
+const { queueManager } = interaction.client.container;
+
+// 1. Dispatch the job
+const job = await queueManager.dispatch('kythia-image-queue', 'profile', {
+  type: 'profileImage',
+  userId: interaction.user.id,
+  options: { /* ... */ }
+});
+
+// 2. Wait for it to finish (ideal for deferred interactions)
+const result = await queueManager.waitFor(job, 'kythia-image-queue');
+
+// 3. Reconstruct buffer from the result
+const buffer = Buffer.from(result.data);
+```
 
 ---
 

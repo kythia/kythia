@@ -6,8 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommandGroup) =>
-		subcommandGroup.setName('panel').setDescription('Manage Panel UI'),
-};
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommandGroup) =>
+		subcommandGroup.setName('panel').setDescription('Manage Panel UI');
+}
+
+exports.default = GroupCommand;

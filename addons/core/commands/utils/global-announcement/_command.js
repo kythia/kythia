@@ -13,21 +13,20 @@ const {
 	InteractionContextType,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class UtilsCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('global-announcement')
 		.setDescription('Send an announcement to all servers the bot has joined.')
 		.setContexts(InteractionContextType.Guild)
-		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
-	ownerOnly: true,
-	mainGuildOnly: true,
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 
-	/**
-	 * Shared function to broadcast a payload to all guilds.
-	 * @param {import('discord.js').ModalSubmitInteraction} interaction
-	 * @param {object} payload
-	 */
-	async sendToAllGuilds(interaction, payload) {
+	ownerOnly = true;
+	mainGuildOnly = true;
+
+	async sendToAllGuilds(interaction) {
+		const payload = this.container;
 		const container = interaction.client.container;
 		const { t } = container;
 
@@ -176,5 +175,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = UtilsCommand;

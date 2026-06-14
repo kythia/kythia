@@ -9,9 +9,12 @@
 const { MessageFlags } = require('discord.js');
 const { refreshTicketPanel } = require('../../helpers');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class DeleteCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('delete')
 			.setDescription('Deletes a ticket type.')
@@ -21,9 +24,10 @@ module.exports = {
 					.setDescription('Select the ticket type to delete.')
 					.setAutocomplete(true)
 					.setRequired(true),
-			),
+			);
 
-	async autocomplete(interaction, container) {
+	async autocomplete(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { TicketConfig } = models;
 		const focusedValue = interaction.options.getFocused();
@@ -44,13 +48,10 @@ module.exports = {
 				value: t.id.toString(),
 			})),
 		);
-	},
+	}
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, t, helpers, logger } = container;
 		const { TicketConfig } = models;
 		const { simpleContainer } = helpers.discord;
@@ -94,5 +95,7 @@ module.exports = {
 				components: await simpleContainer(interaction, desc, { color: 'Red' }),
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = DeleteCommand;

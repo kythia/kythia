@@ -19,16 +19,15 @@ const {
 } = require('discord.js');
 const axios = require('axios');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
-		.setName('fact')
-		.setDescription('🧠 Get a random useless (but interesting) fact'),
+const { BaseCommand } = require('kythia-core');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+class FactCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
+		.setName('fact')
+		.setDescription('🧠 Get a random useless (but interesting) fact');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 
 		await interaction.deferReply();
@@ -116,5 +115,7 @@ module.exports = {
 				/* silently ignore re-fetch errors */
 			}
 		});
-	},
-};
+	}
+}
+
+exports.default = FactCommand;

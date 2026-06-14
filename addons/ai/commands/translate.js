@@ -15,8 +15,10 @@ const {
 const { getAndUseNextAvailableToken } = require('../helpers/gemini');
 const { GoogleGenAI } = require('@google/genai');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class TranslateCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('translate')
 		.setDescription('🌐 Translate text to another language using Gemini AI.')
 		.addStringOption((option) =>
@@ -30,20 +32,17 @@ module.exports = {
 				.setName('lang')
 				.setDescription('Target language (e.g. en, id, ja, etc)')
 				.setRequired(true),
-		),
+		);
 
-	contextMenuCommand: new ContextMenuCommandBuilder()
+	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('Translate Message')
-		.setType(ApplicationCommandType.Message),
+		.setType(ApplicationCommandType.Message);
 
-	contextMenuDescription:
-		'🌐 Translate message to another language using Gemini AI.',
+	contextMenuDescription =
+		'🌐 Translate message to another language using Gemini AI.';
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, kythiaConfig, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -154,5 +153,7 @@ module.exports = {
 				components,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = TranslateCommand;

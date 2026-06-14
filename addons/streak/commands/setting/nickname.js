@@ -8,9 +8,12 @@
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class NicknameCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('nickname')
 			.setDescription('🔥 Toggle auto-nickname for streak')
@@ -23,14 +26,12 @@ module.exports = {
 						{ name: 'Enable', value: 'enable' },
 						{ name: 'Disable', value: 'disable' },
 					),
-			),
-	permissions: [PermissionFlagsBits.ManageGuild],
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	permissions = [PermissionFlagsBits.ManageGuild];
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
@@ -60,5 +61,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = NicknameCommand;

@@ -8,11 +8,14 @@
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	guildOnly: true,
-	permissions: [PermissionFlagsBits.ManageGuild],
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class StatusChannelCommand extends BaseCommand {
+	subcommand = true;
+	guildOnly = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('status-channel')
 			.setDescription('📢 Set a channel to display the Minecraft server status')
@@ -21,13 +24,10 @@ module.exports = {
 					.setName('channel')
 					.setDescription('Channel to display the server status')
 					.setRequired(true),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, helpers, models } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
@@ -63,5 +63,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = StatusChannelCommand;

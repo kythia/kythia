@@ -17,24 +17,24 @@ const { getMarketData, ASSET_IDS } = require('../../helpers/market');
 const { getTopStocksData, getStockData } = require('../../helpers/stock');
 const { getSpotPrice } = require('../../helpers/kyth-amm');
 
+const { BaseCommand } = require('kythia-core');
+
 function getChangeEmoji(percent) {
 	if (percent > 0) return '🟢 ▲';
 	if (percent < 0) return '🔴 ▼';
 	return '⏹️';
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class PortfolioCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('portfolio')
-			.setDescription('💼 View your personal asset portfolio.'),
+			.setDescription('💼 View your personal asset portfolio.');
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser, MarketPortfolio } = models;
 		const { simpleContainer } = helpers.discord;
@@ -221,5 +221,7 @@ module.exports = {
 			components: [portfolioContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = PortfolioCommand;

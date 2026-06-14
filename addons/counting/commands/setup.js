@@ -8,9 +8,12 @@
 
 const { ChannelType, MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class SetupCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('setup')
 			.setDescription('Configure the counting channel.')
@@ -54,13 +57,10 @@ module.exports = {
 						'Enable strict counting. if 1 user false, count will reset to 0.',
 					)
 					.setRequired(false),
-			),
+			);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models, t, helpers } = container;
 		const { Counting } = models;
 		const { simpleContainer, getChannelSafe } = helpers.discord;
@@ -130,5 +130,7 @@ module.exports = {
 			),
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = SetupCommand;

@@ -8,20 +8,20 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class OptoutCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('optout')
 			.setDescription(
 				'Opt-out of all AI features and delete your stored AI memories.',
-			),
+			);
 
-	/**
-	 * @param {import("discord.js").CommandInteraction} interaction
-	 * @param {import("kythia-core/src/structures/Container")} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { logger, models, helpers, t } = container;
 		const { KythiaUser, UserFact } = models;
 		const { simpleContainer } = helpers.discord;
@@ -96,5 +96,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = OptoutCommand;

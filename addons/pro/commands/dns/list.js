@@ -14,9 +14,12 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ListCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
 			.setDescription('🌐 Show all DNS records for one of your subdomains.')
@@ -28,12 +31,10 @@ module.exports = {
 					)
 					.setRequired(true)
 					.setAutocomplete(true),
-			),
-	/**
-	 * @param {import('discord.js').AutocompleteInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async autocomplete(interaction, container) {
+			);
+
+	async autocomplete(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { Subdomain } = models;
 		const focusedValue = interaction.options.getFocused();
@@ -59,13 +60,10 @@ module.exports = {
 						: subdomain.name,
 			})),
 		);
-	},
+	}
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { kythiaConfig, models, helpers, t } = container;
 		const { Subdomain, DnsRecord } = models;
 		const { simpleContainer, isPremium, isVoterActive } = helpers.discord;
@@ -167,5 +165,7 @@ module.exports = {
 			components: [mainContainer],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+exports.default = ListCommand;

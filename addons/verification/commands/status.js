@@ -8,19 +8,24 @@
 
 const { MessageFlags } = require('discord.js');
 
+const { BaseCommand } = require('kythia-core');
+
 const CAPTCHA_TYPES = [
 	{ name: 'Math (multiple choice buttons)', value: 'math' },
 	{ name: 'Emoji click (buttons)', value: 'emoji' },
 	{ name: 'Image text (type the code)', value: 'image' },
 ];
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class StatusCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('status')
-			.setDescription('View current verification config'),
-	async execute(interaction, container) {
+			.setDescription('View current verification config');
+
+	async execute(interaction) {
+		const container = this.container;
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer, createContainer } = helpers.discord;
 		const { VerificationConfig, ServerSetting } = models;
@@ -76,5 +81,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = StatusCommand;

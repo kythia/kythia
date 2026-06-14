@@ -18,19 +18,20 @@ const {
 } = require('discord.js');
 const { claimStreak, restoreStreak } = require('../helpers');
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+const { BaseCommand } = require('kythia-core');
+
+class ClaimCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('claim')
 			.setDescription(
 				'🔥 Claim your streak for today, keep your streak continue!',
-			),
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+			);
+
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { ServerSetting, KythiaVoter } = models;
 		const { simpleContainer } = helpers.discord;
@@ -306,5 +307,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+exports.default = ClaimCommand;

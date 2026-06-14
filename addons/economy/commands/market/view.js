@@ -32,6 +32,8 @@ const {
 const { formatPoolStats, getSpotPrice } = require('../../helpers/kyth-amm');
 const { Op } = require('sequelize');
 
+const { BaseCommand } = require('kythia-core');
+
 function formatMarketTable(rows) {
 	return [
 		'```',
@@ -48,9 +50,10 @@ function getChangeEmoji(percent) {
 	return '⏹️';
 }
 
-module.exports = {
-	subcommand: true,
-	slashCommand: (subcommand) =>
+class ViewCommand extends BaseCommand {
+	subcommand = true;
+
+	slashCommand = (subcommand) =>
 		subcommand
 			.setName('view')
 			.setDescription('📈 View real-time crypto prices from the global market.')
@@ -76,7 +79,7 @@ module.exports = {
 						{ name: '90 Days', value: '90' },
 						{ name: '365 Days', value: '365' },
 					),
-			),
+			);
 
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused().toLowerCase();
@@ -94,9 +97,10 @@ module.exports = {
 				.slice(0, 25)
 				.map((choice) => ({ name: choice, value: choice.toLowerCase() })),
 		);
-	},
+	}
 
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser, MarketOrder, KythLiquidityPool, MarketTransaction } =
 			models;
@@ -471,8 +475,10 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+exports.default = ViewCommand;
 
 async function assetNotFound(interaction, assetId, t, helpers) {
 	const msg = await t(interaction, 'economy.market.view.asset.not.found.desc', {

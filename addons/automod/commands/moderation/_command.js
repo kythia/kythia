@@ -7,9 +7,13 @@
  */
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class CommandsCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('mod')
 		.setDescription('Moderation action')
-		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
-};
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
+}
+
+exports.default = CommandsCommand;

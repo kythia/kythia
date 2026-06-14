@@ -8,8 +8,12 @@
 
 const { SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class GroupCommand extends BaseCommand {
+	slashCommand = new SlashCommandBuilder()
 		.setName('setting')
-		.setDescription('📥️ Setting for invite system'),
-};
+		.setDescription('📥️ Setting for invite system');
+}
+
+exports.default = GroupCommand;

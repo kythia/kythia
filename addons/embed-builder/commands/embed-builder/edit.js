@@ -16,8 +16,10 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	slashCommand: new SlashCommandSubcommandBuilder()
+const { BaseCommand } = require('kythia-core');
+
+class EditCommand extends BaseCommand {
+	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('edit')
 		.setDescription('✏️ Edit a saved embed')
 		.addStringOption((o) =>
@@ -26,13 +28,10 @@ module.exports = {
 				.setDescription('The embed to edit')
 				.setRequired(true)
 				.setAutocomplete(true),
-		),
+		);
 
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async execute(interaction, container) {
+	async execute(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { EmbedBuilder: EmbedModel } = models;
 
@@ -133,14 +132,10 @@ module.exports = {
 			],
 			flags: MessageFlags.Ephemeral,
 		});
-	},
+	}
 
-	/**
-	 * Handle the modal submit for classic embed edits
-	 * @param {import('discord.js').ModalSubmitInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	async modal(interaction, container) {
+	async modal(interaction) {
+		const container = this.container;
 		const { models } = container;
 		const { EmbedBuilder: EmbedModel } = models;
 
@@ -231,5 +226,7 @@ module.exports = {
 			],
 			flags: MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+exports.default = EditCommand;
