@@ -18,9 +18,9 @@ const {
 } = require('discord.js');
 
 const path = require('node:path');
-const { loadTemplates } = require('../../helpers/template');
+const { loadTemplates } = require('./template');
 
-const TEMPLATE_DIR = path.join(__dirname, '../../template');
+const TEMPLATE_DIR = path.join(__dirname, '../template');
 const EMBEDDED = loadTemplates(TEMPLATE_DIR);
 
 const PERM = new Proxy(

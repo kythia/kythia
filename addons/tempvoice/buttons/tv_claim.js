@@ -7,8 +7,14 @@
  */
 const { PermissionsBitField, MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TvClaimButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, client, t, helpers, logger } = container;
 		const { TempVoiceChannel } = models;
 		const { simpleContainer } = helpers.discord;
@@ -119,5 +125,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = TvClaimButton;

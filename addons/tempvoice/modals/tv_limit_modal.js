@@ -8,8 +8,14 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseModal } = require('kythia-core');
+
+class TvLimitModalModal extends BaseModal {
+	modal = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, t, client, logger, helpers } = container;
 		const { TempVoiceChannel } = models;
 		const { simpleContainer } = helpers.discord;
@@ -82,5 +88,7 @@ module.exports = {
 			}),
 			flags: MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+module.exports = TvLimitModalModal;

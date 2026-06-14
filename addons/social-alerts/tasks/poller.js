@@ -25,13 +25,18 @@ const { fetchLatestVideo } = require('../helpers/youtube');
 const { fetchLatestTikTok } = require('../helpers/tiktok');
 const { fetchLatestInstagram } = require('../helpers/instagram');
 
-module.exports = {
-	taskName: 'social-alert-poller',
-	schedule: '*/5 * * * *',
-	active: true,
+const { BaseTask } = require('kythia-core');
 
-	execute: async (container) => {
-		const { client, models, helpers, logger, kythiaConfig, t } = container;
+class PollerTask extends BaseTask {
+	task = {
+		taskName: 'social-alert-poller',
+		schedule: '*/5 * * * *',
+		active: true,
+	};
+
+	async execute(container) {
+		const { client, models, helpers, logger, kythiaConfig, t } =
+			container || this.container;
 
 		// The poller runs on all shards. We'll filter the subscriptions by the current shard.
 		const { ShardClientUtil } = require('discord.js');
@@ -276,5 +281,7 @@ module.exports = {
 				);
 			}
 		}
-	},
-};
+	}
+}
+
+module.exports = PollerTask;

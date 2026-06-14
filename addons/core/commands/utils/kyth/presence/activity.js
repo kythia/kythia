@@ -7,7 +7,9 @@
  */
 
 const { ActivityType, MessageFlags } = require('discord.js');
-const { ACTIVITY_TYPE_OPTIONS } = require('./_group');
+const {
+	ACTIVITY_TYPE_OPTIONS,
+} = require('../../../../helpers/presence-constants');
 
 const { BaseCommand } = require('kythia-core');
 

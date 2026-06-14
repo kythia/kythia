@@ -7,7 +7,7 @@
  */
 
 const { MessageFlags } = require('discord.js');
-const { convertTemperature, tempChoices } = require('./_helpers');
+const { convertTemperature, tempChoices } = require('../../../helpers/convert');
 
 const { BaseCommand } = require('kythia-core');
 

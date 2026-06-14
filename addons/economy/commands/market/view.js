@@ -34,21 +34,7 @@ const { Op } = require('sequelize');
 
 const { BaseCommand } = require('kythia-core');
 
-function formatMarketTable(rows) {
-	return [
-		'```',
-		'SYMBOL   |    PRICE (USD)  |  24H CHANGE',
-		'----------------------------------------',
-		...rows,
-		'```',
-	].join('\n');
-}
-
-function getChangeEmoji(percent) {
-	if (percent > 0) return '🟢 ▲';
-	if (percent < 0) return '🔴 ▼';
-	return '⏹️';
-}
+// Helpers extracted to addons/economy/helpers/market-ui.js
 
 class ViewCommand extends BaseCommand {
 	subcommand = true;
@@ -323,19 +309,31 @@ class ViewCommand extends BaseCommand {
 
 			if (isCrypto) {
 				data = marketData[assetId];
-				if (!data) return assetNotFound(interaction, assetId, t, helpers);
+				if (!data)
+					return helpers.economy['market-ui'].assetNotFound(
+						interaction,
+						assetId,
+						t,
+						helpers,
+					);
 				price = data.usd;
 				percent = data.usd_24h_change;
 				assetName = assetId.toUpperCase();
 			} else {
 				data = await getStockData(assetId);
-				if (!data) return assetNotFound(interaction, assetId, t, helpers);
+				if (!data)
+					return helpers.economy['market-ui'].assetNotFound(
+						interaction,
+						assetId,
+						t,
+						helpers,
+					);
 				price = data.price;
 				percent = data.changePercent;
 				assetName = data.symbol;
 			}
 
-			emoji = getChangeEmoji(percent);
+			emoji = helpers.economy['market-ui'].getChangeEmoji(percent);
 
 			let description = `## ${await t(
 				interaction,
@@ -436,7 +434,7 @@ class ViewCommand extends BaseCommand {
 				})}`.padEnd(15);
 				const changeVal = data.usd_24h_change || 0;
 				const percent = changeVal.toFixed(2);
-				const emoji = getChangeEmoji(changeVal);
+				const emoji = helpers.economy['market-ui'].getChangeEmoji(changeVal);
 				const change = `${emoji} ${percent}%`;
 
 				return `${symbol}| ${price}| ${change}`;
@@ -453,14 +451,16 @@ class ViewCommand extends BaseCommand {
 				})}`.padEnd(15);
 				const changeVal = data.changePercent || 0;
 				const percent = changeVal.toFixed(2);
-				const emoji = getChangeEmoji(changeVal);
+				const emoji = helpers.economy['market-ui'].getChangeEmoji(changeVal);
 				const change = `${emoji} ${percent}%`;
 
 				return `${symbol}| ${price}| ${change}`;
 			}).filter(Boolean);
 
-			const cryptoTable = formatMarketTable(assetRows);
-			const stockTable = formatMarketTable(stockRows);
+			const cryptoTable =
+				helpers.economy['market-ui'].formatMarketTable(assetRows);
+			const stockTable =
+				helpers.economy['market-ui'].formatMarketTable(stockRows);
 
 			const msg =
 				`## ${await t(interaction, 'economy.market.view.all.title')}\n` +
@@ -479,16 +479,3 @@ class ViewCommand extends BaseCommand {
 }
 
 exports.default = ViewCommand;
-
-async function assetNotFound(interaction, assetId, t, helpers) {
-	const msg = await t(interaction, 'economy.market.view.asset.not.found.desc', {
-		asset: assetId.toUpperCase(),
-	});
-	const components = await helpers.discord.simpleContainer(interaction, msg, {
-		color: 'Red',
-	});
-	return interaction.editReply({
-		components,
-		flags: MessageFlags.IsComponentsV2,
-	});
-}

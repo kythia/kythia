@@ -34,12 +34,17 @@ async function findMainChannel(guild, client) {
 	return mainChannel;
 }
 
-module.exports = {
-	taskName: 'daily-greeter',
-	schedule: '0 7 * * *', // Every day at 7 AM
-	active: false,
-	execute: async (container) => {
-		const { logger, client, kythiaConfig } = container;
+const { BaseTask } = require('kythia-core');
+
+class DailyGreeterTask extends BaseTask {
+	task = {
+		taskName: 'daily-greeter',
+		schedule: '0 7 * * *', // Every day at 7 AM
+		active: false,
+	};
+
+	async execute(container) {
+		const { logger, client, kythiaConfig } = container || this.container;
 
 		const apiKeysStr = kythiaConfig.addons.ai.geminiApiKeys || '';
 		if (!apiKeysStr) return;
@@ -94,5 +99,7 @@ module.exports = {
 				label: 'daily-greeter',
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = DailyGreeterTask;

@@ -8,13 +8,17 @@
 
 const { Op } = require('sequelize');
 
-module.exports = {
-	taskName: 'economy-kyth-dividend',
-	schedule: '0 0 * * *',
-	active: true,
+const { BaseTask } = require('kythia-core');
 
-	execute: async (container) => {
-		const { client, models, logger } = container;
+class KythDividendTask extends BaseTask {
+	task = {
+		taskName: 'economy-kyth-dividend',
+		schedule: '0 0 * * *',
+		active: true,
+	};
+
+	async execute(container) {
+		const { client, models, logger } = container || this.container;
 		const { KythLiquidityPool, KythiaUser } = models;
 
 		if (client.shard && !client.shard.ids.includes(0)) return;
@@ -120,5 +124,7 @@ module.exports = {
 				label: 'economy',
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = KythDividendTask;

@@ -31,13 +31,12 @@ const {
 	validateInstagramUser,
 	fetchLatestInstagram,
 } = require('../helpers/instagram');
+const {
+	TIKTOK_LOGO_URL,
+	MAX_SUBSCRIPTIONS_PER_GUILD,
+} = require('../helpers/constants');
 
 const { BaseCommand } = require('kythia-core');
-
-const TIKTOK_LOGO_URL =
-	'https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/tiktok/webapp/main/webapp-desktop/8152caf0c8e8bc67ae0d.png';
-
-const MAX_SUBSCRIPTIONS_PER_GUILD = 25;
 
 class AddCommand extends BaseCommand {
 	subcommand = true;

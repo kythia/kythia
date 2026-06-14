@@ -11,100 +11,13 @@ const {
 	ButtonBuilder,
 	ButtonStyle,
 	ComponentType,
-	ContainerBuilder,
 	MessageFlags,
-	SeparatorBuilder,
-	SeparatorSpacingSize,
 	SlashCommandBuilder,
-	TextDisplayBuilder,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
-const CHOICES = ['rock', 'paper', 'scissors'];
-
-const EMOJI = {
-	rock: '🪨',
-	paper: '📄',
-	scissors: '✂️',
-};
-
-/**
- * Returns 'win' | 'lose' | 'draw' from player1's perspective.
- */
-function getResult(p1, p2) {
-	if (p1 === p2) return 'draw';
-	if (
-		(p1 === 'rock' && p2 === 'scissors') ||
-		(p1 === 'scissors' && p2 === 'paper') ||
-		(p1 === 'paper' && p2 === 'rock')
-	)
-		return 'win';
-	return 'lose';
-}
-
-/**
- * Builds the game ContainerBuilder with the action row embedded inside it.
- * @param {object} options - { title, body, footer, accentColor, row }
- */
-function buildRPSContainer(
-	interaction,
-	{ title, body, footer, accentColor, row = null },
-) {
-	const { helpers, kythiaConfig } = interaction.client.container;
-	const { convertColor } = helpers.color;
-
-	const container = new ContainerBuilder()
-		.setAccentColor(
-			convertColor(accentColor ?? kythiaConfig.bot.color, {
-				from: 'hex',
-				to: 'decimal',
-			}),
-		)
-		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(`${title}\n\n${body}`),
-		)
-		.addSeparatorComponents(
-			new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Small)
-				.setDivider(true),
-		)
-		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(`-# ${footer}`),
-		);
-
-	if (row) container.addActionRowComponents(row);
-	return container;
-}
-
-function buildChoiceRow(disabled = false) {
-	return new ActionRowBuilder().addComponents(
-		new ButtonBuilder()
-			.setCustomId('rps_rock')
-			.setLabel('🪨 Rock')
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(disabled),
-		new ButtonBuilder()
-			.setCustomId('rps_paper')
-			.setLabel('📄 Paper')
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(disabled),
-		new ButtonBuilder()
-			.setCustomId('rps_scissors')
-			.setLabel('✂️ Scissors')
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(disabled),
-	);
-}
-
-function buildRematchRow(label) {
-	return new ActionRowBuilder().addComponents(
-		new ButtonBuilder()
-			.setCustomId('rps_rematch_bot')
-			.setLabel(label)
-			.setStyle(ButtonStyle.Primary),
-	);
-}
+// Helpers extracted to addons/fun/helpers/rps.js
 
 class RpsCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
@@ -119,7 +32,10 @@ class RpsCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { t } = container;
+		const { t, helpers } = container;
+		const rpsHelpers = helpers.fun.rps;
+		const { CHOICES, EMOJI } = rpsHelpers;
+
 		const challenger = interaction.user;
 		const opponent = interaction.options.getUser('opponent');
 		const vsBot = !opponent || opponent.bot;
@@ -132,11 +48,11 @@ class RpsCommand extends BaseCommand {
 				const botChoice = CHOICES[Math.floor(Math.random() * 3)];
 				const title = await t(iCtx, 'fun.rps.title');
 
-				const questionContainer = await buildRPSContainer(iCtx, {
+				const questionContainer = await rpsHelpers.buildRPSContainer(iCtx, {
 					title,
 					body: await t(iCtx, 'fun.rps.choose'),
 					footer: await t(iCtx, 'fun.rps.footer.play'),
-					row: buildChoiceRow(false),
+					row: rpsHelpers.buildChoiceRow(false),
 				});
 
 				let message;
@@ -164,7 +80,7 @@ class RpsCommand extends BaseCommand {
 
 				collector.on('collect', async (i) => {
 					const playerChoice = i.customId.replace('rps_', '');
-					const result = getResult(playerChoice, botChoice);
+					const result = rpsHelpers.getResult(playerChoice, botChoice);
 					const botName = interaction.client.user.username;
 
 					let body;
@@ -191,12 +107,12 @@ class RpsCommand extends BaseCommand {
 						accentColor = '#e74c3c';
 					}
 
-					const resultContainer = await buildRPSContainer(i, {
+					const resultContainer = await rpsHelpers.buildRPSContainer(i, {
 						title: `${title}\n> ${challenger.toString()} ${EMOJI[playerChoice]} vs ${EMOJI[botChoice]} ${botName}`,
 						body,
 						footer: await t(i, 'fun.rps.footer.end'),
 						accentColor,
-						row: buildRematchRow(await t(i, 'fun.rps.rematch')),
+						row: rpsHelpers.buildRematchRow(await t(i, 'fun.rps.rematch')),
 					});
 
 					await i.update({
@@ -208,13 +124,13 @@ class RpsCommand extends BaseCommand {
 
 				collector.on('end', async (collected, reason) => {
 					if (reason === 'time' && collected.size === 0) {
-						const disabledContainer = await buildRPSContainer(
+						const disabledContainer = await rpsHelpers.buildRPSContainer(
 							isUpdate ? iCtx : interaction,
 							{
 								title: await t(interaction, 'fun.rps.title'),
 								body: await t(interaction, 'fun.rps.choose'),
 								footer: await t(interaction, 'fun.rps.footer.play'),
-								row: buildChoiceRow(true),
+								row: rpsHelpers.buildChoiceRow(true),
 							},
 						);
 						await interaction
@@ -267,7 +183,7 @@ class RpsCommand extends BaseCommand {
 				.setStyle(ButtonStyle.Primary),
 		);
 
-		const waitingContainer = await buildRPSContainer(interaction, {
+		const waitingContainer = await rpsHelpers.buildRPSContainer(interaction, {
 			title: `${title}\n> ⚔️ ${challenger.toString()} vs ${opponent.toString()}`,
 			body: await t(interaction, 'fun.rps.waiting', {
 				opponent: opponent.toString(),
@@ -353,14 +269,17 @@ class RpsCommand extends BaseCommand {
 
 			if (reason === 'time' && (!cPick || !oPick)) {
 				const missing = !cPick ? challenger.toString() : opponent.toString();
-				const timedOutContainer = await buildRPSContainer(interaction, {
-					title: headerTitle,
-					body: await t(interaction, 'fun.rps.result.timeout', {
-						opponent: missing,
-					}),
-					footer: await t(interaction, 'fun.rps.footer.end'),
-					accentColor: '#95a5a6',
-				});
+				const timedOutContainer = await rpsHelpers.buildRPSContainer(
+					interaction,
+					{
+						title: headerTitle,
+						body: await t(interaction, 'fun.rps.result.timeout', {
+							opponent: missing,
+						}),
+						footer: await t(interaction, 'fun.rps.footer.end'),
+						accentColor: '#95a5a6',
+					},
+				);
 				return interaction
 					.editReply({
 						components: [timedOutContainer],
@@ -369,7 +288,7 @@ class RpsCommand extends BaseCommand {
 					.catch(() => {});
 			}
 
-			const result = getResult(cPick, oPick);
+			const result = rpsHelpers.getResult(cPick, oPick);
 			const revealText =
 				`\n> ${challenger.toString()}: ${EMOJI[cPick]} **${cPick}**` +
 				`\n> ${opponent.toString()}: ${EMOJI[oPick]} **${oPick}**`;
@@ -395,7 +314,7 @@ class RpsCommand extends BaseCommand {
 				accentColor = result === 'win' ? '#2ecc71' : '#e74c3c';
 			}
 
-			const resultContainer = await buildRPSContainer(interaction, {
+			const resultContainer = await rpsHelpers.buildRPSContainer(interaction, {
 				title: headerTitle + revealText,
 				body,
 				footer: await t(interaction, 'fun.rps.footer.end'),

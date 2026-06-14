@@ -11,49 +11,7 @@ const { Op, fn, col } = require('sequelize');
 
 const { BaseCommand } = require('kythia-core');
 
-/**
- * Returns the start date string (YYYY-MM-DD) for a given period.
- * Returns null for 'all'.
- *
- * @param {string} period
- * @returns {string|null}
- */
-const getPeriodStart = (period) => {
-	const now = new Date();
-	if (period === 'daily') return now.toISOString().slice(0, 10);
-	if (period === 'weekly') {
-		const d = new Date(now);
-		d.setDate(d.getDate() - 6);
-		return d.toISOString().slice(0, 10);
-	}
-	if (period === 'monthly') {
-		const d = new Date(now);
-		d.setDate(d.getDate() - 29);
-		return d.toISOString().slice(0, 10);
-	}
-	return null;
-};
-
-/**
- * Formats a duration in seconds to a human-readable string (Xh Ym Zs).
- *
- * @param {bigint|number} totalSeconds
- * @returns {string}
- */
-const formatDuration = (totalSeconds) => {
-	const secs = Number(totalSeconds);
-	if (secs <= 0) return '0s';
-
-	const h = Math.floor(secs / 3600);
-	const m = Math.floor((secs % 3600) / 60);
-	const s = secs % 60;
-
-	const parts = [];
-	if (h > 0) parts.push(`${h}h`);
-	if (m > 0) parts.push(`${m}m`);
-	if (s > 0 || parts.length === 0) parts.push(`${s}s`);
-	return parts.join(' ');
-};
+// Helpers extracted to addons/activity/helpers/leaderboard.js
 
 class StatsCommand extends BaseCommand {
 	subcommand = true;
@@ -110,7 +68,7 @@ class StatsCommand extends BaseCommand {
 			totalMessages = stat ? Number(BigInt(stat.totalMessages)) : 0;
 			totalVoiceTime = stat ? Number(BigInt(stat.totalVoiceTime)) : 0;
 		} else {
-			const startDate = getPeriodStart(period);
+			const startDate = helpers.activity.leaderboard.getPeriodStart(period);
 			const [row] = await ActivityLog.getAllCache({
 				where: { guildId, userId, date: { [Op.gte]: startDate } },
 				attributes: [
@@ -127,7 +85,7 @@ class StatsCommand extends BaseCommand {
 		const desc = await t(interaction, 'activity.stats.activity.stats.desc', {
 			username: targetUser.username,
 			messages: totalMessages.toLocaleString(),
-			voiceTime: formatDuration(totalVoiceTime),
+			voiceTime: helpers.activity.leaderboard.formatDuration(totalVoiceTime),
 		});
 
 		const components = await simpleContainer(interaction, `${title}\n${desc}`, {

@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const { resetServer } = require('./_helpers');
+const { resetServer } = require('../../helpers/server');
 
 const { BaseCommand } = require('kythia-core');
 

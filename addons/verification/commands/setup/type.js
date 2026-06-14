@@ -10,11 +10,7 @@ const { MessageFlags } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
-const CAPTCHA_TYPES = [
-	{ name: 'Math (multiple choice buttons)', value: 'math' },
-	{ name: 'Emoji click (buttons)', value: 'emoji' },
-	{ name: 'Image text (type the code)', value: 'image' },
-];
+// Constants extracted to addons/verification/helpers/constants.js
 
 class TypeCommand extends BaseCommand {
 	subcommand = true;
@@ -28,7 +24,7 @@ class TypeCommand extends BaseCommand {
 					.setName('type')
 					.setDescription('Type of captcha')
 					.setRequired(true)
-					.addChoices(...CAPTCHA_TYPES),
+					.addChoices(...require('../../helpers/constants').CAPTCHA_TYPES),
 			);
 
 	async execute(interaction) {
@@ -49,7 +45,9 @@ class TypeCommand extends BaseCommand {
 		config.captchaType = type;
 		await config.save();
 
-		const label = CAPTCHA_TYPES.find((t) => t.value === type)?.name;
+		const label = require('../../helpers/constants').CAPTCHA_TYPES.find(
+			(t) => t.value === type,
+		)?.name;
 		const components = await simpleContainer(
 			interaction,
 			await t(interaction, 'verify.setup.type.success', { type: label }),

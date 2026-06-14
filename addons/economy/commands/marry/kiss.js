@@ -11,7 +11,7 @@ const { Op } = require('sequelize');
 
 const { BaseCommand } = require('kythia-core');
 
-const KISS_COOLDOWN = 3600;
+const { KISS_COOLDOWN } = require('../../helpers/constants');
 
 class KissCommand extends BaseCommand {
 	slashCommand = (subcommand) =>

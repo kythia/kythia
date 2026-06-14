@@ -7,8 +7,14 @@ const { MessageFlags } = require('discord.js');
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TvWaitingDenyButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, t } = container;
 
 		const [_, mainChannelId, userIdToKick] = interaction.customId.split(':');
@@ -46,5 +52,7 @@ module.exports = {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = TvWaitingDenyButton;

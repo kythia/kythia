@@ -5,8 +5,16 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-module.exports = {
-	execute: async (interaction) => {
+const { BaseButton } = require('kythia-core');
+
+class TicketCancelCloseButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const _container = this.container;
+
 		await interaction.message.delete().catch(() => {});
-	},
-};
+	}
+}
+
+module.exports = TicketCancelCloseButton;

@@ -19,15 +19,20 @@ const {
 // kythia-arts is now imported in the sandboxed queue processor
 const { DateTime } = require('luxon');
 
-module.exports = {
-	taskName: 'birthday-announcer',
-	schedule: '0 * * * *',
-	active: true,
-	execute: async (container) => {
-		const { client } = container;
-		const { models, helpers, logger } = container;
+const { BaseTask } = require('kythia-core');
+
+class AnnouncerTask extends BaseTask {
+	task = {
+		taskName: 'birthday-announcer',
+		schedule: '0 * * * *',
+		active: true,
+	};
+
+	async execute(container) {
+		const { client } = container || this.container;
+		const { models, helpers, logger } = container || this.container;
 		const { UserBirthday } = models;
-		const { t } = container;
+		const { t } = container || this.container;
 		const { getGuildSafe } = helpers.discord;
 		const { ShardClientUtil } = require('discord.js');
 
@@ -253,5 +258,7 @@ module.exports = {
 					label: 'birthday',
 				});
 		}
-	},
-};
+	}
+}
+
+module.exports = AnnouncerTask;

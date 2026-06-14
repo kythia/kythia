@@ -20,8 +20,14 @@ const {
 	PermissionsBitField,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TicketClaimButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, t, helpers, kythiaConfig, logger } = container;
 		const { Ticket, TicketConfig } = models;
 		const { simpleContainer } = helpers.discord;
@@ -188,5 +194,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = TicketClaimButton;

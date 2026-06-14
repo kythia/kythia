@@ -8,8 +8,14 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class NsfwDeleteButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t } = container;
 
 		// Verify ownership via interaction.message.interaction.user.id
@@ -25,5 +31,7 @@ module.exports = {
 
 		// Delete the message
 		await interaction.message.delete().catch(() => {});
-	},
-};
+	}
+}
+
+module.exports = NsfwDeleteButton;

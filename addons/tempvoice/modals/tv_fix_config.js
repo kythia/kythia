@@ -7,8 +7,14 @@
  */
 const { ComponentType, MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseModal } = require('kythia-core');
+
+class TvFixConfigModal extends BaseModal {
+	modal = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, t } = container;
 		const { TempVoiceConfig } = models;
 		const guild = interaction.guild;
@@ -102,5 +108,7 @@ module.exports = {
 		logs.push(await t(interaction, 'tempvoice.fix_config.success'));
 
 		await interaction.editReply({ content: logs.join('\n') });
-	},
-};
+	}
+}
+
+module.exports = TvFixConfigModal;

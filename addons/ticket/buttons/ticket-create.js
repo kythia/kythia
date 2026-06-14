@@ -14,8 +14,14 @@ const {
 	TextInputStyle,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TicketCreateButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, helpers, t } = container;
 		const { TicketConfig } = models;
 		const { simpleContainer } = helpers.discord;
@@ -62,5 +68,7 @@ module.exports = {
 		} else {
 			await createTicketChannel(interaction, ticketConfig, container, null);
 		}
-	},
-};
+	}
+}
+
+module.exports = TicketCreateButton;

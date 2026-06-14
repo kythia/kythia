@@ -6,13 +6,18 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	taskName: 'economy-token-burn',
-	schedule: '0 12 1 * *',
-	active: true,
+const { BaseTask } = require('kythia-core');
 
-	execute: async (container) => {
-		const { client, models, logger, kythiaConfig } = container;
+class TokenBurnTask extends BaseTask {
+	task = {
+		taskName: 'economy-token-burn',
+		schedule: '0 12 1 * *',
+		active: true,
+	};
+
+	async execute(container) {
+		const { client, models, logger, kythiaConfig } =
+			container || this.container;
 		const { KythLiquidityPool } = models;
 
 		if (client.shard && !client.shard.ids.includes(0)) return;
@@ -104,5 +109,7 @@ module.exports = {
 				label: 'economy',
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = TokenBurnTask;

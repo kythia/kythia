@@ -11,17 +11,7 @@ const crypto = require('node:crypto');
 
 const { BaseCommand } = require('kythia-core');
 
-const SUPPORTED_ALGOS = [
-	{ name: 'MD5', value: 'md5' },
-	{ name: 'SHA1', value: 'sha1' },
-	{ name: 'SHA224', value: 'sha224' },
-	{ name: 'SHA256', value: 'sha256' },
-	{ name: 'SHA384', value: 'sha384' },
-	{ name: 'SHA512', value: 'sha512' },
-	{ name: 'SHA3-256', value: 'sha3-256' },
-	{ name: 'SHA3-512', value: 'sha3-512' },
-	{ name: 'RIPEMD160', value: 'ripemd160' },
-];
+const SUPPORTED_ALGOS = require('../../helpers/crypto').SUPPORTED_ALGOS;
 
 class HashCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()

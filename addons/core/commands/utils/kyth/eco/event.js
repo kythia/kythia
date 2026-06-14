@@ -136,7 +136,7 @@ class EventCommand extends BaseCommand {
 				`**Serok bawah sekarang!** Use \`/eco market buy kyth\` to buy the dip! 🛒`,
 			].join('\n');
 
-			await broadcastToGuilds(
+			await helpers.core['kyth-eco'].broadcastToGuilds(
 				interaction.client,
 				kythiaConfig,
 				channelId,
@@ -190,7 +190,7 @@ class EventCommand extends BaseCommand {
 				`Existing KYTH holders just got richer. 🚀 Diamond hands win!`,
 			].join('\n');
 
-			await broadcastToGuilds(
+			await helpers.core['kyth-eco'].broadcastToGuilds(
 				interaction.client,
 				kythiaConfig,
 				channelId,
@@ -252,7 +252,7 @@ class EventCommand extends BaseCommand {
 				`**FOMO alert!** Use \`/eco market buy kyth\` before it goes even higher! 💎`,
 			].join('\n');
 
-			await broadcastToGuilds(
+			await helpers.core['kyth-eco'].broadcastToGuilds(
 				interaction.client,
 				kythiaConfig,
 				channelId,
@@ -283,7 +283,7 @@ class EventCommand extends BaseCommand {
 				});
 			}
 
-			await broadcastToGuilds(
+			await helpers.core['kyth-eco'].broadcastToGuilds(
 				interaction.client,
 				kythiaConfig,
 				channelId,
@@ -304,32 +304,3 @@ class EventCommand extends BaseCommand {
 }
 
 exports.default = EventCommand;
-
-/**
- * Broadcasts a message to the configured KYTH announcement channel.
- */
-async function broadcastToGuilds(
-	client,
-	kythiaConfig,
-	overrideChannelId,
-	text,
-) {
-	const targetChannelId =
-		overrideChannelId || kythiaConfig?.addons?.economy?.kythAnnounceChannelId;
-	if (!targetChannelId) return;
-
-	try {
-		if (client.shard) {
-			await client.shard.broadcastEval(
-				async (c, { channelId, msg }) => {
-					const ch = c.channels.cache.get(channelId);
-					if (ch) await ch.send(msg);
-				},
-				{ context: { channelId: targetChannelId, msg: text } },
-			);
-		} else {
-			const ch = client.channels.cache.get(targetChannelId);
-			if (ch) await ch.send(text);
-		}
-	} catch (_e) {}
-}

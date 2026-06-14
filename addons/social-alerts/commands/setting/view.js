@@ -16,7 +16,7 @@ const {
 
 const { BaseCommand } = require('kythia-core');
 
-const MAX_SUBSCRIPTIONS_PER_GUILD = 25;
+// Constants extracted to addons/social-alerts/helpers/constants.js
 
 class ViewCommand extends BaseCommand {
 	subcommand = true;
@@ -34,6 +34,7 @@ class ViewCommand extends BaseCommand {
 
 		await interaction.deferReply();
 
+		const { MAX_SUBSCRIPTIONS_PER_GUILD } = helpers['social-alerts'].constants;
 		const [setting, subs] = await Promise.all([
 			SocialAlertSetting.getCache({ guildId: interaction.guild.id }),
 			SocialAlertSubscription.getAllCache({ guildId: interaction.guild.id }),

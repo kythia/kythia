@@ -11,13 +11,6 @@ const axios = require('axios');
 
 const { BaseCommand } = require('kythia-core');
 
-const SUPPORTED_HASHES = [
-	{ name: 'MD5', value: 'md5' },
-	{ name: 'SHA1', value: 'sha1' },
-	{ name: 'SHA256', value: 'sha256' },
-	{ name: 'SHA512', value: 'sha512' },
-];
-
 class CrackHashCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('crack-hash')
@@ -29,7 +22,7 @@ class CrackHashCommand extends BaseCommand {
 				.setName('algorithm')
 				.setDescription('The hash algorithm to lookup')
 				.setRequired(true)
-				.addChoices(...SUPPORTED_HASHES),
+				.addChoices(...require('../../helpers/crypto').SUPPORTED_HASHES),
 		)
 		.addStringOption((option) =>
 			option
@@ -67,6 +60,7 @@ class CrackHashCommand extends BaseCommand {
 			});
 		}
 
+		const { SUPPORTED_HASHES } = helpers.core.crypto;
 		const algoObj = SUPPORTED_HASHES.find((a) => a.value === algorithm);
 
 		let resultText = await t(interaction, 'core.tools.crackhash.not.found');

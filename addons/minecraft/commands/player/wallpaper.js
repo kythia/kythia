@@ -18,22 +18,14 @@ const {
 
 const { BaseCommand } = require('kythia-core');
 
+const {
+	WALLPAPERS,
+	MULTI_PLAYER_WALLPAPERS,
+	USERNAME_REGEX,
+} = require('../../helpers/constants');
+
 const SKIN_API_BASE =
 	'https://starlightskins.lunareclipse.studio/render/wallpaper';
-
-const WALLPAPERS = [
-	{ name: 'Herobrine Hill', value: 'herobrine_hill' },
-	{ name: 'Quick Hide', value: 'quick_hide' },
-	{ name: 'Malevolent', value: 'malevolent' },
-	{ name: 'Off to the Stars', value: 'off_to_the_stars' },
-	{ name: 'Wheat', value: 'wheat' },
-];
-
-// Wallpapers that support more than 1 player
-const MULTI_PLAYER_WALLPAPERS = new Set(['quick_hide']);
-
-// Valid usernames: 3-16 chars, alphanumeric + underscore
-const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,16}$/;
 
 class WallpaperCommand extends BaseCommand {
 	subcommand = true;

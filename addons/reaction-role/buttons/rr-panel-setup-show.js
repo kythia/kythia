@@ -15,8 +15,14 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class RrPanelSetupShowButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const originalMessageId = interaction.message.id;
@@ -121,5 +127,7 @@ module.exports = {
 				});
 			}
 		}
-	},
-};
+	}
+}
+
+module.exports = RrPanelSetupShowButton;

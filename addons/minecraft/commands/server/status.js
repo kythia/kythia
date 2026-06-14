@@ -20,7 +20,7 @@ const axios = require('axios');
 
 const { BaseCommand } = require('kythia-core');
 
-const HOST_REGEX = /^[a-zA-Z0-9._-]+(:\d{1,5})?$/;
+const { HOST_REGEX } = require('../../helpers/constants');
 
 /**
  * Parse host string into { host, port } — port defaults to 25565 for Java.

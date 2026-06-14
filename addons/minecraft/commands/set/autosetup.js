@@ -19,7 +19,7 @@ const { fetchMcStatus } = require('../../helpers/mcstats');
 
 const { BaseCommand } = require('kythia-core');
 
-const HOST_REGEX = /^[a-zA-Z0-9._-]+(:\d{1,5})?$/;
+const { HOST_REGEX } = require('../../helpers/constants');
 
 class AutosetupCommand extends BaseCommand {
 	subcommand = true;

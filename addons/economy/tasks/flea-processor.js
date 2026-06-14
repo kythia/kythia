@@ -9,13 +9,17 @@
 const { Op } = require('sequelize');
 const { toBigIntSafe } = require('../helpers/bigint');
 
-module.exports = {
-	taskName: 'economy-flea-processor',
-	schedule: '*/5 * * * *',
-	active: true,
+const { BaseTask } = require('kythia-core');
 
-	execute: async (container) => {
-		const { client, models, logger } = container;
+class FleaProcessorTask extends BaseTask {
+	task = {
+		taskName: 'economy-flea-processor',
+		schedule: '*/5 * * * *',
+		active: true,
+	};
+
+	async execute(container) {
+		const { client, models, logger } = container || this.container;
 		const { FleaMarketListing, Inventory, KythiaUser } = models;
 
 		if (client.shard && !client.shard.ids.includes(0)) {
@@ -90,5 +94,7 @@ module.exports = {
 				label: 'economy',
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = FleaProcessorTask;

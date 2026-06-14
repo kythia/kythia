@@ -7,8 +7,14 @@
  */
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TvWaitingAllowButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, client, t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const { TempVoiceChannel } = models;
@@ -65,5 +71,7 @@ module.exports = {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = TvWaitingAllowButton;

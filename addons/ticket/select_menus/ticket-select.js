@@ -14,8 +14,14 @@ const {
 	TextInputStyle,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseSelectMenu } = require('kythia-core');
+
+class TicketSelectSelectMenu extends BaseSelectMenu {
+	selectMenu = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, t, helpers } = container;
 		const { TicketConfig } = models;
 		const { simpleContainer } = helpers.discord;
@@ -66,5 +72,7 @@ module.exports = {
 		} else {
 			await createTicketChannel(interaction, ticketConfig, container, null);
 		}
-	},
-};
+	}
+}
+
+module.exports = TicketSelectSelectMenu;

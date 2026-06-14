@@ -10,8 +10,14 @@ const { MessageFlags } = require('discord.js');
 const { buildComponentRows } = require('../helpers/buttons.js');
 const { fetchContent } = require('../helpers/api.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class NsfwRefreshButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t, helpers, models, logger } = container;
 		const { NsfwUser } = models;
 
@@ -78,5 +84,7 @@ module.exports = {
 				86400 * 3,
 			);
 		}
-	},
-};
+	}
+}
+
+module.exports = NsfwRefreshButton;

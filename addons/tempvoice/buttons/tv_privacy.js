@@ -13,8 +13,14 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TvPrivacyButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { client, models, t, helpers, logger } = container;
 		const { TempVoiceChannel } = models;
 		const { convertColor } = helpers.color;
@@ -117,5 +123,7 @@ module.exports = {
 			components: [containerComponent],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+module.exports = TvPrivacyButton;

@@ -13,8 +13,14 @@ const {
 	ActionRowBuilder,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class MmCloseWithReasonButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t } = container;
 
 		const modal = new ModalBuilder()
@@ -37,5 +43,7 @@ module.exports = {
 		);
 
 		return interaction.showModal(modal);
-	},
-};
+	}
+}
+
+module.exports = MmCloseWithReasonButton;

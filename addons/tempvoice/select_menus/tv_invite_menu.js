@@ -7,8 +7,14 @@
  */
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseSelectMenu } = require('kythia-core');
+
+class TvInviteMenuSelectMenu extends BaseSelectMenu {
+	selectMenu = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, client, t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const { TempVoiceChannel } = models;
@@ -135,5 +141,7 @@ module.exports = {
 				color: 'Green',
 			}),
 		});
-	},
-};
+	}
+}
+
+module.exports = TvInviteMenuSelectMenu;

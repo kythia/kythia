@@ -13,30 +13,12 @@ const {
 	SeparatorBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
+
 const achievementDefs = require('../../helpers/achievements');
 
 const { BaseCommand } = require('kythia-core');
 
-/** Emoji for each rarity tier */
-const RARITY_EMOJI = {
-	common: '⚪',
-	rare: '🔵',
-	epic: '🟣',
-	legendary: '🟡',
-};
-
-/** Human-readable category labels */
-const CATEGORY_LABELS = {
-	messages: '💬 Messages (All-Time)',
-	messages_daily: '📅 Messages (Daily Record)',
-	messages_weekly: '📆 Messages (Weekly Record)',
-	voice: '🎙️ Voice Chat (Hours)',
-	voice_joins: '🔔 Voice Chat (Joins)',
-	reactions: '😄 Reactions',
-	server_age: '📅 Server Membership',
-	collector: '🏅 Achievement Collector',
-	special: '⭐ Special',
-};
+// Constants extracted to addons/activity/helpers/achievement-ui.js
 
 class ListCommand extends BaseCommand {
 	subcommand = true;
@@ -106,12 +88,14 @@ class ListCommand extends BaseCommand {
 
 		for (const [catKey, achievements] of categories) {
 			if (!achievements || achievements.length === 0) continue;
-			const label = CATEGORY_LABELS[catKey] ?? catKey;
+			const label =
+				helpers.activity['achievement-ui'].CATEGORY_LABELS[catKey] ?? catKey;
 			lines.push(`### ${label}`);
 
 			for (const a of achievements) {
 				const unlocked = unlockedSet.has(a.id);
-				const rarityEmoji = RARITY_EMOJI[a.rarity] ?? '⚪';
+				const rarityEmoji =
+					helpers.activity['achievement-ui'].RARITY_EMOJI[a.rarity] ?? '⚪';
 				const status = unlocked ? '✅' : '🔒';
 				const localizedName = await container.t(interaction, a.nameKey);
 				const localizedDesc = await container.t(interaction, a.descKey);

@@ -15,8 +15,14 @@ const {
 } = require('discord.js');
 const { refreshTicketPanel } = require('../helpers');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseModal } = require('kythia-core');
+
+class TktTypeStep3SubmitModal extends BaseModal {
+	modal = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { redis, kythiaConfig, t, helpers, models, logger } = container;
 		const { convertColor } = helpers.color;
 		const { simpleContainer } = helpers.discord;
@@ -125,5 +131,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = TktTypeStep3SubmitModal;

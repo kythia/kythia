@@ -220,4 +220,122 @@ module.exports = {
 	lookupTikTokUser,
 	fetchLatestTikTok,
 	validateTikTokUser,
+	handleTikTokAdd,
 };
+
+const { MessageFlags } = require('discord.js');
+const TIKTOK_LOGO_URL =
+	'https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/tiktok/webapp/main/webapp-desktop/8152caf0c8e8bc67ae0d.png';
+
+async function handleTikTokAdd({
+	interaction,
+	existing,
+	rawUsername,
+	discordChannel,
+	customMessage,
+	SocialAlertSubscription,
+	simpleContainer,
+	convertColor,
+	kythiaConfig,
+	t,
+	buildSuccessContainer,
+}) {
+	const rsshubUrl =
+		kythiaConfig?.addons?.socialAlerts?.rsshubUrl || 'https://rsshub.app';
+	const username = rawUsername.startsWith('@')
+		? rawUsername
+		: `@${rawUsername}`;
+
+	const duplicate = existing.find(
+		(s) =>
+			s.platform === 'tiktok' &&
+			s.youtubeChannelId.toLowerCase() === username.toLowerCase(),
+	);
+	if (duplicate) {
+		return interaction.editReply({
+			components: await simpleContainer(
+				interaction,
+				await t(interaction, 'social-alert.add.duplicate.tiktok', {
+					name: duplicate.youtubeChannelName,
+				}),
+				{ color: 'Yellow' },
+			),
+			flags: MessageFlags.IsComponentsV2,
+		});
+	}
+
+	const cleanUsername = rawUsername.replace(/^@/, '').trim();
+	let displayName = username;
+
+	try {
+		const oEmbedUrl = `https://www.tiktok.com/oembed?url=${encodeURIComponent(`https://www.tiktok.com/@${cleanUsername}`)}`;
+		const oEmbedRes = await fetch(oEmbedUrl, {
+			headers: { 'User-Agent': 'KythiaBot/1.0' },
+			signal: AbortSignal.timeout(6_000),
+		});
+
+		if (oEmbedRes.status === 404) {
+			return interaction.editReply({
+				components: await simpleContainer(
+					interaction,
+					await t(interaction, 'social-alert.add.tiktok.not_found', {
+						username,
+					}),
+					{ color: 'Red' },
+				),
+				flags: MessageFlags.IsComponentsV2,
+			});
+		}
+
+		if (oEmbedRes.ok) {
+			const oembed = await oEmbedRes.json();
+			displayName = oembed.author_name || username;
+		}
+	} catch {}
+
+	let lastVideoId = null;
+	try {
+		const latest = await fetchLatestTikTok(rawUsername, rsshubUrl);
+		if (latest) lastVideoId = latest.videoId;
+	} catch {}
+
+	await SocialAlertSubscription.create({
+		guildId: interaction.guild.id,
+		discordChannelId: discordChannel.id,
+		youtubeChannelId: username,
+		youtubeChannelName: displayName,
+		youtubeThumbnailUrl: null,
+		message: customMessage || null,
+		lastVideoId,
+		platform: 'tiktok',
+	});
+
+	const messageLine = customMessage
+		? await t(interaction, 'social-alert.add.success.custom_message', {
+				message: customMessage,
+			})
+		: await t(interaction, 'social-alert.add.success.default_message');
+	const description = await t(interaction, 'social-alert.add.success.tiktok', {
+		name: displayName,
+		username,
+		channel: discordChannel.id,
+		message_line: messageLine,
+	});
+	const footer = await t(interaction, 'social-alert.add.success.footer');
+
+	return interaction.editReply({
+		components: [
+			buildSuccessContainer({
+				accentColor: convertColor(kythiaConfig?.bot?.color || '#FF0000', {
+					from: 'hex',
+					to: 'decimal',
+				}),
+				description,
+				footer,
+				thumbnailUrl: TIKTOK_LOGO_URL,
+				thumbnailAlt: 'TikTok',
+			}),
+		],
+		flags: MessageFlags.IsComponentsV2,
+	});
+}

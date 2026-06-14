@@ -89,14 +89,28 @@ class AddCommand extends BaseCommand {
 			mediaUrl = media.url;
 		}
 
-		await AutoReply.create({
-			guildId: interaction.guild.id,
-			userId: interaction.user.id,
-			trigger,
-			response,
-			media: mediaUrl,
-			useContainer,
-		});
+		try {
+			await AutoReply.create({
+				guildId: interaction.guild.id,
+				userId: interaction.user.id,
+				trigger,
+				response,
+				media: mediaUrl,
+				useContainer,
+			});
+		} catch (err) {
+			if (err.name === 'SequelizeUniqueConstraintError') {
+				const msg = await t(interaction, 'autoreply.add.error.exists');
+				const components = await simpleContainer(interaction, msg, {
+					color: 'Red',
+				});
+				return interaction.editReply({
+					components,
+					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
+				});
+			}
+			throw err;
+		}
 
 		const msg = await t(interaction, 'autoreply.add.success.plain', {
 			trigger: trigger,

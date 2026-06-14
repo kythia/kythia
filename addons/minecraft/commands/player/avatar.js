@@ -18,8 +18,7 @@ const {
 
 const { BaseCommand } = require('kythia-core');
 
-const SKIN_API_BASE = 'https://starlightskins.lunareclipse.studio/render';
-const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,16}$/;
+const { SKIN_API_BASE, USERNAME_REGEX } = require('../../helpers/constants');
 
 class AvatarCommand extends BaseCommand {
 	subcommand = true;

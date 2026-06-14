@@ -8,8 +8,14 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class GiveawayJoinButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		// Ambil tools yang dibutuhkan dari container
 		const { models, helpers, t, giveawayManager, logger } = container;
 		const { simpleContainer } = helpers.discord;
@@ -137,5 +143,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = GiveawayJoinButton;

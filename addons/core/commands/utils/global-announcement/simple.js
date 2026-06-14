@@ -17,7 +17,6 @@ const {
 	TextInputBuilder,
 	ActionRowBuilder,
 } = require('discord.js');
-const { sendToAllGuilds } = require('./_command');
 
 const { BaseCommand } = require('kythia-core');
 
@@ -122,7 +121,11 @@ class SimpleCommand extends BaseCommand {
 			components: [containerMsg],
 			flags: MessageFlags.IsComponentsV2,
 		};
-		await sendToAllGuilds(modalSubmit, payload);
+		await container.helpers.core.announcement.sendToAllGuilds(
+			container,
+			modalSubmit,
+			payload,
+		);
 	}
 }
 

@@ -84,3 +84,110 @@ async function fetchLatestVideo(channelId) {
 }
 
 module.exports = { searchYouTubeChannels, fetchLatestVideo };
+
+const { MessageFlags } = require('discord.js');
+
+async function handleYouTubeAdd({
+	interaction,
+	existing,
+	youtubeChannelId,
+	discordChannel,
+	customMessage,
+	SocialAlertSubscription,
+	simpleContainer,
+	convertColor,
+	kythiaConfig,
+	t,
+	buildSuccessContainer,
+}) {
+	const duplicate = existing.find(
+		(s) => s.platform === 'youtube' && s.youtubeChannelId === youtubeChannelId,
+	);
+	if (duplicate) {
+		return interaction.editReply({
+			components: await simpleContainer(
+				interaction,
+				await t(interaction, 'social-alert.add.duplicate.youtube', {
+					name: duplicate.youtubeChannelName,
+				}),
+				{ color: 'Yellow' },
+			),
+			flags: MessageFlags.IsComponentsV2,
+		});
+	}
+
+	const apiKey =
+		kythiaConfig?.addons?.socialAlerts?.youtubeApiKey ||
+		process.env.YOUTUBE_API_KEY;
+
+	let channelName = youtubeChannelId;
+	let thumbnailUrl = null;
+
+	if (apiKey) {
+		try {
+			const url = new URL('https://www.googleapis.com/youtube/v3/channels');
+			url.searchParams.set('part', 'snippet');
+			url.searchParams.set('id', youtubeChannelId);
+			url.searchParams.set('key', apiKey);
+			const res = await fetch(url.href);
+			if (res.ok) {
+				const data = await res.json();
+				const ch = data.items?.[0];
+				if (ch) {
+					channelName = ch.snippet.title;
+					thumbnailUrl =
+						ch.snippet.thumbnails?.high?.url ||
+						ch.snippet.thumbnails?.default?.url ||
+						null;
+				}
+			}
+		} catch {}
+	}
+
+	let lastVideoId = null;
+	try {
+		const latest = await fetchLatestVideo(youtubeChannelId);
+		if (latest) lastVideoId = latest.videoId;
+	} catch {}
+
+	await SocialAlertSubscription.create({
+		guildId: interaction.guild.id,
+		discordChannelId: discordChannel.id,
+		youtubeChannelId,
+		youtubeChannelName: channelName,
+		youtubeThumbnailUrl: thumbnailUrl,
+		message: customMessage || null,
+		lastVideoId,
+		platform: 'youtube',
+	});
+
+	const messageLine = customMessage
+		? await t(interaction, 'social-alert.add.success.custom_message', {
+				message: customMessage,
+			})
+		: await t(interaction, 'social-alert.add.success.default_message');
+	const description = await t(interaction, 'social-alert.add.success.youtube', {
+		name: channelName,
+		channel: discordChannel.id,
+		message_line: messageLine,
+	});
+	const footer = await t(interaction, 'social-alert.add.success.footer');
+
+	return interaction.editReply({
+		components: [
+			buildSuccessContainer({
+				accentColor: convertColor(kythiaConfig?.bot?.color || '#FF0000', {
+					from: 'hex',
+					to: 'decimal',
+				}),
+				description,
+				footer,
+				thumbnailUrl,
+				thumbnailAlt: channelName,
+			}),
+		],
+		flags: MessageFlags.IsComponentsV2,
+	});
+}
+
+module.exports.handleYouTubeAdd = handleYouTubeAdd;

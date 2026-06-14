@@ -9,8 +9,14 @@
 const { createTicketChannel } = require('../helpers');
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseModal } = require('kythia-core');
+
+class TktOpenReasonModal extends BaseModal {
+	modal = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, t, helpers, logger } = container;
 		const { TicketConfig } = models;
 		const { simpleContainer } = helpers.discord;
@@ -55,5 +61,7 @@ module.exports = {
 				});
 			}
 		}
-	},
-};
+	}
+}
+
+module.exports = TktOpenReasonModal;

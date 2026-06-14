@@ -8,9 +8,17 @@
 
 const { closeModmail } = require('../helpers');
 
-module.exports = {
-	execute: (interaction, container) => {
+const { BaseModal } = require('kythia-core');
+
+class MmCloseReasonSubmitModal extends BaseModal {
+	modal = {};
+
+	execute(interaction) {
+		const container = this.container;
+
 		const reason = interaction.fields.getTextInputValue('reason');
 		return closeModmail(interaction, container, reason);
-	},
-};
+	}
+}
+
+module.exports = MmCloseReasonSubmitModal;

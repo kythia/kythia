@@ -8,8 +8,14 @@
 
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class MmCancelCloseButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const desc = await t(interaction, 'modmail.close.cancelled');
@@ -19,5 +25,7 @@ module.exports = {
 			}),
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+module.exports = MmCancelCloseButton;

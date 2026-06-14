@@ -13,8 +13,14 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class RrPanelAddEmojiShowButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, helpers, logger } = container;
 		const { ReactionRolePanel } = models;
 		const { simpleContainer } = helpers.discord;
@@ -111,5 +117,7 @@ module.exports = {
 				});
 			}
 		}
-	},
-};
+	}
+}
+
+module.exports = RrPanelAddEmojiShowButton;

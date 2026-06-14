@@ -33,9 +33,13 @@ Kythia uses a highly modular directory structure to split complex commands (subc
 
 If a command has no subcommands, it is a single file exporting an ES6 class extending `BaseCommand`.
 
+>[!WARNING]
+> Never Write Helpers in commands file, instead write it on my-addon/helpers/
+
 ```javascript
-const { SlashCommandBuilder } = require("discord.js");
 const { BaseCommand } = require("kythia-core");
+
+const { SlashCommandBuilder } = require("discord.js");
 
 class ExampleCommand extends BaseCommand {
   slashCommand = new SlashCommandBuilder()

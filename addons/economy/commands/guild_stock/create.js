@@ -9,8 +9,10 @@ const { BaseCommand } = require('kythia-core');
  */
 
 // Hardcoded listing requirements
-const REQUIRED_MEMBERS = 1000;
-const LISTING_FEE_KYTH = 50;
+const {
+	REQUIRED_MEMBERS,
+	LISTING_FEE_KYTH,
+} = require('../../helpers/constants');
 
 class CreateCommand extends BaseCommand {
 	subcommand = true;

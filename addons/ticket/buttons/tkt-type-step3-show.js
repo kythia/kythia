@@ -17,8 +17,14 @@ const {
 	StringSelectMenuBuilder,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TktTypeStep3ShowButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t, helpers, redis, logger } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -116,5 +122,7 @@ module.exports = {
 				});
 			}
 		}
-	},
-};
+	}
+}
+
+module.exports = TktTypeStep3ShowButton;

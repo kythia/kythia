@@ -11,94 +11,9 @@ const { formatPoolStats } = require('../../../../../economy/helpers/kyth-amm');
 
 const { BaseCommand } = require('kythia-core');
 
-// ── Human-readable config display ─────────────────────────────────────────────
-function fmtBool(val) {
-	return val ? '✅ Active' : '⏸️ Paused';
-}
-function fmtPct(val) {
-	return `${Number(val).toFixed(2)}%`;
-}
-function fmtCoin(val) {
-	const n = Number(val);
-	return n === 0 ? 'Unlimited' : `🪙 ${n.toLocaleString()}`;
-}
+// Helpers extracted to addons/core/helpers/kyth-eco.js
 
-// ── Config param definitions ───────────────────────────────────────────────────
-const CONFIG_PARAMS = {
-	// Format: key → { column, type, label, validate(v), desc }
-	trading_halt: {
-		column: 'tradingHalted',
-		type: 'bool',
-		label: '🚫 Trading Halt',
-		desc: 'Emergency kill switch. Halts ALL KYTH buy/sell.',
-	},
-	fee_rate: {
-		column: 'feeRatePct',
-		type: 'float',
-		label: '💸 Protocol Fee',
-		desc: 'Fee % taken per swap (e.g. 2 = 2%). Range: 0–10.',
-		validate: (v) => v >= 0 && v <= 10,
-	},
-	min_trade: {
-		column: 'minTradeAmount',
-		type: 'float',
-		label: '📉 Min Trade',
-		desc: 'Minimum Coin per buy order. Range: 1+.',
-		validate: (v) => v >= 1,
-	},
-	max_trade: {
-		column: 'maxTradeAmount',
-		type: 'float',
-		label: '📈 Max Trade',
-		desc: 'Max Coin per buy order (0 = unlimited). Useful to prevent whales.',
-		validate: (v) => v >= 0,
-	},
-	burn_active: {
-		column: 'burnActive',
-		type: 'bool',
-		label: '🔥 Auto Token Burn',
-		desc: 'Monthly scheduled token burn (burns burnRatePct of pool).',
-	},
-	burn_rate: {
-		column: 'burnRatePct',
-		type: 'float',
-		label: '🔥 Burn Rate',
-		desc: '% of kythReserve burned each cycle. Range: 0.1–50.',
-		validate: (v) => v >= 0.1 && v <= 50,
-	},
-	dividend_active: {
-		column: 'dividendActive',
-		type: 'bool',
-		label: '💰 Auto Dividend',
-		desc: 'Daily staking dividend distribution to Solara Mutual stakers.',
-	},
-	dividend_split: {
-		column: 'dividendSplitPct',
-		type: 'float',
-		label: '💰 Dividend Split',
-		desc: '% of fees distributed to stakers (rest stays in pool). Range: 0–100.',
-		validate: (v) => v >= 0 && v <= 100,
-	},
-	blackmarket_active: {
-		column: 'blackmarketActive',
-		type: 'bool',
-		label: '🕶️ Black Market',
-		desc: 'Opens/closes /eco blackmarket for all users.',
-	},
-	staking_active: {
-		column: 'stakingActive',
-		type: 'bool',
-		label: '🔒 Staking',
-		desc: 'Enables/disables /eco kyth_stake for all users.',
-	},
-	staking_min: {
-		column: 'stakingMinKyth',
-		type: 'float',
-		label: '🔒 Min Stake',
-		desc: 'Minimum KYTH required to stake. Range: 0+.',
-		validate: (v) => v >= 0,
-	},
-};
+// CONFIG_PARAMS extracted to addons/core/helpers/kyth-eco.js
 
 class ConfigCommand extends BaseCommand {
 	subcommand = true;
@@ -113,7 +28,9 @@ class ConfigCommand extends BaseCommand {
 					.setDescription('Which setting to change (leave empty to view all)')
 					.setRequired(false)
 					.addChoices(
-						...Object.entries(CONFIG_PARAMS).map(([key, def]) => ({
+						...Object.entries(
+							require('../../../../helpers/kyth-eco').CONFIG_PARAMS,
+						).map(([key, def]) => ({
 							name: `${def.label} — ${def.desc.substring(0, 60)}`,
 							value: key,
 						})),
@@ -151,6 +68,7 @@ class ConfigCommand extends BaseCommand {
 
 		const param = interaction.options.getString('param');
 		const rawValue = interaction.options.getString('value');
+		const CONFIG_PARAMS = helpers.core['kyth-eco'].CONFIG_PARAMS;
 
 		// ── View All ───────────────────────────────────────────────────────────
 		if (!param) {
@@ -160,24 +78,24 @@ class ConfigCommand extends BaseCommand {
 				`*Current spot price: **${stats.spotPrice} Coin/KYTH** | Pool TVL: **🪙 ${stats.tvl}***`,
 				``,
 				`### 🛡️ Trading Controls`,
-				`**${CONFIG_PARAMS.trading_halt.label}:** ${fmtBool(!pool.tradingHalted)}`,
-				`**${CONFIG_PARAMS.fee_rate.label}:** ${fmtPct(pool.feeRatePct ?? 2)}`,
+				`**${CONFIG_PARAMS.trading_halt.label}:** ${helpers.core['kyth-eco'].fmtBool(!pool.tradingHalted)}`,
+				`**${CONFIG_PARAMS.fee_rate.label}:** ${helpers.core['kyth-eco'].fmtPct(pool.feeRatePct ?? 2)}`,
 				`**${CONFIG_PARAMS.min_trade.label}:** 🪙 ${Number(pool.minTradeAmount ?? 1).toLocaleString()}`,
-				`**${CONFIG_PARAMS.max_trade.label}:** ${fmtCoin(pool.maxTradeAmount ?? 0)}`,
+				`**${CONFIG_PARAMS.max_trade.label}:** ${helpers.core['kyth-eco'].fmtCoin(pool.maxTradeAmount ?? 0)}`,
 				``,
 				`### 🔥 Token Burn`,
-				`**${CONFIG_PARAMS.burn_active.label}:** ${fmtBool(pool.burnActive ?? true)}`,
-				`**${CONFIG_PARAMS.burn_rate.label}:** ${fmtPct(pool.burnRatePct ?? 5)} per cycle`,
+				`**${CONFIG_PARAMS.burn_active.label}:** ${helpers.core['kyth-eco'].fmtBool(pool.burnActive ?? true)}`,
+				`**${CONFIG_PARAMS.burn_rate.label}:** ${helpers.core['kyth-eco'].fmtPct(pool.burnRatePct ?? 5)} per cycle`,
 				`**Last Burn:** ${pool.lastBurnAt ? `<t:${Math.floor(new Date(pool.lastBurnAt).getTime() / 1000)}:R>` : 'Never'}`,
 				``,
 				`### 💰 Staking & Dividends`,
-				`**${CONFIG_PARAMS.dividend_active.label}:** ${fmtBool(pool.dividendActive ?? true)}`,
-				`**${CONFIG_PARAMS.dividend_split.label}:** ${fmtPct(pool.dividendSplitPct ?? 50)} of fees to stakers`,
-				`**${CONFIG_PARAMS.staking_active.label}:** ${fmtBool(pool.stakingActive ?? true)}`,
+				`**${CONFIG_PARAMS.dividend_active.label}:** ${helpers.core['kyth-eco'].fmtBool(pool.dividendActive ?? true)}`,
+				`**${CONFIG_PARAMS.dividend_split.label}:** ${helpers.core['kyth-eco'].fmtPct(pool.dividendSplitPct ?? 50)} of fees to stakers`,
+				`**${CONFIG_PARAMS.staking_active.label}:** ${helpers.core['kyth-eco'].fmtBool(pool.stakingActive ?? true)}`,
 				`**${CONFIG_PARAMS.staking_min.label}:** ${Number(pool.stakingMinKyth ?? 1).toFixed(4)} KYTH`,
 				``,
 				`### 🕶️ Features`,
-				`**${CONFIG_PARAMS.blackmarket_active.label}:** ${fmtBool(pool.blackmarketActive ?? true)}`,
+				`**${CONFIG_PARAMS.blackmarket_active.label}:** ${helpers.core['kyth-eco'].fmtBool(pool.blackmarketActive ?? true)}`,
 				``,
 				`---`,
 				`*Use \`/kyth config param:<setting> value:<new value>\` to change any setting.*`,

@@ -13,8 +13,14 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TvRenameButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, t } = container;
 		const { TempVoiceChannel } = models;
 
@@ -48,5 +54,7 @@ module.exports = {
 		modal.addComponents(row);
 
 		await interaction.showModal(modal);
-	},
-};
+	}
+}
+
+module.exports = TvRenameButton;

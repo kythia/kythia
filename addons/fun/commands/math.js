@@ -8,198 +8,17 @@
 
 const {
 	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
 	ComponentType,
-	ContainerBuilder,
 	MessageFlags,
 	ModalBuilder,
-	SeparatorBuilder,
-	SeparatorSpacingSize,
 	SlashCommandBuilder,
-	TextDisplayBuilder,
 	TextInputBuilder,
 	TextInputStyle,
 } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Question generator — scales with streak
-// ─────────────────────────────────────────────────────────────────────────────
-
-function generateQuestion(score) {
-	// Scale difficulty based on score brackets
-	const tier = Math.floor(score / 5); // 0-4: easy, 5-9: medium, 10-14: hard, 15+: extreme
-
-	let a, b, op, answer, display;
-
-	if (tier === 0) {
-		// Easy: add/sub with small numbers
-		a = rand(1, 20);
-		b = rand(1, 20);
-		op = pick(['+', '-']);
-	} else if (tier === 1) {
-		// Medium: add/sub bigger, multiply small
-		a = rand(10, 50);
-		b = rand(2, 12);
-		op = pick(['+', '-', '×']);
-	} else if (tier === 2) {
-		// Hard: multiply/divide, bigger numbers
-		a = rand(10, 99);
-		b = rand(2, 12);
-		op = pick(['×', '+', '-']);
-	} else {
-		// Extreme: multiply two-digit, divide with exact result
-		a = rand(10, 99);
-		b = rand(2, 15);
-		op = pick(['×', '+', '-', '÷']);
-	}
-
-	switch (op) {
-		case '+':
-			answer = a + b;
-			display = `${a} + ${b}`;
-			break;
-		case '-':
-			// ensure non-negative result
-			if (a < b) [a, b] = [b, a];
-			answer = a - b;
-			display = `${a} - ${b}`;
-			break;
-		case '×':
-			answer = a * b;
-			display = `${a} × ${b}`;
-			break;
-		case '÷': {
-			// ensure exact division
-			answer = b;
-			a = b * rand(2, 12);
-			display = `${a} ÷ ${b}`;
-			break;
-		}
-	}
-
-	return { question: display, answer };
-}
-
-function rand(min, max) {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function pick(arr) {
-	return arr[Math.floor(Math.random() * arr.length)];
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// UI helpers
-// ─────────────────────────────────────────────────────────────────────────────
-
-async function buildMathContainer(interaction, { body, footer, accentColor }) {
-	const { helpers, kythiaConfig } = interaction.client.container;
-	const { convertColor } = helpers.color;
-
-	return new ContainerBuilder()
-		.setAccentColor(
-			convertColor(accentColor ?? kythiaConfig.bot.color, {
-				from: 'hex',
-				to: 'decimal',
-			}),
-		)
-		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(
-				`${await interaction.client.container.t(interaction, 'fun.math.title')}\n\n${body}`,
-			),
-		)
-		.addSeparatorComponents(
-			new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Small)
-				.setDivider(true),
-		)
-		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(`-# ${footer}`),
-		);
-}
-
-function buildAnswerRow(disabled = false) {
-	return new ActionRowBuilder().addComponents(
-		new ButtonBuilder()
-			.setCustomId('math_answer')
-			.setLabel('✏️ Answer')
-			.setStyle(ButtonStyle.Primary)
-			.setDisabled(disabled),
-	);
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Leaderboard helper
-// ─────────────────────────────────────────────────────────────────────────────
-
-async function buildLeaderboard(interaction, container) {
-	const { models, t } = container;
-	const { MathScore } = models;
-
-	const top = await MathScore.getAllCache({
-		order: [['bestScore', 'DESC']],
-		limit: 10,
-	});
-
-	const title = await t(interaction, 'fun.math.leaderboard.title');
-
-	if (!top || top.length === 0) {
-		const empty = await t(interaction, 'fun.math.leaderboard.empty');
-		return new ContainerBuilder()
-			.setAccentColor(0xf1c40f)
-			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`${title}\n\n${empty}`),
-			);
-	}
-
-	const lines = await Promise.all(
-		top.map((entry, i) =>
-			t(interaction, 'fun.math.leaderboard.entry', {
-				rank: i + 1,
-				user: entry.username ?? `<@${entry.userId}>`,
-				score: entry.bestScore,
-			}),
-		),
-	);
-
-	return new ContainerBuilder()
-		.setAccentColor(0xf1c40f)
-		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(`${title}\n\n${lines.join('\n')}`),
-		);
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Score save helper
-// ─────────────────────────────────────────────────────────────────────────────
-
-async function saveScore(container, userId, username, score) {
-	const { models } = container;
-	const { MathScore } = models;
-
-	let record = await MathScore.getCache({ userId });
-
-	if (!record) {
-		record = await MathScore.create({
-			userId,
-			username,
-			bestScore: score,
-			totalGames: 1,
-		});
-	} else {
-		record.totalGames = (record.totalGames ?? 0) + 1;
-		if (score > (record.bestScore ?? 0)) {
-			record.bestScore = score;
-		}
-		record.username = username;
-		await record.save();
-	}
-
-	return record;
-}
+// Helpers extracted to addons/fun/helpers/math.js
 
 class MathCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
@@ -221,9 +40,15 @@ class MathCommand extends BaseCommand {
 		const { t } = container;
 		const sub = interaction.options.getSubcommand();
 
+		const { helpers } = container;
+		const mathHelpers = helpers.fun.math;
+
 		// ── Leaderboard ──────────────────────────────────────────────────────
 		if (sub === 'leaderboard') {
-			const lbContainer = await buildLeaderboard(interaction, container);
+			const lbContainer = await mathHelpers.buildLeaderboard(
+				interaction,
+				container,
+			);
 			return interaction.reply({
 				components: [lbContainer],
 				flags: MessageFlags.IsComponentsV2,
@@ -233,7 +58,7 @@ class MathCommand extends BaseCommand {
 		// ── Play ─────────────────────────────────────────────────────────────
 		const userId = interaction.user.id;
 		let score = 0;
-		let { question, answer } = generateQuestion(score);
+		let { question, answer } = mathHelpers.generateQuestion(score);
 
 		const footer = await t(interaction, 'fun.math.footer.play');
 		const questionText = await t(interaction, 'fun.math.question', {
@@ -241,12 +66,15 @@ class MathCommand extends BaseCommand {
 			score,
 		});
 
-		const questionContainer = await buildMathContainer(interaction, {
-			body: questionText,
-			footer,
-		});
+		const questionContainer = await mathHelpers.buildMathContainer(
+			interaction,
+			{
+				body: questionText,
+				footer,
+			},
+		);
 
-		const row = buildAnswerRow(false);
+		const row = mathHelpers.buildAnswerRow(false);
 
 		const message = await interaction.reply({
 			components: [questionContainer, row],
@@ -329,7 +157,7 @@ class MathCommand extends BaseCommand {
 				score++;
 
 				// Generate a new, harder question
-				const next = generateQuestion(score);
+				const next = mathHelpers.generateQuestion(score);
 				question = next.question;
 				answer = next.answer;
 
@@ -338,21 +166,24 @@ class MathCommand extends BaseCommand {
 					score,
 				});
 				const correctFeedback = await t(interaction, 'fun.math.correct');
-				const nextContainer = await buildMathContainer(interaction, {
-					body: `${correctFeedback}\n\n${nextText}`,
-					footer,
-					accentColor: '#2ecc71',
-				});
+				const nextContainer = await mathHelpers.buildMathContainer(
+					interaction,
+					{
+						body: `${correctFeedback}\n\n${nextText}`,
+						footer,
+						accentColor: '#2ecc71',
+					},
+				);
 
 				await interaction.editReply({
-					components: [nextContainer, buildAnswerRow(false)],
+					components: [nextContainer, mathHelpers.buildAnswerRow(false)],
 					flags: MessageFlags.IsComponentsV2,
 				});
 			} else {
 				// Game over
 				running = false;
 
-				const record = await saveScore(
+				const record = await mathHelpers.saveScore(
 					container,
 					userId,
 					interaction.user.username,
@@ -374,14 +205,14 @@ class MathCommand extends BaseCommand {
 					? `\n${await t(interaction, 'fun.math.new_best', { score })}`
 					: '';
 
-				const endContainer = await buildMathContainer(interaction, {
+				const endContainer = await mathHelpers.buildMathContainer(interaction, {
 					body: `${endReason}${bonusLine}`,
 					footer: await t(interaction, 'fun.math.footer.end'),
 					accentColor: '#e74c3c',
 				});
 
 				await interaction.editReply({
-					components: [endContainer, buildAnswerRow(true)],
+					components: [endContainer, mathHelpers.buildAnswerRow(true)],
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}

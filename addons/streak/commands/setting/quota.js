@@ -10,8 +10,7 @@ const { MessageFlags, PermissionFlagsBits } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
-const MIN_QUOTA = 0; // 0 = disable restores entirely
-const MAX_QUOTA = 30;
+const { MIN_QUOTA, MAX_QUOTA } = require('../../helpers/constants');
 
 class QuotaCommand extends BaseCommand {
 	subcommand = true;

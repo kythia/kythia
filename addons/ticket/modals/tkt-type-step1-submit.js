@@ -17,8 +17,14 @@ const {
 	ActionRowBuilder,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseModal } = require('kythia-core');
+
+class TktTypeStep1SubmitModal extends BaseModal {
+	modal = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { redis, kythiaConfig, t, helpers, logger } = container;
 		const { convertColor } = helpers.color;
 		const { simpleContainer } = helpers.discord;
@@ -104,5 +110,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = TktTypeStep1SubmitModal;

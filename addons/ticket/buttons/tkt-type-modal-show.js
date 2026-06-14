@@ -16,8 +16,14 @@ const {
 	ChannelSelectMenuBuilder,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TktTypeModalShowButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 
@@ -99,5 +105,7 @@ module.exports = {
 				});
 			}
 		}
-	},
-};
+	}
+}
+
+module.exports = TktTypeModalShowButton;

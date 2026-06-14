@@ -19,29 +19,7 @@ const axios = require('axios');
 
 const { BaseCommand } = require('kythia-core');
 
-const VALID_ACTIONS = [
-	'hug',
-	'kiss',
-	'pat',
-	'slap',
-	'cuddle',
-	'wave',
-	'highfive',
-	'handhold',
-	'bite',
-	'bonk',
-	'yeet',
-	'dance',
-	'poke',
-	'wink',
-	'smile',
-	'blush',
-	'happy',
-	'cry',
-	'nom',
-	'kick',
-	'smug',
-];
+// Constants extracted to addons/fun/helpers/constants.js
 
 class ActCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
@@ -91,7 +69,7 @@ class ActCommand extends BaseCommand {
 		const targetUser = interaction.options.getUser('user');
 		const author = interaction.user;
 
-		if (!VALID_ACTIONS.includes(action)) {
+		if (!helpers.fun.constants.VALID_ACTIONS.includes(action)) {
 			return interaction.reply({
 				content: await t(interaction, 'fun.act.errors.invalid_action'),
 				flags: MessageFlags.Ephemeral,

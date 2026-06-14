@@ -7,8 +7,14 @@
  */
 const { MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseSelectMenu } = require('kythia-core');
+
+class HelpMenuSelectMenu extends BaseSelectMenu {
+	selectMenu = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t, helpers } = container;
 		const { getHelpData, buildHelpReply } = helpers.helpUtils;
 
@@ -50,5 +56,7 @@ module.exports = {
 			helpData,
 		);
 		await interaction.editReply(updatedReply).catch(() => {});
-	},
-};
+	}
+}
+
+module.exports = HelpMenuSelectMenu;

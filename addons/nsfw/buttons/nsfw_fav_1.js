@@ -8,8 +8,16 @@
 
 const { handleFavorite } = require('../helpers/buttons.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class NsfwFav1Button extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		await handleFavorite(interaction, container, 1);
-	},
-};
+	}
+}
+
+module.exports = NsfwFav1Button;

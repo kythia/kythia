@@ -127,4 +127,113 @@ async function fetchLatestInstagram(
 	}
 }
 
-module.exports = { validateInstagramUser, fetchLatestInstagram };
+module.exports = {
+	validateInstagramUser,
+	fetchLatestInstagram,
+	handleInstagramAdd,
+};
+
+const { MessageFlags } = require('discord.js');
+
+async function handleInstagramAdd({
+	interaction,
+	existing,
+	rawUsername,
+	discordChannel,
+	customMessage,
+	SocialAlertSubscription,
+	simpleContainer,
+	convertColor,
+	kythiaConfig,
+	t,
+	buildSuccessContainer,
+}) {
+	const rsshubUrl =
+		kythiaConfig?.addons?.socialAlerts?.rsshubUrl || 'https://rsshub.app';
+	const username = rawUsername.startsWith('@')
+		? rawUsername
+		: `@${rawUsername}`;
+	const cleanUsername = rawUsername.replace(/^@/, '').trim();
+
+	const duplicate = existing.find(
+		(s) =>
+			s.platform === 'instagram' &&
+			s.youtubeChannelId.toLowerCase() === username.toLowerCase(),
+	);
+	if (duplicate) {
+		return interaction.editReply({
+			components: await simpleContainer(
+				interaction,
+				await t(interaction, 'social-alert.add.duplicate.instagram', {
+					name: duplicate.youtubeChannelName,
+				}),
+				{ color: 'Yellow' },
+			),
+			flags: MessageFlags.IsComponentsV2,
+		});
+	}
+
+	const userInfo = await validateInstagramUser(cleanUsername, rsshubUrl);
+	if (!userInfo) {
+		return interaction.editReply({
+			components: await simpleContainer(
+				interaction,
+				await t(interaction, 'social-alert.add.instagram.not_found', {
+					username,
+				}),
+				{ color: 'Red' },
+			),
+			flags: MessageFlags.IsComponentsV2,
+		});
+	}
+
+	let lastVideoId = null;
+	try {
+		const latest = await fetchLatestInstagram(cleanUsername, rsshubUrl);
+		if (latest) lastVideoId = latest.videoId;
+	} catch {}
+
+	await SocialAlertSubscription.create({
+		guildId: interaction.guild.id,
+		discordChannelId: discordChannel.id,
+		youtubeChannelId: username,
+		youtubeChannelName: userInfo.displayName,
+		youtubeThumbnailUrl: null,
+		message: customMessage || null,
+		lastVideoId,
+		platform: 'instagram',
+	});
+
+	const messageLine = customMessage
+		? await t(interaction, 'social-alert.add.success.custom_message', {
+				message: customMessage,
+			})
+		: await t(interaction, 'social-alert.add.success.default_message');
+	const description = await t(
+		interaction,
+		'social-alert.add.success.instagram',
+		{
+			name: userInfo.displayName,
+			username,
+			channel: discordChannel.id,
+			message_line: messageLine,
+		},
+	);
+	const footer = await t(interaction, 'social-alert.add.success.footer');
+
+	return interaction.editReply({
+		components: [
+			buildSuccessContainer({
+				accentColor: convertColor(kythiaConfig?.bot?.color || '#FF0000', {
+					from: 'hex',
+					to: 'decimal',
+				}),
+				description,
+				footer,
+				thumbnailUrl: null,
+				thumbnailAlt: 'Instagram',
+			}),
+		],
+		flags: MessageFlags.IsComponentsV2,
+	});
+}

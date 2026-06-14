@@ -17,8 +17,14 @@ const {
 	ButtonStyle,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class MmCloseButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t, helpers, kythiaConfig } = container;
 		const { convertColor } = helpers.color;
 
@@ -80,5 +86,7 @@ module.exports = {
 			components: [confirmContainer],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+module.exports = MmCloseButton;

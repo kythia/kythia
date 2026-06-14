@@ -23,15 +23,6 @@ const axios = require('axios');
 
 const { BaseCommand } = require('kythia-core');
 
-const SUBREDDITS = [
-	'memes',
-	'dankmemes',
-	'me_irl',
-	'AdviceAnimals',
-	'funny',
-	'ProgrammerHumor',
-];
-
 class MemeCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('meme')
@@ -57,9 +48,10 @@ class MemeCommand extends BaseCommand {
 
 		await interaction.deferReply();
 
+		const subreddits = helpers.fun.constants.SUBREDDITS;
 		const subreddit =
 			interaction.options.getString('subreddit') ??
-			SUBREDDITS[Math.floor(Math.random() * SUBREDDITS.length)];
+			subreddits[Math.floor(Math.random() * subreddits.length)];
 
 		let meme;
 		try {

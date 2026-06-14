@@ -7,8 +7,16 @@
  */
 const { closeTicket } = require('../helpers');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TicketConfirmCloseButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		await closeTicket(interaction, container);
-	},
-};
+	}
+}
+
+module.exports = TicketConfirmCloseButton;

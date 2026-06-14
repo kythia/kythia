@@ -11,13 +11,17 @@ const {
 	LabelBuilder,
 	TextInputBuilder,
 	TextInputStyle,
-	ChannelSelectMenuBuilder,
-	ChannelType,
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TktPanelModalShowButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const originalMessageId = interaction.message.id;
@@ -28,15 +32,16 @@ module.exports = {
 				.setTitle('Create New Panel')
 				.addLabelComponents(
 					new LabelBuilder()
-						.setLabel('Panel Channel')
-						.setDescription('Select the channel where this panel will be sent.')
-						.setChannelSelectMenuComponent(
-							new ChannelSelectMenuBuilder()
+						.setLabel('Panel Channel ID')
+						.setDescription(
+							'Paste the ID of the channel where this panel will be sent.',
+						)
+						.setTextInputComponent(
+							new TextInputBuilder()
 								.setCustomId('channelId')
-								.setPlaceholder('Select a channel...')
-								.addChannelTypes(ChannelType.GuildText)
-								.setMinValues(1)
-								.setMaxValues(1),
+								.setStyle(TextInputStyle.Short)
+								.setPlaceholder('e.g. 123456789012345678')
+								.setRequired(true),
 						),
 
 					new LabelBuilder()
@@ -89,5 +94,7 @@ module.exports = {
 				});
 			}
 		}
-	},
-};
+	}
+}
+
+module.exports = TktPanelModalShowButton;

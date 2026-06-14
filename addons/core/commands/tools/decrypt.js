@@ -11,7 +11,7 @@ const crypto = require('node:crypto');
 
 const { BaseCommand } = require('kythia-core');
 
-const ALGORITHM = 'aes-256-gcm';
+// ALGORITHM extracted to addons/core/helpers/crypto.js
 
 class DecryptCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
@@ -53,6 +53,8 @@ class DecryptCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
+
+		const { ALGORITHM } = helpers.core.crypto;
 
 		try {
 			const parts = encryptedData.split(':');

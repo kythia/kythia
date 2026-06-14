@@ -13,7 +13,6 @@ const {
 	ActionRowBuilder,
 	MessageFlags,
 } = require('discord.js');
-const { sendToAllGuilds } = require('./_command');
 
 const { BaseCommand } = require('kythia-core');
 
@@ -88,7 +87,11 @@ class ComplexCommand extends BaseCommand {
 				),
 			});
 		}
-		await sendToAllGuilds(modalSubmit, payload);
+		await container.helpers.core.announcement.sendToAllGuilds(
+			container,
+			modalSubmit,
+			payload,
+		);
 	}
 }
 

@@ -16,13 +16,7 @@ const {
 
 const { BaseCommand } = require('kythia-core');
 
-function parseCustomEmoji(str) {
-	const match = str.match(/<?a?:?(\w+):(\d+)>?/);
-	if (!match) return null;
-	const [, name, id] = match;
-	const isAnimated = str.startsWith('<a:');
-	return { name, id, isAnimated };
-}
+// Helpers extracted to addons/core/helpers/grab.js
 
 class GrabCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
@@ -348,7 +342,7 @@ class GrabCommand extends BaseCommand {
 			const emojiRegex = /<a?:\w+:\d+>/g;
 			const found = message?.content?.match?.(emojiRegex);
 			if (found && found.length > 0) {
-				const emojiData = parseCustomEmoji(found[0]);
+				const emojiData = helpers.core.grab.parseCustomEmoji(found[0]);
 				if (!emojiData) {
 					const components = await simpleContainer(
 						interaction,

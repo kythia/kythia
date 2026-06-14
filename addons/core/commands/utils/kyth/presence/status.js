@@ -7,7 +7,7 @@
  */
 
 const { MessageFlags } = require('discord.js');
-const { STATUS_OPTIONS } = require('./_group');
+const { STATUS_OPTIONS } = require('../../../../helpers/presence-constants');
 
 const { BaseCommand } = require('kythia-core');
 

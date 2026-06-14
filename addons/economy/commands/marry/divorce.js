@@ -12,7 +12,7 @@ const { Op } = require('sequelize');
 const { BaseCommand } = require('kythia-core');
 
 const divorceConfirmations = new Map();
-const DIVORCE_CONFIRM_EXPIRE = 1000 * 60 * 2;
+const { DIVORCE_CONFIRM_EXPIRE } = require('../../helpers/constants');
 
 class DivorceCommand extends BaseCommand {
 	slashCommand = (subcommand) =>

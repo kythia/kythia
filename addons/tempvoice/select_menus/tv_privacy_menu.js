@@ -7,8 +7,14 @@
  */
 const { PermissionsBitField, MessageFlags } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseSelectMenu } = require('kythia-core');
+
+class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
+	selectMenu = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, client, logger, t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { TempVoiceChannel } = models;
@@ -126,5 +132,7 @@ module.exports = {
 				),
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = TvPrivacyMenuSelectMenu;

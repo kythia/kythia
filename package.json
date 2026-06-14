@@ -43,7 +43,7 @@
 		"hono": "^4.10.7",
 		"javascript-obfuscator": "^4.1.1",
 		"kythia-arts": "^26.0.0-rc.2",
-		"kythia-core": "^26.0.10",
+		"kythia-core": "file:.yalc/kythia-core",
 		"luxon": "^3.7.2",
 		"marked": "^4.3.0",
 		"mathjs": "^15.1.0",

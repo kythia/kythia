@@ -15,12 +15,19 @@ const {
 } = require('discord.js');
 const { createModmailThread } = require('../helpers');
 
-module.exports = {
-	/**
-	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
-	 * @param {KythiaDI.Container} container
-	 */
-	execute: async (interaction, container) => {
+const { BaseSelectMenu } = require('kythia-core');
+
+class MmServerSelectSelectMenu extends BaseSelectMenu {
+	selectMenu = {
+		/**
+		 * @param {import('discord.js').ChatInputCommandInteraction} interaction
+		 * @param {KythiaDI.Container} container
+		 */
+	};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, t, helpers, logger, kythiaConfig, client } = container;
 		const { ModmailConfig } = models;
 		const { simpleContainer } = helpers.discord;
@@ -136,5 +143,7 @@ module.exports = {
 			);
 			client.modmailActiveDMs?.delete(userId);
 		}
-	},
-};
+	}
+}
+
+module.exports = MmServerSelectSelectMenu;

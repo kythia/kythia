@@ -23,7 +23,7 @@ const { getSpotPrice } = require('../../helpers/kyth-amm');
 
 const { BaseCommand } = require('kythia-core');
 
-const ITEMS_PER_PAGE = 5;
+const { ITEMS_PER_PAGE } = require('../../helpers/constants');
 
 class BlackmarketCommand extends BaseCommand {
 	subcommand = true;

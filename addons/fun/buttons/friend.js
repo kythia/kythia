@@ -15,9 +15,14 @@ const {
 const Friend = require('../database/models/Friend');
 const { convertColor } = require('kythia-core').utils;
 
-module.exports = {
-	execute: async (interaction) => {
-		const container = interaction.client.container;
+const { BaseButton } = require('kythia-core');
+
+class FriendButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t, kythiaConfig } = container;
 		const [prefix, actionType, friendReqId] = interaction.customId.split(':');
 		if (prefix !== 'friend' || !actionType || !friendReqId) return;
@@ -158,5 +163,7 @@ module.exports = {
 				components: [cont],
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = FriendButton;

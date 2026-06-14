@@ -12,33 +12,7 @@ const { fetchContent } = require('../helpers/api.js');
 
 const { BaseCommand } = require('kythia-core');
 
-const ALLOWED_CATEGORIES = [
-	'hass',
-	'hmidriff',
-	'pgif',
-	'4k',
-	'hentai',
-	'holo',
-	'hneko',
-	'neko',
-	'hkitsune',
-	'kemonomimi',
-	'anal',
-	'hanal',
-	'gonewild',
-	'kanna',
-	'ass',
-	'pussy',
-	'thigh',
-	'hthigh',
-	'coffee',
-	'food',
-	'paizuri',
-	'tentacle',
-	'boobs',
-	'hboobs',
-	'yaoi',
-];
+// Constants extracted to addons/nsfw/helpers/constants.js
 
 class GetCommand extends BaseCommand {
 	subcommand = true;
@@ -53,7 +27,9 @@ class GetCommand extends BaseCommand {
 					.setDescription('Content category')
 					.setRequired(true)
 					.addChoices(
-						...ALLOWED_CATEGORIES.map((cat) => ({ name: cat, value: cat })),
+						...require('../helpers/constants').ALLOWED_CATEGORIES.map(
+							(cat) => ({ name: cat, value: cat }),
+						),
 					),
 			)
 			.addBooleanOption((option) =>

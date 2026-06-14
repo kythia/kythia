@@ -26,7 +26,7 @@ const { toBigIntSafe } = require('../../helpers/bigint');
 
 const { BaseCommand } = require('kythia-core');
 
-const SLIPPAGE_TOLERANCE_PCT = 0.5;
+const { SLIPPAGE_TOLERANCE_PCT } = require('../../helpers/constants');
 
 class SellCommand extends BaseCommand {
 	subcommand = true;
@@ -217,11 +217,10 @@ class SellCommand extends BaseCommand {
 			if (warningNote) previewLines.push(warningNote);
 
 			if (impactLevel === 'safe') {
-				return _executeSellKyth({
+				return helpers.economy['kyth-trade'].executeSellKyth({
 					interactionOrI: interaction,
 					t,
 					user,
-					pool,
 					sellQuantity,
 					minCoinOut,
 					simpleContainer,
@@ -262,15 +261,10 @@ class SellCommand extends BaseCommand {
 
 			collector.on('collect', async (i) => {
 				if (i.customId === 'kyth_sell_confirm') {
-					const freshPool = await KythLiquidityPool.getCache(
-						{ id: 1 },
-						{ noCache: true },
-					);
-					return _executeSellKyth({
+					return helpers.economy['kyth-trade'].executeSellKyth({
 						interactionOrI: i,
 						t,
 						user,
-						pool: freshPool,
 						sellQuantity,
 						minCoinOut,
 						simpleContainer,
@@ -441,123 +435,3 @@ class SellCommand extends BaseCommand {
 }
 
 exports.default = SellCommand;
-
-async function _executeSellKyth({
-	interactionOrI,
-	t,
-	user,
-	_pool,
-	sellQuantity,
-	minCoinOut,
-	simpleContainer,
-	models,
-	logger,
-}) {
-	const { KythLiquidityPool, MarketTransaction } = models;
-	const { MessageFlags: MF } = require('discord.js');
-	const { toBigIntSafe: toBig } = require('../../helpers/bigint');
-
-	const method =
-		interactionOrI.deferred || interactionOrI.replied ? 'editReply' : 'update';
-
-	const { waitAndAcquireLock, releaseLock } = require('../../helpers/lock');
-	const LOCK_KEY = 'kythia:locks:amm_pool';
-	try {
-		let lockAcquired = false;
-		let result;
-		let newSpotPrice;
-
-		try {
-			await waitAndAcquireLock(LOCK_KEY);
-			lockAcquired = true;
-
-			// Fetch fresh pool state from DB after lock is acquired to prevent race conditions
-			const freshPool = await KythLiquidityPool.getCache(
-				{ id: 1 },
-				{ noCache: true },
-			);
-
-			const poolState = {
-				coinReserve: Number(freshPool.coinReserve),
-				kythReserve: Number(freshPool.kythReserve),
-				kConstant: Number(freshPool.kConstant),
-				feeRate: Number(freshPool.feeRatePct ?? 2) / 100, // Admin-controlled
-			};
-
-			result = calcSellOutput(sellQuantity, poolState);
-			newSpotPrice = result.newCoinReserve / result.newKythReserve;
-
-			// Slippage guard
-			if (result.coinOut < minCoinOut) {
-				const components = await simpleContainer(
-					interactionOrI,
-					await t(interactionOrI, 'economy.market.sell.error.slippage.desc', {
-						received: result.coinOut.toLocaleString(undefined, {
-							maximumFractionDigits: 2,
-						}),
-						minOut: minCoinOut.toLocaleString(undefined, {
-							maximumFractionDigits: 2,
-						}),
-					}),
-					{ color: 'Red' },
-				);
-				return interactionOrI[method]({ components, flags: MF.IsComponentsV2 });
-			}
-
-			// Update pool — preserve float precision, no Math.round()
-			freshPool.coinReserve = result.newCoinReserve;
-			freshPool.kythReserve = result.newKythReserve;
-			freshPool.changed('coinReserve', true);
-			freshPool.changed('kythReserve', true);
-			await freshPool.save();
-		} finally {
-			if (lockAcquired) {
-				await releaseLock(LOCK_KEY);
-				lockAcquired = false;
-			}
-		}
-
-		// Update user
-		user.kythHolding = Math.max(
-			0,
-			(Number(user.kythHolding) || 0) - sellQuantity,
-		);
-		user.kythiaCoin =
-			toBig(user.kythiaCoin) + toBig(Math.round(result.coinOut));
-		user.changed('kythHolding', true);
-		user.changed('kythiaCoin', true);
-		await user.save();
-
-		await MarketTransaction.create({
-			userId: user.userId,
-			assetId: 'kyth',
-			type: 'sell',
-			quantity: sellQuantity,
-			price: newSpotPrice,
-		});
-
-		const successMsg = [
-			`## 💰 KYTH Sold!`,
-			``,
-			`**Sold:** 💎 ${sellQuantity.toFixed(6)} KYTH`,
-			`**Received:** 🪙 ${result.coinOut.toLocaleString(undefined, { maximumFractionDigits: 2 })} Coin`,
-			`**Effective Price:** ${result.executionPrice.toFixed(6)} Coin/KYTH`,
-			`**New Market Price:** ${newSpotPrice.toFixed(6)} Coin/KYTH 📉`,
-		].join('\n');
-
-		const components = await simpleContainer(interactionOrI, successMsg, {
-			color: 'Yellow',
-		});
-		await interactionOrI[method]({ components, flags: MF.IsComponentsV2 });
-	} catch (err) {
-		logger.error?.(`KYTH sell error: ${err.message || err}`, {
-			label: 'economy:kyth:sell',
-		});
-		const components = await simpleContainer(
-			interactionOrI,
-			`## ❌ Transaction Failed\n${err.message || 'Unknown error.'}`,
-			{ color: 'Red' },
-		);
-		await interactionOrI[method]({ components, flags: MF.IsComponentsV2 });
-	}
-}

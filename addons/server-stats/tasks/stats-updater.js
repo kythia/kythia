@@ -8,17 +8,23 @@
 
 const { runStatsUpdater } = require('../helpers/stats');
 
-module.exports = {
-	taskName: 'server-stats-updater',
-	schedule: '*/5 * * * *',
-	active: true,
+const { BaseTask } = require('kythia-core');
 
-	execute: async (container) => {
-		const { client } = container;
+class StatsUpdaterTask extends BaseTask {
+	task = {
+		taskName: 'server-stats-updater',
+		schedule: '*/5 * * * *',
+		active: true,
+	};
+
+	async execute(container) {
+		const { client } = container || this.container;
 
 		// Runs on all shards. The helper filters by client.guilds.cache.get()
 		// which ensures each shard only updates its own guilds.
 
 		await runStatsUpdater(client);
-	},
-};
+	}
+}
+
+module.exports = StatsUpdaterTask;

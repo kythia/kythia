@@ -15,8 +15,14 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TktTypeStep1ShowButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t, helpers, models, logger } = container;
 		const { simpleContainer, getTextChannelSafe } = helpers.discord;
 		const { TicketPanel } = models;
@@ -127,5 +133,7 @@ module.exports = {
 				});
 			}
 		}
-	},
-};
+	}
+}
+
+module.exports = TktTypeStep1ShowButton;

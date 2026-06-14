@@ -12,13 +12,19 @@ const {
 	fetchServerStatus,
 } = require('../commands/server/status');
 
-module.exports = {
-	/**
-	 * customId format: mc-r_<type>_<host>_<port>
-	 * @param {import('discord.js').ButtonInteraction} interaction
-	 */
-	execute: async (interaction) => {
-		const container = interaction.client.container;
+const { BaseButton } = require('kythia-core');
+
+class McRButton extends BaseButton {
+	button = {
+		/**
+		 * customId format: mc-r_<type>_<host>_<port>
+		 * @param {import('discord.js').ButtonInteraction} interaction
+		 */
+	};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t, kythiaConfig, helpers } = container;
 
 		// Parse customId: mc-r:<type>:<host>:<port>
@@ -61,5 +67,7 @@ module.exports = {
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-	},
-};
+	}
+}
+
+module.exports = McRButton;

@@ -105,7 +105,24 @@ class SetupCommand extends BaseCommand {
 		if (success) createData.successReaction = success;
 		if (fail) createData.failReaction = fail;
 
-		await Counting.create(createData);
+		try {
+			await Counting.create(createData);
+		} catch (err) {
+			if (err.name === 'SequelizeUniqueConstraintError') {
+				await interaction.editReply({
+					components: await simpleContainer(
+						interaction,
+						await t(interaction, 'counting.setup.already_configured'),
+						{
+							color: 'Red',
+						},
+					),
+					flags: MessageFlags.IsComponentsV2,
+				});
+				return;
+			}
+			throw err;
+		}
 
 		// const desc =
 

@@ -8,19 +8,23 @@
 
 const { processOrders } = require('../helpers/orderProcessor');
 
-module.exports = {
-	taskName: 'economy-order-processor',
-	// Fallback interval if missing from config
-	schedule: '*/5 * * * *',
-	active: true,
+const { BaseTask } = require('kythia-core');
 
-	// Optional: read schedule from config dynamically during load if supported,
-	// but static 'schedule' property is usually expected by the Task Loader.
-	// Since orderProcessorSchedule was previously checked from kythiaConfig in initializeOrderProcessing,
-	// we use */5 * * * * as the standard base. (Container provides kythiaConfig at execute time).
+class OrderProcessorTask extends BaseTask {
+	task = {
+		taskName: 'economy-order-processor',
+		// Fallback interval if missing from config
+		schedule: '*/5 * * * *',
+		active: true,
 
-	execute: async (container) => {
-		const { client } = container;
+		// Optional: read schedule from config dynamically during load if supported,
+		// but static 'schedule' property is usually expected by the Task Loader.
+		// Since orderProcessorSchedule was previously checked from kythiaConfig in initializeOrderProcessing,
+		// we use */5 * * * * as the standard base. (Container provides kythiaConfig at execute time).
+	};
+
+	async execute(container) {
+		const { client } = container || this.container;
 
 		// Only run on Shard 0 to prevent duplicate order executions across shards
 		if (client.shard && !client.shard.ids.includes(0)) {
@@ -35,5 +39,7 @@ module.exports = {
 		};
 
 		await processOrders(dummyBot);
-	},
-};
+	}
+}
+
+module.exports = OrderProcessorTask;

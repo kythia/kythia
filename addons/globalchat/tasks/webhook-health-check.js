@@ -18,11 +18,17 @@ function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-module.exports = {
-	taskName: 'webhook-health-check',
-	schedule: '* */30 * * *', // Every 30 minutes
-	execute: async (container) => {
-		const { logger, models, kythiaConfig, client } = container;
+const { BaseTask } = require('kythia-core');
+
+class WebhookHealthCheckTask extends BaseTask {
+	task = {
+		taskName: 'webhook-health-check',
+		schedule: '* */30 * * *', // Every 30 minutes
+	};
+
+	async execute(container) {
+		const { logger, models, kythiaConfig, client } =
+			container || this.container;
 		const { GlobalChat } = models;
 		const { ShardClientUtil } = require('discord.js');
 
@@ -186,5 +192,7 @@ module.exports = {
 		logger.info('Webhook health check (API+DB sync & probe) finished.', {
 			label: 'global chat',
 		});
-	},
-};
+	}
+}
+
+module.exports = WebhookHealthCheckTask;

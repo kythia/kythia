@@ -15,9 +15,14 @@ const {
 const Marriage = require('../database/models/Marriage');
 const { convertColor } = require('kythia-core').utils;
 
-module.exports = {
-	execute: async (interaction) => {
-		const container = interaction.client.container;
+const { BaseButton } = require('kythia-core');
+
+class MarryButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t, kythiaConfig } = container;
 		const [prefix, actionType, marriageId] = interaction.customId.split(':');
 		if (prefix !== 'marry' || !actionType || !marriageId) return;
@@ -160,5 +165,7 @@ module.exports = {
 				components: [container],
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = MarryButton;

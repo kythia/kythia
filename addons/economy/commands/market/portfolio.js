@@ -19,11 +19,7 @@ const { getSpotPrice } = require('../../helpers/kyth-amm');
 
 const { BaseCommand } = require('kythia-core');
 
-function getChangeEmoji(percent) {
-	if (percent > 0) return '🟢 ▲';
-	if (percent < 0) return '🔴 ▼';
-	return '⏹️';
-}
+// Helpers extracted to addons/economy/helpers/market-ui.js
 
 class PortfolioCommand extends BaseCommand {
 	subcommand = true;
@@ -155,7 +151,9 @@ class PortfolioCommand extends BaseCommand {
 					: currentAssetData.usd_24h_change < 0
 						? ''
 						: '';
-			const change24hEmoji = getChangeEmoji(currentAssetData.usd_24h_change);
+			const change24hEmoji = helpers.economy['market-ui'].getChangeEmoji(
+				currentAssetData.usd_24h_change,
+			);
 
 			const lines = [
 				`### 💠 ${holding.assetId.toUpperCase()}${pnl > 0 ? '  📈' : pnl < 0 ? '  📉' : ''}`,

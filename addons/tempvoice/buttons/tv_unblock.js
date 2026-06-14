@@ -13,8 +13,14 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class TvUnblockButton extends BaseButton {
+	button = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, t, helpers, kythiaConfig } = container;
 		const { convertColor } = helpers.color;
 		const { TempVoiceChannel } = models;
@@ -57,5 +63,7 @@ module.exports = {
 			components: [containerComponent],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
-	},
-};
+	}
+}
+
+module.exports = TvUnblockButton;

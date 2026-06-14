@@ -13,8 +13,14 @@ const {
 
 const { refreshPanelMessage } = require('../helpers/index.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseModal } = require('kythia-core');
+
+class RrPanelAddEmojiModal extends BaseModal {
+	modal = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { models, helpers, logger } = container;
 		const { ReactionRolePanel, ReactionRole } = models;
 		const { simpleContainer } = helpers.discord;
@@ -187,5 +193,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = RrPanelAddEmojiModal;

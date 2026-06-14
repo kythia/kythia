@@ -12,7 +12,7 @@ const {
 	SlashCommandBuilder,
 } = require('discord.js');
 
-const { EMBEDDED } = require('./_helpers');
+const { EMBEDDED } = require('../../helpers/server');
 
 const { BaseCommand } = require('kythia-core');
 

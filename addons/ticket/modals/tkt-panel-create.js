@@ -16,8 +16,14 @@ const {
 	ChannelType,
 } = require('discord.js');
 
-module.exports = {
-	execute: async (interaction, container) => {
+const { BaseModal } = require('kythia-core');
+
+class TktPanelCreateModal extends BaseModal {
+	modal = {};
+
+	async execute(interaction) {
+		const container = this.container;
+
 		const { t, helpers, models, kythiaConfig, logger } = container;
 		const { convertColor } = helpers.color;
 		const { simpleContainer } = helpers.discord;
@@ -37,9 +43,7 @@ module.exports = {
 				});
 			}
 
-			const channelId = interaction.fields
-				.getSelectedChannels('channelId')
-				.first()?.id;
+			const channelId = interaction.fields.getTextInputValue('channelId');
 			const title = interaction.fields.getTextInputValue('title');
 			const description = interaction.fields.getTextInputValue('description');
 			const image = interaction.fields.getTextInputValue('image');
@@ -161,5 +165,7 @@ module.exports = {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = TktPanelCreateModal;

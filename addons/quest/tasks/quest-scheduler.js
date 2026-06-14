@@ -62,11 +62,17 @@ async function fetchQuestsFromAny(urls, logger) {
 	return null;
 }
 
-module.exports = {
-	taskName: 'quest-notifier',
-	schedule: '*/30 * * * *', // Every 30 minutes
-	execute: async (container) => {
-		const { models, logger, client, kythiaConfig } = container;
+const { BaseTask } = require('kythia-core');
+
+class QuestSchedulerTask extends BaseTask {
+	task = {
+		taskName: 'quest-notifier',
+		schedule: '*/30 * * * *', // Every 30 minutes
+	};
+
+	async execute(container) {
+		const { models, logger, client, kythiaConfig } =
+			container || this.container;
 		const { QuestConfig, QuestGuildLog } = models;
 		const { ShardClientUtil } = require('discord.js');
 		logger.info(`Running cron job...`, { label: 'questnotifier' });
@@ -244,5 +250,7 @@ module.exports = {
 				label: 'questnotifier',
 			});
 		}
-	},
-};
+	}
+}
+
+module.exports = QuestSchedulerTask;

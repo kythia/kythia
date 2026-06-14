@@ -8,10 +8,18 @@
 
 const { closeModmail } = require('../helpers');
 
-module.exports = {
-	execute: (interaction, container) => {
+const { BaseButton } = require('kythia-core');
+
+class MmConfirmCloseButton extends BaseButton {
+	button = {};
+
+	execute(interaction) {
+		const container = this.container;
+
 		const rawReason = interaction.customId.split(':').slice(1).join(':');
 		const reason = rawReason ? decodeURIComponent(rawReason) : null;
 		return closeModmail(interaction, container, reason);
-	},
-};
+	}
+}
+
+module.exports = MmConfirmCloseButton;
