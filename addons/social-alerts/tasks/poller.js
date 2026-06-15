@@ -19,6 +19,7 @@ const {
 	ThumbnailBuilder,
 	MediaGalleryBuilder,
 	MediaGalleryItemBuilder,
+	ShardClientUtil,
 } = require('discord.js');
 const { fetchLatestVideo } = require('../helpers/youtube');
 const { fetchLatestTikTok } = require('../helpers/tiktok');
@@ -35,7 +36,7 @@ class PollerTask extends BaseTask {
 			container || this.container;
 
 		// The poller runs on all shards. We'll filter the subscriptions by the current shard.
-		const { ShardClientUtil } = require('discord.js');
+
 		const { SocialAlertSubscription, SocialAlertSetting } = models;
 		const { convertColor } = helpers.color;
 		const { getGuildSafe } = helpers.discord;

@@ -35,16 +35,14 @@ app.get('/leaderboard', async (c) => {
 		// Resolve Discord user information
 		const detailedLeaderboard = await Promise.all(
 			leaderboard.map(async (lbUser) => {
-				let discordUser = client.users.cache.get(lbUser.userId);
-				if (!discordUser) {
-					try {
-						discordUser = await client.container.helpers.discord.getUserSafe(
-							client,
-							lbUser.userId,
-						);
-					} catch (_e) {
-						discordUser = null;
-					}
+				let discordUser;
+				try {
+					discordUser = await client.container.helpers.discord.getUserSafe(
+						client,
+						lbUser.userId,
+					);
+				} catch (_e) {
+					discordUser = null;
 				}
 				return {
 					userId: lbUser.userId,

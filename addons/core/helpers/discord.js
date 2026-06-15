@@ -299,10 +299,7 @@ async function getChannelSafe(guild, channelId) {
 	let channel = guild.channels.cache.get(channelId);
 	if (!channel) {
 		try {
-			channel = await guild.client.container.helpers.discord.getChannelSafe(
-				guild,
-				channelId,
-			);
+			channel = await guild.channels.fetch(channelId);
 		} catch (_e) {
 			return null;
 		}
@@ -321,10 +318,7 @@ async function getMemberSafe(guild, userId) {
 	let member = guild.members.cache.get(userId);
 	if (member) return member;
 	try {
-		member = await guild.client.container.helpers.discord.getMemberSafe(
-			guild,
-			userId,
-		);
+		member = await guild.members.fetch(userId);
 	} catch (_e) {}
 	return member || null;
 }
@@ -333,10 +327,7 @@ async function getGuildSafe(client, guildId) {
 	let guild = client.guilds.cache.get(guildId);
 	if (guild) return guild;
 	try {
-		guild = await client.container.helpers.discord.getGuildSafe(
-			client,
-			guildId,
-		);
+		guild = await client.guilds.fetch(guildId);
 	} catch (_e) {}
 	return guild || null;
 }
@@ -345,7 +336,7 @@ async function getUserSafe(client, userId) {
 	let user = client.users.cache.get(userId);
 	if (user) return user;
 	try {
-		user = await client.container.helpers.discord.getUserSafe(client, userId);
+		user = await client.users.fetch(userId);
 	} catch (_e) {}
 	return user || null;
 }
@@ -354,10 +345,7 @@ async function getChannelGlobalSafe(client, channelId) {
 	let channel = client.channels.cache.get(channelId);
 	if (channel) return channel;
 	try {
-		channel = await client.container.helpers.discord.getChannelGlobalSafe(
-			client,
-			channelId,
-		);
+		channel = await client.channels.fetch(channelId);
 	} catch (_e) {}
 	return channel || null;
 }
@@ -366,10 +354,7 @@ async function getMessageSafe(channel, messageId) {
 	let message = channel.messages.cache.get(messageId);
 	if (message) return message;
 	try {
-		message = await channel.client.container.helpers.discord.getMessageSafe(
-			channel,
-			messageId,
-		);
+		message = await channel.messages.fetch(messageId);
 	} catch (_e) {}
 	return message || null;
 }

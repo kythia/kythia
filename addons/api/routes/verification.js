@@ -7,6 +7,15 @@
  */
 
 const { Hono } = require('hono');
+const {
+	ContainerBuilder,
+	TextDisplayBuilder,
+	SeparatorBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	ActionRowBuilder,
+	MessageFlags,
+} = require('discord.js');
 const app = new Hono();
 const getModels = (c) => c.get('client').container.models;
 const getBot = (c) => c.get('client'); // discord.js Client-like (has .guilds, .container)
@@ -752,15 +761,7 @@ app.post('/:guildId/panel/send', async (c) => {
 		const color = panelConfig.color
 			? parseInt(panelConfig.color.replace('#', ''), 16)
 			: null;
-		const {
-			ContainerBuilder,
-			TextDisplayBuilder,
-			SeparatorBuilder,
-			ButtonBuilder,
-			ButtonStyle,
-			ActionRowBuilder,
-			MessageFlags,
-		} = require('discord.js');
+
 		const containerPayload = new ContainerBuilder()
 			.setAccentColor(color || c.get('config').bot.color)
 			.addTextDisplayComponents(
@@ -886,15 +887,7 @@ app.post('/:guildId/panel/resend', async (c) => {
 		const color = panelConfig.color
 			? parseInt(panelConfig.color.replace('#', ''), 16)
 			: null;
-		const {
-			ContainerBuilder,
-			TextDisplayBuilder,
-			SeparatorBuilder,
-			ButtonBuilder,
-			ButtonStyle,
-			ActionRowBuilder,
-			MessageFlags,
-		} = require('discord.js');
+
 		const containerPayload = new ContainerBuilder()
 			.setAccentColor(color || c.get('config').bot.color)
 			.addTextDisplayComponents(

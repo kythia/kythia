@@ -7,6 +7,7 @@
  */
 
 const { Hono } = require('hono');
+const { MessageFlags } = require('discord.js');
 const app = new Hono();
 
 // Helpers
@@ -454,7 +455,7 @@ app.post('/panels', async (c) => {
 			panelMessageId = bodyMessageId;
 		} else {
 			// post_embed — send an initial embed
-			const { MessageFlags } = require('discord.js');
+
 			const panelTitle = title || '🎭 Reaction Roles';
 			const embed = rrHelpers.buildPanelEmbed(
 				{
@@ -522,7 +523,7 @@ app.patch('/panels/:id', async (c) => {
 	const { ReactionRolePanel, ReactionRole } = getModels(c);
 	const id = c.req.param('id');
 	const body = await c.req.json();
-	const { MessageFlags } = require('discord.js');
+
 	try {
 		const panel = await ReactionRolePanel.getCache({
 			id: id,
@@ -1346,7 +1347,7 @@ app.post('/panels/:id/duplicate', async (c) => {
 		}
 
 		// Post initial embed to target channel
-		const { MessageFlags } = require('discord.js');
+
 		const newTitle = overrideTitle || sourcePanel.title || '🎭 Reaction Roles';
 		const embed = rrHelpers.buildPanelEmbed(
 			{

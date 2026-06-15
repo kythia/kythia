@@ -41,12 +41,14 @@ class LeaderboardCommand extends BaseCommand {
 			// Await all translations before joining
 			const entries = await Promise.all(
 				leaderboard.map(async (pet, index) => {
-					let user = interaction.client.users.cache.get(pet.userId);
-					if (!user) {
+					let user;
+					try {
 						user = await helpers.discord.getUserSafe(
 							interaction.client,
 							pet.userId,
 						);
+					} catch (_e) {
+						user = null;
 					}
 					return t(interaction, 'pet.leaderboard.entry', {
 						index: index + 1,

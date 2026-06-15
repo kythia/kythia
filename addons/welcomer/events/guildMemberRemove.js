@@ -12,6 +12,7 @@ const {
 	MediaGalleryBuilder,
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
+	AttachmentBuilder,
 } = require('discord.js');
 
 const {
@@ -201,7 +202,6 @@ class GuildMemberRemoveEvent extends BaseEvent {
 			let embedImageUrl = goodbyeImage;
 			const files = [];
 			if (Buffer.isBuffer(goodbyeImage)) {
-				const { AttachmentBuilder } = require('discord.js');
 				const attachment = new AttachmentBuilder(goodbyeImage, {
 					name: 'goodbye.png',
 				});

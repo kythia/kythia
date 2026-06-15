@@ -7,6 +7,13 @@
  */
 
 const { Op, fn, col } = require('sequelize');
+const {
+	MessageFlags,
+	ContainerBuilder,
+	TextDisplayBuilder,
+	MediaGalleryBuilder,
+	MediaGalleryItemBuilder,
+} = require('discord.js');
 const achievements = require('./achievements');
 const lang = require('../lang/en-US.json');
 
@@ -260,9 +267,6 @@ async function checkAndUnlock(triggerType, ctx) {
 				const result = await queueManager.waitFor(job, 'kythia-image-queue');
 				const buffer = Buffer.from(result.data);
 
-				const { MessageFlags, ContainerBuilder, TextDisplayBuilder } =
-					require('discord.js');
-
 				const notifContainer = new ContainerBuilder()
 					.setAccentColor(
 						convertColor(kythiaConfig.bot.color, {
@@ -276,10 +280,8 @@ async function checkAndUnlock(triggerType, ctx) {
 						),
 					)
 					.addMediaGalleryComponents(
-						new (require('discord.js').MediaGalleryBuilder)().addItems([
-							new (require('discord.js').MediaGalleryItemBuilder)().setURL(
-								`attachment://${imageName}`,
-							),
+						new MediaGalleryBuilder().addItems([
+							new MediaGalleryItemBuilder().setURL(`attachment://${imageName}`),
 						]),
 					);
 

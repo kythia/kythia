@@ -7,7 +7,7 @@
  */
 
 const { Hono } = require('hono');
-// const { ChannelType, PermissionFlagsBits } = require('discord.js');
+const { ChannelType, PermissionFlagsBits } = require('discord.js');
 const {
 	fetchMcStatus,
 	runMinecraftStatsUpdater,
@@ -194,7 +194,6 @@ app.post('/autosetup/:guildId', async (c) => {
 		let setupResult = null;
 
 		const createChannelsLogic = async (c, context) => {
-			const { ChannelType, PermissionFlagsBits } = require('discord.js');
 			const g = c.guilds.cache.get(context.guildId);
 			if (!g) return null;
 

@@ -15,6 +15,7 @@ const {
 	MediaGalleryBuilder,
 	MediaGalleryItemBuilder,
 	SeparatorSpacingSize,
+	ShardClientUtil,
 } = require('discord.js');
 // kythia-arts is now imported in the sandboxed queue processor
 const { DateTime } = require('luxon');
@@ -31,7 +32,7 @@ class AnnouncerTask extends BaseTask {
 		const { UserBirthday } = models;
 		const { t } = container || this.container;
 		const { getGuildSafe } = helpers.discord;
-		const { ShardClientUtil } = require('discord.js');
+
 		logger.info('🎂 Running birthday announcer...', {
 			label: 'birthday',
 		});

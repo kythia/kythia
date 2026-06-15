@@ -18,6 +18,7 @@ const {
 	MediaGalleryBuilder,
 	MediaGalleryItemBuilder,
 	MessageFlags,
+	AttachmentBuilder,
 } = require('discord.js');
 
 const { BaseEvent } = require('kythia-core');
@@ -216,7 +217,6 @@ class GuildMemberAddEvent extends BaseEvent {
 			let embedImageUrl = welcomeInImage;
 			const files = [];
 			if (Buffer.isBuffer(welcomeInImage)) {
-				const { AttachmentBuilder } = require('discord.js');
 				const attachment = new AttachmentBuilder(welcomeInImage, {
 					name: 'welcome.png',
 				});

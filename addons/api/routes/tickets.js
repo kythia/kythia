@@ -646,15 +646,6 @@ app.post('/panels/:id/resend', async (c) => {
 		} catch (_) {}
 
 		// Post a fresh panel stub to the target channel
-		const {
-			ContainerBuilder,
-			TextDisplayBuilder,
-			SeparatorBuilder,
-			SeparatorSpacingSize,
-			MediaGalleryBuilder,
-			MediaGalleryItemBuilder,
-			MessageFlags,
-		} = require('discord.js');
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
