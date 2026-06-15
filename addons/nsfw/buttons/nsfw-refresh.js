@@ -13,7 +13,7 @@ const { fetchContent } = require('../helpers/api.js');
 const { BaseButton } = require('kythia-core');
 
 class NsfwRefreshButton extends BaseButton {
-	button = {};
+	button = { customId: 'nsfw_refresh' };
 
 	async execute(interaction) {
 		const container = this.container;

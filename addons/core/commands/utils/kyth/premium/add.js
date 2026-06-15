@@ -40,18 +40,10 @@ class AddCommand extends BaseCommand {
 		const days = interaction.options.getInteger('days') ?? 30;
 		const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 
-		let kythiaUser = await KythiaUser.getCache({ userId: user.id });
-		if (kythiaUser) {
-			kythiaUser.isPremium = true;
-			kythiaUser.premiumExpiresAt = expiresAt;
-			await kythiaUser.save();
-		} else {
-			kythiaUser = await KythiaUser.create({
-				userId: user.id,
-				isPremium: true,
-				premiumExpiresAt: expiresAt,
-			});
-		}
+		await KythiaUser.updateOrCreateCache(
+			{ userId: user.id },
+			{ isPremium: true, premiumExpiresAt: expiresAt },
+		);
 
 		const msg = await t(interaction, 'core.premium.premium.add.success', {
 			user: `<@${user.id}>`,

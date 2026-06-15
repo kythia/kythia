@@ -11,7 +11,7 @@ const { MessageFlags } = require('discord.js');
 const { BaseModal } = require('kythia-core');
 
 class TvLimitModalModal extends BaseModal {
-	modal = {};
+	modal = { customId: 'tv_limit_modal' };
 
 	async execute(interaction) {
 		const container = this.container;

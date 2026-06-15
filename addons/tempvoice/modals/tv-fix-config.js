@@ -10,7 +10,7 @@ const { ComponentType, MessageFlags } = require('discord.js');
 const { BaseModal } = require('kythia-core');
 
 class TvFixConfigModal extends BaseModal {
-	modal = {};
+	modal = { customId: 'tv_fix_config_modal' };
 
 	async execute(interaction) {
 		const container = this.container;

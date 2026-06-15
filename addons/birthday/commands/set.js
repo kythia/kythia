@@ -71,26 +71,13 @@ class SetCommand extends BaseCommand {
 			});
 		}
 
-		// Check if user already has a birthday set
-		const existing = await UserBirthday.getCache({
-			guildId: interaction.guild.id,
-			userId: interaction.user.id,
-		});
-
-		if (existing) {
-			existing.day = day;
-			existing.month = month;
-			existing.year = year;
-			await existing.save();
-		} else {
-			await UserBirthday.create({
+		await UserBirthday.updateOrCreateCache(
+			{
 				guildId: interaction.guild.id,
 				userId: interaction.user.id,
-				day,
-				month,
-				year,
-			});
-		}
+			},
+			{ day, month, year },
+		);
 
 		const successMsg = await t(interaction, 'birthday.set.success', {
 			date: dateObj.toFormat(year ? 'DDDD' : 'MMMM d'),

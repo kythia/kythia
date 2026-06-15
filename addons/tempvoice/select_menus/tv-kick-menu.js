@@ -11,7 +11,7 @@ const { MessageFlags } = require('discord.js');
 const { BaseSelectMenu } = require('kythia-core');
 
 class TvKickMenuSelectMenu extends BaseSelectMenu {
-	selectMenu = {};
+	selectMenu = { customId: 'tv_kick_menu' };
 
 	async execute(interaction) {
 		const container = this.container;

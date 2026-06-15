@@ -10,7 +10,7 @@ const { MessageFlags } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 
 class TvWaitingDenyButton extends BaseButton {
-	button = {};
+	button = { customId: 'tv_waiting_deny' };
 
 	async execute(interaction) {
 		const container = this.container;

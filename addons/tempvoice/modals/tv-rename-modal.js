@@ -11,7 +11,7 @@ const { MessageFlags } = require('discord.js');
 const { BaseModal } = require('kythia-core');
 
 class TvRenameModalModal extends BaseModal {
-	modal = {};
+	modal = { customId: 'tv_rename_modal' };
 
 	async execute(interaction) {
 		const container = this.container;

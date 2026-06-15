@@ -10,7 +10,7 @@ const { PermissionsBitField, MessageFlags } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 
 class TvStageButton extends BaseButton {
-	button = {};
+	button = { customId: 'tv_stage' };
 
 	async execute(interaction) {
 		const container = this.container;

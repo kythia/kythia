@@ -16,7 +16,7 @@ const {
 const { BaseButton } = require('kythia-core');
 
 class TvUntrustButton extends BaseButton {
-	button = {};
+	button = { customId: 'tv_untrust' };
 
 	async execute(interaction) {
 		const container = this.container;

@@ -50,33 +50,19 @@ app.post('/topgg', async (c) => {
 	if (!userId) return c.json({ error: 'No User ID' }, 400);
 
 	try {
-		const kythiaVoter = await KythiaVoter.getCache({ userId });
-		if (kythiaVoter) {
-			await kythiaVoter.update({ votedAt: new Date() });
-		} else {
-			await KythiaVoter.create({ userId, votedAt: new Date() });
-		}
+		await KythiaVoter.updateOrCreateCache({ userId }, { votedAt: new Date() });
 
-		let user = await KythiaUser.getCache({ userId });
-		let isNew = false;
+		const voteExpiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000);
+		const [user, isNew] = await KythiaUser.getOrCreateCache(
+			{ userId },
+			{ kythiaCoin: 0, isVoted: false, voteExpiresAt, votePoints: 0 },
+		);
 
-		if (!user) {
-			user = await KythiaUser.create({
-				userId,
-				kythiaCoin: 1000,
-				isVoted: true,
-				voteExpiresAt: new Date(Date.now() + 12 * 60 * 60 * 1000),
-				votePoints: 1,
-			});
-			await user.save();
-			isNew = true;
-		} else {
-			user.kythiaCoin = (user.kythiaCoin || 0) + 1000;
-			user.isVoted = true;
-			user.voteExpiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000);
-			user.votePoints = (user.votePoints || 0) + 1;
-			await user.save();
-		}
+		user.kythiaCoin = (user.kythiaCoin || 0) + 1000;
+		user.isVoted = true;
+		user.voteExpiresAt = voteExpiresAt;
+		user.votePoints = (user.votePoints || 0) + 1;
+		await user.save();
 
 		try {
 			const discordUser = await client.users.fetch(userId);
@@ -99,7 +85,7 @@ app.post('/topgg', async (c) => {
 				.addActionRowComponents(
 					new ActionRowBuilder().addComponents(
 						new ButtonBuilder()
-							.setCustomId('vote_remind')
+							.setCustomId('vote-remind')
 							.setLabel('Remind me in 12h')
 							.setStyle(ButtonStyle.Primary),
 					),

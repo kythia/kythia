@@ -32,7 +32,7 @@ const REGIONS = [
 const { BaseButton } = require('kythia-core');
 
 class TvRegionButton extends BaseButton {
-	button = {};
+	button = { customId: 'tv_region' };
 
 	async execute(interaction) {
 		const container = this.container;

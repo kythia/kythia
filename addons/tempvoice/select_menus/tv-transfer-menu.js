@@ -10,7 +10,7 @@ const { PermissionsBitField, MessageFlags } = require('discord.js');
 const { BaseSelectMenu } = require('kythia-core');
 
 class TvTransferMenuSelectMenu extends BaseSelectMenu {
-	selectMenu = {};
+	selectMenu = { customId: 'tv_transfer_menu' };
 
 	async execute(interaction) {
 		const container = this.container;

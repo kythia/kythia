@@ -35,16 +35,9 @@ class ViewCommand extends BaseCommand {
 
 		await interaction.deferReply();
 
-		let setting = await BirthdaySetting.getCache({
+		const [setting] = await BirthdaySetting.firstOrCreateCache({
 			guildId: interaction.guild.id,
 		});
-
-		if (!setting) {
-			// Create default if not exists
-			setting = await BirthdaySetting.create({
-				guildId: interaction.guild.id,
-			});
-		}
 
 		const notSet = await t(interaction, 'birthday.setting.view.not_set');
 		const systemDefault = await t(

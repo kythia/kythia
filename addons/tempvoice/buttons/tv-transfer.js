@@ -16,7 +16,7 @@ const {
 const { BaseButton } = require('kythia-core');
 
 class TvTransferButton extends BaseButton {
-	button = {};
+	button = { customId: 'tv_transfer' };
 
 	async execute(interaction) {
 		const container = this.container;

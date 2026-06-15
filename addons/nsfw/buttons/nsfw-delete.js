@@ -11,7 +11,7 @@ const { MessageFlags } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 
 class NsfwDeleteButton extends BaseButton {
-	button = {};
+	button = { customId: 'nsfw_delete' };
 
 	async execute(interaction) {
 		const container = this.container;

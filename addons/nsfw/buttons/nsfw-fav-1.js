@@ -11,7 +11,7 @@ const { handleFavorite } = require('../helpers/buttons.js');
 const { BaseButton } = require('kythia-core');
 
 class NsfwFav1Button extends BaseButton {
-	button = {};
+	button = { customId: 'nsfw_fav_1' };
 
 	async execute(interaction) {
 		const container = this.container;

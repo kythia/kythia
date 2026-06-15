@@ -16,7 +16,7 @@ const {
 const { BaseButton } = require('kythia-core');
 
 class TvUnblockButton extends BaseButton {
-	button = {};
+	button = { customId: 'tv_unblock' };
 
 	async execute(interaction) {
 		const container = this.container;

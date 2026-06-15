@@ -16,7 +16,7 @@ const {
 const { BaseButton } = require('kythia-core');
 
 class TvRenameButton extends BaseButton {
-	button = {};
+	button = { customId: 'tv_rename' };
 
 	async execute(interaction) {
 		const container = this.container;
