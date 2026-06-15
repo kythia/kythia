@@ -88,18 +88,20 @@ app.get('/messages/:channelId', async (c) => {
 			await client.container.helpers.discord.fetchMessagesQuerySafe(channel, {
 				limit,
 			});
-		const formatted = messages.map((msg) => ({
-			id: msg.id,
-			content: parseDiscordMarkdown(msg.content, msg.guild),
-			author: {
-				username: msg.author.username,
-				avatar: msg.author.displayAvatarURL(),
-				bot: msg.author.bot,
-			},
-			timestamp: msg.createdAt,
-			embeds: msg.embeds,
-			attachments: msg.attachments.map((a) => a.url),
-		}));
+		const formatted = await Promise.all(
+			messages.map(async (msg) => ({
+				id: msg.id,
+				content: await parseDiscordMarkdown(msg.content, msg.guild),
+				author: {
+					username: msg.author.username,
+					avatar: msg.author.displayAvatarURL(),
+					bot: msg.author.bot,
+				},
+				timestamp: msg.createdAt,
+				embeds: msg.embeds,
+				attachments: msg.attachments.map((a) => a.url),
+			})),
+		);
 		return c.json(formatted.reverse());
 	} catch (_e) {
 		return c.json(

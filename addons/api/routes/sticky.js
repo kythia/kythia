@@ -129,7 +129,11 @@ app.post('/', async (c) => {
 
 			sentId = results.find((id) => id !== null);
 		} else {
-			const channel = client.channels.cache.get(body.channelId);
+			const channel =
+				await client.container.helpers.discord.getChannelGlobalSafe(
+					client,
+					body.channelId,
+				);
 			if (channel) {
 				const sent = await channel.send({
 					components: [stickyContainerJSON],

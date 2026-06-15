@@ -14,8 +14,17 @@ function hexToRgb(hex) {
 		: '255,255,255';
 }
 
-function parseDiscordMarkdown(text, guild) {
-	const { getChannelSafe } = guild.client.container.helpers.discord;
+async function replaceAsync(str, regex, asyncFn) {
+	const promises = [];
+	str.replace(regex, (match, ...args) => {
+		const promise = asyncFn(match, ...args);
+		promises.push(promise);
+	});
+	const data = await Promise.all(promises);
+	return str.replace(regex, () => data.shift());
+}
+
+async function parseDiscordMarkdown(text, guild) {
 	if (!text) return '';
 
 	const placeholders = {};
@@ -53,21 +62,36 @@ function parseDiscordMarkdown(text, guild) {
 		.replace(/^# (.*$)/gim, '<h2>$1</h2>');
 
 	if (guild) {
-		text = text.replace(/&lt;@!?(\d+)&gt;/g, (_match, userId) => {
-			const member = guild.members.cache.get(userId);
-			return `<span class="mention" title="${member ? member.user.tag : userId}">@${member ? member.displayName : 'unknown-user'}</span>`;
-		});
-		text = text.replace(/&lt;#(\d+)&gt;/g, async (_match, channelId) => {
-			const channel = await getChannelSafe(guild, channelId);
-			return `<span class="mention">#${channel ? channel.name : 'deleted-channel'}</span>`;
-		});
-		text = text.replace(/&lt;@&(\d+)&gt;/g, (_match, roleId) => {
-			const role = guild.roles.cache.get(roleId);
-			const roleStyle = role
-				? `color: ${role.hexColor}; background-color: rgba(${hexToRgb(role.hexColor)}, 0.1); border: 1px solid rgba(${hexToRgb(role.hexColor)}, 0.3);`
-				: '';
-			return `<span class="mention" style="${roleStyle}">@${role ? role.name : 'unknown-role'}</span>`;
-		});
+		const { getUserSafe, getChannelSafe, getRoleSafe } =
+			guild.client.container.helpers.discord;
+
+		text = await replaceAsync(
+			text,
+			/&lt;@!?(\d+)&gt;/g,
+			async (_match, userId) => {
+				const user = await getUserSafe(guild.client, userId);
+				return `<span class="mention" title="${user ? user.tag : userId}">@${user ? user.displayName || user.username : 'unknown-user'}</span>`;
+			},
+		);
+		text = await replaceAsync(
+			text,
+			/&lt;#(\d+)&gt;/g,
+			async (_match, channelId) => {
+				const channel = await getChannelSafe(guild, channelId);
+				return `<span class="mention">#${channel ? channel.name : 'deleted-channel'}</span>`;
+			},
+		);
+		text = await replaceAsync(
+			text,
+			/&lt;@&(\d+)&gt;/g,
+			async (_match, roleId) => {
+				const role = await getRoleSafe(guild, roleId);
+				const roleStyle = role
+					? `color: ${role.hexColor}; background-color: rgba(${hexToRgb(role.hexColor)}, 0.1); border: 1px solid rgba(${hexToRgb(role.hexColor)}, 0.3);`
+					: '';
+				return `<span class="mention" style="${roleStyle}">@${role ? role.name : 'unknown-role'}</span>`;
+			},
+		);
 	}
 
 	text = text

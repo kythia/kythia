@@ -686,11 +686,15 @@ app.delete('/:guildId/members/:userId/revoke', async (c) => {
 				404,
 			);
 		if (config.verifiedRoleId) {
-			const role = guild.roles.cache.get(config.verifiedRoleId);
+			const role = await c
+				.get('client')
+				.container.helpers.discord.getRoleSafe(guild, config.verifiedRoleId);
 			if (role) await member.roles.remove(role).catch(() => null);
 		}
 		if (config.unverifiedRoleId) {
-			const role = guild.roles.cache.get(config.unverifiedRoleId);
+			const role = await c
+				.get('client')
+				.container.helpers.discord.getRoleSafe(guild, config.unverifiedRoleId);
 			if (role) await member.roles.add(role).catch(() => null);
 		}
 		return c.json({
