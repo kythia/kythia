@@ -13,14 +13,14 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class ThreadMemberUpdateEvent extends BaseEvent {
 	async execute(oldMember, newMember) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
@@ -35,16 +35,15 @@ class ThreadMemberUpdateEvent extends BaseEvent {
 		if (!thread?.guild) return;
 		const guild = thread.guild;
 		const guildId = guild.id;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId: guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -60,13 +59,15 @@ class ThreadMemberUpdateEvent extends BaseEvent {
 					`**Flags:** ${oldMember.flags.bitfield} ➔ ${newMember.flags.bitfield}`,
 				);
 			}
-
 			if (changes.length === 0) return; // Ignore if no visible changes
 
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Blurple', { from: 'discord', to: 'decimal' }),
+						convertColor('Blurple', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -94,13 +95,18 @@ class ThreadMemberUpdateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -118,5 +124,4 @@ class ThreadMemberUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = ThreadMemberUpdateEvent;

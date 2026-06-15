@@ -17,26 +17,21 @@ const { handleFailedGlobalChat } = require('../helpers/handleFailedGlobalChat');
 function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
 const { BaseTask } = require('kythia-core');
-
 class WebhookHealthCheckTask extends BaseTask {
 	task = {
 		taskName: 'webhook-health-check',
 		schedule: '* */30 * * *', // Every 30 minutes
 	};
-
 	async execute(container) {
 		const { logger, models, kythiaConfig, client } =
 			container || this.container;
 		const { GlobalChat } = models;
 		const { ShardClientUtil } = require('discord.js');
-
 		const apiUrl = kythiaConfig.addons.globalchat.apiUrl;
 		const apiKey = kythiaConfig.addons.globalchat.apiKey;
 		const checkDelayMs =
 			kythiaConfig.addons.globalchat.healthCheckDelay || 1000;
-
 		logger.info('Starting webhook health check (API+DB sync, then probe)...', {
 			label: 'global chat',
 		});
@@ -97,23 +92,24 @@ class WebhookHealthCheckTask extends BaseTask {
 				);
 				if (!client.shard.ids.includes(expectedShardId)) continue;
 			}
-
 			const dbEntry = dbGuildMap.get(apiGuild.id);
-
 			const shouldUpdate =
 				!dbEntry ||
 				dbEntry.globalChannelId !== apiGuild.globalChannelId ||
 				dbEntry.webhookId !== apiGuild.webhookId ||
 				dbEntry.webhookToken !== apiGuild.webhookToken;
-
 			if (shouldUpdate) {
 				logger.warn(
 					`DB desync: Entry for ${apiGuild.guildName || apiGuild.id} is missing/out-of-date vs API. Will update local DB cache.`,
-					{ label: 'global chat' },
+					{
+						label: 'global chat',
+					},
 				);
 				try {
 					await GlobalChat.updateOrCreateCache(
-						{ guildId: apiGuild.id },
+						{
+							guildId: apiGuild.id,
+						},
 						{
 							guildName: apiGuild.guildName,
 							globalChannelId: apiGuild.globalChannelId,
@@ -124,7 +120,9 @@ class WebhookHealthCheckTask extends BaseTask {
 				} catch (err) {
 					logger.error(
 						`Failed to update DB from API for guild ${apiGuild.id}: ${err.message || err}`,
-						{ label: 'global chat' },
+						{
+							label: 'global chat',
+						},
 					);
 				}
 			}
@@ -134,38 +132,44 @@ class WebhookHealthCheckTask extends BaseTask {
 		const managedGuildsToCheck = dbGuilds.filter((g) =>
 			client.guilds.cache.has(g.guildId),
 		);
-
 		logger.info(
 			`Checking webhook health for ${managedGuildsToCheck.length} guild(s) in our local DB...`,
-			{ label: 'global chat' },
+			{
+				label: 'global chat',
+			},
 		);
-
 		for (const guildInfo of managedGuildsToCheck) {
 			// Only check if present in API as well (should be after sync above, but extra safety)
 			const apiGuild = apiGuildMap.get(guildInfo.guildId);
 			if (!apiGuild) {
 				logger.warn(
 					`Skipping guild ${guildInfo.guildId}: not present in latest API list.`,
-					{ label: 'global chat' },
+					{
+						label: 'global chat',
+					},
 				);
 				continue;
 			}
-
 			try {
 				const webhookUrl = `https://discord.com/api/webhooks/${guildInfo.webhookId}/${guildInfo.webhookToken}`;
 				const webhookRes = await fetch(webhookUrl);
-
 				if (webhookRes.status === 404) {
 					logger.warn(
 						`DEAD webhook (404) for guild ${guildInfo.guildName || guildInfo.guildId}. Will trigger self-heal!`,
-						{ label: 'global chat' },
+						{
+							label: 'global chat',
+						},
 					);
 					const failedGuild = {
 						guildId: guildInfo.guildId,
 						guildName:
 							guildInfo.guildName ||
-							(await client.guilds.fetch(guildInfo.guildId).catch(() => null))
-								?.name ||
+							(
+								await client.container.helpers.discord.getGuildSafe(
+									client,
+									guildInfo.guildId,
+								)
+							)?.name ||
 							guildInfo.guildId,
 						error: 'Proactive check failed: 404 Not Found',
 					};
@@ -177,22 +181,24 @@ class WebhookHealthCheckTask extends BaseTask {
 				} else if (!webhookRes.ok) {
 					logger.warn(
 						`Webhook for ${guildInfo.guildId} returned non-OK status: ${webhookRes.status}`,
-						{ label: 'global chat' },
+						{
+							label: 'global chat',
+						},
 					);
 				}
 			} catch (fetchErr) {
 				logger.error(
 					`Error fetching webhook for guild ${guildInfo.guildId}: ${fetchErr.message || fetchErr}`,
-					{ label: 'global chat' },
+					{
+						label: 'global chat',
+					},
 				);
 			}
 			await sleep(checkDelayMs);
 		}
-
 		logger.info('Webhook health check (API+DB sync & probe) finished.', {
 			label: 'global chat',
 		});
 	}
 }
-
 exports.default = WebhookHealthCheckTask;

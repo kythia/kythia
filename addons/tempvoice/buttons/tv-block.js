@@ -12,43 +12,43 @@ const {
 	TextDisplayBuilder,
 	MessageFlags,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TvBlockButton extends BaseButton {
-	button = { customId: 'tv_block' };
-
+	button = {
+		customId: 'tv_block',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, t, helpers, kythiaConfig } = container;
 		const { convertColor } = helpers.color;
 		const { TempVoiceChannel } = models;
-
 		const activeChannel = await TempVoiceChannel.getCache({
 			ownerId: interaction.user.id,
 			guildId: interaction.guild.id,
 		});
-
 		if (!activeChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.block.no_active_channel'),
-				flags: MessageFlags.Ephemeral,
+				components:
+					await interaction.client.container.helpers.discord.simpleContainer(
+						interaction,
+						await t(interaction, 'tempvoice.block.no_active_channel'),
+						{
+							color: 'Red',
+						},
+					),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const selectMenu = new UserSelectMenuBuilder()
 			.setCustomId(`tv_block_menu:${activeChannel.channelId}`)
 			.setPlaceholder(await t(interaction, 'tempvoice.block.menu.placeholder'))
 			.setMinValues(1)
 			.setMaxValues(10);
-
 		const row = new ActionRowBuilder().addComponents(selectMenu);
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const containerComponent = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
@@ -57,12 +57,10 @@ class TvBlockButton extends BaseButton {
 				),
 			)
 			.addActionRowComponents(row);
-
 		await interaction.reply({
 			components: [containerComponent],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = TvBlockButton;

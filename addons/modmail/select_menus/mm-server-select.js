@@ -14,9 +14,7 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { createModmailThread } = require('../helpers');
-
 const { BaseSelectMenu } = require('kythia-core');
-
 class MmServerSelectSelectMenu extends BaseSelectMenu {
 	selectMenu = {
 		/**
@@ -24,21 +22,19 @@ class MmServerSelectSelectMenu extends BaseSelectMenu {
 		 * @param {KythiaDI.Container} container
 		 */
 	};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, t, helpers, logger, kythiaConfig, client } = container;
 		const { ModmailConfig } = models;
 		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
-
 		const guildId = interaction.values[0];
 		const userId = interaction.user.id;
-
 		try {
 			// ── Load config & resolve guild name early (for the confirmation card) ─
-			const config = await ModmailConfig.getCache({ guildId });
+			const config = await ModmailConfig.getCache({
+				guildId,
+			});
 			const fakeInteraction = {
 				client,
 				locale: kythiaConfig.bot.locale || 'en-US',
@@ -50,7 +46,6 @@ class MmServerSelectSelectMenu extends BaseSelectMenu {
 			const footerText = await t(fakeInteraction, 'common.container.footer', {
 				username: kythiaConfig.bot.name,
 			});
-
 			if (!config) {
 				const desc = await t(fakeInteraction, 'modmail.errors.not_configured');
 				await interaction
@@ -84,7 +79,10 @@ class MmServerSelectSelectMenu extends BaseSelectMenu {
 			}
 
 			// ── Fetch the guild name for the confirmation card ─────────────────────
-			const guild = await client.guilds.fetch(guildId).catch(() => null);
+			const guild = await client.container.helpers.discord.getGuildSafe(
+				client,
+				guildId,
+			);
 			const guildName = guild?.name || 'Unknown Server';
 
 			// ── Replace the picker with a "Now chatting with…" Components V2 card ──
@@ -121,7 +119,6 @@ class MmServerSelectSelectMenu extends BaseSelectMenu {
 			const pending = client.modmailPendingSelections?.get(userId);
 			const content = pending?.content || '';
 			const attachments = pending?.attachments || new Map();
-
 			if (client.modmailPendingSelections) {
 				client.modmailPendingSelections.delete(userId);
 			}
@@ -145,5 +142,4 @@ class MmServerSelectSelectMenu extends BaseSelectMenu {
 		}
 	}
 }
-
 module.exports = MmServerSelectSelectMenu;

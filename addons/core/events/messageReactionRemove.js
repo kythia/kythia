@@ -13,26 +13,25 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class MessageReactionRemoveEvent extends BaseEvent {
 	async execute(reaction, user) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
 		const guildId = reaction.message.guild?.id;
-
 		try {
 			if (!user) return; // Prevent null user errors
 
 			// Handle partials
 			if (reaction.partial) {
 				try {
-					await reaction.fetch();
+					await helpers.discord.resolvePartialSafe(reaction);
 				} catch (error) {
 					logger.error(`Error: ${error.message || error}`, {
 						label: 'messageReactionRemove:fetchMessage',
@@ -42,7 +41,7 @@ class MessageReactionRemoveEvent extends BaseEvent {
 			}
 			if (user.partial) {
 				try {
-					await user.fetch();
+					await helpers.discord.refreshObjectSafe(user);
 				} catch (error) {
 					logger.error(`Error: ${error.message || error}`, {
 						label: 'messageReactionRemove:fetchUser',
@@ -50,7 +49,6 @@ class MessageReactionRemoveEvent extends BaseEvent {
 					return;
 				}
 			}
-
 			if (user.bot) return; // Ignore bots
 			const message = reaction.message;
 			if (!message.guild) return; // Ignore DMs
@@ -60,10 +58,10 @@ class MessageReactionRemoveEvent extends BaseEvent {
 				guildId: message.guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await message.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				message.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -71,15 +69,16 @@ class MessageReactionRemoveEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			const emojiDisplay = reaction.emoji.id
 				? `<:${reaction.emoji.name}:${reaction.emoji.id}>`
 				: reaction.emoji.name;
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Red', { from: 'discord', to: 'decimal' }),
+						convertColor('Red', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -107,13 +106,18 @@ class MessageReactionRemoveEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -131,5 +135,4 @@ class MessageReactionRemoveEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = MessageReactionRemoveEvent;

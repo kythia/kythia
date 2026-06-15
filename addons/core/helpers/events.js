@@ -44,7 +44,6 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 	const { member, guild, channel, user, client } = interaction;
 	const container = client.container;
 	const { logger } = container;
-
 	switch (eventName) {
 		// Message events
 		case Events.MessageCreate:
@@ -54,17 +53,23 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 					content: 'This is a test message for event testing.',
 				}),
 			];
-
 		case Events.MessageUpdate: {
 			const oldMessage = await channel.send({
 				content: 'Old message content.',
 			});
-			const newMessage = await channel.messages.fetch(oldMessage.id);
-
+			const newMessage = await container.helpers.discord.getMessageSafe(
+				channel,
+				oldMessage.id,
+			);
 			if (type === 'embed-add') {
 				// Simulate adding an embed
 				Object.defineProperty(newMessage, 'embeds', {
-					value: [{ title: 'New Embed', description: 'Test embed' }],
+					value: [
+						{
+							title: 'New Embed',
+							description: 'Test embed',
+						},
+					],
 					writable: true,
 				});
 			} else {
@@ -76,31 +81,39 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 			}
 			return [oldMessage, newMessage];
 		}
-
 		case Events.MessageBulkDelete: {
 			const messages = new Collection();
-			const msg1 = await channel.send({ content: 'Message 1' });
-			const msg2 = await channel.send({ content: 'Message 2' });
+			const msg1 = await channel.send({
+				content: 'Message 1',
+			});
+			const msg2 = await channel.send({
+				content: 'Message 2',
+			});
 			messages.set(msg1.id, msg1);
 			messages.set(msg2.id, msg2);
 			return [messages, channel];
 		}
-
 		case Events.MessageReactionAdd:
 		case Events.MessageReactionRemove: {
-			const message = await channel.send({ content: 'React to this!' });
+			const message = await channel.send({
+				content: 'React to this!',
+			});
 			const reaction = {
-				emoji: { name: '👍', id: null },
+				emoji: {
+					name: '👍',
+					id: null,
+				},
 				count: 1,
 				me: false,
 				message,
 			};
 			return [reaction, user];
 		}
-
 		case Events.MessageReactionRemoveAll:
 		case Events.MessageReactionRemoveEmoji: {
-			const message = await channel.send({ content: 'All reactions removed' });
+			const message = await channel.send({
+				content: 'All reactions removed',
+			});
 			return [message];
 		}
 
@@ -108,14 +121,12 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 		case Events.GuildMemberAdd:
 		case Events.GuildMemberRemove:
 			return [member];
-
 		case Events.GuildMemberUpdate: {
 			const oldMember = Object.assign(
 				Object.create(Object.getPrototypeOf(member)),
 				member,
 			);
 			const newMember = member;
-
 			switch (type) {
 				case 'boost':
 					oldMember.premiumSinceTimestamp = null;
@@ -135,10 +146,17 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 			}
 			return [oldMember, newMember];
 		}
-
 		case Events.GuildMembersChunk: {
 			const members = new Collection([[member.id, member]]);
-			return [members, guild, { index: 0, count: 1, nonce: 'test' }];
+			return [
+				members,
+				guild,
+				{
+					index: 0,
+					count: 1,
+					nonce: 'test',
+				},
+			];
 		}
 
 		// Guild events
@@ -165,18 +183,15 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 				return [mockGuild];
 			}
 			return [guild];
-
 		case Events.GuildDelete:
 		case Events.GuildUnavailable:
 		case Events.GuildAvailable:
 			return [guild];
-
 		case Events.GuildUpdate: {
 			const oldGuild = Object.assign(
 				Object.create(Object.getPrototypeOf(guild)),
 				guild,
 			);
-
 			switch (type) {
 				case 'icon-change':
 					oldGuild.icon = 'old_icon_hash';
@@ -190,14 +205,17 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 			}
 			return [oldGuild, guild];
 		}
-
 		case Events.GuildIntegrationsUpdate:
 			return [guild];
 
 		// Ban events
 		case Events.GuildBanAdd:
 		case Events.GuildBanRemove: {
-			const ban = { guild, user, reason: 'Test ban from /testevent' };
+			const ban = {
+				guild,
+				user,
+				reason: 'Test ban from /testevent',
+			};
 			return [ban];
 		}
 
@@ -205,13 +223,11 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 		case Events.ChannelCreate:
 		case Events.ChannelDelete:
 			return [channel];
-
 		case Events.ChannelUpdate: {
 			const oldChannel = Object.assign(
 				Object.create(Object.getPrototypeOf(channel)),
 				channel,
 			);
-
 			switch (type) {
 				case 'topic-change':
 					oldChannel.topic = 'Old topic';
@@ -225,7 +241,6 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 			}
 			return [oldChannel, channel];
 		}
-
 		case Events.ChannelPinsUpdate: {
 			return [channel, new Date()];
 		}
@@ -233,8 +248,14 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 		// Thread events
 		case Events.ThreadCreate:
 		case Events.ThreadDelete:
-			return [channel.isThread() ? channel : { ...channel, type: 11 }];
-
+			return [
+				channel.isThread()
+					? channel
+					: {
+							...channel,
+							type: 11,
+						},
+			];
 		case Events.ThreadUpdate: {
 			const oldThread = Object.assign(
 				Object.create(Object.getPrototypeOf(channel)),
@@ -242,7 +263,6 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 			);
 			return [oldThread, channel];
 		}
-
 		case Events.ThreadListSync:
 		case Events.ThreadMembersUpdate:
 			return [new Collection(), guild];
@@ -251,7 +271,6 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 		case Events.GuildRoleCreate:
 		case Events.GuildRoleDelete:
 			return [guild.roles.cache.first() || guild.roles.everyone];
-
 		case Events.GuildRoleUpdate: {
 			const role = guild.roles.cache.first() || guild.roles.everyone;
 			const oldRole = Object.assign(
@@ -290,9 +309,10 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 
 		// Voice events
 		case Events.VoiceStateUpdate: {
-			const oldState = { ...member.voice };
+			const oldState = {
+				...member.voice,
+			};
 			const newState = member.voice;
-
 			switch (type) {
 				case 'join':
 					oldState.channel = null;
@@ -347,11 +367,14 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 			oldUser.username = 'OldUsername';
 			return [oldUser, user];
 		}
-
 		case Events.PresenceUpdate: {
-			const oldPresence = member.presence || { status: 'offline', user };
-			const newPresence = { ...oldPresence };
-
+			const oldPresence = member.presence || {
+				status: 'offline',
+				user,
+			};
+			const newPresence = {
+				...oldPresence,
+			};
 			switch (type) {
 				case 'online':
 					newPresence.status = 'online';
@@ -379,16 +402,12 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 		// Client events
 		case Events.ClientReady:
 			return [client];
-
 		case Events.Invalidated:
 			return [];
-
 		case Events.Error:
 			return [new Error('Test error from /testevent')];
-
 		case Events.Warn:
 			return ['Test warning from /testevent'];
-
 		case Events.Debug:
 			return ['Test debug message from /testevent'];
 
@@ -398,7 +417,15 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 
 		// Typing event
 		case Events.TypingStart:
-			return [{ user, channel, timestamp: Date.now(), guild, member }];
+			return [
+				{
+					user,
+					channel,
+					timestamp: Date.now(),
+					guild,
+					member,
+				},
+			];
 
 		// Stage Instance events
 		case Events.StageInstanceCreate:
@@ -435,7 +462,11 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 		case Events.AutoModerationRuleCreate:
 		case Events.AutoModerationRuleDelete:
 		case Events.AutoModerationRuleUpdate: {
-			const rule = { id: '123456789', guild, name: 'Test Rule' };
+			const rule = {
+				id: '123456789',
+				guild,
+				name: 'Test Rule',
+			};
 			return [rule];
 		}
 
@@ -469,7 +500,11 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 		case Events.GuildSoundboardSoundCreate:
 		case Events.GuildSoundboardSoundDelete:
 		case Events.GuildSoundboardSoundUpdate: {
-			const sound = { id: '123456789', name: 'Test Sound', guildId: guild.id };
+			const sound = {
+				id: '123456789',
+				name: 'Test Sound',
+				guildId: guild.id,
+			};
 			return eventName === Events.GuildSoundboardSoundUpdate
 				? [sound, sound]
 				: [sound];
@@ -481,13 +516,22 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 		// Poll Votes
 		case Events.MessagePollVoteAdd:
 		case Events.MessagePollVoteRemove: {
-			const pollAnswer = { id: 1, text: 'Option 1' };
+			const pollAnswer = {
+				id: 1,
+				text: 'Option 1',
+			};
 			return [pollAnswer, user.id];
 		}
 
 		// Shard Events
 		case Events.ShardDisconnect:
-			return [{ code: 1000, reason: 'Normal' }, 0];
+			return [
+				{
+					code: 1000,
+					reason: 'Normal',
+				},
+				0,
+			];
 		case Events.ShardError:
 			return [new Error('Shard Error'), 0];
 		case Events.ShardReady:
@@ -519,7 +563,9 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 				{
 					channelId: channel.id,
 					guildId: guild.id,
-					emoji: { name: '🎉' },
+					emoji: {
+						name: '🎉',
+					},
 					userId: user.id,
 				},
 			];
@@ -554,5 +600,8 @@ async function createMockEventArgs(eventName, interaction, type = 'default') {
 			return [guild || channel || user || member || client];
 	}
 }
-
-module.exports = { createMockEventArgs, getEventScenarios, EVENT_SCENARIOS };
+module.exports = {
+	createMockEventArgs,
+	getEventScenarios,
+	EVENT_SCENARIOS,
+};

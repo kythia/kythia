@@ -52,9 +52,10 @@ app.post('/:userId/managed-guilds', async (c) => {
 			const fetchPromises = botGuilds.map(async (guildId) => {
 				const botMasters = settingsMap.get(guildId) || [];
 				if (botMasters.length > 0) {
-					const guild = client.guilds.cache.get(guildId);
+					const { getGuildSafe, getMemberSafe } = container.helpers.discord;
+					const guild = await getGuildSafe(client, guildId);
 					if (guild) {
-						const member = await guild.members.fetch(userId).catch(() => null); // user might not be in the guild anymore (rare, but possible)
+						const member = await getMemberSafe(guild, userId);
 						if (member) {
 							const hasBotMaster = botMasters.some((roleId) =>
 								member.roles.cache.has(roleId),

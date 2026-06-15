@@ -14,13 +14,10 @@ const {
 	ActionRowBuilder,
 	PermissionFlagsBits,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ClearCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ManageMessages;
 	botPermissions = PermissionFlagsBits.ManageMessages;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('clear')
@@ -31,54 +28,52 @@ class ClearCommand extends BaseCommand {
 					.setDescription('Amount of messages to delete (0 = all)')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		const amount = interaction.options.getInteger('amount');
-
 		if (amount === 0) {
 			return await showClearOptions(interaction, t, container);
 		}
-
 		await interaction.deferReply();
-
 		if (typeof interaction.channel.bulkDelete !== 'function') {
 			const reply = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.moderation.clear.text.only'),
-				{ color: 'Orange' },
+				{
+					color: 'Orange',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		try {
 			const deleted = await interaction.channel.bulkDelete(amount, true);
 			const totalDeleted = deleted.size;
-
 			if (totalDeleted === 0) {
 				const reply = await simpleContainer(
 					interaction,
 					await t(interaction, 'core.moderation.clear.nothing.deleted'),
-					{ color: 'Orange' },
+					{
+						color: 'Orange',
+					},
 				);
 				return interaction.editReply({
 					components: reply,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const reply = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.moderation.clear.embed.desc', {
 					count: totalDeleted,
 				}),
-				{ color: 'Green' },
+				{
+					color: 'Green',
+				},
 			);
 			await interaction.editReply({
 				components: reply,
@@ -88,7 +83,9 @@ class ClearCommand extends BaseCommand {
 			const reply = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.moderation.clear.error'),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -97,15 +94,15 @@ class ClearCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = ClearCommand;
 
 // Show options for clear (Nuke/Bulk)
 async function showClearOptions(interaction, t, container) {
 	const { helpers } = container;
 	const { createContainer, simpleContainer } = helpers.discord;
-	await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+	await interaction.deferReply({
+		flags: MessageFlags.Ephemeral,
+	});
 	const row = new ActionRowBuilder().addComponents(
 		new ButtonBuilder()
 			.setCustomId('confirmNuke')
@@ -127,37 +124,34 @@ async function showClearOptions(interaction, t, container) {
 		'\n\n' +
 		`**💥 Nuke Channel**\n${await t(interaction, 'core.moderation.clear.options.nuke.value')}\n\n` +
 		`**🗑️ Bulk Delete**\n${await t(interaction, 'core.moderation.clear.options.bulk.value')}`;
-
 	const replyWithFields = await createContainer(interaction, {
 		color: 'Orange',
 		title: await t(interaction, 'core.moderation.clear.options.title'),
 		description: desc,
 		components: [row],
 	});
-
 	const message = await interaction.editReply({
 		components: replyWithFields,
 		flags: MessageFlags.IsComponentsV2,
 	});
-
 	const collector = message.createMessageComponentCollector({
 		componentType: ComponentType.Button,
 		time: 60000,
 	});
-
 	collector.on('collect', async (i) => {
 		if (i.user.id !== interaction.user.id) {
 			const reply = await simpleContainer(
 				i,
 				await t(i, 'core.moderation.clear.not.allowed'),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return i.reply({
 				components: reply,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (i.customId === 'confirmNuke') {
 			await i.deferUpdate();
 			await handleNuke(interaction, t, container);
@@ -171,7 +165,9 @@ async function showClearOptions(interaction, t, container) {
 			const reply = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.moderation.clear.cancelled'),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			await interaction.editReply({
 				components: reply,
@@ -180,13 +176,14 @@ async function showClearOptions(interaction, t, container) {
 			collector.stop();
 		}
 	});
-
 	collector.on('end', async (_collected, reason) => {
 		if (reason === 'time') {
 			const reply = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.moderation.clear.timeout'),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			await interaction.editReply({
 				components: reply,
@@ -195,24 +192,25 @@ async function showClearOptions(interaction, t, container) {
 		}
 	});
 }
-
 async function handleNuke(interaction, t, container) {
 	const { logger, helpers } = container;
 	const { simpleContainer } = helpers.discord;
 	const channel = interaction.channel;
-
 	try {
 		const oldPosition = channel.position;
 		const newChannel = await channel.clone();
 		await channel.delete();
 		await newChannel.setPosition(oldPosition);
-
 		const successReply = await simpleContainer(
 			interaction,
 			await t(interaction, 'core.moderation.clear.nuked.success'),
-			{ color: 'Green' },
+			{
+				color: 'Green',
+			},
 		);
-		await newChannel.send({ components: successReply });
+		await newChannel.send({
+			components: successReply,
+		});
 	} catch (err) {
 		logger.error(`Nuke error: ${err.message || err}`, {
 			label: 'automod',
@@ -222,7 +220,9 @@ async function handleNuke(interaction, t, container) {
 			await t(interaction, 'core.moderation.clear.failed', {
 				error: err.message,
 			}),
-			{ color: 'Red' },
+			{
+				color: 'Red',
+			},
 		);
 		await interaction.editReply({
 			components: reply,
@@ -230,21 +230,22 @@ async function handleNuke(interaction, t, container) {
 		});
 	}
 }
-
 async function handleBulkDelete(interaction, t, container) {
 	const { logger, helpers } = container;
 	const { simpleContainer } = helpers.discord;
-
 	try {
 		let totalDeleted = 0;
 		let hasMore = true;
-
 		while (hasMore) {
-			const messages = await interaction.channel.messages.fetch({ limit: 100 });
+			const messages = await helpers.discord.fetchMessagesQuerySafe(
+				interaction.channel,
+				{
+					limit: 100,
+				},
+			);
 			const deletableMessages = messages.filter(
 				(msg) => Date.now() - msg.createdTimestamp < 1209600000,
 			);
-
 			if (deletableMessages.size > 0) {
 				const deleted = await interaction.channel.bulkDelete(
 					deletableMessages,
@@ -252,19 +253,19 @@ async function handleBulkDelete(interaction, t, container) {
 				);
 				totalDeleted += deleted.size;
 			}
-
 			if (deletableMessages.size < 100 || messages.size === 0) {
 				hasMore = false;
 			}
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 		}
-
 		const doneReply = await simpleContainer(
 			interaction,
 			await t(interaction, 'core.moderation.clear.embed.desc', {
 				count: totalDeleted,
 			}),
-			{ color: 'Green' },
+			{
+				color: 'Green',
+			},
 		);
 		await interaction.editReply({
 			components: doneReply,
@@ -277,7 +278,9 @@ async function handleBulkDelete(interaction, t, container) {
 		const reply = await simpleContainer(
 			interaction,
 			await t(interaction, 'core.moderation.clear.error'),
-			{ color: 'Red' },
+			{
+				color: 'Red',
+			},
 		);
 		await interaction.followUp({
 			components: reply,

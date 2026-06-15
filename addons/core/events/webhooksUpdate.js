@@ -14,29 +14,28 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class WebhooksUpdateEvent extends BaseEvent {
 	async execute(channel) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!channel.guild) return;
 		const { models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 		const guildId = channel.guild.id;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId: channel.guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await channel.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				channel.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -54,7 +53,6 @@ class WebhooksUpdateEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!createAudit) return;
-
 			if (!channel.guild.members.me?.permissions?.has('ViewAuditLog')) return;
 			const updateAudit = await channel.guild
 				.fetchAuditLogs({
@@ -63,7 +61,6 @@ class WebhooksUpdateEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!updateAudit) return;
-
 			if (!channel.guild.members.me?.permissions?.has('ViewAuditLog')) return;
 			const deleteAudit = await channel.guild
 				.fetchAuditLogs({
@@ -72,28 +69,23 @@ class WebhooksUpdateEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!deleteAudit) return;
-
 			const createEntry = createAudit.entries.find(
 				(e) =>
 					e.extra?.channel?.id === channel.id &&
 					e.createdTimestamp > Date.now() - 5000,
 			);
-
 			const updateEntry = updateAudit.entries.find(
 				(e) =>
 					e.extra?.channel?.id === channel.id &&
 					e.createdTimestamp > Date.now() - 5000,
 			);
-
 			const deleteEntry = deleteAudit.entries.find(
 				(e) =>
 					e.extra?.channel?.id === channel.id &&
 					e.createdTimestamp > Date.now() - 5000,
 			);
-
 			const entry = createEntry || updateEntry || deleteEntry;
 			if (!entry) return;
-
 			const action = createEntry
 				? 'Created'
 				: updateEntry
@@ -101,11 +93,13 @@ class WebhooksUpdateEvent extends BaseEvent {
 					: 'Deleted';
 			const color = createEntry ? 'Green' : updateEntry ? 'Blurple' : 'Red';
 			const executor = entry.executor;
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor(color, { from: 'discord', to: 'decimal' }),
+						convertColor(color, {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -133,13 +127,18 @@ class WebhooksUpdateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -157,5 +156,4 @@ class WebhooksUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = WebhooksUpdateEvent;

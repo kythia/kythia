@@ -10,12 +10,9 @@ const {
 	ContainerBuilder,
 	TextDisplayBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class DeleteCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('delete')
@@ -28,22 +25,22 @@ class DeleteCommand extends BaseCommand {
 					)
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, helpers, logger } = container;
 		const { ReactionRolePanel, ReactionRole } = models;
 		const { convertColor } = helpers.color;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const panelId = interaction.options.getInteger('panel_id');
-
 		try {
 			const panel = await ReactionRolePanel.getCache({
-				where: { id: panelId, guildId: interaction.guildId },
+				where: {
+					id: panelId,
+					guildId: interaction.guildId,
+				},
 			});
-
 			if (!panel) {
 				return interaction.editReply({
 					content: `❌ Panel with ID **${panelId}** not found in this server.`,
@@ -52,16 +49,20 @@ class DeleteCommand extends BaseCommand {
 
 			// Remove bot reactions from the panel message (best-effort)
 			try {
-				const channel = await interaction.client.channels
-					.fetch(panel.channelId)
-					.catch(() => null);
+				const channel = await helpers.discord.getChannelSafe(
+					interaction.client,
+					panel.channelId,
+				);
 				if (channel && panel.messageId) {
-					const message = await channel.messages
-						.fetch(panel.messageId)
-						.catch(() => null);
+					const message = await helpers.discord.getMessageSafe(
+						channel,
+						panel.messageId,
+					);
 					if (message) {
 						const bindings = await ReactionRole.getAllCache({
-							where: { panelId: panel.id },
+							where: {
+								panelId: panel.id,
+							},
 						});
 						for (const rr of bindings) {
 							try {
@@ -83,17 +84,18 @@ class DeleteCommand extends BaseCommand {
 
 			// Destroy panel (cascades to reaction_roles via FK)
 			await panel.destroy();
-
 			const successContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor('Green', { from: 'discord', to: 'decimal' }),
+					convertColor('Green', {
+						from: 'discord',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
 						`✅ **Panel [ID: ${panelId}]** has been deleted along with all its emoji bindings.`,
 					),
 				);
-
 			return interaction.editReply({
 				components: [successContainer],
 				flags: MessageFlags.IsComponentsV2,
@@ -108,5 +110,4 @@ class DeleteCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = DeleteCommand;

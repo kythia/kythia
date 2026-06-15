@@ -129,7 +129,9 @@ class RestoreCommand extends BaseCommand {
 				}
 
 				// Delete stickers
-				const existingStickers = await guild.stickers.fetch().catch(() => null);
+				const { getAllStickersSafe } =
+					interaction.client.container.helpers.discord;
+				const existingStickers = await getAllStickersSafe(guild);
 				if (existingStickers) {
 					for (const s of [...existingStickers.values()]) {
 						await s.delete('Restore: clearing before restore').catch(() => {});

@@ -14,29 +14,28 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { Sentry } = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class AutoModerationRuleDeleteEvent extends BaseEvent {
 	async execute(autoModerationRule) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!autoModerationRule.guild) return;
 		const { models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
-
 		const guildId = autoModerationRule.guild.id;
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await autoModerationRule.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				autoModerationRule.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -44,7 +43,6 @@ class AutoModerationRuleDeleteEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			if (
 				!autoModerationRule.guild.members.me?.permissions?.has('ViewAuditLog')
 			)
@@ -56,20 +54,20 @@ class AutoModerationRuleDeleteEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!audit) return;
-
 			const entry = audit.entries.find(
 				(e) =>
 					e.target?.id === autoModerationRule.id &&
 					e.createdTimestamp > Date.now() - 5000,
 			);
-
 			if (!entry) return;
-
 			const executor = entry.executor;
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Red', { from: 'discord', to: 'decimal' }),
+						convertColor('Red', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -97,13 +95,18 @@ class AutoModerationRuleDeleteEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -121,5 +124,4 @@ class AutoModerationRuleDeleteEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = AutoModerationRuleDeleteEvent;

@@ -15,53 +15,54 @@ const {
 	TextDisplayBuilder,
 } = require('discord.js');
 const { Op } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
-
 class ProfileCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('profile')
 			.setDescription('👰 View your marriage profile');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Marriage } = models;
 		const { convertColor } = helpers.color;
-
 		const userId = interaction.user.id;
-
 		const marriages = await Marriage.getAllCache({
 			where: {
 				[Op.or]: [
-					{ user1Id: userId, status: 'married' },
-					{ user2Id: userId, status: 'married' },
+					{
+						user1Id: userId,
+						status: 'married',
+					},
+					{
+						user2Id: userId,
+						status: 'married',
+					},
 				],
 			},
 			limit: 1,
 		});
-
 		const marriage = marriages && marriages.length > 0 ? marriages[0] : null;
-
 		if (!marriage) {
 			const components = await helpers.discord.simpleContainer(
 				interaction,
 				await t(interaction, 'fun.marry.not.married.default'),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.reply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const partnerId =
 			marriage.user1Id === userId ? marriage.user2Id : marriage.user1Id;
 		const self = interaction.user;
-		const partner = await interaction.client.users
-			.fetch(partnerId)
-			.catch(() => null);
+		const partner = await helpers.discord.getUserSafe(
+			interaction.client,
+			partnerId,
+		);
 		const marriedFor = Math.floor(
 			(Date.now() - marriage.marriedAt) / (1000 * 60 * 60 * 24),
 		);
@@ -70,28 +71,34 @@ class ProfileCommand extends BaseCommand {
 			month: 'short',
 			day: 'numeric',
 		});
-
 		const selfBlock = `-# ${(await t(interaction, 'fun.marry.profile.you.label', {}, null)) || 'YOU'}\n## ${self.username}\n`;
 		const partnerBlock = `-# ${(await t(interaction, 'fun.marry.profile.partner.label', {}, null)) || 'YOUR PARTNER'}\n## ${partner?.username || 'Unknown'}\n`;
-
 		const defaultAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
 		const selfAvatar = self.displayAvatarURL
-			? self.displayAvatarURL({ extension: 'png', size: 256 })
+			? self.displayAvatarURL({
+					extension: 'png',
+					size: 256,
+				})
 			: defaultAvatar;
 		const partnerAvatar = partner?.displayAvatarURL
-			? partner.displayAvatarURL({ extension: 'png', size: 256 })
+			? partner.displayAvatarURL({
+					extension: 'png',
+					size: 256,
+				})
 			: defaultAvatar;
-
 		const statsSection =
 			`${(await t(interaction, 'fun.marry.profile.married.since', {}, null)) || 'Married Since'}\n${marriedAtStr}\n` +
 			`${(await t(interaction, 'fun.marry.profile.days.married', {}, null)) || 'Days Together'}\n${marriedFor} days\n` +
 			`${(await t(interaction, 'fun.marry.profile.love.score', {}, null)) || 'Love Score'}\n${marriage.loveScore} ❤️`;
-
-		const footerText = `${await t(interaction, 'common.container.footer', { username: interaction.client.user.username })}`;
-
+		const footerText = `${await t(interaction, 'common.container.footer', {
+			username: interaction.client.user.username,
+		})}`;
 		const marryContainer = new ContainerBuilder()
 			.setAccentColor(
-				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+				convertColor(kythiaConfig.bot.color, {
+					from: 'hex',
+					to: 'decimal',
+				}),
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
@@ -131,12 +138,10 @@ class ProfileCommand extends BaseCommand {
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(footerText),
 			);
-
 		await interaction.reply({
 			flags: MessageFlags.IsComponentsV2,
 			components: [marryContainer],
 		});
 	}
 }
-
 exports.default = ProfileCommand;

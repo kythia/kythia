@@ -14,28 +14,27 @@ const {
 	AuditLogEvent,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class GuildIntegrationsUpdateEvent extends BaseEvent {
 	async execute(guild) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
 		const guildId = guild.id;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId: guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -48,7 +47,8 @@ class GuildIntegrationsUpdateEvent extends BaseEvent {
 			if (!guild.members.me?.permissions?.has('ViewAuditLog')) return;
 			const audit = await guild
 				.fetchAuditLogs({
-					type: AuditLogEvent.IntegrationCreate, // Or Delete/Update. It's hard to distinguish perfectly without checking multiple types or checking exact time.
+					type: AuditLogEvent.IntegrationCreate,
+					// Or Delete/Update. It's hard to distinguish perfectly without checking multiple types or checking exact time.
 					limit: 1,
 				})
 				.catch(() => null);
@@ -61,13 +61,14 @@ class GuildIntegrationsUpdateEvent extends BaseEvent {
 			const entry = audit.entries.first();
 			// Ideally we'd filter by time, but this event fires right after.
 			const isRecent = entry && Date.now() - entry.createdTimestamp < 5000;
-
 			const executor = isRecent ? entry.executor : null;
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Blurple', { from: 'discord', to: 'decimal' }),
+						convertColor('Blurple', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -95,13 +96,18 @@ class GuildIntegrationsUpdateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -119,5 +125,4 @@ class GuildIntegrationsUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = GuildIntegrationsUpdateEvent;

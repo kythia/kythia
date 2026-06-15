@@ -13,36 +13,32 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class ThreadMembersUpdateEvent extends BaseEvent {
 	async execute(oldMembers, newMembers, thread) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
-
 		if (!thread.guild) return;
 		const guildId = thread.guild.id;
-
 		try {
 			// This event works with collections of members added/removed.
 			const addedMembers = newMembers.filter((m) => !oldMembers.has(m.id));
 			const removedMembers = oldMembers.filter((m) => !newMembers.has(m.id));
-
 			if (addedMembers.size === 0 && removedMembers.size === 0) return;
-
 			const settings = await ServerSetting.getCache({
 				guildId: thread.guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await thread.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				thread.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -50,23 +46,22 @@ class ThreadMembersUpdateEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			let description = `🧵 **Thread Members Updated** in <#${thread.id}>\n\n`;
-
 			if (addedMembers.size > 0) {
 				const addedList = addedMembers.map((m) => `<@${m.id}>`).join(', ');
 				description += `**Added (${addedMembers.size}):** ${addedList.length > 500 ? `${addedList.substring(0, 500)}...` : addedList}\n`;
 			}
-
 			if (removedMembers.size > 0) {
 				const removedList = removedMembers.map((m) => `<@${m.id}>`).join(', ');
 				description += `**Removed (${removedMembers.size}):** ${removedList.length > 500 ? `${removedList.substring(0, 500)}...` : removedList}\n`;
 			}
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Blurple', { from: 'discord', to: 'decimal' }),
+						convertColor('Blurple', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(description),
@@ -89,13 +84,18 @@ class ThreadMembersUpdateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -113,5 +113,4 @@ class ThreadMembersUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = ThreadMembersUpdateEvent;

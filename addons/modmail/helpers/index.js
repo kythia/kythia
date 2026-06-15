@@ -55,11 +55,13 @@ async function processAttachments(attachments) {
 	const imageUrls = [];
 	const fileEntries = [];
 	let fileSummary = '';
-
 	if (!attachments || attachments.size === 0) {
-		return { imageUrls, fileEntries, fileSummary };
+		return {
+			imageUrls,
+			fileEntries,
+			fileSummary,
+		};
 	}
-
 	const IMAGE_TYPES = [
 		'image/png',
 		'image/jpeg',
@@ -68,13 +70,11 @@ async function processAttachments(attachments) {
 		'image/webp',
 		'image/svg+xml',
 	];
-
 	for (const attachment of attachments.values()) {
 		const contentType = attachment.contentType || '';
 		const isImage =
 			IMAGE_TYPES.some((t) => contentType.startsWith(t)) ||
 			/\.(png|jpg|jpeg|gif|webp|svg)$/i.test(attachment.name);
-
 		if (isImage) {
 			// Images: use CDN URL directly in MediaGallery (no download needed)
 			imageUrls.push(attachment.url);
@@ -89,7 +89,10 @@ async function processAttachments(attachments) {
 				const fileComponent = new FileBuilder()
 					.setURL(`attachment://${attachment.name}`)
 					.setSpoiler(false);
-				fileEntries.push({ builder, fileComponent });
+				fileEntries.push({
+					builder,
+					fileComponent,
+				});
 				fileSummary += `\n[File: ${attachment.name} — ${attachment.url}]`;
 			} catch (_e) {
 				// If download fails, fall back to URL in text
@@ -97,8 +100,11 @@ async function processAttachments(attachments) {
 			}
 		}
 	}
-
-	return { imageUrls, fileEntries, fileSummary };
+	return {
+		imageUrls,
+		fileEntries,
+		fileSummary,
+	};
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -132,7 +138,6 @@ function buildModmailContainer(
 				.setDivider(true),
 		)
 		.addTextDisplayComponents(new TextDisplayBuilder().setContent(body));
-
 	if (actionRow) {
 		container.addSeparatorComponents(
 			new SeparatorBuilder()
@@ -141,7 +146,6 @@ function buildModmailContainer(
 		);
 		container.addActionRowComponents(actionRow);
 	}
-
 	container
 		.addSeparatorComponents(
 			new SeparatorBuilder()
@@ -149,7 +153,6 @@ function buildModmailContainer(
 				.setDivider(true),
 		)
 		.addTextDisplayComponents(new TextDisplayBuilder().setContent(footer));
-
 	return container;
 }
 
@@ -178,17 +181,20 @@ async function createModmailThread(
 	const { models, t, kythiaConfig, helpers, logger, client } = container;
 	const { Modmail, ModmailConfig } = models;
 	const { convertColor } = helpers.color;
-
 	try {
-		const config = await ModmailConfig.getCache({ guildId });
+		const config = await ModmailConfig.getCache({
+			guildId,
+		});
 		if (!config) return null;
-
-		const guild = await client.guilds.fetch(guildId).catch(() => null);
+		const guild = await client.container.helpers.discord.getGuildSafe(
+			client,
+			guildId,
+		);
 		if (!guild) return null;
-
-		const inboxChannel = await guild.channels
-			.fetch(config.inboxChannelId)
-			.catch(() => null);
+		const inboxChannel = await helpers.discord.getChannelSafe(
+			guild,
+			config.inboxChannelId,
+		);
 		if (!inboxChannel) return null;
 
 		// Create a private thread named "modmail-{username}" in the inbox channel
@@ -198,18 +204,15 @@ async function createModmailThread(
 				.replace(/[^a-z0-9]/g, '')
 				.slice(0, 12) || 'user';
 		const threadName = `modmail-${safeName}`;
-
 		const thread = await inboxChannel.threads.create({
 			name: threadName,
 			type: ChannelType.PrivateThread,
 			invitable: false,
 		});
-
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const fakeInteraction = {
 			client,
 			locale: kythiaConfig.bot.locale || 'en-US',
@@ -226,7 +229,6 @@ async function createModmailThread(
 		const footerText = await t(fakeInteraction, 'common.container.footer', {
 			username: kythiaConfig.bot.name,
 		});
-
 		const closeRow = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('mm-close')
@@ -234,7 +236,6 @@ async function createModmailThread(
 				.setStyle(ButtonStyle.Secondary)
 				.setEmoji('🔒'),
 		);
-
 		const openContainer = buildModmailContainer(
 			accentColor,
 			`## 📬 ${titleText}`,
@@ -242,7 +243,6 @@ async function createModmailThread(
 			footerText,
 			closeRow,
 		);
-
 		await thread.send({
 			components: [openContainer],
 			flags: MessageFlags.IsComponentsV2,
@@ -251,7 +251,6 @@ async function createModmailThread(
 		// ─── Relay the first user message into the thread ────────────────────
 		const { imageUrls: openImageUrls, fileEntries: openFileEntries } =
 			await processAttachments(attachments);
-
 		const receivedTitle = await t(
 			fakeInteraction,
 			'modmail.relay.received_title',
@@ -260,7 +259,6 @@ async function createModmailThread(
 			userId: user.id,
 			username: user.username,
 		});
-
 		const firstMsgCard = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
@@ -273,7 +271,6 @@ async function createModmailThread(
 					.setSpacing(SeparatorSpacingSize.Small)
 					.setDivider(true),
 			);
-
 		if (initialContent) {
 			firstMsgCard.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(initialContent),
@@ -298,19 +295,22 @@ async function createModmailThread(
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(footerText),
 			);
-
 		await thread.send({
 			components: [firstMsgCard],
 			files: openFileEntries.map((e) => e.builder),
 			flags: MessageFlags.IsComponentsV2,
-			allowedMentions: { parse: [] },
+			allowedMentions: {
+				parse: [],
+			},
 		});
 
 		// ─── Notify staff role if configured ────────────────────────────────
 		if (config.staffRoleId && config.pingStaff) {
 			await thread.send({
 				content: `<@&${config.staffRoleId}>`,
-				allowedMentions: { roles: [config.staffRoleId] },
+				allowedMentions: {
+					roles: [config.staffRoleId],
+				},
 			});
 		}
 
@@ -323,7 +323,6 @@ async function createModmailThread(
 		const greetingAccent = config.greetingColor
 			? parseInt(config.greetingColor.replace('#', ''), 16)
 			: accentColor;
-
 		try {
 			const greetingCard = new ContainerBuilder().setAccentColor(
 				greetingAccent,
@@ -342,7 +341,6 @@ async function createModmailThread(
 						.setDivider(true),
 				);
 			}
-
 			greetingCard
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(greetingText),
@@ -359,7 +357,6 @@ async function createModmailThread(
 						}),
 					),
 				);
-
 			await user.send({
 				components: [greetingCard],
 				flags: MessageFlags.IsComponentsV2,
@@ -381,12 +378,13 @@ async function createModmailThread(
 			status: 'open',
 			openedAt: Date.now(),
 		});
-
 		return modmail;
 	} catch (error) {
 		logger.error(
 			`[modmail:helpers:create-thread] Error: ${error.message || String(error)}`,
-			{ label: 'modmail:helpers:create-thread' },
+			{
+				label: 'modmail:helpers:create-thread',
+			},
 		);
 		return null;
 	}
@@ -411,11 +409,11 @@ async function relayUserMessage(message, modmail, container) {
 	// const { simpleContainer } = helpers.discord;
 
 	try {
-		const thread = await client.channels
-			.fetch(modmail.threadChannelId)
-			.catch(() => null);
+		const thread = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			modmail.threadChannelId,
+		);
 		if (!thread) return;
-
 		const fakeInteraction = {
 			client,
 			locale: kythiaConfig.bot.locale || 'en-US',
@@ -427,14 +425,12 @@ async function relayUserMessage(message, modmail, container) {
 		const footerText = await t(fakeInteraction, 'common.container.footer', {
 			username: kythiaConfig.bot.name,
 		});
-
 		const bodyText = message.content?.trim() || '';
 
 		// ── Process attachments ───────────────────────────────────────────────
 		const { imageUrls, fileEntries } = await processAttachments(
 			message.attachments,
 		);
-
 		const receivedTitle = await t(
 			fakeInteraction,
 			'modmail.relay.received_title',
@@ -443,11 +439,9 @@ async function relayUserMessage(message, modmail, container) {
 			userId: message.author.id,
 			username: message.author.username,
 		});
-
 		const headerText = bodyText
 			? `## 📩 ${receivedTitle}\n-# 👤 ${fromLine}`
 			: `## 📩 ${receivedTitle}\n-# 👤 ${fromLine}`;
-
 		const threadCard = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(new TextDisplayBuilder().setContent(headerText))
@@ -456,7 +450,6 @@ async function relayUserMessage(message, modmail, container) {
 					.setSpacing(SeparatorSpacingSize.Small)
 					.setDivider(true),
 			);
-
 		if (bodyText) {
 			threadCard.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(bodyText),
@@ -476,7 +469,6 @@ async function relayUserMessage(message, modmail, container) {
 		for (const { fileComponent } of fileEntries) {
 			threadCard.addFileComponents(fileComponent);
 		}
-
 		threadCard
 			.addSeparatorComponents(
 				new SeparatorBuilder()
@@ -486,12 +478,13 @@ async function relayUserMessage(message, modmail, container) {
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(footerText),
 			);
-
 		await thread.send({
 			components: [threadCard],
 			files: fileEntries.map((e) => e.builder),
 			flags: MessageFlags.IsComponentsV2,
-			allowedMentions: { parse: [] },
+			allowedMentions: {
+				parse: [],
+			},
 		});
 
 		// ── Send "Message Sent" confirmation card to user ──────────────────────
@@ -523,7 +516,6 @@ async function relayUserMessage(message, modmail, container) {
 					),
 				);
 			}
-
 			sentCard
 				.addSeparatorComponents(
 					new SeparatorBuilder()
@@ -533,7 +525,6 @@ async function relayUserMessage(message, modmail, container) {
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(footerText),
 				);
-
 			await message.author.send({
 				components: [sentCard],
 				flags: MessageFlags.IsComponentsV2,
@@ -564,25 +555,23 @@ async function relayStaffReply(interaction, content, anonymous, container) {
 	const { Modmail } = models;
 	const { simpleContainer } = helpers.discord;
 	const { convertColor } = helpers.color;
-
 	try {
 		const modmail = await Modmail.getCache({
 			threadChannelId: interaction.channel.id,
 			status: 'open',
 		});
-
 		if (!modmail) {
 			const desc = await t(interaction, 'modmail.errors.not_a_modmail');
 			return interaction.reply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const displayName = anonymous
 			? await t(interaction, 'modmail.reply.anonymous_name')
 			: interaction.user.username;
-
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
@@ -595,17 +584,21 @@ async function relayStaffReply(interaction, content, anonymous, container) {
 		const dmTitleKey = anonymous
 			? 'modmail.dm.staff_reply_anon'
 			: 'modmail.dm.staff_reply';
-		const dmTitle = await t(interaction, dmTitleKey, { name: displayName });
+		const dmTitle = await t(interaction, dmTitleKey, {
+			name: displayName,
+		});
 		const dmContainer = buildModmailContainer(
 			accentColor,
 			`## 📨 ${dmTitle}`,
 			content,
 			footerText,
 		);
-
 		let dmSent = false;
 		try {
-			const user = await interaction.client.users.fetch(modmail.userId);
+			const user = await helpers.discord.getUserSafe(
+				interaction.client,
+				modmail.userId,
+			);
 			await user.send({
 				components: [dmContainer],
 				flags: MessageFlags.IsComponentsV2,
@@ -621,10 +614,11 @@ async function relayStaffReply(interaction, content, anonymous, container) {
 			: await t(interaction, 'modmail.relay.staff_reply_prefix', {
 					userId: interaction.user.id,
 				});
-
 		await interaction.channel.send({
 			content: `${threadTag}\n${content}`,
-			allowedMentions: { parse: [] },
+			allowedMentions: {
+				parse: [],
+			},
 		});
 
 		// ─── Ack to staff ────────────────────────────────────────────────────
@@ -639,7 +633,9 @@ async function relayStaffReply(interaction, content, anonymous, container) {
 	} catch (error) {
 		logger.error(
 			`[modmail:helpers:relay-staff-reply] Error: ${error.message || String(error)}`,
-			{ label: 'modmail:helpers:relay-staff-reply' },
+			{
+				label: 'modmail:helpers:relay-staff-reply',
+			},
 		);
 		const descError = await t(interaction, 'modmail.errors.generic');
 		if (interaction.replied || interaction.deferred) {
@@ -686,12 +682,10 @@ async function relayGuildReply(
 ) {
 	const { t, helpers, kythiaConfig, logger } = container;
 	const { convertColor } = helpers.color;
-
 	const accentColor = convertColor(kythiaConfig.bot.color, {
 		from: 'hex',
 		to: 'decimal',
 	});
-
 	const fakeInteraction = {
 		client,
 		locale: kythiaConfig.bot.locale || 'en-US',
@@ -699,7 +693,6 @@ async function relayGuildReply(
 	const footerText = await t(fakeInteraction, 'common.container.footer', {
 		username: kythiaConfig.bot.name,
 	});
-
 	const displayName = anonymous
 		? await t(fakeInteraction, 'modmail.reply.anonymous_name')
 		: message.author.username;
@@ -708,7 +701,6 @@ async function relayGuildReply(
 	const { imageUrls, fileEntries } = await processAttachments(
 		message.attachments,
 	);
-
 	const bodyText = content || '';
 
 	// ── Thread card: "Message Sent" ──────────────────────────────────────────
@@ -722,7 +714,6 @@ async function relayGuildReply(
 				userId: message.author.id,
 				username: message.author.username,
 			});
-
 	const threadCard = new ContainerBuilder()
 		.setAccentColor(accentColor)
 		.addTextDisplayComponents(
@@ -735,7 +726,6 @@ async function relayGuildReply(
 				.setSpacing(SeparatorSpacingSize.Small)
 				.setDivider(true),
 		);
-
 	if (bodyText) {
 		threadCard.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(bodyText),
@@ -758,13 +748,14 @@ async function relayGuildReply(
 				.setDivider(true),
 		)
 		.addTextDisplayComponents(new TextDisplayBuilder().setContent(footerText));
-
 	try {
 		await message.channel.send({
 			components: [threadCard],
 			files: fileEntries.map((e) => e.builder),
 			flags: MessageFlags.IsComponentsV2,
-			allowedMentions: { parse: [] },
+			allowedMentions: {
+				parse: [],
+			},
 		});
 	} catch (err) {
 		logger.error(
@@ -779,8 +770,9 @@ async function relayGuildReply(
 	const dmTitleKey = anonymous
 		? 'modmail.dm.staff_reply_anon'
 		: 'modmail.dm.staff_reply';
-	const dmTitle = await t(fakeInteraction, dmTitleKey, { name: displayName });
-
+	const dmTitle = await t(fakeInteraction, dmTitleKey, {
+		name: displayName,
+	});
 	const dmCard = new ContainerBuilder()
 		.setAccentColor(accentColor)
 		.addTextDisplayComponents(
@@ -793,7 +785,6 @@ async function relayGuildReply(
 				.setSpacing(SeparatorSpacingSize.Small)
 				.setDivider(true),
 		);
-
 	if (bodyText) {
 		dmCard.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(bodyText),
@@ -819,9 +810,11 @@ async function relayGuildReply(
 				.setDivider(true),
 		)
 		.addTextDisplayComponents(new TextDisplayBuilder().setContent(footerText));
-
 	try {
-		const user = await client.users.fetch(modmail.userId);
+		const user = await client.container.helpers.discord.getUserSafe(
+			client,
+			modmail.userId,
+		);
 		await user.send({
 			components: [dmCard],
 			files: dmFileEntries.fileEntries.map((e) => e.builder),
@@ -859,41 +852,41 @@ async function createTranscript(thread, container) {
 	const { kythiaConfig } = container;
 	const locale = kythiaConfig.bot.locale || 'en-US';
 	const timezone = kythiaConfig.bot.timezone || 'UTC';
-
 	const collection = [];
 	let lastId = null;
 	let loop = true;
 	const MAX_MESSAGES = 5000;
-
 	while (loop) {
-		const options = { limit: 100 };
+		const options = {
+			limit: 100,
+		};
 		if (lastId) options.before = lastId;
-
-		const messages = await thread.messages.fetch(options);
+		const messages = await container.helpers.discord.getMessageSafe(
+			thread,
+			options,
+		);
 		if (messages.size === 0) break;
-
 		collection.push(...messages.values());
 		lastId = messages.last().id;
-
 		if (collection.length >= MAX_MESSAGES) loop = false;
 	}
-
 	const sorted = collection.sort(
 		(a, b) => a.createdTimestamp - b.createdTimestamp,
 	);
-
 	let text = `=============== KYTHIA'S MODMAIL FEATURE ===============\n\n`;
 	text += `THREAD: ${thread.name}\n`;
 	text += `SERVER: ${thread.guild.name}\n`;
-	text += `GENERATED AT: ${new Date().toLocaleString(locale, { timeZone: timezone })}\n`;
+	text += `GENERATED AT: ${new Date().toLocaleString(locale, {
+		timeZone: timezone,
+	})}\n`;
 	text += `TOTAL MESSAGES: ${sorted.length}\n`;
 	text += `======================================================\n\n`;
-
 	sorted.forEach((msg) => {
-		const time = msg.createdAt.toLocaleString(locale, { timeZone: timezone });
+		const time = msg.createdAt.toLocaleString(locale, {
+			timeZone: timezone,
+		});
 		const author = msg.author?.tag ?? 'System';
 		let content = msg.content || '';
-
 		if (msg.attachments.size > 0) {
 			const urls = msg.attachments
 				.map((a) => `[Attachment: ${a.url}]`)
@@ -905,10 +898,8 @@ async function createTranscript(thread, container) {
 		if (!content && msg.components.length > 0)
 			content = '[Message contains Components]';
 		if (!content) content = '[System Message]';
-
 		text += `[${time}] ${author}: ${content}\n`;
 	});
-
 	return text;
 }
 
@@ -933,13 +924,11 @@ async function closeModmail(interaction, container, reason = null) {
 	const { Modmail, ModmailConfig } = models;
 	const { simpleContainer, getChannelSafe } = helpers.discord;
 	const { convertColor } = helpers.color;
-
 	try {
 		const modmail = await Modmail.getCache({
 			threadChannelId: interaction.channel.id,
 			status: 'open',
 		});
-
 		if (!modmail) {
 			const desc = await t(interaction, 'modmail.errors.not_a_modmail');
 			if (interaction.replied || interaction.deferred) {
@@ -951,12 +940,15 @@ async function closeModmail(interaction, container, reason = null) {
 				});
 			}
 			return interaction.reply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
-		const config = await ModmailConfig.getCache({ guildId: modmail.guildId });
+		const config = await ModmailConfig.getCache({
+			guildId: modmail.guildId,
+		});
 		if (!config) {
 			const desc = await t(interaction, 'modmail.errors.config_missing');
 			if (interaction.replied || interaction.deferred) {
@@ -968,7 +960,9 @@ async function closeModmail(interaction, container, reason = null) {
 				});
 			}
 			return interaction.reply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
@@ -980,7 +974,6 @@ async function closeModmail(interaction, container, reason = null) {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
@@ -1004,7 +997,6 @@ async function closeModmail(interaction, container, reason = null) {
 		const transcriptChannel = config.transcriptChannelId
 			? await getChannelSafe(interaction.guild, config.transcriptChannelId)
 			: null;
-
 		if (transcriptChannel) {
 			const transcriptTitle = await t(interaction, 'modmail.transcript.title', {
 				modmailId: modmail.id,
@@ -1019,7 +1011,6 @@ async function closeModmail(interaction, container, reason = null) {
 			const footerText = await t(interaction, 'common.container.footer', {
 				username: kythiaConfig.bot.name,
 			});
-
 			const transcriptContainer = new ContainerBuilder()
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
@@ -1037,12 +1028,13 @@ async function closeModmail(interaction, container, reason = null) {
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(footerText),
 				);
-
 			await transcriptChannel.send({
 				components: [transcriptContainer],
 				files: [attachment],
 				flags: MessageFlags.IsComponentsV2,
-				allowedMentions: { parse: [] },
+				allowedMentions: {
+					parse: [],
+				},
 			});
 		}
 
@@ -1050,7 +1042,6 @@ async function closeModmail(interaction, container, reason = null) {
 		const logsChannel = config.logsChannelId
 			? await getChannelSafe(interaction.guild, config.logsChannelId)
 			: null;
-
 		if (logsChannel) {
 			const logDesc = await t(interaction, 'modmail.close.log_message', {
 				modmailId: modmail.id,
@@ -1062,7 +1053,9 @@ async function closeModmail(interaction, container, reason = null) {
 			await logsChannel.send({
 				components: await simpleContainer(interaction, logDesc),
 				flags: MessageFlags.IsComponentsV2,
-				allowedMentions: { parse: [] },
+				allowedMentions: {
+					parse: [],
+				},
 			});
 		}
 
@@ -1075,9 +1068,11 @@ async function closeModmail(interaction, container, reason = null) {
 		const closingAccent = config.closingColor
 			? parseInt(config.closingColor.replace('#', ''), 16)
 			: accentColor;
-
 		try {
-			const user = await interaction.client.users.fetch(modmail.userId);
+			const user = await helpers.discord.getUserSafe(
+				interaction.client,
+				modmail.userId,
+			);
 			const closingCard = new ContainerBuilder().setAccentColor(closingAccent);
 
 			// Optional banner image at the top
@@ -1093,7 +1088,6 @@ async function closeModmail(interaction, container, reason = null) {
 						.setDivider(true),
 				);
 			}
-
 			const fakeInteraction = {
 				client: interaction.client,
 				locale: kythiaConfig.bot.locale || 'en-US',
@@ -1114,7 +1108,6 @@ async function closeModmail(interaction, container, reason = null) {
 						}),
 					),
 				);
-
 			await user.send({
 				components: [closingCard],
 				flags: MessageFlags.IsComponentsV2,
@@ -1141,9 +1134,10 @@ async function closeModmail(interaction, container, reason = null) {
 	} catch (error) {
 		logger.error(
 			`[modmail:helpers:close-modmail] Error: ${error.message || String(error)}`,
-			{ label: 'modmail:helpers:close-modmail' },
+			{
+				label: 'modmail:helpers:close-modmail',
+			},
 		);
-
 		const descError = await t(interaction, 'modmail.errors.close_failed');
 		if (!interaction.replied && !interaction.deferred) {
 			return interaction.reply({

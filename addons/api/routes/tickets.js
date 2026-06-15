@@ -16,7 +16,6 @@ const {
 	MediaGalleryItemBuilder,
 	MessageFlags,
 } = require('discord.js');
-
 const app = new Hono();
 
 // Helper to get container and models
@@ -39,17 +38,27 @@ app.get('/', async (c) => {
 	const userId = c.req.query('userId');
 	const channelId = c.req.query('channelId');
 	const status = c.req.query('status');
-
 	if (guildId) where.guildId = guildId;
 	if (userId) where.userId = userId;
 	if (channelId) where.channelId = channelId;
 	if (status) where.status = status;
-
 	try {
-		const tickets = await Ticket.getAllCache({ where });
-		return c.json({ success: true, count: tickets.length, data: tickets });
+		const tickets = await Ticket.getAllCache({
+			where,
+		});
+		return c.json({
+			success: true,
+			count: tickets.length,
+			data: tickets,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -58,12 +67,29 @@ app.get('/:id', async (c) => {
 	const { Ticket } = getModels(c);
 	const id = c.req.param('id');
 	try {
-		const ticket = await Ticket.getCache({ id: id });
+		const ticket = await Ticket.getCache({
+			id: id,
+		});
 		if (!ticket)
-			return c.json({ success: false, error: 'Ticket not found' }, 404);
-		return c.json({ success: true, data: ticket });
+			return c.json(
+				{
+					success: false,
+					error: 'Ticket not found',
+				},
+				404,
+			);
+		return c.json({
+			success: true,
+			data: ticket,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -73,14 +99,31 @@ app.patch('/:id', async (c) => {
 	const id = c.req.param('id');
 	const body = await c.req.json();
 	try {
-		const ticket = await Ticket.getCache({ id: id });
+		const ticket = await Ticket.getCache({
+			id: id,
+		});
 		if (!ticket)
-			return c.json({ success: false, error: 'Ticket not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Ticket not found',
+				},
+				404,
+			);
 		await ticket.update(body);
 		await ticket.save();
-		return c.json({ success: true, data: ticket });
+		return c.json({
+			success: true,
+			data: ticket,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -89,13 +132,30 @@ app.delete('/:id', async (c) => {
 	const { Ticket } = getModels(c);
 	const id = c.req.param('id');
 	try {
-		const ticket = await Ticket.getCache({ id: id });
+		const ticket = await Ticket.getCache({
+			id: id,
+		});
 		if (!ticket)
-			return c.json({ success: false, error: 'Ticket not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Ticket not found',
+				},
+				404,
+			);
 		await ticket.destroy();
-		return c.json({ success: true, message: 'Ticket deleted successfully' });
+		return c.json({
+			success: true,
+			message: 'Ticket deleted successfully',
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -107,7 +167,6 @@ app.post('/open', async (c) => {
 	const { TicketConfig } = getModels(c);
 	const body = await c.req.json();
 	const { guildId, userId, ticketConfigId, reason } = body;
-
 	if (!guildId || !userId || !ticketConfigId)
 		return c.json(
 			{
@@ -116,38 +175,68 @@ app.post('/open', async (c) => {
 			},
 			400,
 		);
-
 	try {
-		const guild = await client.guilds.fetch(guildId).catch(() => null);
-		const user = await client.users.fetch(userId).catch(() => null);
-		const ticketConfig = await TicketConfig.getCache({ id: ticketConfigId });
-
+		const { getGuildSafe, getMemberSafe } = getContainer(c).helpers.discord;
+		const guild = await getGuildSafe(client, guildId);
+		const user = await client.container.helpers.discord.getUserSafe(
+			client,
+			userId,
+		);
+		const ticketConfig = await TicketConfig.getCache({
+			id: ticketConfigId,
+		});
 		if (!guild)
-			return c.json({ success: false, error: 'Guild not found' }, 404);
-		if (!user) return c.json({ success: false, error: 'User not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Guild not found',
+				},
+				404,
+			);
+		if (!user)
+			return c.json(
+				{
+					success: false,
+					error: 'User not found',
+				},
+				404,
+			);
 		if (!ticketConfig)
-			return c.json({ success: false, error: 'TicketConfig not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'TicketConfig not found',
+				},
+				404,
+			);
 		const mockInteraction = {
 			client,
 			guild,
 			user,
-			member: await guild.members.fetch(userId).catch(() => null),
+			member: await getMemberSafe(guild, userId),
 			reply: async () => {},
 			followUp: async () => {},
 			replied: false,
 			deferred: false,
 		};
-
 		await ticketHelpers.createTicketChannel(
 			mockInteraction,
 			ticketConfig,
 			container,
 			reason ?? null,
 		);
-		return c.json({ success: true, message: 'Ticket creation initiated' });
+		return c.json({
+			success: true,
+			message: 'Ticket creation initiated',
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -160,48 +249,76 @@ app.post('/:id/close', async (c) => {
 	const id = c.req.param('id');
 	const body = await c.req.json();
 	const { userId, reason } = body;
-
 	if (!userId)
 		return c.json(
-			{ success: false, error: 'Missing required: userId (closer)' },
+			{
+				success: false,
+				error: 'Missing required: userId (closer)',
+			},
 			400,
 		);
-
 	try {
-		const ticket = await Ticket.getCache({ id: id });
+		const ticket = await Ticket.getCache({
+			id: id,
+		});
 		if (!ticket)
-			return c.json({ success: false, error: 'Ticket not found' }, 404);
-		if (ticket.status === 'closed')
-			return c.json({ success: false, error: 'Ticket is already closed' }, 400);
-
-		const guild = await client.guilds.fetch(ticket.guildId).catch(() => null);
-		const user = await client.users.fetch(userId).catch(() => null);
-		const channel = await client.channels
-			.fetch(ticket.channelId)
-			.catch(() => null);
-
-		if (!guild || !user || !channel)
 			return c.json(
-				{ success: false, error: 'Guild, user, or channel not found' },
+				{
+					success: false,
+					error: 'Ticket not found',
+				},
 				404,
 			);
-
+		if (ticket.status === 'closed')
+			return c.json(
+				{
+					success: false,
+					error: 'Ticket is already closed',
+				},
+				400,
+			);
+		const { getGuildSafe, getMemberSafe } = getContainer(c).helpers.discord;
+		const guild = await getGuildSafe(client, ticket.guildId);
+		const user = await client.container.helpers.discord.getUserSafe(
+			client,
+			userId,
+		);
+		const channel = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			ticket.channelId,
+		);
+		if (!guild || !user || !channel)
+			return c.json(
+				{
+					success: false,
+					error: 'Guild, user, or channel not found',
+				},
+				404,
+			);
 		const mockInteraction = {
 			client,
 			guild,
 			user,
 			channel,
-			member: await guild.members.fetch(userId).catch(() => null),
+			member: await getMemberSafe(guild, userId),
 			reply: async () => {},
 			followUp: async () => {},
 			replied: false,
 			deferred: false,
 		};
-
 		await ticketHelpers.closeTicket(mockInteraction, container, reason ?? null);
-		return c.json({ success: true, message: 'Ticket closing initiated' });
+		return c.json({
+			success: true,
+			message: 'Ticket closing initiated',
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -214,10 +331,24 @@ app.get('/panels/:guildId', async (c) => {
 	const { TicketPanel } = getModels(c);
 	const guildId = c.req.param('guildId');
 	try {
-		const panels = await TicketPanel.getAllCache({ where: { guildId } });
-		return c.json({ success: true, count: panels.length, data: panels });
+		const panels = await TicketPanel.getAllCache({
+			where: {
+				guildId,
+			},
+		});
+		return c.json({
+			success: true,
+			count: panels.length,
+			data: panels,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -232,7 +363,6 @@ app.post('/panels', async (c) => {
 	const { convertColor } = helpers.color;
 	const body = await c.req.json();
 	const { guildId, channelId, title, description, image } = body;
-
 	if (!guildId || !channelId || !title)
 		return c.json(
 			{
@@ -241,12 +371,17 @@ app.post('/panels', async (c) => {
 			},
 			400,
 		);
-
 	try {
-		const channel = await client.channels.fetch(channelId).catch(() => null);
+		const channel = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			channelId,
+		);
 		if (!channel)
 			return c.json(
-				{ success: false, error: `Channel ${channelId} not found` },
+				{
+					success: false,
+					error: `Channel ${channelId} not found`,
+				},
 				404,
 			);
 
@@ -265,13 +400,11 @@ app.post('/panels', async (c) => {
 					.setSpacing(SeparatorSpacingSize.Small)
 					.setDivider(true),
 			);
-
 		if (description) {
 			panelContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(description),
 			);
 		}
-
 		if (
 			image &&
 			(image.startsWith('http://') || image.startsWith('https://'))
@@ -287,7 +420,6 @@ app.post('/panels', async (c) => {
 				]),
 			);
 		}
-
 		panelContainer
 			.addSeparatorComponents(
 				new SeparatorBuilder()
@@ -316,10 +448,18 @@ app.post('/panels', async (c) => {
 			image: image || null,
 		});
 		await panel.save();
-
-		return c.json({ success: true, data: panel });
+		return c.json({
+			success: true,
+			data: panel,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -330,12 +470,18 @@ app.patch('/panels/:id', async (c) => {
 	const { TicketPanel } = getModels(c);
 	const id = c.req.param('id');
 	const body = await c.req.json();
-
 	try {
-		const panel = await TicketPanel.getCache({ id: id });
+		const panel = await TicketPanel.getCache({
+			id: id,
+		});
 		if (!panel)
-			return c.json({ success: false, error: 'Panel not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'Panel not found',
+				},
+				404,
+			);
 		await panel.update(body);
 		await panel.save();
 
@@ -343,10 +489,18 @@ app.patch('/panels/:id', async (c) => {
 		if (panel.messageId) {
 			await ticketHelpers.refreshTicketPanel(panel.messageId, container);
 		}
-
-		return c.json({ success: true, data: panel });
+		return c.json({
+			success: true,
+			data: panel,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -356,42 +510,59 @@ app.delete('/panels/:id', async (c) => {
 	const client = getBot(c);
 	const { TicketPanel, TicketConfig } = getModels(c);
 	const id = c.req.param('id');
-
 	try {
-		const panel = await TicketPanel.getCache({ id: id });
+		const panel = await TicketPanel.getCache({
+			id: id,
+		});
 		if (!panel)
-			return c.json({ success: false, error: 'Panel not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Panel not found',
+				},
+				404,
+			);
 
 		// Delete the Discord panel message (best-effort)
 		try {
-			const channel = await client.channels
-				.fetch(panel.channelId)
-				.catch(() => null);
+			const channel =
+				await client.container.helpers.discord.getChannelGlobalSafe(
+					client,
+					panel.channelId,
+				);
 			if (channel) {
-				const message = await channel.messages
-					.fetch(panel.messageId)
-					.catch(() => null);
+				const message = await client.container.helpers.discord.getMessageSafe(
+					channel,
+					panel.messageId,
+				);
 				if (message) await message.delete();
 			}
 		} catch (_) {}
 
 		// Delete all associated ticket types
 		const relatedTypes = await TicketConfig.getAllCache({
-			where: { panelMessageId: panel.messageId },
+			where: {
+				panelMessageId: panel.messageId,
+			},
 		});
 		if (relatedTypes && relatedTypes.length > 0) {
 			for (const type of relatedTypes) {
 				await type.destroy();
 			}
 		}
-
 		await panel.destroy();
 		return c.json({
 			success: true,
 			message: `Panel "${panel.title}" deleted successfully`,
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -401,9 +572,18 @@ app.post('/panels/:messageId/refresh', async (c) => {
 	const messageId = c.req.param('messageId');
 	try {
 		await ticketHelpers.refreshTicketPanel(messageId, container);
-		return c.json({ success: true, message: 'Panel refreshed' });
+		return c.json({
+			success: true,
+			message: 'Panel refreshed',
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -418,37 +598,49 @@ app.post('/panels/:id/resend', async (c) => {
 	const { kythiaConfig, helpers } = container;
 	const { convertColor } = helpers.color;
 	const id = c.req.param('id');
-
 	let body = {};
 	try {
 		body = await c.req.json();
 	} catch (_) {}
-
 	try {
-		const panel = await TicketPanel.getCache({ id: id });
+		const panel = await TicketPanel.getCache({
+			id: id,
+		});
 		if (!panel)
-			return c.json({ success: false, error: 'Panel not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'Panel not found',
+				},
+				404,
+			);
 		const targetChannelId = body.channelId || panel.channelId;
-
-		const targetChannel = await client.channels
-			.fetch(targetChannelId)
-			.catch(() => null);
+		const targetChannel =
+			await client.container.helpers.discord.getChannelGlobalSafe(
+				client,
+				targetChannelId,
+			);
 		if (!targetChannel)
 			return c.json(
-				{ success: false, error: `Channel ${targetChannelId} not found` },
+				{
+					success: false,
+					error: `Channel ${targetChannelId} not found`,
+				},
 				404,
 			);
 
 		// Delete old Discord message (best-effort — may already be gone)
 		try {
-			const oldChannel = await client.channels
-				.fetch(panel.channelId)
-				.catch(() => null);
+			const oldChannel =
+				await client.container.helpers.discord.getChannelGlobalSafe(
+					client,
+					panel.channelId,
+				);
 			if (oldChannel) {
-				const oldMessage = await oldChannel.messages
-					.fetch(panel.messageId)
-					.catch(() => null);
+				const oldMessage = await helpers.discord.getMessageSafe(
+					oldChannel,
+					panel.messageId,
+				);
 				if (oldMessage) await oldMessage.delete();
 			}
 		} catch (_) {}
@@ -463,12 +655,10 @@ app.post('/panels/:id/resend', async (c) => {
 			MediaGalleryItemBuilder,
 			MessageFlags,
 		} = require('discord.js');
-
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const panelContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
@@ -479,13 +669,11 @@ app.post('/panels/:id/resend', async (c) => {
 					.setSpacing(SeparatorSpacingSize.Small)
 					.setDivider(true),
 			);
-
 		if (panel.description) {
 			panelContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(panel.description),
 			);
 		}
-
 		if (
 			panel.image &&
 			(panel.image.startsWith('http://') || panel.image.startsWith('https://'))
@@ -501,7 +689,6 @@ app.post('/panels/:id/resend', async (c) => {
 				]),
 			);
 		}
-
 		panelContainer
 			.addSeparatorComponents(
 				new SeparatorBuilder()
@@ -513,7 +700,6 @@ app.post('/panels/:id/resend', async (c) => {
 					'> No ticket types configured yet.',
 				),
 			);
-
 		const newMessage = await targetChannel.send({
 			components: [panelContainer],
 			flags: MessageFlags.IsComponentsV2,
@@ -532,15 +718,18 @@ app.post('/panels/:id/resend', async (c) => {
 		// the old panelMessageId) and the panel renders as empty.
 		const { TicketConfig } = getModels(c);
 		const linkedTypes = await TicketConfig.getAllCache({
-			where: { panelMessageId: oldMessageId },
+			where: {
+				panelMessageId: oldMessageId,
+			},
 		});
 		for (const type of linkedTypes) {
-			await type.update({ panelMessageId: newMessage.id });
+			await type.update({
+				panelMessageId: newMessage.id,
+			});
 		}
 
 		// Refresh the panel to populate ticket type buttons
 		await ticketHelpers.refreshTicketPanel(newMessage.id, container);
-
 		return c.json({
 			success: true,
 			message: `Panel "${panel.title}" resent to channel ${targetChannelId}`,
@@ -551,7 +740,13 @@ app.post('/panels/:id/resend', async (c) => {
 			},
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -564,10 +759,24 @@ app.get('/configs/:guildId', async (c) => {
 	const { TicketConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
 	try {
-		const configs = await TicketConfig.getAllCache({ where: { guildId } });
-		return c.json({ success: true, count: configs.length, data: configs });
+		const configs = await TicketConfig.getAllCache({
+			where: {
+				guildId,
+			},
+		});
+		return c.json({
+			success: true,
+			count: configs.length,
+			data: configs,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -576,12 +785,29 @@ app.get('/configs/id/:id', async (c) => {
 	const { TicketConfig } = getModels(c);
 	const id = c.req.param('id');
 	try {
-		const config = await TicketConfig.getCache({ id: id });
+		const config = await TicketConfig.getCache({
+			id: id,
+		});
 		if (!config)
-			return c.json({ success: false, error: 'TicketConfig not found' }, 404);
-		return c.json({ success: true, data: config });
+			return c.json(
+				{
+					success: false,
+					error: 'TicketConfig not found',
+				},
+				404,
+			);
+		return c.json({
+			success: true,
+			data: config,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -602,7 +828,6 @@ app.post('/configs', async (c) => {
 		logsChannelId,
 		transcriptChannelId,
 	} = body;
-
 	if (
 		!guildId ||
 		!panelMessageId ||
@@ -619,10 +844,8 @@ app.post('/configs', async (c) => {
 			},
 			400,
 		);
-
 	const ticketStyle = body.ticketStyle || 'channel';
 	const ticketThreadChannelId = body.ticketThreadChannelId || null;
-
 	if (ticketStyle === 'thread' && !ticketThreadChannelId)
 		return c.json(
 			{
@@ -631,7 +854,6 @@ app.post('/configs', async (c) => {
 			},
 			400,
 		);
-
 	try {
 		const config = await TicketConfig.create({
 			guildId,
@@ -652,10 +874,18 @@ app.post('/configs', async (c) => {
 
 		// Refresh the parent panel so the new type appears immediately
 		await ticketHelpers.refreshTicketPanel(panelMessageId, container);
-
-		return c.json({ success: true, data: config });
+		return c.json({
+			success: true,
+			data: config,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -666,12 +896,18 @@ app.patch('/configs/:id', async (c) => {
 	const { TicketConfig } = getModels(c);
 	const id = c.req.param('id');
 	const body = await c.req.json();
-
 	try {
-		const config = await TicketConfig.getCache({ id: id });
+		const config = await TicketConfig.getCache({
+			id: id,
+		});
 		if (!config)
-			return c.json({ success: false, error: 'TicketConfig not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'TicketConfig not found',
+				},
+				404,
+			);
 		await config.update(body);
 		await config.save();
 
@@ -679,10 +915,18 @@ app.patch('/configs/:id', async (c) => {
 		if (config.panelMessageId) {
 			await ticketHelpers.refreshTicketPanel(config.panelMessageId, container);
 		}
-
-		return c.json({ success: true, data: config });
+		return c.json({
+			success: true,
+			data: config,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -692,25 +936,35 @@ app.delete('/configs/:id', async (c) => {
 	const container = getContainer(c);
 	const { TicketConfig } = getModels(c);
 	const id = c.req.param('id');
-
 	try {
-		const config = await TicketConfig.getCache({ id: id });
+		const config = await TicketConfig.getCache({
+			id: id,
+		});
 		if (!config)
-			return c.json({ success: false, error: 'TicketConfig not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'TicketConfig not found',
+				},
+				404,
+			);
 		const { panelMessageId, typeName } = config;
 		await config.destroy();
 
 		// Refresh the parent panel so the deleted type disappears
 		await ticketHelpers.refreshTicketPanel(panelMessageId, container);
-
 		return c.json({
 			success: true,
 			message: `Ticket type "${typeName}" deleted successfully`,
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
-
 module.exports = app;

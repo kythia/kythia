@@ -8,16 +8,13 @@
 
 const { Hono } = require('hono');
 const app = new Hono();
-
 const { ChannelType } = require('discord.js');
 const { buildInterface } = require('../../tempvoice/helpers/interface.js');
 
 // Helper to get client and models
 const getClient = (c) => c.get('client');
 const getModels = (c) => getClient(c).container.models;
-
 const { requireVote } = require('../helpers/locks');
-
 app.use('*', (c, next) => {
 	if (c.req.method !== 'GET') {
 		return requireVote()(c, next);
@@ -36,43 +33,70 @@ app.post('/setup', async (c) => {
 	const { TempVoiceConfig } = getModels(c);
 	const container = client.container;
 	const { logger, t } = container;
-
 	const body = await c.req.json();
 	const { guildId } = body;
-
 	if (!guildId) {
-		return c.json({ success: false, error: 'Missing guildId' }, 400);
+		return c.json(
+			{
+				success: false,
+				error: 'Missing guildId',
+			},
+			400,
+		);
 	}
-
 	try {
-		const guild = await client.guilds.fetch(guildId);
+		const { getGuildSafe } = container.helpers.discord;
+		const guild = await getGuildSafe(client, guildId);
 		if (!guild) {
-			return c.json({ success: false, error: 'Guild not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Guild not found',
+				},
+				404,
+			);
 		}
-
 		let triggerChannel = body.triggerChannelId
-			? await guild.channels.fetch(body.triggerChannelId).catch(() => null)
+			? await container.helpers.discord.getChannelSafe(
+					guild,
+					body.triggerChannelId,
+				)
 			: null;
 		let category = body.categoryId
-			? await guild.channels.fetch(body.categoryId).catch(() => null)
+			? await container.helpers.discord.getChannelSafe(guild, body.categoryId)
 			: null;
 		let controlPanel = body.controlPanelChannelId
-			? await guild.channels.fetch(body.controlPanelChannelId).catch(() => null)
+			? await container.helpers.discord.getChannelSafe(
+					guild,
+					body.controlPanelChannelId,
+				)
 			: null;
-
-		const autoReason = await t({ guildId }, 'tempvoice.setup.auto_reason');
-
+		const autoReason = await t(
+			{
+				guildId,
+			},
+			'tempvoice.setup.auto_reason',
+		);
 		if (!category) {
 			category = await guild.channels.create({
-				name: await t({ guildId }, 'tempvoice.setup.auto_category_name'),
+				name: await t(
+					{
+						guildId,
+					},
+					'tempvoice.setup.auto_category_name',
+				),
 				type: ChannelType.GuildCategory,
 				reason: autoReason,
 			});
 		}
-
 		if (!triggerChannel) {
 			triggerChannel = await guild.channels.create({
-				name: await t({ guildId }, 'tempvoice.setup.auto_trigger_name'),
+				name: await t(
+					{
+						guildId,
+					},
+					'tempvoice.setup.auto_trigger_name',
+				),
 				type: ChannelType.GuildVoice,
 				parent: category.id,
 				reason: autoReason,
@@ -81,12 +105,18 @@ app.post('/setup', async (c) => {
 			!triggerChannel.parentId ||
 			triggerChannel.parentId !== category.id
 		) {
-			await triggerChannel.setParent(category.id, { lockPermissions: false });
+			await triggerChannel.setParent(category.id, {
+				lockPermissions: false,
+			});
 		}
-
 		if (!controlPanel) {
 			controlPanel = await guild.channels.create({
-				name: await t({ guildId }, 'tempvoice.setup.auto_control_name'),
+				name: await t(
+					{
+						guildId,
+					},
+					'tempvoice.setup.auto_control_name',
+				),
 				type: ChannelType.GuildText,
 				parent: category.id,
 				reason: autoReason,
@@ -95,18 +125,24 @@ app.post('/setup', async (c) => {
 			!controlPanel.parentId ||
 			controlPanel.parentId !== category.id
 		) {
-			await controlPanel.setParent(category.id, { lockPermissions: false });
+			await controlPanel.setParent(category.id, {
+				lockPermissions: false,
+			});
 		}
 
 		// Cleanup old panel message if exists
-		const oldConfig = await TempVoiceConfig.getCache({ guildId });
+		const oldConfig = await TempVoiceConfig.getCache({
+			guildId,
+		});
 		if (oldConfig?.interfaceMessageId) {
 			try {
-				const oldChannel = await client.channels.fetch(
-					oldConfig.controlPanelChannelId,
-					{ force: true },
-				);
-				const oldMsg = await oldChannel.messages.fetch(
+				const oldChannel =
+					await client.container.helpers.discord.getChannelGlobalSafe(
+						client,
+						oldConfig.controlPanelChannelId,
+					);
+				const oldMsg = await container.helpers.discord.getMessageSafe(
+					oldChannel,
 					oldConfig.interfaceMessageId,
 				);
 				await oldMsg.delete();
@@ -124,20 +160,26 @@ app.post('/setup', async (c) => {
 			guildId: guild.id,
 			guild,
 		};
-
 		const { components, flags } = await buildInterface(mockInteraction);
-		const interfaceMessage = await controlPanel.send({ components, flags });
-
+		const interfaceMessage = await controlPanel.send({
+			components,
+			flags,
+		});
 		if (!interfaceMessage) {
 			return c.json(
-				{ success: false, error: 'Failed to send interface message' },
+				{
+					success: false,
+					error: 'Failed to send interface message',
+				},
 				500,
 			);
 		}
 
 		// Save to database
 		const [config] = await TempVoiceConfig.findOrCreateCache({
-			where: { guildId: guildId },
+			where: {
+				guildId: guildId,
+			},
 			defaults: {
 				guildId: guildId,
 				triggerChannelId: triggerChannel.id,
@@ -155,7 +197,6 @@ app.post('/setup', async (c) => {
 			interfaceMessageId: interfaceMessage.id,
 		});
 		await config.save();
-
 		return c.json({
 			success: true,
 			data: {
@@ -167,7 +208,13 @@ app.post('/setup', async (c) => {
 			},
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 // POST /api/tempvoice/configs/:guildId/refresh - Refresh the control panel interface message
@@ -175,53 +222,74 @@ app.post('/configs/:guildId/refresh', async (c) => {
 	const client = getClient(c);
 	const { TempVoiceConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
-
 	try {
-		const config = await TempVoiceConfig.getCache({ guildId });
+		const config = await TempVoiceConfig.getCache({
+			guildId,
+		});
 		if (!config) {
 			return c.json(
-				{ success: false, error: 'TempVoiceConfig not found' },
+				{
+					success: false,
+					error: 'TempVoiceConfig not found',
+				},
 				404,
 			);
 		}
-
-		const guild = await client.guilds.fetch(guildId);
+		const { getGuildSafe } = client.container.helpers.discord;
+		const guild = await getGuildSafe(client, guildId);
 		if (!guild) {
-			return c.json({ success: false, error: 'Guild not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Guild not found',
+				},
+				404,
+			);
 		}
-
-		const channel = await guild.channels
-			.fetch(config.controlPanelChannelId)
-			.catch(() => null);
+		const channel = await client.container.helpers.discord.getChannelSafe(
+			guild,
+			config.controlPanelChannelId,
+		);
 		if (!channel) {
 			return c.json(
-				{ success: false, error: 'Control panel channel not found' },
+				{
+					success: false,
+					error: 'Control panel channel not found',
+				},
 				404,
 			);
 		}
 
 		// Mock interaction for buildInterface
-		const mockInteraction = { client, guildId, guild };
+		const mockInteraction = {
+			client,
+			guildId,
+			guild,
+		};
 		const { components, flags } = await buildInterface(mockInteraction);
-
 		let message = null;
 		if (config.interfaceMessageId) {
-			message = await channel.messages
-				.fetch(config.interfaceMessageId)
-				.catch(() => null);
+			message = await client.container.helpers.discord.getMessageSafe(
+				channel,
+				config.interfaceMessageId,
+			);
 		}
-
 		if (message) {
 			// Try to edit existing message
-			await message.edit({ components, flags });
+			await message.edit({
+				components,
+				flags,
+			});
 		} else {
 			// Send new message if missing
-			const newMessage = await channel.send({ components, flags });
+			const newMessage = await channel.send({
+				components,
+				flags,
+			});
 			config.interfaceMessageId = newMessage.id;
 			await config.save();
 			await config.save();
 		}
-
 		return c.json({
 			success: true,
 			message: message
@@ -232,7 +300,13 @@ app.post('/configs/:guildId/refresh', async (c) => {
 			},
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -244,17 +318,30 @@ app.post('/configs/:guildId/refresh', async (c) => {
 app.get('/configs/:guildId', async (c) => {
 	const { TempVoiceConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
-
 	try {
-		const config = await TempVoiceConfig.getCache({ guildId });
+		const config = await TempVoiceConfig.getCache({
+			guildId,
+		});
 		if (!config)
 			return c.json(
-				{ success: false, error: 'TempVoiceConfig not found' },
+				{
+					success: false,
+					error: 'TempVoiceConfig not found',
+				},
 				404,
 			);
-		return c.json({ success: true, data: config });
+		return c.json({
+			success: true,
+			data: config,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -263,7 +350,6 @@ app.post('/configs', async (c) => {
 	const { TempVoiceConfig } = getModels(c);
 	const body = await c.req.json();
 	const { guildId, triggerChannelId, categoryId } = body;
-
 	if (!guildId || !triggerChannelId || !categoryId) {
 		return c.json(
 			{
@@ -273,10 +359,11 @@ app.post('/configs', async (c) => {
 			400,
 		);
 	}
-
 	try {
 		const [config, created] = await TempVoiceConfig.findOrCreateCache({
-			where: { guildId },
+			where: {
+				guildId,
+			},
 			defaults: {
 				guildId,
 				triggerChannelId,
@@ -285,7 +372,6 @@ app.post('/configs', async (c) => {
 				interfaceMessageId: body.interfaceMessageId ?? null,
 			},
 		});
-
 		if (!created) {
 			await config.update({
 				triggerChannelId,
@@ -298,10 +384,19 @@ app.post('/configs', async (c) => {
 				}),
 			});
 		}
-
-		return c.json({ success: true, created, data: config });
+		return c.json({
+			success: true,
+			created,
+			data: config,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -310,15 +405,18 @@ app.patch('/configs/:guildId', async (c) => {
 	const { TempVoiceConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
 	const body = await c.req.json();
-
 	try {
-		const config = await TempVoiceConfig.getCache({ guildId });
+		const config = await TempVoiceConfig.getCache({
+			guildId,
+		});
 		if (!config)
 			return c.json(
-				{ success: false, error: 'TempVoiceConfig not found' },
+				{
+					success: false,
+					error: 'TempVoiceConfig not found',
+				},
 				404,
 			);
-
 		const allowedFields = [
 			'triggerChannelId',
 			'categoryId',
@@ -331,11 +429,19 @@ app.patch('/configs/:guildId', async (c) => {
 				updates[field] = body[field];
 			}
 		}
-
 		await config.update(updates);
-		return c.json({ success: true, data: config });
+		return c.json({
+			success: true,
+			data: config,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -343,22 +449,31 @@ app.patch('/configs/:guildId', async (c) => {
 app.delete('/configs/:guildId', async (c) => {
 	const { TempVoiceConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
-
 	try {
-		const config = await TempVoiceConfig.getCache({ guildId });
+		const config = await TempVoiceConfig.getCache({
+			guildId,
+		});
 		if (!config)
 			return c.json(
-				{ success: false, error: 'TempVoiceConfig not found' },
+				{
+					success: false,
+					error: 'TempVoiceConfig not found',
+				},
 				404,
 			);
-
 		await config.destroy();
 		return c.json({
 			success: true,
 			message: 'TempVoiceConfig deleted successfully',
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -371,16 +486,26 @@ app.get('/channels', async (c) => {
 	const { TempVoiceChannel } = getModels(c);
 	const guildId = c.req.query('guildId');
 	const ownerId = c.req.query('ownerId');
-
 	const where = {};
 	if (guildId) where.guildId = guildId;
 	if (ownerId) where.ownerId = ownerId;
-
 	try {
-		const data = await TempVoiceChannel.getAllCache({ where });
-		return c.json({ success: true, count: data.length, data });
+		const data = await TempVoiceChannel.getAllCache({
+			where,
+		});
+		return c.json({
+			success: true,
+			count: data.length,
+			data,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -388,17 +513,30 @@ app.get('/channels', async (c) => {
 app.get('/channels/:channelId', async (c) => {
 	const { TempVoiceChannel } = getModels(c);
 	const channelId = c.req.param('channelId');
-
 	try {
-		const channel = await TempVoiceChannel.getCache({ id: channelId });
+		const channel = await TempVoiceChannel.getCache({
+			id: channelId,
+		});
 		if (!channel)
 			return c.json(
-				{ success: false, error: 'TempVoiceChannel not found' },
+				{
+					success: false,
+					error: 'TempVoiceChannel not found',
+				},
 				404,
 			);
-		return c.json({ success: true, data: channel });
+		return c.json({
+			success: true,
+			data: channel,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -407,15 +545,18 @@ app.patch('/channels/:channelId', async (c) => {
 	const { TempVoiceChannel } = getModels(c);
 	const channelId = c.req.param('channelId');
 	const body = await c.req.json();
-
 	try {
-		const channel = await TempVoiceChannel.getCache({ id: channelId });
+		const channel = await TempVoiceChannel.getCache({
+			id: channelId,
+		});
 		if (!channel)
 			return c.json(
-				{ success: false, error: 'TempVoiceChannel not found' },
+				{
+					success: false,
+					error: 'TempVoiceChannel not found',
+				},
 				404,
 			);
-
 		const allowedFields = [
 			'ownerId',
 			'waitingRoomChannelId',
@@ -427,11 +568,19 @@ app.patch('/channels/:channelId', async (c) => {
 				updates[field] = body[field];
 			}
 		}
-
 		await channel.update(updates);
-		return c.json({ success: true, data: channel });
+		return c.json({
+			success: true,
+			data: channel,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -439,23 +588,31 @@ app.patch('/channels/:channelId', async (c) => {
 app.delete('/channels/:channelId', async (c) => {
 	const { TempVoiceChannel } = getModels(c);
 	const channelId = c.req.param('channelId');
-
 	try {
-		const channel = await TempVoiceChannel.getCache({ id: channelId });
+		const channel = await TempVoiceChannel.getCache({
+			id: channelId,
+		});
 		if (!channel)
 			return c.json(
-				{ success: false, error: 'TempVoiceChannel not found' },
+				{
+					success: false,
+					error: 'TempVoiceChannel not found',
+				},
 				404,
 			);
-
 		await channel.destroy();
 		return c.json({
 			success: true,
 			message: 'TempVoiceChannel deleted successfully',
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
-
 module.exports = app;

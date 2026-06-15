@@ -11,9 +11,7 @@ const {
 	MessageFlags,
 	SlashCommandSubcommandBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class DeleteCommand extends BaseCommand {
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('delete')
@@ -33,22 +31,22 @@ class DeleteCommand extends BaseCommand {
 				)
 				.setRequired(false),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;
 		const { EmbedBuilder: EmbedModel } = models;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const embedId = parseInt(interaction.options.getString('id'), 10);
 		const deleteMessage =
 			interaction.options.getBoolean('delete_message') ?? false;
-
 		const record = await EmbedModel.getCache({
-			where: { id: embedId, guildId: interaction.guild.id },
+			where: {
+				id: embedId,
+				guildId: interaction.guild.id,
+			},
 		});
-
 		if (!record) {
 			return interaction.editReply({
 				embeds: [
@@ -58,28 +56,27 @@ class DeleteCommand extends BaseCommand {
 				],
 			});
 		}
-
 		const embedName = record.name;
 
 		// Optionally delete the Discord message
 		if (deleteMessage && record.messageId && record.channelId) {
 			try {
-				const channel = await interaction.client.channels
-					.fetch(record.channelId)
-					.catch(() => null);
+				const channel = await container.helpers.discord.getChannelSafe(
+					interaction.client,
+					record.channelId,
+				);
 				if (channel) {
-					const msg = await channel.messages
-						.fetch(record.messageId)
-						.catch(() => null);
+					const msg = await container.helpers.discord.getMessageSafe(
+						channel,
+						record.messageId,
+					);
 					if (msg) await msg.delete();
 				}
 			} catch {
 				// Best-effort; don't fail if message is already gone
 			}
 		}
-
 		await record.destroy();
-
 		return interaction.editReply({
 			embeds: [
 				new EmbedBuilder()
@@ -91,5 +88,4 @@ class DeleteCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = DeleteCommand;

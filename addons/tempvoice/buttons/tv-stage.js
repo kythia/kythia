@@ -6,19 +6,16 @@
  * @version 26.0.0-rc.1
  */
 const { PermissionsBitField, MessageFlags } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TvStageButton extends BaseButton {
-	button = { customId: 'tv_stage' };
-
+	button = {
+		customId: 'tv_stage',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, client, t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const { TempVoiceChannel } = models;
-
 		const activeChannel = await TempVoiceChannel.getCache({
 			ownerId: interaction.user.id,
 			guildId: interaction.guild.id,
@@ -28,32 +25,38 @@ class TvStageButton extends BaseButton {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.stage.no_active_channel'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const channelId = activeChannel.channelId;
 		let channel;
 		try {
-			channel = await client.channels.fetch(channelId, { force: true });
+			channel = await client.container.helpers.discord.getChannelGlobalSafe(
+				client,
+				channelId,
+			);
 		} catch (error) {
 			logger.error(
 				`CRITICAL: Failed to fetch channel ${channelId} for rename. Error: ${error.message || error}`,
-				{ label: 'tempvoice' },
+				{
+					label: 'tempvoice',
+				},
 			);
-
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.channel_not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (!channel) {
 			return interaction.reply({
 				components: await simpleContainer(
@@ -66,11 +69,9 @@ class TvStageButton extends BaseButton {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const everyoneRole = interaction.guild.roles.everyone;
 		const perms = channel.permissionsFor(everyoneRole);
 		const canEveryoneSpeak = perms.has(PermissionsBitField.Flags.Speak);
-
 		try {
 			if (canEveryoneSpeak) {
 				await channel.permissionOverwrites.edit(everyoneRole, {
@@ -80,7 +81,9 @@ class TvStageButton extends BaseButton {
 					components: await simpleContainer(
 						interaction,
 						await t(interaction, 'tempvoice.stage.enabled'),
-						{ color: 'Green' },
+						{
+							color: 'Green',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
@@ -92,7 +95,9 @@ class TvStageButton extends BaseButton {
 					components: await simpleContainer(
 						interaction,
 						await t(interaction, 'tempvoice.stage.disabled'),
-						{ color: 'Green' },
+						{
+							color: 'Green',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
@@ -102,12 +107,13 @@ class TvStageButton extends BaseButton {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.fail'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 	}
 }
-
 exports.default = TvStageButton;

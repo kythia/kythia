@@ -13,31 +13,29 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class GuildScheduledEventUserRemoveEvent extends BaseEvent {
 	async execute(guildScheduledEvent, user) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
 		const guild = guildScheduledEvent.guild;
 		const guildId = guild.id;
-
 		if (!guild) return;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId: guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -45,11 +43,13 @@ class GuildScheduledEventUserRemoveEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Red', { from: 'discord', to: 'decimal' }),
+						convertColor('Red', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -79,13 +79,18 @@ class GuildScheduledEventUserRemoveEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -103,5 +108,4 @@ class GuildScheduledEventUserRemoveEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = GuildScheduledEventUserRemoveEvent;

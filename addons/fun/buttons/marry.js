@@ -14,21 +14,17 @@ const {
 } = require('discord.js');
 const Marriage = require('../database/models/Marriage');
 const { convertColor } = require('kythia-core').utils;
-
 const { BaseButton } = require('kythia-core');
-
 class MarryButton extends BaseButton {
 	button = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { t, kythiaConfig } = container;
 		const [prefix, actionType, marriageId] = interaction.customId.split(':');
 		if (prefix !== 'marry' || !actionType || !marriageId) return;
-
-		const marriage = await Marriage.getCache({ id: marriageId });
-
+		const marriage = await Marriage.getCache({
+			id: marriageId,
+		});
 		if (actionType === 'accept') {
 			if (marriage?.status !== 'pending') {
 				const container = new ContainerBuilder()
@@ -55,30 +51,28 @@ class MarryButton extends BaseButton {
 					components: [container],
 				});
 			}
-
 			if (interaction.user.id !== marriage.user2Id) {
 				return interaction.reply({
 					content: await t(interaction, 'fun.marry.not.your.proposal'),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
 			await marriage.update({
 				status: 'married',
 				marriedAt: new Date(),
 				loveScore: 0,
 			});
-
 			let user1Display, user2Display;
-
 			try {
-				const user1 = await interaction.client.users.fetch(marriage.user1Id);
+				const user1 = await container.helpers.discord.getUserSafe(
+					interaction.client,
+					marriage.user1Id,
+				);
 				user1Display = user1 ? user1.toString() : 'Unknown';
 			} catch {
 				user1Display = 'Unknown';
 			}
 			user2Display = interaction.user.toString();
-
 			const congratsTitle = `## ${await t(interaction, 'fun.marry.congrats.title')}`;
 			const congratsDesc = await t(
 				interaction,
@@ -91,10 +85,12 @@ class MarryButton extends BaseButton {
 			const footer = await t(interaction, 'common.container.footer', {
 				username: interaction.client.user.username,
 			});
-
 			const container = new ContainerBuilder()
 				.setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(congratsTitle),
@@ -105,7 +101,6 @@ class MarryButton extends BaseButton {
 				)
 				.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
 				.addTextDisplayComponents(new TextDisplayBuilder().setContent(footer));
-
 			await interaction.update({
 				components: [container],
 			});
@@ -135,16 +130,15 @@ class MarryButton extends BaseButton {
 					components: [container],
 				});
 			}
-
 			if (interaction.user.id !== marriage.user2Id) {
 				return interaction.reply({
 					content: await t(interaction, 'fun.marry.not.your.proposal'),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
-
-			await marriage.update({ status: 'rejected' });
-
+			await marriage.update({
+				status: 'rejected',
+			});
 			const rejectedText = await t(interaction, 'fun.marry.proposal.rejected', {
 				user1: `<@${marriage.user1Id}>`,
 				user2: `<@${marriage.user2Id}>`,
@@ -152,20 +146,22 @@ class MarryButton extends BaseButton {
 			const footer = await t(interaction, 'common.container.footer', {
 				username: interaction.client.user.username,
 			});
-
 			const container = new ContainerBuilder()
-				.setAccentColor(convertColor('Red', { from: 'discord', to: 'decimal' }))
+				.setAccentColor(
+					convertColor('Red', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(rejectedText),
 				)
 				.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
 				.addTextDisplayComponents(new TextDisplayBuilder().setContent(footer));
-
 			await interaction.update({
 				components: [container],
 			});
 		}
 	}
 }
-
 exports.default = MarryButton;

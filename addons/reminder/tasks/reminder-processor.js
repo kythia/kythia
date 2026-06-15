@@ -8,23 +8,18 @@
 
 const { MessageFlags } = require('discord.js');
 const { Op } = require('sequelize');
-
 const { BaseTask } = require('kythia-core');
-
 class ReminderProcessorTask extends BaseTask {
 	taskName = 'reminder-processor';
 	schedule = '* * * * *'; // Every minute
 	active = true;
-
 	async execute(container) {
 		const { logger, client, models, helpers, t } = container;
 		const { KythiaReminder } = models;
 		const { getTextChannelSafe } = helpers.discord;
-
 		logger.info('⏰ Running reminder processor task...', {
 			label: 'reminder-processor',
 		});
-
 		try {
 			// Find all reminders where expiresAt is less than or equal to now
 			const expiredReminders = await KythiaReminder.getAllCache({
@@ -34,31 +29,33 @@ class ReminderProcessorTask extends BaseTask {
 					},
 				},
 			});
-
 			if (!expiredReminders || expiredReminders.length === 0) return;
-
 			for (const reminder of expiredReminders) {
 				try {
 					let targetChannel = null;
 					let user = null;
-
 					try {
-						user = await client.users.fetch(reminder.userId);
+						user = await client.container.helpers.discord.getUserSafe(
+							client,
+							reminder.userId,
+						);
 					} catch (_e) {
 						// User not found or bot can't fetch them
 					}
-
 					if (!user) {
 						await reminder.destroy();
 						continue;
 					}
-
 					const titleContent = await t(
-						{ locale: 'en-US' },
+						{
+							locale: 'en-US',
+						},
 						'reminder.tasks.processor.title',
 					);
 					const msgContent = await t(
-						{ locale: 'en-US' },
+						{
+							locale: 'en-US',
+						},
 						'reminder.tasks.processor.desc',
 						{
 							reason: reminder.reason,
@@ -66,10 +63,11 @@ class ReminderProcessorTask extends BaseTask {
 							createdAt: `<t:${Math.floor(reminder.createdAt.getTime() / 1000)}:R>`,
 						},
 					);
-
 					const { createContainer } = helpers.discord;
 					const components = await createContainer(
-						{ client },
+						{
+							client,
+						},
 						{
 							title: titleContent,
 							description: msgContent,
@@ -84,7 +82,6 @@ class ReminderProcessorTask extends BaseTask {
 							reminder.channelId,
 						);
 					}
-
 					const payload = {
 						components,
 						flags: MessageFlags.IsComponentsV2,
@@ -92,7 +89,6 @@ class ReminderProcessorTask extends BaseTask {
 							parse: ['users'],
 						},
 					};
-
 					if (targetChannel) {
 						await targetChannel.send(payload);
 					} else {
@@ -126,7 +122,6 @@ class ReminderProcessorTask extends BaseTask {
 							else if (reminder.repeatMode === 'monthly')
 								nextDate.setUTCMonth(nextDate.getUTCMonth() + 1);
 						}
-
 						reminder.expiresAt = nextDate;
 						await reminder.save();
 					} else {
@@ -135,7 +130,9 @@ class ReminderProcessorTask extends BaseTask {
 				} catch (err) {
 					logger.error(
 						`Failed to process reminder ID ${reminder.id}: ${err.message}`,
-						{ label: 'reminder-processor' },
+						{
+							label: 'reminder-processor',
+						},
 					);
 					// Destroy it anyway to prevent infinite loops if DM is locked,
 					// UNLESS it's a recurring reminder, then just skip and it will retry next minute?
@@ -159,5 +156,4 @@ class ReminderProcessorTask extends BaseTask {
 		}
 	}
 }
-
 exports.default = ReminderProcessorTask;

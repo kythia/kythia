@@ -18,16 +18,13 @@ const {
 } = require('discord.js');
 // kythia-arts is now imported in the sandboxed queue processor
 const { DateTime } = require('luxon');
-
 const { BaseTask } = require('kythia-core');
-
 class AnnouncerTask extends BaseTask {
 	task = {
 		taskName: 'birthday-announcer',
 		schedule: '0 * * * *',
 		active: true,
 	};
-
 	async execute(container) {
 		const { client } = container || this.container;
 		const { models, helpers, logger } = container || this.container;
@@ -35,14 +32,13 @@ class AnnouncerTask extends BaseTask {
 		const { t } = container || this.container;
 		const { getGuildSafe } = helpers.discord;
 		const { ShardClientUtil } = require('discord.js');
-
-		logger.info('🎂 Running birthday announcer...', { label: 'birthday' });
-
+		logger.info('🎂 Running birthday announcer...', {
+			label: 'birthday',
+		});
 		const now = DateTime.now();
 		const currentDay = now.day;
 		const currentMonth = now.month;
 		const currentYear = now.year;
-
 		try {
 			const birthdays = await UserBirthday.getAllCache({
 				where: {
@@ -50,9 +46,7 @@ class AnnouncerTask extends BaseTask {
 					month: currentMonth,
 				},
 			});
-
 			if (birthdays.length === 0) return;
-
 			for (const record of birthdays) {
 				if (client.shard) {
 					const expectedShardId = ShardClientUtil.shardIdForGuildId(
@@ -61,69 +55,97 @@ class AnnouncerTask extends BaseTask {
 					);
 					if (!client.shard.ids.includes(expectedShardId)) continue;
 				}
-
 				if (record.lastCelebratedYear === currentYear) continue;
-
 				const guild = await getGuildSafe(client, record.guildId);
 				if (!guild) continue;
-
 				const { BirthdaySetting } = models;
 				let channel = null;
-
 				const setting = await BirthdaySetting.getCache({
 					guildId: guild.id,
 				});
-
 				if (setting?.channelId) {
 					channel = guild.channels.cache.get(setting.channelId);
 				}
-
 				if (!channel) {
 					channel = guild.systemChannel;
 				}
-
 				if (!channel) continue;
-
 				try {
-					const user = await client.users
-						.fetch(record.userId)
-						.catch(() => null);
+					const user = await client.container.helpers.discord.getUserSafe(
+						client,
+						record.userId,
+					);
 					if (!user) continue;
 
 					// const roleId = setting?.roleId;
 					const pingRoleId = setting?.pingRoleId;
 					const showAge = setting?.showAge ?? true;
 					let contentMsg = setting?.message;
-
 					const getZodiac = (d, m) => {
 						const z = [
-							{ sign: '♑ Capricorn', lastDay: 19 },
-							{ sign: '♒ Aquarius', lastDay: 18 },
-							{ sign: '♓ Pisces', lastDay: 20 },
-							{ sign: '♈ Aries', lastDay: 19 },
-							{ sign: '♉ Taurus', lastDay: 20 },
-							{ sign: '♊ Gemini', lastDay: 20 },
-							{ sign: '♋ Cancer', lastDay: 22 },
-							{ sign: '♌ Leo', lastDay: 22 },
-							{ sign: '♍ Virgo', lastDay: 22 },
-							{ sign: '♎ Libra', lastDay: 22 },
-							{ sign: '♏ Scorpio', lastDay: 21 },
-							{ sign: '♐ Sagittarius', lastDay: 21 },
-							{ sign: '♑ Capricorn', lastDay: 31 },
+							{
+								sign: '♑ Capricorn',
+								lastDay: 19,
+							},
+							{
+								sign: '♒ Aquarius',
+								lastDay: 18,
+							},
+							{
+								sign: '♓ Pisces',
+								lastDay: 20,
+							},
+							{
+								sign: '♈ Aries',
+								lastDay: 19,
+							},
+							{
+								sign: '♉ Taurus',
+								lastDay: 20,
+							},
+							{
+								sign: '♊ Gemini',
+								lastDay: 20,
+							},
+							{
+								sign: '♋ Cancer',
+								lastDay: 22,
+							},
+							{
+								sign: '♌ Leo',
+								lastDay: 22,
+							},
+							{
+								sign: '♍ Virgo',
+								lastDay: 22,
+							},
+							{
+								sign: '♎ Libra',
+								lastDay: 22,
+							},
+							{
+								sign: '♏ Scorpio',
+								lastDay: 21,
+							},
+							{
+								sign: '♐ Sagittarius',
+								lastDay: 21,
+							},
+							{
+								sign: '♑ Capricorn',
+								lastDay: 31,
+							},
 						];
 						return d > z[m - 1].lastDay ? z[m].sign : z[m - 1].sign;
 					};
-
 					let age = '';
 					if (record.year && showAge) {
 						age = (currentYear - record.year).toString();
 					}
 					const zodiac = getZodiac(currentDay, currentMonth);
-
 					const ageInfo = age ? `Age: ${age}` : '';
 					const zodiacInfo = zodiac ? `Zodiac: ${zodiac}` : '';
 					const pingInfo = pingRoleId ? `<@&${pingRoleId}>` : '';
-
 					if (!contentMsg) {
 						contentMsg = await t(guild, 'birthday.announcement', {
 							user: user.toString(),
@@ -137,7 +159,6 @@ class AnnouncerTask extends BaseTask {
 							.replace(/{age}/g, age || '')
 							.replace(/{zodiac}/g, zodiac);
 					}
-
 					let bannerBuffer = null;
 					try {
 						const job = await container.queueManager.dispatch(
@@ -160,7 +181,6 @@ class AnnouncerTask extends BaseTask {
 								},
 							},
 						);
-
 						const result = await container.queueManager.waitFor(
 							job,
 							'kythia-birthday-queue',
@@ -171,7 +191,6 @@ class AnnouncerTask extends BaseTask {
 							`❌ [Birthday] Failed to generate arts: ${e.message || e}`,
 						);
 					}
-
 					const files = [];
 					let imageUrl = null;
 					if (Buffer.isBuffer(bannerBuffer)) {
@@ -181,15 +200,12 @@ class AnnouncerTask extends BaseTask {
 						files.push(attachment);
 						imageUrl = 'attachment://birthday.png';
 					}
-
 					const { convertColor } = helpers.color;
-
 					const colorInput = setting?.embedColor || '#FFD700';
 					const accentColor = convertColor(colorInput, {
 						from: 'hex',
 						to: 'decimal',
 					});
-
 					const builder = new ContainerBuilder()
 						.setAccentColor(accentColor)
 						.addTextDisplayComponents(
@@ -197,14 +213,12 @@ class AnnouncerTask extends BaseTask {
 								`# 🎂 Happy Birthday!\n${contentMsg}`,
 							),
 						);
-
 					if (imageUrl) {
 						builder.addSeparatorComponents(
 							new SeparatorBuilder()
 								.setSpacing(SeparatorSpacingSize.Small)
 								.setDivider(true),
 						);
-
 						builder.addMediaGalleryComponents(
 							new MediaGalleryBuilder().addItems([
 								new MediaGalleryItemBuilder().setURL(imageUrl),
@@ -235,20 +249,20 @@ class AnnouncerTask extends BaseTask {
 								}),
 							),
 						);
-
 					await channel.send({
 						components: [builder],
 						files: files,
 						flags: MessageFlags.IsComponentsV2,
 					});
-
 					record.lastCelebratedYear = currentYear;
 					await record.save();
 				} catch (err) {
 					if (logger)
 						logger.error(
 							`❌ [Birthday] Failed to announce for user ${record.userId} in guild ${record.guildId}: ${err.message || err}`,
-							{ label: 'birthday' },
+							{
+								label: 'birthday',
+							},
 						);
 				}
 			}
@@ -260,5 +274,4 @@ class AnnouncerTask extends BaseTask {
 		}
 	}
 }
-
 exports.default = AnnouncerTask;

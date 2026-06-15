@@ -5,29 +5,32 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-/**
- * @param {import('kythia-core').Kythia} bot
- * @param {import('discord.js').GuildMember} oldMember
- * @param {import('discord.js').GuildMember} newMember
- */
-
+// 1 line space
+// discord.js import on top of another import
+// Sorting from shortest letter to longest letter
+// kythia core after discord.js
 const { BaseEvent } = require('kythia-core');
-
+// space 1 line
 class GuildMemberUpdateEvent extends BaseEvent {
 	async execute(oldMember, newMember) {
+		// Filter outbots
 		if (!newMember?.user || newMember.user.bot) return;
 		// Detect boost start: was not boosting before, now is
 		const startedBoosting = !oldMember.premiumSince && newMember.premiumSince;
 		if (!startedBoosting) return;
 
+		// container const
 		const container = this.container;
-
+		// then models destructure if needed, else dont put it
 		const { models } = container;
+		// then if any models destructure
 		const { ServerSetting } = models;
-
+		// guildId or userId or something else with const declaration
 		const guildId = newMember.guild.id;
 		const userId = newMember.id;
 
+		// model cache get, dont use findOne/findAll/findByPk
+		// instead use getCache/getAllCache read <this project>/docs/core/MODEL_USAGE.md
 		const serverSetting = await ServerSetting.getCache({ guildId });
 		if (!serverSetting?.activityOn) return;
 
@@ -42,5 +45,5 @@ class GuildMemberUpdateEvent extends BaseEvent {
 		}).catch(() => null);
 	}
 }
-
+// space 1 line
 module.exports = GuildMemberUpdateEvent;

@@ -7,22 +7,22 @@
  */
 
 const { BaseEvent } = require('kythia-core');
-
 class MessageReactionRemoveEvent extends BaseEvent {
 	async execute(reaction, user) {
 		const container = this.container;
-		const _bot = { client: this.client, container: this.container };
-
+		const _bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { models, logger } = container;
 		const { ReactionRole } = models;
-
 		try {
 			if (!user || user.bot) return;
 
 			// Handle partials
 			if (reaction.partial) {
 				try {
-					await reaction.fetch();
+					await container.helpers.discord.resolvePartialSafe(reaction);
 				} catch (error) {
 					logger.error(`Error: ${error.message || error}`, {
 						label: 'reactionRole:fetchMessage',
@@ -30,10 +30,9 @@ class MessageReactionRemoveEvent extends BaseEvent {
 					return;
 				}
 			}
-
 			if (reaction.message.partial) {
 				try {
-					await reaction.message.fetch();
+					await container.helpers.discord.resolvePartialSafe(reaction.message);
 				} catch (error) {
 					logger.error(`Error: ${error.message || error}`, {
 						label: 'reactionRole:fetchMessagePartial',
@@ -41,12 +40,9 @@ class MessageReactionRemoveEvent extends BaseEvent {
 					return;
 				}
 			}
-
 			const { guildId, id: messageId } = reaction.message;
 			if (!guildId) return;
-
 			const emojiIdentifier = reaction.emoji.toString();
-
 			const rr = await ReactionRole.getCache({
 				where: {
 					guildId,
@@ -54,14 +50,18 @@ class MessageReactionRemoveEvent extends BaseEvent {
 					emoji: emojiIdentifier,
 				},
 			});
-
 			if (rr) {
-				const member = await reaction.message.guild.members.fetch(user.id);
+				const member = await container.helpers.discord.getMemberSafe(
+					reaction.message.guild,
+					user.id,
+				);
 				if (member) {
 					await member.roles.remove(rr.roleId).catch((err) => {
 						logger.warn(
 							`Failed to remove role ${rr.roleId} from user ${user.id}: ${err.message}`,
-							{ label: 'reactionRole:removeRole' },
+							{
+								label: 'reactionRole:removeRole',
+							},
 						);
 					});
 				}
@@ -73,5 +73,4 @@ class MessageReactionRemoveEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = MessageReactionRemoveEvent;

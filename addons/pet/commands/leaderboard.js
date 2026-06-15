@@ -6,25 +6,24 @@
  * @version 26.0.0-rc.1
  */
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class LeaderboardCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand.setName('leaderboard').setDescription('View pet leaderboard!');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { UserPet, Pet } = models;
-
 		await interaction.deferReply();
-
 		const leaderboard = await UserPet.getAllCache({
-			include: [{ model: Pet, as: 'pet' }],
+			include: [
+				{
+					model: Pet,
+					as: 'pet',
+				},
+			],
 			order: [
 				[
 					UserPet.sequelize.literal(
@@ -37,7 +36,6 @@ class LeaderboardCommand extends BaseCommand {
 			limit: 10,
 			cacheTags: ['UserPet:leaderboard'],
 		});
-
 		let leaderboardDesc;
 		if (leaderboard.length) {
 			// Await all translations before joining
@@ -45,9 +43,10 @@ class LeaderboardCommand extends BaseCommand {
 				leaderboard.map(async (pet, index) => {
 					let user = interaction.client.users.cache.get(pet.userId);
 					if (!user) {
-						user = await interaction.client.users
-							.fetch(pet.userId)
-							.catch(() => null);
+						user = await helpers.discord.getUserSafe(
+							interaction.client,
+							pet.userId,
+						);
 					}
 					return t(interaction, 'pet.leaderboard.entry', {
 						index: index + 1,
@@ -64,13 +63,13 @@ class LeaderboardCommand extends BaseCommand {
 		} else {
 			leaderboardDesc = await t(interaction, 'pet.leaderboard.empty');
 		}
-
 		const components = await simpleContainer(
 			interaction,
 			`${await t(interaction, 'pet.leaderboard.title')}\n${leaderboardDesc}`,
-			{ color: kythiaConfig.bot.color },
+			{
+				color: kythiaConfig.bot.color,
+			},
 		);
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
@@ -80,5 +79,4 @@ class LeaderboardCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = LeaderboardCommand;

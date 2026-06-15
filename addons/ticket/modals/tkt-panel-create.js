@@ -15,22 +15,16 @@ const {
 	MediaGalleryItemBuilder,
 	ChannelType,
 } = require('discord.js');
-
 const { BaseModal } = require('kythia-core');
-
 class TktPanelCreateModal extends BaseModal {
 	modal = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { t, helpers, models, kythiaConfig, logger } = container;
 		const { convertColor } = helpers.color;
 		const { simpleContainer } = helpers.discord;
 		const { TicketPanel } = models;
-
 		await interaction.deferUpdate();
-
 		try {
 			const originalMessageId = interaction.customId.split(':')[1];
 			if (!originalMessageId) {
@@ -42,12 +36,10 @@ class TktPanelCreateModal extends BaseModal {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			const channelId = interaction.fields.getTextInputValue('channelId');
 			const title = interaction.fields.getTextInputValue('title');
 			const description = interaction.fields.getTextInputValue('description');
 			const image = interaction.fields.getTextInputValue('image');
-
 			if (!channelId) {
 				const desc = await t(
 					interaction,
@@ -60,10 +52,10 @@ class TktPanelCreateModal extends BaseModal {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
-			const channel = await interaction.guild.channels
-				.fetch(channelId)
-				.catch(() => null);
+			const channel = await helpers.discord.getChannelSafe(
+				interaction.guild,
+				channelId,
+			);
 			if (!channel || channel.type !== ChannelType.GuildText) {
 				const desc = await t(
 					interaction,
@@ -76,7 +68,6 @@ class TktPanelCreateModal extends BaseModal {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			const accentColor = convertColor(kythiaConfig.bot.color, {
 				from: 'hex',
 				to: 'decimal',
@@ -91,13 +82,11 @@ class TktPanelCreateModal extends BaseModal {
 						.setSpacing(SeparatorSpacingSize.Small)
 						.setDivider(true),
 				);
-
 			if (description) {
 				panelContainer.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(description),
 				);
 			}
-
 			if (
 				image &&
 				(image.startsWith('http://') || image.startsWith('https://'))
@@ -113,7 +102,6 @@ class TktPanelCreateModal extends BaseModal {
 					]),
 				);
 			}
-
 			panelContainer.addSeparatorComponents(
 				new SeparatorBuilder()
 					.setSpacing(SeparatorSpacingSize.Small)
@@ -124,12 +112,10 @@ class TktPanelCreateModal extends BaseModal {
 					await t(interaction, 'ticket.panel.no_types'),
 				),
 			);
-
 			const panelMessage = await channel.send({
 				components: [panelContainer],
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			await TicketPanel.create({
 				guildId: interaction.guild.id,
 				channelId: channelId,
@@ -138,16 +124,16 @@ class TktPanelCreateModal extends BaseModal {
 				description: description || null,
 				image: image || null,
 			});
-
 			const descSuccess = await t(interaction, 'ticket.panel.create_success', {
 				channel: channel.toString(),
 			});
 			const successContainer = await simpleContainer(
 				interaction,
 				`${descSuccess}`,
-				{ color: 'Green' },
+				{
+					color: 'Green',
+				},
 			);
-
 			await interaction.channel.messages.edit(originalMessageId, {
 				components: successContainer,
 			});
@@ -159,13 +145,13 @@ class TktPanelCreateModal extends BaseModal {
 				},
 			);
 			const desc = await t(interaction, 'ticket.errors.generic');
-
 			await interaction.followUp({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 	}
 }
-
 exports.default = TktPanelCreateModal;

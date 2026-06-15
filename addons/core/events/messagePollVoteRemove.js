@@ -13,33 +13,30 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class MessagePollVoteRemoveEvent extends BaseEvent {
 	async execute(pollAnswer, userId) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
-
 		const message = pollAnswer.poll.message;
 		const guild = message.guild;
 		const guildId = guild?.id;
-
 		if (!guild) return;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId: guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -47,13 +44,14 @@ class MessagePollVoteRemoveEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
-			const user = await this.client.users.fetch(userId).catch(() => null);
-
+			const user = await helpers.discord.getUserSafe(this.client, userId);
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Red', { from: 'discord', to: 'decimal' }),
+						convertColor('Red', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -81,13 +79,18 @@ class MessagePollVoteRemoveEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -105,5 +108,4 @@ class MessagePollVoteRemoveEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = MessagePollVoteRemoveEvent;

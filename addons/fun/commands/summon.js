@@ -17,9 +17,7 @@ const {
 	SlashCommandBuilder,
 } = require('discord.js');
 const { Op } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
-
 class SummonCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('summon')
@@ -30,54 +28,57 @@ class SummonCommand extends BaseCommand {
 				.setDescription('The friend you want to summon')
 				.setRequired(true),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Friend } = models;
 		const { convertColor } = helpers.color;
-
 		const targetUser = interaction.options.getUser('user');
 		const author = interaction.user;
-
 		if (targetUser.bot || targetUser.id === author.id) {
 			return interaction.reply({
 				content: await t(interaction, 'fun.summon.not.friend'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		const existingFriendships = await Friend.getAllCache({
 			where: {
 				[Op.or]: [
-					{ user1Id: author.id, user2Id: targetUser.id },
-					{ user1Id: targetUser.id, user2Id: author.id },
+					{
+						user1Id: author.id,
+						user2Id: targetUser.id,
+					},
+					{
+						user1Id: targetUser.id,
+						user2Id: author.id,
+					},
 				],
 				status: 'accepted',
 			},
 			limit: 1,
 		});
-
 		if (!existingFriendships || existingFriendships.length === 0) {
 			return interaction.reply({
 				content: await t(interaction, 'fun.summon.not.friend'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		try {
-			const targetMember = await interaction.guild.members
-				.fetch(targetUser.id)
-				.catch(() => null);
+			const targetMember = await helpers.discord.getMemberSafe(
+				interaction.guild,
+				targetUser.id,
+			);
 			if (!targetMember) throw new Error('Not in guild');
-
 			const jumpUrl = `https://discord.com/channels/${interaction.guild.id}/${interaction.channel.id}`;
-
 			const dmContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
@@ -110,12 +111,10 @@ class SummonCommand extends BaseCommand {
 						}),
 					),
 				);
-
 			await targetUser.send({
 				components: [dmContainer],
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			await interaction.editReply({
 				content: await t(interaction, 'fun.summon.success', {
 					user: targetUser.toString(),
@@ -130,5 +129,4 @@ class SummonCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = SummonCommand;

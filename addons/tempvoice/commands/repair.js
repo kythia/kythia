@@ -17,17 +17,13 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { buildInterface } = require('../helpers/interface');
-
 const { BaseCommand } = require('kythia-core');
-
 class RepairCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('repair')
 			.setDescription('Repair TempVoice configuration.');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, t, helpers, kythiaConfig } = container;
@@ -35,18 +31,18 @@ class RepairCommand extends BaseCommand {
 		const { convertColor } = helpers.color;
 		const { simpleContainer } = helpers.discord;
 		const guild = interaction.guild;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
-		const config = await TempVoiceConfig.getCache({
-			where: { guildId: guild.id },
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
 		});
-
+		const config = await TempVoiceConfig.getCache({
+			where: {
+				guildId: guild.id,
+			},
+		});
 		if (!config) {
 			return interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-
 					await t(interaction, 'tempvoice.repair.no_config'),
 					{
 						color: 'Red',
@@ -55,18 +51,15 @@ class RepairCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const logs = [];
 		const missingItems = [];
-
 		logs.push(
 			await t(interaction, 'tempvoice.repair.start_log', {
 				guildName: guild.name,
 			}),
 		);
-
 		try {
-			await guild.channels.fetch(config.categoryId);
+			await helpers.discord.getChannelSafe(guild, config.categoryId);
 			logs.push(await t(interaction, 'tempvoice.repair.category.found'));
 		} catch (_e) {
 			logs.push(
@@ -76,9 +69,8 @@ class RepairCommand extends BaseCommand {
 			);
 			missingItems.push('category');
 		}
-
 		try {
-			await guild.channels.fetch(config.triggerChannelId);
+			await helpers.discord.getChannelSafe(guild, config.triggerChannelId);
 			logs.push(await t(interaction, 'tempvoice.repair.trigger.found'));
 		} catch (_e) {
 			logs.push(
@@ -88,11 +80,11 @@ class RepairCommand extends BaseCommand {
 			);
 			missingItems.push('trigger');
 		}
-
 		let interfaceChannel = null;
 		if (config.controlPanelChannelId) {
 			try {
-				interfaceChannel = await guild.channels.fetch(
+				interfaceChannel = await helpers.discord.getChannelSafe(
+					guild,
 					config.controlPanelChannelId,
 				);
 				logs.push(await t(interaction, 'tempvoice.repair.interface.found'));
@@ -105,20 +97,21 @@ class RepairCommand extends BaseCommand {
 				missingItems.push('interface');
 			}
 		}
-
 		if (
 			interfaceChannel &&
 			config.interfaceMessageId &&
 			!missingItems.includes('interface')
 		) {
 			try {
-				await interfaceChannel.messages.fetch(config.interfaceMessageId);
+				await helpers.discord.getMessageSafe(
+					interfaceChannel,
+					config.interfaceMessageId,
+				);
 				logs.push(await t(interaction, 'tempvoice.repair.interface.msg_found'));
 			} catch (_e) {
 				logs.push(
 					await t(interaction, 'tempvoice.repair.interface.msg_missing'),
 				);
-
 				try {
 					const { components, flags } = await buildInterface(interaction);
 					const interfaceMessage = await interfaceChannel.send({
@@ -141,9 +134,10 @@ class RepairCommand extends BaseCommand {
 				}
 			}
 		}
-
 		const activeChannels = await TempVoiceChannel.getAllCache({
-			where: { guildId: guild.id },
+			where: {
+				guildId: guild.id,
+			},
 		});
 		logs.push(
 			await t(interaction, 'tempvoice.repair.scan_active', {
@@ -152,12 +146,12 @@ class RepairCommand extends BaseCommand {
 		);
 		let fixed = 0;
 		let cleaned = 0;
-
 		for (const dbChannel of activeChannels) {
 			try {
-				const discordChannel = await guild.channels
-					.fetch(dbChannel.channelId)
-					.catch(() => null);
+				const discordChannel = await helpers.discord.getChannelSafe(
+					guild,
+					dbChannel.channelId,
+				);
 				if (!discordChannel) {
 					await dbChannel.destroy();
 					cleaned++;
@@ -170,7 +164,6 @@ class RepairCommand extends BaseCommand {
 				/* silent */
 			}
 		}
-
 		logs.push(await t(interaction, 'tempvoice.repair.result.header'));
 		logs.push(
 			await t(interaction, 'tempvoice.repair.result.cleaned', {
@@ -178,19 +171,18 @@ class RepairCommand extends BaseCommand {
 			}),
 		);
 		logs.push(
-			await t(interaction, 'tempvoice.repair.result.fixed', { count: fixed }),
+			await t(interaction, 'tempvoice.repair.result.fixed', {
+				count: fixed,
+			}),
 		);
-
 		const kythiaColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
 		const finalContainer = new ContainerBuilder().setAccentColor(kythiaColor);
-
 		finalContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(logs.join('\n')),
 		);
-
 		if (missingItems.length > 0) {
 			finalContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
@@ -211,12 +203,10 @@ class RepairCommand extends BaseCommand {
 				),
 			);
 		}
-
 		await interaction.editReply({
 			components: [finalContainer],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = RepairCommand;

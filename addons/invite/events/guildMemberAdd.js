@@ -11,30 +11,31 @@ const {
 	applyTemplate,
 } = require('../helpers');
 const { PermissionsBitField, MessageFlags } = require('discord.js');
-
 const { BaseEvent } = require('kythia-core');
-
 class GuildMemberAddEvent extends BaseEvent {
 	async execute(member) {
 		const container = this.container;
-		const _bot = { client: this.client, container: this.container };
-
+		const _bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!member?.guild) return;
 		const guild = member.guild;
-
 		const { models, helpers, t, logger, kythiaConfig } = container;
 		const { ServerSetting, Invite, InviteHistory, InviteSetting } = models;
 		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
-
 		let inviteChannelId = null;
 		let setting;
 		let inviteSetting;
-
 		try {
 			[setting, inviteSetting] = await Promise.all([
-				ServerSetting.getCache({ guildId: guild.id }),
-				InviteSetting.getCache({ guildId: guild.id }),
+				ServerSetting.getCache({
+					guildId: guild.id,
+				}),
+				InviteSetting.getCache({
+					guildId: guild.id,
+				}),
 			]);
 			inviteChannelId = setting?.inviteChannelId;
 		} catch (e) {
@@ -42,34 +43,28 @@ class GuildMemberAddEvent extends BaseEvent {
 				label: 'Invite Tracker',
 			});
 		}
-
 		if (!setting?.invitesOn) {
 			return;
 		}
-
 		const fakeThreshold = inviteSetting?.fakeThreshold ?? 7;
-
 		const me = guild.members.me || (await guild.members.fetchMe());
 		if (!me.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
 			logger.warn(`Missing 'Manage Guild' permission in ${guild.name}`, {
 				label: 'invite tracker',
 			});
 		}
-
 		const cacheBefore = getGuildInviteCache(guild.id);
-
 		let inviterId = null;
 		let inviterUser = null;
 		let inviteType = 'unknown';
 		let inviteCode = null;
-
 		try {
-			const invitesNow = await guild.invites.fetch();
-
+			const { getAllInvitesSafe } = member.client.container.helpers.discord;
+			const invitesNow = await getAllInvitesSafe(guild);
+			if (!invitesNow) return;
 			for (const invite of invitesNow.values()) {
 				const before = cacheBefore.get(invite.code);
 				const beforeUses = before?.uses ?? 0;
-
 				if (invite.uses > beforeUses) {
 					inviterId = invite.inviter?.id || before?.inviterId || null;
 					inviterUser = invite.inviter || null;
@@ -78,7 +73,6 @@ class GuildMemberAddEvent extends BaseEvent {
 					break;
 				}
 			}
-
 			if (!inviterId && guild.vanityURLCode) {
 				try {
 					const vanity = await guild.fetchVanityData();
@@ -88,40 +82,35 @@ class GuildMemberAddEvent extends BaseEvent {
 					}
 				} catch (_e) {}
 			}
-
 			if (!inviterId && inviteType === 'unknown') {
 				inviteType = member.user.bot ? 'oauth' : 'unknown';
 			}
-
 			const accountAgeDays =
 				(Date.now() - member.user.createdTimestamp) / (1000 * 60 * 60 * 24);
 			let isFake = false;
-
 			if (inviterId) {
 				isFake = accountAgeDays < fakeThreshold;
-
 				try {
 					const [inviteData] = await Invite.findOrCreateCache({
-						where: { guildId: guild.id, userId: inviterId },
+						where: {
+							guildId: guild.id,
+							userId: inviterId,
+						},
 						defaults: {
 							guildId: guild.id,
 							userId: inviterId,
 						},
 					});
-
 					if (isFake) {
 						inviteData.fake = (inviteData.fake || 0) + 1;
 					} else {
 						inviteData.invites = (inviteData.invites || 0) + 1;
 					}
-
 					if (inviteData.changed && typeof inviteData.changed === 'function') {
 						inviteData.changed('invites', true);
 						inviteData.changed('fake', true);
 					}
-
 					await inviteData.save();
-
 					await InviteHistory.create({
 						guildId: guild.id,
 						inviterId: inviterId,
@@ -141,11 +130,11 @@ class GuildMemberAddEvent extends BaseEvent {
 					label: 'Invite Tracker',
 				});
 			}
-
 			if (inviteChannelId) {
-				const channel = await guild.channels
-					.fetch(inviteChannelId)
-					.catch(() => null);
+				const channel = await helpers.discord.getChannelSafe(
+					guild,
+					inviteChannelId,
+				);
 				if (channel?.isTextBased && channel.viewable) {
 					// ── Resolve inviter's total invites (for {invites} placeholder) ──
 					let inviterTotalInvites = 0;
@@ -173,7 +162,6 @@ class GuildMemberAddEvent extends BaseEvent {
 											guild,
 											'invite.events.guildMemberAdd.tracker.type.real',
 										);
-
 					const templateVars = {
 						user: `<@${member?.id}>`,
 						username: member?.user?.username,
@@ -187,7 +175,6 @@ class GuildMemberAddEvent extends BaseEvent {
 						code: inviteCode || 'unknown',
 						type: inviteTypeLabel,
 					};
-
 					let finalContent;
 
 					// ── Use custom joinMessage if set, otherwise fall back to standard text ──
@@ -205,9 +192,10 @@ class GuildMemberAddEvent extends BaseEvent {
 						const accountAgeStr = await t(
 							guild,
 							'invite.events.guildMemberAdd.tracker.account.age',
-							{ days: Math.floor(accountAgeDays) },
+							{
+								days: Math.floor(accountAgeDays),
+							},
 						);
-
 						let embedDesc = '';
 						if (inviterId) {
 							const joinedBy = await t(
@@ -224,7 +212,9 @@ class GuildMemberAddEvent extends BaseEvent {
 							const codeUsed = await t(
 								guild,
 								'invite.events.guildMemberAdd.tracker.code',
-								{ code: inviteCode },
+								{
+									code: inviteCode,
+								},
 							);
 							embedDesc = `${joinedBy}\n${codeUsed}\n${accountAgeStr}`;
 						} else if (inviteType === 'vanity') {
@@ -242,28 +232,31 @@ class GuildMemberAddEvent extends BaseEvent {
 							const joinedOauth = await t(
 								guild,
 								'invite.events.guildMemberAdd.tracker.joined.oauth',
-								{ user: templateVars.user, username: templateVars.username },
+								{
+									user: templateVars.user,
+									username: templateVars.username,
+								},
 							);
 							embedDesc = `${joinedOauth}\n${accountAgeStr}`;
 						} else {
 							const joinedUnknown = await t(
 								guild,
 								'invite.events.guildMemberAdd.tracker.joined.unknown',
-								{ user: templateVars.user, username: templateVars.username },
+								{
+									user: templateVars.user,
+									username: templateVars.username,
+								},
 							);
 							embedDesc = `${joinedUnknown}\n${accountAgeStr}`;
 						}
-
 						finalContent = `## ${title}\n${embedDesc}`;
 					}
-
 					const components = await simpleContainer(member, finalContent, {
 						color: convertColor(kythiaConfig.bot.color, {
 							from: 'hex',
 							to: 'decimal',
 						}),
 					});
-
 					channel.send({
 						components: components,
 						allowedMentions: {
@@ -274,7 +267,9 @@ class GuildMemberAddEvent extends BaseEvent {
 				} else {
 					logger.warn(
 						`Invite channel ${inviteChannelId} not found in ${guild?.name}`,
-						{ label: 'Invite Tracker' },
+						{
+							label: 'Invite Tracker',
+						},
 					);
 				}
 			}
@@ -284,9 +279,10 @@ class GuildMemberAddEvent extends BaseEvent {
 			});
 		} finally {
 			await refreshGuildInvites(guild);
-			logger.info(`Invite Cache Refreshed.`, { label: 'Invite Tracker' });
+			logger.info(`Invite Cache Refreshed.`, {
+				label: 'Invite Tracker',
+			});
 		}
 	}
 }
-
 module.exports = GuildMemberAddEvent;

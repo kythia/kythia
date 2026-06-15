@@ -14,12 +14,9 @@ const {
 } = require('discord.js');
 const banks = require('../../helpers/banks');
 const { toBigIntSafe } = require('../../helpers/bigint');
-
 const { BaseCommand } = require('kythia-core');
-
 class HackCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('hack')
@@ -30,22 +27,21 @@ class HackCommand extends BaseCommand {
 					.setDescription('User you want to hack')
 					.setRequired(true),
 			);
-
 	guildOnly = true;
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser, Inventory } = models;
 		const { simpleContainer, createContainer } = helpers.discord;
 		const { checkCooldown } = helpers.time;
-
 		await interaction.deferReply();
-
 		const targetUser = interaction.options.getUser('target');
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
-		const target = await KythiaUser.getCache({ userId: targetUser.id });
-
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
+		const target = await KythiaUser.getCache({
+			userId: targetUser.id,
+		});
 		if (!user) {
 			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
 			const components = await simpleContainer(interaction, msg, {
@@ -56,7 +52,6 @@ class HackCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const cooldown = checkCooldown(
 			user.lastHack,
 			kythiaConfig.addons.economy.hackCooldown || 7200,
@@ -74,7 +69,6 @@ class HackCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (!user || !target) {
 			const msg = await t(
 				interaction,
@@ -88,7 +82,6 @@ class HackCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (targetUser.id === interaction.user.id) {
 			const msg = await t(interaction, 'economy.hack.hack.self');
 			const components = await simpleContainer(interaction, msg, {
@@ -99,7 +92,6 @@ class HackCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (target.kythiaBank <= 0) {
 			const msg = await t(interaction, 'economy.hack.hack.target.no.bank');
 			const components = await simpleContainer(interaction, msg, {
@@ -110,7 +102,6 @@ class HackCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (user.kythiaBank <= 20) {
 			const msg = await t(interaction, 'economy.hack.hack.user.no.bank');
 			const components = await simpleContainer(interaction, msg, {
@@ -121,15 +112,12 @@ class HackCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const antivirus = await Inventory.getCache({
 			userId: target.userId,
 			itemName: '🛡️ Antivirus',
 		});
-
 		let currentNode = 1;
 		const totalNodes = 3;
-
 		const renderNode = async (nodeNum) => {
 			const row = new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
@@ -145,21 +133,16 @@ class HackCommand extends BaseCommand {
 					.setLabel('Bruteforce Port C')
 					.setStyle(ButtonStyle.Primary),
 			);
-
 			const difficultyText = antivirus
 				? '⚠️ **WARNING: ACTIVE ANTIVIRUS DETECTED! DEFENSES ARE EXTREMELY HIGH!**'
 				: 'Network seems standard.';
-
 			const nodeNames = ['Proxy Server', 'Firewall Bypass', 'Mainframe Access'];
-
 			const containerDef = await createContainer(interaction, {
 				description: `## 💻 Hacking Sequence (Node ${nodeNum}/${totalNodes})\nTargeting: **${nodeNames[nodeNum - 1]}**\n\n${difficultyText}\n\nChoose an attack vector quickly!`,
 				components: [row],
 			});
-
 			return containerDef;
 		};
-
 		const message = await interaction.editReply({
 			components: await renderNode(1),
 			flags: MessageFlags.IsComponentsV2,
@@ -169,9 +152,7 @@ class HackCommand extends BaseCommand {
 			filter,
 			time: 20000,
 		});
-
 		let failed = false;
-
 		collector.on('collect', async (i) => {
 			// Probability logic
 			// Normal: 1 safe (100%), 1 risky (50%), 1 fail (0%)
@@ -182,15 +163,12 @@ class HackCommand extends BaseCommand {
 			let selectedIndex = 0;
 			if (i.customId === 'hack_opt_2') selectedIndex = 1;
 			if (i.customId === 'hack_opt_3') selectedIndex = 2;
-
 			const successChance =
 				chances[selectedIndex] + (user.hackMastered || 0) / 200; // Slight boost from mastery
 			const isSuccess = Math.random() < successChance;
-
 			if (!isSuccess) {
 				failed = true;
 				collector.stop();
-
 				if (antivirus) await antivirus.destroy(); // Antivirus is consumed if it caught them
 
 				// Apply Penalty
@@ -199,7 +177,6 @@ class HackCommand extends BaseCommand {
 				const penalty = Math.floor(
 					basePenalty * (userBank ? userBank.robPenaltyMultiplier : 1),
 				);
-
 				if (user.kythiaBank >= penalty) {
 					user.kythiaBank =
 						toBigIntSafe(user.kythiaBank) - toBigIntSafe(penalty);
@@ -209,23 +186,30 @@ class HackCommand extends BaseCommand {
 					target.changed('kythiaBank', true);
 					await target.save();
 				}
-
 				user.lastHack = Date.now();
 				user.changed('lastHack', true);
 				await user.save();
-
 				const msg = await t(
 					interaction,
 					'economy.crime.hack.event.busted.desc',
-					{ node: currentNode, penalty },
+					{
+						node: currentNode,
+						penalty,
+					},
 				);
-				const components = await simpleContainer(i, msg, { color: 'Red' });
-				return i.update({ components, flags: MessageFlags.IsComponentsV2 });
+				const components = await simpleContainer(i, msg, {
+					color: 'Red',
+				});
+				return i.update({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
 			}
-
 			if (currentNode < totalNodes) {
 				currentNode++;
-				collector.resetTimer({ time: 20000 }); // reset time for next node
+				collector.resetTimer({
+					time: 20000,
+				}); // reset time for next node
 				await i.update({
 					components: await renderNode(currentNode),
 					flags: MessageFlags.IsComponentsV2,
@@ -240,7 +224,6 @@ class HackCommand extends BaseCommand {
 					target.kythiaBank * (userBank.robSuccessBonusPercent / 100),
 				);
 				const totalHacked = target.kythiaBank + hackBonus;
-
 				user.kythiaBank =
 					toBigIntSafe(user.kythiaBank) + toBigIntSafe(totalHacked);
 				if ((user.hackMastered || 0) < 100) {
@@ -251,44 +234,47 @@ class HackCommand extends BaseCommand {
 				user.bountyAmount =
 					toBigIntSafe(user.bountyAmount || 0) +
 					toBigIntSafe(Math.floor(totalHacked * 0.5));
-
 				user.changed('kythiaBank', true);
 				user.changed('lastHack', true);
 				user.changed('bountyAmount', true);
 				target.changed('kythiaBank', true);
-
 				await user.save();
 				await target.save();
-
 				try {
-					const targetDiscord = await interaction.client.users.fetch(
+					const targetDiscord = await helpers.discord.getUserSafe(
+						interaction.client,
 						targetUser.id,
 					);
 					const dmComponents = await simpleContainer(
 						i,
 						`## 🚨 BANK COMPROMISED\n${interaction.user.username} bypassed your security and drained your bank of **🪙 ${totalHacked.toLocaleString()}**!`,
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					await targetDiscord.send({
 						components: dmComponents,
 						flags: MessageFlags.IsComponentsV2,
 					});
 				} catch (_e) {}
-
 				const successMsg = `## 💻 Mainframe Breached!\nYou successfully hacked ${targetUser.username}'s bank account and stole **🪙 ${totalHacked.toLocaleString()}**!\nYour bounty increased by **🪙 ${Math.floor(totalHacked * 0.5).toLocaleString()}**!`;
 				const components = await simpleContainer(i, successMsg, {
 					color: 'Green',
 				});
-				await i.update({ components, flags: MessageFlags.IsComponentsV2 });
+				await i.update({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
 			}
 		});
-
 		collector.on('end', async (_collected, reason) => {
 			if (reason === 'time' && !failed) {
 				const components = await simpleContainer(
 					interaction,
 					'## ⏱️ Connection Timed Out\nYou took too long to inject the payload. Connection dropped.',
-					{ color: 'Yellow' },
+					{
+						color: 'Yellow',
+					},
 				);
 				await interaction.editReply({
 					components,
@@ -298,5 +284,4 @@ class HackCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = HackCommand;

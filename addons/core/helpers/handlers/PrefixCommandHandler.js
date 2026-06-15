@@ -24,7 +24,6 @@ const {
 // components are present (we keep it when components exist, since Discord.js
 // message.reply() accepts it on newer library versions).
 const STRIP_FLAGS = MessageFlags.Ephemeral | (MessageFlags.SuppressEmbeds ?? 0);
-
 class PrefixCommandHandler {
 	/**
 	 * Primary entry-point. Called from the messageCreate event.
@@ -36,20 +35,16 @@ class PrefixCommandHandler {
 		// ── 1. Resolve active prefix set ──────────────────────────────────
 		const { kythiaConfig, models } = container;
 		const { ServerSetting } = models;
-
 		if (message.author?.bot) return false;
-
 		const contentLower = message.content.toLowerCase();
 		const serverSetting = message.guild
-			? await ServerSetting.getCache({ guildId: message.guild.id }).catch(
-					() => null,
-				)
+			? await ServerSetting.getCache({
+					guildId: message.guild.id,
+				}).catch(() => null)
 			: null;
 		const customPrefix = serverSetting?.prefix;
-
 		const allPrefixes = [...kythiaConfig.bot.prefixes];
 		if (customPrefix) allPrefixes.push(customPrefix);
-
 		const matchedPrefix = this._findMatchedPrefix(contentLower, allPrefixes);
 		if (!matchedPrefix) return false;
 
@@ -76,7 +71,6 @@ class PrefixCommandHandler {
 		// parse subcommands — it won't find anything if we pass the alias.
 		const actualCommandName =
 			baseCommand.slashCommand?.name ?? baseCommand.data?.name ?? commandName;
-
 		const slashData = baseCommand.slashCommand ?? baseCommand.data;
 		const topOptions = slashData?.options ?? [];
 
@@ -91,7 +85,6 @@ class PrefixCommandHandler {
 				const subName = defaultSub.slice(0, colonIdx);
 				const topLevelNames = topOptions.map((o) => o.name);
 				const firstWord = args[0]?.toLowerCase();
-
 				if (!topLevelNames.includes(firstWord)) {
 					// e.g. ['jennie', 'solo'] → ['play', 'jennie', 'solo']
 					args.unshift(subName);
@@ -124,14 +117,12 @@ class PrefixCommandHandler {
 				/^[a-zA-Z_]\w*$/.test(key) && val.length > 0 && !val.startsWith('//')
 			);
 		};
-
 		let remainingArgsString;
 		{
 			let cursor = 0; // how many leading args are structural
 
 			const first = args[0]?.toLowerCase();
 			const firstOpt = first && topOptions.find((o) => o.name === first);
-
 			if (firstOpt) {
 				cursor = 1; // first arg is a known sub or group name
 
@@ -139,20 +130,16 @@ class PrefixCommandHandler {
 				const isGroup =
 					firstOpt.type === 2 ||
 					firstOpt.constructor?.name === 'SlashCommandSubcommandGroupBuilder';
-
 				if (isGroup && args[1]) {
 					const second = args[1].toLowerCase();
 					const groupSubs = firstOpt.options ?? [];
 					if (groupSubs.some((o) => o.name === second)) cursor = 2;
 				}
 			}
-
 			const structuralParts = args.slice(0, cursor);
 			const valueParts = args.slice(cursor);
-
 			const named = valueParts.filter(isNamedArg);
 			const positional = valueParts.filter((a) => !isNamedArg(a));
-
 			const out = [...structuralParts];
 			if (positional.length > 1) {
 				// Multi-word value → wrap in quotes so factory treats it as one token
@@ -190,7 +177,13 @@ class PrefixCommandHandler {
 		 */
 		const _buildPayload = (opts) => {
 			const payload =
-				typeof opts === 'string' ? { content: opts } : { ...opts };
+				typeof opts === 'string'
+					? {
+							content: opts,
+						}
+					: {
+							...opts,
+						};
 
 			// Strip Ephemeral and other interaction-only flags
 			if (payload.flags != null) {
@@ -198,14 +191,12 @@ class PrefixCommandHandler {
 				// If flags is now 0, remove the key entirely to avoid API errors
 				if (payload.flags === 0) delete payload.flags;
 			}
-
 			const hasText = Boolean(payload.content);
 			const hasEmbeds =
 				Array.isArray(payload.embeds) && payload.embeds.length > 0;
 			const hasFiles = Array.isArray(payload.files) && payload.files.length > 0;
 			const hasComponents =
 				Array.isArray(payload.components) && payload.components.length > 0;
-
 			if (!hasText && !hasEmbeds && !hasFiles && hasComponents) {
 				// When IS_COMPONENTS_V2 flag is set, Discord FORBIDS the 'content' field —
 				// components alone satisfy the non-empty requirement in that mode.
@@ -213,18 +204,14 @@ class PrefixCommandHandler {
 				const isComponentsV2Mode =
 					payload.flags != null &&
 					Boolean(payload.flags & MessageFlags.IsComponentsV2);
-
 				if (!isComponentsV2Mode) {
 					payload.content = '\u200b';
 				}
 			}
-
 			return payload;
 		};
-
 		fakeInteraction.reply = async (opts) => {
 			const payload = _buildPayload(opts);
-
 			if (_replied) {
 				// Already replied → edit the existing message instead
 				if (_replyMessage) {
@@ -234,15 +221,12 @@ class PrefixCommandHandler {
 				}
 				return _replyMessage;
 			}
-
 			_replied = true;
 			_replyMessage = await message.reply(payload);
 			return _replyMessage;
 		};
-
 		fakeInteraction.editReply = async (opts) => {
 			const payload = _buildPayload(opts);
-
 			if (_replyMessage) {
 				_replyMessage = await _replyMessage.edit(payload);
 			} else {
@@ -252,21 +236,17 @@ class PrefixCommandHandler {
 			_replied = true;
 			return _replyMessage;
 		};
-
 		fakeInteraction.followUp = (opts) => {
 			const payload = _buildPayload(opts);
 			return message.reply(payload);
 		};
-
 		fakeInteraction.deferReply = () => {
 			// Mark as deferred so editReply() sends a fresh reply instead of throwing.
 			// No typing indicator — prefix commands respond instantly.
 			_replied = true;
 			return Promise.resolve(null);
 		};
-
 		fakeInteraction.fetchReply = () => Promise.resolve(_replyMessage);
-
 		fakeInteraction.deleteReply = async () => {
 			if (_replyMessage) {
 				await _replyMessage.delete().catch(() => {});
@@ -283,7 +263,6 @@ class PrefixCommandHandler {
 		if (subcommandGroup && subcommand)
 			finalCommandKey = `${actualCommandName} ${subcommandGroup} ${subcommand}`;
 		else if (subcommand) finalCommandKey = `${actualCommandName} ${subcommand}`;
-
 		const finalCommand =
 			message.client.commands.get(finalCommandKey) ||
 			[...message.client.commands.values()].find(
@@ -293,7 +272,6 @@ class PrefixCommandHandler {
 						cmd.aliases.map((a) => a.toLowerCase()).includes(commandName)),
 			) ||
 			baseCommand;
-
 		if (!finalCommand) return false;
 
 		// ── 8. Permission gate ─────────────────────────────────────────────
@@ -326,7 +304,6 @@ class PrefixCommandHandler {
 		if (serverSetting?.deleteCommandMessages && message.deletable) {
 			message.delete().catch(() => {});
 		}
-
 		await this._executeCommand(
 			finalCommand,
 			fakeInteraction,
@@ -334,7 +311,6 @@ class PrefixCommandHandler {
 			commandName,
 			container,
 		);
-
 		return true;
 	}
 
@@ -382,16 +358,23 @@ class PrefixCommandHandler {
 		const { KythiaVoter } = models;
 
 		// Guild-only
-		if (command.guildOnly && !message.guild) return { allowed: false };
+		if (command.guildOnly && !message.guild)
+			return {
+				allowed: false,
+			};
 
 		// Owner-only
 		if (command.ownerOnly && !isOwner(message.author.id))
-			return { allowed: false };
+			return {
+				allowed: false,
+			};
 
 		// User permissions
 		if (command.permissions && message.member) {
 			if (message.member.permissions.missing(command.permissions).length > 0) {
-				return { allowed: false };
+				return {
+					allowed: false,
+				};
 			}
 		}
 
@@ -401,7 +384,9 @@ class PrefixCommandHandler {
 				message.guild.members.me?.permissions.missing(command.botPermissions)
 					.length > 0
 			) {
-				return { allowed: false };
+				return {
+					allowed: false,
+				};
 			}
 		}
 
@@ -413,10 +398,8 @@ class PrefixCommandHandler {
 					label: 'PrefixCommandHandler',
 				});
 			}
-
 			let isMember = false;
 			let mainGuildName = 'Support Server';
-
 			try {
 				if (message.client.shard) {
 					const results = await message.client.shard.broadcastEval(
@@ -424,20 +407,33 @@ class PrefixCommandHandler {
 							const g = c.guilds.cache.get(gId);
 							if (!g) return null;
 							try {
-								await g.members.fetch(uId);
-								return { isMember: true, name: g.name };
+								await helpers.discord.getMemberSafe(g, uId);
+								return {
+									isMember: true,
+									name: g.name,
+								};
 							} catch {
-								return { isMember: false, name: g.name };
+								return {
+									isMember: false,
+									name: g.name,
+								};
 							}
 						},
-						{ context: { gId: mainGuildId, uId: message.author.id } },
+						{
+							context: {
+								gId: mainGuildId,
+								uId: message.author.id,
+							},
+						},
 					);
 					const hit = results.find((r) => r !== null);
 					if (hit) {
 						isMember = hit.isMember;
 						mainGuildName = hit.name;
 					} else {
-						return { allowed: true }; // guild not found on any shard → fail open
+						return {
+							allowed: true,
+						}; // guild not found on any shard → fail open
 					}
 				} else {
 					const mainGuild = message.client.guilds.cache.get(mainGuildId);
@@ -445,11 +441,13 @@ class PrefixCommandHandler {
 						logger.error(`Bot is not a member of main guild: ${mainGuildId}`, {
 							label: 'PrefixCommandHandler',
 						});
-						return { allowed: true }; // fail open
+						return {
+							allowed: true,
+						}; // fail open
 					}
 					mainGuildName = mainGuild.name;
 					try {
-						await mainGuild.members.fetch(message.author.id);
+						await helpers.discord.getMemberSafe(mainGuild, message.author.id);
 						isMember = true;
 					} catch {
 						isMember = false;
@@ -459,9 +457,10 @@ class PrefixCommandHandler {
 				logger.error(`isInMainGuild check failed: ${err.message}`, {
 					label: 'PrefixCommandHandler',
 				});
-				return { allowed: true }; // fail open
+				return {
+					allowed: true,
+				}; // fail open
 			}
-
 			if (!isMember) {
 				const accent = convertColor(kythiaConfig.bot.color, {
 					from: 'hex',
@@ -501,7 +500,6 @@ class PrefixCommandHandler {
 							}),
 						),
 					);
-
 				return {
 					allowed: false,
 					response: {
@@ -519,7 +517,6 @@ class PrefixCommandHandler {
 				userId: message.author.id,
 			}).catch(() => null);
 			const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
-
 			if (!voter || voter.votedAt < twelveHoursAgo) {
 				const accent = convertColor(kythiaConfig.bot.color, {
 					from: 'hex',
@@ -559,7 +556,6 @@ class PrefixCommandHandler {
 							await t(message, 'common.container.footer'),
 						),
 					);
-
 				return {
 					allowed: false,
 					response: {
@@ -570,8 +566,9 @@ class PrefixCommandHandler {
 				};
 			}
 		}
-
-		return { allowed: true };
+		return {
+			allowed: true,
+		};
 	}
 
 	/**
@@ -580,23 +577,20 @@ class PrefixCommandHandler {
 	async _checkCooldown(command, commandKey, message, container) {
 		const { kythiaConfig, helpers, t } = container;
 		const { isOwner } = helpers.discord;
-
 		const cooldownDuration =
 			command.cooldown ?? kythiaConfig.bot.globalCommandCooldown ?? 0;
-
 		if (cooldownDuration <= 0 || isOwner(message.author.id)) {
-			return { allowed: true };
+			return {
+				allowed: true,
+			};
 		}
-
 		const { cooldowns } = message.client;
 		if (!cooldowns.has(commandKey)) {
 			cooldowns.set(commandKey, new Collection());
 		}
-
 		const now = Date.now();
 		const timestamps = cooldowns.get(commandKey);
 		const cooldownAmount = cooldownDuration * 1000;
-
 		if (timestamps.has(message.author.id)) {
 			const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
 			if (now < expirationTime) {
@@ -604,7 +598,6 @@ class PrefixCommandHandler {
 				const reply = await t(message, 'common.error.cooldown', {
 					time: timeLeft.toFixed(1),
 				});
-
 				return {
 					allowed: false,
 					response: message
@@ -614,11 +607,11 @@ class PrefixCommandHandler {
 				};
 			}
 		}
-
 		timestamps.set(message.author.id, now);
 		setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
-
-		return { allowed: true };
+		return {
+			allowed: true,
+		};
 	}
 
 	/**
@@ -633,7 +626,6 @@ class PrefixCommandHandler {
 		container,
 	) {
 		const { t, logger } = container;
-
 		try {
 			if (typeof command.execute === 'function') {
 				await command.execute(fakeInteraction, container);
@@ -643,14 +635,20 @@ class PrefixCommandHandler {
 				const helpMessage = await t(
 					fakeInteraction,
 					'core.events.messageCreate.subcommand.required',
-					{ command: commandName },
+					{
+						command: commandName,
+					},
 				);
-				await fakeInteraction.reply({ content: helpMessage });
+				await fakeInteraction.reply({
+					content: helpMessage,
+				});
 			}
 		} catch (err) {
 			logger.error(
 				`Error executing prefix command '${commandKey}': ${err.message}\nFull Error: ${JSON.stringify(err, Object.getOwnPropertyNames(err), 2)}`,
-				{ label: 'PrefixCommandHandler' },
+				{
+					label: 'PrefixCommandHandler',
+				},
 			);
 			await fakeInteraction
 				.reply(await t(fakeInteraction, 'core.events.messageCreate.error'))
@@ -675,5 +673,4 @@ class PrefixCommandHandler {
 		return this._executeCommand(...args);
 	}
 }
-
 module.exports = PrefixCommandHandler;

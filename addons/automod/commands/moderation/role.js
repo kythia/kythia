@@ -7,13 +7,10 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class RoleCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ManageRoles;
 	botPermissions = PermissionFlagsBits.ManageRoles;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('role')
@@ -30,20 +27,18 @@ class RoleCommand extends BaseCommand {
 					.setDescription('The role to add or remove')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const user = interaction.options.getUser('user');
 		const role = interaction.options.getRole('role');
-
 		try {
-			const member = await interaction.guild.members.fetch(user.id);
-
+			const member = await helpers.discord.getMemberSafe(
+				interaction.guild,
+				user.id,
+			);
 			if (member.roles.cache.has(role.id)) {
 				await member.roles.remove(role);
 				const reply = await createContainer(interaction, {
@@ -85,7 +80,9 @@ class RoleCommand extends BaseCommand {
 				await t(interaction, 'core.moderation.role.failed', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -94,5 +91,4 @@ class RoleCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = RoleCommand;

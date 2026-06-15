@@ -14,7 +14,6 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 function formatChanges(changes) {
 	if (!changes || changes.length === 0) return 'No changes detected.';
 	return changes
@@ -24,34 +23,32 @@ function formatChanges(changes) {
 				.replace(/\b\w/g, (l) => l.toUpperCase());
 			const oldValue = change.old ?? 'Nothing';
 			const newValue = change.new ?? 'Nothing';
-
 			return `**${key}**: \`${oldValue}\` ➔ \`${newValue}\``;
 		})
 		.join('\n');
 }
-
 const { BaseEvent } = require('kythia-core');
-
 class RoleUpdateEvent extends BaseEvent {
 	async execute(_oldRole, newRole) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!newRole.guild) return;
 		const { models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 		const guildId = newRole.guild.id;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId: newRole.guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await newRole.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				newRole.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -59,7 +56,6 @@ class RoleUpdateEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			if (!newRole.guild.members.me?.permissions?.has('ViewAuditLog')) return;
 			const audit = await newRole.guild
 				.fetchAuditLogs({
@@ -68,19 +64,19 @@ class RoleUpdateEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!audit) return;
-
 			const entry = audit.entries.find(
 				(e) =>
 					e.target?.id === newRole.id && e.createdTimestamp > Date.now() - 5000,
 			);
-
 			if (!entry) return;
-
 			const executor = entry.executor;
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Blurple', { from: 'discord', to: 'decimal' }),
+						convertColor('Blurple', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -108,13 +104,18 @@ class RoleUpdateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -132,5 +133,4 @@ class RoleUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = RoleUpdateEvent;

@@ -31,7 +31,9 @@ app.patch('/:guildId', async (c) => {
 	const container = client.container;
 	const { logger } = container;
 	const { ServerSetting } = container.models;
-	const guildName = client.guilds.fetch(guildId)?.name;
+	const { getGuildSafe } = container.helpers.discord;
+	const guild = await getGuildSafe(client, guildId);
+	const guildName = guild?.name;
 
 	const body = await c.req.json();
 

@@ -7,18 +7,17 @@
  */
 
 const invitesCache = new Map();
-
 function getGuildInviteCache(guildId) {
 	if (!invitesCache.has(guildId)) invitesCache.set(guildId, new Map());
 	return invitesCache.get(guildId);
 }
-
 async function refreshGuildInvites(guild) {
 	try {
-		const invites = await guild.invites.fetch();
+		const { getAllInvitesSafe } = guild.client.container.helpers.discord;
+		const invites = await getAllInvitesSafe(guild);
+		if (!invites) return;
 		const cache = getGuildInviteCache(guild.id);
 		cache.clear();
-
 		for (const invite of invites.values()) {
 			cache.set(invite.code, {
 				uses: invite.uses || 0,
@@ -30,7 +29,10 @@ async function refreshGuildInvites(guild) {
 		if (guild.vanityURLCode) {
 			try {
 				const vanity = await guild.fetchVanityData();
-				cache.set('VANITY', { uses: vanity?.uses || 0, inviterId: null });
+				cache.set('VANITY', {
+					uses: vanity?.uses || 0,
+					inviterId: null,
+				});
 			} catch (_e) {}
 		}
 	} catch (_e) {}
@@ -51,11 +53,9 @@ function resolveInviter({
 	let inviterId = null;
 	let inviteCode = null;
 	let inviteType = 'unknown';
-
 	for (const invite of invitesNow.values()) {
 		const before = cacheBefore.get(invite.code);
 		const beforeUses = before?.uses ?? 0;
-
 		if (invite.uses > beforeUses) {
 			inviterId = invite.inviter?.id || before?.inviterId || null;
 			inviteCode = invite.code;
@@ -63,17 +63,18 @@ function resolveInviter({
 			break;
 		}
 	}
-
 	if (!inviteCode && vanityUsesNow > vanityUsesBefore) {
 		inviteType = 'vanity';
 		inviteCode = null;
 	}
-
 	if (!inviteCode && inviteType === 'unknown') {
 		inviteType = member.user.bot ? 'oauth' : 'unknown';
 	}
-
-	return { inviterId, inviteCode, inviteType };
+	return {
+		inviterId,
+		inviteCode,
+		inviteType,
+	};
 }
 
 /**
@@ -100,12 +101,10 @@ function resolveJoinType(baseType, isRejoin, isFake) {
  */
 async function applyMilestoneRoles(member, inviteData, inviteSetting) {
 	if (!inviteSetting?.milestoneRoles?.length) return;
-
 	const totalInvites = (inviteData.invites || 0) + (inviteData.bonus || 0);
 	const milestones = [...inviteSetting.milestoneRoles].sort(
 		(a, b) => b.invites - a.invites,
 	);
-
 	if (inviteSetting.roleStack) {
 		// Stack all earned roles
 		for (const m of milestones) {
@@ -153,19 +152,19 @@ async function revokeMilestoneRoles(
 	inviteSetting,
 ) {
 	if (!inviteSetting?.milestoneRoles?.length) return;
-
 	const totalInvites = (inviteData.invites || 0) + (inviteData.bonus || 0);
 	const milestones = [...inviteSetting.milestoneRoles].sort(
 		(a, b) => b.invites - a.invites,
 	);
-
 	let inviterMember;
 	try {
-		inviterMember = await guild.members.fetch(inviterId);
+		inviterMember = await guild.client.container.helpers.discord.getMemberSafe(
+			guild,
+			inviterId,
+		);
 	} catch (_e) {
 		return;
 	}
-
 	if (inviteSetting.roleStack) {
 		for (const m of milestones) {
 			if (totalInvites < m.invites && inviterMember.roles.cache.has(m.roleId)) {
@@ -194,7 +193,6 @@ async function revokeMilestoneRoles(
 function applyTemplate(template, vars) {
 	return template.replace(/\{(\w+)\}/g, (_, key) => vars[key] ?? `{${key}}`);
 }
-
 module.exports = {
 	getGuildInviteCache,
 	refreshGuildInvites,

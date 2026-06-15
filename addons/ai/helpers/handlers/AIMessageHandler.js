@@ -27,7 +27,10 @@ const SAFETY_SETTINGS = [
 	HarmCategory.HARM_CATEGORY_HATE_SPEECH,
 	HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
 	HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-].map((category) => ({ category, threshold: HarmBlockThreshold.BLOCK_NONE }));
+].map((category) => ({
+	category,
+	threshold: HarmBlockThreshold.BLOCK_NONE,
+}));
 
 /**
  * save_memory function declaration — always present alongside command tools.
@@ -61,13 +64,11 @@ class AIMessageHandler {
 		this.isOwner = container.helpers.discord.isOwner;
 		this.config = container.kythiaConfig;
 		this.aiConfig = this.config.addons.ai;
-
 		const AIResponseFilter = require('../AIResponseFilter');
 		const UserFactsManager = require('../UserFactsManager');
 		const ConversationManager = require('../ConversationManager');
 		const MediaProcessor = require('../MediaProcessor');
 		const path = require('node:path');
-
 		this.responseFilter = new AIResponseFilter();
 		this.factsManager = new UserFactsManager({
 			UserFact: container.sequelize.models.UserFact,
@@ -84,7 +85,6 @@ class AIMessageHandler {
 			logger: this.logger,
 			geminiApiKey: (this.aiConfig.geminiApiKeys || '').split(',')[0],
 		});
-
 		this.userCooldowns = new Map();
 
 		// Cleanup interval to prevent memory leak
@@ -106,7 +106,13 @@ class AIMessageHandler {
 
 	safeReply(message, payload) {
 		const options =
-			typeof payload === 'string' ? { content: payload } : { ...payload };
+			typeof payload === 'string'
+				? {
+						content: payload,
+					}
+				: {
+						...payload,
+					};
 		options.failIfNotExists = false;
 		options.allowedMentions = {
 			parse: [],
@@ -116,7 +122,7 @@ class AIMessageHandler {
 			this.logger.warn(`SafeReply fallback: ${err.message}`, {
 				label: 'AIMessageHandler',
 			});
-			return message.channel.send(options).catch(() => {});
+			return message.channel?.send(options).catch(() => {});
 		});
 	}
 
@@ -138,20 +144,25 @@ class AIMessageHandler {
 		if (!intent.needsSearch && !intent.needsMemory) {
 			return undefined;
 		}
-
 		const tools = [];
 		if (intent.needsSearch) {
-			tools.push({ googleSearch: {} });
+			tools.push({
+				googleSearch: {},
+			});
 		}
 		if (intent.needsMemory) {
-			tools.push({ functionDeclarations: [SAVE_MEMORY_DECLARATION] });
+			tools.push({
+				functionDeclarations: [SAVE_MEMORY_DECLARATION],
+			});
 		}
 		return tools;
 	}
-
 	async _analyzeIntent(userText) {
 		if (!this.aiConfig.groqApiKey) {
-			return { needsSearch: true, needsMemory: true };
+			return {
+				needsSearch: true,
+				needsMemory: true,
+			};
 		}
 		try {
 			const response = await fetch(
@@ -173,29 +184,38 @@ class AIMessageHandler {
 						],
 						temperature: 0.1,
 						max_tokens: 60,
-						response_format: { type: 'json_object' },
+						response_format: {
+							type: 'json_object',
+						},
 					}),
 				},
 			);
-
 			if (!response.ok) {
 				this.logger.warn(
 					`Groq API returned HTTP ${response.status} — falling back to safe defaults.`,
-					{ label: 'AIMessageHandler' },
+					{
+						label: 'AIMessageHandler',
+					},
 				);
-				return { needsSearch: true, needsMemory: true };
+				return {
+					needsSearch: true,
+					needsMemory: true,
+				};
 			}
-
 			const data = await response.json();
 			const content = data?.choices?.[0]?.message?.content;
 			if (!content) {
 				this.logger.warn(
 					`Groq returned unexpected shape: ${JSON.stringify(data)}`,
-					{ label: 'AIMessageHandler' },
+					{
+						label: 'AIMessageHandler',
+					},
 				);
-				return { needsSearch: true, needsMemory: true };
+				return {
+					needsSearch: true,
+					needsMemory: true,
+				};
 			}
-
 			const parsed = JSON.parse(content);
 			// Validate that the parsed result has boolean-compatible values.
 			return {
@@ -206,7 +226,10 @@ class AIMessageHandler {
 			this.logger.warn(`Groq intent analysis error: ${err.message}`, {
 				label: 'AIMessageHandler',
 			});
-			return { needsSearch: true, needsMemory: true };
+			return {
+				needsSearch: true,
+				needsMemory: true,
+			};
 		}
 	}
 
@@ -214,11 +237,9 @@ class AIMessageHandler {
 
 	async handleMessage(bot, message) {
 		const client = bot.client;
-
 		if (message.author?.bot || message.system) {
 			return;
 		}
-
 		try {
 			const KythiaUser = this.container.sequelize.models.KythiaUser;
 			if (KythiaUser) {
@@ -234,7 +255,6 @@ class AIMessageHandler {
 				label: 'ai',
 			});
 		}
-
 		const content =
 			typeof message.content === 'string' ? message.content.trim() : '';
 		if (
@@ -243,22 +263,18 @@ class AIMessageHandler {
 		) {
 			return;
 		}
-
 		const isDm =
-			message.channel.type === ChannelType.DM || message.channel.type === 1;
-
+			message.channel?.type === ChannelType.DM || message.channel?.type === 1;
 		const isMentioned =
 			client.user != null &&
 			message.mentions.users.has(client.user.id) &&
 			!message.mentions.everyone;
-
 		if (isDm) {
 			const activeDMs = client.modmailActiveDMs;
 			if (activeDMs instanceof Set && activeDMs.has(message.author.id)) {
 				return;
 			}
 		}
-
 		let isAiChannel = false;
 		if (message.guild) {
 			try {
@@ -276,7 +292,7 @@ class AIMessageHandler {
 				}
 				if (
 					Array.isArray(aiChannelIds) &&
-					aiChannelIds.includes(message.channel.id)
+					aiChannelIds.includes(message.channelId)
 				) {
 					isAiChannel = true;
 				}
@@ -286,11 +302,9 @@ class AIMessageHandler {
 				});
 			}
 		}
-
 		if (!(isAiChannel || isDm || isMentioned)) {
 			return;
 		}
-
 		const isOwnerUser = this.isOwner(message.author.id);
 		if (!isOwnerUser || !this.aiConfig.ownerBypassFilter) {
 			const cooldown = this.checkUserCooldown(message.author.id);
@@ -303,7 +317,6 @@ class AIMessageHandler {
 				return;
 			}
 		}
-
 		await this.processAIRequest(bot, message, client);
 	}
 
@@ -318,11 +331,16 @@ class AIMessageHandler {
 		);
 		if (timestamps.length >= maxRequests) {
 			this.userCooldowns.set(userId, timestamps);
-			return { limited: true, resetIn: windowMs - (now - timestamps[0]) };
+			return {
+				limited: true,
+				resetIn: windowMs - (now - timestamps[0]),
+			};
 		}
 		timestamps.push(now);
 		this.userCooldowns.set(userId, timestamps);
-		return { limited: false };
+		return {
+			limited: false,
+		};
 	}
 
 	// ─── Pre-flight ───────────────────────────────────────────────────────────
@@ -349,7 +367,7 @@ class AIMessageHandler {
 			// ==========================================
 			const sendTypingNative = () => {
 				fetch(
-					`https://discord.com/api/v10/channels/${message.channel.id}/typing`,
+					`https://discord.com/api/v10/channels/${message.channelId}/typing`,
 					{
 						method: 'POST',
 						headers: {
@@ -374,7 +392,6 @@ class AIMessageHandler {
 			mediaParts.push(
 				...this.mediaProcessor.extractYouTubeUrls(message.content),
 			);
-
 			if (!cleanContent && mediaParts.length === 0) {
 				if (message.mentions.users.has(client.user.id)) {
 					this.safeReply(
@@ -387,7 +404,7 @@ class AIMessageHandler {
 			}
 
 			// Restore or seed conversation history
-			const historyId = message.channel.id;
+			const historyId = message.channelId;
 			const channelConv = this.conversationManager.getConversation(historyId);
 			if (channelConv.history.length === 0) {
 				await this.loadConversationHistory(message, client, channelConv);
@@ -400,10 +417,15 @@ class AIMessageHandler {
 				mediaParts.length > 0
 					? [
 							...mediaParts,
-							{ text: prefix + (cleanContent || 'Describe this.') },
+							{
+								text: prefix + (cleanContent || 'Describe this.'),
+							},
 						]
-					: [{ text: prefix + cleanContent }];
-
+					: [
+							{
+								text: prefix + cleanContent,
+							},
+						];
 			const success = await this.executeAIRequest(
 				message,
 				context,
@@ -411,11 +433,11 @@ class AIMessageHandler {
 				bot,
 				client,
 			);
-
 			clearInterval(typingInterval);
-
 			if (!success) {
-				this.logger.warn('❌ All AI tokens exhausted.', { label: 'ai' });
+				this.logger.warn('❌ All AI tokens exhausted.', {
+					label: 'ai',
+				});
 				this.safeReply(
 					message,
 					await this.t(message, 'ai.events.messageCreate.memory.token.limit'),
@@ -441,7 +463,6 @@ class AIMessageHandler {
 	 */
 	async executeAIRequest(message, context, userParts, bot, client) {
 		const systemInstruction = buildSystemInstruction(context);
-
 		const rawUserText = userParts
 			.map((p) => p.text || '')
 			.join(' ')
@@ -449,23 +470,22 @@ class AIMessageHandler {
 		const intent = await this._analyzeIntent(rawUserText);
 		this.logger.info(
 			`needsSearch=${intent.needsSearch}, needsMemory=${intent.needsMemory}`,
-			{ label: 'ai intent' },
+			{
+				label: 'ai intent',
+			},
 		);
-
 		const PREFERRED_MODEL =
 			intent.needsSearch || intent.needsMemory
 				? this.aiConfig.model || MINIMUM_MODEL
 				: this.aiConfig.liteModel || MINIMUM_LITE_MODEL;
 		const FALLBACK_MODEL = this.aiConfig.liteModel || MINIMUM_LITE_MODEL;
 		let useModelFallback = false;
-
 		const tools = this._buildTools(intent);
-		const historyId = message.channel.id;
+		const historyId = message.channelId;
 
 		// History for chat initialization (exclude the current user turn —
 		// we'll send it via chat.sendMessage so the chat tracks it internally)
 		const priorHistory = this.conversationManager.buildContentsArray(historyId);
-
 		const totalTokens = (this.aiConfig.geminiApiKeys || '')
 			.split(',')
 			.map((k) => k.trim())
@@ -474,35 +494,41 @@ class AIMessageHandler {
 		// Allow up to 2× totalTokens attempts so a 503-triggered model fallback
 		// always gets at least one real retry slot, even with a single API key.
 		const maxAttempts = totalTokens * 2;
-
 		for (let attempt = 0; attempt < maxAttempts; attempt++) {
 			this.logger.info(`🧠 AI attempt ${attempt + 1}/${maxAttempts}...`, {
 				label: 'ai',
 			});
-
 			const tokenIdx = await getAndUseNextAvailableToken();
 			if (tokenIdx === -1) {
-				this.logger.warn('⚠️ All tokens rate-limited.', { label: 'ai' });
+				this.logger.warn('⚠️ All tokens rate-limited.', {
+					label: 'ai',
+				});
 				break;
 			}
-
 			const apiKey = (this.aiConfig.geminiApiKeys || '')
 				.split(',')
 				[tokenIdx]?.trim();
 			if (!apiKey) continue;
-
-			const genAI = new GoogleGenAI({ apiKey });
-
+			const genAI = new GoogleGenAI({
+				apiKey,
+			});
 			try {
 				const chatConfig = {
-					systemInstruction: { parts: [{ text: systemInstruction }] },
+					systemInstruction: {
+						parts: [
+							{
+								text: systemInstruction,
+							},
+						],
+					},
 					safetySettings: SAFETY_SETTINGS,
 				};
 				if (tools) {
 					chatConfig.tools = tools;
-					chatConfig.toolConfig = { includeServerSideToolInvocations: true };
+					chatConfig.toolConfig = {
+						includeServerSideToolInvocations: true,
+					};
 				}
-
 				const activeModel = useModelFallback ? FALLBACK_MODEL : PREFERRED_MODEL;
 
 				// Create a stateful chat seeded with conversation history
@@ -511,15 +537,17 @@ class AIMessageHandler {
 					history: priorHistory,
 					config: chatConfig,
 				});
-
 				this.logger.info(
 					`🔍 [DEBUG] Sending request | model: ${activeModel}${useModelFallback ? ' (fallback)' : ''} | tools: ${JSON.stringify(tools?.map((t) => Object.keys(t)[0]) || 'none')}`,
-					{ label: 'ai' },
+					{
+						label: 'ai',
+					},
 				);
 
 				// Send the current user message
-				const response = await chat.sendMessage({ message: userParts });
-
+				const response = await chat.sendMessage({
+					message: userParts,
+				});
 				this.logger.info(`✅ AI request successful on attempt ${attempt + 1}`, {
 					label: 'ai',
 				});
@@ -533,7 +561,6 @@ class AIMessageHandler {
 						.join(' ')
 						.trim(),
 				);
-
 				await this.handleAIResponse(response, chat, message, bot, client);
 				return true;
 			} catch (err) {
@@ -546,12 +573,16 @@ class AIMessageHandler {
 				if (is429) {
 					this.logger.warn(
 						`Token ${tokenIdx} hit 429. Retrying with next token...`,
-						{ label: 'AIMessageHandler' },
+						{
+							label: 'AIMessageHandler',
+						},
 					);
 				} else if (is503) {
 					this.logger.warn(
 						`Model overloaded (503) on token ${tokenIdx}. Retrying with fallback model...`,
-						{ label: 'AIMessageHandler' },
+						{
+							label: 'AIMessageHandler',
+						},
 					);
 					useModelFallback = true;
 				} else {
@@ -559,13 +590,12 @@ class AIMessageHandler {
 						label: 'AIMessageHandler',
 					});
 					await message.channel
-						.send(await this.t(message, 'ai.events.messageCreate.error'))
-						.catch(() => {});
+						?.send(await this.t(message, 'ai.events.messageCreate.error'))
+						?.catch(() => {});
 					return false;
 				}
 			}
 		}
-
 		return false;
 	}
 
@@ -573,16 +603,19 @@ class AIMessageHandler {
 
 	async handleAIResponse(response, chat, message, bot, client, depth = 0) {
 		if (depth > 5) {
-			this.logger.warn('⚠️ Max AI agent depth reached.', { label: 'ai' });
+			this.logger.warn('⚠️ Max AI agent depth reached.', {
+				label: 'ai',
+			});
 			return;
 		}
-
 		const replyText = this._extractText(response);
 
 		// DEBUG: log usage
 		this.logger.info(
 			`🔍 [DEBUG] Usage: ${JSON.stringify(response?.usageMetadata)}`,
-			{ label: 'ai' },
+			{
+				label: 'ai',
+			},
 		);
 
 		// DEBUG: log raw response structure
@@ -596,18 +629,17 @@ class AIMessageHandler {
 					),
 				})),
 			)}`,
-			{ label: 'ai' },
+			{
+				label: 'ai',
+			},
 		);
-
 		let textToSend = replyText;
 		const textToHistory = replyText;
-
 		if (response.memorySaved) {
 			textToSend = textToSend
 				? `${textToSend}\n\n-# *this information is saved*`
 				: '-# *this information is saved*';
 		}
-
 		if (textToSend) {
 			const filterResult = this.responseFilter.filterResponse(
 				textToSend,
@@ -631,26 +663,23 @@ class AIMessageHandler {
 				label: 'ai',
 			});
 			await wait(typingSpeedDelay);
-
 			await this.sendSplitMessage(message, textToSend);
 		}
-
 		if (textToHistory) {
 			this.conversationManager.addToHistory(
-				message.channel.id,
+				message.channelId,
 				'model',
 				textToHistory,
 			);
 		}
-
 		const functionCalls = response.functionCalls || [];
-
 		if (functionCalls.length > 0) {
 			this.logger.info(
 				`🧠 Executing ${functionCalls.length} parallel functions: ${functionCalls.map((f) => f.name).join(', ')}`,
-				{ label: 'ai' },
+				{
+					label: 'ai',
+				},
 			);
-
 			const functionResponses = [];
 			let memorySaved = false;
 			for (const call of functionCalls) {
@@ -662,10 +691,11 @@ class AIMessageHandler {
 				);
 				if (result) {
 					if (result.memorySaved) memorySaved = true;
-					functionResponses.push({ functionResponse: result.functionResponse });
+					functionResponses.push({
+						functionResponse: result.functionResponse,
+					});
 				}
 			}
-
 			if (functionResponses.length > 0) {
 				try {
 					const followUp = await chat.sendMessage({
@@ -683,7 +713,9 @@ class AIMessageHandler {
 				} catch (err) {
 					this.logger.error(
 						`Error sending batch function responses: ${err.message}`,
-						{ label: 'ai' },
+						{
+							label: 'ai',
+						},
 					);
 				}
 			}
@@ -694,9 +726,7 @@ class AIMessageHandler {
 
 	async executeSingleFunction(call, message, _bot, client) {
 		let { name: fnName, args: fnArgs, id: fnId } = call;
-
 		fnName = fnName.replace(/^google:/, '').trim();
-
 		const makeResponse = (payload) => ({
 			functionResponse: {
 				id: fnId,
@@ -712,12 +742,16 @@ class AIMessageHandler {
 		if (fnName === 'save_memory') {
 			this.logger.info(
 				`🧠 [DEBUG] AI triggered 'save_memory' args: ${JSON.stringify(fnArgs)}`,
-				{ label: 'ai' },
+				{
+					label: 'ai',
+				},
 			);
 			const fact = typeof fnArgs?.fact === 'string' ? fnArgs.fact.trim() : '';
-
-			if (!fact) return makeResponse({ status: 'error', reason: 'empty fact' });
-
+			if (!fact)
+				return makeResponse({
+					status: 'error',
+					reason: 'empty fact',
+				});
 			const status = await this.factsManager.appendFact(
 				message.author.id,
 				fact,
@@ -725,24 +759,32 @@ class AIMessageHandler {
 			this.logger.info(`🧠 save_memory: "${fact}" → ${status}`, {
 				label: 'ai',
 			});
-
-			return { ...makeResponse({ status, fact }), memorySaved: true };
+			return {
+				...makeResponse({
+					status,
+					fact,
+				}),
+				memorySaved: true,
+			};
 		}
 
 		// ── Discord command function calls ─────────────────────────────────────
 		const baseCommandName = fnName.split('_')[0];
 		const command = client.commands.get(baseCommandName);
-
 		if (!command) {
 			this.logger.warn(`🧠 Command not found: ${baseCommandName}`, {
 				label: 'ai',
 			});
-			return makeResponse({ status: 'error', reason: 'Command not found' });
+			return makeResponse({
+				status: 'error',
+				reason: 'Command not found',
+			});
 		}
-
 		this.logger.info(
 			`🧠 Executing /${baseCommandName} (from "${fnName}") args: ${JSON.stringify(fnArgs)}`,
-			{ label: 'ai' },
+			{
+				label: 'ai',
+			},
 		);
 		let rawArgsString = '';
 		if (fnArgs && typeof fnArgs === 'object') {
@@ -753,19 +795,16 @@ class AIMessageHandler {
 				})
 				.join(' ');
 		}
-
 		const fakeInteraction = utils.InteractionFactory.create(
 			message,
 			fnName,
 			rawArgsString,
 		);
-
 		try {
 			const executionResult = await command.execute(
 				fakeInteraction,
 				client.container,
 			);
-
 			let resultStr = JSON.stringify({
 				success: true,
 				result: executionResult,
@@ -773,13 +812,15 @@ class AIMessageHandler {
 			if (resultStr.length > 80000) {
 				resultStr = `${resultStr.substring(0, 80000)}... [TRUNCATED]`;
 			}
-
 			return makeResponse(resultStr);
 		} catch (err) {
 			this.logger.error(`Error running "${fnName}": ${err.message}`, {
 				label: 'ai',
 			});
-			return makeResponse({ status: 'error', reason: err.message });
+			return makeResponse({
+				status: 'error',
+				reason: err.message,
+			});
 		}
 	}
 
@@ -796,15 +837,14 @@ class AIMessageHandler {
 		);
 		const userBio = await this.getUserBio(message.author.id, client);
 		const guildName = message.guild?.name || 'Direct Message';
-		const channelName = message.channel.name || 'Direct Message';
-
+		const channelName = message.channel?.name || 'Direct Message';
 		const { KythiaUser } = this.container.sequelize.models;
-		const user = await KythiaUser.getCache({ userId: message.author.id });
+		const user = await KythiaUser.getCache({
+			userId: message.author.id,
+		});
 		const userPersonality =
 			user?.aiPersonality || this.aiConfig.defaultPersonality || 'friendly';
-
 		const preferredLocale = message.guild?.preferredLocale || 'en';
-
 		return {
 			userId: message.author.id,
 			userDisplayName,
@@ -817,12 +857,12 @@ class AIMessageHandler {
 			preferredLocale,
 		};
 	}
-
 	async getUserBio(userId, client) {
 		try {
 			// Race against a 5s timeout so a slow Discord REST call never hangs.
+			const { getUserSafe } = client.container.helpers.discord;
 			const user = await Promise.race([
-				client.users.fetch(userId, { force: false }),
+				getUserSafe(client, userId),
 				new Promise((_, reject) =>
 					setTimeout(() => reject(new Error('getUserBio timeout')), 5000),
 				),
@@ -832,7 +872,6 @@ class AIMessageHandler {
 			return 'Cannot get bio';
 		}
 	}
-
 	cleanMessageContent(content) {
 		return typeof content === 'string'
 			? content
@@ -842,15 +881,22 @@ class AIMessageHandler {
 					.slice(0, 1500)
 			: '';
 	}
-
 	async loadConversationHistory(message, client, _userConv) {
 		this.logger.info(
-			`🧠 Cache miss for channel ${message.channel.name || message.channel.id}. Reconstructing history...`,
-			{ label: 'ai' },
+			`🧠 Cache miss for channel ${message.channel?.name || message.channelId}. Reconstructing history...`,
+			{
+				label: 'ai',
+			},
 		);
-
 		const limit = this.aiConfig.getMessageHistoryLength || 10;
-		const lastMessages = await message.channel.messages.fetch({ limit });
+		if (!message.channel) return;
+		const lastMessages =
+			await client.container.helpers.discord.fetchMessagesQuerySafe(
+				message.channel,
+				{
+					limit,
+				},
+			);
 		const relevantMessages = Array.from(lastMessages.values())
 			.filter(
 				(msg) =>
@@ -858,19 +904,16 @@ class AIMessageHandler {
 					(!msg.author?.bot || msg.author.id === client.user.id),
 			)
 			.reverse();
-
 		for (const msg of relevantMessages) {
 			const c =
 				typeof msg.content === 'string'
 					? msg.content.replace(/<@!?\d+>/g, '').trim()
 					: '';
 			if (!c && msg.attachments.size === 0) continue;
-
 			const isModel = msg.author.id === client.user.id;
 			const content = isModel ? c : `[${msg.author.username}]: ${c}`;
-
 			this.conversationManager.addToHistory(
-				message.channel.id,
+				message.channelId,
 				isModel ? 'model' : 'user',
 				content,
 			);
@@ -884,11 +927,9 @@ class AIMessageHandler {
 		text = typeof text === 'string' ? text : '';
 		const parts = text.split('[SPLIT]');
 		let hasReplied = false;
-
 		for (const part of parts) {
 			const chunk = part.trim();
 			if (!chunk) continue;
-
 			const filterResult = this.responseFilter.filterResponse(
 				chunk,
 				message.author?.id,
@@ -902,12 +943,10 @@ class AIMessageHandler {
 				);
 				return;
 			}
-
 			if (chunk.length > CHUNK_SIZE) {
 				const lines = chunk.split('\n');
 				const subChunks = [];
 				let currentSub = '';
-
 				for (const line of lines) {
 					if (line.length > CHUNK_SIZE) {
 						if (currentSub) subChunks.push(currentSub);
@@ -923,7 +962,6 @@ class AIMessageHandler {
 					}
 				}
 				if (currentSub) subChunks.push(currentSub);
-
 				for (const sub of subChunks) {
 					const f = this.responseFilter.filterResponse(
 						sub,
@@ -939,22 +977,25 @@ class AIMessageHandler {
 						return;
 					}
 					if (!hasReplied) {
-						this.safeReply(message, { content: sub });
+						this.safeReply(message, {
+							content: sub,
+						});
 						hasReplied = true;
 					} else {
-						await message.channel.send(sub);
+						await message.channel?.send(sub);
 					}
 				}
 			} else {
 				if (!hasReplied) {
-					this.safeReply(message, { content: chunk });
+					this.safeReply(message, {
+						content: chunk,
+					});
 					hasReplied = true;
 				} else {
-					await message.channel.send(chunk);
+					await message.channel?.send(chunk);
 				}
 			}
 		}
 	}
 }
-
 module.exports = AIMessageHandler;

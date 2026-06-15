@@ -64,7 +64,7 @@ class MessageCreateEvent extends BaseEvent {
 		if (Array.isArray(setting?.noXpRoles)) {
 			const member =
 				message.member ||
-				(await message.guild.members.fetch(userId).catch(() => null));
+				(await helpers.discord.getMemberSafe(message.guild, userId));
 			if (
 				member &&
 				setting.noXpRoles.some((roleId) => member.roles.cache.has(roleId))

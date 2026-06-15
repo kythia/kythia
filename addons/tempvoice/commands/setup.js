@@ -7,13 +7,10 @@
  */
 const { ChannelType, MessageFlags } = require('discord.js');
 const { buildInterface } = require('../helpers/interface');
-
 const { BaseCommand } = require('kythia-core');
-
 class SetupCommand extends BaseCommand {
 	subcommand = true;
 	voteLocked = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('setup')
@@ -47,22 +44,17 @@ class SetupCommand extends BaseCommand {
 					.setRequired(false)
 					.addChannelTypes(ChannelType.GuildText),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, logger, client, helpers, t } = container;
 		const { TempVoiceConfig } = models;
 		const { simpleContainer } = helpers.discord;
 		const guildId = interaction.guild.id;
-
 		await interaction.deferReply();
-
 		let triggerChannel = interaction.options.getChannel('trigger_channel');
 		let category = interaction.options.getChannel('category');
 		let controlPanel = interaction.options.getChannel('control_panel');
-
 		const autoReason = await t(interaction, 'tempvoice.setup.auto_reason');
-
 		if (!category) {
 			category = await interaction.guild.channels.create({
 				name: await t(interaction, 'tempvoice.setup.auto_category_name'),
@@ -81,7 +73,9 @@ class SetupCommand extends BaseCommand {
 			!triggerChannel.parentId ||
 			triggerChannel.parentId !== category.id
 		) {
-			await triggerChannel.setParent(category.id, { lockPermissions: false });
+			await triggerChannel.setParent(category.id, {
+				lockPermissions: false,
+			});
 		}
 		if (!controlPanel) {
 			controlPanel = await interaction.guild.channels.create({
@@ -94,17 +88,22 @@ class SetupCommand extends BaseCommand {
 			!controlPanel.parentId ||
 			controlPanel.parentId !== category.id
 		) {
-			await controlPanel.setParent(category.id, { lockPermissions: false });
+			await controlPanel.setParent(category.id, {
+				lockPermissions: false,
+			});
 		}
-
-		const oldConfig = await TempVoiceConfig.getCache({ guildId });
+		const oldConfig = await TempVoiceConfig.getCache({
+			guildId,
+		});
 		if (oldConfig?.interfaceMessageId) {
 			try {
-				const oldChannel = await client.channels.fetch(
-					oldConfig.controlPanelChannelId,
-					{ force: true },
-				);
-				const oldMsg = await oldChannel.messages.fetch(
+				const oldChannel =
+					await client.container.helpers.discord.getChannelGlobalSafe(
+						client,
+						oldConfig.controlPanelChannelId,
+					);
+				const oldMsg = await helpers.discord.getMessageSafe(
+					oldChannel,
 					oldConfig.interfaceMessageId,
 				);
 				await oldMsg.delete();
@@ -114,10 +113,11 @@ class SetupCommand extends BaseCommand {
 				});
 			}
 		}
-
 		const { components, flags } = await buildInterface(interaction);
-		const interfaceMessage = await controlPanel.send({ components, flags });
-
+		const interfaceMessage = await controlPanel.send({
+			components,
+			flags,
+		});
 		if (!interfaceMessage) {
 			return interaction.editReply({
 				components: await simpleContainer(
@@ -130,9 +130,10 @@ class SetupCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		await TempVoiceConfig.findOrCreateCache({
-			where: { guildId: guildId },
+			where: {
+				guildId: guildId,
+			},
 			defaults: {
 				guildId: guildId,
 				triggerChannelId: triggerChannel.id,
@@ -141,7 +142,6 @@ class SetupCommand extends BaseCommand {
 				interfaceMessageId: interfaceMessage.id,
 			},
 		});
-
 		const setupSuccessContent = await t(
 			interaction,
 			'tempvoice.setup.success_content',
@@ -151,7 +151,6 @@ class SetupCommand extends BaseCommand {
 				controlPanel: controlPanel.id,
 			},
 		);
-
 		return interaction.editReply({
 			components: await simpleContainer(interaction, setupSuccessContent, {
 				color: 'Green',
@@ -160,5 +159,4 @@ class SetupCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = SetupCommand;

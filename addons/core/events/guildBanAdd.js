@@ -14,27 +14,28 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class GuildBanAddEvent extends BaseEvent {
 	async execute(ban) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!ban.guild) return;
 		const { models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 		const guildId = ban.guild.id;
-
 		try {
-			const settings = await ServerSetting.getCache({ guildId });
+			const settings = await ServerSetting.getCache({
+				guildId,
+			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await ban.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				ban.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -42,7 +43,6 @@ class GuildBanAddEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			if (!ban.guild.members.me?.permissions?.has('ViewAuditLog')) return;
 			const audit = await ban.guild
 				.fetchAuditLogs({
@@ -51,20 +51,20 @@ class GuildBanAddEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!audit) return;
-
 			const entry = audit.entries.find(
 				(e) =>
 					e.target?.id === ban.user.id &&
 					e.createdTimestamp > Date.now() - 5000,
 			);
-
 			if (!entry) return;
-
 			const executor = entry.executor;
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Red', { from: 'discord', to: 'decimal' }),
+						convertColor('Red', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -94,13 +94,18 @@ class GuildBanAddEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -118,5 +123,4 @@ class GuildBanAddEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = GuildBanAddEvent;

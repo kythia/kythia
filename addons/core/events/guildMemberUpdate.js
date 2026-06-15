@@ -14,29 +14,28 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class GuildMemberUpdateEvent extends BaseEvent {
 	async execute(oldMember, newMember) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!newMember.guild) return;
 		const { models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 		const guildId = newMember.guild.id;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId: newMember.guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await newMember.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				newMember.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -44,7 +43,6 @@ class GuildMemberUpdateEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			if (!newMember.guild.members.me?.permissions?.has('ViewAuditLog')) return;
 			const audit = await newMember.guild
 				.fetchAuditLogs({
@@ -53,30 +51,27 @@ class GuildMemberUpdateEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!audit) return;
-
 			const entry = audit.entries.find(
 				(e) =>
 					e.target?.id === newMember.id &&
 					e.createdTimestamp > Date.now() - 5000,
 			);
-
 			if (!entry) return;
-
 			const executor = entry.executor;
 			const changes = [];
-
 			if (oldMember.nickname !== newMember.nickname) {
 				changes.push(
 					`**Nickname**: \`${oldMember.nickname || 'None'}\` ➔ \`${newMember.nickname || 'None'}\``,
 				);
 			}
-
 			if (changes.length === 0) return;
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Blurple', { from: 'discord', to: 'decimal' }),
+						convertColor('Blurple', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -104,13 +99,18 @@ class GuildMemberUpdateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -128,5 +128,4 @@ class GuildMemberUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = GuildMemberUpdateEvent;

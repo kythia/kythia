@@ -20,38 +20,30 @@ const {
 	MediaGalleryBuilder,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
-
 const { fetchLatestVideo } = require('../helpers/youtube');
 const { fetchLatestTikTok } = require('../helpers/tiktok');
 const { fetchLatestInstagram } = require('../helpers/instagram');
-
 const { BaseTask } = require('kythia-core');
-
 class PollerTask extends BaseTask {
 	task = {
 		taskName: 'social-alert-poller',
 		schedule: '*/5 * * * *',
 		active: true,
 	};
-
 	async execute(container) {
 		const { client, models, helpers, logger, kythiaConfig, t } =
 			container || this.container;
 
 		// The poller runs on all shards. We'll filter the subscriptions by the current shard.
 		const { ShardClientUtil } = require('discord.js');
-
 		const { SocialAlertSubscription, SocialAlertSetting } = models;
 		const { convertColor } = helpers.color;
 		const { getGuildSafe } = helpers.discord;
-
 		const rsshubUrl =
 			kythiaConfig?.addons?.socialAlerts?.rsshubUrl || 'https://rsshub.app';
-
 		logger.info('📡 Running social alert poller...', {
 			label: 'social-alerts',
 		});
-
 		let subscriptions;
 		try {
 			subscriptions = await SocialAlertSubscription.getAllCache();
@@ -62,12 +54,10 @@ class PollerTask extends BaseTask {
 			});
 			return;
 		}
-
 		const accentColor = convertColor(kythiaConfig?.bot?.color || '#FF0000', {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		for (const sub of subscriptions) {
 			if (client.shard) {
 				const expectedShardId = ShardClientUtil.shardIdForGuildId(
@@ -76,7 +66,6 @@ class PollerTask extends BaseTask {
 				);
 				if (!client.shard.ids.includes(expectedShardId)) continue;
 			}
-
 			try {
 				const platform = sub.platform || 'youtube';
 
@@ -89,7 +78,6 @@ class PollerTask extends BaseTask {
 				} else {
 					latest = await fetchLatestVideo(sub.youtubeChannelId);
 				}
-
 				if (!latest) continue;
 
 				// No new content
@@ -105,20 +93,20 @@ class PollerTask extends BaseTask {
 				// };
 
 				if (!guild) continue;
-
 				const channel =
 					guild.channels.cache.get(sub.discordChannelId) ||
-					(await guild.channels.fetch(sub.discordChannelId).catch(() => null));
+					(await helpers.discord.getChannelSafe(guild, sub.discordChannelId));
 				if (!channel) continue;
 
 				// Fetch setting for optional role mention
 				let setting = null;
 				try {
-					setting = await SocialAlertSetting.getCache({ guildId: sub.guildId });
+					setting = await SocialAlertSetting.getCache({
+						guildId: sub.guildId,
+					});
 				} catch {
 					// Proceed without setting
 				}
-
 				const mentionText = setting?.mentionRoleId
 					? `\nMention: <@&${setting.mentionRoleId}>`
 					: '';
@@ -137,12 +125,13 @@ class PollerTask extends BaseTask {
 							? await t(
 									guild,
 									'social-alert.poller.instagram.default_message',
-									{ channel: sub.youtubeChannelName },
+									{
+										channel: sub.youtubeChannelName,
+									},
 								)
 							: await t(guild, 'social-alert.poller.youtube.default_message', {
 									channel: sub.youtubeChannelName,
 								});
-
 				const publishTimestamp = latest.publishedAt
 					? `\n-# Published <t:${Math.floor(new Date(latest.publishedAt).getTime() / 1000)}:R>`
 					: '';
@@ -228,7 +217,6 @@ class PollerTask extends BaseTask {
 								.setDivider(true),
 						);
 				}
-
 				builder
 					.addActionRowComponents(
 						new ActionRowBuilder().addComponents(
@@ -254,7 +242,6 @@ class PollerTask extends BaseTask {
 							}),
 						),
 					);
-
 				const messagePayload = {
 					components: [builder],
 					flags: MessageFlags.IsComponentsV2,
@@ -269,19 +256,21 @@ class PollerTask extends BaseTask {
 				// Update the last seen content ID
 				sub.lastVideoId = latest.videoId;
 				await sub.save();
-
 				logger.info(
 					`Posted ${platform} alert for "${latest.title}" in guild ${sub.guildId}`,
-					{ label: 'social-alerts' },
+					{
+						label: 'social-alerts',
+					},
 				);
 			} catch (err) {
 				logger.error(
 					`Error processing subscription ${sub.id} (${sub.youtubeChannelId}): ${err?.message || err}${err?.stack ? `\n${err.stack}` : ''}`,
-					{ label: 'social-alerts' },
+					{
+						label: 'social-alerts',
+					},
 				);
 			}
 		}
 	}
 }
-
 exports.default = PollerTask;

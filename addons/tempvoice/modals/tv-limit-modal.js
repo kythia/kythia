@@ -7,22 +7,19 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseModal } = require('kythia-core');
-
 class TvLimitModalModal extends BaseModal {
-	modal = { customId: 'tv_limit_modal' };
-
+	modal = {
+		customId: 'tv_limit_modal',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, t, client, logger, helpers } = container;
 		const { TempVoiceChannel } = models;
 		const { simpleContainer } = helpers.discord;
 		const newLimitStr = interaction.fields.getTextInputValue('user_limit');
 		const newLimit = parseInt(newLimitStr, 10);
 		const channelId = interaction.customId.split(':')[1];
-
 		if (Number.isNaN(newLimit) || newLimit < 0 || newLimit > 99) {
 			return interaction.reply({
 				content: await t(interaction, 'tempvoice.limit.modal.invalid_input'),
@@ -38,7 +35,6 @@ class TvLimitModalModal extends BaseModal {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		const activeChannel = await TempVoiceChannel.getCache({
 			channelId: channelId,
 			ownerId: interaction.user.id,
@@ -49,21 +45,26 @@ class TvLimitModalModal extends BaseModal {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		let channel;
 		try {
-			channel = await client.channels.fetch(channelId, { force: true });
+			channel = await client.container.helpers.discord.getChannelGlobalSafe(
+				client,
+				channelId,
+			);
 		} catch (error) {
 			logger.error(
 				`CRITICAL: Failed to fetch channel ${channelId} for rename. Error: ${error.message || error}`,
-				{ label: 'tempvoice' },
+				{
+					label: 'tempvoice',
+				},
 			);
-
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.channel_not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 			});
@@ -77,7 +78,6 @@ class TvLimitModalModal extends BaseModal {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		await channel.setUserLimit(newLimit);
 		await interaction.reply({
 			content: await t(interaction, 'tempvoice.limit.modal.success', {
@@ -90,5 +90,4 @@ class TvLimitModalModal extends BaseModal {
 		});
 	}
 }
-
 exports.default = TvLimitModalModal;

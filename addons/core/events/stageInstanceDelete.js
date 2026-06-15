@@ -14,29 +14,28 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class StageInstanceDeleteEvent extends BaseEvent {
 	async execute(stageInstance) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!stageInstance.guild) return;
 		const { models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 		const guildId = stageInstance.guild.id;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId: stageInstance.guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await stageInstance.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				stageInstance.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -44,7 +43,6 @@ class StageInstanceDeleteEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			if (!stageInstance.guild.members.me?.permissions?.has('ViewAuditLog'))
 				return;
 			const audit = await stageInstance.guild
@@ -54,20 +52,20 @@ class StageInstanceDeleteEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!audit) return;
-
 			const entry = audit.entries.find(
 				(e) =>
 					e.target?.id === stageInstance.id &&
 					e.createdTimestamp > Date.now() - 5000,
 			);
-
 			if (!entry) return;
-
 			const executor = entry.executor;
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Red', { from: 'discord', to: 'decimal' }),
+						convertColor('Red', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -95,13 +93,18 @@ class StageInstanceDeleteEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -119,5 +122,4 @@ class StageInstanceDeleteEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = StageInstanceDeleteEvent;

@@ -11,14 +11,10 @@ const {
 	ContainerBuilder,
 	TextDisplayBuilder,
 } = require('discord.js');
-
 const { refreshReactionRoleMessage } = require('../helpers/index.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class EditCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('edit')
@@ -56,15 +52,14 @@ class EditCommand extends BaseCommand {
 					.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, logger } = container;
 		const { ReactionRole } = models;
 		const { convertColor } = helpers.color;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const messageId = interaction.options.getString('message_id');
 		const currentEmoji = interaction.options.getString('emoji');
 		const newRole = interaction.options.getRole('new_role');
@@ -78,13 +73,11 @@ class EditCommand extends BaseCommand {
 				content: await t(interaction, 'reaction-role.edit.nothing_to_edit'),
 			});
 		}
-
 		if (!channel?.isTextBased()) {
 			return interaction.editReply({
 				content: await t(interaction, 'reaction-role.invalid_channel'),
 			});
 		}
-
 		try {
 			// Find the existing reaction role entry
 			const rr = await ReactionRole.getCache({
@@ -94,29 +87,24 @@ class EditCommand extends BaseCommand {
 					emoji: currentEmoji,
 				},
 			});
-
 			if (!rr) {
 				return interaction.editReply({
 					content: await t(interaction, 'reaction-role.not_found'),
 				});
 			}
-
 			let panel = null;
 			if (rr.panelId) {
 				panel = await models.ReactionRolePanel.findByPk(rr.panelId);
 			}
 
 			// Fetch the Discord message so we can swap reactions
-			const message = await channel.messages.fetch(messageId).catch(() => null);
-
+			const message = await helpers.discord.getMessageSafe(channel, messageId);
 			if (!message) {
 				return interaction.editReply({
 					content: await t(interaction, 'reaction-role.invalid_message'),
 				});
 			}
-
 			const emojiChanged = newEmoji && newEmoji !== currentEmoji;
-
 			if (emojiChanged) {
 				// Validate the new emoji by reacting
 				try {
@@ -152,10 +140,8 @@ class EditCommand extends BaseCommand {
 						label: 'reaction-role:edit:remove_old_reaction',
 					});
 				}
-
 				rr.emoji = newEmoji;
 			}
-
 			if (newRole) {
 				rr.roleId = newRole.id;
 			}
@@ -171,10 +157,12 @@ class EditCommand extends BaseCommand {
 			if (emojiChanged)
 				changes.push(`**Emoji:** ${currentEmoji} → ${newEmoji}`);
 			if (newRole) changes.push(`**Role:** ${newRole}`);
-
 			const successContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor('Blue', { from: 'discord', to: 'decimal' }),
+					convertColor('Blue', {
+						from: 'discord',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
@@ -183,7 +171,6 @@ class EditCommand extends BaseCommand {
 							changes.join('\n'),
 					),
 				);
-
 			return interaction.editReply({
 				components: [successContainer],
 				flags: MessageFlags.IsComponentsV2,
@@ -198,5 +185,4 @@ class EditCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = EditCommand;

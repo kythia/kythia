@@ -10,15 +10,13 @@ const {
 	ChannelType,
 	MessageFlags,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TvWaitingButton extends BaseButton {
-	button = { customId: 'tv_waiting' };
-
+	button = {
+		customId: 'tv_waiting',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, client, t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const { TempVoiceChannel } = models;
@@ -40,27 +38,31 @@ class TvWaitingButton extends BaseButton {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const channelId = activeChannel.channelId;
 		let mainChannel;
 		try {
-			mainChannel = await client.channels.fetch(channelId, { force: true });
+			mainChannel = await client.container.helpers.discord.getChannelGlobalSafe(
+				client,
+				channelId,
+			);
 		} catch (error) {
 			logger.error(
 				`CRITICAL: Failed to fetch channel ${channelId} for rename. Error: ${error.message || error}`,
-				{ label: 'tempvoice' },
+				{
+					label: 'tempvoice',
+				},
 			);
-
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.channel_not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (!mainChannel)
 			return interaction.reply({
 				components: await simpleContainer(
@@ -72,13 +74,14 @@ class TvWaitingButton extends BaseButton {
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
-
 		try {
 			if (activeChannel.waitingRoomChannelId) {
 				// --- LOGIKA DISABLE WAITING ROOM ---
-				const waitingRoom = await client.channels
-					.fetch(activeChannel.waitingRoomChannelId, { force: true })
-					.catch(() => null);
+				const waitingRoom =
+					await client.container.helpers.discord.getChannelGlobalSafe(
+						client,
+						activeChannel.waitingRoomChannelId,
+					);
 				if (waitingRoom) {
 					// Kick semua user di waiting room
 					for (const [_, member] of waitingRoom.members) {
@@ -96,15 +99,15 @@ class TvWaitingButton extends BaseButton {
 						Connect: true, // Balikin ke default
 					},
 				);
-
 				activeChannel.waitingRoomChannelId = null;
 				await activeChannel.save();
-
 				await interaction.reply({
 					components: await simpleContainer(
 						interaction,
 						await t(interaction, 'tempvoice.waiting.disabled'),
-						{ color: 'Green' },
+						{
+							color: 'Green',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
@@ -113,12 +116,15 @@ class TvWaitingButton extends BaseButton {
 				const wrName = await t(
 					interaction,
 					'tempvoice.waiting.wr_channel_name',
-					{ name: mainChannel.name },
+					{
+						name: mainChannel.name,
+					},
 				);
 				const waitingRoom = await interaction.guild.channels.create({
 					name: wrName,
 					type: ChannelType.GuildVoice,
-					parent: mainChannel.parentId, // Taruh di kategori yang sama
+					parent: mainChannel.parentId,
+					// Taruh di kategori yang sama
 					permissionOverwrites: [
 						{
 							// @everyone: Boleh liat, boleh join
@@ -146,17 +152,17 @@ class TvWaitingButton extends BaseButton {
 						Connect: false,
 					},
 				);
-
 				activeChannel.waitingRoomChannelId = waitingRoom.id;
 				await activeChannel.save();
-
 				await interaction.reply({
 					components: await simpleContainer(
 						interaction,
 						await t(interaction, 'tempvoice.waiting.enabled', {
 							channel: waitingRoom.id,
 						}),
-						{ color: 'Green' },
+						{
+							color: 'Green',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
@@ -169,12 +175,13 @@ class TvWaitingButton extends BaseButton {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.fail'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 	}
 }
-
 exports.default = TvWaitingButton;

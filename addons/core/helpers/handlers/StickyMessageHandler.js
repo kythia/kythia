@@ -11,7 +11,6 @@ const {
 	ContainerBuilder,
 	TextDisplayBuilder,
 } = require('discord.js');
-
 class StickyMessageHandler {
 	/**
 	 * Handle sticky message logic
@@ -22,7 +21,6 @@ class StickyMessageHandler {
 		const { models, kythiaConfig, logger, helpers } = container;
 		const { StickyMessage } = models;
 		const { convertColor } = helpers.color;
-
 		try {
 			if (!message.channel || !message.channelId) return;
 
@@ -33,28 +31,27 @@ class StickyMessageHandler {
 				message.author.id === message.client.user.id
 			)
 				return;
-
 			const sticky = await StickyMessage.getCache({
 				channelId: message.channelId,
 			});
-
 			if (!sticky) return;
-
 			if (sticky.messageId) {
-				const oldMsg = await message.channel.messages
-					.fetch(sticky.messageId)
-					.catch(() => null);
+				const oldMsg = await helpers.discord.getMessageSafe(
+					message.channel,
+					sticky.messageId,
+				);
 				if (oldMsg) await oldMsg.delete().catch(() => {});
 			}
-
 			const stickyContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(sticky.message),
 				);
-
 			const sent = await message.channel.send({
 				components: [stickyContainer],
 				flags: MessageFlags.IsComponentsV2,
@@ -62,7 +59,6 @@ class StickyMessageHandler {
 					parse: [],
 				},
 			});
-
 			sticky.messageId = sent.id;
 			sticky.changed('messageId', true);
 			await sticky.save();
@@ -73,5 +69,4 @@ class StickyMessageHandler {
 		}
 	}
 }
-
 module.exports = StickyMessageHandler;

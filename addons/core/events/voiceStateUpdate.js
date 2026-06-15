@@ -13,21 +13,19 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class VoiceStateUpdateEvent extends BaseEvent {
 	async execute(oldState, newState) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { helpers, models, t, logger } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
-
 		const guild = newState.guild || oldState.guild;
 		const guildId = guild.id;
-
 		try {
 			if (!guild) return;
 
@@ -55,7 +53,6 @@ class VoiceStateUpdateEvent extends BaseEvent {
 				oldState.channelId &&
 				newState.channelId &&
 				oldState.channelId !== newState.channelId;
-
 			if (!isJoin && !isLeave && !isSwitch) return; // Ignore state updates like self-mute for now
 
 			if (isJoin) {
@@ -77,10 +74,10 @@ class VoiceStateUpdateEvent extends BaseEvent {
 				guildId: guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -88,11 +85,13 @@ class VoiceStateUpdateEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor(color, { from: 'discord', to: 'decimal' }),
+						convertColor(color, {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -117,13 +116,18 @@ class VoiceStateUpdateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -144,5 +148,4 @@ class VoiceStateUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = VoiceStateUpdateEvent;

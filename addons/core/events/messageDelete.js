@@ -20,22 +20,21 @@ const Sentry = require('@sentry/node');
  * Helper delay biar audit log sempet ke-generate
  */
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const { BaseEvent } = require('kythia-core');
-
 class MessageDeleteEvent extends BaseEvent {
 	async execute(message) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 
 		// 1. Basic Checks
 		if (!message.guild || !message.channelId) return;
 		if (message.author?.bot) return;
-
 		const { models, helpers, logger, t, redis } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
-
 		const guildId = message.guild.id;
 
 		// Save to snipe cache using Redis
@@ -58,18 +57,15 @@ class MessageDeleteEvent extends BaseEvent {
 				});
 			}
 		}
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId,
 			});
-
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await message.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
-
+			const logChannel = await helpers.discord.getChannelSafe(
+				message.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -109,14 +105,12 @@ class MessageDeleteEvent extends BaseEvent {
 			// 5. Determine Executor
 			let executor = null;
 			let logReason = null;
-
 			const entry = audit?.entries.find(
 				(e) =>
 					e.target?.id === message.author?.id &&
 					e.extra?.channel?.id === message.channelId &&
 					e.createdTimestamp > Date.now() - 20000,
 			);
-
 			if (entry) {
 				executor = entry.executor;
 				logReason = entry.reason;
@@ -126,7 +120,6 @@ class MessageDeleteEvent extends BaseEvent {
 					executor = message.author;
 				}
 			}
-
 			const executorId = executor?.id || 'Unknown';
 			const executorTag = executor?.tag || 'Unknown User';
 			const isSelfDelete = message.author && executor?.id === message.author.id;
@@ -142,7 +135,6 @@ class MessageDeleteEvent extends BaseEvent {
 			} else if (message.partial) {
 				contentText = '\n**Content:** *(Message not cached)*';
 			}
-
 			let attachmentText = '';
 			if (message.attachments.size > 0) {
 				const fileNames = message.attachments
@@ -150,7 +142,6 @@ class MessageDeleteEvent extends BaseEvent {
 					.join(', ');
 				attachmentText = `\n**Attachments (${message.attachments.size}):** ${fileNames.length > 200 ? `${fileNames.substring(0, 197)}...` : fileNames}`;
 			}
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
@@ -188,9 +179,15 @@ class MessageDeleteEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
@@ -198,7 +195,8 @@ class MessageDeleteEvent extends BaseEvent {
 			// 7. Send Log (Include Files!)
 			await logChannel.send({
 				components,
-				files: filesToUpload, // Re-uploaded attachments
+				files: filesToUpload,
+				// Re-uploaded attachments
 				flags: MessageFlags.IsComponentsV2,
 				allowedMentions: {
 					parse: [],
@@ -207,7 +205,6 @@ class MessageDeleteEvent extends BaseEvent {
 		} catch (err) {
 			// Ignore permission errors
 			if (err.code === 50013 || err.code === 50001) return;
-
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'messageDelete',
 			});
@@ -217,5 +214,4 @@ class MessageDeleteEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = MessageDeleteEvent;

@@ -21,7 +21,6 @@ const grabHelper = require('../../helpers/grab');
 class GrabCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ManageGuildExpressions;
 	botPermissions = PermissionFlagsBits.ManageGuildExpressions;
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('grab')
 		.setDescription('🛍️ grab stickers or emojis from messages.')
@@ -71,7 +70,6 @@ class GrabCommand extends BaseCommand {
 		.setName('Grab Sticker/Emoji')
 		.setType(ApplicationCommandType.Message);
 	contextMenuDescription = '🛍️ Grab sticker or emoji from this message.';
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
@@ -211,7 +209,10 @@ class GrabCommand extends BaseCommand {
 				const stickerName = interaction.options.getString('name');
 				let targetMessage;
 				try {
-					targetMessage = await interaction.channel.messages.fetch(messageId);
+					targetMessage = await helpers.discord.getMessageSafe(
+						interaction.channel,
+						messageId,
+					);
 				} catch {
 					const components = await simpleContainer(
 						interaction,
@@ -458,5 +459,4 @@ class GrabCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = GrabCommand;

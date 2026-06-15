@@ -14,30 +14,28 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { Sentry } = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class AutoModerationRuleUpdateEvent extends BaseEvent {
 	async execute(oldRule, newRule) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!newRule.guild) return;
 		const { models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
-
 		const guildId = newRule.guild.id;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await newRule.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				newRule.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -45,7 +43,6 @@ class AutoModerationRuleUpdateEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			if (!newRule.guild.members.me?.permissions?.has('ViewAuditLog')) return;
 			const audit = await newRule.guild
 				.fetchAuditLogs({
@@ -54,14 +51,11 @@ class AutoModerationRuleUpdateEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!audit) return;
-
 			const entry = audit.entries.find(
 				(e) =>
 					e.target?.id === newRule.id && e.createdTimestamp > Date.now() - 5000,
 			);
-
 			if (!entry) return;
-
 			const changes = [];
 			if (oldRule.name !== newRule.name) {
 				changes.push(`**Name**: \`${oldRule.name}\` ➔ \`${newRule.name}\``);
@@ -71,14 +65,15 @@ class AutoModerationRuleUpdateEvent extends BaseEvent {
 					`**Enabled**: \`${oldRule.enabled ? 'Yes' : 'No'}\` ➔ \`${newRule.enabled ? 'Yes' : 'No'}\``,
 				);
 			}
-
 			if (changes.length === 0) return;
-
 			const executor = entry.executor;
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Blurple', { from: 'discord', to: 'decimal' }),
+						convertColor('Blurple', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -106,13 +101,18 @@ class AutoModerationRuleUpdateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -130,5 +130,4 @@ class AutoModerationRuleUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = AutoModerationRuleUpdateEvent;

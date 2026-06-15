@@ -7,26 +7,22 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ResignCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('resign')
 			.setDescription('🏃‍♂️ Resign from your current employer.');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user?.employerId) {
 			const msg = await t(
 				interaction,
@@ -40,13 +36,10 @@ class ResignCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const employerId = user.employerId;
-
 		user.employerId = null;
 		user.changed('employerId', true);
 		await user.save();
-
 		const msg = await t(interaction, 'economy.company.resign.success');
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Green',
@@ -54,8 +47,10 @@ class ResignCommand extends BaseCommand {
 
 		// Try to notify employer
 		try {
-			const employerDiscordUser =
-				await interaction.client.users.fetch(employerId);
+			const employerDiscordUser = await helpers.discord.getUserSafe(
+				interaction.client,
+				employerId,
+			);
 			if (employerDiscordUser) {
 				const dmMsg = await t(interaction, 'economy.company.resign.dm', {
 					employee: interaction.user.username,
@@ -71,12 +66,10 @@ class ResignCommand extends BaseCommand {
 					.catch(() => {});
 			}
 		} catch {}
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = ResignCommand;

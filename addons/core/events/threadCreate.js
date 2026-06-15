@@ -15,7 +15,6 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const channelTypeNames = {
 	[ChannelType.GuildText]: 'Text Channel',
 	[ChannelType.GuildVoice]: 'Voice Channel',
@@ -32,7 +31,6 @@ const channelTypeNames = {
 	[ChannelType.DM]: 'Direct Message',
 	[ChannelType.GroupDM]: 'Group DM',
 };
-
 function humanChannelType(type) {
 	if (typeof type === 'string' && channelTypeNames[type])
 		return channelTypeNames[type];
@@ -42,29 +40,28 @@ function humanChannelType(type) {
 	if (typeof type === 'number') return `Unknown (${type})`;
 	return 'Unknown';
 }
-
 const { BaseEvent } = require('kythia-core');
-
 class ThreadCreateEvent extends BaseEvent {
 	async execute(thread) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!thread.guild) return;
 		const { models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 		const guildId = thread.guild.id;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId: thread.guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await thread.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				thread.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -72,7 +69,6 @@ class ThreadCreateEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			if (!thread.guild.members.me?.permissions?.has('ViewAuditLog')) return;
 			const audit = await thread.guild
 				.fetchAuditLogs({
@@ -81,19 +77,19 @@ class ThreadCreateEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!audit) return;
-
 			const entry = audit.entries.find(
 				(e) =>
 					e.target?.id === thread.id && e.createdTimestamp > Date.now() - 5000,
 			);
-
 			if (!entry) return;
-
 			const executor = entry.executor;
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Green', { from: 'discord', to: 'decimal' }),
+						convertColor('Green', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -125,13 +121,18 @@ class ThreadCreateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -149,5 +150,4 @@ class ThreadCreateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = ThreadCreateEvent;

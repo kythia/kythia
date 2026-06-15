@@ -26,20 +26,29 @@ const rrHelpers = require('../../reaction-role/helpers/index.js');
 app.get('/', async (c) => {
 	const { ReactionRole } = getModels(c);
 	const where = {};
-
 	const guildId = c.req.query('guildId');
 	const channelId = c.req.query('channelId');
 	const messageId = c.req.query('messageId');
-
 	if (guildId) where.guildId = guildId;
 	if (channelId) where.channelId = channelId;
 	if (messageId) where.messageId = messageId;
-
 	try {
-		const data = await ReactionRole.getAllCache({ where });
-		return c.json({ success: true, count: data.length, data });
+		const data = await ReactionRole.getAllCache({
+			where,
+		});
+		return c.json({
+			success: true,
+			count: data.length,
+			data,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -61,7 +70,6 @@ app.post('/', async (c) => {
 	const { ReactionRole } = getModels(c);
 	const body = await c.req.json();
 	const { guildId, channelId, messageId, emoji, roleId } = body;
-
 	if (!guildId || !channelId || !messageId || !emoji || !roleId) {
 		return c.json(
 			{
@@ -72,20 +80,25 @@ app.post('/', async (c) => {
 			400,
 		);
 	}
-
 	try {
 		// Fetch the Discord channel & message
-		const channel = await client.channels.fetch(channelId).catch(() => null);
+		const { getChannelGlobalSafe, getMessageSafe } = container.helpers.discord;
+		const channel = await getChannelGlobalSafe(client, channelId);
 		if (!channel)
 			return c.json(
-				{ success: false, error: `Channel ${channelId} not found` },
+				{
+					success: false,
+					error: `Channel ${channelId} not found`,
+				},
 				404,
 			);
-
-		const message = await channel.messages.fetch(messageId).catch(() => null);
+		const message = await getMessageSafe(channel, messageId);
 		if (!message)
 			return c.json(
-				{ success: false, error: `Message ${messageId} not found` },
+				{
+					success: false,
+					error: `Message ${messageId} not found`,
+				},
 				404,
 			);
 
@@ -93,15 +106,30 @@ app.post('/', async (c) => {
 		try {
 			await message.react(emoji);
 		} catch (_) {
-			return c.json({ success: false, error: `Invalid emoji: ${emoji}` }, 400);
+			return c.json(
+				{
+					success: false,
+					error: `Invalid emoji: ${emoji}`,
+				},
+				400,
+			);
 		}
 
 		// Upsert — find existing or create new
 		const [rr, created] = await ReactionRole.findOrCreateCache({
-			where: { guildId, messageId, emoji },
-			defaults: { guildId, channelId, messageId, emoji, roleId },
+			where: {
+				guildId,
+				messageId,
+				emoji,
+			},
+			defaults: {
+				guildId,
+				channelId,
+				messageId,
+				emoji,
+				roleId,
+			},
 		});
-
 		if (!created) {
 			// Update role & channel on existing record
 			rr.roleId = roleId;
@@ -111,10 +139,19 @@ app.post('/', async (c) => {
 
 		// Refresh the live Discord message
 		await rrHelpers.refreshReactionRoleMessage(messageId, container);
-
-		return c.json({ success: true, created, data: rr });
+		return c.json({
+			success: true,
+			created,
+			data: rr,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -153,26 +190,30 @@ app.delete('/message/:messageId', async (c) => {
 	const client = getBot(c);
 	const { ReactionRole } = getModels(c);
 	const messageId = c.req.param('messageId');
-
 	try {
-		const records = await ReactionRole.getAllCache({ where: { messageId } });
-
+		const records = await ReactionRole.getAllCache({
+			where: {
+				messageId,
+			},
+		});
 		if (records.length === 0) {
 			return c.json(
-				{ success: false, error: 'No reaction roles found for this message' },
+				{
+					success: false,
+					error: 'No reaction roles found for this message',
+				},
 				404,
 			);
 		}
-
 		const channelId = records[0].channelId;
 
 		// Remove all bot reactions (best-effort)
 		try {
-			const channel = await client.channels.fetch(channelId).catch(() => null);
+			const { getChannelGlobalSafe, getMessageSafe } =
+				client.container.helpers.discord;
+			const channel = await getChannelGlobalSafe(client, channelId);
 			if (channel) {
-				const message = await channel.messages
-					.fetch(messageId)
-					.catch(() => null);
+				const message = await getMessageSafe(channel, messageId);
 				if (message) {
 					for (const rr of records) {
 						try {
@@ -198,15 +239,22 @@ app.delete('/message/:messageId', async (c) => {
 
 		// Bulk destroy all records for this message
 		const deletedCount = await ReactionRole.destroyAndClearCache({
-			where: { messageId },
+			where: {
+				messageId,
+			},
 		});
-
 		return c.json({
 			success: true,
 			message: `Deleted ${deletedCount} reaction role(s) for message ${messageId}`,
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -223,12 +271,20 @@ app.delete('/message/:messageId', async (c) => {
 app.post('/message/:messageId/refresh', async (c) => {
 	const container = getContainer(c);
 	const messageId = c.req.param('messageId');
-
 	try {
 		await rrHelpers.refreshReactionRoleMessage(messageId, container);
-		return c.json({ success: true, message: `Message ${messageId} refreshed` });
+		return c.json({
+			success: true,
+			message: `Message ${messageId} refreshed`,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -245,15 +301,24 @@ app.post('/message/:messageId/refresh', async (c) => {
 app.get('/panels', async (c) => {
 	const { ReactionRolePanel, ReactionRole } = getModels(c);
 	const guildId = c.req.query('guildId');
-
 	if (!guildId)
-		return c.json({ success: false, error: 'guildId is required' }, 400);
-
+		return c.json(
+			{
+				success: false,
+				error: 'guildId is required',
+			},
+			400,
+		);
 	try {
-		const panels = await ReactionRolePanel.getAllCache({ where: { guildId } });
-
+		const panels = await ReactionRolePanel.getAllCache({
+			where: {
+				guildId,
+			},
+		});
 		const bindings = await ReactionRole.getAllCache({
-			where: { guildId },
+			where: {
+				guildId,
+			},
 			attributes: ['panelId'],
 		});
 		const countMap = {};
@@ -261,14 +326,23 @@ app.get('/panels', async (c) => {
 			if (b.panelId != null)
 				countMap[b.panelId] = (countMap[b.panelId] || 0) + 1;
 		}
-
 		const data = panels.map((p) => ({
 			...p.toJSON(),
 			emojiCount: countMap[p.id] || 0,
 		}));
-		return c.json({ success: true, count: data.length, data });
+		return c.json({
+			success: true,
+			count: data.length,
+			data,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -280,16 +354,38 @@ app.get('/panels', async (c) => {
 app.get('/panels/:id', async (c) => {
 	const { ReactionRolePanel, ReactionRole } = getModels(c);
 	const id = c.req.param('id');
-
 	try {
-		const panel = await ReactionRolePanel.getCache({ id: id });
+		const panel = await ReactionRolePanel.getCache({
+			id: id,
+		});
 		if (!panel)
-			return c.json({ success: false, error: 'Panel not found' }, 404);
-
-		const bindings = await ReactionRole.getAllCache({ where: { panelId: id } });
-		return c.json({ success: true, data: { ...panel.toJSON(), bindings } });
+			return c.json(
+				{
+					success: false,
+					error: 'Panel not found',
+				},
+				404,
+			);
+		const bindings = await ReactionRole.getAllCache({
+			where: {
+				panelId: id,
+			},
+		});
+		return c.json({
+			success: true,
+			data: {
+				...panel.toJSON(),
+				bindings,
+			},
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -316,24 +412,27 @@ app.post('/panels', async (c) => {
 		messageId: bodyMessageId,
 		layout = null,
 	} = body;
-
 	if (!guildId || !channelId) {
 		return c.json(
-			{ success: false, error: 'guildId and channelId are required' },
+			{
+				success: false,
+				error: 'guildId and channelId are required',
+			},
 			400,
 		);
 	}
-
 	try {
-		const channel = await client.channels.fetch(channelId).catch(() => null);
+		const { getChannelGlobalSafe, getMessageSafe } = container.helpers.discord;
+		const channel = await getChannelGlobalSafe(client, channelId);
 		if (!channel?.isTextBased())
 			return c.json(
-				{ success: false, error: 'Channel not found or not a text channel' },
+				{
+					success: false,
+					error: 'Channel not found or not a text channel',
+				},
 				404,
 			);
-
 		let panelMessageId = null;
-
 		if (mode === 'use_message') {
 			if (!bodyMessageId)
 				return c.json(
@@ -343,10 +442,13 @@ app.post('/panels', async (c) => {
 					},
 					400,
 				);
-			const msg = await channel.messages.fetch(bodyMessageId).catch(() => null);
+			const msg = await getMessageSafe(channel, bodyMessageId);
 			if (!msg)
 				return c.json(
-					{ success: false, error: `Message ${bodyMessageId} not found` },
+					{
+						success: false,
+						error: `Message ${bodyMessageId} not found`,
+					},
 					404,
 				);
 			panelMessageId = bodyMessageId;
@@ -371,7 +473,6 @@ app.post('/panels', async (c) => {
 			});
 			panelMessageId = sent.id;
 		}
-
 		const panel = await ReactionRolePanel.create({
 			guildId,
 			channelId,
@@ -388,10 +489,21 @@ app.post('/panels', async (c) => {
 
 		// Refresh to render the panel properly
 		await rrHelpers.refreshPanelMessage(panel.id, container);
-
-		return c.json({ success: true, data: panel }, 201);
+		return c.json(
+			{
+				success: true,
+				data: panel,
+			},
+			201,
+		);
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -411,15 +523,21 @@ app.patch('/panels/:id', async (c) => {
 	const id = c.req.param('id');
 	const body = await c.req.json();
 	const { MessageFlags } = require('discord.js');
-
 	try {
-		const panel = await ReactionRolePanel.getCache({ id: id });
+		const panel = await ReactionRolePanel.getCache({
+			id: id,
+		});
 		if (!panel)
-			return c.json({ success: false, error: 'Panel not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Panel not found',
+				},
+				404,
+			);
 
 		// --- Simple metadata fields ---
 		const oldPanelType = panel.panelType || 'reaction';
-
 		const metadataFields = [
 			'panelType',
 			'title',
@@ -432,22 +550,21 @@ app.patch('/panels/:id', async (c) => {
 		for (const key of metadataFields) {
 			if (body[key] !== undefined) panel[key] = body[key];
 		}
-
 		const newPanelType = panel.panelType || 'reaction';
 
 		// If switching panel types, add or remove the bot's emoji reactions on the active message
 		if (oldPanelType !== newPanelType && panel.messageId) {
 			try {
-				const channel = await client.channels
-					.fetch(panel.channelId)
-					.catch(() => null);
+				const { getChannelGlobalSafe, getMessageSafe } =
+					container.helpers.discord;
+				const channel = await getChannelGlobalSafe(client, panel.channelId);
 				if (channel) {
-					const message = await channel.messages
-						.fetch(panel.messageId)
-						.catch(() => null);
+					const message = await getMessageSafe(channel, panel.messageId);
 					if (message) {
 						const bindings = await ReactionRole.getAllCache({
-							where: { panelId: panel.id },
+							where: {
+								panelId: panel.id,
+							},
 						});
 						for (const rr of bindings) {
 							if (newPanelType === 'dropdown') {
@@ -475,7 +592,6 @@ app.patch('/panels/:id', async (c) => {
 		const newMessageId = body.messageId;
 		const channelChanging = newChannelId && newChannelId !== panel.channelId;
 		const modeChanging = newMode && newMode !== panel.mode;
-
 		if (
 			channelChanging ||
 			modeChanging ||
@@ -483,10 +599,9 @@ app.patch('/panels/:id', async (c) => {
 		) {
 			const targetChannelId = newChannelId || panel.channelId;
 			const targetMode = newMode || panel.mode;
-
-			const targetChannel = await client.channels
-				.fetch(targetChannelId)
-				.catch(() => null);
+			const { getChannelGlobalSafe, getMessageSafe } =
+				container.helpers.discord;
+			const targetChannel = await getChannelGlobalSafe(client, targetChannelId);
 			if (!targetChannel?.isTextBased()) {
 				return c.json(
 					{
@@ -499,9 +614,10 @@ app.patch('/panels/:id', async (c) => {
 
 			// Fetch all bindings before migration
 			const bindings = await ReactionRole.getAllCache({
-				where: { panelId: panel.id },
+				where: {
+					panelId: panel.id,
+				},
 			});
-
 			if (targetMode === 'use_message') {
 				// Attaching to an existing message
 				if (!newMessageId) {
@@ -513,9 +629,7 @@ app.patch('/panels/:id', async (c) => {
 						400,
 					);
 				}
-				const targetMessage = await targetChannel.messages
-					.fetch(newMessageId)
-					.catch(() => null);
+				const targetMessage = await getMessageSafe(targetChannel, newMessageId);
 				if (!targetMessage) {
 					return c.json(
 						{
@@ -529,13 +643,12 @@ app.patch('/panels/:id', async (c) => {
 				// Best-effort: remove reactions from old message
 				if (panel.messageId && (channelChanging || modeChanging)) {
 					try {
-						const oldChannel = await client.channels
-							.fetch(panel.channelId)
-							.catch(() => null);
+						const oldChannel = await getChannelGlobalSafe(
+							client,
+							panel.channelId,
+						);
 						const oldMessage = oldChannel
-							? await oldChannel.messages
-									.fetch(panel.messageId)
-									.catch(() => null)
+							? await getMessageSafe(oldChannel, panel.messageId)
 							: null;
 						if (oldMessage)
 							await oldMessage.reactions.removeAll().catch(() => {});
@@ -548,7 +661,6 @@ app.patch('/panels/:id', async (c) => {
 						await targetMessage.react(rr.emoji);
 					} catch (_) {}
 				}
-
 				panel.channelId = targetChannelId;
 				panel.messageId = newMessageId;
 				panel.mode = 'use_message';
@@ -573,13 +685,12 @@ app.patch('/panels/:id', async (c) => {
 				// Delete old panel message if channel is changing (best-effort)
 				if (channelChanging && panel.messageId) {
 					try {
-						const oldChannel = await client.channels
-							.fetch(panel.channelId)
-							.catch(() => null);
+						const oldChannel = await getChannelGlobalSafe(
+							client,
+							panel.channelId,
+						);
 						const oldMessage = oldChannel
-							? await oldChannel.messages
-									.fetch(panel.messageId)
-									.catch(() => null)
+							? await getMessageSafe(oldChannel, panel.messageId)
 							: null;
 						if (oldMessage) await oldMessage.delete().catch(() => {});
 					} catch (_) {}
@@ -588,8 +699,15 @@ app.patch('/panels/:id', async (c) => {
 				// Update binding records to point at new channel/message
 				if (bindings.length > 0) {
 					await ReactionRole.update(
-						{ channelId: targetChannelId, messageId: sent.id },
-						{ where: { panelId: panel.id } },
+						{
+							channelId: targetChannelId,
+							messageId: sent.id,
+						},
+						{
+							where: {
+								panelId: panel.id,
+							},
+						},
 					);
 					// Re-react on the new message
 					for (const rr of bindings) {
@@ -598,19 +716,25 @@ app.patch('/panels/:id', async (c) => {
 						} catch (_) {}
 					}
 				}
-
 				panel.channelId = targetChannelId;
 				panel.messageId = sent.id;
 				panel.mode = 'post_embed';
 			}
 		}
-
 		await panel.save();
 		await rrHelpers.refreshPanelMessage(panel.id, container);
-
-		return c.json({ success: true, data: panel });
+		return c.json({
+			success: true,
+			data: panel,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -623,24 +747,31 @@ app.delete('/panels/:id', async (c) => {
 	const client = getBot(c);
 	const { ReactionRolePanel, ReactionRole } = getModels(c);
 	const id = c.req.param('id');
-
 	try {
-		const panel = await ReactionRolePanel.getCache({ id: id });
+		const panel = await ReactionRolePanel.getCache({
+			id: id,
+		});
 		if (!panel)
-			return c.json({ success: false, error: 'Panel not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Panel not found',
+				},
+				404,
+			);
 
 		// Remove bot reactions (best-effort)
 		try {
-			const channel = await client.channels
-				.fetch(panel.channelId)
-				.catch(() => null);
+			const { getChannelGlobalSafe, getMessageSafe } =
+				client.container.helpers.discord;
+			const channel = await getChannelGlobalSafe(client, panel.channelId);
 			if (channel && panel.messageId) {
-				const message = await channel.messages
-					.fetch(panel.messageId)
-					.catch(() => null);
+				const message = await getMessageSafe(channel, panel.messageId);
 				if (message) {
 					const bindings = await ReactionRole.getAllCache({
-						where: { panelId: panel.id },
+						where: {
+							panelId: panel.id,
+						},
 					});
 					for (const rr of bindings) {
 						try {
@@ -657,12 +788,20 @@ app.delete('/panels/:id', async (c) => {
 				}
 			}
 		} catch (_) {}
-
 		await panel.destroy(); // cascades to reaction_roles
 
-		return c.json({ success: true, message: `Panel ${id} deleted` });
+		return c.json({
+			success: true,
+			message: `Panel ${id} deleted`,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -679,29 +818,45 @@ app.post('/panels/:id/emoji', async (c) => {
 	const id = c.req.param('id');
 	const body = await c.req.json();
 	const { emoji, roleId, label } = body;
-
 	if (!emoji || !roleId)
 		return c.json(
-			{ success: false, error: 'emoji and roleId are required' },
+			{
+				success: false,
+				error: 'emoji and roleId are required',
+			},
 			400,
 		);
-
 	try {
-		const panel = await ReactionRolePanel.getCache({ id: id });
+		const panel = await ReactionRolePanel.getCache({
+			id: id,
+		});
 		if (!panel)
-			return c.json({ success: false, error: 'Panel not found' }, 404);
-
-		const channel = await client.channels
-			.fetch(panel.channelId)
-			.catch(() => null);
+			return c.json(
+				{
+					success: false,
+					error: 'Panel not found',
+				},
+				404,
+			);
+		const { getChannelGlobalSafe, getMessageSafe } = container.helpers.discord;
+		const channel = await getChannelGlobalSafe(client, panel.channelId);
 		if (!channel)
-			return c.json({ success: false, error: 'Panel channel not found' }, 404);
-
-		const message = await channel.messages
-			.fetch(panel.messageId)
-			.catch(() => null);
+			return c.json(
+				{
+					success: false,
+					error: 'Panel channel not found',
+				},
+				404,
+			);
+		const message = await getMessageSafe(channel, panel.messageId);
 		if (!message)
-			return c.json({ success: false, error: 'Panel message not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Panel message not found',
+				},
+				404,
+			);
 
 		// Validate emoji
 		try {
@@ -712,11 +867,20 @@ app.post('/panels/:id/emoji', async (c) => {
 				} catch (_) {}
 			}
 		} catch (_) {
-			return c.json({ success: false, error: `Invalid emoji: ${emoji}` }, 400);
+			return c.json(
+				{
+					success: false,
+					error: `Invalid emoji: ${emoji}`,
+				},
+				400,
+			);
 		}
-
 		const [rr, created] = await ReactionRole.findOrCreateCache({
-			where: { guildId: panel.guildId, messageId: panel.messageId, emoji },
+			where: {
+				guildId: panel.guildId,
+				messageId: panel.messageId,
+				emoji,
+			},
 			defaults: {
 				guildId: panel.guildId,
 				channelId: panel.channelId,
@@ -727,18 +891,25 @@ app.post('/panels/:id/emoji', async (c) => {
 				panelId: panel.id,
 			},
 		});
-
 		if (!created) {
 			rr.roleId = roleId;
 			if (label !== undefined) rr.label = label || null;
 			await rr.save();
 		}
-
 		await rrHelpers.refreshPanelMessage(panel.id, container);
-
-		return c.json({ success: true, created, data: rr });
+		return c.json({
+			success: true,
+			created,
+			data: rr,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -752,20 +923,26 @@ app.delete('/panels/:id/emoji/:rrId', async (c) => {
 	const container = getContainer(c);
 	const { ReactionRole } = getModels(c);
 	const rrId = c.req.param('rrId');
-
 	try {
-		const rr = await ReactionRole.getCache({ id: rrId });
-		if (!rr) return c.json({ success: false, error: 'Binding not found' }, 404);
+		const rr = await ReactionRole.getCache({
+			id: rrId,
+		});
+		if (!rr)
+			return c.json(
+				{
+					success: false,
+					error: 'Binding not found',
+				},
+				404,
+			);
 
 		// Remove bot reaction (best-effort)
 		try {
-			const channel = await client.channels
-				.fetch(rr.channelId)
-				.catch(() => null);
+			const { getChannelGlobalSafe, getMessageSafe } =
+				container.helpers.discord;
+			const channel = await getChannelGlobalSafe(client, rr.channelId);
 			if (channel) {
-				const message = await channel.messages
-					.fetch(rr.messageId)
-					.catch(() => null);
+				const message = await getMessageSafe(channel, rr.messageId);
 				if (message) {
 					const reaction = message.reactions.cache.find((r) => {
 						const e = r.emoji.id ?? r.emoji.name;
@@ -777,15 +954,21 @@ app.delete('/panels/:id/emoji/:rrId', async (c) => {
 				}
 			}
 		} catch (_) {}
-
 		const panelId = rr.panelId;
 		await rr.destroy();
-
 		if (panelId) await rrHelpers.refreshPanelMessage(panelId, container);
-
-		return c.json({ success: true, message: `Binding ${rrId} removed` });
+		return c.json({
+			success: true,
+			message: `Binding ${rrId} removed`,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -797,12 +980,20 @@ app.delete('/panels/:id/emoji/:rrId', async (c) => {
 app.post('/panels/:id/refresh', async (c) => {
 	const container = getContainer(c);
 	const id = c.req.param('id');
-
 	try {
 		await rrHelpers.refreshPanelMessage(parseInt(id, 10), container);
-		return c.json({ success: true, message: `Panel ${id} refreshed` });
+		return c.json({
+			success: true,
+			message: `Panel ${id} refreshed`,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -825,32 +1016,42 @@ app.patch('/panels/:id/emoji/:rrId', async (c) => {
 	const { ReactionRole } = getModels(c);
 	const rrId = c.req.param('rrId');
 	const body = await c.req.json();
-
 	try {
-		const rr = await ReactionRole.getCache({ id: rrId });
-		if (!rr) return c.json({ success: false, error: 'Binding not found' }, 404);
-
+		const rr = await ReactionRole.getCache({
+			id: rrId,
+		});
+		if (!rr)
+			return c.json(
+				{
+					success: false,
+					error: 'Binding not found',
+				},
+				404,
+			);
 		const newEmoji = body.emoji ?? rr.emoji;
 		const newRoleId = body.roleId ?? rr.roleId;
 		const newLabel = body.label !== undefined ? body.label : rr.label;
 		const emojiChanged = newEmoji !== rr.emoji;
-
 		if (emojiChanged) {
 			// Fetch the panel message for reaction updates
-			const channel = await client.channels
-				.fetch(rr.channelId)
-				.catch(() => null);
+			const channel =
+				await client.container.helpers.discord.getChannelGlobalSafe(
+					client,
+					rr.channelId,
+				);
 			const message = channel
-				? await channel.messages.fetch(rr.messageId).catch(() => null)
+				? await container.helpers.discord.getMessageSafe(channel, rr.messageId)
 				: null;
-
 			if (message) {
 				// Validate new emoji first
 				try {
 					await message.react(newEmoji);
 				} catch (_) {
 					return c.json(
-						{ success: false, error: `Invalid emoji: ${newEmoji}` },
+						{
+							success: false,
+							error: `Invalid emoji: ${newEmoji}`,
+						},
 						400,
 					);
 				}
@@ -867,14 +1068,24 @@ app.patch('/panels/:id/emoji/:rrId', async (c) => {
 				} catch (_) {}
 			}
 		}
-
-		await rr.update({ emoji: newEmoji, roleId: newRoleId, label: newLabel });
-
+		await rr.update({
+			emoji: newEmoji,
+			roleId: newRoleId,
+			label: newLabel,
+		});
 		if (rr.panelId) await rrHelpers.refreshPanelMessage(rr.panelId, container);
-
-		return c.json({ success: true, data: rr });
+		return c.json({
+			success: true,
+			data: rr,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -893,7 +1104,6 @@ app.put('/panels/:id/emoji', async (c) => {
 	const id = c.req.param('id');
 	const body = await c.req.json();
 	const { bindings } = body;
-
 	if (!Array.isArray(bindings)) {
 		return c.json(
 			{
@@ -903,18 +1113,28 @@ app.put('/panels/:id/emoji', async (c) => {
 			400,
 		);
 	}
-
 	try {
-		const panel = await ReactionRolePanel.getCache({ id: id });
+		const panel = await ReactionRolePanel.getCache({
+			id: id,
+		});
 		if (!panel)
-			return c.json({ success: false, error: 'Panel not found' }, 404);
-
-		const channel = await client.channels
-			.fetch(panel.channelId)
-			.catch(() => null);
+			return c.json(
+				{
+					success: false,
+					error: 'Panel not found',
+				},
+				404,
+			);
+		const channel = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			panel.channelId,
+		);
 		const message =
 			channel && panel.messageId
-				? await channel.messages.fetch(panel.messageId).catch(() => null)
+				? await container.helpers.discord.getMessageSafe(
+						channel,
+						panel.messageId,
+					)
 				: null;
 
 		// Remove all existing bot reactions (best-effort)
@@ -924,7 +1144,9 @@ app.put('/panels/:id/emoji', async (c) => {
 			} catch (_) {
 				// Fallback: individually remove bot's reactions
 				const existing = await ReactionRole.getAllCache({
-					where: { panelId: panel.id },
+					where: {
+						panelId: panel.id,
+					},
 				});
 				for (const rr of existing) {
 					try {
@@ -942,7 +1164,11 @@ app.put('/panels/:id/emoji', async (c) => {
 		}
 
 		// Destroy all existing bindings for this panel
-		await ReactionRole.destroyAndClearCache({ where: { panelId: panel.id } });
+		await ReactionRole.destroyAndClearCache({
+			where: {
+				panelId: panel.id,
+			},
+		});
 
 		// Create new bindings and react
 		const created = [];
@@ -957,7 +1183,6 @@ app.put('/panels/:id/emoji', async (c) => {
 					continue; // Skip invalid emojis silently in bulk mode
 				}
 			}
-
 			const rr = await ReactionRole.create({
 				guildId: panel.guildId,
 				channelId: panel.channelId,
@@ -969,12 +1194,20 @@ app.put('/panels/:id/emoji', async (c) => {
 			});
 			created.push(rr);
 		}
-
 		await rrHelpers.refreshPanelMessage(panel.id, container);
-
-		return c.json({ success: true, count: created.length, data: created });
+		return c.json({
+			success: true,
+			count: created.length,
+			data: created,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -992,27 +1225,41 @@ app.post('/panels/:id/emoji/validate', async (c) => {
 	const id = c.req.param('id');
 	const body = await c.req.json();
 	const { emoji } = body;
-
 	if (!emoji)
-		return c.json({ success: false, error: 'emoji is required' }, 400);
-
+		return c.json(
+			{
+				success: false,
+				error: 'emoji is required',
+			},
+			400,
+		);
 	try {
-		const panel = await ReactionRolePanel.getCache({ id: id });
+		const panel = await ReactionRolePanel.getCache({
+			id: id,
+		});
 		if (!panel)
-			return c.json({ success: false, error: 'Panel not found' }, 404);
-
-		const channel = await client.channels
-			.fetch(panel.channelId)
-			.catch(() => null);
+			return c.json(
+				{
+					success: false,
+					error: 'Panel not found',
+				},
+				404,
+			);
+		const channel = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			panel.channelId,
+		);
 		if (!channel)
 			return c.json({
 				success: true,
 				valid: false,
 				error: 'Panel channel not found',
 			});
-
 		const message = panel.messageId
-			? await channel.messages.fetch(panel.messageId).catch(() => null)
+			? await client.container.helpers.discord.getMessageSafe(
+					channel,
+					panel.messageId,
+				)
 			: null;
 		if (!message)
 			return c.json({
@@ -1020,14 +1267,16 @@ app.post('/panels/:id/emoji/validate', async (c) => {
 				valid: false,
 				error: 'Panel message not found',
 			});
-
 		try {
 			const reaction = await message.react(emoji);
 			// Remove the test reaction immediately
 			try {
 				await reaction.users.remove(client.user.id);
 			} catch (_) {}
-			return c.json({ success: true, valid: true });
+			return c.json({
+				success: true,
+				valid: true,
+			});
 		} catch (_) {
 			return c.json({
 				success: true,
@@ -1036,7 +1285,13 @@ app.post('/panels/:id/emoji/validate', async (c) => {
 			});
 		}
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -1054,22 +1309,32 @@ app.post('/panels/:id/duplicate', async (c) => {
 	const id = c.req.param('id');
 	const body = await c.req.json();
 	const { channelId: targetChannelId, title: overrideTitle } = body;
-
 	if (!targetChannelId) {
 		return c.json(
-			{ success: false, error: 'targetChannelId is required' },
+			{
+				success: false,
+				error: 'targetChannelId is required',
+			},
 			400,
 		);
 	}
-
 	try {
-		const sourcePanel = await ReactionRolePanel.getCache({ id: id });
+		const sourcePanel = await ReactionRolePanel.getCache({
+			id: id,
+		});
 		if (!sourcePanel)
-			return c.json({ success: false, error: 'Source panel not found' }, 404);
-
-		const targetChannel = await client.channels
-			.fetch(targetChannelId)
-			.catch(() => null);
+			return c.json(
+				{
+					success: false,
+					error: 'Source panel not found',
+				},
+				404,
+			);
+		const targetChannel =
+			await client.container.helpers.discord.getChannelGlobalSafe(
+				client,
+				targetChannelId,
+			);
 		if (!targetChannel?.isTextBased()) {
 			return c.json(
 				{
@@ -1114,7 +1379,9 @@ app.post('/panels/:id/duplicate', async (c) => {
 
 		// Copy all emoji bindings to the new panel
 		const sourceBindings = await ReactionRole.getAllCache({
-			where: { panelId: sourcePanel.id },
+			where: {
+				panelId: sourcePanel.id,
+			},
 		});
 		const newBindings = [];
 		for (const rr of sourceBindings) {
@@ -1135,13 +1402,24 @@ app.post('/panels/:id/duplicate', async (c) => {
 
 		// Refresh to render properly
 		await rrHelpers.refreshPanelMessage(newPanel.id, container);
-
 		return c.json(
-			{ success: true, data: { ...newPanel.toJSON(), bindings: newBindings } },
+			{
+				success: true,
+				data: {
+					...newPanel.toJSON(),
+					bindings: newBindings,
+				},
+			},
 			201,
 		);
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -1153,14 +1431,30 @@ app.post('/panels/:id/duplicate', async (c) => {
 app.get('/:id', async (c) => {
 	const { ReactionRole } = getModels(c);
 	const id = c.req.param('id');
-
 	try {
-		const rr = await ReactionRole.getCache({ id: id });
+		const rr = await ReactionRole.getCache({
+			id: id,
+		});
 		if (!rr)
-			return c.json({ success: false, error: 'ReactionRole not found' }, 404);
-		return c.json({ success: true, data: rr });
+			return c.json(
+				{
+					success: false,
+					error: 'ReactionRole not found',
+				},
+				404,
+			);
+		return c.json({
+			success: true,
+			data: rr,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -1178,27 +1472,34 @@ app.patch('/:id', async (c) => {
 	const { ReactionRole } = getModels(c);
 	const id = c.req.param('id');
 	const body = await c.req.json();
-
 	try {
-		const rr = await ReactionRole.getCache({ id: id });
+		const rr = await ReactionRole.getCache({
+			id: id,
+		});
 		if (!rr)
-			return c.json({ success: false, error: 'ReactionRole not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'ReactionRole not found',
+				},
+				404,
+			);
 		const oldEmoji = rr.emoji;
 		const newEmoji = body.emoji ?? rr.emoji;
 		const emojiChanged = newEmoji !== oldEmoji;
 
 		// If emoji is changing, validate the new emoji first
 		if (emojiChanged) {
-			const channel = await client.channels
-				.fetch(body.channelId ?? rr.channelId)
-				.catch(() => null);
-
+			const channel =
+				await client.container.helpers.discord.getChannelGlobalSafe(
+					client,
+					body.channelId ?? rr.channelId,
+				);
 			if (channel) {
-				const message = await channel.messages
-					.fetch(rr.messageId)
-					.catch(() => null);
-
+				const message = await container.helpers.discord.getMessageSafe(
+					channel,
+					rr.messageId,
+				);
 				if (message) {
 					// Remove old bot reaction
 					try {
@@ -1221,7 +1522,10 @@ app.patch('/:id', async (c) => {
 						await message.react(newEmoji);
 					} catch (_) {
 						return c.json(
-							{ success: false, error: `Invalid emoji: ${newEmoji}` },
+							{
+								success: false,
+								error: `Invalid emoji: ${newEmoji}`,
+							},
 							400,
 						);
 					}
@@ -1238,10 +1542,18 @@ app.patch('/:id', async (c) => {
 
 		// Refresh the live Discord message
 		await rrHelpers.refreshReactionRoleMessage(rr.messageId, container);
-
-		return c.json({ success: true, data: rr });
+		return c.json({
+			success: true,
+			data: rr,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -1257,12 +1569,18 @@ app.delete('/:id', async (c) => {
 	const container = getContainer(c);
 	const { ReactionRole } = getModels(c);
 	const id = c.req.param('id');
-
 	try {
-		const rr = await ReactionRole.getCache({ id: id });
+		const rr = await ReactionRole.getCache({
+			id: id,
+		});
 		if (!rr)
-			return c.json({ success: false, error: 'ReactionRole not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'ReactionRole not found',
+				},
+				404,
+			);
 		const { channelId, messageId, emoji } = rr;
 
 		// Destroy DB record first
@@ -1270,11 +1588,16 @@ app.delete('/:id', async (c) => {
 
 		// Remove bot reaction (best-effort)
 		try {
-			const channel = await client.channels.fetch(channelId).catch(() => null);
+			const channel =
+				await client.container.helpers.discord.getChannelGlobalSafe(
+					client,
+					channelId,
+				);
 			if (channel) {
-				const message = await channel.messages
-					.fetch(messageId)
-					.catch(() => null);
+				const message = await container.helpers.discord.getMessageSafe(
+					channel,
+					messageId,
+				);
 				if (message) {
 					const botReaction = message.reactions.cache.find((r) => {
 						const reactEmoji = r.emoji.id ?? r.emoji.name;
@@ -1294,14 +1617,18 @@ app.delete('/:id', async (c) => {
 
 		// Refresh the live Discord message with remaining reaction roles
 		await rrHelpers.refreshReactionRoleMessage(messageId, container);
-
 		return c.json({
 			success: true,
 			message: `ReactionRole (id=${id}) deleted successfully`,
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
-
 module.exports = app;

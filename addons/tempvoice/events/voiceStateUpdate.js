@@ -17,27 +17,25 @@ const {
 	TextDisplayBuilder,
 	MessageFlags,
 } = require('discord.js');
-
 const { BaseEvent } = require('kythia-core');
-
 class VoiceStateUpdateEvent extends BaseEvent {
 	async execute(oldState, newState) {
 		const container = this.container;
-		const _bot = { client: this.client, container: this.container };
-
+		const _bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { models, logger, client, t } = container;
 		const { TempVoiceConfig, TempVoiceChannel } = models;
-
 		const member = newState.member || oldState.member;
 		if (!member?.guild) return;
-
 		const guild = member.guild;
 		const newChannelId = newState.channelId;
 		const oldChannelId = oldState.channelId;
-
-		const config = await TempVoiceConfig.getCache({ guildId: guild.id });
+		const config = await TempVoiceConfig.getCache({
+			guildId: guild.id,
+		});
 		if (!config) return;
-
 		if (newChannelId === config.triggerChannelId && !member.user?.bot) {
 			// Prevent spam: if the user already owns an active temp voice channel,
 			// move them back to it instead of creating a new one.
@@ -54,7 +52,6 @@ class VoiceStateUpdateEvent extends BaseEvent {
 				}
 				return;
 			}
-
 			try {
 				const newChannel = await guild.channels.create({
 					name: `🎧┃${member.displayName}'s Room`,
@@ -91,9 +88,7 @@ class VoiceStateUpdateEvent extends BaseEvent {
 						},
 					],
 				});
-
 				await member.voice.setChannel(newChannel);
-
 				await TempVoiceChannel.create({
 					channelId: newChannel.id,
 					guildId: guild.id,
@@ -102,11 +97,12 @@ class VoiceStateUpdateEvent extends BaseEvent {
 			} catch (error) {
 				logger.error(
 					`Failed to create channel for ${member.user.tag}: ${error.message || error}`,
-					{ label: 'tempvoice' },
+					{
+						label: 'tempvoice',
+					},
 				);
 			}
 		}
-
 		if (
 			newChannelId &&
 			newChannelId !== config.triggerChannelId &&
@@ -116,19 +112,23 @@ class VoiceStateUpdateEvent extends BaseEvent {
 				waitingRoomChannelId: newChannelId,
 				guildId: guild.id,
 			});
-
 			if (mainChannel) {
 				try {
-					const owner = await guild.members
-						.fetch(mainChannel.ownerId)
-						.catch(() => null);
-					const ownerChannel = await client.channels
-						.fetch(mainChannel.channelId, { force: true })
-						.catch(() => null);
-
+					const owner = await container.helpers.discord.getMemberSafe(
+						guild,
+						mainChannel.ownerId,
+					);
+					const ownerChannel =
+						await client.container.helpers.discord.getChannelGlobalSafe(
+							client,
+							mainChannel.channelId,
+						);
 					if (owner && ownerChannel) {
-						const fakeInteraction = { guild, user: owner.user, client };
-
+						const fakeInteraction = {
+							guild,
+							user: owner.user,
+							client,
+						};
 						const msgContent = await t(
 							fakeInteraction,
 							'tempvoice.waiting.join_request',
@@ -137,7 +137,6 @@ class VoiceStateUpdateEvent extends BaseEvent {
 								user: `<@${member.id}>`,
 							},
 						);
-
 						const containerComponent = new ContainerBuilder()
 							.addTextDisplayComponents(
 								new TextDisplayBuilder().setContent(msgContent),
@@ -169,12 +168,10 @@ class VoiceStateUpdateEvent extends BaseEvent {
 										.setEmoji('❌'),
 								),
 							);
-
 						const reqMsg = await ownerChannel.send({
 							components: [containerComponent],
 							flags: MessageFlags.IsComponentsV2,
 						});
-
 						const requests = mainChannel.pendingJoinRequests || {};
 						requests[member.id] = reqMsg.id;
 						mainChannel.pendingJoinRequests = requests;
@@ -190,31 +187,32 @@ class VoiceStateUpdateEvent extends BaseEvent {
 				}
 			}
 		}
-
 		if (oldChannelId && oldChannelId !== config.triggerChannelId) {
 			const activeMainChannel = await TempVoiceChannel.getCache({
 				channelId: oldChannelId,
 			});
-
 			if (activeMainChannel) {
-				const channel = await client.channels
-					.fetch(oldChannelId, { force: true })
-					.catch(() => null);
-
+				const channel =
+					await client.container.helpers.discord.getChannelGlobalSafe(
+						client,
+						oldChannelId,
+					);
 				if (channel && channel.members.size === 0) {
 					logger.info(
 						`[TempVoice] Main channel ${oldChannelId} is now empty, deleting...`,
-						{ label: 'tempvoice' },
+						{
+							label: 'tempvoice',
+						},
 					);
 					await channel.delete('Temp channel empty.');
-
 					if (activeMainChannel.waitingRoomChannelId) {
-						const wr = await client.channels
-							.fetch(activeMainChannel.waitingRoomChannelId, { force: true })
-							.catch(() => null);
+						const wr =
+							await client.container.helpers.discord.getChannelGlobalSafe(
+								client,
+								activeMainChannel.waitingRoomChannelId,
+							);
 						if (wr) await wr.delete('Main temp channel deleted.');
 					}
-
 					await activeMainChannel.destroy();
 				}
 			}
@@ -227,18 +225,19 @@ class VoiceStateUpdateEvent extends BaseEvent {
 			if (mainChannel) {
 				const requests = mainChannel.pendingJoinRequests || {};
 				const messageId = requests[member.id];
-
 				if (messageId) {
-					const ownerChannel = await client.channels
-						.fetch(mainChannel.channelId, { force: true })
-						.catch(() => null);
+					const ownerChannel =
+						await client.container.helpers.discord.getChannelGlobalSafe(
+							client,
+							mainChannel.channelId,
+						);
 					if (ownerChannel) {
-						const msg = await ownerChannel.messages
-							.fetch(messageId)
-							.catch(() => null);
+						const msg = await container.helpers.discord.getMessageSafe(
+							ownerChannel,
+							messageId,
+						);
 						if (msg) await msg.delete().catch(() => {});
 					}
-
 					delete requests[member.id];
 					mainChannel.pendingJoinRequests = requests;
 					await mainChannel.save();
@@ -247,5 +246,4 @@ class VoiceStateUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = VoiceStateUpdateEvent;

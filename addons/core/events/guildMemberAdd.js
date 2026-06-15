@@ -13,18 +13,17 @@ const {
 	MessageFlags,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class GuildMemberAddEvent extends BaseEvent {
 	async execute(member) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
-
 		const guildId = member.guild.id;
 
 		// const [user] = await User.getOrCreateCache(
@@ -33,19 +32,23 @@ class GuildMemberAddEvent extends BaseEvent {
 		// );
 
 		// ── Audit log ────────────────────────────────────────────────
-		const setting = await ServerSetting.getCache({ guildId });
+		const setting = await ServerSetting.getCache({
+			guildId,
+		});
 		if (!setting?.auditLogChannelId) return;
-
-		const logChannel = await member.guild.channels
-			.fetch(setting.auditLogChannelId)
-			.catch(() => null);
-
+		const logChannel = await helpers.discord.getChannelSafe(
+			member.guild,
+			setting.auditLogChannelId,
+		);
 		if (logChannel?.isTextBased()) {
 			try {
 				const components = [
 					new ContainerBuilder()
 						.setAccentColor(
-							convertColor('Green', { from: 'discord', to: 'decimal' }),
+							convertColor('Green', {
+								from: 'discord',
+								to: 'decimal',
+							}),
 						)
 						.addTextDisplayComponents(
 							new TextDisplayBuilder().setContent(
@@ -75,17 +78,24 @@ class GuildMemberAddEvent extends BaseEvent {
 						)
 						.addTextDisplayComponents(
 							new TextDisplayBuilder().setContent(
-								await t({ guildId }, 'common.container.footer', {
-									username: this.client.user.username,
-								}),
+								await t(
+									{
+										guildId,
+									},
+									'common.container.footer',
+									{
+										username: this.client.user.username,
+									},
+								),
 							),
 						),
 				];
-
 				await logChannel.send({
 					components,
 					flags: MessageFlags.IsComponentsV2,
-					allowedMentions: { parse: [] },
+					allowedMentions: {
+						parse: [],
+					},
 				});
 			} catch (err) {
 				logger.error(`Error: ${err.message || err}`, {
@@ -98,5 +108,4 @@ class GuildMemberAddEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = GuildMemberAddEvent;

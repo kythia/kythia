@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class DeleteCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('delete')
@@ -24,25 +21,20 @@ class DeleteCommand extends BaseCommand {
 					.setAutocomplete(true)
 					.setRequired(true),
 			);
-
 	async autocomplete(interaction) {
 		const container = this.container;
 		const { models } = container;
 		const { TicketPanel } = models;
 		const focusedValue = interaction.options.getFocused();
-
 		const panels = await TicketPanel.getAllCache({
 			guildId: interaction.guild.id,
 		});
-
 		if (!panels || panels.length === 0) return interaction.respond([]);
-
 		const filtered = panels.filter(
 			(p) =>
 				p.title.toLowerCase().includes(focusedValue.toLowerCase()) ||
 				p.messageId.includes(focusedValue),
 		);
-
 		await interaction.respond(
 			filtered.slice(0, 25).map((p) => ({
 				name: `${p.title.substring(0, 50)} (${p.messageId})`,
@@ -50,19 +42,19 @@ class DeleteCommand extends BaseCommand {
 			})),
 		);
 	}
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, t, helpers, logger } = container;
 		const { TicketPanel, TicketConfig } = models;
 		const { simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		try {
 			const panelMessageId = interaction.options.getString('panel_id');
-			const panel = await TicketPanel.getCache({ messageId: panelMessageId });
-
+			const panel = await TicketPanel.getCache({
+				messageId: panelMessageId,
+			});
 			if (!panel) {
 				const desc = await t(interaction, 'ticket.errors.no_panels_found');
 				return interaction.editReply({
@@ -71,34 +63,36 @@ class DeleteCommand extends BaseCommand {
 					}),
 				});
 			}
-
 			try {
-				const channel = await interaction.guild.channels
-					.fetch(panel.channelId)
-					.catch(() => null);
+				const channel = await helpers.discord.getChannelSafe(
+					interaction.guild,
+					panel.channelId,
+				);
 				if (channel) {
-					const message = await channel.messages
-						.fetch(panel.messageId)
-						.catch(() => null);
+					const message = await helpers.discord.getMessageSafe(
+						channel,
+						panel.messageId,
+					);
 					if (message) await message.delete();
 				}
 			} catch (e) {
 				logger.warn(
 					`Failed to delete panel message ${panelMessageId}:`,
 					e.message,
-					{ label: 'ticket' },
+					{
+						label: 'ticket',
+					},
 				);
 			}
-
-			const relatedTypes = await TicketConfig.getAllCache({ panelMessageId });
+			const relatedTypes = await TicketConfig.getAllCache({
+				panelMessageId,
+			});
 			if (relatedTypes && relatedTypes.length > 0) {
 				for (const type of relatedTypes) {
 					await type.destroy();
 				}
 			}
-
 			await panel.destroy();
-
 			const desc = await t(interaction, 'ticket.panel.delete_success', {
 				title: panel.title,
 			});
@@ -114,10 +108,11 @@ class DeleteCommand extends BaseCommand {
 			});
 			const desc = await t(interaction, 'ticket.errors.generic');
 			await interaction.editReply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 			});
 		}
 	}
 }
-
 exports.default = DeleteCommand;

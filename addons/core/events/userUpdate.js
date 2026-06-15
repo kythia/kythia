@@ -13,14 +13,14 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class UserUpdateEvent extends BaseEvent {
 	async execute(oldUser, newUser) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
@@ -30,9 +30,7 @@ class UserUpdateEvent extends BaseEvent {
 		const discriminatorChanged =
 			oldUser.discriminator !== newUser.discriminator;
 		const avatarChanged = oldUser.avatar !== newUser.avatar;
-
 		if (!usernameChanged && !discriminatorChanged && !avatarChanged) return;
-
 		try {
 			// Prepare changes list
 			const changes = [];
@@ -52,9 +50,7 @@ class UserUpdateEvent extends BaseEvent {
 					`**Avatar:** [Old](${oldUser.displayAvatarURL()}) ➔ [New](${newUser.displayAvatarURL()})`,
 				);
 			}
-
 			if (changes.length === 0) return;
-
 			const description =
 				`👤 **User Updated Profile**\n\n` +
 				`**User:** ${newUser.tag} (<@${newUser.id}>)\n\n` +
@@ -77,17 +73,18 @@ class UserUpdateEvent extends BaseEvent {
 						// Ideally there would be a finer grain setting, but for now we follow general audit log.
 
 						if (!settings?.auditLogChannelId) continue;
-
-						const logChannel = await guild.channels
-							.fetch(settings.auditLogChannelId)
-							.catch(() => null);
-
+						const logChannel = await helpers.discord.getChannelSafe(
+							guild,
+							settings.auditLogChannelId,
+						);
 						if (!logChannel?.isTextBased()) continue;
-
 						const components = [
 							new ContainerBuilder()
 								.setAccentColor(
-									convertColor('Blurple', { from: 'discord', to: 'decimal' }),
+									convertColor('Blurple', {
+										from: 'discord',
+										to: 'decimal',
+									}),
 								)
 								.addTextDisplayComponents(
 									new TextDisplayBuilder().setContent(description),
@@ -110,13 +107,18 @@ class UserUpdateEvent extends BaseEvent {
 								)
 								.addTextDisplayComponents(
 									new TextDisplayBuilder().setContent(
-										await t({ guildId }, 'common.container.footer', {
-											username: this.client.user.username,
-										}),
+										await t(
+											{
+												guildId,
+											},
+											'common.container.footer',
+											{
+												username: this.client.user.username,
+											},
+										),
 									),
 								),
 						];
-
 						await logChannel.send({
 							components,
 							flags: MessageFlags.IsComponentsV2,
@@ -140,5 +142,4 @@ class UserUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = UserUpdateEvent;

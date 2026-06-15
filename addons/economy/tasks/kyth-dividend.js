@@ -7,28 +7,28 @@
  */
 
 const { Op } = require('sequelize');
-
 const { BaseTask } = require('kythia-core');
-
 class KythDividendTask extends BaseTask {
 	task = {
 		taskName: 'economy-kyth-dividend',
 		schedule: '0 0 * * *',
 		active: true,
 	};
-
 	async execute(container) {
 		const { client, models, logger } = container || this.container;
 		const { KythLiquidityPool, KythiaUser } = models;
-
 		if (client.shard && !client.shard.ids.includes(0)) return;
-
-		logger.info('Checking KYTH staking dividends...', { label: 'economy' });
-
+		logger.info('Checking KYTH staking dividends...', {
+			label: 'economy',
+		});
 		try {
 			const pool = await KythLiquidityPool.getCache(
-				{ id: 1 },
-				{ noCache: true },
+				{
+					id: 1,
+				},
+				{
+					noCache: true,
+				},
 			);
 			if (!pool) {
 				logger.warn('KYTH pool not found. Skipping dividend.', {
@@ -41,16 +41,19 @@ class KythDividendTask extends BaseTask {
 			if (pool.dividendActive === false) {
 				logger.info(
 					'Dividend distribution is disabled by admin (dividendActive=false). Skipping.',
-					{ label: 'economy' },
+					{
+						label: 'economy',
+					},
 				);
 				return;
 			}
-
 			const totalTax = Number(pool.totalTaxCollected);
 			if (totalTax <= 0) {
 				logger.info(
 					'No protocol fees collected today. No dividend to distribute.',
-					{ label: 'economy' },
+					{
+						label: 'economy',
+					},
 				);
 				return;
 			}
@@ -58,52 +61,56 @@ class KythDividendTask extends BaseTask {
 			// ── Dividend split (admin-configurable) ───────────────────────────
 			const splitPct = Number(pool.dividendSplitPct ?? 50) / 100;
 			const dividendPool = Math.floor(totalTax * splitPct);
-
 			if (dividendPool <= 0) {
 				logger.info(
 					`Dividend pool is 0 (splitPct=${(splitPct * 100).toFixed(1)}%, totalTax=${totalTax}). Skipping.`,
-					{ label: 'economy' },
+					{
+						label: 'economy',
+					},
 				);
 				return;
 			}
-
 			const stakers = await KythiaUser.getAllCache({
 				where: {
-					kythStaked: { [Op.gt]: 0 },
+					kythStaked: {
+						[Op.gt]: 0,
+					},
 					bankType: 'solara_mutual',
 				},
 			});
-
 			if (stakers.length === 0) {
 				logger.info(
 					'No KYTH stakers found. Dividends carried over to next cycle.',
-					{ label: 'economy' },
+					{
+						label: 'economy',
+					},
 				);
 				return;
 			}
-
 			const totalStaked = stakers.reduce(
 				(sum, u) => sum + (Number(u.kythStaked) || 0),
 				0,
 			);
 			if (totalStaked <= 0) return;
-
 			logger.info(
 				`Distributing 🪙 ${dividendPool} Coin (${(splitPct * 100).toFixed(1)}% of ${totalTax}) to ${stakers.length} stakers`,
-				{ label: 'economy' },
+				{
+					label: 'economy',
+				},
 			);
-
 			for (const staker of stakers) {
 				const share = Number(staker.kythStaked) / totalStaked;
 				const reward = Math.floor(dividendPool * share);
 				if (reward <= 0) continue;
-
 				staker.kythiaCoin = BigInt(staker.kythiaCoin || 0) + BigInt(reward);
 				staker.changed('kythiaCoin', true);
 				await staker.save();
-
 				try {
-					const discordUser = await client.users.fetch(staker.userId);
+					const discordUser =
+						await client.container.helpers.discord.getUserSafe(
+							client,
+							staker.userId,
+						);
 					await discordUser.send(
 						`## 💰 KYTH Staking Dividend!\n` +
 							`You earned **🪙 ${reward.toLocaleString()} Coin** as your daily dividend!\n` +
@@ -117,8 +124,9 @@ class KythDividendTask extends BaseTask {
 			pool.totalTaxCollected = 0;
 			pool.changed('totalTaxCollected', true);
 			await pool.save();
-
-			logger.info('KYTH dividend distribution complete.', { label: 'economy' });
+			logger.info('KYTH dividend distribution complete.', {
+				label: 'economy',
+			});
 		} catch (error) {
 			logger.error(`Error during KYTH dividend: ${error.message || error}`, {
 				label: 'economy',
@@ -126,5 +134,4 @@ class KythDividendTask extends BaseTask {
 		}
 	}
 }
-
 exports.default = KythDividendTask;

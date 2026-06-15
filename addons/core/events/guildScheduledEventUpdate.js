@@ -14,29 +14,28 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class GuildScheduledEventUpdateEvent extends BaseEvent {
 	async execute(oldEvent, newEvent) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!newEvent.guild) return;
 		const { models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 		const guildId = newEvent.guild.id;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId: newEvent.guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await newEvent.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				newEvent.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -44,7 +43,6 @@ class GuildScheduledEventUpdateEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			if (!newEvent.guild.members.me?.permissions?.has('ViewAuditLog')) return;
 			const audit = await newEvent.guild
 				.fetchAuditLogs({
@@ -53,15 +51,12 @@ class GuildScheduledEventUpdateEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!audit) return;
-
 			const entry = audit.entries.find(
 				(e) =>
 					e.target?.id === newEvent.id &&
 					e.createdTimestamp > Date.now() - 5000,
 			);
-
 			if (!entry) return;
-
 			const executor = entry.executor;
 			const changes = [];
 			if (oldEvent.name !== newEvent.name) {
@@ -77,13 +72,14 @@ class GuildScheduledEventUpdateEvent extends BaseEvent {
 					`**Status**: \`${oldEvent.status}\` ➔ \`${newEvent.status}\``,
 				);
 			}
-
 			if (changes.length === 0) return;
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Blurple', { from: 'discord', to: 'decimal' }),
+						convertColor('Blurple', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -111,13 +107,18 @@ class GuildScheduledEventUpdateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -135,5 +136,4 @@ class GuildScheduledEventUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = GuildScheduledEventUpdateEvent;

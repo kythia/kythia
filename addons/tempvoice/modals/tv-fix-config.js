@@ -6,33 +6,31 @@
  * @version 26.0.0-rc.1
  */
 const { ComponentType, MessageFlags } = require('discord.js');
-
 const { BaseModal } = require('kythia-core');
-
 class TvFixConfigModal extends BaseModal {
-	modal = { customId: 'tv_fix_config_modal' };
-
+	modal = {
+		customId: 'tv_fix_config_modal',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, t } = container;
 		const { TempVoiceConfig } = models;
 		const guild = interaction.guild;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const config = await TempVoiceConfig.getCache({
-			where: { guildId: guild.id },
+			where: {
+				guildId: guild.id,
+			},
 		});
 		if (!config)
 			return interaction.editReply(
 				await t(interaction, 'tempvoice.fix_config.config_not_found'),
 			);
-
 		const getChannelId = (customId) => {
 			try {
 				const component = interaction.fields.fields.get(customId);
-
 				if (component && component.type === ComponentType.ChannelSelect) {
 					return component.values[0];
 				}
@@ -41,13 +39,10 @@ class TvFixConfigModal extends BaseModal {
 				return null;
 			}
 		};
-
 		const newCatId = getChannelId('new_category_id');
 		const newTrigId = getChannelId('new_trigger_id');
 		const newIntId = getChannelId('new_interface_id');
-
 		const logs = [await t(interaction, 'tempvoice.fix_config.applying_fixes')];
-
 		if (newCatId) {
 			config.categoryId = newCatId;
 			logs.push(
@@ -55,9 +50,11 @@ class TvFixConfigModal extends BaseModal {
 					id: newCatId,
 				}),
 			);
-
 			try {
-				const cat = await guild.channels.fetch(newCatId);
+				const cat = await container.helpers.discord.getChannelSafe(
+					guild,
+					newCatId,
+				);
 				if (cat) {
 					await cat.permissionOverwrites.edit(guild.members.me, {
 						ViewChannel: true,
@@ -71,7 +68,6 @@ class TvFixConfigModal extends BaseModal {
 				logs.push(await t(interaction, 'tempvoice.fix_config.perms_warning'));
 			}
 		}
-
 		if (newTrigId) {
 			config.triggerChannelId = newTrigId;
 			logs.push(
@@ -79,9 +75,11 @@ class TvFixConfigModal extends BaseModal {
 					id: newTrigId,
 				}),
 			);
-
 			try {
-				const trig = await guild.channels.fetch(newTrigId);
+				const trig = await container.helpers.discord.getChannelSafe(
+					guild,
+					newTrigId,
+				);
 				if (trig) {
 					await trig.lockPermissions().catch(() => {});
 					logs.push(await t(interaction, 'tempvoice.fix_config.perms_synced'));
@@ -90,7 +88,6 @@ class TvFixConfigModal extends BaseModal {
 				logs.push(await t(interaction, 'tempvoice.fix_config.trigger_warning'));
 			}
 		}
-
 		if (newIntId) {
 			config.controlPanelChannelId = newIntId;
 			config.interfaceMessageId = null;
@@ -103,12 +100,11 @@ class TvFixConfigModal extends BaseModal {
 				await t(interaction, 'tempvoice.fix_config.interface_regenerate'),
 			);
 		}
-
 		await config.save();
 		logs.push(await t(interaction, 'tempvoice.fix_config.success'));
-
-		await interaction.editReply({ content: logs.join('\n') });
+		await interaction.editReply({
+			content: logs.join('\n'),
+		});
 	}
 }
-
 exports.default = TvFixConfigModal;

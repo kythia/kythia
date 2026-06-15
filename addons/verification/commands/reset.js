@@ -9,12 +9,9 @@
 const { MessageFlags } = require('discord.js');
 const { sendCaptcha } = require('../helpers/verify');
 const { clearSession } = require('../helpers/session');
-
 const { BaseCommand } = require('kythia-core');
-
 class ResetCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('reset')
@@ -22,20 +19,20 @@ class ResetCommand extends BaseCommand {
 			.addUserOption((o) =>
 				o.setName('member').setDescription('Target member').setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer } = helpers.discord;
 		const { VerificationConfig } = models;
 		const guildId = interaction.guild.id;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const user = interaction.options.getUser('member');
-		const member = await interaction.guild.members
-			.fetch(user.id)
-			.catch(() => null);
+		const member = await helpers.discord.getMemberSafe(
+			interaction.guild,
+			user.id,
+		);
 		if (!member) {
 			const components = await simpleContainer(
 				interaction,
@@ -49,8 +46,11 @@ class ResetCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
-		const config = await VerificationConfig.getCache({ where: { guildId } });
+		const config = await VerificationConfig.getCache({
+			where: {
+				guildId,
+			},
+		});
 		if (!config) {
 			const components = await simpleContainer(
 				interaction,
@@ -64,12 +64,13 @@ class ResetCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		clearSession(guildId, user.id);
 		await sendCaptcha(member, config);
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'verify.captcha.sent', { user: member.user.tag }),
+			await t(interaction, 'verify.captcha.sent', {
+				user: member.user.tag,
+			}),
 			{
 				color: kythiaConfig.bot.color,
 			},
@@ -80,5 +81,4 @@ class ResetCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ResetCommand;

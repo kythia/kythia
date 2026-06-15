@@ -13,29 +13,24 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseEvent } = require('kythia-core');
-
 class ChannelPinsUpdateEvent extends BaseEvent {
 	async execute(channel, _time) {
 		const container = this.container;
-
 		if (!channel.guild) return;
 		const { models, helpers, t, logger } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
-
 		const guildId = channel.guild.id;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await channel.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				channel.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -53,7 +48,6 @@ class ChannelPinsUpdateEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!pinAudit) return;
-
 			if (!channel.guild.members.me?.permissions?.has('ViewAuditLog')) return;
 			const unpinAudit = await channel.guild
 				.fetchAuditLogs({
@@ -62,25 +56,20 @@ class ChannelPinsUpdateEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!unpinAudit) return;
-
 			const pinEntry = pinAudit.entries.find(
 				(e) =>
 					e.extra?.channel?.id === channel.id &&
 					e.createdTimestamp > Date.now() - 5000,
 			);
-
 			const unpinEntry = unpinAudit.entries.find(
 				(e) =>
 					e.extra?.channel?.id === channel.id &&
 					e.createdTimestamp > Date.now() - 5000,
 			);
-
 			const entry = pinEntry || unpinEntry;
 			if (!entry) return;
-
 			const isPinned = !!pinEntry;
 			const executor = entry.executor;
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
@@ -115,13 +104,18 @@ class ChannelPinsUpdateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -136,5 +130,4 @@ class ChannelPinsUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = ChannelPinsUpdateEvent;

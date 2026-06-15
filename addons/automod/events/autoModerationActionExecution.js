@@ -12,39 +12,35 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseEvent } = require('kythia-core');
-
 class AutoModerationActionExecutionEvent extends BaseEvent {
 	async execute(execution) {
 		const container = this.container;
-
 		const { t, models, helpers } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
-
 		const guildId = execution.guild.id;
 		const ruleName = execution.ruleTriggerType.toString();
-
 		const settings = await ServerSetting.getCache({
 			guildId,
 		});
 		const locale = execution.guild.preferredLocale || 'en';
-
 		if (!settings?.modLogChannelId) {
 			return;
 		}
-
 		const logChannelId = settings.modLogChannelId;
-		const logChannel = await execution.guild.channels
-			.fetch(logChannelId)
-			.catch(() => null);
-
+		const logChannel = await helpers.discord.getChannelSafe(
+			execution.guild,
+			logChannelId,
+		);
 		if (logChannel?.isTextBased()) {
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Red', { from: 'discord', to: 'decimal' }),
+						convertColor('Red', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -72,13 +68,18 @@ class AutoModerationActionExecutionEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -89,5 +90,4 @@ class AutoModerationActionExecutionEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = AutoModerationActionExecutionEvent;

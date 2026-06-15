@@ -30,7 +30,9 @@ async function getInviteLink(guild) {
 		);
 		let existingInvites = [];
 		try {
-			existingInvites = await guild.invites.fetch();
+			const { getAllInvitesSafe } = guild.client.container.helpers.discord;
+			existingInvites = await getAllInvitesSafe(guild);
+			if (!existingInvites) return;
 			if (existingInvites && existingInvites.size > 0) {
 				const useable = existingInvites.find((i) => !i.expired && i.url);
 				if (useable) return useable.url;

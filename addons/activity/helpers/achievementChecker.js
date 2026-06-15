@@ -73,6 +73,7 @@ async function checkAndUnlock(triggerType, ctx) {
 	const { guildId, userId, guild, container, specialFlags = [] } = ctx;
 	const { models, logger, kythiaConfig, helpers, queueManager } = container;
 	const { ActivityStat, ActivityLog, UserAchievement, ServerSetting } = models;
+	const { convertColor } = helpers.color;
 
 	try {
 		// Feature flag
@@ -129,9 +130,7 @@ async function checkAndUnlock(triggerType, ctx) {
 		const getMemberAgeDays = async () => {
 			if (memberAgeDays !== null) return memberAgeDays;
 			try {
-				const member =
-					guild.members.cache.get(userId) ??
-					(await guild.members.fetch(userId).catch(() => null));
+				const member = await helpers.discord.getMemberSafe(guild, userId);
 				if (!member?.joinedAt) return 0;
 				memberAgeDays = Math.floor(
 					(Date.now() - member.joinedAt.getTime()) / 86_400_000,
@@ -246,7 +245,7 @@ async function checkAndUnlock(triggerType, ctx) {
 							botToken: kythiaConfig.bot.token,
 							achievementName: nameText,
 							achievementDesc: descText,
-							achievementEmoji: achievement.emoji,
+							// achievementEmoji: achievement.emoji,
 							rarity: achievement.rarity,
 							unlockedCount: newUnlockedCount,
 							totalCount,
@@ -265,6 +264,12 @@ async function checkAndUnlock(triggerType, ctx) {
 					require('discord.js');
 
 				const notifContainer = new ContainerBuilder()
+					.setAccentColor(
+						convertColor(kythiaConfig.bot.color, {
+							from: 'hex',
+							to: 'decimal',
+						}),
+					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
 							`🏆 <@${userId}> unlocked **${nameText}**!`,

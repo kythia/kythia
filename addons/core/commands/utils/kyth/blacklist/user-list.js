@@ -7,30 +7,25 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class UserListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('user-list')
 			.setDescription('List all blacklisted users');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, logger, helpers, client } = container;
 		const { KythiaBlacklist } = models;
 		const { createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		try {
 			const entries = await KythiaBlacklist.getAllCache({
-				where: { type: 'user' },
+				where: {
+					type: 'user',
+				},
 			});
-
 			if (entries.length === 0) {
 				const components = await createContainer(interaction, {
 					description: await t(
@@ -44,7 +39,6 @@ class UserListCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const noReason = await t(
 				interaction,
 				'core.utils.kyth.blacklist.no.reason',
@@ -55,9 +49,11 @@ class UserListCommand extends BaseCommand {
 			);
 			const rows = await Promise.all(
 				entries.map(async (entry) => {
-					const fetchedUser = await client.users
-						.fetch(entry.targetId)
-						.catch(() => null);
+					const fetchedUser =
+						await client.container.helpers.discord.getUserSafe(
+							client,
+							entry.targetId,
+						);
 					const tag = fetchedUser
 						? fetchedUser.tag
 						: `${unknownUser} (${entry.targetId})`;
@@ -68,14 +64,12 @@ class UserListCommand extends BaseCommand {
 					});
 				}),
 			);
-
 			const description =
 				(await t(interaction, 'core.utils.kyth.blacklist.user.list.total', {
 					count: entries.length,
 				})) +
 				'\n\n' +
 				rows.join('\n\n');
-
 			const components = await createContainer(interaction, {
 				title: await t(
 					interaction,
@@ -102,7 +96,9 @@ class UserListCommand extends BaseCommand {
 				description: await t(
 					interaction,
 					'core.utils.kyth.blacklist.user.list.error',
-					{ error: error.message },
+					{
+						error: error.message,
+					},
 				),
 				color: 'Red',
 			});
@@ -113,5 +109,4 @@ class UserListCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = UserListCommand;

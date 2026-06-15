@@ -143,9 +143,9 @@ async function handleUserDM(
 		const eligibleConfigs = [];
 		for (const cfg of allConfigs) {
 			try {
-				const guild = await client.guilds.fetch(cfg.guildId).catch(() => null);
+				const guild = await helpers.discord.getGuildSafe(client, cfg.guildId);
 				if (!guild) continue;
-				const member = await guild.members.fetch(userId).catch(() => null);
+				const member = await helpers.discord.getMemberSafe(guild, userId);
 				if (!member) continue;
 				const blocked = Array.isArray(cfg.blockedUserIds)
 					? cfg.blockedUserIds

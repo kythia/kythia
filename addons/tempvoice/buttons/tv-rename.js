@@ -12,34 +12,35 @@ const {
 	ActionRowBuilder,
 	MessageFlags,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TvRenameButton extends BaseButton {
-	button = { customId: 'tv_rename' };
-
+	button = {
+		customId: 'tv_rename',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, t } = container;
 		const { TempVoiceChannel } = models;
-
 		const activeChannel = await TempVoiceChannel.getCache({
 			ownerId: interaction.user.id,
 			guildId: interaction.guild.id,
 		});
-
 		if (!activeChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.rename.no_active_channel'),
-				flags: MessageFlags.Ephemeral,
+				components:
+					await interaction.client.container.helpers.discord.simpleContainer(
+						interaction,
+						await t(interaction, 'tempvoice.rename.no_active_channel'),
+						{
+							color: 'Red',
+						},
+					),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const modal = new ModalBuilder()
 			.setCustomId(`tv_rename_modal:${activeChannel.channelId}`)
 			.setTitle(await t(interaction, 'tempvoice.rename.modal_title'));
-
 		const nameInput = new TextInputBuilder()
 			.setCustomId('channel_name')
 			.setLabel(await t(interaction, 'tempvoice.rename.input_label'))
@@ -49,10 +50,8 @@ class TvRenameButton extends BaseButton {
 			)
 			.setRequired(true)
 			.setMaxLength(100);
-
 		const row = new ActionRowBuilder().addComponents(nameInput);
 		modal.addComponents(row);
-
 		await interaction.showModal(modal);
 	}
 }

@@ -7,13 +7,10 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class UnmuteCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.MuteMembers;
 	botPermissions = PermissionFlagsBits.MuteMembers;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unmute')
@@ -24,18 +21,17 @@ class UnmuteCommand extends BaseCommand {
 					.setDescription('The user to unmute')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const user = interaction.options.getUser('user');
-
 		try {
-			const member = await interaction.guild.members.fetch(user.id);
+			const member = await helpers.discord.getMemberSafe(
+				interaction.guild,
+				user.id,
+			);
 			if (member.voice.channel) {
 				await member.voice.setMute(false);
 				const reply = await createContainer(interaction, {
@@ -58,7 +54,9 @@ class UnmuteCommand extends BaseCommand {
 				const reply = await simpleContainer(
 					interaction,
 					await t(interaction, 'core.moderation.unmute.not.in.voice'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components: reply,
@@ -71,7 +69,9 @@ class UnmuteCommand extends BaseCommand {
 				await t(interaction, 'core.moderation.unmute.failed', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -80,5 +80,4 @@ class UnmuteCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = UnmuteCommand;

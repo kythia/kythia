@@ -12,23 +12,21 @@ const {
 	LabelBuilder,
 	MessageFlags,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TvFixConfigButton extends BaseButton {
-	button = { customId: 'tv_fix_config' };
-
+	button = {
+		customId: 'tv_fix_config',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, helpers, t } = container;
 		const { TempVoiceConfig } = models;
 		const { simpleContainer } = helpers.discord;
-
 		const config = await TempVoiceConfig.getCache({
-			where: { guildId: interaction.guild.id },
+			where: {
+				guildId: interaction.guild.id,
+			},
 		});
-
 		if (!config)
 			return interaction.reply({
 				components: await simpleContainer(
@@ -40,7 +38,6 @@ class TvFixConfigButton extends BaseButton {
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
-
 		const modal = new ModalBuilder()
 			.setCustomId('tv_fix_config_modal')
 			.setTitle(await t(interaction, 'tempvoice.fix_config.modal_title'));
@@ -51,11 +48,10 @@ class TvFixConfigButton extends BaseButton {
 		// 1. Category
 		let catMissing = false;
 		try {
-			await guild.channels.fetch(config.categoryId);
+			await helpers.discord.getChannelSafe(guild, config.categoryId);
 		} catch {
 			catMissing = true;
 		}
-
 		if (catMissing) {
 			modal.addLabelComponents(
 				new LabelBuilder()
@@ -85,11 +81,10 @@ class TvFixConfigButton extends BaseButton {
 		// 2. Trigger Channel
 		let trigMissing = false;
 		try {
-			await guild.channels.fetch(config.triggerChannelId);
+			await helpers.discord.getChannelSafe(guild, config.triggerChannelId);
 		} catch {
 			trigMissing = true;
 		}
-
 		if (trigMissing) {
 			modal.addLabelComponents(
 				new LabelBuilder()
@@ -116,12 +111,14 @@ class TvFixConfigButton extends BaseButton {
 		let intMissing = false;
 		if (config.controlPanelChannelId) {
 			try {
-				await guild.channels.fetch(config.controlPanelChannelId);
+				await helpers.discord.getChannelSafe(
+					guild,
+					config.controlPanelChannelId,
+				);
 			} catch {
 				intMissing = true;
 			}
 		}
-
 		if (intMissing) {
 			modal.addLabelComponents(
 				new LabelBuilder()
@@ -145,7 +142,6 @@ class TvFixConfigButton extends BaseButton {
 					),
 			);
 		}
-
 		if (!catMissing && !trigMissing && !intMissing) {
 			return interaction.reply({
 				components: await simpleContainer(
@@ -158,9 +154,7 @@ class TvFixConfigButton extends BaseButton {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		await interaction.showModal(modal);
 	}
 }
-
 exports.default = TvFixConfigButton;

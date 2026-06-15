@@ -171,21 +171,20 @@ app.post('/:guildId/test', async (c) => {
 	}
 
 	try {
-		const guild = await client.guilds.fetch(guildId).catch(() => null);
+		const { getGuildSafe, getMemberSafe } = client.container.helpers.discord;
+		const guild = await getGuildSafe(client, guildId);
 		if (!guild) {
 			return c.json({ success: false, error: 'Guild not found' }, 404);
 		}
 
 		let member = null;
 		if (userId) {
-			member = await guild.members.fetch(userId).catch(() => null);
+			member = await getMemberSafe(guild, userId);
 		}
 
 		if (!member) {
 			// Default to guild owner or bot itself if owner cannot be fetched
-			member =
-				(await guild.members.fetch(guild.ownerId).catch(() => null)) ||
-				guild.members.me;
+			member = (await getMemberSafe(guild, guild.ownerId)) || guild.members.me;
 		}
 
 		if (type === 'in') {

@@ -11,12 +11,9 @@ const {
 	ContainerBuilder,
 	TextDisplayBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class RemoveCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
@@ -42,15 +39,14 @@ class RemoveCommand extends BaseCommand {
 					.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, logger } = container;
 		const { ReactionRole } = models;
 		const { convertColor } = helpers.color;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const messageId = interaction.options.getString('message_id');
 		const emojiInput = interaction.options.getString('emoji');
 		const channel =
@@ -64,7 +60,6 @@ class RemoveCommand extends BaseCommand {
 					emoji: emojiInput,
 				},
 			});
-
 			if (!deleted) {
 				return interaction.editReply({
 					content: await t(interaction, 'reaction-role.not_found'),
@@ -74,9 +69,10 @@ class RemoveCommand extends BaseCommand {
 			// Try to remove bot's reaction
 			try {
 				if (channel?.isTextBased()) {
-					const message = await channel.messages
-						.fetch(messageId)
-						.catch(() => null);
+					const message = await helpers.discord.getMessageSafe(
+						channel,
+						messageId,
+					);
 					if (message) {
 						// Simple check, might need better emoji ID handling
 						const botReaction = message.reactions.cache.find((r) => {
@@ -86,7 +82,6 @@ class RemoveCommand extends BaseCommand {
 								`<:${r.emoji.name}:${r.emoji.id}>` === emojiInput
 							);
 						});
-
 						if (botReaction) {
 							await botReaction.users.remove(interaction.client.user.id);
 						}
@@ -98,9 +93,13 @@ class RemoveCommand extends BaseCommand {
 				});
 				// Continue even if we can't remove the reaction
 			}
-
 			const successContainer = new ContainerBuilder()
-				.setAccentColor(convertColor('Red', { from: 'discord', to: 'decimal' }))
+				.setAccentColor(
+					convertColor('Red', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
 						`🗑️ **Reaction Role Removed**\n\n` +
@@ -108,7 +107,6 @@ class RemoveCommand extends BaseCommand {
 							`**Emoji:** ${emojiInput}`,
 					),
 				);
-
 			return interaction.editReply({
 				components: [successContainer],
 				flags: MessageFlags.IsComponentsV2,
@@ -123,5 +121,4 @@ class RemoveCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = RemoveCommand;

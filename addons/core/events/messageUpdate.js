@@ -13,19 +13,18 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class MessageUpdateEvent extends BaseEvent {
 	async execute(oldMessage, newMessage) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
 		const guildId = newMessage.guild?.id;
-
 		try {
 			if (!newMessage?.author || !newMessage.guild) return;
 			if (!newMessage.author || newMessage.author.bot) return;
@@ -38,10 +37,10 @@ class MessageUpdateEvent extends BaseEvent {
 				guildId: newMessage.guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await newMessage.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				newMessage.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -56,17 +55,18 @@ class MessageUpdateEvent extends BaseEvent {
 					? `${oldMessage.content.substring(0, 1021)}...`
 					: oldMessage.content
 				: '*(Unable to fetch old content)*';
-
 			const newContent = newMessage.content
 				? newMessage.content.length > 1024
 					? `${newMessage.content.substring(0, 1021)}...`
 					: newMessage.content
 				: '*(Empty)*';
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Blurple', { from: 'discord', to: 'decimal' }),
+						convertColor('Blurple', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -96,13 +96,18 @@ class MessageUpdateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -120,5 +125,4 @@ class MessageUpdateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = MessageUpdateEvent;

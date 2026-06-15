@@ -12,30 +12,33 @@ const {
 	TextDisplayBuilder,
 	MessageFlags,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TvUnblockButton extends BaseButton {
-	button = { customId: 'tv_unblock' };
-
+	button = {
+		customId: 'tv_unblock',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, t, helpers, kythiaConfig } = container;
 		const { convertColor } = helpers.color;
 		const { TempVoiceChannel } = models;
-
 		const activeChannel = await TempVoiceChannel.getCache({
 			ownerId: interaction.user.id,
 			guildId: interaction.guild.id,
 		});
 		if (!activeChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.unblock.no_active_channel'),
-				flags: MessageFlags.Ephemeral,
+				components:
+					await interaction.client.container.helpers.discord.simpleContainer(
+						interaction,
+						await t(interaction, 'tempvoice.unblock.no_active_channel'),
+						{
+							color: 'Red',
+						},
+					),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const selectMenu = new UserSelectMenuBuilder()
 			.setCustomId(`tv_unblock_menu:${activeChannel.channelId}`)
 			.setPlaceholder(
@@ -43,13 +46,11 @@ class TvUnblockButton extends BaseButton {
 			)
 			.setMinValues(1)
 			.setMaxValues(10);
-
 		const row = new ActionRowBuilder().addComponents(selectMenu);
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const containerComponent = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
@@ -58,12 +59,10 @@ class TvUnblockButton extends BaseButton {
 				),
 			)
 			.addActionRowComponents(row);
-
 		await interaction.reply({
 			components: [containerComponent],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = TvUnblockButton;

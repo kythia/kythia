@@ -28,7 +28,8 @@ function buildFakeInteraction(channel) {
 		// Allow t() to be called with this fake interaction; it just reads guild
 		guild: channel?.guild ?? null,
 		client: channel?.client ?? null,
-		replied: true, // Prevents manager from trying to reply
+		replied: true,
+		// Prevents manager from trying to reply
 		deferred: true,
 		// No-op reply methods — API returns JSON to the caller instead
 		reply: async () => {},
@@ -59,7 +60,6 @@ app.post('/start', async (c) => {
 	const container = getContainer(c);
 	const { giveawayManager } = container;
 	const client = getBot(c);
-
 	const body = await c.req.json();
 	const {
 		channelId,
@@ -73,7 +73,6 @@ app.post('/start', async (c) => {
 		roleId,
 		description,
 	} = body;
-
 	if (!channelId || !guildId || !hostId || !winners || !prize) {
 		return c.json(
 			{
@@ -100,10 +99,12 @@ app.post('/start', async (c) => {
 			400,
 		);
 	}
-
 	try {
 		// Fetch the channel from Discord
-		const channel = await client.channels.fetch(channelId).catch(() => null);
+		const channel = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			channelId,
+		);
 		if (!channel) {
 			return c.json(
 				{
@@ -113,7 +114,6 @@ app.post('/start', async (c) => {
 				404,
 			);
 		}
-
 		const endTime = Date.now() + durationMs;
 		const endTimestamp = Math.floor(endTime / 1000);
 		const accentColor = color || container.kythiaConfig.bot.color;
@@ -157,7 +157,6 @@ app.post('/start', async (c) => {
 
 		// Register in Redis scheduler so the auto-ender picks it up
 		await Giveaway.scheduleAdd('active_schedule', endTimestamp, message.id);
-
 		return c.json(
 			{
 				success: true,
@@ -168,7 +167,13 @@ app.post('/start', async (c) => {
 			201,
 		);
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -192,15 +197,29 @@ app.post('/:messageId/end', async (c) => {
 	const { giveawayManager } = container;
 	const { Giveaway } = getModels(c);
 	const messageId = c.req.param('messageId');
-
 	try {
-		const giveaway = await Giveaway.getCache({ where: { messageId } });
-
+		const giveaway = await Giveaway.getCache({
+			where: {
+				messageId,
+			},
+		});
 		if (!giveaway) {
-			return c.json({ success: false, error: 'Giveaway not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Giveaway not found',
+				},
+				404,
+			);
 		}
 		if (giveaway.ended) {
-			return c.json({ success: false, error: 'Giveaway already ended' }, 409);
+			return c.json(
+				{
+					success: false,
+					error: 'Giveaway already ended',
+				},
+				409,
+			);
 		}
 
 		// endGiveaway(giveawayData, interaction = null) — interaction is optional
@@ -209,10 +228,18 @@ app.post('/:messageId/end', async (c) => {
 
 		// Refresh from DB to get the updated ended state
 		await giveaway.reload();
-
-		return c.json({ success: true, data: giveaway });
+		return c.json({
+			success: true,
+			data: giveaway,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -235,24 +262,36 @@ app.post('/:messageId/cancel', async (c) => {
 	const { Giveaway } = getModels(c);
 	const client = getBot(c);
 	const messageId = c.req.param('messageId');
-
 	try {
-		const giveaway = await Giveaway.getCache({ where: { messageId } });
-
+		const giveaway = await Giveaway.getCache({
+			where: {
+				messageId,
+			},
+		});
 		if (!giveaway) {
-			return c.json({ success: false, error: 'Giveaway not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Giveaway not found',
+				},
+				404,
+			);
 		}
 		if (giveaway.ended) {
 			return c.json(
-				{ success: false, error: 'Giveaway already ended or cancelled' },
+				{
+					success: false,
+					error: 'Giveaway already ended or cancelled',
+				},
 				409,
 			);
 		}
 
 		// Fetch the channel to pass as i18n context (t() works with channels too)
-		const channel = await client.channels
-			.fetch(giveaway.channelId)
-			.catch(() => null);
+		const channel = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			giveaway.channelId,
+		);
 
 		// Build a minimal fake interaction — cancelGiveaway() uses it for t() and reply()
 		// We pass the channel as the i18n context, and reply() is a no-op
@@ -261,14 +300,20 @@ app.post('/:messageId/cancel', async (c) => {
 			// cancelGiveaway checks interaction.guild for the t() fallback
 			guild: channel?.guild ?? null,
 		};
-
 		await giveawayManager.cancelGiveaway(messageId, fakeInteraction);
-
 		await giveaway.reload();
-
-		return c.json({ success: true, data: giveaway });
+		return c.json({
+			success: true,
+			data: giveaway,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -292,12 +337,20 @@ app.post('/:messageId/reroll', async (c) => {
 	const { Giveaway } = getModels(c);
 	const client = getBot(c);
 	const messageId = c.req.param('messageId');
-
 	try {
-		const giveaway = await Giveaway.getCache({ where: { messageId } });
-
+		const giveaway = await Giveaway.getCache({
+			where: {
+				messageId,
+			},
+		});
 		if (!giveaway) {
-			return c.json({ success: false, error: 'Giveaway not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Giveaway not found',
+				},
+				404,
+			);
 		}
 		if (!giveaway.ended) {
 			return c.json(
@@ -308,34 +361,43 @@ app.post('/:messageId/reroll', async (c) => {
 				409,
 			);
 		}
-
 		const participants = Array.isArray(giveaway.participants)
 			? giveaway.participants
 			: JSON.parse(giveaway.participants || '[]');
-
 		if (participants.length === 0) {
 			return c.json(
-				{ success: false, error: 'No participants to reroll from.' },
+				{
+					success: false,
+					error: 'No participants to reroll from.',
+				},
 				400,
 			);
 		}
 
 		// Fetch channel for i18n context
-		const channel = await client.channels
-			.fetch(giveaway.channelId)
-			.catch(() => null);
+		const channel = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			giveaway.channelId,
+		);
 
 		// rerollGiveaway(messageId, interaction) — uses interaction for t() and reply()
 		const fakeInteraction = buildFakeInteraction(channel);
-
 		await giveawayManager.rerollGiveaway(messageId, fakeInteraction);
-
 		return c.json({
 			success: true,
-			data: { messageId, participants: participants.length },
+			data: {
+				messageId,
+				participants: participants.length,
+			},
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -348,25 +410,32 @@ app.post('/:messageId/reroll', async (c) => {
 app.get('/', async (c) => {
 	const { Giveaway } = getModels(c);
 	const where = {};
-
 	const guildId = c.req.query('guildId');
 	const hostId = c.req.query('hostId');
 	const channelId = c.req.query('channelId');
 	const ended = c.req.query('ended');
-
 	if (guildId) where.guildId = guildId;
 	if (hostId) where.hostId = hostId;
 	if (channelId) where.channelId = channelId;
 	if (ended !== undefined && ended !== '') where.ended = ended === 'true';
-
 	try {
 		const data = await Giveaway.getAllCache({
 			where,
 			order: [['endTime', 'DESC']],
 		});
-		return c.json({ success: true, count: data.length, data });
+		return c.json({
+			success: true,
+			count: data.length,
+			data,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -374,14 +443,32 @@ app.get('/', async (c) => {
 app.get('/message/:messageId', async (c) => {
 	const { Giveaway } = getModels(c);
 	const messageId = c.req.param('messageId');
-
 	try {
-		const giveaway = await Giveaway.getCache({ where: { messageId } });
+		const giveaway = await Giveaway.getCache({
+			where: {
+				messageId,
+			},
+		});
 		if (!giveaway)
-			return c.json({ success: false, error: 'Giveaway not found' }, 404);
-		return c.json({ success: true, data: giveaway });
+			return c.json(
+				{
+					success: false,
+					error: 'Giveaway not found',
+				},
+				404,
+			);
+		return c.json({
+			success: true,
+			data: giveaway,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -389,14 +476,30 @@ app.get('/message/:messageId', async (c) => {
 app.get('/:id', async (c) => {
 	const { Giveaway } = getModels(c);
 	const id = parseInt(c.req.param('id'), 10);
-
 	try {
-		const giveaway = await Giveaway.getCache({ id: id });
+		const giveaway = await Giveaway.getCache({
+			id: id,
+		});
 		if (!giveaway)
-			return c.json({ success: false, error: 'Giveaway not found' }, 404);
-		return c.json({ success: true, data: giveaway });
+			return c.json(
+				{
+					success: false,
+					error: 'Giveaway not found',
+				},
+				404,
+			);
+		return c.json({
+			success: true,
+			data: giveaway,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -409,7 +512,6 @@ app.patch('/:id', async (c) => {
 	const { Giveaway } = getModels(c);
 	const id = parseInt(c.req.param('id'), 10);
 	const body = await c.req.json();
-
 	const ALLOWED_FIELDS = [
 		'prize',
 		'description',
@@ -419,21 +521,35 @@ app.patch('/:id', async (c) => {
 		'ended',
 		'participants',
 	];
-
 	try {
-		const giveaway = await Giveaway.getCache({ id: id });
+		const giveaway = await Giveaway.getCache({
+			id: id,
+		});
 		if (!giveaway)
-			return c.json({ success: false, error: 'Giveaway not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'Giveaway not found',
+				},
+				404,
+			);
 		const updates = {};
 		for (const field of ALLOWED_FIELDS) {
 			if (field in body) updates[field] = body[field];
 		}
-
 		await giveaway.update(updates);
-		return c.json({ success: true, data: giveaway });
+		return c.json({
+			success: true,
+			data: giveaway,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -441,19 +557,31 @@ app.patch('/:id', async (c) => {
 app.delete('/:id', async (c) => {
 	const { Giveaway } = getModels(c);
 	const id = parseInt(c.req.param('id'), 10);
-
 	try {
-		const giveaway = await Giveaway.getCache({ id: id });
+		const giveaway = await Giveaway.getCache({
+			id: id,
+		});
 		if (!giveaway)
-			return c.json({ success: false, error: 'Giveaway not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'Giveaway not found',
+				},
+				404,
+			);
 		await giveaway.destroy();
 		return c.json({
 			success: true,
 			message: `Giveaway (id=${id}) deleted successfully`,
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -465,15 +593,19 @@ app.delete('/:id', async (c) => {
 app.get('/:id/participants', async (c) => {
 	const { Giveaway } = getModels(c);
 	const id = parseInt(c.req.param('id'), 10);
-
 	try {
 		const giveaway = await Giveaway.getCache({
 			id: id,
 			attributes: ['id', 'messageId', 'participants', 'ended'],
 		});
 		if (!giveaway)
-			return c.json({ success: false, error: 'Giveaway not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'Giveaway not found',
+				},
+				404,
+			);
 		let participants = giveaway.participants;
 		if (typeof participants === 'string') {
 			try {
@@ -482,10 +614,19 @@ app.get('/:id/participants', async (c) => {
 				participants = [];
 			}
 		}
-
-		return c.json({ success: true, count: participants.length, participants });
+		return c.json({
+			success: true,
+			count: participants.length,
+			participants,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -496,21 +637,35 @@ app.post('/:id/participants', async (c) => {
 	const id = parseInt(c.req.param('id'), 10);
 	const body = await c.req.json();
 	const { userId } = body;
-
 	if (!userId) {
 		return c.json(
-			{ success: false, error: 'Missing required field: userId' },
+			{
+				success: false,
+				error: 'Missing required field: userId',
+			},
 			400,
 		);
 	}
-
 	try {
-		const giveaway = await Giveaway.getCache({ id: id });
+		const giveaway = await Giveaway.getCache({
+			id: id,
+		});
 		if (!giveaway)
-			return c.json({ success: false, error: 'Giveaway not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Giveaway not found',
+				},
+				404,
+			);
 		if (giveaway.ended)
-			return c.json({ success: false, error: 'Giveaway has ended' }, 409);
-
+			return c.json(
+				{
+					success: false,
+					error: 'Giveaway has ended',
+				},
+				409,
+			);
 		let participants = giveaway.participants;
 		if (typeof participants === 'string') {
 			try {
@@ -520,16 +675,30 @@ app.post('/:id/participants', async (c) => {
 			}
 		}
 		if (participants.includes(userId)) {
-			return c.json({ success: false, error: 'User already joined' }, 409);
+			return c.json(
+				{
+					success: false,
+					error: 'User already joined',
+				},
+				409,
+			);
 		}
-
 		participants.push(userId);
 		giveaway.participants = participants;
 		await giveaway.save();
-
-		return c.json({ success: true, count: participants.length, participants });
+		return c.json({
+			success: true,
+			count: participants.length,
+			participants,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -538,12 +707,18 @@ app.delete('/:id/participants/:userId', async (c) => {
 	const { Giveaway } = getModels(c);
 	const id = parseInt(c.req.param('id'), 10);
 	const userId = c.req.param('userId');
-
 	try {
-		const giveaway = await Giveaway.getCache({ id: id });
+		const giveaway = await Giveaway.getCache({
+			id: id,
+		});
 		if (!giveaway)
-			return c.json({ success: false, error: 'Giveaway not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'Giveaway not found',
+				},
+				404,
+			);
 		let participants = giveaway.participants;
 		if (typeof participants === 'string') {
 			try {
@@ -554,22 +729,28 @@ app.delete('/:id/participants/:userId', async (c) => {
 		}
 		if (!participants.includes(userId)) {
 			return c.json(
-				{ success: false, error: 'User is not a participant' },
+				{
+					success: false,
+					error: 'User is not a participant',
+				},
 				404,
 			);
 		}
-
 		giveaway.participants = participants.filter((uid) => uid !== userId);
 		await giveaway.save();
-
 		return c.json({
 			success: true,
 			count: giveaway.participants.length,
 			participants: giveaway.participants,
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
-
 module.exports = app;

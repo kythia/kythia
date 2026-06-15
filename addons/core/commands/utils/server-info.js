@@ -42,8 +42,6 @@ class ServerInfoCommand extends BaseCommand {
 		const { convertColor } = helpers.color;
 
 		const guild = interaction.guild;
-
-		await guild.fetch();
 		const owner = await guild.fetchOwner().catch(() => null);
 
 		const verificationLevels = {

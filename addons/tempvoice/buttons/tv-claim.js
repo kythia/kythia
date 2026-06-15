@@ -6,31 +6,29 @@
  * @version 26.0.0-rc.1
  */
 const { PermissionsBitField, MessageFlags } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TvClaimButton extends BaseButton {
-	button = { customId: 'tv_claim' };
-
+	button = {
+		customId: 'tv_claim',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, client, t, helpers, logger } = container;
 		const { TempVoiceChannel } = models;
 		const { simpleContainer } = helpers.discord;
-
 		const userVoiceState = interaction.member.voice;
 		if (!userVoiceState?.channelId) {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.claim.not_in_channel'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const activeChannel = await TempVoiceChannel.getCache({
 			channelId: userVoiceState.channelId,
 			guildId: interaction.guild.id,
@@ -40,27 +38,29 @@ class TvClaimButton extends BaseButton {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.claim.not_temp_channel'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		if (activeChannel.ownerId === interaction.user.id) {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.claim.already_owner'),
-					{ color: 'Yellow' },
+					{
+						color: 'Yellow',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
-		const oldOwner = await interaction.guild.members
-			.fetch(activeChannel.ownerId)
-			.catch(() => null);
-
+		const oldOwner = await helpers.discord.getMemberSafe(
+			interaction.guild,
+			activeChannel.ownerId,
+		);
 		if (oldOwner) {
 			return interaction.reply({
 				components: await simpleContainer(
@@ -68,50 +68,55 @@ class TvClaimButton extends BaseButton {
 					await t(interaction, 'tempvoice.claim.owner_exists', {
 						user: oldOwner.displayName,
 					}),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		try {
 			const channelId = activeChannel.channelId;
 			let channel;
 			try {
-				channel = await client.channels.fetch(channelId, { force: true });
+				channel = await client.container.helpers.discord.getChannelGlobalSafe(
+					client,
+					channelId,
+				);
 			} catch (error) {
 				logger.error(
 					`CRITICAL: Failed to fetch channel ${channelId} for rename. Error: ${error.message || error}`,
-					{ label: 'tempvoice' },
+					{
+						label: 'tempvoice',
+					},
 				);
-
 				return interaction.reply({
 					components: await simpleContainer(
 						interaction,
 						await t(interaction, 'tempvoice.common.channel_not_found'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					),
 					flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 				});
 			}
-
 			await channel.permissionOverwrites.delete(activeChannel.ownerId);
-
 			await channel.permissionOverwrites.edit(interaction.member, {
 				[PermissionsBitField.Flags.ManageChannels]: true,
 				[PermissionsBitField.Flags.MoveMembers]: true,
 				[PermissionsBitField.Flags.ViewChannel]: true,
 				[PermissionsBitField.Flags.Connect]: true,
 			});
-
 			activeChannel.ownerId = interaction.user.id;
 			await activeChannel.save();
-
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.claim.success'),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
@@ -120,12 +125,13 @@ class TvClaimButton extends BaseButton {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.fail'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 	}
 }
-
 exports.default = TvClaimButton;

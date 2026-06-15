@@ -18,11 +18,8 @@ const {
 	InteractionContextType,
 	ContextMenuCommandBuilder,
 } = require('discord.js');
-
 const { Op } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
-
 class UserInfoCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('userinfo')
@@ -34,33 +31,30 @@ class UserInfoCommand extends BaseCommand {
 				.setRequired(false),
 		)
 		.setContexts(InteractionContextType.Guild);
-
 	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('User Info')
 		.setType(ApplicationCommandType.User)
 		.setContexts(InteractionContextType.Guild);
-
 	contextMenuDescription = '📄 Displays information about a user.';
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, models } = container;
 		const { convertColor } = helpers.color;
 		const { Marriage } = models;
-
 		await interaction.deferReply();
-
 		const user =
 			interaction.options.getUser?.('user') ||
 			interaction.targetUser ||
 			interaction.user;
 		let member;
 		try {
-			member = await interaction.guild?.members.fetch(user.id);
+			const { getMemberSafe } = container.helpers.discord;
+			member = interaction.guild
+				? await getMemberSafe(interaction.guild, user.id)
+				: null;
 		} catch (_e) {
 			member = null;
 		}
-
 		if (!member && !interaction.guild) {
 			return interaction.editReply({
 				content: await t(interaction, 'core.utils.userinfo.user.not.found'),
@@ -79,7 +73,10 @@ class UserInfoCommand extends BaseCommand {
 		// User avatar (mimics marry.js fallback)
 		const defaultAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
 		const avatarUrl = user.displayAvatarURL
-			? user.displayAvatarURL({ extension: 'png', size: 256 })
+			? user.displayAvatarURL({
+					extension: 'png',
+					size: 256,
+				})
 			: defaultAvatar;
 
 		// Joined at
@@ -95,28 +92,30 @@ class UserInfoCommand extends BaseCommand {
 		const generalSection =
 			`### ${await t(interaction, 'core.utils.userinfo.field.username')}\n${user.username}\n` +
 			`### ${await t(interaction, 'core.utils.userinfo.field.userid')}\n${user.id}\n`;
-
 		const datesSection =
 			`### ${await t(interaction, 'core.utils.userinfo.field.created')}\n<t:${Math.floor(user.createdTimestamp / 1000)}:F>\n` +
 			`### ${await t(interaction, 'core.utils.userinfo.field.joined.text')}\n${joinedAt}\n`;
-
 		const rolesSection =
 			`### ${await t(interaction, 'core.utils.userinfo.field.roles')}\n` +
 			(roles || (await t(interaction, 'core.utils.userinfo.value.no.roles')));
-
 		let marriageBlock = null;
 		let marriage = null;
 		try {
 			const marriages = await Marriage.getAllCache({
 				where: {
 					[Op.or]: [
-						{ user1Id: user.id, status: 'married' },
-						{ user2Id: user.id, status: 'married' },
+						{
+							user1Id: user.id,
+							status: 'married',
+						},
+						{
+							user2Id: user.id,
+							status: 'married',
+						},
 					],
 				},
 				limit: 1,
 			});
-
 			marriage = marriages && marriages.length > 0 ? marriages[0] : null;
 		} catch {}
 		if (marriage) {
@@ -128,23 +127,26 @@ class UserInfoCommand extends BaseCommand {
 			const marriedFor = marriage.marriedAt
 				? Math.floor((Date.now() - marriage.marriedAt) / (1000 * 60 * 60 * 24))
 				: null;
-
 			const partnerId =
 				marriage.user1Id === user.id ? marriage.user2Id : marriage.user1Id;
 			let partner = null;
 			try {
-				partner = await interaction.client.users.fetch(partnerId);
+				partner = await helpers.discord.getUserSafe(
+					interaction.client,
+					partnerId,
+				);
 			} catch {}
-
 			const partnerLabel =
 				(await t(interaction, 'fun.marry.profile.partner.label', {}, null)) ||
 				'Partner';
 
 			// Avatar
 			const partnerAvatar = partner?.displayAvatarURL
-				? partner.displayAvatarURL({ extension: 'png', size: 256 })
+				? partner.displayAvatarURL({
+						extension: 'png',
+						size: 256,
+					})
 				: defaultAvatar;
-
 			marriageBlock =
 				`${(await t(interaction, 'fun.marry.profile.title', {}, null)) || 'Marriage'}\n` +
 				`-# **${partnerLabel}**\n### ${partner?.username || 'Unknown'}\n\n` +
@@ -153,27 +155,32 @@ class UserInfoCommand extends BaseCommand {
 					? `${(await t(interaction, 'fun.marry.profile.days.married', {}, null)) || 'Days Together'}\n${marriedFor} days\n`
 					: '') +
 				`${(await t(interaction, 'fun.marry.profile.love.score', {}, null)) || 'Love Score'}\n${marriage.loveScore} ❤️`;
-
 			marriageBlock = {
 				content: marriageBlock,
 				avatar: partnerAvatar,
 				partnerName: partner?.username || 'Unknown',
 			};
 		}
-
-		const footerText = `${await t(interaction, 'common.container.footer', { username: interaction.client.user.username })}`;
+		const footerText = `${await t(interaction, 'common.container.footer', {
+			username: interaction.client.user.username,
+		})}`;
 
 		// Build container
 		let containerBuilder = new ContainerBuilder()
 			.setAccentColor(
-				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+				convertColor(kythiaConfig.bot.color, {
+					from: 'hex',
+					to: 'decimal',
+				}),
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
 					`## ${await t(interaction, 'core.utils.userinfo.embed.title')}\n${await t(
 						interaction,
 						'core.utils.userinfo.embed.desc',
-						{ tag: user.tag },
+						{
+							tag: user.tag,
+						},
 					)}`,
 				),
 			)
@@ -192,7 +199,6 @@ class UserInfoCommand extends BaseCommand {
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(datesSection),
 			);
-
 		if (marriageBlock) {
 			// Insert marriage block before roles and after misc
 			containerBuilder = containerBuilder
@@ -209,7 +215,6 @@ class UserInfoCommand extends BaseCommand {
 						),
 				);
 		}
-
 		containerBuilder = containerBuilder
 			.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
 			.addTextDisplayComponents(
@@ -219,12 +224,10 @@ class UserInfoCommand extends BaseCommand {
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(footerText),
 			);
-
 		return interaction.editReply({
 			components: [containerBuilder],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = UserInfoCommand;

@@ -14,27 +14,28 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class GuildMemberRemoveEvent extends BaseEvent {
 	async execute(member) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!member.guild) return;
 		const { models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 
 		// ── Audit log ────────────────────────────────────────────────
-		const setting = await ServerSetting.getCache({ guildId: member.guild.id });
+		const setting = await ServerSetting.getCache({
+			guildId: member.guild.id,
+		});
 		if (!setting?.auditLogChannelId) return;
-
-		const logChannel = await member.guild.channels
-			.fetch(setting.auditLogChannelId)
-			.catch(() => null);
-
+		const logChannel = await helpers.discord.getChannelSafe(
+			member.guild,
+			setting.auditLogChannelId,
+		);
 		if (logChannel?.isTextBased()) {
 			try {
 				// Check if it was a kick
@@ -46,19 +47,20 @@ class GuildMemberRemoveEvent extends BaseEvent {
 					})
 					.catch(() => null);
 				if (!kickAudit) return;
-
 				const kickEntry = kickAudit.entries.find(
 					(e) =>
 						e.target?.id === member.id &&
 						e.createdTimestamp > Date.now() - 5000,
 				);
-
 				if (kickEntry) {
 					const executor = kickEntry.executor;
 					const components = [
 						new ContainerBuilder()
 							.setAccentColor(
-								convertColor('Red', { from: 'discord', to: 'decimal' }),
+								convertColor('Red', {
+									from: 'discord',
+									to: 'decimal',
+								}),
 							)
 							.addTextDisplayComponents(
 								new TextDisplayBuilder().setContent(
@@ -91,7 +93,9 @@ class GuildMemberRemoveEvent extends BaseEvent {
 							.addTextDisplayComponents(
 								new TextDisplayBuilder().setContent(
 									await t(
-										{ guildId: member.guild.id },
+										{
+											guildId: member.guild.id,
+										},
 										'common.container.footer',
 										{
 											username: this.client.user.username,
@@ -100,11 +104,12 @@ class GuildMemberRemoveEvent extends BaseEvent {
 								),
 							),
 					];
-
 					await logChannel.send({
 						components,
 						flags: MessageFlags.IsComponentsV2,
-						allowedMentions: { parse: [] },
+						allowedMentions: {
+							parse: [],
+						},
 					});
 					return;
 				}
@@ -113,7 +118,10 @@ class GuildMemberRemoveEvent extends BaseEvent {
 				const components = [
 					new ContainerBuilder()
 						.setAccentColor(
-							convertColor('Orange', { from: 'discord', to: 'decimal' }),
+							convertColor('Orange', {
+								from: 'discord',
+								to: 'decimal',
+							}),
 						)
 						.addTextDisplayComponents(
 							new TextDisplayBuilder().setContent(
@@ -144,7 +152,9 @@ class GuildMemberRemoveEvent extends BaseEvent {
 						.addTextDisplayComponents(
 							new TextDisplayBuilder().setContent(
 								await t(
-									{ guildId: member.guild.id },
+									{
+										guildId: member.guild.id,
+									},
 									'common.container.footer',
 									{
 										username: this.client.user.username,
@@ -153,11 +163,12 @@ class GuildMemberRemoveEvent extends BaseEvent {
 							),
 						),
 				];
-
 				await logChannel.send({
 					components,
 					flags: MessageFlags.IsComponentsV2,
-					allowedMentions: { parse: [] },
+					allowedMentions: {
+						parse: [],
+					},
 				});
 			} catch (err) {
 				if (err.code === 50001 || err.code === 50013) return;
@@ -171,5 +182,4 @@ class GuildMemberRemoveEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = GuildMemberRemoveEvent;

@@ -14,7 +14,6 @@ const {
 	SeparatorSpacingSize,
 	MessageFlags,
 } = require('discord.js');
-
 const app = new Hono();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -41,17 +40,27 @@ app.get('/', async (c) => {
 	const userId = c.req.query('userId');
 	const threadChannelId = c.req.query('threadChannelId');
 	const status = c.req.query('status');
-
 	if (guildId) where.guildId = guildId;
 	if (userId) where.userId = userId;
 	if (threadChannelId) where.threadChannelId = threadChannelId;
 	if (status) where.status = status;
-
 	try {
-		const modmails = await Modmail.getAllCache({ where });
-		return c.json({ success: true, count: modmails.length, data: modmails });
+		const modmails = await Modmail.getAllCache({
+			where,
+		});
+		return c.json({
+			success: true,
+			count: modmails.length,
+			data: modmails,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -63,12 +72,29 @@ app.get('/:id', async (c) => {
 	const { Modmail } = getModels(c);
 	const id = c.req.param('id');
 	try {
-		const modmail = await Modmail.getCache({ id: id });
+		const modmail = await Modmail.getCache({
+			id: id,
+		});
 		if (!modmail)
-			return c.json({ success: false, error: 'Modmail not found' }, 404);
-		return c.json({ success: true, data: modmail });
+			return c.json(
+				{
+					success: false,
+					error: 'Modmail not found',
+				},
+				404,
+			);
+		return c.json({
+			success: true,
+			data: modmail,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -82,14 +108,31 @@ app.patch('/:id', async (c) => {
 	const id = c.req.param('id');
 	const body = await c.req.json();
 	try {
-		const modmail = await Modmail.getCache({ id: id });
+		const modmail = await Modmail.getCache({
+			id: id,
+		});
 		if (!modmail)
-			return c.json({ success: false, error: 'Modmail not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Modmail not found',
+				},
+				404,
+			);
 		await modmail.update(body);
 		await modmail.save();
-		return c.json({ success: true, data: modmail });
+		return c.json({
+			success: true,
+			data: modmail,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -102,13 +145,30 @@ app.delete('/:id', async (c) => {
 	const { Modmail } = getModels(c);
 	const id = c.req.param('id');
 	try {
-		const modmail = await Modmail.getCache({ id: id });
+		const modmail = await Modmail.getCache({
+			id: id,
+		});
 		if (!modmail)
-			return c.json({ success: false, error: 'Modmail not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Modmail not found',
+				},
+				404,
+			);
 		await modmail.destroy();
-		return c.json({ success: true, message: 'Modmail record deleted' });
+		return c.json({
+			success: true,
+			message: 'Modmail record deleted',
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -123,29 +183,46 @@ app.post('/open', async (c) => {
 	const { ModmailConfig } = getModels(c);
 	const body = await c.req.json();
 	const { guildId, userId, initialMessage } = body;
-
 	if (!guildId || !userId)
 		return c.json(
-			{ success: false, error: 'Missing required: guildId, userId' },
+			{
+				success: false,
+				error: 'Missing required: guildId, userId',
+			},
 			400,
 		);
-
 	try {
-		const config = await ModmailConfig.getCache({ guildId });
+		const config = await ModmailConfig.getCache({
+			guildId,
+		});
 		if (!config)
 			return c.json(
-				{ success: false, error: 'Modmail not configured for this guild' },
+				{
+					success: false,
+					error: 'Modmail not configured for this guild',
+				},
 				404,
 			);
-
-		const user = await client.users.fetch(userId).catch(() => null);
+		const user = await client.container.helpers.discord.getUserSafe(
+			client,
+			userId,
+		);
 		if (!user)
-			return c.json({ success: false, error: `User ${userId} not found` }, 404);
-
-		const guild = await client.guilds.fetch(guildId).catch(() => null);
+			return c.json(
+				{
+					success: false,
+					error: `User ${userId} not found`,
+				},
+				404,
+			);
+		const { getGuildSafe } = getContainer(c).helpers.discord;
+		const guild = await getGuildSafe(client, guildId);
 		if (!guild)
 			return c.json(
-				{ success: false, error: `Guild ${guildId} not found` },
+				{
+					success: false,
+					error: `Guild ${guildId} not found`,
+				},
 				404,
 			);
 
@@ -171,18 +248,20 @@ app.post('/open', async (c) => {
 			: [];
 		if (blocked.includes(userId))
 			return c.json(
-				{ success: false, error: 'User is blocked from modmail in this guild' },
+				{
+					success: false,
+					error: 'User is blocked from modmail in this guild',
+				},
 				403,
 			);
-
 		const modmail = await modmailHelpers.createModmailThread(
 			user,
 			guildId,
 			initialMessage || '',
-			new Map(), // no attachments via API
+			new Map(),
+			// no attachments via API
 			container,
 		);
-
 		if (!modmail)
 			return c.json(
 				{
@@ -191,10 +270,18 @@ app.post('/open', async (c) => {
 				},
 				500,
 			);
-
-		return c.json({ success: true, data: modmail });
+		return c.json({
+			success: true,
+			data: modmail,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -210,34 +297,58 @@ app.post('/:id/close', async (c) => {
 	const id = c.req.param('id');
 	const body = await c.req.json();
 	const { closerId, reason } = body;
-
 	if (!closerId)
-		return c.json({ success: false, error: 'Missing required: closerId' }, 400);
-
+		return c.json(
+			{
+				success: false,
+				error: 'Missing required: closerId',
+			},
+			400,
+		);
 	try {
-		const modmail = await Modmail.getCache({ id: id });
+		const modmail = await Modmail.getCache({
+			id: id,
+		});
 		if (!modmail)
-			return c.json({ success: false, error: 'Modmail not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Modmail not found',
+				},
+				404,
+			);
 		if (modmail.status === 'closed')
 			return c.json(
-				{ success: false, error: 'Modmail is already closed' },
+				{
+					success: false,
+					error: 'Modmail is already closed',
+				},
 				400,
 			);
-
-		const guild = await client.guilds.fetch(modmail.guildId).catch(() => null);
-		const channel = await client.channels
-			.fetch(modmail.threadChannelId)
-			.catch(() => null);
-		const closer = await client.users.fetch(closerId).catch(() => null);
-
+		const { getGuildSafe } = getContainer(c).helpers.discord;
+		const guild = await getGuildSafe(client, modmail.guildId);
+		const channel = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			modmail.threadChannelId,
+		);
+		const closer = await client.container.helpers.discord.getUserSafe(
+			client,
+			closerId,
+		);
 		if (!guild || !channel)
 			return c.json(
-				{ success: false, error: 'Guild or thread channel not found' },
+				{
+					success: false,
+					error: 'Guild or thread channel not found',
+				},
 				404,
 			);
 		if (!closer)
 			return c.json(
-				{ success: false, error: `User ${closerId} (closer) not found` },
+				{
+					success: false,
+					error: `User ${closerId} (closer) not found`,
+				},
 				404,
 			);
 
@@ -247,22 +358,33 @@ app.post('/:id/close', async (c) => {
 			guild,
 			user: closer,
 			channel,
-			member: await guild.members.fetch(closerId).catch(() => null),
+			member: await getContainer(c).helpers.discord.getMemberSafe(
+				guild,
+				closerId,
+			),
 			replied: false,
 			deferred: false,
 			reply: async () => {},
 			followUp: async () => {},
 			editReply: async () => {},
 		};
-
 		await modmailHelpers.closeModmail(
 			mockInteraction,
 			container,
 			reason ?? null,
 		);
-		return c.json({ success: true, message: 'Modmail closed successfully' });
+		return c.json({
+			success: true,
+			message: 'Modmail closed successfully',
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -278,35 +400,58 @@ app.post('/:id/reply', async (c) => {
 	const id = c.req.param('id');
 	const body = await c.req.json();
 	const { staffId, content, anonymous } = body;
-
 	if (!staffId || !content)
 		return c.json(
-			{ success: false, error: 'Missing required: staffId, content' },
+			{
+				success: false,
+				error: 'Missing required: staffId, content',
+			},
 			400,
 		);
-
 	try {
-		const modmail = await Modmail.getCache({ id: id });
+		const modmail = await Modmail.getCache({
+			id: id,
+		});
 		if (!modmail)
-			return c.json({ success: false, error: 'Modmail not found' }, 404);
-		if (modmail.status === 'closed')
 			return c.json(
-				{ success: false, error: 'Cannot reply to a closed modmail' },
-				400,
-			);
-
-		const staff = await client.users.fetch(staffId).catch(() => null);
-		if (!staff)
-			return c.json(
-				{ success: false, error: `User ${staffId} (staff) not found` },
+				{
+					success: false,
+					error: 'Modmail not found',
+				},
 				404,
 			);
-
-		const thread = await client.channels
-			.fetch(modmail.threadChannelId)
-			.catch(() => null);
+		if (modmail.status === 'closed')
+			return c.json(
+				{
+					success: false,
+					error: 'Cannot reply to a closed modmail',
+				},
+				400,
+			);
+		const staff = await client.container.helpers.discord.getUserSafe(
+			client,
+			staffId,
+		);
+		if (!staff)
+			return c.json(
+				{
+					success: false,
+					error: `User ${staffId} (staff) not found`,
+				},
+				404,
+			);
+		const thread = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			modmail.threadChannelId,
+		);
 		if (!thread)
-			return c.json({ success: false, error: 'Thread channel not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Thread channel not found',
+				},
+				404,
+			);
 
 		// Build a mock message-like object that satisfies relayGuildReply
 		const mockMessage = {
@@ -316,7 +461,6 @@ app.post('/:id/reply', async (c) => {
 			attachments: new Map(),
 			delete: async () => {},
 		};
-
 		await modmailHelpers.relayGuildReply(
 			mockMessage,
 			modmail,
@@ -324,10 +468,18 @@ app.post('/:id/reply', async (c) => {
 			anonymous === true,
 			container,
 		);
-
-		return c.json({ success: true, message: 'Reply sent to user' });
+		return c.json({
+			success: true,
+			message: 'Reply sent to user',
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -342,33 +494,56 @@ app.post('/:id/note', async (c) => {
 	const id = c.req.param('id');
 	const body = await c.req.json();
 	const { staffId, content } = body;
-
 	if (!staffId || !content)
 		return c.json(
-			{ success: false, error: 'Missing required: staffId, content' },
+			{
+				success: false,
+				error: 'Missing required: staffId, content',
+			},
 			400,
 		);
-
 	try {
-		const modmail = await Modmail.getCache({ id: id });
+		const modmail = await Modmail.getCache({
+			id: id,
+		});
 		if (!modmail)
-			return c.json({ success: false, error: 'Modmail not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Modmail not found',
+				},
+				404,
+			);
 		if (modmail.status === 'closed')
 			return c.json(
-				{ success: false, error: 'Cannot add a note to a closed modmail' },
+				{
+					success: false,
+					error: 'Cannot add a note to a closed modmail',
+				},
 				400,
 			);
-
-		const thread = await client.channels
-			.fetch(modmail.threadChannelId)
-			.catch(() => null);
+		const thread = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			modmail.threadChannelId,
+		);
 		if (!thread)
-			return c.json({ success: false, error: 'Thread channel not found' }, 404);
-
-		const staff = await client.users.fetch(staffId).catch(() => null);
+			return c.json(
+				{
+					success: false,
+					error: 'Thread channel not found',
+				},
+				404,
+			);
+		const staff = await client.container.helpers.discord.getUserSafe(
+			client,
+			staffId,
+		);
 		if (!staff)
 			return c.json(
-				{ success: false, error: `User ${staffId} (staff) not found` },
+				{
+					success: false,
+					error: `User ${staffId} (staff) not found`,
+				},
 				404,
 			);
 
@@ -390,16 +565,25 @@ app.post('/:id/note', async (c) => {
 					.setDivider(true),
 			)
 			.addTextDisplayComponents(new TextDisplayBuilder().setContent(content));
-
 		await thread.send({
 			components: [noteCard],
 			flags: MessageFlags.IsComponentsV2,
-			allowedMentions: { parse: [] },
+			allowedMentions: {
+				parse: [],
+			},
 		});
-
-		return c.json({ success: true, message: 'Note posted to thread' });
+		return c.json({
+			success: true,
+			message: 'Note posted to thread',
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -415,15 +599,29 @@ app.get('/configs/:guildId', async (c) => {
 	const { ModmailConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
 	try {
-		const config = await ModmailConfig.getCache({ guildId });
+		const config = await ModmailConfig.getCache({
+			guildId,
+		});
 		if (!config)
 			return c.json(
-				{ success: false, error: 'Modmail not configured for this guild' },
+				{
+					success: false,
+					error: 'Modmail not configured for this guild',
+				},
 				404,
 			);
-		return c.json({ success: true, data: config });
+		return c.json({
+			success: true,
+			data: config,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -438,15 +636,18 @@ app.put('/configs/:guildId', async (c) => {
 	const { ModmailConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
 	const body = await c.req.json();
-
 	if (!body.inboxChannelId)
 		return c.json(
-			{ success: false, error: 'Missing required: inboxChannelId' },
+			{
+				success: false,
+				error: 'Missing required: inboxChannelId',
+			},
 			400,
 		);
-
 	try {
-		const existing = await ModmailConfig.getCache({ guildId });
+		const existing = await ModmailConfig.getCache({
+			guildId,
+		});
 		const data = {
 			guildId,
 			inboxChannelId: body.inboxChannelId,
@@ -461,21 +662,32 @@ app.put('/configs/:guildId', async (c) => {
 			closingColor: body.closingColor || null,
 			closingImage: body.closingImage || null,
 		};
-
 		if (existing) {
 			await existing.update(data);
 			await existing.save();
-			return c.json({ success: true, data: existing });
+			return c.json({
+				success: true,
+				data: existing,
+			});
 		} else {
 			const config = await ModmailConfig.create({
 				...data,
 				blockedUserIds: body.blockedUserIds || [],
 				snippets: body.snippets || {},
 			});
-			return c.json({ success: true, data: config });
+			return c.json({
+				success: true,
+				data: config,
+			});
 		}
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -488,19 +700,32 @@ app.patch('/configs/:guildId', async (c) => {
 	const { ModmailConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
 	const body = await c.req.json();
-
 	try {
-		const config = await ModmailConfig.getCache({ guildId });
+		const config = await ModmailConfig.getCache({
+			guildId,
+		});
 		if (!config)
 			return c.json(
-				{ success: false, error: 'Modmail config not found for this guild' },
+				{
+					success: false,
+					error: 'Modmail config not found for this guild',
+				},
 				404,
 			);
 		await config.update(body);
 		await config.save();
-		return c.json({ success: true, data: config });
+		return c.json({
+			success: true,
+			data: config,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -512,10 +737,15 @@ app.delete('/configs/:guildId', async (c) => {
 	const { ModmailConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
 	try {
-		const config = await ModmailConfig.getCache({ guildId });
+		const config = await ModmailConfig.getCache({
+			guildId,
+		});
 		if (!config)
 			return c.json(
-				{ success: false, error: 'Modmail config not found for this guild' },
+				{
+					success: false,
+					error: 'Modmail config not found for this guild',
+				},
 				404,
 			);
 		await config.destroy();
@@ -524,7 +754,13 @@ app.delete('/configs/:guildId', async (c) => {
 			message: `Modmail config for guild ${guildId} deleted`,
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -540,9 +776,17 @@ app.get('/configs/:guildId/block', async (c) => {
 	const { ModmailConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
 	try {
-		const config = await ModmailConfig.getCache({ guildId });
+		const config = await ModmailConfig.getCache({
+			guildId,
+		});
 		if (!config)
-			return c.json({ success: false, error: 'Modmail config not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Modmail config not found',
+				},
+				404,
+			);
 		const blockedUserIds = Array.isArray(config.blockedUserIds)
 			? config.blockedUserIds
 			: [];
@@ -552,7 +796,13 @@ app.get('/configs/:guildId/block', async (c) => {
 			data: blockedUserIds,
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -566,27 +816,54 @@ app.post('/configs/:guildId/block', async (c) => {
 	const guildId = c.req.param('guildId');
 	const body = await c.req.json();
 	const { userId } = body;
-
 	if (!userId)
-		return c.json({ success: false, error: 'Missing required: userId' }, 400);
-
+		return c.json(
+			{
+				success: false,
+				error: 'Missing required: userId',
+			},
+			400,
+		);
 	try {
-		const config = await ModmailConfig.getCache({ guildId });
+		const config = await ModmailConfig.getCache({
+			guildId,
+		});
 		if (!config)
-			return c.json({ success: false, error: 'Modmail config not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'Modmail config not found',
+				},
+				404,
+			);
 		const blocked = Array.isArray(config.blockedUserIds)
 			? [...config.blockedUserIds]
 			: [];
 		if (blocked.includes(userId))
-			return c.json({ success: false, error: 'User is already blocked' }, 409);
-
+			return c.json(
+				{
+					success: false,
+					error: 'User is already blocked',
+				},
+				409,
+			);
 		blocked.push(userId);
 		config.blockedUserIds = blocked;
 		await config.save();
-		return c.json({ success: true, data: { blockedUserIds: blocked } });
+		return c.json({
+			success: true,
+			data: {
+				blockedUserIds: blocked,
+			},
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -598,26 +875,45 @@ app.delete('/configs/:guildId/block/:userId', async (c) => {
 	const { ModmailConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
 	const userId = c.req.param('userId');
-
 	try {
-		const config = await ModmailConfig.getCache({ guildId });
+		const config = await ModmailConfig.getCache({
+			guildId,
+		});
 		if (!config)
-			return c.json({ success: false, error: 'Modmail config not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'Modmail config not found',
+				},
+				404,
+			);
 		const blocked = Array.isArray(config.blockedUserIds)
 			? [...config.blockedUserIds]
 			: [];
 		if (!blocked.includes(userId))
-			return c.json({ success: false, error: 'User is not blocked' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'User is not blocked',
+				},
+				404,
+			);
 		config.blockedUserIds = blocked.filter((id) => id !== userId);
 		await config.save();
 		return c.json({
 			success: true,
-			data: { blockedUserIds: config.blockedUserIds },
+			data: {
+				blockedUserIds: config.blockedUserIds,
+			},
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -633,9 +929,17 @@ app.get('/configs/:guildId/snippets', async (c) => {
 	const { ModmailConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
 	try {
-		const config = await ModmailConfig.getCache({ guildId });
+		const config = await ModmailConfig.getCache({
+			guildId,
+		});
 		if (!config)
-			return c.json({ success: false, error: 'Modmail config not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Modmail config not found',
+				},
+				404,
+			);
 		const snippets = config.snippets || {};
 		return c.json({
 			success: true,
@@ -643,7 +947,13 @@ app.get('/configs/:guildId/snippets', async (c) => {
 			data: snippets,
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -657,21 +967,47 @@ app.put('/configs/:guildId/snippets/:name', async (c) => {
 	const guildId = c.req.param('guildId');
 	const name = c.req.param('name').toLowerCase();
 	const body = await c.req.json();
-
 	if (!body.content)
-		return c.json({ success: false, error: 'Missing required: content' }, 400);
-
+		return c.json(
+			{
+				success: false,
+				error: 'Missing required: content',
+			},
+			400,
+		);
 	try {
-		const config = await ModmailConfig.getCache({ guildId });
+		const config = await ModmailConfig.getCache({
+			guildId,
+		});
 		if (!config)
-			return c.json({ success: false, error: 'Modmail config not found' }, 404);
-
-		const snippets = { ...(config.snippets || {}), [name]: body.content };
+			return c.json(
+				{
+					success: false,
+					error: 'Modmail config not found',
+				},
+				404,
+			);
+		const snippets = {
+			...(config.snippets || {}),
+			[name]: body.content,
+		};
 		config.snippets = snippets;
 		await config.save();
-		return c.json({ success: true, data: { name, content: body.content } });
+		return c.json({
+			success: true,
+			data: {
+				name,
+				content: body.content,
+			},
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -683,26 +1019,44 @@ app.delete('/configs/:guildId/snippets/:name', async (c) => {
 	const { ModmailConfig } = getModels(c);
 	const guildId = c.req.param('guildId');
 	const name = c.req.param('name').toLowerCase();
-
 	try {
-		const config = await ModmailConfig.getCache({ guildId });
+		const config = await ModmailConfig.getCache({
+			guildId,
+		});
 		if (!config)
-			return c.json({ success: false, error: 'Modmail config not found' }, 404);
-
-		const snippets = { ...(config.snippets || {}) };
-		if (!snippets[name])
 			return c.json(
-				{ success: false, error: `Snippet "${name}" not found` },
+				{
+					success: false,
+					error: 'Modmail config not found',
+				},
 				404,
 			);
-
+		const snippets = {
+			...(config.snippets || {}),
+		};
+		if (!snippets[name])
+			return c.json(
+				{
+					success: false,
+					error: `Snippet "${name}" not found`,
+				},
+				404,
+			);
 		delete snippets[name];
 		config.snippets = snippets;
 		await config.save();
-		return c.json({ success: true, message: `Snippet "${name}" deleted` });
+		return c.json({
+			success: true,
+			message: `Snippet "${name}" deleted`,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
-
 module.exports = app;

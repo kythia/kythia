@@ -79,7 +79,10 @@ function buildLayoutContainer(layout, bindings, container, panelData = {}) {
 	let accentColor;
 	try {
 		accentColor = layout.accentColor
-			? convertColor(layout.accentColor, { from: 'hex', to: 'decimal' })
+			? convertColor(layout.accentColor, {
+					from: 'hex',
+					to: 'decimal',
+				})
 			: convertColor(container.kythiaConfig.bot.color, {
 					from: 'hex',
 					to: 'decimal',
@@ -90,7 +93,6 @@ function buildLayoutContainer(layout, bindings, container, panelData = {}) {
 			to: 'decimal',
 		});
 	}
-
 	const builder = new ContainerBuilder().setAccentColor(accentColor);
 
 	// --- Thumbnail (shown above title as a small gallery item) ---
@@ -163,7 +165,6 @@ function buildLayoutContainer(layout, bindings, container, panelData = {}) {
 			}
 			inlineBuffer.length = 0;
 		};
-
 		for (const field of layout.fields) {
 			if (field.inline) {
 				inlineBuffer.push(field);
@@ -189,7 +190,6 @@ function buildLayoutContainer(layout, bindings, container, panelData = {}) {
 
 	// --- Emoji bindings ---
 	const isDropdown = panelData.panelType === 'dropdown';
-
 	if (isDropdown) {
 		if (bindings && bindings.length > 0) {
 			builder.addSeparatorComponents(
@@ -306,7 +306,6 @@ function buildLayoutContainer(layout, bindings, container, panelData = {}) {
 			),
 		);
 	}
-
 	return builder;
 }
 
@@ -340,15 +339,12 @@ function buildPanelEmbed(panelData, reactionRoles, container) {
 			panelData,
 		);
 	}
-
 	const { kythiaConfig, helpers } = container;
 	const { convertColor } = helpers.color;
-
 	const accentColor = convertColor(kythiaConfig.bot.color, {
 		from: 'hex',
 		to: 'decimal',
 	});
-
 	const builder = new ContainerBuilder().setAccentColor(accentColor);
 
 	// Title
@@ -356,7 +352,6 @@ function buildPanelEmbed(panelData, reactionRoles, container) {
 	builder.addTextDisplayComponents(
 		new TextDisplayBuilder().setContent(`## ${title}`),
 	);
-
 	builder.addSeparatorComponents(
 		new SeparatorBuilder()
 			.setSpacing(SeparatorSpacingSize.Small)
@@ -374,9 +369,7 @@ function buildPanelEmbed(panelData, reactionRoles, container) {
 				.setDivider(false),
 		);
 	}
-
 	const isDropdown = panelData.panelType === 'dropdown';
-
 	if (isDropdown) {
 		// ── Dropdown mode: render a StringSelectMenu ──────────────────────────
 		if (!reactionRoles || reactionRoles.length === 0) {
@@ -465,7 +458,6 @@ function buildPanelEmbed(panelData, reactionRoles, container) {
 			),
 		);
 	}
-
 	return builder;
 }
 
@@ -509,7 +501,6 @@ async function refreshPanelMessage(panelId, container) {
 	const { models, logger } = container;
 	const client = container.client;
 	const { ReactionRolePanel, ReactionRole } = models;
-
 	const panel = await ReactionRolePanel.findByPk(panelId);
 	if (!panel?.messageId) return;
 
@@ -520,38 +511,39 @@ async function refreshPanelMessage(panelId, container) {
 		(panel.panelType || 'reaction') === 'reaction'
 	)
 		return;
-
 	const reactionRoles = await ReactionRole.getAllCache({
-		where: { panelId: panel.id },
+		where: {
+			panelId: panel.id,
+		},
 	});
-
-	const channel = await client.channels
-		.fetch(panel.channelId)
-		.catch(() => null);
+	const channel = await client.container.helpers.discord.getChannelGlobalSafe(
+		client,
+		panel.channelId,
+	);
 	if (!channel) {
 		logger.warn(`Channel ${panel.channelId} not found for panel ${panelId}.`, {
 			label: 'reaction-role refresh',
 		});
 		return;
 	}
-
-	const message = await channel.messages
-		.fetch(panel.messageId)
-		.catch(() => null);
+	const message = await container.helpers.discord.getMessageSafe(
+		channel,
+		panel.messageId,
+	);
 	if (!message) {
 		logger.warn(
 			`Message ${panel.messageId} not found in channel ${panel.channelId}.`,
-			{ label: 'reaction-role refresh' },
+			{
+				label: 'reaction-role refresh',
+			},
 		);
 		return;
 	}
-
 	const updatedContainer = buildPanelEmbed(
 		panel.toJSON(),
 		reactionRoles,
 		container,
 	);
-
 	await message.edit({
 		components: [updatedContainer],
 		flags: MessageFlags.IsComponentsV2,
@@ -574,9 +566,10 @@ async function refreshReactionRoleMessage(messageId, container) {
 	const { models, logger } = container;
 	const client = container.client;
 	const { ReactionRole } = models;
-
 	const reactionRoles = await ReactionRole.getAllCache({
-		where: { messageId },
+		where: {
+			messageId,
+		},
 	});
 	if (reactionRoles.length === 0) return;
 
@@ -585,24 +578,27 @@ async function refreshReactionRoleMessage(messageId, container) {
 	if (firstWithPanel) {
 		return refreshPanelMessage(firstWithPanel.panelId, container);
 	}
-
 	const channelId = reactionRoles[0].channelId;
-	const channel = await client.channels.fetch(channelId).catch(() => null);
+	const channel = await client.container.helpers.discord.getChannelGlobalSafe(
+		client,
+		channelId,
+	);
 	if (!channel) {
 		logger.warn(`Channel ${channelId} not found.`, {
 			label: 'reaction-role refresh',
 		});
 		return;
 	}
-
-	const message = await channel.messages.fetch(messageId).catch(() => null);
+	const message = await container.helpers.discord.getMessageSafe(
+		channel,
+		messageId,
+	);
 	if (!message) {
 		logger.warn(`Message ${messageId} not found.`, {
 			label: 'reaction-role refresh',
 		});
 		return;
 	}
-
 	const updatedContainer = buildReactionRoleComponents(
 		reactionRoles,
 		container,
@@ -612,7 +608,6 @@ async function refreshReactionRoleMessage(messageId, container) {
 		flags: MessageFlags.IsComponentsV2,
 	});
 }
-
 module.exports = {
 	buildLayoutContainer,
 	buildPanelEmbed,

@@ -11,12 +11,9 @@ const {
 	ContainerBuilder,
 	TextDisplayBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AddCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
@@ -48,38 +45,36 @@ class AddCommand extends BaseCommand {
 					.addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, logger } = container;
 		const { ReactionRole, ReactionRolePanel } = models;
 		const { convertColor } = helpers.color;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const messageId = interaction.options.getString('message_id');
 		const emojiInput = interaction.options.getString('emoji');
 		const role = interaction.options.getRole('role');
 		const channel =
 			interaction.options.getChannel('channel') || interaction.channel;
-
 		if (!channel?.isTextBased()) {
 			return interaction.editReply({
 				content: await t(interaction, 'reaction-role.invalid_channel'),
 			});
 		}
-
 		try {
-			const message = await channel.messages.fetch(messageId).catch(() => null);
-
+			const message = await helpers.discord.getMessageSafe(channel, messageId);
 			if (!message) {
 				return interaction.editReply({
 					content: await t(interaction, 'reaction-role.invalid_message'),
 				});
 			}
-
 			const panel = await ReactionRolePanel.getCache({
-				where: { guildId: interaction.guildId, messageId },
+				where: {
+					guildId: interaction.guildId,
+					messageId,
+				},
 			});
 
 			// Validate emoji by trying to react
@@ -107,7 +102,6 @@ class AddCommand extends BaseCommand {
 					emoji: emojiInput,
 				},
 			});
-
 			if (existing) {
 				existing.roleId = role.id;
 				existing.channelId = channel.id; // Update channel just in case
@@ -128,10 +122,12 @@ class AddCommand extends BaseCommand {
 			if (panel) {
 				await helpers.reactionRole.refreshPanelMessage(panel.id, container);
 			}
-
 			const successContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor('Green', { from: 'discord', to: 'decimal' }),
+					convertColor('Green', {
+						from: 'discord',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
@@ -142,7 +138,6 @@ class AddCommand extends BaseCommand {
 						}),
 					),
 				);
-
 			return interaction.editReply({
 				components: [successContainer],
 				flags: MessageFlags.IsComponentsV2,
@@ -157,5 +152,4 @@ class AddCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = AddCommand;

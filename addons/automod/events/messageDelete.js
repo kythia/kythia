@@ -13,46 +13,38 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseEvent } = require('kythia-core');
-
 const { automodDeletedMessages } = require('../helpers/automod');
-
 class MessageDeleteEvent extends BaseEvent {
 	async execute(message) {
 		const container = this.container;
-		const _bot = { client: this.client, container: this.container };
+		const _bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { models } = container;
 		const { ServerSetting } = models;
-
 		if (!message.guild || !message.author || message.author.bot) return;
-
 		if (automodDeletedMessages.has(message.id)) {
 			automodDeletedMessages.delete(message.id);
 			return;
 		}
-
 		const mentionCount =
 			message.mentions.users.size + message.mentions.roles.size;
 		if (mentionCount === 0) return;
-
 		const settings = await ServerSetting.getCache({
 			guildId: message.guild.id,
 		});
-
 		if (!settings?.antiGhostPingOn) return;
-
 		const ageMs = Date.now() - message.createdTimestamp;
 		if (ageMs > 5 * 60 * 1000) return;
-
 		const channelId = settings.auditLogChannelId || settings.modLogChannelId;
 		if (!channelId) return;
-
-		const logChannel = await message.guild.channels
-			.fetch(channelId)
-			.catch(() => null);
+		const logChannel = await container.helpers.discord.getChannelSafe(
+			message.guild,
+			channelId,
+		);
 		if (!logChannel?.isTextBased()) return;
-
 		const components = [
 			new ContainerBuilder()
 				.setAccentColor(0xffaa00)
@@ -76,7 +68,6 @@ class MessageDeleteEvent extends BaseEvent {
 					),
 				),
 		];
-
 		await logChannel
 			.send({
 				components,
@@ -88,5 +79,4 @@ class MessageDeleteEvent extends BaseEvent {
 			.catch(() => null);
 	}
 }
-
 module.exports = MessageDeleteEvent;

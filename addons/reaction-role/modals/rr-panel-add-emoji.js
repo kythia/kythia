@@ -10,54 +10,50 @@ const {
 	TextDisplayBuilder,
 	MessageFlags,
 } = require('discord.js');
-
 const { refreshPanelMessage } = require('../helpers/index.js');
-
 const { BaseModal } = require('kythia-core');
-
 class RrPanelAddEmojiModal extends BaseModal {
 	modal = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, helpers, logger } = container;
 		const { ReactionRolePanel, ReactionRole } = models;
 		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
-
 		await interaction.deferUpdate();
-
 		try {
 			// customId: rr-panel-add-emoji:<panelId>
 			const panelId = parseInt(interaction.customId.split(':')[1], 10);
-
 			if (!panelId) {
 				return interaction.followUp({
 					components: await simpleContainer(
 						interaction,
 						'❌ Invalid panel ID in button.',
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			const panel = await ReactionRolePanel.getCache({
-				where: { id: panelId, guildId: interaction.guildId },
+				where: {
+					id: panelId,
+					guildId: interaction.guildId,
+				},
 			});
-
 			if (!panel) {
 				return interaction.followUp({
 					components: await simpleContainer(
 						interaction,
 						`❌ Panel \`${panelId}\` not found.`,
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			const emojiInput = interaction.fields.getTextInputValue('emoji').trim();
 			const roleId = interaction.fields.getTextInputValue('roleId').trim();
 			// label is only present in dropdown-type panel modals
@@ -70,46 +66,50 @@ class RrPanelAddEmojiModal extends BaseModal {
 			})();
 
 			// Validate role exists
-			const role = await interaction.guild.roles
-				.fetch(roleId)
-				.catch(() => null);
+			const { getRoleSafe } = container.helpers.discord;
+			const role = await getRoleSafe(interaction.guild, roleId);
 			if (!role) {
 				return interaction.followUp({
 					components: await simpleContainer(
 						interaction,
 						`❌ Role ID \`${roleId}\` not found in this server.`,
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
 
 			// Fetch the panel message and validate emoji by reacting
-			const channel = await interaction.client.channels
-				.fetch(panel.channelId)
-				.catch(() => null);
-
+			const channel = await helpers.discord.getChannelSafe(
+				interaction.client,
+				panel.channelId,
+			);
 			if (!channel) {
 				return interaction.followUp({
 					components: await simpleContainer(
 						interaction,
 						`❌ Panel channel not found.`,
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
-			const message = await channel.messages
-				.fetch(panel.messageId)
-				.catch(() => null);
-
+			const message = await helpers.discord.getMessageSafe(
+				channel,
+				panel.messageId,
+			);
 			if (!message) {
 				return interaction.followUp({
 					components: await simpleContainer(
 						interaction,
 						`❌ Panel message not found. It may have been deleted.`,
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
@@ -129,7 +129,9 @@ class RrPanelAddEmojiModal extends BaseModal {
 					components: await simpleContainer(
 						interaction,
 						`❌ Invalid emoji: \`${emojiInput}\`. Please use a valid emoji.`,
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
@@ -152,7 +154,6 @@ class RrPanelAddEmojiModal extends BaseModal {
 					panelId: panel.id,
 				},
 			});
-
 			if (!created) {
 				rr.roleId = role.id;
 				if (labelInput !== null) rr.label = labelInput;
@@ -166,7 +167,10 @@ class RrPanelAddEmojiModal extends BaseModal {
 			const isDropdown = panel.panelType === 'dropdown';
 			const successContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor('Green', { from: 'discord', to: 'decimal' }),
+					convertColor('Green', {
+						from: 'discord',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
@@ -175,7 +179,6 @@ class RrPanelAddEmojiModal extends BaseModal {
 							`The panel has been updated.`,
 					),
 				);
-
 			await interaction.followUp({
 				components: [successContainer],
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
@@ -188,12 +191,13 @@ class RrPanelAddEmojiModal extends BaseModal {
 				components: await simpleContainer(
 					interaction,
 					'❌ An error occurred while adding the emoji binding.',
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 	}
 }
-
 exports.default = RrPanelAddEmojiModal;

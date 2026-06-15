@@ -7,32 +7,29 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseSelectMenu } = require('kythia-core');
-
 class TvKickMenuSelectMenu extends BaseSelectMenu {
-	selectMenu = { customId: 'tv_kick_menu' };
-
+	selectMenu = {
+		customId: 'tv_kick_menu',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, client, t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const { TempVoiceChannel } = models;
-
 		const userIdToKick = interaction.values[0];
 		const channelId = interaction.customId.split(':')[1];
-
 		if (!channelId) {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.no_channel_id'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
 		}
-
 		const activeChannel = await TempVoiceChannel.getCache({
 			channelId: channelId,
 			ownerId: interaction.user.id,
@@ -42,25 +39,32 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.not_owner'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
 		}
-
 		let channel;
 		try {
-			channel = await client.channels.fetch(channelId, { force: true });
+			channel = await client.container.helpers.discord.getChannelGlobalSafe(
+				client,
+				channelId,
+			);
 		} catch (error) {
 			logger.error(
 				`CRITICAL: Failed to fetch channel ${channelId} for rename. Error: ${error.message || error}`,
-				{ label: 'tempvoice' },
+				{
+					label: 'tempvoice',
+				},
 			);
-
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.channel_not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 			});
@@ -76,10 +80,10 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 				),
 			});
 		}
-
-		const memberToKick = await interaction.guild.members
-			.fetch(userIdToKick)
-			.catch(() => null);
+		const memberToKick = await helpers.discord.getMemberSafe(
+			interaction.guild,
+			userIdToKick,
+		);
 		if (!memberToKick) {
 			return interaction.update({
 				components: await simpleContainer(
@@ -91,7 +95,6 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 				),
 			});
 		}
-
 		if (memberToKick.voice.channelId !== channelId) {
 			return interaction.update({
 				components: await simpleContainer(
@@ -99,23 +102,25 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 					await t(interaction, 'tempvoice.kick.menu.not_in_channel', {
 						user: memberToKick.displayName,
 					}),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
 		}
-
 		try {
 			await memberToKick.voice.disconnect(
 				await t(interaction, 'tempvoice.kick.menu.kick_reason'),
 			);
-
 			await interaction.update({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.kick.menu.success', {
 						user: memberToKick.displayName,
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				),
 			});
 		} catch (_err) {
@@ -123,11 +128,12 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.fail'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
 		}
 	}
 }
-
 module.exports = TvKickMenuSelectMenu;

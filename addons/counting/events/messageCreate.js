@@ -7,15 +7,12 @@
  */
 const { MessageFlags } = require('discord.js');
 const { parseInputToNumber, formatNumberByMode } = require('../helpers');
-
 const channelQueues = new Map();
-
 class CountingQueue {
 	constructor() {
 		this.queue = [];
 		this.isProcessing = false;
 	}
-
 	enqueue(task) {
 		return new Promise((resolve, reject) => {
 			this.queue.push(async () => {
@@ -29,7 +26,6 @@ class CountingQueue {
 			this.processNext();
 		});
 	}
-
 	async processNext() {
 		if (this.isProcessing || this.queue.length === 0) return;
 		this.isProcessing = true;
@@ -48,32 +44,31 @@ class CountingQueue {
  */
 
 const { BaseEvent } = require('kythia-core');
-
 class MessageCreateEvent extends BaseEvent {
 	async execute(message) {
 		const container = this.container;
-		const _bot = { client: this.client, container: this.container };
-
+		const _bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!message.author || message.author.bot || !message.guild) return;
 		if (!message.channel || !message.channelId) return;
-
 		const { models, t, helpers } = container;
 		const { Counting, CountingUser } = models;
 		const { simpleContainer } = helpers.discord;
-
 		const guildId = message.guild.id;
 
 		// Initial check to prevent queueing messages in non-counting channels
-		const quickSetting = await Counting.getCache({ guildId });
+		const quickSetting = await Counting.getCache({
+			guildId,
+		});
 		if (!quickSetting?.channelId) return;
 		if (message.channelId !== quickSetting.channelId) return;
-
 		const lines = message.content
 			.split('\n')
 			.map((l) => l.trim())
 			.filter(Boolean);
 		if (lines.length === 0) return;
-
 		const mode = quickSetting.mode || 'decimal';
 		const mathEnabled = quickSetting.mathEnabled;
 		const successReaction = quickSetting.successReaction || '🌸';
@@ -81,7 +76,6 @@ class MessageCreateEvent extends BaseEvent {
 
 		// Parse the first line immediately to reject invalid input without clogging the queue
 		const firstInput = parseInputToNumber(lines[0], mode, mathEnabled);
-
 		if (firstInput === null) {
 			const warning = await t(message, 'counting.game.invalid_input', {
 				mode: mode,
@@ -89,7 +83,9 @@ class MessageCreateEvent extends BaseEvent {
 			const components = await simpleContainer(
 				message,
 				`${message.author}, ${warning}`,
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			await message.reply({
 				components,
@@ -103,23 +99,26 @@ class MessageCreateEvent extends BaseEvent {
 			channelQueues.set(message.channel.id, new CountingQueue());
 		}
 		const queue = channelQueues.get(message.channel.id);
-
 		return queue.enqueue(async () => {
 			// Inside the queue: Fetch fresh setting to guarantee exact DB state sequentially
-			const setting = await Counting.getCache({ guildId });
+			const setting = await Counting.getCache({
+				guildId,
+			});
 			if (!setting?.channelId || message.channel.id !== setting.channelId)
 				return;
-
 			let expectedFromDB = BigInt(setting.currentCount || 0) + 1n;
 
 			// Handle race conditions/cache lag by checking the actual last message in the channel
 			// (This is mostly redundant with the queue, but good for cross-shard/external DB syncing)
 			if (firstInput !== expectedFromDB) {
 				try {
-					const messages = await message.channel.messages.fetch({
-						limit: 1,
-						before: message.id,
-					});
+					const messages = await helpers.discord.fetchMessagesQuerySafe(
+						message.channel,
+						{
+							limit: 1,
+							before: message.id,
+						},
+					);
 					const lastMsg = messages.first();
 					if (lastMsg) {
 						const lastLines = lastMsg.content
@@ -143,10 +142,8 @@ class MessageCreateEvent extends BaseEvent {
 					}
 				} catch (_e) {}
 			}
-
 			let simulatedNext = expectedFromDB;
 			let simulatedLastUser = setting.lastUserId;
-
 			let successCount = 0;
 			let failedAtLine = -1;
 			let failReason = null; // 'invalid', 'double_count', 'wrong_number'
@@ -154,13 +151,11 @@ class MessageCreateEvent extends BaseEvent {
 			for (let i = 0; i < lines.length; i++) {
 				const line = lines[i];
 				const parsed = parseInputToNumber(line, mode, mathEnabled);
-
 				if (parsed === null) {
 					failedAtLine = i;
 					failReason = 'invalid';
 					break;
 				}
-
 				if (
 					i === 0 &&
 					simulatedLastUser === message.author.id &&
@@ -170,7 +165,6 @@ class MessageCreateEvent extends BaseEvent {
 					failReason = 'double_count';
 					break;
 				}
-
 				if (parsed === simulatedNext) {
 					successCount++;
 					simulatedNext++;
@@ -185,8 +179,14 @@ class MessageCreateEvent extends BaseEvent {
 			// Helper to fetch/create user stats
 			const getUserStats = async (userId) => {
 				const [userStat] = await CountingUser.findOrCreateCache({
-					where: { guildId, userId },
-					defaults: { correctCounts: 0, ruinedCounts: 0 },
+					where: {
+						guildId,
+						userId,
+					},
+					defaults: {
+						correctCounts: 0,
+						ruinedCounts: 0,
+					},
 				});
 				return userStat;
 			};
@@ -211,11 +211,9 @@ class MessageCreateEvent extends BaseEvent {
 					const userStat = await getUserStats(message.author.id);
 					userStat.ruinedCounts += 1;
 					await userStat.save();
-
 					const isStrict = setting.strictEnabled;
 					let desc;
 					const formattedNext = formatNumberByMode(expectedFromDB, mode);
-
 					if (isStrict) {
 						desc = await t(message, 'counting.game.wrong_number_reset', {
 							number: formattedNext,
@@ -229,7 +227,6 @@ class MessageCreateEvent extends BaseEvent {
 							user: message.author.toString(),
 						});
 					}
-
 					const components = await simpleContainer(message, desc, {
 						color: 'Red',
 					});
@@ -256,7 +253,6 @@ class MessageCreateEvent extends BaseEvent {
 						highestMilestone = n;
 					}
 				}
-
 				if (hitMilestone) {
 					const milestoneDesc = await t(message, 'counting.game.milestone', {
 						number: formatNumberByMode(highestMilestone, mode),
@@ -275,11 +271,9 @@ class MessageCreateEvent extends BaseEvent {
 				if (failedAtLine > 0) {
 					await message.react(failReaction).catch(() => {});
 					userStat.ruinedCounts += 1;
-
 					const isStrict = setting.strictEnabled;
 					let desc;
 					const formattedNext = formatNumberByMode(simulatedNext, mode);
-
 					if (isStrict) {
 						desc = await t(message, 'counting.game.wrong_number_reset', {
 							number: formattedNext,
@@ -295,7 +289,6 @@ class MessageCreateEvent extends BaseEvent {
 						setting.currentCount = Number(simulatedNext - 1n);
 						setting.lastUserId = message.author.id;
 					}
-
 					const components = await simpleContainer(message, desc, {
 						color: 'Red',
 					});
@@ -309,12 +302,10 @@ class MessageCreateEvent extends BaseEvent {
 					setting.lastUserId = message.author.id;
 					await message.react(successReaction).catch(() => {});
 				}
-
 				await userStat.save();
 				await setting.save();
 			}
 		});
 	}
 }
-
 module.exports = MessageCreateEvent;

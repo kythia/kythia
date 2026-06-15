@@ -8,7 +8,6 @@
 
 const { Hono } = require('hono');
 const { EmbedBuilder, MessageFlags } = require('discord.js');
-
 const app = new Hono();
 
 // Helpers
@@ -30,17 +29,34 @@ const getModels = (c) => getContainer(c).models;
  */
 function resolveAllowedMentions(raw) {
 	const SHORTHANDS = {
-		everyone: { parse: ['everyone', 'roles', 'users'] },
-		roles: { parse: ['roles'] },
-		users: { parse: ['users'] },
-		none: { parse: [] },
+		everyone: {
+			parse: ['everyone', 'roles', 'users'],
+		},
+		roles: {
+			parse: ['roles'],
+		},
+		users: {
+			parse: ['users'],
+		},
+		none: {
+			parse: [],
+		},
 	};
-	if (!raw) return { parse: ['everyone', 'roles', 'users'] };
+	if (!raw)
+		return {
+			parse: ['everyone', 'roles', 'users'],
+		};
 	if (typeof raw === 'string')
-		return SHORTHANDS[raw] ?? { parse: ['everyone', 'roles', 'users'] };
+		return (
+			SHORTHANDS[raw] ?? {
+				parse: ['everyone', 'roles', 'users'],
+			}
+		);
 	// Accept a raw object (e.g. { parse: ['roles'] } passed directly)
 	if (typeof raw === 'object' && Array.isArray(raw.parse)) return raw;
-	return { parse: ['everyone', 'roles', 'users'] };
+	return {
+		parse: ['everyone', 'roles', 'users'],
+	};
 }
 
 /**
@@ -74,8 +90,10 @@ function sendClassicEmbed(channel, data, allowedMentions) {
 			iconURL: data.footer.icon_url,
 		});
 	if (Array.isArray(data.fields)) embed.addFields(data.fields);
-
-	return channel.send({ embeds: [embed], allowedMentions });
+	return channel.send({
+		embeds: [embed],
+		allowedMentions,
+	});
 }
 
 /**
@@ -85,9 +103,11 @@ function sendClassicEmbed(channel, data, allowedMentions) {
  * @param {object} record  EmbedBuilder DB record
  */
 async function editDiscordMessage(channel, messageId, record) {
-	const msg = await channel.messages.fetch(messageId).catch(() => null);
+	const msg = await channel.client.container.helpers.discord.getMessageSafe(
+		channel,
+		messageId,
+	);
 	if (!msg) return null;
-
 	if (record.mode === 'embed') {
 		const embed = new EmbedBuilder();
 		const data = record.data || {};
@@ -113,8 +133,9 @@ async function editDiscordMessage(channel, messageId, record) {
 				iconURL: data.footer.icon_url,
 			});
 		if (Array.isArray(data.fields)) embed.addFields(data.fields);
-
-		return msg.edit({ embeds: [embed] });
+		return msg.edit({
+			embeds: [embed],
+		});
 	}
 
 	// components_v2
@@ -133,23 +154,30 @@ async function editDiscordMessage(channel, messageId, record) {
 app.get('/', async (c) => {
 	const { EmbedBuilder: EmbedModel } = getModels(c);
 	const where = {};
-
 	const guildId = c.req.query('guildId');
 	const mode = c.req.query('mode');
 	const createdBy = c.req.query('createdBy');
-
 	if (guildId) where.guildId = guildId;
 	if (mode) where.mode = mode;
 	if (createdBy) where.createdBy = createdBy;
-
 	try {
 		const data = await EmbedModel.getAllCache({
 			where,
 			order: [['createdAt', 'DESC']],
 		});
-		return c.json({ success: true, count: data.length, data });
+		return c.json({
+			success: true,
+			count: data.length,
+			data,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -160,14 +188,30 @@ app.get('/', async (c) => {
 app.get('/:id', async (c) => {
 	const { EmbedBuilder: EmbedModel } = getModels(c);
 	const id = parseInt(c.req.param('id'), 10);
-
 	try {
-		const record = await EmbedModel.getCache({ id: id });
+		const record = await EmbedModel.getCache({
+			id: id,
+		});
 		if (!record)
-			return c.json({ success: false, error: 'Embed not found' }, 404);
-		return c.json({ success: true, data: record });
+			return c.json(
+				{
+					success: false,
+					error: 'Embed not found',
+				},
+				404,
+			);
+		return c.json({
+			success: true,
+			data: record,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -180,7 +224,6 @@ app.post('/', async (c) => {
 	const { EmbedBuilder: EmbedModel } = getModels(c);
 	const body = await c.req.json();
 	const { guildId, createdBy, name, mode = 'embed', data } = body;
-
 	if (!guildId || !createdBy || !name) {
 		return c.json(
 			{
@@ -190,7 +233,6 @@ app.post('/', async (c) => {
 			400,
 		);
 	}
-
 	if (mode !== 'embed' && mode !== 'components_v2') {
 		return c.json(
 			{
@@ -202,7 +244,12 @@ app.post('/', async (c) => {
 	}
 
 	// Check duplicate name in same guild
-	const existing = await EmbedModel.getCache({ where: { guildId, name } });
+	const existing = await EmbedModel.getCache({
+		where: {
+			guildId,
+			name,
+		},
+	});
 	if (existing) {
 		return c.json(
 			{
@@ -212,7 +259,6 @@ app.post('/', async (c) => {
 			409,
 		);
 	}
-
 	const defaultData =
 		data ??
 		(mode === 'embed'
@@ -235,7 +281,6 @@ app.post('/', async (c) => {
 						},
 					],
 				});
-
 	try {
 		const record = await EmbedModel.create({
 			guildId,
@@ -246,9 +291,21 @@ app.post('/', async (c) => {
 			messageId: null,
 			channelId: null,
 		});
-		return c.json({ success: true, data: record }, 201);
+		return c.json(
+			{
+				success: true,
+				data: record,
+			},
+			201,
+		);
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -262,25 +319,38 @@ app.patch('/:id', async (c) => {
 	const { EmbedBuilder: EmbedModel } = getModels(c);
 	const id = parseInt(c.req.param('id'), 10);
 	const body = await c.req.json();
-
 	const ALLOWED = ['name', 'mode', 'data', 'allowedMentions'];
-
 	try {
-		const record = await EmbedModel.getCache({ id: id });
+		const record = await EmbedModel.getCache({
+			id: id,
+		});
 		if (!record)
-			return c.json({ success: false, error: 'Embed not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'Embed not found',
+				},
+				404,
+			);
 		const updates = {};
 		for (const field of ALLOWED) {
 			if (field in body) updates[field] = body[field];
 		}
-
 		await record.update(updates);
 		await record.reload(); // Ensure JSON fields (data) are fresh on the instance
 
-		return c.json({ success: true, data: record });
+		return c.json({
+			success: true,
+			data: record,
+		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -294,36 +364,46 @@ app.delete('/:id', async (c) => {
 	const { EmbedBuilder: EmbedModel } = getModels(c);
 	const id = parseInt(c.req.param('id'), 10);
 	const deleteMsg = c.req.query('deleteMessage') === 'true';
-
 	try {
-		const record = await EmbedModel.getCache({ id: id });
+		const record = await EmbedModel.getCache({
+			id: id,
+		});
 		if (!record)
-			return c.json({ success: false, error: 'Embed not found' }, 404);
+			return c.json(
+				{
+					success: false,
+					error: 'Embed not found',
+				},
+				404,
+			);
 
 		// Optionally delete the Discord message
 		if (deleteMsg && record.messageId && record.channelId) {
 			try {
-				const channel = await client.channels
-					.fetch(record.channelId)
-					.catch(() => null);
+				const { getChannelGlobalSafe, getMessageSafe } =
+					client.container.helpers.discord;
+				const channel = await getChannelGlobalSafe(client, record.channelId);
 				if (channel) {
-					const msg = await channel.messages
-						.fetch(record.messageId)
-						.catch(() => null);
+					const msg = await getMessageSafe(channel, record.messageId);
 					if (msg) await msg.delete();
 				}
 			} catch (_) {
 				// Best-effort
 			}
 		}
-
 		await record.destroy();
 		return c.json({
 			success: true,
 			message: `Embed "${record.name}" (id=${id}) deleted.`,
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -346,20 +426,31 @@ app.post('/:id/send', async (c) => {
 	const id = parseInt(c.req.param('id'), 10);
 	const body = await c.req.json();
 	const { channelId } = body;
-
 	if (!channelId) {
 		return c.json(
-			{ success: false, error: 'Missing required field: channelId' },
+			{
+				success: false,
+				error: 'Missing required field: channelId',
+			},
 			400,
 		);
 	}
-
 	try {
-		const record = await EmbedModel.getCache({ id: id });
+		const record = await EmbedModel.getCache({
+			id: id,
+		});
 		if (!record)
-			return c.json({ success: false, error: 'Embed not found' }, 404);
-
-		const channel = await client.channels.fetch(channelId).catch(() => null);
+			return c.json(
+				{
+					success: false,
+					error: 'Embed not found',
+				},
+				404,
+			);
+		const channel = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			channelId,
+		);
 		if (!channel) {
 			return c.json(
 				{
@@ -374,7 +465,6 @@ app.post('/:id/send', async (c) => {
 		const allowedMentions = resolveAllowedMentions(
 			body.allowedMentions ?? record.allowedMentions,
 		);
-
 		let message;
 		if (record.mode === 'embed') {
 			message = await sendClassicEmbed(
@@ -399,13 +489,11 @@ app.post('/:id/send', async (c) => {
 				allowedMentions,
 			});
 		}
-
 		await record.update({
 			messageId: message.id,
 			channelId: channel.id,
 			allowedMentions,
 		});
-
 		return c.json(
 			{
 				success: true,
@@ -416,7 +504,13 @@ app.post('/:id/send', async (c) => {
 			201,
 		);
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
 
@@ -435,12 +529,18 @@ app.post('/:id/resend', async (c) => {
 	const client = getBot(c);
 	const { EmbedBuilder: EmbedModel } = getModels(c);
 	const id = parseInt(c.req.param('id'), 10);
-
 	try {
-		const record = await EmbedModel.getCache({ id: id });
+		const record = await EmbedModel.getCache({
+			id: id,
+		});
 		if (!record)
-			return c.json({ success: false, error: 'Embed not found' }, 404);
-
+			return c.json(
+				{
+					success: false,
+					error: 'Embed not found',
+				},
+				404,
+			);
 		if (!record.messageId || !record.channelId) {
 			return c.json(
 				{
@@ -450,10 +550,10 @@ app.post('/:id/resend', async (c) => {
 				422,
 			);
 		}
-
-		const channel = await client.channels
-			.fetch(record.channelId)
-			.catch(() => null);
+		const channel = await client.container.helpers.discord.getChannelGlobalSafe(
+			client,
+			record.channelId,
+		);
 		if (!channel) {
 			return c.json(
 				{
@@ -463,7 +563,6 @@ app.post('/:id/resend', async (c) => {
 				404,
 			);
 		}
-
 		const updatedMessage = await editDiscordMessage(
 			channel,
 			record.messageId,
@@ -479,7 +578,6 @@ app.post('/:id/resend', async (c) => {
 				404,
 			);
 		}
-
 		return c.json({
 			success: true,
 			messageId: record.messageId,
@@ -487,8 +585,13 @@ app.post('/:id/resend', async (c) => {
 			data: record,
 		});
 	} catch (error) {
-		return c.json({ success: false, error: error.message }, 500);
+		return c.json(
+			{
+				success: false,
+				error: error.message,
+			},
+			500,
+		);
 	}
 });
-
 module.exports = app;

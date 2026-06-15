@@ -7,15 +7,13 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseSelectMenu } = require('kythia-core');
-
 class TvRegionMenuSelectMenu extends BaseSelectMenu {
-	selectMenu = { customId: 'tv_region_menu' };
-
+	selectMenu = {
+		customId: 'tv_region_menu',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, client, t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const { TempVoiceChannel } = models;
@@ -28,7 +26,9 @@ class TvRegionMenuSelectMenu extends BaseSelectMenu {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.no_channel_id'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
 		const activeChannel = await TempVoiceChannel.getCache({
@@ -40,24 +40,31 @@ class TvRegionMenuSelectMenu extends BaseSelectMenu {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.not_owner'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
-
 		let channel;
 		try {
-			channel = await client.channels.fetch(channelId, { force: true });
+			channel = await client.container.helpers.discord.getChannelGlobalSafe(
+				client,
+				channelId,
+			);
 		} catch (error) {
 			logger.error(
 				`CRITICAL: Failed to fetch channel ${channelId} for rename. Error: ${error.message || error}`,
-				{ label: 'tempvoice' },
+				{
+					label: 'tempvoice',
+				},
 			);
-
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.channel_not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 			});
@@ -72,17 +79,17 @@ class TvRegionMenuSelectMenu extends BaseSelectMenu {
 					},
 				),
 			});
-
 		try {
 			await channel.setRTCRegion(newRegion);
-
 			await interaction.update({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.region.success', {
 						region: newRegion || 'Automatic',
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				),
 			});
 		} catch (_err) {
@@ -90,11 +97,12 @@ class TvRegionMenuSelectMenu extends BaseSelectMenu {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.fail'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
 		}
 	}
 }
-
 module.exports = TvRegionMenuSelectMenu;

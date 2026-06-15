@@ -23,7 +23,6 @@ const DEFAULT_MODULE = (threshold = 3, window = 10000, action = 'kick') => ({
 	window,
 	action,
 });
-
 const DEFAULT_CONFIG = () => ({
 	enabled: false,
 	modules: {
@@ -33,7 +32,10 @@ const DEFAULT_CONFIG = () => ({
 		channelDelete: DEFAULT_MODULE(3, 10000, 'kick'),
 		roleDelete: DEFAULT_MODULE(3, 10000, 'kick'),
 		webhookCreate: DEFAULT_MODULE(5, 10000, 'kick'),
-		adminGrant: { enabled: true, action: 'kick' },
+		adminGrant: {
+			enabled: true,
+			action: 'kick',
+		},
 		fakeAccount: {
 			enabled: false,
 			action: 'kick',
@@ -42,15 +44,26 @@ const DEFAULT_CONFIG = () => ({
 			requireNoBanner: true,
 			detectGibberish: true,
 		},
-		botAdd: { enabled: false, action: 'kick' },
+		botAdd: {
+			enabled: false,
+			action: 'kick',
+		},
 		massJoin: {
 			enabled: false,
 			action: 'lockdown',
 			threshold: 10,
 			window: 10000,
 		},
-		serverUpdate: { enabled: false, action: 'kick' },
-		roleUpdate: { enabled: false, action: 'kick', threshold: 3, window: 10000 },
+		serverUpdate: {
+			enabled: false,
+			action: 'kick',
+		},
+		roleUpdate: {
+			enabled: false,
+			action: 'kick',
+			threshold: 3,
+			window: 10000,
+		},
 		channelUpdate: {
 			enabled: false,
 			action: 'kick',
@@ -85,22 +98,28 @@ const DEFAULT_CONFIG = () => ({
 // In-memory action tracker  { guildId → { module → { userId → { count, last } } } }
 // ---------------------------------------------------------------------------
 const _tracker = new Map();
-
 function _track(guildId, moduleName, userId, windowMs) {
 	if (!_tracker.has(guildId)) _tracker.set(guildId, new Map());
 	const guildMap = _tracker.get(guildId);
 	if (!guildMap.has(moduleName)) guildMap.set(moduleName, new Map());
 	const modMap = guildMap.get(moduleName);
-
 	const now = Date.now();
-	const prev = modMap.get(userId) || { count: 0, last: 0 };
+	const prev = modMap.get(userId) || {
+		count: 0,
+		last: 0,
+	};
 	const count = now - prev.last < windowMs ? prev.count + 1 : 1;
-	modMap.set(userId, { count, last: now });
+	modMap.set(userId, {
+		count,
+		last: now,
+	});
 	return count;
 }
-
 function _resetCount(guildId, moduleName, userId) {
-	_tracker.get(guildId)?.get(moduleName)?.set(userId, { count: 0, last: 0 });
+	_tracker.get(guildId)?.get(moduleName)?.set(userId, {
+		count: 0,
+		last: 0,
+	});
 }
 
 // ---------------------------------------------------------------------------
@@ -118,7 +137,10 @@ function getConfig(setting) {
 		return {
 			...def,
 			...parsed,
-			modules: { ...def.modules, ...(parsed.modules || {}) },
+			modules: {
+				...def.modules,
+				...(parsed.modules || {}),
+			},
 		};
 	} catch {
 		return DEFAULT_CONFIG();
@@ -148,19 +170,19 @@ async function executeAction(guild, member, action, reason) {
 			return false;
 		}
 	}
-
 	if (!member) return false;
-
 	switch (action) {
 		case 'ban':
 			if (!member.bannable) return false;
 			try {
-				await member.ban({ reason, deleteMessageSeconds: 0 });
+				await member.ban({
+					reason,
+					deleteMessageSeconds: 0,
+				});
 				return true;
 			} catch {
 				return false;
 			}
-
 		case 'kick':
 			if (!member.kickable) return false;
 			try {
@@ -169,7 +191,6 @@ async function executeAction(guild, member, action, reason) {
 			} catch {
 				return false;
 			}
-
 		case 'dehoistRole':
 			// Strip ALL roles except @everyone AND managed roles
 			try {
@@ -181,9 +202,9 @@ async function executeAction(guild, member, action, reason) {
 			} catch {
 				return false;
 			}
-
 		default:
-			return true; // log only
+			return true;
+		// log only
 	}
 }
 
@@ -198,10 +219,12 @@ async function sendAlert(
 ) {
 	const channelId = config.logChannelId || settings?.auditLogChannelId;
 	if (!channelId) return;
-
-	const logChannel = await guild.channels.fetch(channelId).catch(() => null);
+	const logChannel =
+		await guild.client.container.helpers.discord.getChannelSafe(
+			guild,
+			channelId,
+		);
 	if (!logChannel?.isTextBased()) return;
-
 	const actionEmoji =
 		{
 			ban: '🔨',
@@ -210,7 +233,6 @@ async function sendAlert(
 			lockdown: '🔒',
 			none: '👁️',
 		}[action] || '⚠️';
-
 	const components = [
 		new ContainerBuilder()
 			.setAccentColor(0xff4444)
@@ -234,12 +256,13 @@ async function sendAlert(
 				),
 			),
 	];
-
 	await logChannel
 		.send({
 			components,
 			flags: MessageFlags.IsComponentsV2,
-			allowedMentions: { parse: [] },
+			allowedMentions: {
+				parse: [],
+			},
 		})
 		.catch(() => null);
 }
@@ -260,36 +283,33 @@ async function sendAlert(
  */
 async function checkThreshold({ bot, guild, executor, moduleName, detail }) {
 	if (!executor || executor.bot) return;
-
 	const container = bot.client.container;
 	const { ServerSetting } = container.models;
 	const { logger } = container;
-
 	try {
-		const settings = await ServerSetting.getCache({ guildId: guild.id });
+		const settings = await ServerSetting.getCache({
+			guildId: guild.id,
+		});
 		const config = getConfig(settings);
-
 		if (!config.enabled) return;
-
 		const mod = config.modules[moduleName];
 		if (!mod?.enabled) return;
-
-		const member = await guild.members.fetch(executor.id).catch(() => null);
+		const member = await container.helpers.discord.getMemberSafe(
+			guild,
+			executor.id,
+		);
 		if (!member) return;
 
 		// Bot itself and whitelisted users are immune
 		if (!member.user || member.user.bot) return;
 		if (isWhitelisted(member, config)) return;
-
 		const count = _track(guild.id, moduleName, executor.id, mod.window);
 		if (count < mod.threshold) return;
 
 		// Threshold exceeded — act
 		_resetCount(guild.id, moduleName, executor.id);
-
 		const reason = `[AntiNuke] ${moduleName}: ${count} actions in ${mod.window / 1000}s`;
 		const actioned = await executeAction(guild, member, mod.action, reason);
-
 		if (actioned) {
 			await sendAlert(guild, config, settings, {
 				moduleName,
@@ -313,28 +333,26 @@ async function checkThreshold({ bot, guild, executor, moduleName, detail }) {
  */
 async function checkInstant({ bot, guild, executor, moduleName, detail }) {
 	if (!executor || executor.bot) return;
-
 	const container = bot.client.container;
 	const { ServerSetting } = container.models;
 	const { logger } = container;
-
 	try {
-		const settings = await ServerSetting.getCache({ guildId: guild.id });
+		const settings = await ServerSetting.getCache({
+			guildId: guild.id,
+		});
 		const config = getConfig(settings);
-
 		if (!config.enabled) return;
-
 		const mod = config.modules[moduleName];
 		if (!mod?.enabled) return;
-
-		const member = await guild.members.fetch(executor.id).catch(() => null);
+		const member = await container.helpers.discord.getMemberSafe(
+			guild,
+			executor.id,
+		);
 		if (!member) return;
 		if (!member.user || member.user.bot) return;
 		if (isWhitelisted(member, config)) return;
-
 		const reason = `[AntiNuke] ${moduleName}: unauthorized action`;
 		const actioned = await executeAction(guild, member, mod.action, reason);
-
 		if (actioned) {
 			await sendAlert(guild, config, settings, {
 				moduleName,
@@ -408,7 +426,6 @@ async function revertTampering(entity, oldState, type) {
 			if (entity.hoist !== oldState.hoist) updates.hoist = oldState.hoist;
 			if (entity.mentionable !== oldState.mentionable)
 				updates.mentionable = oldState.mentionable;
-
 			if (Object.keys(updates).length > 0) {
 				await entity.edit(
 					updates,
@@ -425,7 +442,9 @@ async function revertTampering(entity, oldState, type) {
 		} else if (type === 'emoji') {
 			if (entity.name !== oldState.name) {
 				await entity.edit(
-					{ name: oldState.name },
+					{
+						name: oldState.name,
+					},
 					'AntiNuke: Reverting unauthorized emoji rename',
 				);
 			}
@@ -435,7 +454,6 @@ async function revertTampering(entity, oldState, type) {
 		return false;
 	}
 }
-
 module.exports = {
 	checkThreshold,
 	checkInstant,

@@ -17,7 +17,6 @@ const { Op } = require('sequelize');
 
 async function fetchQuestsFromAny(urls, logger) {
 	const TIMEOUT_MS = 5000;
-
 	for (const url of urls) {
 		const controller = new AbortController();
 		const timeoutId = setTimeout(() => {
@@ -26,30 +25,30 @@ async function fetchQuestsFromAny(urls, logger) {
 			});
 			controller.abort();
 		}, TIMEOUT_MS);
-
 		try {
-			logger.info(`Trying quest API: ${url}`, { label: 'questnotifier' });
-
+			logger.info(`Trying quest API: ${url}`, {
+				label: 'questnotifier',
+			});
 			const response = await fetch(url, {
 				signal: controller.signal,
 			});
-
 			clearTimeout(timeoutId);
-
 			if (!response.ok) {
 				logger.warn(
 					`API fetch failed with status ${response.status} for ${url}`,
-					{ label: 'questnotifier' },
+					{
+						label: 'questnotifier',
+					},
 				);
 				continue;
 			}
-
 			const apiQuests = await response.json();
-			logger.info(`Got quest data from: ${url}`, { label: 'questnotifier' });
+			logger.info(`Got quest data from: ${url}`, {
+				label: 'questnotifier',
+			});
 			return apiQuests;
 		} catch (e) {
 			clearTimeout(timeoutId);
-
 			if (e.name === 'AbortError') {
 			} else {
 				logger.warn(`Error fetching from ${url}: ${e.message}`, {
@@ -58,65 +57,56 @@ async function fetchQuestsFromAny(urls, logger) {
 			}
 		}
 	}
-
 	return null;
 }
-
 const { BaseTask } = require('kythia-core');
-
 class QuestSchedulerTask extends BaseTask {
 	task = {
 		taskName: 'quest-notifier',
 		schedule: '*/30 * * * *', // Every 30 minutes
 	};
-
 	async execute(container) {
 		const { models, logger, client, kythiaConfig } =
 			container || this.container;
 		const { QuestConfig, QuestGuildLog } = models;
 		const { ShardClientUtil } = require('discord.js');
-		logger.info(`Running cron job...`, { label: 'questnotifier' });
-
+		logger.info(`Running cron job...`, {
+			label: 'questnotifier',
+		});
 		const apiUrlsConfig = kythiaConfig.addons.quest.apiUrls || '';
-
 		const apiUrls = apiUrlsConfig
 			.split(',')
 			.map((v) => v.trim())
 			.filter((v) => v.length > 0);
-
 		if (apiUrls.length === 0) {
-			logger.warn(`No API URLs configured!`, { label: 'questnotifier' });
+			logger.warn(`No API URLs configured!`, {
+				label: 'questnotifier',
+			});
 			return;
 		}
-
 		try {
 			const apiQuests = await fetchQuestsFromAny(apiUrls, logger);
-
 			if (!apiQuests) {
 				logger.warn(`All API quest endpoints failed. No quests retrieved.`, {
 					label: 'questnotifier',
 				});
 				return;
 			}
-
 			const now = new Date();
 			const TwodayAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
-
 			const validQuests = apiQuests.filter((quest) => {
 				const startsAt = new Date(quest.config.starts_at);
 				const expiresAt = new Date(quest.config.expires_at);
-
 				const isExpired = expiresAt < now;
 				const isTooOld = startsAt < TwodayAgo;
-
 				return !isExpired && !isTooOld;
 			});
-
 			if (validQuests.length === 0) {
-				logger.info(`No new quests found.`, { label: 'questnotifier' });
+				logger.info(`No new quests found.`, {
+					label: 'questnotifier',
+				});
 				return;
 			}
-
 			const allGuildConfigs = await QuestConfig.getAllCache();
 			if (allGuildConfigs.length === 0) {
 				logger.info(`No guilds have set up the notifier.`, {
@@ -124,19 +114,24 @@ class QuestSchedulerTask extends BaseTask {
 				});
 				return;
 			}
-
 			const validQuestIds = validQuests.map((q) => q.id);
-
 			const handleMissingAccess = async (configObj) => {
 				try {
-					await QuestConfig.destroy({ where: { guildId: configObj.guildId } });
+					await QuestConfig.destroy({
+						where: {
+							guildId: configObj.guildId,
+						},
+					});
 					logger.info(
 						`Deleted QuestConfig for guild ${configObj.guildId} due to missing permissions.`,
-						{ label: 'questnotifier' },
+						{
+							label: 'questnotifier',
+						},
 					);
-					const guild = await client.guilds
-						.fetch(configObj.guildId)
-						.catch(() => null);
+					const guild = await client.container.helpers.discord.getGuildSafe(
+						client,
+						configObj.guildId,
+					);
 					if (guild) {
 						const targetChannel =
 							guild.systemChannel ||
@@ -159,19 +154,26 @@ class QuestSchedulerTask extends BaseTask {
 							const components = await simpleContainer(
 								mockInteraction,
 								content,
-								{ color: 'Red' },
+								{
+									color: 'Red',
+								},
 							);
-							await targetChannel.send({ components }).catch(() => {});
+							await targetChannel
+								.send({
+									components,
+								})
+								.catch(() => {});
 						}
 					}
 				} catch (e) {
 					logger.error(
 						`Failed to handle missing access for guild ${configObj.guildId}: ${e.message}`,
-						{ label: 'questnotifier' },
+						{
+							label: 'questnotifier',
+						},
 					);
 				}
 			};
-
 			for (const config of allGuildConfigs) {
 				if (client.shard) {
 					const expectedShardId = ShardClientUtil.shardIdForGuildId(
@@ -180,40 +182,42 @@ class QuestSchedulerTask extends BaseTask {
 					);
 					if (!client.shard.ids.includes(expectedShardId)) continue;
 				}
-
 				try {
-					const channel = await client.channels
-						.fetch(config.channelId, { force: true })
-						.catch(() => null);
+					const channel =
+						await client.container.helpers.discord.getChannelGlobalSafe(
+							client,
+							config.channelId,
+						);
 					if (!channel) {
 						logger.warn(
 							`Channel ${config.channelId} not found for guild ${config.guildId}. Removing config.`,
-							{ label: 'questnotifier' },
+							{
+								label: 'questnotifier',
+							},
 						);
 						await handleMissingAccess(config);
 						continue;
 					}
-
 					const sentLogs = await QuestGuildLog.getAllCache({
 						where: {
 							guildId: config.guildId,
-							questId: { [Op.in]: validQuestIds },
+							questId: {
+								[Op.in]: validQuestIds,
+							},
 						},
 						attributes: ['questId'],
 					});
 					const sentQuestIds = new Set(sentLogs.map((log) => log.questId));
-
 					const questsToSend = validQuests.filter(
 						(quest) => !sentQuestIds.has(quest.id),
 					);
-
 					if (questsToSend.length === 0) continue;
-
 					logger.info(
 						`⏰ [QuestNotifier] Sending ${questsToSend.length} new quest(s) to guild ${config.guildId}...`,
-						{ label: 'quest' },
+						{
+							label: 'quest',
+						},
 					);
-
 					for (const quest of questsToSend) {
 						const role = config.roleId ? `<@&${config.roleId}>` : null;
 						const { components, flags } = await buildQuestNotification(
@@ -221,9 +225,10 @@ class QuestSchedulerTask extends BaseTask {
 							quest,
 							role,
 						);
-
-						await channel.send({ components, flags });
-
+						await channel.send({
+							components,
+							flags,
+						});
 						await QuestGuildLog.create({
 							guildId: config.guildId,
 							questId: quest.id,
@@ -232,7 +237,9 @@ class QuestSchedulerTask extends BaseTask {
 				} catch (guildError) {
 					logger.error(
 						`Failed to process guild ${config.guildId}: ${guildError.message}`,
-						{ label: 'questnotifier' },
+						{
+							label: 'questnotifier',
+						},
 					);
 					if (
 						guildError.code === 50013 ||
@@ -244,7 +251,9 @@ class QuestSchedulerTask extends BaseTask {
 					}
 				}
 			}
-			logger.info(`Cron job finished.`, { label: 'questnotifier' });
+			logger.info(`Cron job finished.`, {
+				label: 'questnotifier',
+			});
 		} catch (error) {
 			logger.error(`CRON JOB FAILED: ${error.message || error}`, {
 				label: 'questnotifier',
@@ -252,5 +261,4 @@ class QuestSchedulerTask extends BaseTask {
 		}
 	}
 }
-
 exports.default = QuestSchedulerTask;

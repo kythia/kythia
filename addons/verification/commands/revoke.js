@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class RevokeCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('revoke')
@@ -20,20 +17,20 @@ class RevokeCommand extends BaseCommand {
 			.addUserOption((o) =>
 				o.setName('member').setDescription('Target member').setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, helpers, kythiaConfig, t } = container;
 		const { simpleContainer } = helpers.discord;
 		const { VerificationConfig } = models;
 		const guildId = interaction.guild.id;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const user = interaction.options.getUser('member');
-		const member = await interaction.guild.members
-			.fetch(user.id)
-			.catch(() => null);
+		const member = await helpers.discord.getMemberSafe(
+			interaction.guild,
+			user.id,
+		);
 		if (!member) {
 			const components = await simpleContainer(
 				interaction,
@@ -47,8 +44,11 @@ class RevokeCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
-		const config = await VerificationConfig.getCache({ where: { guildId } });
+		const config = await VerificationConfig.getCache({
+			where: {
+				guildId,
+			},
+		});
 		if (!config) {
 			const components = await simpleContainer(
 				interaction,
@@ -62,7 +62,6 @@ class RevokeCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (config.verifiedRoleId) {
 			const role = interaction.guild.roles.cache.get(config.verifiedRoleId);
 			if (role) await member.roles.remove(role).catch(() => null);
@@ -71,10 +70,11 @@ class RevokeCommand extends BaseCommand {
 			const role = interaction.guild.roles.cache.get(config.unverifiedRoleId);
 			if (role) await member.roles.add(role).catch(() => null);
 		}
-
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'verify.revoke.success', { user: member.user.tag }),
+			await t(interaction, 'verify.revoke.success', {
+				user: member.user.tag,
+			}),
 			{
 				color: kythiaConfig.bot.color,
 			},
@@ -85,5 +85,4 @@ class RevokeCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = RevokeCommand;

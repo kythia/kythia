@@ -6,19 +6,16 @@
  * @version 26.0.0-rc.1
  */
 const { PermissionsBitField, MessageFlags } = require('discord.js');
-
 const { BaseSelectMenu } = require('kythia-core');
-
 class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
-	selectMenu = { customId: 'tv_privacy_menu' };
-
+	selectMenu = {
+		customId: 'tv_privacy_menu',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, client, logger, t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { TempVoiceChannel } = models;
-
 		const selectedOp = interaction.values[0];
 		const channelId = interaction.customId.split(':')[1];
 		if (!channelId) {
@@ -32,7 +29,6 @@ class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
 				),
 			});
 		}
-
 		const activeChannel = await TempVoiceChannel.getCache({
 			channelId: channelId,
 			ownerId: interaction.user.id,
@@ -42,25 +38,32 @@ class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.privacy.menu.not_owner'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
 		}
-
 		let channel;
 		try {
-			channel = await client.channels.fetch(channelId, { force: true });
+			channel = await client.container.helpers.discord.getChannelGlobalSafe(
+				client,
+				channelId,
+			);
 		} catch (error) {
 			logger.error(
 				`CRITICAL: Failed to fetch channel ${channelId} for rename. Error: ${error.message || error}`,
-				{ label: 'tempvoice' },
+				{
+					label: 'tempvoice',
+				},
 			);
-
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.channel_not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 			});
@@ -76,16 +79,13 @@ class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
 				),
 			});
 		}
-
 		const everyoneRole = interaction.guild.roles.everyone;
 		let resultMsg;
-
 		const currentPerms = channel.permissionsFor(everyoneRole);
 		const newPerms = {
 			ViewChannel: currentPerms.has(PermissionsBitField.Flags.ViewChannel),
 			Connect: currentPerms.has(PermissionsBitField.Flags.Connect),
 		};
-
 		if (selectedOp === 'lock_channel') {
 			newPerms.Connect = false;
 			resultMsg = await t(interaction, 'tempvoice.privacy.menu.lock_success');
@@ -107,13 +107,11 @@ class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
 				'tempvoice.privacy.menu.visible_success',
 			);
 		}
-
 		try {
 			await channel.permissionOverwrites.edit(everyoneRole, {
 				[PermissionsBitField.Flags.ViewChannel]: newPerms.ViewChannel,
 				[PermissionsBitField.Flags.Connect]: newPerms.Connect,
 			});
-
 			await interaction.update({
 				components: await simpleContainer(interaction, resultMsg, {
 					color: 'Green',
@@ -123,16 +121,16 @@ class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
 			logger.error(`Gagal ubah privasi: ${err.message || err}`, {
 				label: 'tempvoice',
 			});
-
 			await interaction.update({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.privacy.menu.fail'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
 		}
 	}
 }
-
 module.exports = TvPrivacyMenuSelectMenu;

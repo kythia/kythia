@@ -7,26 +7,22 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class RemoveCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
 			.setDescription('Removes the sticky message from this channel.');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, models } = container;
 		const { simpleContainer } = helpers.discord;
 		const { StickyMessage } = models;
-
 		const channelId = interaction.channel.id;
-		const sticky = await StickyMessage.getCache({ channelId });
-
+		const sticky = await StickyMessage.getCache({
+			channelId,
+		});
 		if (!sticky) {
 			const msg = await t(
 				interaction,
@@ -40,27 +36,26 @@ class RemoveCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		if (sticky?.messageId) {
 			try {
-				const oldMsg = await interaction.channel.messages
-					.fetch(sticky.messageId)
-					.catch(() => null);
+				const oldMsg = await helpers.discord.getMessageSafe(
+					interaction.channel,
+					sticky.messageId,
+				);
 				if (oldMsg) await oldMsg.delete().catch(() => {});
 			} catch (_e) {}
 		}
-		await sticky.destroy({ individualHooks: true });
-
+		await sticky.destroy({
+			individualHooks: true,
+		});
 		const msg = await t(interaction, 'core.tools.sticky.remove.success');
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Red',
 		});
-
 		return interaction.reply({
 			components,
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = RemoveCommand;

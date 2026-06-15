@@ -20,8 +20,9 @@ class VerifyMathButton extends BaseButton {
 	async execute(interaction) {
 		const container = this.container;
 		const { client } = this;
-		const { models, logger } = container;
+		const { models, logger, helpers } = container;
 		const { VerificationConfig } = models;
+		const { getMemberSafe, getGuildSafe } = helpers.discord;
 
 		try {
 			const parts = interaction.customId.split(':');
@@ -52,14 +53,10 @@ class VerifyMathButton extends BaseButton {
 			});
 			if (!config) return;
 
-			const guild =
-				client.guilds.cache.get(guildId) ||
-				(await client.guilds.fetch(guildId).catch(() => null));
+			const guild = await getGuildSafe(client, guildId);
 			if (!guild) return;
 
-			const member = await guild.members
-				.fetch(interaction.user.id)
-				.catch(() => null);
+			const member = await getMemberSafe(guild, interaction.user.id);
 			if (!member) return;
 
 			if (result === 'correct') {

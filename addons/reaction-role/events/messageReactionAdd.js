@@ -7,15 +7,15 @@
  */
 
 const { BaseEvent } = require('kythia-core');
-
 class MessageReactionAddEvent extends BaseEvent {
 	async execute(reaction, user) {
 		const container = this.container;
-		const _bot = { client: this.client, container: this.container };
-
+		const _bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { models, logger } = container;
 		const { ReactionRole, ReactionRolePanel } = models;
-
 		try {
 			// Ignore bots
 			if (!user || user.bot) return;
@@ -23,7 +23,7 @@ class MessageReactionAddEvent extends BaseEvent {
 			// Handle partials
 			if (reaction.partial) {
 				try {
-					await reaction.fetch();
+					await container.helpers.discord.resolvePartialSafe(reaction);
 				} catch (error) {
 					logger.error(`Error: ${error.message || error}`, {
 						label: 'reactionRole:fetchMessage',
@@ -31,10 +31,9 @@ class MessageReactionAddEvent extends BaseEvent {
 					return;
 				}
 			}
-
 			if (reaction.message.partial) {
 				try {
-					await reaction.message.fetch();
+					await container.helpers.discord.resolvePartialSafe(reaction.message);
 				} catch (error) {
 					logger.error(`Error: ${error.message || error}`, {
 						label: 'reactionRole:fetchMessagePartial',
@@ -42,7 +41,6 @@ class MessageReactionAddEvent extends BaseEvent {
 					return;
 				}
 			}
-
 			const { guildId, id: messageId } = reaction.message;
 			if (!guildId) return;
 
@@ -53,7 +51,6 @@ class MessageReactionAddEvent extends BaseEvent {
 			// If it was a custom emoji string, it's that string.
 			// The reaction.emoji.toString() usually gives the formatted string for custom emojis, or the char for unicode.
 			const emojiIdentifier = reaction.emoji.toString();
-
 			const rr = await ReactionRole.getCache({
 				where: {
 					guildId,
@@ -64,11 +61,11 @@ class MessageReactionAddEvent extends BaseEvent {
 					emoji: emojiIdentifier, // Try exact match first
 				},
 			});
-
 			if (rr) {
-				const member = await reaction.message.guild.members
-					.fetch(user.id)
-					.catch(() => null);
+				const member = await container.helpers.discord.getMemberSafe(
+					reaction.message.guild,
+					user.id,
+				);
 				if (!member) return;
 
 				// --- Panel whitelist / blacklist enforcement ---
@@ -103,11 +100,12 @@ class MessageReactionAddEvent extends BaseEvent {
 						// Non-blocking — fall through and assign role anyway
 					}
 				}
-
 				await member.roles.add(rr.roleId).catch((err) => {
 					logger.warn(
 						`Failed to add role ${rr.roleId} to user ${user.id}: ${err.message}`,
-						{ label: 'reactionRole:addRole' },
+						{
+							label: 'reactionRole:addRole',
+						},
 					);
 				});
 			}
@@ -118,5 +116,4 @@ class MessageReactionAddEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = MessageReactionAddEvent;

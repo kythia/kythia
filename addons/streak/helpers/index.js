@@ -8,9 +8,11 @@
 
 async function getOrCreateStreak(container, userId, guildId) {
 	const { Streak } = container.models;
-
 	const [userStreak] = await Streak.getOrCreateCache(
-		{ userId: userId, guildId: guildId },
+		{
+			userId: userId,
+			guildId: guildId,
+		},
 		{
 			userId,
 			guildId,
@@ -20,10 +22,8 @@ async function getOrCreateStreak(container, userId, guildId) {
 			streakFreezes: 0,
 		},
 	);
-
 	return userStreak;
 }
-
 async function updateNickname(
 	member,
 	streakCount,
@@ -32,19 +32,20 @@ async function updateNickname(
 ) {
 	let fetchedMember = member;
 	try {
-		fetchedMember = await member.guild.members.fetch(member.id);
+		fetchedMember =
+			await member.guild.client.container.helpers.discord.getMemberSafe(
+				member.guild,
+				member.id,
+			);
 	} catch (_e) {}
-
 	if (!fetchedMember.manageable) {
 		return;
 	}
 	try {
 		let currentNickname = fetchedMember.displayName;
-
 		const escapedEmoji = streakEmoji.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 		const streakRegex = new RegExp(`\\s${escapedEmoji}\\s\\d+$`);
 		currentNickname = currentNickname.replace(streakRegex, '').trim();
-
 		let newNickname = currentNickname;
 		if (streakCount >= streakMinimum) {
 			newNickname = `${currentNickname} ${streakEmoji} ${streakCount}`;
@@ -66,7 +67,9 @@ async function updateNickname(
  */
 function getTodayDateString(timezone) {
 	const tz = timezone || process.env.TZ || 'UTC';
-	return new Date().toLocaleDateString('en-CA', { timeZone: tz }); // 'en-CA' gives YYYY-MM-DD
+	return new Date().toLocaleDateString('en-CA', {
+		timeZone: tz,
+	}); // 'en-CA' gives YYYY-MM-DD
 }
 
 /**
@@ -78,9 +81,10 @@ function getYesterdayDateString(timezone) {
 	const tz = timezone || process.env.TZ || 'UTC';
 	const yesterday = new Date();
 	yesterday.setDate(yesterday.getDate() - 1);
-	return yesterday.toLocaleDateString('en-CA', { timeZone: tz });
+	return yesterday.toLocaleDateString('en-CA', {
+		timeZone: tz,
+	});
 }
-
 function getMissedDays(lastClaimDateStr, timezone) {
 	if (!lastClaimDateStr) return Infinity;
 	const todayMs = new Date(getTodayDateString(timezone)).getTime();
@@ -88,22 +92,21 @@ function getMissedDays(lastClaimDateStr, timezone) {
 	const diff = (todayMs - lastMs) / (1000 * 60 * 60 * 24);
 	return Math.round(diff);
 }
-
 async function syncStreakRoles(member, streakCount, streakRoleRewards) {
 	if (!Array.isArray(streakRoleRewards) || streakRoleRewards.length === 0)
 		return [];
-
 	let fetchedMember;
 	try {
-		fetchedMember = await member.guild.members.fetch(member.id);
+		fetchedMember =
+			await member.guild.client.container.helpers.discord.getMemberSafe(
+				member.guild,
+				member.id,
+			);
 	} catch (_e) {
 		return [];
 	}
-
 	if (!fetchedMember.manageable) return [];
-
 	const allRewardRoles = [...new Set(streakRoleRewards.map((r) => r.role))];
-
 	const rolesToHave = [
 		...new Set(
 			streakRoleRewards
@@ -111,17 +114,13 @@ async function syncStreakRoles(member, streakCount, streakRoleRewards) {
 				.map((r) => r.role),
 		),
 	];
-
 	const rolesToRemove = allRewardRoles.filter(
 		(roleId) => !rolesToHave.includes(roleId),
 	);
-
 	const currentRoles = fetchedMember.roles.cache;
 	const toAdd = rolesToHave.filter((roleId) => !currentRoles.has(roleId));
 	const toRemove = rolesToRemove.filter((roleId) => currentRoles.has(roleId));
-
 	const rolesGiven = [];
-
 	if (toAdd.length > 0) {
 		try {
 			await fetchedMember.roles.add(
@@ -131,7 +130,6 @@ async function syncStreakRoles(member, streakCount, streakRoleRewards) {
 			rolesGiven.push(...toAdd);
 		} catch (_e) {}
 	}
-
 	if (toRemove.length > 0) {
 		try {
 			await fetchedMember.roles.remove(
@@ -140,31 +138,24 @@ async function syncStreakRoles(member, streakCount, streakRoleRewards) {
 			);
 		} catch (_e) {}
 	}
-
 	return rolesGiven;
 }
-
 async function restoreStreak(container, member, settings) {
 	const userId = member.id;
 	const guildId = member.guild.id;
 	const timezone = settings.streakTimezone || null;
 	const today = getTodayDateString(timezone);
 	const streak = await getOrCreateStreak(container, userId, guildId);
-
 	const previousStreak = streak.currentStreak;
 	streak.currentStreak = previousStreak + 1;
-
 	if (streak.currentStreak > (streak.highestStreak || 0)) {
 		streak.highestStreak = streak.currentStreak;
 	}
-
 	streak.lastClaimTimestamp = new Date(today);
 	await streak.save();
-
 	const streakEmoji = settings.streakEmoji || '🔥';
 	const streakMinimum = settings.streakMinimum || 3;
 	const updateStreakNickname = settings.streakNickname || false;
-
 	if (updateStreakNickname) {
 		await updateNickname(
 			member,
@@ -173,7 +164,6 @@ async function restoreStreak(container, member, settings) {
 			streakMinimum,
 		);
 	}
-
 	const rewards = Array.isArray(settings.streakRoleRewards)
 		? settings.streakRoleRewards
 		: [];
@@ -182,10 +172,11 @@ async function restoreStreak(container, member, settings) {
 		streak.currentStreak,
 		rewards,
 	);
-
-	return { streak, rewardRolesGiven };
+	return {
+		streak,
+		rewardRolesGiven,
+	};
 }
-
 async function claimStreak(container, member, settings) {
 	const userId = member.id;
 	const guildId = member.guild.id;
@@ -193,15 +184,15 @@ async function claimStreak(container, member, settings) {
 	const streak = await getOrCreateStreak(container, userId, guildId);
 	const today = getTodayDateString(timezone);
 	const yesterday = getYesterdayDateString(timezone);
-
 	const lastClaimDateStr = streak.lastClaimTimestamp
 		? streak.lastClaimTimestamp.toISOString().slice(0, 10)
 		: null;
-
 	if (lastClaimDateStr === today) {
-		return { status: 'ALREADY_CLAIMED', streak };
+		return {
+			status: 'ALREADY_CLAIMED',
+			streak,
+		};
 	}
-
 	let status = 'CONTINUE';
 	if (lastClaimDateStr !== yesterday && streak.currentStreak > 0) {
 		const missed = getMissedDays(lastClaimDateStr, timezone);
@@ -213,7 +204,10 @@ async function claimStreak(container, member, settings) {
 			// Missed exactly 1 day — offer restore via vote, don't save yet
 			// Snapshot lastStreak now so /streak restore can use it
 			streak.lastStreak = streak.currentStreak;
-			return { status: 'CAN_RESTORE', streak };
+			return {
+				status: 'CAN_RESTORE',
+				streak,
+			};
 		} else {
 			// Lost more than 1 day — snapshot then reset
 			streak.lastStreak = streak.currentStreak;
@@ -227,18 +221,14 @@ async function claimStreak(container, member, settings) {
 		streak.currentStreak = 1;
 		status = 'NEW';
 	}
-
 	if (streak.currentStreak > (streak.highestStreak || 0)) {
 		streak.highestStreak = streak.currentStreak;
 	}
-
 	streak.lastClaimTimestamp = new Date(today);
 	await streak.save();
-
 	const streakEmoji = settings.streakEmoji || '🔥';
 	const streakMinimum = settings.streakMinimum || 3;
 	const updateStreakNickname = settings.streakNickname || false;
-
 	if (updateStreakNickname) {
 		await updateNickname(
 			member,
@@ -247,19 +237,20 @@ async function claimStreak(container, member, settings) {
 			streakMinimum,
 		);
 	}
-
 	const rewards = Array.isArray(settings.streakRoleRewards)
 		? settings.streakRoleRewards
 		: [];
 	let rewardRolesGiven = [];
-
 	rewardRolesGiven = await syncStreakRoles(
 		member,
 		streak.currentStreak,
 		rewards,
 	);
-
-	return { status, streak, rewardRolesGiven };
+	return {
+		status,
+		streak,
+		rewardRolesGiven,
+	};
 }
 
 /**
@@ -284,7 +275,9 @@ async function restoreLastStreak(container, member, settings) {
 
 	// Current month key in the guild's timezone (e.g. "2026-05")
 	const currentMonthKey = new Date()
-		.toLocaleDateString('en-CA', { timeZone: tz })
+		.toLocaleDateString('en-CA', {
+			timeZone: tz,
+		})
 		.slice(0, 7);
 
 	// Max restores per calendar month (configurable, default 5)
@@ -292,17 +285,24 @@ async function restoreLastStreak(container, member, settings) {
 		typeof settings.streakRestoreQuota === 'number'
 			? settings.streakRestoreQuota
 			: 5;
-
 	const streak = await getOrCreateStreak(container, userId, guildId);
 
 	// Nothing to restore
 	if (!streak.lastStreak || streak.lastStreak <= 0) {
-		return { status: 'NO_STREAK_TO_RESTORE', streak, restoreQuota };
+		return {
+			status: 'NO_STREAK_TO_RESTORE',
+			streak,
+			restoreQuota,
+		};
 	}
 
 	// Already restored this specific loss
 	if (streak.lastRestoreTimestamp) {
-		return { status: 'ALREADY_RESTORED', streak, restoreQuota };
+		return {
+			status: 'ALREADY_RESTORED',
+			streak,
+			restoreQuota,
+		};
 	}
 
 	// Auto-reset the monthly counter if we're in a new month
@@ -330,17 +330,13 @@ async function restoreLastStreak(container, member, settings) {
 	streak.lastClaimTimestamp = new Date(today);
 	streak.restoreCount = usedThisMonth + 1;
 	streak.restoreMonthKey = currentMonthKey;
-
 	if (streak.currentStreak > (streak.highestStreak || 0)) {
 		streak.highestStreak = streak.currentStreak;
 	}
-
 	await streak.save();
-
 	const streakEmoji = settings.streakEmoji || '🔥';
 	const streakMinimum = settings.streakMinimum || 3;
 	const updateStreakNickname = settings.streakNickname || false;
-
 	if (updateStreakNickname) {
 		await updateNickname(
 			member,
@@ -349,7 +345,6 @@ async function restoreLastStreak(container, member, settings) {
 			streakMinimum,
 		);
 	}
-
 	const rewards = Array.isArray(settings.streakRoleRewards)
 		? settings.streakRoleRewards
 		: [];
@@ -358,7 +353,6 @@ async function restoreLastStreak(container, member, settings) {
 		streak.currentStreak,
 		rewards,
 	);
-
 	return {
 		status: 'SUCCESS',
 		streak,
@@ -367,7 +361,6 @@ async function restoreLastStreak(container, member, settings) {
 		restoreQuota,
 	};
 }
-
 module.exports = {
 	getOrCreateStreak,
 	updateNickname,

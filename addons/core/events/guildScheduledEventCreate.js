@@ -14,29 +14,28 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class GuildScheduledEventCreateEvent extends BaseEvent {
 	async execute(scheduledEvent) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!scheduledEvent.guild) return;
 		const { models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 		const guildId = scheduledEvent.guild.id;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId: scheduledEvent.guild.id,
 			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await scheduledEvent.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				scheduledEvent.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -44,7 +43,6 @@ class GuildScheduledEventCreateEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			if (!scheduledEvent.guild.members.me?.permissions?.has('ViewAuditLog'))
 				return;
 			const audit = await scheduledEvent.guild
@@ -54,20 +52,20 @@ class GuildScheduledEventCreateEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!audit) return;
-
 			const entry = audit.entries.find(
 				(e) =>
 					e.target?.id === scheduledEvent.id &&
 					e.createdTimestamp > Date.now() - 5000,
 			);
-
 			if (!entry) return;
-
 			const executor = entry.executor;
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Green', { from: 'discord', to: 'decimal' }),
+						convertColor('Green', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -98,13 +96,18 @@ class GuildScheduledEventCreateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -122,5 +125,4 @@ class GuildScheduledEventCreateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = GuildScheduledEventCreateEvent;

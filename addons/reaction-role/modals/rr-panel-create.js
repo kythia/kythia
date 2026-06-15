@@ -15,24 +15,17 @@ const {
 	TextDisplayBuilder,
 	MessageFlags,
 } = require('discord.js');
-
 const { buildPanelEmbed } = require('../helpers/index.js');
-
 const { BaseModal } = require('kythia-core');
-
 class RrPanelCreateModal extends BaseModal {
 	modal = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, helpers, logger } = container;
 		const { ReactionRolePanel } = models;
 		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
-
 		await interaction.deferUpdate();
-
 		try {
 			// customId: rr-panel-create:<originalMessageId>
 			const originalMessageId = interaction.customId.split(':')[1];
@@ -43,13 +36,11 @@ class RrPanelCreateModal extends BaseModal {
 				.trim()
 				.toLowerCase();
 			const mode = modeRaw === 'use_message' ? 'use_message' : 'post_embed';
-
 			const panelTypeRaw = interaction.fields
 				.getTextInputValue('panelType')
 				.trim()
 				.toLowerCase();
 			const panelType = panelTypeRaw === 'dropdown' ? 'dropdown' : 'reaction';
-
 			const channelId = interaction.fields
 				.getSelectedChannels('channelId')
 				.first()?.id;
@@ -71,17 +62,18 @@ class RrPanelCreateModal extends BaseModal {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
-			const channel = await interaction.guild.channels
-				.fetch(channelId)
-				.catch(() => null);
-
+			const channel = await helpers.discord.getChannelSafe(
+				interaction.guild,
+				channelId,
+			);
 			if (!channel?.isTextBased()) {
 				return interaction.followUp({
 					components: await simpleContainer(
 						interaction,
 						'❌ Invalid channel. Please select a text channel.',
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
@@ -89,7 +81,6 @@ class RrPanelCreateModal extends BaseModal {
 
 			// ----- Mode-specific logic -----
 			let panelMessageId = null;
-
 			if (mode === 'use_message') {
 				// Validate message ID
 				if (!messageIdInput) {
@@ -97,27 +88,29 @@ class RrPanelCreateModal extends BaseModal {
 						components: await simpleContainer(
 							interaction,
 							'❌ For **use_message** mode you must provide a Message ID.',
-							{ color: 'Red' },
+							{
+								color: 'Red',
+							},
 						),
 						flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 					});
 				}
-
-				const existingMessage = await channel.messages
-					.fetch(messageIdInput)
-					.catch(() => null);
-
+				const existingMessage = await helpers.discord.getMessageSafe(
+					channel,
+					messageIdInput,
+				);
 				if (!existingMessage) {
 					return interaction.followUp({
 						components: await simpleContainer(
 							interaction,
 							`❌ Message ID \`${messageIdInput}\` not found in <#${channelId}>. Make sure the message is in the selected channel.`,
-							{ color: 'Red' },
+							{
+								color: 'Red',
+							},
 						),
 						flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 					});
 				}
-
 				panelMessageId = messageIdInput;
 			} else {
 				// post_embed — send a new embed to the channel
@@ -137,7 +130,6 @@ class RrPanelCreateModal extends BaseModal {
 					[],
 					container,
 				);
-
 				const sentMessage = await channel.send({
 					components: [placeholder],
 					flags: MessageFlags.IsComponentsV2,
@@ -165,7 +157,6 @@ class RrPanelCreateModal extends BaseModal {
 			const typeLabel =
 				panelType === 'dropdown' ? '🔽 Dropdown Select' : '⚡ Reaction';
 			const jumpLink = `https://discord.com/channels/${interaction.guildId}/${channelId}/${panelMessageId}`;
-
 			const addEmojiButton = new ButtonBuilder()
 				.setCustomId(`rr-panel-add-emoji-show:${panel.id}`)
 				.setLabel(
@@ -173,10 +164,12 @@ class RrPanelCreateModal extends BaseModal {
 				)
 				.setStyle(ButtonStyle.Success)
 				.setEmoji('➕');
-
 			const successContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor('Green', { from: 'discord', to: 'decimal' }),
+					convertColor('Green', {
+						from: 'discord',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
@@ -220,12 +213,13 @@ class RrPanelCreateModal extends BaseModal {
 				components: await simpleContainer(
 					interaction,
 					'❌ An error occurred while creating the panel.',
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 	}
 }
-
 exports.default = RrPanelCreateModal;

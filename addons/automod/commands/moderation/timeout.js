@@ -7,13 +7,10 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class TimeoutCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ModerateMembers;
 	botPermissions = PermissionFlagsBits.ModerateMembers;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('timeout')
@@ -36,22 +33,21 @@ class TimeoutCommand extends BaseCommand {
 					.setDescription('Reason for the timeout')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const user = interaction.options.getUser('user');
 		const duration = interaction.options.getInteger('duration');
 		const reason =
 			interaction.options.getString('reason') ||
 			(await t(interaction, 'core.moderation.timeout.default.reason'));
-
 		try {
-			const member = await interaction.guild.members.fetch(user.id);
+			const member = await helpers.discord.getMemberSafe(
+				interaction.guild,
+				user.id,
+			);
 			await member.timeout(duration * 60 * 1000, reason);
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
@@ -77,7 +73,9 @@ class TimeoutCommand extends BaseCommand {
 				await t(interaction, 'core.moderation.timeout.failed', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -86,5 +84,4 @@ class TimeoutCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = TimeoutCommand;

@@ -6,26 +6,25 @@
  * @version 26.0.0-rc.1
  */
 const { MessageFlags } = require('discord.js');
-
 const { BaseSelectMenu } = require('kythia-core');
-
 class TvInviteMenuSelectMenu extends BaseSelectMenu {
-	selectMenu = { customId: 'tv_invite_menu' };
-
+	selectMenu = {
+		customId: 'tv_invite_menu',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, client, t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const { TempVoiceChannel } = models;
 		const channelId = interaction.customId.split(':')[1];
-
 		if (!channelId)
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.no_channel_id'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
 		const activeChannel = await TempVoiceChannel.getCache({
@@ -37,24 +36,31 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.not_owner'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
-
 		let channel;
 		try {
-			channel = await client.channels.fetch(channelId, { force: true });
+			channel = await client.container.helpers.discord.getChannelGlobalSafe(
+				client,
+				channelId,
+			);
 		} catch (error) {
 			logger.error(
 				`CRITICAL: Failed to fetch channel ${channelId} for rename. Error: ${error.message || error}`,
-				{ label: 'tempvoice' },
+				{
+					label: 'tempvoice',
+				},
 			);
-
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.channel_not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 			});
@@ -69,12 +75,10 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 					},
 				),
 			});
-
 		const userIdsToInvite = interaction.values;
 		const successNames = [];
 		const failNames = [];
 		let inviteUrl = '';
-
 		try {
 			const inviteReason = await t(
 				interaction,
@@ -94,20 +98,23 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.invite.fail'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
 		}
-
 		const dmContent = await t(interaction, 'tempvoice.invite.dm_message', {
 			user: interaction.user.globalName || interaction.user.username,
 			guild: interaction.guild.name,
 			channel: channel.name,
 			inviteUrl: inviteUrl,
 		});
-
 		for (const userId of userIdsToInvite) {
-			const user = await client.users.fetch(userId).catch(() => null);
+			const user = await client.container.helpers.discord.getUserSafe(
+				client,
+				userId,
+			);
 			if (user) {
 				try {
 					await user.send({
@@ -123,7 +130,6 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 				}
 			}
 		}
-
 		let summaryContent = '';
 		if (successNames.length > 0) {
 			summaryContent += `${await t(interaction, 'tempvoice.invite.success_dm', {
@@ -135,7 +141,6 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 				users: failNames.join(', '),
 			});
 		}
-
 		await interaction.update({
 			components: await simpleContainer(interaction, summaryContent, {
 				color: 'Green',
@@ -143,5 +148,4 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 		});
 	}
 }
-
 module.exports = TvInviteMenuSelectMenu;

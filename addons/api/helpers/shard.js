@@ -330,7 +330,8 @@ async function broadcastGetGuildMembers(client, guildId, detailed = false) {
 		const guild = client.guilds.cache.get(guildId);
 		if (!guild) return null;
 
-		await guild.members.fetch().catch(() => null);
+		const { getAllMembersSafe } = require('../../core/helpers/discord.js');
+		await getAllMembersSafe(guild);
 
 		return guild.members.cache.map((m) => {
 			if (detailed) {
@@ -356,7 +357,8 @@ async function broadcastGetGuildMembers(client, guildId, detailed = false) {
 			const g = c.guilds.cache.get(id);
 			if (!g) return null;
 
-			await g.members.fetch().catch(() => null);
+			const { getAllMembersSafe } = require('../../core/helpers/discord.js');
+			await getAllMembersSafe(g);
 
 			return g.members.cache.map((m) => {
 				if (isDetailed) {
@@ -396,12 +398,8 @@ async function broadcastGetUsers(client, userIds) {
 	if (!client.shard) {
 		const found = [];
 		for (const id of userIds) {
-			let u = client.users.cache.get(id);
-			if (!u) {
-				try {
-					u = await client.users.fetch(id).catch(() => null);
-				} catch (_e) {}
-			}
+			const { getUserSafe } = require('../../core/helpers/discord.js');
+			const u = await getUserSafe(client, id);
 			if (u) {
 				found.push({
 					id: u.id,
@@ -417,12 +415,8 @@ async function broadcastGetUsers(client, userIds) {
 		async (c, { ids }) => {
 			const localFound = [];
 			for (const id of ids) {
-				let u = c.users.cache.get(id);
-				if (!u) {
-					try {
-						u = await c.users.fetch(id).catch(() => null);
-					} catch (_e) {}
-				}
+				const { getUserSafe } = require('../../core/helpers/discord.js');
+				const u = await getUserSafe(c, id);
 				if (u) {
 					localFound.push({
 						id: u.id,

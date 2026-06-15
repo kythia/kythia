@@ -1,5 +1,4 @@
 const USERS_PER_PAGE = 10;
-
 async function generateLeaderboardContainer(
 	interaction,
 	page,
@@ -9,10 +8,8 @@ async function generateLeaderboardContainer(
 ) {
 	const { t, helpers } = interaction.client.container;
 	const { createPaginationContainer } = helpers.discord;
-
 	const totalPages = Math.max(1, Math.ceil(totalUsers / USERS_PER_PAGE));
 	page = Math.max(1, Math.min(page, totalPages));
-
 	const startIndex = (page - 1) * USERS_PER_PAGE;
 	const pageUsers = topUsers.slice(startIndex, startIndex + USERS_PER_PAGE);
 
@@ -39,12 +36,14 @@ async function generateLeaderboardContainer(
 				// Fetch username from Discord
 				let username;
 				try {
-					const discordUser = await interaction.client.users.fetch(row.userId);
+					const discordUser = await helpers.discord.getUserSafe(
+						interaction.client,
+						row.userId,
+					);
 					username = `${discordUser.username} (${row.userId})`;
 				} catch (_error) {
 					username = `Unknown User (${row.userId})`;
 				}
-
 				return await t(interaction, 'invite.invite.command.leaderboard.entry', {
 					medal,
 					username,
@@ -70,10 +69,12 @@ async function generateLeaderboardContainer(
 		customIdPrefix: 'leaderboard',
 		navDisabled,
 	});
-
-	return { leaderboardContainer, page, totalPages };
+	return {
+		leaderboardContainer,
+		page,
+		totalPages,
+	};
 }
-
 module.exports = {
 	generateLeaderboardContainer,
 };

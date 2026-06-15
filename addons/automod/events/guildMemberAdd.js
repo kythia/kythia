@@ -14,28 +14,26 @@ const {
 	_track,
 	_resetCount,
 } = require('../helpers/antinuke');
-
 const { BaseEvent } = require('kythia-core');
-
 function isGibberish(username) {
 	if (/\d{5,}/.test(username)) return true;
 	if (/[bcdfghjklmnpqrstvwxyz]{5,}/i.test(username)) return true;
 	return false;
 }
-
 class GuildMemberAddEvent extends BaseEvent {
 	async execute(member) {
 		const container = this.container;
-		const _bot = { client: this.client, container: this.container };
+		const _bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const { models, logger } = container;
 		const { ServerSetting } = models;
-
 		try {
 			const settings = await ServerSetting.getCache({
 				guildId: member.guild.id,
 			});
 			if (!settings) return;
-
 			const config = getConfig(settings);
 			if (!config.enabled) return;
 
@@ -47,7 +45,6 @@ class GuildMemberAddEvent extends BaseEvent {
 				if (botMod?.enabled) {
 					if (member.kickable)
 						await member.kick('AntiNuke: botAdd module triggered');
-
 					try {
 						await new Promise((r) => setTimeout(r, 1500));
 						const logs = await member.guild.fetchAuditLogs({
@@ -55,7 +52,6 @@ class GuildMemberAddEvent extends BaseEvent {
 							limit: 1,
 						});
 						const entry = logs.entries.first();
-
 						if (
 							entry &&
 							entry.target?.id === member.user.id &&
@@ -65,11 +61,12 @@ class GuildMemberAddEvent extends BaseEvent {
 							const isWhitelisted = config.whitelistedUsers?.includes(
 								executor.id,
 							);
-
 							if (!isWhitelisted && executor.id !== this.client.user.id) {
-								const executorMember = await member.guild.members
-									.fetch(executor.id)
-									.catch(() => null);
+								const executorMember =
+									await container.helpers.discord.getMemberSafe(
+										member.guild,
+										executor.id,
+									);
 								const reason = `[AntiNuke] botAdd: Unauthorized bot addition (${member.user.tag})`;
 								const actioned = await executeAction(
 									member.guild,
@@ -77,7 +74,6 @@ class GuildMemberAddEvent extends BaseEvent {
 									botMod.action,
 									reason,
 								);
-
 								if (actioned) {
 									await sendAlert(member.guild, config, settings, {
 										moduleName: 'botAdd',
@@ -115,7 +111,6 @@ class GuildMemberAddEvent extends BaseEvent {
 						massMod.action,
 						reason,
 					);
-
 					if (actioned) {
 						await sendAlert(member.guild, config, settings, {
 							moduleName: 'massJoin',
@@ -132,21 +127,16 @@ class GuildMemberAddEvent extends BaseEvent {
 			// ==========================================
 			const mod = config.modules.fakeAccount;
 			if (!mod?.enabled) return;
-
-			await member.user.fetch(true).catch(() => null);
-
+			await container.helpers.discord.refreshObjectSafe(member.user, true);
 			const ageMs = Date.now() - member.user.createdTimestamp;
 			const minAgeMs = (mod.minAgeDays || 7) * 24 * 60 * 60 * 1000;
 			const isTooNew = ageMs < minAgeMs;
-
 			const hasNoAvatar = !member.user.avatar;
 			const hasNoBanner = !member.user.banner;
 			const avatarMatch = mod.requireNoAvatar ? hasNoAvatar : true;
 			const bannerMatch = mod.requireNoBanner ? hasNoBanner : true;
-
 			const usernameNgawur = isGibberish(member.user.username);
 			const gibberishMatch = mod.detectGibberish ? usernameNgawur : true;
-
 			if (isTooNew && avatarMatch && bannerMatch && gibberishMatch) {
 				const reason = `[AntiNuke] fakeAccount: Account detected as fake on join.`;
 				const actioned = await executeAction(
@@ -155,7 +145,6 @@ class GuildMemberAddEvent extends BaseEvent {
 					mod.action,
 					reason,
 				);
-
 				if (actioned) {
 					const detail = `User joined with age ${Math.floor(ageMs / (1000 * 60 * 60 * 24))} days, no avatar/banner, and username "${member.user.username}".`;
 					await sendAlert(member.guild, config, settings, {
@@ -176,5 +165,4 @@ class GuildMemberAddEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = GuildMemberAddEvent;

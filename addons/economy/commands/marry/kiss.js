@@ -8,46 +8,46 @@
 
 const { MessageFlags } = require('discord.js');
 const { Op } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
-
 const { KISS_COOLDOWN } = require('../../helpers/constants');
-
 class KissCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand.setName('kiss').setDescription('😘 Kiss your partner');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Marriage } = models;
 		const userId = interaction.user.id;
 		const now = new Date();
-
 		const marriages = await Marriage.getAllCache({
 			where: {
 				[Op.or]: [
-					{ user1Id: userId, status: 'married' },
-					{ user2Id: userId, status: 'married' },
+					{
+						user1Id: userId,
+						status: 'married',
+					},
+					{
+						user2Id: userId,
+						status: 'married',
+					},
 				],
 			},
 			limit: 1,
 		});
-
 		const marriage = marriages && marriages.length > 0 ? marriages[0] : null;
-
 		if (!marriage) {
 			const components = await helpers.discord.simpleContainer(
 				interaction,
 				await t(interaction, 'fun.marry.not.married.both'),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.reply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (marriage.lastKiss && now - marriage.lastKiss < KISS_COOLDOWN) {
 			const remaining = Math.ceil(
 				(KISS_COOLDOWN - (now - marriage.lastKiss)) / 60000,
@@ -59,18 +59,16 @@ class KissCommand extends BaseCommand {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		await marriage.update({
 			lastKiss: now,
 			loveScore: marriage.loveScore + 1,
 		});
-
 		const partnerId =
 			marriage.user1Id === userId ? marriage.user2Id : marriage.user1Id;
-		const partner = await interaction.client.users
-			.fetch(partnerId)
-			.catch(() => null);
-
+		const partner = await helpers.discord.getUserSafe(
+			interaction.client,
+			partnerId,
+		);
 		const kissMessages = [
 			await t(interaction, 'fun.marry.kiss.1', {
 				user: interaction.user.toString(),
@@ -85,18 +83,19 @@ class KissCommand extends BaseCommand {
 				partner: partner?.toString() || 'Unknown',
 			}),
 		];
-
 		const randomMessage =
 			kissMessages[Math.floor(Math.random() * kissMessages.length)];
-
 		const components = await helpers.discord.simpleContainer(
 			interaction,
 			randomMessage,
-			{ color: kythiaConfig.bot.color },
+			{
+				color: kythiaConfig.bot.color,
+			},
 		);
-
-		await interaction.reply({ components, flags: MessageFlags.IsComponentsV2 });
+		await interaction.reply({
+			components,
+			flags: MessageFlags.IsComponentsV2,
+		});
 	}
 }
-
 exports.default = KissCommand;

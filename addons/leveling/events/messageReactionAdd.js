@@ -6,7 +6,6 @@
  * @version 26.0.0-rc.1
  */
 const { addXp } = require('../helpers');
-
 const reactorCooldown = new Map();
 const authorCooldown = new Map();
 
@@ -18,18 +17,22 @@ const authorCooldown = new Map();
  */
 
 const { BaseEvent } = require('kythia-core');
-
 class MessageReactionAddEvent extends BaseEvent {
 	async execute(reaction, user) {
 		const _container = this.container;
-		const _bot = { client: this.client, container: this.container };
-
+		const _bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!user || user.bot || !reaction.message.guild) return;
-
-		if (reaction.partial) await reaction.fetch().catch(() => {});
+		if (reaction.partial)
+			await reaction.client.container.helpers.discord.resolvePartialSafe(
+				reaction,
+			);
 		if (reaction.message.partial)
-			await reaction.message.fetch().catch(() => {});
-
+			await reaction.message.client.container.helpers.discord.resolvePartialSafe(
+				reaction.message,
+			);
 		const message = reaction.message;
 		if (
 			!message.guild ||
@@ -38,41 +41,37 @@ class MessageReactionAddEvent extends BaseEvent {
 			message.author.id === user.id
 		)
 			return;
-
 		const guildId = message.guild.id;
 		const reactorId = user.id;
 		const authorId = message.author.id;
-
 		const { ServerSetting, LevelingSetting } = this.container.models;
-		const serverSetting = await ServerSetting.getCache({ guildId });
+		const serverSetting = await ServerSetting.getCache({
+			guildId,
+		});
 		if (!serverSetting?.levelingOn) return;
-
-		const setting = await LevelingSetting.getCache({ guildId });
+		const setting = await LevelingSetting.getCache({
+			guildId,
+		});
 		if (!setting?.reactionXpEnabled) return;
-
 		if (
 			Array.isArray(setting?.noXpChannels) &&
 			setting.noXpChannels.includes(message.channel.id)
 		)
 			return;
-
 		const awardType = setting?.reactionXpAward || 'both';
 		if (awardType === 'none') return;
-
 		const min =
 			typeof setting?.reactionXpMin === 'number' ? setting.reactionXpMin : 1;
 		const max =
 			typeof setting?.reactionXpMax === 'number' ? setting.reactionXpMax : 5;
 		const xpToAdd =
 			min === max ? min : Math.floor(Math.random() * (max - min + 1)) + min;
-
 		const cdSeconds =
 			typeof setting?.reactionXpCooldown === 'number'
 				? setting.reactionXpCooldown
 				: 10;
 		const cdTime = cdSeconds * 1000;
 		const now = Date.now();
-
 		const { getChannelSafe } = this.container.helpers.discord;
 		const announceChannel =
 			(await getChannelSafe(message.guild, setting?.levelingChannelId)) ||
@@ -107,5 +106,4 @@ class MessageReactionAddEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = MessageReactionAddEvent;

@@ -7,26 +7,19 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand.setName('list').setDescription('Show all Kythia Team members');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, logger, helpers } = container;
 		const { KythiaTeam } = models;
 		const { createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		try {
 			const teamMembers = await KythiaTeam.getAllCache();
-
 			if (teamMembers.length === 0) {
 				const components = await createContainer(interaction, {
 					description: await t(interaction, 'core.utils.kyth.team.list.empty'),
@@ -37,7 +30,6 @@ class ListCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const noRole = await t(interaction, 'core.utils.kyth.team.list.no.role');
 			const unknownUser = await t(
 				interaction,
@@ -46,9 +38,10 @@ class ListCommand extends BaseCommand {
 			const memberList = [];
 			for (const member of teamMembers) {
 				try {
-					const user = await interaction.client.users
-						.fetch(member.userId)
-						.catch(() => null);
+					const user = await helpers.discord.getUserSafe(
+						interaction.client,
+						member.userId,
+					);
 					const userName = user
 						? user.tag
 						: `${unknownUser} (${member.userId})`;
@@ -76,14 +69,12 @@ class ListCommand extends BaseCommand {
 					);
 				}
 			}
-
 			const description =
 				(await t(interaction, 'core.utils.kyth.team.list.total', {
 					count: teamMembers.length,
 				})) +
 				'\n\n' +
 				memberList.join('\n\n');
-
 			const components = await createContainer(interaction, {
 				title: await t(interaction, 'core.utils.kyth.team.list.title'),
 				description,
@@ -113,5 +104,4 @@ class ListCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = ListCommand;

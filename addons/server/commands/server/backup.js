@@ -14,44 +14,41 @@ const {
 	AttachmentBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class BackupCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('backup')
 			.setDescription('Backup server structure to a JSON file sent to your DM');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, logger, kythiaConfig } = container;
 		const { simpleContainer, chunkTextDisplay } = helpers.discord;
 		const { convertColor } = helpers.color;
 		const { guild } = interaction;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		let components = await simpleContainer(
 			interaction,
 			`${await t(interaction, 'server.server.backup.start')}`,
-			{ color: 'Blurple' },
+			{
+				color: 'Blurple',
+			},
 		);
 		await interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-
 		try {
 			const [channels, roles, emojis, stickers, bans, webhooks] =
 				await Promise.all([
-					guild.channels.fetch(),
-					guild.roles.fetch(),
-					guild.emojis.fetch(),
-					guild.stickers.fetch(),
-					guild.bans.fetch().catch(() => null),
+					helpers.discord.getAllChannelsSafe(guild),
+					helpers.discord.getAllRolesSafe(guild),
+					helpers.discord.getAllEmojisSafe(guild),
+					helpers.discord.getAllStickersSafe(guild),
+					helpers.discord.getAllBansSafe(guild),
 					guild.fetchWebhooks().catch(() => null),
 				]);
 
@@ -68,7 +65,10 @@ class BackupCommand extends BaseCommand {
 					managed: role.managed,
 					permissions: role.permissions.bitfield.toString(),
 					position: role.position,
-					icon: role.iconURL({ forceStatic: true }) ?? null,
+					icon:
+						role.iconURL({
+							forceStatic: true,
+						}) ?? null,
 					unicodeEmoji: role.unicodeEmoji ?? null,
 				}));
 
@@ -77,7 +77,6 @@ class BackupCommand extends BaseCommand {
 			const sortedChannels = [...channels.values()].sort(
 				(a, b) => a.rawPosition - b.rawPosition,
 			);
-
 			for (const ch of sortedChannels) {
 				const entry = {
 					id: ch.id,
@@ -114,7 +113,6 @@ class BackupCommand extends BaseCommand {
 				};
 				channelList.push(entry);
 			}
-
 			const backup = {
 				metadata: {
 					guildId: guild.id,
@@ -132,11 +130,22 @@ class BackupCommand extends BaseCommand {
 					nsfwLevel: guild.nsfwLevel,
 					preferredLocale: guild.preferredLocale,
 					// Icons / splash
-					iconURL: guild.iconURL({ forceStatic: true }) ?? null,
-					bannerURL: guild.bannerURL({ forceStatic: true }) ?? null,
-					splashURL: guild.splashURL({ forceStatic: true }) ?? null,
+					iconURL:
+						guild.iconURL({
+							forceStatic: true,
+						}) ?? null,
+					bannerURL:
+						guild.bannerURL({
+							forceStatic: true,
+						}) ?? null,
+					splashURL:
+						guild.splashURL({
+							forceStatic: true,
+						}) ?? null,
 					discoverySplashURL:
-						guild.discoverySplashURL({ forceStatic: true }) ?? null,
+						guild.discoverySplashURL({
+							forceStatic: true,
+						}) ?? null,
 					// Special channels (stored as IDs for reference; restored if channel recreated)
 					systemChannelId: guild.systemChannelId ?? null,
 					systemChannelName: guild.systemChannel?.name ?? null,
@@ -187,37 +196,33 @@ class BackupCommand extends BaseCommand {
 						}))
 					: [],
 			};
-
 			const json = JSON.stringify(backup, null, 2);
 			const buffer = Buffer.from(json, 'utf-8');
-
 			if (buffer.length > 10 * 1024 * 1024) {
 				components = await simpleContainer(
 					interaction,
 					`${await t(interaction, 'server.server.backup.too.large')}`,
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const filename = `backup-${guild.id}-${Date.now()}.json`;
 			const accentColor = convertColor(kythiaConfig.bot.color, {
 				from: 'hex',
 				to: 'decimal',
 			});
 			const ts = Math.floor(Date.now() / 1000);
-
 			const attachment = new AttachmentBuilder(buffer)
 				.setName(filename)
 				.setDescription(`Server backup for ${guild.name}`);
-
 			const fileComponent = new FileBuilder()
 				.setURL(`attachment://${filename}`)
 				.setSpoiler(false);
-
 			const titleLine = `## 📦 Server Backup — **${guild.name}**`;
 			const metaLine = [
 				`> **Guild ID:** \`${guild.id}\``,
@@ -226,7 +231,6 @@ class BackupCommand extends BaseCommand {
 				`> **Channels:** ${backup.channels.length} | **Roles:** ${backup.roles.length} | **Emojis:** ${backup.emojis.length} | **Stickers:** ${backup.stickers.length}`,
 			].join('\n');
 			const footerLine = `*Use \`/server restore\` to restore this backup. Keep this file safe!*`;
-
 			const v2Components = [
 				new ContainerBuilder()
 					.setAccentColor(accentColor)
@@ -271,8 +275,10 @@ class BackupCommand extends BaseCommand {
 					components: [
 						new ContainerBuilder()
 							.setAccentColor(
-								convertColor('Orange', { from: 'named', to: 'decimal' }) ??
-									0xffa500,
+								convertColor('Orange', {
+									from: 'named',
+									to: 'decimal',
+								}) ?? 0xffa500,
 							)
 							.addTextDisplayComponents(...chunkTextDisplay(failMsg))
 							.addSeparatorComponents(
@@ -286,11 +292,14 @@ class BackupCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			components = await simpleContainer(
 				interaction,
-				`${await t(interaction, 'server.server.backup.success', { name: guild.name })}`,
-				{ color: 'Green' },
+				`${await t(interaction, 'server.server.backup.success', {
+					name: guild.name,
+				})}`,
+				{
+					color: 'Green',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -303,7 +312,9 @@ class BackupCommand extends BaseCommand {
 			components = await simpleContainer(
 				interaction,
 				`${await t(interaction, 'server.server.backup.failed')}`,
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -312,5 +323,4 @@ class BackupCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = BackupCommand;

@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class CommandIdCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('command-id')
@@ -23,23 +20,18 @@ class CommandIdCommand extends BaseCommand {
 					.setDescription('The name of the command to look up')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
-		const { simpleContainer } = helpers.discord;
-
+		const { simpleContainer, refreshObjectSafe } = helpers.discord;
 		await interaction.deferReply();
-
 		const input = interaction.options.getString('name');
 		const parts = input.trim().split(/\s+/);
 		const commandName = parts[0];
-
-		await interaction.client.application.commands.fetch();
+		await refreshObjectSafe(interaction.client.application.commands);
 		const cmd = interaction.client.application.commands.cache.find(
 			(c) => c.name === commandName,
 		);
-
 		if (!cmd) {
 			const components = await simpleContainer(
 				interaction,
@@ -52,7 +44,6 @@ class CommandIdCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const mention = `</${parts.join(' ')}:${cmd.id}>`;
 		return interaction.editReply({
 			content: await t(interaction, 'core.utils.commandid.success', {
@@ -62,5 +53,4 @@ class CommandIdCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = CommandIdCommand;

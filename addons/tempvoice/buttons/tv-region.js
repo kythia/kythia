@@ -12,46 +12,100 @@ const {
 	TextDisplayBuilder,
 	MessageFlags,
 } = require('discord.js');
-
 const REGIONS = [
-	{ label: 'Automatic', value: 'auto', emoji: '🤖' },
-	{ label: 'Brazil', value: 'brazil', emoji: '🇧🇷' },
-	{ label: 'Hong Kong', value: 'hongkong', emoji: '🇭🇰' },
-	{ label: 'India', value: 'india', emoji: '🇮🇳' },
-	{ label: 'Japan', value: 'japan', emoji: '🇯🇵' },
-	{ label: 'Rotterdam', value: 'rotterdam', emoji: '🇳🇱' },
-	{ label: 'Singapore', value: 'singapore', emoji: '🇸🇬' },
-	{ label: 'South Africa', value: 'southafrica', emoji: '🇿🇦' },
-	{ label: 'Sydney', value: 'sydney', emoji: '🇦🇺' },
-	{ label: 'US Central', value: 'us-central', emoji: '🇺🇸' },
-	{ label: 'US East', value: 'us-east', emoji: '🇺🇸' },
-	{ label: 'US South', value: 'us-south', emoji: '🇺🇸' },
-	{ label: 'US West', value: 'us-west', emoji: '🇺🇸' },
+	{
+		label: 'Automatic',
+		value: 'auto',
+		emoji: '🤖',
+	},
+	{
+		label: 'Brazil',
+		value: 'brazil',
+		emoji: '🇧🇷',
+	},
+	{
+		label: 'Hong Kong',
+		value: 'hongkong',
+		emoji: '🇭🇰',
+	},
+	{
+		label: 'India',
+		value: 'india',
+		emoji: '🇮🇳',
+	},
+	{
+		label: 'Japan',
+		value: 'japan',
+		emoji: '🇯🇵',
+	},
+	{
+		label: 'Rotterdam',
+		value: 'rotterdam',
+		emoji: '🇳🇱',
+	},
+	{
+		label: 'Singapore',
+		value: 'singapore',
+		emoji: '🇸🇬',
+	},
+	{
+		label: 'South Africa',
+		value: 'southafrica',
+		emoji: '🇿🇦',
+	},
+	{
+		label: 'Sydney',
+		value: 'sydney',
+		emoji: '🇦🇺',
+	},
+	{
+		label: 'US Central',
+		value: 'us-central',
+		emoji: '🇺🇸',
+	},
+	{
+		label: 'US East',
+		value: 'us-east',
+		emoji: '🇺🇸',
+	},
+	{
+		label: 'US South',
+		value: 'us-south',
+		emoji: '🇺🇸',
+	},
+	{
+		label: 'US West',
+		value: 'us-west',
+		emoji: '🇺🇸',
+	},
 ];
-
 const { BaseButton } = require('kythia-core');
-
 class TvRegionButton extends BaseButton {
-	button = { customId: 'tv_region' };
-
+	button = {
+		customId: 'tv_region',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, t, helpers, kythiaConfig } = container;
 		const { convertColor } = helpers.color;
 		const { TempVoiceChannel } = models;
-
 		const activeChannel = await TempVoiceChannel.getCache({
 			ownerId: interaction.user.id,
 			guildId: interaction.guild.id,
 		});
 		if (!activeChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.region.no_active_channel'),
-				flags: MessageFlags.Ephemeral,
+				components:
+					await interaction.client.container.helpers.discord.simpleContainer(
+						interaction,
+						await t(interaction, 'tempvoice.region.no_active_channel'),
+						{
+							color: 'Red',
+						},
+					),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const selectMenu = new StringSelectMenuBuilder()
 			.setCustomId(`tv_region_menu:${activeChannel.channelId}`)
 			.setPlaceholder(await t(interaction, 'tempvoice.region.menu.placeholder'))
@@ -61,13 +115,11 @@ class TvRegionButton extends BaseButton {
 					default: r.value === (activeChannel.rtcRegion || 'auto'),
 				})),
 			);
-
 		const row = new ActionRowBuilder().addComponents(selectMenu);
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const containerComponent = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
@@ -76,12 +128,10 @@ class TvRegionButton extends BaseButton {
 				),
 			)
 			.addActionRowComponents(row);
-
 		await interaction.reply({
 			components: [containerComponent],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = TvRegionButton;

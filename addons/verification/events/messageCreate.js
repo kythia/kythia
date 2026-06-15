@@ -22,12 +22,12 @@ const { BaseEvent } = require('kythia-core');
 class MessageCreateEvent extends BaseEvent {
 	async execute(message) {
 		const container = this.container;
-		const _bot = { client: this.client, container: this.container };
 
 		if (!message.author || message.author.bot) return;
 
-		const { models, logger } = container;
+		const { models, logger, helpers } = container;
 		const { VerificationConfig, ServerSetting } = models;
+		const { getMemberSafe, getGuildSafe } = helpers.discord;
 
 		try {
 			let session = null;
@@ -38,14 +38,14 @@ class MessageCreateEvent extends BaseEvent {
 				session = getSession(guildId, message.author.id);
 			} else {
 				// DM fallback
-				session = getSessionByChannel(message.channel.id, message.author.id);
+				session = getSessionByChannel(message.channelId, message.author.id);
 				if (session) guildId = session.guildId;
 			}
 
 			if (!session?.answer || !guildId) return;
 
 			// Only respond in the session's channel
-			if (message.channel.id !== session.channelId) return;
+			if (message.channelId !== session.channelId) return;
 
 			const settings = await ServerSetting.getCache({
 				guildId: guildId,
@@ -62,39 +62,31 @@ class MessageCreateEvent extends BaseEvent {
 
 			if (input === correct) {
 				await message.delete().catch(() => null);
-				const guild =
-					this.client.guilds.cache.get(guildId) ||
-					(await this.client.guilds.fetch(guildId).catch(() => null));
+				const guild = await getGuildSafe(this.client, guildId);
 				if (!guild) return;
-				const member = await guild.members
-					.fetch(message.author.id)
-					.catch(() => null);
+				const member = await getMemberSafe(guild, message.author.id);
 				if (!member) return;
 				await handleSuccess(member, config);
-				const { simpleContainer } = container.helpers.discord;
+				const { simpleContainer } = helpers.discord;
 				const comps = await simpleContainer(
 					message.channel,
 					`✅ <@${message.author.id}> You're verified! Welcome to **${guild.name}**.`,
 					{ color: 'Green' },
 				);
 				await message.channel
-					.send({
+					?.send({
 						content: `<@${message.author.id}>`,
 						components: comps,
 						allowedMentions: { users: [message.author.id] },
 						flags: MessageFlags.IsComponentsV2,
 					})
-					.then((m) => setTimeout(() => m.delete().catch(() => null), 8000));
+					?.then((m) => setTimeout(() => m.delete().catch(() => null), 8000));
 			} else {
 				await message.delete().catch(() => null);
 				const attempts = incrementAttempts(guildId, message.author.id);
-				const guild =
-					this.client.guilds.cache.get(guildId) ||
-					(await this.client.guilds.fetch(guildId).catch(() => null));
+				const guild = await getGuildSafe(this.client, guildId);
 				if (!guild) return;
-				const member = await guild.members
-					.fetch(message.author.id)
-					.catch(() => null);
+				const member = await getMemberSafe(guild, message.author.id);
 				if (!member) return;
 
 				await handleFail(member, config, attempts, async (remaining) => {

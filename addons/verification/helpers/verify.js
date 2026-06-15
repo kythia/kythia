@@ -13,7 +13,6 @@ const {
 	SeparatorSpacingSize,
 	MessageFlags,
 } = require('discord.js');
-
 const { generateMathCaptcha } = require('./captchaMath');
 const { generateEmojiCaptcha } = require('./captchaEmoji');
 const { generateImageCaptcha } = require('./captchaImage');
@@ -26,13 +25,22 @@ async function sendLog(guild, config, text) {
 	if (!config.logChannelId) return;
 	const ch =
 		guild.channels.cache.get(config.logChannelId) ||
-		(await guild.channels.fetch(config.logChannelId).catch(() => null));
-
+		(await guild.client.container.helpers.discord.getChannelSafe(
+			guild,
+			config.logChannelId,
+		));
 	if (ch?.isTextBased()) {
 		try {
 			const { simpleContainer } = require('kythia-core').helpers.discord;
-			const comps = await simpleContainer(ch, text, { color: 'Green' });
-			await ch.send({ components: comps, flags: 1 << 16 }).catch(() => null);
+			const comps = await simpleContainer(ch, text, {
+				color: 'Green',
+			});
+			await ch
+				.send({
+					components: comps,
+					flags: 1 << 16,
+				})
+				.catch(() => null);
 		} catch {
 			await ch.send(text).catch(() => null);
 		}
@@ -45,7 +53,6 @@ async function sendLog(guild, config, text) {
 function buildCaptchaPayload(member, config) {
 	const { captchaType } = config;
 	const userId = member.id;
-
 	const header = new ContainerBuilder()
 		.setAccentColor(0x5865f2)
 		.addTextDisplayComponents(
@@ -61,7 +68,6 @@ function buildCaptchaPayload(member, config) {
 				.setSpacing(SeparatorSpacingSize.Small)
 				.setDivider(true),
 		);
-
 	if (captchaType === 'math') {
 		const { question, rows } = generateMathCaptcha(userId, member.guild.id);
 		header.addTextDisplayComponents(
@@ -75,7 +81,6 @@ function buildCaptchaPayload(member, config) {
 			answer: null, // button-based
 		};
 	}
-
 	if (captchaType === 'emoji') {
 		const { prompt, rows } = generateEmojiCaptcha(userId, member.guild.id);
 		header.addTextDisplayComponents(
@@ -116,28 +121,35 @@ async function sendCaptcha(member, config, interaction = null) {
 		const role = guild.roles.cache.get(config.unverifiedRoleId);
 		if (role) await member.roles.add(role).catch(() => null);
 	}
-
 	const payload = await buildCaptchaPayload(member, config);
-
 	let sentMessage = null;
 	let sentChannel = null;
-
 	if (interaction) {
 		payload.ephemeral = true;
 		if (interaction.deferred || interaction.replied) {
 			sentMessage = await interaction
-				.followUp({ ...payload, fetchReply: true })
+				.followUp({
+					...payload,
+					fetchReply: true,
+				})
 				.catch(() => null);
 		} else {
 			sentMessage = await interaction
-				.reply({ ...payload, fetchReply: true })
+				.reply({
+					...payload,
+					fetchReply: true,
+				})
 				.catch(() => null);
 		}
 		if (sentMessage) sentChannel = interaction.channel;
 	} else {
 		// Try channel first (for non-interaction commands like /verify reset)
 		if (config.channelId) {
-			const ch = await guild.channels.fetch(config.channelId).catch(() => null);
+			const ch =
+				await interaction.client.container.helpers.discord.getChannelSafe(
+					guild,
+					config.channelId,
+				);
 			if (ch?.isTextBased()) {
 				const msg = await ch.send(payload).catch(() => null);
 				if (msg) {
@@ -159,14 +171,14 @@ async function sendCaptcha(member, config, interaction = null) {
 			}
 		}
 	}
-
 	if (!sentMessage) return; // Can't reach member
 
 	// Register session
 	createSession({
 		guildId: guild.id,
 		userId: member.id,
-		answer: payload.answer, // null for button-based
+		answer: payload.answer,
+		// null for button-based
 		channelId: sentChannel.id,
 		messageId: sentMessage.id,
 		timeoutMs: config.timeoutSeconds * 1000,
@@ -192,7 +204,6 @@ async function handleSuccess(member, config) {
 		const role = guild.roles.cache.get(config.unverifiedRoleId);
 		if (role) await member.roles.remove(role).catch(() => null);
 	}
-
 	await sendLog(
 		guild,
 		config,
@@ -206,7 +217,9 @@ async function handleSuccess(member, config) {
 			await dm
 				.send({
 					content: config.welcomeMessage,
-					allowedMentions: { parse: [] },
+					allowedMentions: {
+						parse: [],
+					},
 				})
 				.catch(() => null);
 		}
@@ -219,7 +232,6 @@ async function handleSuccess(member, config) {
 async function handleFail(member, config, attempts, sendRetry) {
 	const guild = member.guild;
 	const remaining = config.maxAttempts - attempts;
-
 	if (remaining <= 0) {
 		clearSession(guild.id, member.id);
 		await sendLog(
@@ -242,7 +254,10 @@ async function handleFail(member, config, attempts, sendRetry) {
 // handleTimeout — called by session timer
 // ---------------------------------------------------------------------------
 async function handleTimeout(guild, userId, config) {
-	const member = await guild.members.fetch(userId).catch(() => null);
+	const member = await guild.client.container.helpers.discord.getMemberSafe(
+		guild,
+		userId,
+	);
 	await sendLog(
 		guild,
 		config,
@@ -252,7 +267,6 @@ async function handleTimeout(guild, userId, config) {
 		await member.kick('Captcha verification timed out').catch(() => null);
 	}
 }
-
 module.exports = {
 	sendCaptcha,
 	handleSuccess,

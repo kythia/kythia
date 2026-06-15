@@ -6,26 +6,25 @@
  * @version 26.0.0-rc.1
  */
 const { PermissionsBitField, MessageFlags } = require('discord.js');
-
 const { BaseSelectMenu } = require('kythia-core');
-
 class TvTrustMenuSelectMenu extends BaseSelectMenu {
-	selectMenu = { customId: 'tv_trust_menu' };
-
+	selectMenu = {
+		customId: 'tv_trust_menu',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, client, t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const channelId = interaction.customId.split(':')[1];
 		const { TempVoiceChannel } = models;
-
 		if (!channelId)
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.no_channel_id'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
 		const activeChannel = await TempVoiceChannel.getCache({
@@ -37,24 +36,31 @@ class TvTrustMenuSelectMenu extends BaseSelectMenu {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.not_owner'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
-
 		let channel;
 		try {
-			channel = await client.channels.fetch(channelId, { force: true });
+			channel = await client.container.helpers.discord.getChannelGlobalSafe(
+				client,
+				channelId,
+			);
 		} catch (error) {
 			logger.error(
 				`CRITICAL: Failed to fetch channel ${channelId} for rename. Error: ${error.message || error}`,
-				{ label: 'tempvoice' },
+				{
+					label: 'tempvoice',
+				},
 			);
-
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.channel_not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 			});
@@ -69,15 +75,14 @@ class TvTrustMenuSelectMenu extends BaseSelectMenu {
 					},
 				),
 			});
-
 		const userIdsToTrust = interaction.values;
 		const trustedNames = [];
-
 		try {
 			for (const userId of userIdsToTrust) {
-				const member = await interaction.guild.members
-					.fetch(userId)
-					.catch(() => null);
+				const member = await helpers.discord.getMemberSafe(
+					interaction.guild,
+					userId,
+				);
 				if (member) {
 					await channel.permissionOverwrites.edit(member, {
 						[PermissionsBitField.Flags.ViewChannel]: true,
@@ -87,14 +92,15 @@ class TvTrustMenuSelectMenu extends BaseSelectMenu {
 					trustedNames.push(member.displayName);
 				}
 			}
-
 			await interaction.update({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.trust.success', {
 						users: trustedNames.join(', '),
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				),
 			});
 		} catch (_err) {
@@ -102,11 +108,12 @@ class TvTrustMenuSelectMenu extends BaseSelectMenu {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.fail'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 			});
 		}
 	}
 }
-
 module.exports = TvTrustMenuSelectMenu;

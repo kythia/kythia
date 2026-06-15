@@ -12,57 +12,72 @@ const {
 	TextDisplayBuilder,
 	MessageFlags,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TvPrivacyButton extends BaseButton {
-	button = { customId: 'tv_privacy' };
-
+	button = {
+		customId: 'tv_privacy',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { client, models, t, helpers, logger } = container;
 		const { TempVoiceChannel } = models;
 		const { convertColor } = helpers.color;
 		const { simpleContainer } = helpers.discord;
-
 		const activeChannel = await TempVoiceChannel.getCache({
 			ownerId: interaction.user.id,
 			guildId: interaction.guild.id,
 		});
 		if (!activeChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.privacy.no_active_channel'),
-				flags: MessageFlags.Ephemeral,
+				components:
+					await interaction.client.container.helpers.discord.simpleContainer(
+						interaction,
+						await t(interaction, 'tempvoice.privacy.no_active_channel'),
+						{
+							color: 'Red',
+						},
+					),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 		const channelId = activeChannel.channelId;
 		let channel;
 		try {
-			channel = await client.channels.fetch(channelId, { force: true });
+			channel = await client.container.helpers.discord.getChannelGlobalSafe(
+				client,
+				channelId,
+			);
 		} catch (error) {
 			logger.error(
 				`CRITICAL: Failed to fetch channel ${channelId} for rename. Error: ${error.message || error}`,
-				{ label: 'tempvoice' },
+				{
+					label: 'tempvoice',
+				},
 			);
-
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'tempvoice.common.channel_not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (!channel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.privacy.channel_not_found'),
-				flags: MessageFlags.Ephemeral,
+				components:
+					await interaction.client.container.helpers.discord.simpleContainer(
+						interaction,
+						await t(interaction, 'tempvoice.privacy.channel_not_found'),
+						{
+							color: 'Red',
+						},
+					),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const menu = new StringSelectMenuBuilder()
 			.setCustomId(`tv_privacy_menu:${channelId}`)
 			.setPlaceholder(
@@ -103,13 +118,14 @@ class TvPrivacyButton extends BaseButton {
 					emoji: '👁️',
 				},
 			]);
-
 		const row = new ActionRowBuilder().addComponents(menu);
-
 		const containerComponent = new ContainerBuilder()
 			.setAccentColor(
 				typeof convertColor === 'function'
-					? convertColor('#ffb86c', { from: 'hex', to: 'decimal' })
+					? convertColor('#ffb86c', {
+							from: 'hex',
+							to: 'decimal',
+						})
 					: 0xffb86c,
 			)
 			.addTextDisplayComponents(
@@ -118,12 +134,10 @@ class TvPrivacyButton extends BaseButton {
 				),
 			)
 			.addActionRowComponents(row);
-
 		await interaction.reply({
 			components: [containerComponent],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = TvPrivacyButton;

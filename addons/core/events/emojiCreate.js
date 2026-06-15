@@ -13,27 +13,24 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseEvent } = require('kythia-core');
-
 class EmojiCreateEvent extends BaseEvent {
 	async execute(emoji) {
 		const container = this.container;
-
 		if (!emoji.guild) return;
 		const { models, helpers, t, logger } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
-
 		const guildId = emoji.guild.id;
-
 		try {
-			const settings = await ServerSetting.getCache({ guildId });
+			const settings = await ServerSetting.getCache({
+				guildId,
+			});
 			if (!settings?.auditLogChannelId) return;
-
-			const logChannel = await emoji.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				emoji.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -41,7 +38,6 @@ class EmojiCreateEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			if (!emoji.guild.members.me?.permissions?.has('ViewAuditLog')) return;
 			const audit = await emoji.guild
 				.fetchAuditLogs({
@@ -50,19 +46,19 @@ class EmojiCreateEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!audit) return;
-
 			const entry = audit.entries.find(
 				(e) =>
 					e.target?.id === emoji.id && e.createdTimestamp > Date.now() - 10000,
 			);
-
 			if (!entry) return;
-
 			const executor = entry.executor;
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Green', { from: 'discord', to: 'decimal' }),
+						convertColor('Green', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -93,13 +89,18 @@ class EmojiCreateEvent extends BaseEvent {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t({ guildId }, 'common.container.footer', {
-								username: this.client.user.username,
-							}),
+							await t(
+								{
+									guildId,
+								},
+								'common.container.footer',
+								{
+									username: this.client.user.username,
+								},
+							),
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -114,5 +115,4 @@ class EmojiCreateEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = EmojiCreateEvent;

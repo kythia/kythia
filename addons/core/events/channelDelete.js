@@ -15,19 +15,18 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 const { BaseEvent } = require('kythia-core');
-
 class ChannelDeleteEvent extends BaseEvent {
 	async execute(channel) {
 		const container = this.container;
-		const bot = { client: this.client, container: this.container };
-
+		const bot = {
+			client: this.client,
+			container: this.container,
+		};
 		if (!channel.guild) return;
 		const { models, helpers, logger } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
-
 		try {
 			if (!channel.guild.members.me?.permissions?.has('ViewAuditLog')) return;
 			const audit = await channel.guild
@@ -37,7 +36,6 @@ class ChannelDeleteEvent extends BaseEvent {
 				})
 				.catch(() => null);
 			if (!audit) return;
-
 			let entry = audit.entries.find(
 				(e) =>
 					e.target?.id === channel.id && e.createdTimestamp > Date.now() - 5000,
@@ -50,15 +48,14 @@ class ChannelDeleteEvent extends BaseEvent {
 						) && e.createdTimestamp > Date.now() - 5000,
 				);
 			}
-
 			const settings = await ServerSetting.getCache({
 				guildId: channel.guild.id,
 			});
 			if (!settings?.auditLogChannelId || !entry) return;
-
-			const logChannel = await channel.guild.channels
-				.fetch(settings.auditLogChannelId)
-				.catch(() => null);
+			const logChannel = await helpers.discord.getChannelSafe(
+				channel.guild,
+				settings.auditLogChannelId,
+			);
 			if (!logChannel?.isTextBased()) return;
 			if (
 				!logChannel
@@ -66,7 +63,6 @@ class ChannelDeleteEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-
 			const executor = entry.executor;
 			const channelTypeNames = {
 				[ChannelType.GuildText]: 'Text Channel',
@@ -82,11 +78,13 @@ class ChannelDeleteEvent extends BaseEvent {
 			};
 			const channelTypeName =
 				channelTypeNames[channel.type] || `Unknown (${channel.type})`;
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Red', { from: 'discord', to: 'decimal' }),
+						convertColor('Red', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -108,11 +106,12 @@ class ChannelDeleteEvent extends BaseEvent {
 						),
 					),
 			];
-
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
-				allowedMentions: { parse: [] },
+				allowedMentions: {
+					parse: [],
+				},
 			});
 		} catch (err) {
 			logger.error(`Error in channelDelete: ${err.message || err}`, {
@@ -124,5 +123,4 @@ class ChannelDeleteEvent extends BaseEvent {
 		}
 	}
 }
-
 module.exports = ChannelDeleteEvent;
