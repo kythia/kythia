@@ -1,45 +1,4 @@
-const {
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
-
 const USERS_PER_PAGE = 10;
-
-async function buildNavButtons(
-	interaction,
-	page,
-	totalPages,
-	allDisabled = false,
-) {
-	const { t } = interaction.client.container;
-	return [
-		new ButtonBuilder()
-			.setCustomId('upcoming_first')
-			.setLabel(await t(interaction, 'common.pagination.first'))
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(allDisabled || page <= 1),
-		new ButtonBuilder()
-			.setCustomId('upcoming_prev')
-			.setLabel(await t(interaction, 'common.pagination.prev'))
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(allDisabled || page <= 1),
-		new ButtonBuilder()
-			.setCustomId('upcoming_next')
-			.setLabel(await t(interaction, 'common.pagination.next'))
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(allDisabled || page >= totalPages),
-		new ButtonBuilder()
-			.setCustomId('upcoming_last')
-			.setLabel(await t(interaction, 'common.pagination.last'))
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(allDisabled || page >= totalPages),
-	];
-}
 
 async function generateUpcomingContainer(
 	interaction,
@@ -49,6 +8,7 @@ async function generateUpcomingContainer(
 	navDisabled = false,
 ) {
 	const { t, kythiaConfig, helpers } = interaction.client.container;
+	const { createPaginationContainer } = helpers.discord;
 	const { convertColor } = helpers.color;
 
 	const totalPages = Math.max(1, Math.ceil(totalUsers / USERS_PER_PAGE));
@@ -110,53 +70,22 @@ async function generateUpcomingContainer(
 		contentText = lines.join('\n');
 	}
 
-	const navButtons = await buildNavButtons(
-		interaction,
+	const [container] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
+		title: await t(interaction, 'birthday.list.title'),
+		content: contentText,
+		footer: await t(interaction, 'common.container.pagination.footer', {
+			page,
+			totalPages,
+		}),
+		customIdPrefix: 'upcoming',
 		navDisabled,
-	);
-
-	const colorInput = kythiaConfig.bot.color || '#5865F2';
-	const accentColor = convertColor(colorInput, {
-		from: 'hex',
-		to: 'decimal',
 	});
-
-	const container = new ContainerBuilder()
-		.setAccentColor(accentColor)
-		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(
-				await t(interaction, 'birthday.list.title'),
-			),
-		)
-		.addSeparatorComponents(
-			new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Small)
-				.setDivider(true),
-		)
-		.addTextDisplayComponents(new TextDisplayBuilder().setContent(contentText))
-		.addSeparatorComponents(
-			new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Small)
-				.setDivider(true),
-		)
-		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(
-				await t(interaction, 'common.container.pagination.footer', {
-					page,
-					totalPages,
-				}),
-			),
-		)
-		.addActionRowComponents(
-			new ActionRowBuilder().addComponents(...navButtons),
-		);
 
 	return { container, page, totalPages };
 }
 
 module.exports = {
-	buildNavButtons,
 	generateUpcomingContainer,
 };

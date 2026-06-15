@@ -79,6 +79,7 @@ const {
 	chunkTextDisplay,
 	getTextChannelSafe,
 	setVoiceChannelStatus,
+	createPaginationContainer,
 } = require('@coreHelpers/discord'); // Discord helper funcs for permissions/identity
 
 const {
@@ -140,6 +141,7 @@ const dependencies = {
 			chunkTextDisplay,
 			getTextChannelSafe,
 			setVoiceChannelStatus,
+			createPaginationContainer,
 		},
 		color: { convertColor },
 		time: { checkCooldown, formatDuration, parseDuration },

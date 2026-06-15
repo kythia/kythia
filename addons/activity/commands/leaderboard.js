@@ -126,6 +126,9 @@ class LeaderboardCommand extends BaseCommand {
 			return interaction.editReply({
 				components: [leaderboardContainer],
 				flags: MessageFlags.IsComponentsV2,
+				allowedMentions: {
+					parse: [],
+				},
 			});
 		}
 
@@ -143,6 +146,9 @@ class LeaderboardCommand extends BaseCommand {
 			components: [leaderboardContainer],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
+			allowedMentions: {
+				parse: [],
+			},
 		});
 
 		if (totalPages <= 1) return;
@@ -185,6 +191,9 @@ class LeaderboardCommand extends BaseCommand {
 			await i.update({
 				components: [newContainer],
 				flags: MessageFlags.IsComponentsV2,
+				allowedMentions: {
+					parse: [],
+				},
 			});
 		});
 
@@ -204,6 +213,9 @@ class LeaderboardCommand extends BaseCommand {
 				await message.edit({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
+					allowedMentions: {
+						parse: [],
+					},
 				});
 			} catch (_e) {}
 		});

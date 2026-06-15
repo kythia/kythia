@@ -107,6 +107,9 @@ class VoteLeaderboardCommand extends BaseCommand {
 			await interaction.editReply({
 				components: [mainContainer],
 				flags: MessageFlags.IsComponentsV2,
+				allowedMentions: {
+					parse: [],
+				},
 			});
 		} catch (error) {
 			container.logger.error(

@@ -93,9 +93,7 @@ class ShardsCommand extends BaseCommand {
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
-					content: await t(i, 'common.pagination.not.your.interaction', {
-						defaultValue: '❌ This interaction is not for you.',
-					}),
+					content: await t(i, 'common.pagination.not.your.interaction'),
 					flags: MessageFlags.Ephemeral,
 				});
 			}

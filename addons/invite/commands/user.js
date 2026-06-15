@@ -56,6 +56,9 @@ class UserCommand extends BaseCommand {
 		return interaction.editReply({
 			components: containers,
 			flags: MessageFlags.IsComponentsV2,
+			allowedMentions: {
+				parse: [],
+			},
 		});
 	}
 }

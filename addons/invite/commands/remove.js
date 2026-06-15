@@ -65,6 +65,9 @@ class RemoveCommand extends BaseCommand {
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
+			allowedMentions: {
+				parse: [],
+			},
 		});
 	}
 }

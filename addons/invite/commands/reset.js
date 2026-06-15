@@ -31,20 +31,6 @@ class ResetCommand extends BaseCommand {
 
 		await interaction.deferReply();
 
-		// 🛡️ Permission Check
-		if (!interaction.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-			const title = await t(interaction, 'invite.invite.command.title');
-			const msg = await t(interaction, 'invite.invite.command.no.permission');
-			const components = await simpleContainer(
-				interaction,
-				`## ${title}\n${msg}`,
-				{
-					color: 'Red',
-				},
-			);
-			return interaction.editReply({ components });
-		}
-
 		// Hapus dari DB
 		await Invite.destroy({ where: { guildId } });
 

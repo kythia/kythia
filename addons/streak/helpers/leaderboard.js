@@ -1,44 +1,4 @@
-const {
-	ActionRowBuilder,
-	ContainerBuilder,
-	SeparatorBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	SeparatorSpacingSize,
-} = require('discord.js');
-
 const USERS_PER_PAGE = 10;
-
-async function buildNavButtons(
-	interaction,
-	page,
-	totalPages,
-	allDisabled = false,
-) {
-	const { t } = interaction.client.container;
-	return [
-		new ButtonBuilder()
-			.setCustomId('leaderboard_first')
-			.setLabel(await t(interaction, 'streak.streak.leaderboard.nav.first'))
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(allDisabled || page <= 1),
-		new ButtonBuilder()
-			.setCustomId('leaderboard_prev')
-			.setLabel(await t(interaction, 'streak.streak.leaderboard.nav.prev'))
-			.setStyle(ButtonStyle.Primary)
-			.setDisabled(allDisabled || page <= 1),
-		new ButtonBuilder()
-			.setCustomId('leaderboard_next')
-			.setLabel(await t(interaction, 'streak.streak.leaderboard.nav.next'))
-			.setStyle(ButtonStyle.Primary)
-			.setDisabled(allDisabled || page >= totalPages),
-		new ButtonBuilder()
-			.setCustomId('leaderboard_last')
-			.setLabel(await t(interaction, 'streak.streak.leaderboard.nav.last'))
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(allDisabled || page >= totalPages),
-	];
-}
 
 async function generateLeaderboardContainer(
 	interaction,
@@ -49,6 +9,7 @@ async function generateLeaderboardContainer(
 	navDisabled = false,
 ) {
 	const { t, kythiaConfig, helpers } = interaction.client.container;
+	const { createPaginationContainer } = helpers.discord;
 	const { convertColor } = helpers.color;
 	const { chunkTextDisplay } = helpers.discord;
 
@@ -89,48 +50,21 @@ async function generateLeaderboardContainer(
 		leaderboardText = entries.join('\n');
 	}
 
-	const navButtons = await buildNavButtons(
-		interaction,
+	const [leaderboardContainer] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
+		title: `## ${await t(interaction, 'streak.streak.leaderboard.title')}`,
+		content: leaderboardText,
+		footer: await t(interaction, 'streak.streak.leaderboard.footer', {
+			server: interaction.guild.name,
+		}),
+		customIdPrefix: 'leaderboard',
 		navDisabled,
-	);
-
-	const leaderboardContainer = new ContainerBuilder()
-		.setAccentColor(
-			convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
-		)
-		.addTextDisplayComponents(
-			...chunkTextDisplay(
-				`## ${await t(interaction, 'streak.streak.leaderboard.title')}`,
-			),
-		)
-		.addSeparatorComponents(
-			new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Small)
-				.setDivider(true),
-		)
-		.addTextDisplayComponents(...chunkTextDisplay(leaderboardText))
-		.addSeparatorComponents(
-			new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Small)
-				.setDivider(true),
-		)
-		.addTextDisplayComponents(
-			...chunkTextDisplay(
-				await t(interaction, 'streak.streak.leaderboard.footer', {
-					server: interaction.guild.name,
-				}),
-			),
-		)
-		.addActionRowComponents(
-			new ActionRowBuilder().addComponents(...navButtons),
-		);
+	});
 
 	return { leaderboardContainer, page, totalPages };
 }
 
 module.exports = {
-	buildNavButtons,
 	generateLeaderboardContainer,
 };

@@ -1,46 +1,4 @@
-const {
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
-
 const ITEMS_PER_PAGE = 10;
-
-async function buildNavButtons(
-	interaction,
-	page,
-	totalPages,
-	allDisabled = false,
-) {
-	const { t } = interaction.client.container;
-
-	return [
-		new ButtonBuilder()
-			.setCustomId('autoreply_list_first')
-			.setLabel(await t(interaction, 'common.first'))
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(allDisabled || page <= 1),
-		new ButtonBuilder()
-			.setCustomId('autoreply_list_prev')
-			.setLabel(await t(interaction, 'common.previous'))
-			.setStyle(ButtonStyle.Primary)
-			.setDisabled(allDisabled || page <= 1),
-		new ButtonBuilder()
-			.setCustomId('autoreply_list_next')
-			.setLabel(await t(interaction, 'common.next'))
-			.setStyle(ButtonStyle.Primary)
-			.setDisabled(allDisabled || page >= totalPages),
-		new ButtonBuilder()
-			.setCustomId('autoreply_list_last')
-			.setLabel(await t(interaction, 'common.last'))
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(allDisabled || page >= totalPages),
-	];
-}
 
 async function generateListContainer(
 	interaction,
@@ -50,34 +8,19 @@ async function generateListContainer(
 	navDisabled = false,
 ) {
 	const { t } = interaction.client.container;
+	const { createPaginationContainer } =
+		interaction.client.container.helpers.discord;
 	const totalPages = Math.max(1, Math.ceil(replies.length / ITEMS_PER_PAGE));
 	page = Math.max(1, Math.min(page, totalPages));
 
 	const startIndex = (page - 1) * ITEMS_PER_PAGE;
 	const pageItems = replies.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-	const listContainer = new ContainerBuilder()
-		.setAccentColor(accentColor)
-		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(
-				await t(interaction, 'autoreply.list.title', { page, totalPages }),
-			),
-		)
-		.addSeparatorComponents(
-			new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Large)
-				.setDivider(true),
-		);
+	let content = '';
 
 	if (pageItems.length === 0) {
-		listContainer.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(
-				await t(interaction, 'autoreply.list.empty'),
-			),
-		);
+		content = await t(interaction, 'autoreply.list.empty');
 	} else {
-		let content = '';
-
 		const entries = await Promise.all(
 			pageItems.map(async (reply) => {
 				const containerTag = reply.useContainer
@@ -90,40 +33,24 @@ async function generateListContainer(
 			}),
 		);
 		content = entries.join('');
-
-		listContainer.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(content),
-		);
 	}
 
-	listContainer
-		.addSeparatorComponents(
-			new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Small)
-				.setDivider(true),
-		)
-		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(
-				await t(interaction, 'autoreply.list.footer', { page, totalPages }),
-			),
-		);
-
-	if (totalPages > 1) {
-		const buttons = await buildNavButtons(
-			interaction,
+	const [listContainer] = await createPaginationContainer(interaction, {
+		page,
+		totalPages,
+		title: `## ${await t(interaction, 'autoreply.list.title', { page, totalPages })}`,
+		content,
+		footer: await t(interaction, 'autoreply.list.footer', {
 			page,
 			totalPages,
-			navDisabled,
-		);
-		listContainer.addActionRowComponents(
-			new ActionRowBuilder().addComponents(...buttons),
-		);
-	}
+		}),
+		customIdPrefix: 'autoreply_list',
+		navDisabled,
+	});
 
 	return { listContainer, page, totalPages };
 }
 
 module.exports = {
-	buildNavButtons,
 	generateListContainer,
 };

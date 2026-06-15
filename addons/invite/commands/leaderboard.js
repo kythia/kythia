@@ -48,6 +48,9 @@ class LeaderboardCommand extends BaseCommand {
 			return interaction.editReply({
 				components: [leaderboardContainer],
 				flags: MessageFlags.IsComponentsV2,
+				allowedMentions: {
+					parse: [],
+				},
 			});
 		}
 		const { leaderboardContainer, totalPages } =
@@ -71,6 +74,9 @@ class LeaderboardCommand extends BaseCommand {
 				return i.reply({
 					content: await t(i, 'economy.leaderboard.not.your.interaction'),
 					flags: MessageFlags.Ephemeral,
+					allowedMentions: {
+						parse: [],
+					},
 				});
 			}
 			if (i.customId === 'leaderboard_first') {
@@ -92,6 +98,9 @@ class LeaderboardCommand extends BaseCommand {
 			await i.update({
 				components: [newContainer],
 				flags: MessageFlags.IsComponentsV2,
+				allowedMentions: {
+					parse: [],
+				},
 			});
 		});
 		collector.on('end', async () => {
@@ -107,6 +116,9 @@ class LeaderboardCommand extends BaseCommand {
 				await message.edit({
 					components: [finalContainer],
 					flags: MessageFlags.IsComponentsV2,
+					allowedMentions: {
+						parse: [],
+					},
 				});
 			} catch (_error) {}
 		});

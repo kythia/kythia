@@ -1,45 +1,4 @@
-const {
-	SeparatorSpacingSize,
-	TextDisplayBuilder,
-	ActionRowBuilder,
-	ContainerBuilder,
-	SeparatorBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-} = require('discord.js');
-
 const PETS_PER_PAGE = 10;
-
-async function buildNavButtons(
-	interaction,
-	page,
-	totalPages,
-	allDisabled = false,
-) {
-	const { t } = interaction.client.container;
-	return [
-		new ButtonBuilder()
-			.setCustomId('pets_first')
-			.setLabel(await t(interaction, 'common.pagination.first'))
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(allDisabled || page <= 1),
-		new ButtonBuilder()
-			.setCustomId('pets_prev')
-			.setLabel(await t(interaction, 'common.pagination.prev'))
-			.setStyle(ButtonStyle.Primary)
-			.setDisabled(allDisabled || page <= 1),
-		new ButtonBuilder()
-			.setCustomId('pets_next')
-			.setLabel(await t(interaction, 'common.pagination.next'))
-			.setStyle(ButtonStyle.Primary)
-			.setDisabled(allDisabled || page >= totalPages),
-		new ButtonBuilder()
-			.setCustomId('pets_last')
-			.setLabel(await t(interaction, 'common.pagination.last'))
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(allDisabled || page >= totalPages),
-	];
-}
 
 async function generatePetListContainer(
 	interaction,
@@ -49,6 +8,7 @@ async function generatePetListContainer(
 	navDisabled = false,
 ) {
 	const { t, kythiaConfig, helpers } = interaction.client.container;
+	const { createPaginationContainer } = helpers.discord;
 	const { convertColor } = helpers.color;
 
 	const totalPages = Math.max(1, Math.ceil(totalPets / PETS_PER_PAGE));
@@ -77,50 +37,23 @@ async function generatePetListContainer(
 		petListText = entries.join('\n\n');
 	}
 
-	const navButtons = await buildNavButtons(
-		interaction,
+	const [petListContainer] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
+		title: `## ${await t(interaction, 'pet.admin.list.list.title')}`,
+		content: petListText,
+		footer: await t(interaction, 'pet.admin.list.list.footer', {
+			page,
+			totalPages,
+			total: totalPets,
+		}),
+		customIdPrefix: 'pets',
 		navDisabled,
-	);
-
-	const petListContainer = new ContainerBuilder()
-		.setAccentColor(
-			convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
-		)
-		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(
-				`## ${await t(interaction, 'pet.admin.list.list.title')}`,
-			),
-		)
-		.addSeparatorComponents(
-			new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Small)
-				.setDivider(true),
-		)
-		.addTextDisplayComponents(new TextDisplayBuilder().setContent(petListText))
-		.addSeparatorComponents(
-			new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Small)
-				.setDivider(true),
-		)
-		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(
-				await t(interaction, 'pet.admin.list.list.footer', {
-					page,
-					totalPages,
-					total: totalPets,
-				}),
-			),
-		)
-		.addActionRowComponents(
-			new ActionRowBuilder().addComponents(...navButtons),
-		);
+	});
 
 	return { petListContainer, page, totalPages };
 }
 
 module.exports = {
-	buildNavButtons,
 	generatePetListContainer,
 };

@@ -1,35 +1,4 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-
 const IMAGES_PER_PAGE = 4;
-
-function buildNavButtons(page, totalPages, allDisabled = false) {
-	return [
-		new ButtonBuilder()
-			.setCustomId('nsfw_fav_first')
-			.setLabel('First')
-			.setEmoji('⏮️')
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(allDisabled || page <= 1),
-		new ButtonBuilder()
-			.setCustomId('nsfw_fav_prev')
-			.setLabel('Prev')
-			.setEmoji('◀️')
-			.setStyle(ButtonStyle.Primary)
-			.setDisabled(allDisabled || page <= 1),
-		new ButtonBuilder()
-			.setCustomId('nsfw_fav_next')
-			.setLabel('Next')
-			.setEmoji('▶️')
-			.setStyle(ButtonStyle.Primary)
-			.setDisabled(allDisabled || page >= totalPages),
-		new ButtonBuilder()
-			.setCustomId('nsfw_fav_last')
-			.setLabel('Last')
-			.setEmoji('⏭️')
-			.setStyle(ButtonStyle.Secondary)
-			.setDisabled(allDisabled || page >= totalPages),
-	];
-}
 
 async function generateFavContainer(
 	interaction,
@@ -38,6 +7,7 @@ async function generateFavContainer(
 	navDisabled = false,
 ) {
 	const { helpers } = interaction.client.container;
+	const { createPaginationContainer } = helpers.discord;
 
 	const totalPages = Math.max(
 		1,
@@ -51,21 +21,19 @@ async function generateFavContainer(
 		startIndex + IMAGES_PER_PAGE,
 	);
 
-	const [container] = await helpers.discord.createContainer(interaction, {
-		title: 'Your NSFW Favorites ❤️',
-		description: `Page ${page} of ${totalPages} • Total Favorites: ${allFavorites.length}`,
+	const [containerBody] = await createPaginationContainer(interaction, {
+		page,
+		totalPages,
+		title: '## Your NSFW Favorites ❤️',
 		media: pageImages,
+		footer: `Total Favorites: ${allFavorites.length}`,
+		customIdPrefix: 'nsfw_fav',
+		navDisabled,
 	});
 
-	const navButtons = buildNavButtons(page, totalPages, navDisabled);
-	container.addActionRowComponents(
-		new ActionRowBuilder().addComponents(...navButtons),
-	);
-
-	return { containerBody: container, page, totalPages };
+	return { containerBody, page, totalPages };
 }
 
 module.exports = {
-	buildNavButtons,
 	generateFavContainer,
 };

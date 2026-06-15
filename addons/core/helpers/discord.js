@@ -904,11 +904,130 @@ async function safeResolvePlaceholder(
 	}
 }
 
+async function createPaginationContainer(interaction, options = {}) {
+	const { kythiaConfig, helpers, t, logger } = interaction.client.container;
+	const { convertColor } = helpers.color;
+
+	const {
+		page,
+		totalPages,
+		title,
+		content,
+		media,
+		footer,
+		customIdPrefix,
+		navDisabled = false,
+		color,
+	} = options;
+
+	const defaultAccent = convertColor(kythiaConfig.bot.color, {
+		from: 'hex',
+		to: 'decimal',
+	});
+
+	let accentColor = defaultAccent;
+	if (color) {
+		const isHex = /^#?([0-9A-Fa-f]{6})$/.test(color);
+		if (isHex) {
+			accentColor = convertColor(color, { from: 'hex', to: 'decimal' });
+		} else {
+			try {
+				accentColor = convertColor(color, { from: 'discord', to: 'decimal' });
+			} catch (err) {
+				accentColor = defaultAccent;
+				logger.error(`Error: ${err.message || err}`, { label: 'core' });
+			}
+		}
+	}
+
+	const navButtons = [
+		new ButtonBuilder()
+			.setCustomId(`${customIdPrefix}_first`)
+			.setLabel(await t(interaction, 'common.pagination.first'))
+			.setStyle(ButtonStyle.Secondary)
+			.setDisabled(navDisabled || page <= 1),
+		new ButtonBuilder()
+			.setCustomId(`${customIdPrefix}_prev`)
+			.setLabel(await t(interaction, 'common.pagination.prev'))
+			.setStyle(ButtonStyle.Primary)
+			.setDisabled(navDisabled || page <= 1),
+		new ButtonBuilder()
+			.setCustomId(`${customIdPrefix}_next`)
+			.setLabel(await t(interaction, 'common.pagination.next'))
+			.setStyle(ButtonStyle.Primary)
+			.setDisabled(navDisabled || page >= totalPages),
+		new ButtonBuilder()
+			.setCustomId(`${customIdPrefix}_last`)
+			.setLabel(await t(interaction, 'common.pagination.last'))
+			.setStyle(ButtonStyle.Secondary)
+			.setDisabled(navDisabled || page >= totalPages),
+	];
+
+	const container = new ContainerBuilder().setAccentColor(accentColor);
+
+	if (title) {
+		container.addTextDisplayComponents(
+			new TextDisplayBuilder().setContent(title),
+		);
+		container.addSeparatorComponents(
+			new SeparatorBuilder()
+				.setSpacing(SeparatorSpacingSize.Small)
+				.setDivider(true),
+		);
+	}
+
+	if (content) {
+		container.addTextDisplayComponents(...chunkTextDisplay(content));
+	} else if (!media) {
+		// Fallback empty content to prevent errors if neither content nor media exists
+		container.addTextDisplayComponents(
+			new TextDisplayBuilder().setContent(' '),
+		);
+	}
+
+	if (media && media.length > 0) {
+		container.addSeparatorComponents(
+			new SeparatorBuilder()
+				.setSpacing(SeparatorSpacingSize.Small)
+				.setDivider(true),
+		);
+		const gallery = new MediaGalleryBuilder();
+		media.forEach((url) => {
+			gallery.addItems([new MediaGalleryItemBuilder().setURL(url)]);
+		});
+		container.addMediaGalleryComponents(gallery);
+	}
+
+	if (footer) {
+		container.addSeparatorComponents(
+			new SeparatorBuilder()
+				.setSpacing(SeparatorSpacingSize.Small)
+				.setDivider(true),
+		);
+		container.addTextDisplayComponents(
+			new TextDisplayBuilder().setContent(footer),
+		);
+	} else {
+		container.addSeparatorComponents(
+			new SeparatorBuilder()
+				.setSpacing(SeparatorSpacingSize.Small)
+				.setDivider(true),
+		);
+	}
+
+	container.addActionRowComponents(
+		new ActionRowBuilder().addComponents(...navButtons),
+	);
+
+	return [container];
+}
+
 module.exports = {
 	embedFooter,
 	setVoiceChannelStatus,
 	simpleContainer,
 	createContainer,
+	createPaginationContainer,
 	getChannelSafe,
 	getTextChannelSafe,
 	getMemberSafe,

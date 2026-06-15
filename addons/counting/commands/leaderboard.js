@@ -58,6 +58,9 @@ class LeaderboardCommand extends BaseCommand {
 				color: 'Gold',
 			}),
 			flags: MessageFlags.IsComponentsV2,
+			allowedMentions: {
+				parse: [],
+			},
 		});
 	}
 }
