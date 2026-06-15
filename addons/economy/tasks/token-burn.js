@@ -88,13 +88,20 @@ class TokenBurnTask extends BaseTask {
 					if (client.shard) {
 						await client.shard.broadcastEval(
 							async (c, { channelId, msg }) => {
-								const ch = c.channels.cache.get(channelId);
+								const ch =
+									await c.container.helpers.discord.getChannelGlobalSafe(
+										c,
+										channelId,
+									);
 								if (ch) await ch.send(msg);
 							},
 							{ context: { channelId: announceChannelId, msg: announcement } },
 						);
 					} else {
-						const ch = client.channels.cache.get(announceChannelId);
+						const ch = await container.helpers.discord.getChannelGlobalSafe(
+							client,
+							announceChannelId,
+						);
 						if (ch) await ch.send(announcement);
 					}
 				}

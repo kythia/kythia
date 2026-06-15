@@ -110,7 +110,10 @@ app.post('/', async (c) => {
 		if (client.shard) {
 			const results = await client.shard.broadcastEval(
 				async (c, { chId, containerJson }) => {
-					const ch = c.channels.cache.get(chId);
+					const ch = await c.container.helpers.discord.getChannelGlobalSafe(
+						c,
+						chId,
+					);
 					if (!ch) return null;
 					try {
 						const sentMsg = await ch.send({

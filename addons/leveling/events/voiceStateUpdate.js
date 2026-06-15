@@ -55,14 +55,17 @@ const startTick = (botClient) => {
 				if (now - session.lastXpAt < cooldownMs) continue;
 
 				// Check noXpChannels / noXpRoles
-				const guild = botClient.guilds.cache.get(guildId);
+				const guild = await botClient.container.helpers.discord.getGuildSafe(
+					botClient,
+					guildId,
+				);
 				if (!guild) continue;
 
 				const member = await helpers.discord.getMemberSafe(guild, userId);
 				if (!member) continue;
 
 				// Check if user is still in a voice channel
-				const voiceState = guild.voiceStates.cache.get(userId);
+				const voiceState = member.voice;
 				if (!voiceState?.channelId) {
 					voiceSessions.delete(key);
 					continue;
@@ -90,7 +93,10 @@ const startTick = (botClient) => {
 				}
 
 				// Minimum members check
-				const voiceChannel = guild.channels.cache.get(voiceState.channelId);
+				const voiceChannel = await helpers.discord.getChannelSafe(
+					guild,
+					voiceState.channelId,
+				);
 				const minMembers =
 					typeof setting?.voiceMinMembers === 'number'
 						? setting.voiceMinMembers

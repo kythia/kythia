@@ -58,7 +58,13 @@ class GuildMemberUpdateEvent extends BaseEvent {
 			userTag: newMember.user.id,
 			guildName: guild.name,
 			guildId: guild.id,
-			ownerName: guild.members.cache.get(guild.ownerId)?.user?.tag || 'Unknown',
+			ownerName:
+				(
+					await this.container.helpers.discord.getMemberSafe(
+						guild,
+						guild.ownerId,
+					)
+				)?.user?.tag || 'Unknown',
 			ownerId: guild.ownerId,
 			region: guild.preferredLocale,
 			createdAt: guild.createdAt,

@@ -58,7 +58,10 @@ module.exports = {
 				}
 
 				try {
-					const guild = client.guilds.cache.get(session.guildId);
+					const guild = await helpers.discord.getGuildSafe(
+						client,
+						session.guildId,
+					);
 					const voiceChannel = guild
 						? await getChannelSafe(guild, session.voiceChannelId)
 						: null;

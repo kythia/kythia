@@ -73,7 +73,16 @@ class GuildinviteCommand extends BaseCommand {
 			if (client.shard) {
 				const results = await client.shard.broadcastEval(
 					async (c, context) => {
-						const g = c.guilds.cache.get(context.guildId);
+						const shardId =
+							require('discord.js').ShardClientUtil.shardIdForGuildId(
+								context.guildId,
+								c.shard.count,
+							);
+						if (!c.shard.ids.includes(shardId)) return null;
+						const g = await c.container.helpers.discord.getGuildSafe(
+							c,
+							context.guildId,
+						);
 						if (!g) return { found: false };
 
 						// find channel & create invite
@@ -112,7 +121,10 @@ class GuildinviteCommand extends BaseCommand {
 					return interaction.editReply({ components: comps });
 				}
 			} else {
-				const guild = client.guilds.cache.get(guildId);
+				const guild = await container.helpers.discord.getGuildSafe(
+					client,
+					guildId,
+				);
 				if (!guild) {
 					const comps = await simpleContainer(
 						interaction,

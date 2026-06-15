@@ -78,7 +78,10 @@ const flushVoiceTime = async (container, guildId, userId, durationSeconds) => {
 			await hourlyLog.save();
 		}
 
-		const guild = container.client.guilds.cache.get(guildId);
+		const guild = await container.helpers.discord.getGuildSafe(
+			container.client,
+			guildId,
+		);
 		if (guild) {
 			checkAndUnlock('voice_flush', {
 				guildId,
@@ -141,12 +144,21 @@ const startSession = (container, guildId, userId, key, now) => {
 				specialFlags.push('first_voice_join');
 			}
 
-			const guild = container.client.guilds.cache.get(guildId);
+			const guild = await container.helpers.discord.getGuildSafe(
+				container.client,
+				guildId,
+			);
 			if (guild) {
-				const member = guild.members.cache.get(userId);
+				const member = await container.helpers.discord.getMemberSafe(
+					guild,
+					userId,
+				);
 				const channelId = member?.voice?.channelId;
 				if (channelId) {
-					const channel = guild.channels.cache.get(channelId);
+					const channel = await container.helpers.discord.getChannelSafe(
+						guild,
+						channelId,
+					);
 					const humanCount =
 						channel?.members?.filter((m) => !m.user.bot).size ?? 0;
 					if (humanCount <= 1) specialFlags.push('echo_chamber');

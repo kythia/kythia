@@ -158,7 +158,10 @@ const addXp = async (guildId, userId, xpToAdd, message, channel) => {
 			const highestReward = rewards.reduce((a, b) =>
 				a.level > b.level ? a : b,
 			);
-			const role = message.guild.roles.cache.get(highestReward.role);
+			const role = await helpers.discord.getRoleSafe(
+				message.guild,
+				highestReward.role,
+			);
 			if (role && member) {
 				await member.roles.add(role).catch(() => {});
 				rewardRoleName = role.name;

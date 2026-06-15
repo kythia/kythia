@@ -23,12 +23,10 @@ const { createSession, clearSession } = require('./session');
 // ---------------------------------------------------------------------------
 async function sendLog(guild, config, text) {
 	if (!config.logChannelId) return;
-	const ch =
-		guild.channels.cache.get(config.logChannelId) ||
-		(await guild.client.container.helpers.discord.getChannelSafe(
-			guild,
-			config.logChannelId,
-		));
+	const ch = await guild.client.container.helpers.discord.getChannelSafe(
+		guild,
+		config.logChannelId,
+	);
 	if (ch?.isTextBased()) {
 		try {
 			const { simpleContainer } = require('kythia-core').helpers.discord;
@@ -118,7 +116,10 @@ async function sendCaptcha(member, config, interaction = null) {
 
 	// Assign unverified role if configured
 	if (config.unverifiedRoleId) {
-		const role = guild.roles.cache.get(config.unverifiedRoleId);
+		const role = await guild.client.container.helpers.discord.getRoleSafe(
+			guild,
+			config.unverifiedRoleId,
+		);
 		if (role) await member.roles.add(role).catch(() => null);
 	}
 	const payload = await buildCaptchaPayload(member, config);
@@ -195,13 +196,19 @@ async function handleSuccess(member, config) {
 
 	// Assign verified role
 	if (config.verifiedRoleId) {
-		const role = guild.roles.cache.get(config.verifiedRoleId);
+		const role = await guild.client.container.helpers.discord.getRoleSafe(
+			guild,
+			config.verifiedRoleId,
+		);
 		if (role) await member.roles.add(role).catch(() => null);
 	}
 
 	// Remove unverified role
 	if (config.unverifiedRoleId) {
-		const role = guild.roles.cache.get(config.unverifiedRoleId);
+		const role = await guild.client.container.helpers.discord.getRoleSafe(
+			guild,
+			config.unverifiedRoleId,
+		);
 		if (role) await member.roles.remove(role).catch(() => null);
 	}
 	await sendLog(

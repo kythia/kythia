@@ -59,15 +59,23 @@ async function broadcastGetGuilds(client) {
 async function broadcastFindGuild(client, guildId) {
 	if (!client.shard) {
 		// Non-sharded fallback
-		const guild = client.guilds.cache.get(guildId);
+		const guild = await client.container.helpers.discord.getGuildSafe(
+			client,
+			guildId,
+		);
 		if (!guild) return null;
 		return _extractGuildData(guild, client, 0);
 	}
 
 	/** @type {Array<object|null>} */
 	const results = await client.shard.broadcastEval(
-		(c, { id }) => {
-			const g = c.guilds.cache.get(id);
+		async (c, { id }) => {
+			const shardId = require('discord.js').ShardClientUtil.shardIdForGuildId(
+				id,
+				c.shard.count,
+			);
+			if (!c.shard.ids.includes(shardId)) return null;
+			const g = await c.container.helpers.discord.getGuildSafe(c, id);
 			if (!g) return null;
 
 			const shardIds = c.shard?.ids ?? [0];
@@ -298,7 +306,10 @@ async function broadcastGetDetailedShards(client) {
  */
 async function broadcastEditMember(client, guildId, payload) {
 	if (!client.shard) {
-		const guild = client.guilds.cache.get(guildId);
+		const guild = await client.container.helpers.discord.getGuildSafe(
+			client,
+			guildId,
+		);
 		if (!guild) return false;
 		await guild.members.editMe(payload);
 		return true;
@@ -306,7 +317,12 @@ async function broadcastEditMember(client, guildId, payload) {
 
 	const results = await client.shard.broadcastEval(
 		async (c, { id, editPayload }) => {
-			const g = c.guilds.cache.get(id);
+			const shardId = require('discord.js').ShardClientUtil.shardIdForGuildId(
+				id,
+				c.shard.count,
+			);
+			if (!c.shard.ids.includes(shardId)) return null;
+			const g = await c.container.helpers.discord.getGuildSafe(c, id);
 			if (!g) return null;
 			await g.members.editMe(editPayload);
 			return true;
@@ -327,11 +343,13 @@ async function broadcastEditMember(client, guildId, payload) {
  */
 async function broadcastGetGuildMembers(client, guildId, detailed = false) {
 	if (!client.shard) {
-		const guild = client.guilds.cache.get(guildId);
+		const guild = await client.container.helpers.discord.getGuildSafe(
+			client,
+			guildId,
+		);
 		if (!guild) return null;
 
-		const { getAllMembersSafe } = require('../../core/helpers/discord.js');
-		await getAllMembersSafe(guild);
+		await client.container.helpers.discord.getAllMembersSafe(guild);
 
 		return guild.members.cache.map((m) => {
 			if (detailed) {
@@ -354,11 +372,15 @@ async function broadcastGetGuildMembers(client, guildId, detailed = false) {
 
 	const results = await client.shard.broadcastEval(
 		async (c, { id, isDetailed }) => {
-			const g = c.guilds.cache.get(id);
+			const shardId = require('discord.js').ShardClientUtil.shardIdForGuildId(
+				id,
+				c.shard.count,
+			);
+			if (!c.shard.ids.includes(shardId)) return null;
+			const g = await c.container.helpers.discord.getGuildSafe(c, id);
 			if (!g) return null;
 
-			const { getAllMembersSafe } = require('../../core/helpers/discord.js');
-			await getAllMembersSafe(g);
+			await c.container.helpers.discord.getAllMembersSafe(g);
 
 			return g.members.cache.map((m) => {
 				if (isDetailed) {

@@ -47,31 +47,12 @@ function getSafeEmoji(emoji, fallback = '🎭') {
 // buildLayoutContainer — embed-builder JSON → Components V2
 // =============================================================================
 
-/**
- * Layout schema (all fields optional):
- * {
- *   accentColor:   string,  // hex  e.g. "#5865F2"
- *   authorName:    string,
- *   authorIconUrl: string,  // stored but not renderable natively in CV2 — ignored
- *   authorUrl:     string,
- *   title:         string,
- *   titleUrl:      string,
- *   description:   string,
- *   fields:        [{ name: string, value: string, inline?: boolean }],
- *   imageUrl:      string,  // large image at bottom
- *   thumbnailUrl:  string,  // small image shown above title
- *   footerText:    string,
- *   footerIconUrl: string,  // stored but not renderable natively in CV2 — ignored
- *   timestamp:     string,  // ISO 8601 — appended to footer as Discord timestamp
- * }
- *
- * @param {object}   layout      Layout config object (see schema above).
- * @param {object[]} bindings    Array of ReactionRole DB instances.
- * @param {object}   container   Kythia DI container.
- * @param {object}   [panelData] Panel DB record (for whitelist/blacklist + id).
- * @returns {ContainerBuilder}
- */
-function buildLayoutContainer(layout, bindings, container, panelData = {}) {
+async function buildLayoutContainer(
+	layout,
+	bindings,
+	container,
+	panelData = {},
+) {
 	const { helpers } = container;
 	const { convertColor } = helpers.color;
 
@@ -197,15 +178,23 @@ function buildLayoutContainer(layout, bindings, container, panelData = {}) {
 					.setSpacing(SeparatorSpacingSize.Small)
 					.setDivider(true),
 			);
-			const guild = container.client.guilds.cache.get(panelData.guildId);
-			const options = bindings.map((rr) => {
-				const roleName = guild?.roles.cache.get(rr.roleId)?.name;
-				return {
-					label: rr.label || roleName || `Role ${rr.roleId}`,
-					value: rr.roleId,
-					emoji: getSafeEmoji(rr.emoji),
-				};
-			});
+			const guild = await container.helpers.discord.getGuildSafe(
+				container.client,
+				panelData.guildId,
+			);
+			const options = await Promise.all(
+				bindings.map(async (rr) => {
+					const role = guild
+						? await container.helpers.discord.getRoleSafe(guild, rr.roleId)
+						: null;
+					const roleName = role?.name;
+					return {
+						label: rr.label || roleName || `Role ${rr.roleId}`,
+						value: rr.roleId,
+						emoji: getSafeEmoji(rr.emoji),
+					};
+				}),
+			);
 			builder.addActionRowComponents(
 				new ActionRowBuilder().addComponents(
 					new StringSelectMenuBuilder()
@@ -313,17 +302,7 @@ function buildLayoutContainer(layout, bindings, container, panelData = {}) {
 // buildPanelEmbed — simple default panel (no custom layout)
 // =============================================================================
 
-/**
- * Build a Components V2 ContainerBuilder for a reaction role panel.
- * If `panelData.layout` is set, delegates to buildLayoutContainer() for
- * full embed-builder-style rendering; otherwise renders a simple default.
- *
- * @param {object}   panelData     Panel DB record or plain object.
- * @param {object[]} reactionRoles Array of ReactionRole DB instances.
- * @param {object}   container     Kythia DI container.
- * @returns {ContainerBuilder}
- */
-function buildPanelEmbed(panelData, reactionRoles, container) {
+async function buildPanelEmbed(panelData, reactionRoles, container) {
 	// Delegate to custom layout renderer if a layout config is present
 	if (panelData.layout && typeof panelData.layout === 'object') {
 		// Merge panel-level title/description into layout as defaults
@@ -332,7 +311,7 @@ function buildPanelEmbed(panelData, reactionRoles, container) {
 			description: panelData.description,
 			...panelData.layout,
 		};
-		return buildLayoutContainer(
+		return await buildLayoutContainer(
 			mergedLayout,
 			reactionRoles,
 			container,
@@ -379,15 +358,23 @@ function buildPanelEmbed(panelData, reactionRoles, container) {
 				),
 			);
 		} else {
-			const guild = container.client.guilds.cache.get(panelData.guildId);
-			const options = reactionRoles.map((rr) => {
-				const roleName = guild?.roles.cache.get(rr.roleId)?.name;
-				return {
-					label: rr.label || roleName || `Role ${rr.roleId}`,
-					value: rr.roleId,
-					emoji: getSafeEmoji(rr.emoji),
-				};
-			});
+			const guild = await container.helpers.discord.getGuildSafe(
+				container.client,
+				panelData.guildId,
+			);
+			const options = await Promise.all(
+				reactionRoles.map(async (rr) => {
+					const role = guild
+						? await container.helpers.discord.getRoleSafe(guild, rr.roleId)
+						: null;
+					const roleName = role?.name;
+					return {
+						label: rr.label || roleName || `Role ${rr.roleId}`,
+						value: rr.roleId,
+						emoji: getSafeEmoji(rr.emoji),
+					};
+				}),
+			);
 			builder.addActionRowComponents(
 				new ActionRowBuilder().addComponents(
 					new StringSelectMenuBuilder()
@@ -465,15 +452,8 @@ function buildPanelEmbed(panelData, reactionRoles, container) {
 // buildReactionRoleComponents — legacy (no panel)
 // =============================================================================
 
-/**
- * Backwards-compatible builder used by old (non-panel) reaction roles.
- *
- * @param {object[]} reactionRoles
- * @param {object}   container
- * @returns {ContainerBuilder}
- */
-function buildReactionRoleComponents(reactionRoles, container) {
-	return buildPanelEmbed(
+async function buildReactionRoleComponents(reactionRoles, container) {
+	return await buildPanelEmbed(
 		{
 			title: '🎭 Reaction Roles',
 			description: null,
@@ -489,14 +469,6 @@ function buildReactionRoleComponents(reactionRoles, container) {
 // refreshPanelMessage
 // =============================================================================
 
-/**
- * Re-fetch all ReactionRole records for a given panel, then re-edit the
- * Discord panel message using the panel's current layout (custom or default).
- *
- * @param {number} panelId   DB primary key of the ReactionRolePanel record.
- * @param {object} container Kythia DI container.
- * @returns {Promise<void>}
- */
 async function refreshPanelMessage(panelId, container) {
 	const { models, logger } = container;
 	const client = container.client;
@@ -539,7 +511,7 @@ async function refreshPanelMessage(panelId, container) {
 		);
 		return;
 	}
-	const updatedContainer = buildPanelEmbed(
+	const updatedContainer = await buildPanelEmbed(
 		panel.toJSON(),
 		reactionRoles,
 		container,
@@ -554,14 +526,6 @@ async function refreshPanelMessage(panelId, container) {
 // refreshReactionRoleMessage — legacy (no panel)
 // =============================================================================
 
-/**
- * Legacy helper — refreshes a Discord message that has reaction roles but
- * no associated panel (backwards compatibility with old add-command records).
- *
- * @param {string} messageId   Discord message ID.
- * @param {object} container   Kythia DI container.
- * @returns {Promise<void>}
- */
 async function refreshReactionRoleMessage(messageId, container) {
 	const { models, logger } = container;
 	const client = container.client;
@@ -599,7 +563,7 @@ async function refreshReactionRoleMessage(messageId, container) {
 		});
 		return;
 	}
-	const updatedContainer = buildReactionRoleComponents(
+	const updatedContainer = await buildReactionRoleComponents(
 		reactionRoles,
 		container,
 	);

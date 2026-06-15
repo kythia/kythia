@@ -32,9 +32,11 @@ class GuildMemberAddEvent extends BaseEvent {
 			});
 			if (!config?.verifiedRoleId) return;
 
-			// Assign unverified role if configured, so they get locked here
 			if (config.unverifiedRoleId) {
-				const role = member.guild.roles.cache.get(config.unverifiedRoleId);
+				const role = await container.helpers.discord.getRoleSafe(
+					member.guild,
+					config.unverifiedRoleId,
+				);
 				if (role) await member.roles.add(role).catch(() => null);
 			}
 

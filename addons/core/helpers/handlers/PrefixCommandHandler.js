@@ -404,7 +404,13 @@ class PrefixCommandHandler {
 				if (message.client.shard) {
 					const results = await message.client.shard.broadcastEval(
 						async (c, { gId, uId }) => {
-							const g = c.guilds.cache.get(gId);
+							const shardId =
+								require('discord.js').ShardClientUtil.shardIdForGuildId(
+									gId,
+									c.shard.count,
+								);
+							if (!c.shard.ids.includes(shardId)) return null;
+							const g = await c.container.helpers.discord.getGuildSafe(c, gId);
 							if (!g) return null;
 							try {
 								await helpers.discord.getMemberSafe(g, uId);
@@ -436,7 +442,10 @@ class PrefixCommandHandler {
 						}; // guild not found on any shard → fail open
 					}
 				} else {
-					const mainGuild = message.client.guilds.cache.get(mainGuildId);
+					const mainGuild = await this.container.helpers.discord.getGuildSafe(
+						message.client,
+						mainGuildId,
+					);
 					if (!mainGuild) {
 						logger.error(`Bot is not a member of main guild: ${mainGuildId}`, {
 							label: 'PrefixCommandHandler',

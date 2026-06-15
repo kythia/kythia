@@ -94,9 +94,10 @@ class PollerTask extends BaseTask {
 				// };
 
 				if (!guild) continue;
-				const channel =
-					guild.channels.cache.get(sub.discordChannelId) ||
-					(await helpers.discord.getChannelSafe(guild, sub.discordChannelId));
+				const channel = await helpers.discord.getChannelSafe(
+					guild,
+					sub.discordChannelId,
+				);
 				if (!channel) continue;
 
 				// Fetch setting for optional role mention

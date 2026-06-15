@@ -68,7 +68,8 @@ class ReportCommand extends BaseCommand {
 			});
 		}
 
-		const reportChannel = interaction.guild?.channels.cache.get(
+		const reportChannel = await container.helpers.discord.getChannelSafe(
+			interaction.guild,
 			setting.modLogChannelId,
 		);
 

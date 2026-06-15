@@ -32,7 +32,8 @@ class GuildMemberRemoveEvent extends BaseEvent {
 		if (!member.guild) return;
 		const { models, helpers, kythiaConfig, logger } = container;
 		const { WelcomeSetting } = models;
-		const { getTextChannelSafe, chunkTextDisplay } = helpers.discord;
+		const { getTextChannelSafe, chunkTextDisplay, getUserSafe } =
+			helpers.discord;
 		const { convertColor } = helpers.color;
 
 		const setting = await WelcomeSetting.getCache({ guildId: member.guild.id });
@@ -55,7 +56,7 @@ class GuildMemberRemoveEvent extends BaseEvent {
 			guildName: guild.name,
 			guildId: guild.id,
 			ownerName:
-				guild.members.cache.get(guild.ownerId)?.user?.tag ||
+				(await getUserSafe(this.client, guild.ownerId))?.tag ||
 				(await guild.fetchOwner().catch(() => null))?.user?.tag ||
 				'Unknown',
 			ownerId: guild.ownerId,

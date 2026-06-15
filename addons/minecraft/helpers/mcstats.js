@@ -128,26 +128,38 @@ async function runMinecraftStatsUpdater(client, settingsOverride = null) {
 
 			// IP channel → server IP string
 			if (setting.minecraftIpChannelId) {
-				const ch = guild.channels.cache.get(setting.minecraftIpChannelId);
+				const ch = await client.container.helpers.discord.getChannelSafe(
+					guild,
+					setting.minecraftIpChannelId,
+				);
 				channelUpdates.push(safeRename(ch, host, logger));
 			}
 
 			// Port channel → port number
 			if (setting.minecraftPortChannelId) {
-				const ch = guild.channels.cache.get(setting.minecraftPortChannelId);
+				const ch = await client.container.helpers.discord.getChannelSafe(
+					guild,
+					setting.minecraftPortChannelId,
+				);
 				channelUpdates.push(safeRename(ch, String(port), logger));
 			}
 
 			// Status channel → "🟢 Online | 12/100" or "🔴 Offline"
 			if (setting.minecraftStatusChannelId) {
-				const ch = guild.channels.cache.get(setting.minecraftStatusChannelId);
+				const ch = await client.container.helpers.discord.getChannelSafe(
+					guild,
+					setting.minecraftStatusChannelId,
+				);
 				const statusName = isOnline ? `🟢 Online` : '🔴 Offline';
 				channelUpdates.push(safeRename(ch, statusName, logger));
 			}
 
 			// Players channel → "👥 12/100" or "👥 —/—"
 			if (setting.minecraftPlayersChannelId) {
-				const ch = guild.channels.cache.get(setting.minecraftPlayersChannelId);
+				const ch = await client.container.helpers.discord.getChannelSafe(
+					guild,
+					setting.minecraftPlayersChannelId,
+				);
 				const playersName = isOnline
 					? `👥 ${onlinePlayers}/${maxPlayers}`
 					: '👥 —/—';

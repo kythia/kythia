@@ -90,10 +90,15 @@ class RestoreCommand extends BaseCommand {
 		// SUCCESS
 		let rewardMsg = '';
 		if (rewardRolesGiven?.length > 0) {
-			const roleMentions = rewardRolesGiven.map((roleId) => {
-				const role = interaction.guild.roles.cache.get(roleId);
-				return role ? `<@&${role.id}>` : `Role ID: ${roleId}`;
-			});
+			const roleMentions = await Promise.all(
+				rewardRolesGiven.map(async (roleId) => {
+					const role = await helpers.discord.getRoleSafe(
+						interaction.guild,
+						roleId,
+					);
+					return role ? `<@&${role.id}>` : `Role ID: ${roleId}`;
+				}),
+			);
 			rewardMsg = `\n${await t(interaction, 'streak.streak.claim.reward', {
 				roles: roleMentions.join(', '),
 			})}`;

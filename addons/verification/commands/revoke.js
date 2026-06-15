@@ -63,11 +63,17 @@ class RevokeCommand extends BaseCommand {
 			});
 		}
 		if (config.verifiedRoleId) {
-			const role = interaction.guild.roles.cache.get(config.verifiedRoleId);
+			const role = await helpers.discord.getRoleSafe(
+				interaction.guild,
+				config.verifiedRoleId,
+			);
 			if (role) await member.roles.remove(role).catch(() => null);
 		}
 		if (config.unverifiedRoleId) {
-			const role = interaction.guild.roles.cache.get(config.unverifiedRoleId);
+			const role = await helpers.discord.getRoleSafe(
+				interaction.guild,
+				config.unverifiedRoleId,
+			);
 			if (role) await member.roles.add(role).catch(() => null);
 		}
 		const components = await simpleContainer(

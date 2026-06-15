@@ -291,7 +291,16 @@ app.post('/servers/:guildId/leave', async (c) => {
 		if (client.shard) {
 			const results = await client.shard.broadcastEval(
 				async (c, context) => {
-					const g = c.guilds.cache.get(context.guildId);
+					const shardId =
+						require('discord.js').ShardClientUtil.shardIdForGuildId(
+							context.guildId,
+							c.shard.count,
+						);
+					if (!c.shard.ids.includes(shardId)) return null;
+					const g = await c.container.helpers.discord.getGuildSafe(
+						c,
+						context.guildId,
+					);
 					if (g) {
 						const name = g.name;
 						const members = g.memberCount;
@@ -319,7 +328,8 @@ app.post('/servers/:guildId/leave', async (c) => {
 				memberCount = hit.members;
 			}
 		} else {
-			const guild = client.guilds.cache.get(guildId);
+			const { helpers } = getContainer(c);
+			const guild = await helpers.discord.getGuildSafe(client, guildId);
 			if (guild) {
 				found = true;
 				guildName = guild.name;
@@ -571,10 +581,16 @@ app.get('/blacklist/guilds', async (c) => {
 		if (guildIds.length > 0) {
 			if (client.shard) {
 				const results = await client.shard.broadcastEval(
-					(c, { ids }) => {
+					async (c, { ids }) => {
 						const localFound = [];
 						for (const id of ids) {
-							const g = c.guilds.cache.get(id);
+							const shardId =
+								require('discord.js').ShardClientUtil.shardIdForGuildId(
+									id,
+									c.shard.count,
+								);
+							if (!c.shard.ids.includes(shardId)) return null;
+							const g = await c.container.helpers.discord.getGuildSafe(c, id);
 							if (g) {
 								localFound.push({
 									id: g.id,
@@ -603,8 +619,9 @@ app.get('/blacklist/guilds', async (c) => {
 				}
 				cachedGuilds = Array.from(finalMap.values());
 			} else {
+				const { helpers } = getContainer(c);
 				for (const id of guildIds) {
-					const g = client.guilds.cache.get(id);
+					const g = await helpers.discord.getGuildSafe(client, id);
 					if (g) {
 						cachedGuilds.push({
 							id: g.id,
@@ -709,7 +726,7 @@ app.post('/blacklist/guilds', async (c) => {
 		if (client.shard) {
 			const results = await client.shard.broadcastEval(
 				async (c, { id }) => {
-					const g = c.guilds.cache.get(id);
+					const g = await c.container.helpers.discord.getGuildSafe(c, id);
 					if (g) {
 						try {
 							await g.leave();
@@ -728,7 +745,8 @@ app.post('/blacklist/guilds', async (c) => {
 			);
 			left = results.some((r) => r === true);
 		} else {
-			const targetGuild = client.guilds.cache.get(guildId);
+			const { helpers } = getContainer(c);
+			const targetGuild = await helpers.discord.getGuildSafe(client, guildId);
 			if (targetGuild) {
 				try {
 					await targetGuild.leave();

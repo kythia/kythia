@@ -44,9 +44,11 @@ class VoiceStateUpdateEvent extends BaseEvent {
 				guildId: guild.id,
 			});
 			if (existingChannel) {
-				const alreadyOwnedChannel = guild.channels.cache.get(
-					existingChannel.channelId,
-				);
+				const alreadyOwnedChannel =
+					await container.helpers.discord.getChannelSafe(
+						guild,
+						existingChannel.channelId,
+					);
 				if (alreadyOwnedChannel) {
 					await member.voice.setChannel(alreadyOwnedChannel).catch(() => {});
 				}

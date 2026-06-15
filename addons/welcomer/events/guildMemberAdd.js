@@ -30,7 +30,8 @@ class GuildMemberAddEvent extends BaseEvent {
 
 		const { models, helpers, kythiaConfig, logger } = container;
 		const { WelcomeSetting } = models;
-		const { getTextChannelSafe, chunkTextDisplay } = helpers.discord;
+		const { getTextChannelSafe, chunkTextDisplay, getRoleSafe, getUserSafe } =
+			helpers.discord;
 		const { convertColor } = helpers.color;
 
 		const guild = member.guild;
@@ -46,7 +47,7 @@ class GuildMemberAddEvent extends BaseEvent {
 		// ── Welcome Role ──────────────────────────────────────────────
 		if (setting.welcomeRoleId) {
 			try {
-				const welcomeRole = guild.roles.cache.get(setting.welcomeRoleId);
+				const welcomeRole = await getRoleSafe(guild, setting.welcomeRoleId);
 				if (welcomeRole) {
 					await member.roles.add(welcomeRole);
 					logger.info(`Added welcome role to ${member.user.tag}`, {
@@ -69,7 +70,7 @@ class GuildMemberAddEvent extends BaseEvent {
 			guildName: guild.name,
 			guildId: guild.id,
 			ownerName:
-				guild.members.cache.get(guild.ownerId)?.user?.tag ||
+				(await getUserSafe(this.client, guild.ownerId))?.tag ||
 				(await guild.fetchOwner().catch(() => null))?.user?.tag ||
 				'Unknown',
 			ownerId: guild.ownerId,

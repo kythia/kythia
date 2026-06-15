@@ -194,7 +194,15 @@ app.post('/autosetup/:guildId', async (c) => {
 		let setupResult = null;
 
 		const createChannelsLogic = async (c, context) => {
-			const g = c.guilds.cache.get(context.guildId);
+			const shardId = require('discord.js').ShardClientUtil.shardIdForGuildId(
+				context.guildId,
+				c.shard.count,
+			);
+			if (!c.shard.ids.includes(shardId)) return null;
+			const g = await c.container.helpers.discord.getGuildSafe(
+				c,
+				context.guildId,
+			);
 			if (!g) return null;
 
 			const category = await g.channels.create({

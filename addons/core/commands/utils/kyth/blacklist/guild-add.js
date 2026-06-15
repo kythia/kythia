@@ -71,7 +71,13 @@ class GuildAddCommand extends BaseCommand {
 			if (client.shard) {
 				const results = await client.shard.broadcastEval(
 					async (c, { id }) => {
-						const g = c.guilds.cache.get(id);
+						const shardId =
+							require('discord.js').ShardClientUtil.shardIdForGuildId(
+								id,
+								c.shard.count,
+							);
+						if (!c.shard.ids.includes(shardId)) return null;
+						const g = await c.container.helpers.discord.getGuildSafe(c, id);
 						if (g) {
 							try {
 								await g.leave();
@@ -86,7 +92,10 @@ class GuildAddCommand extends BaseCommand {
 				);
 				left = results.some((r) => r === true);
 			} else {
-				const targetGuild = client.guilds.cache.get(guildId);
+				const targetGuild = await container.helpers.discord.getGuildSafe(
+					client,
+					guildId,
+				);
 				if (targetGuild) {
 					try {
 						await targetGuild.leave();

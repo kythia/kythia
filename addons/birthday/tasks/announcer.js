@@ -65,7 +65,10 @@ class AnnouncerTask extends BaseTask {
 					guildId: guild.id,
 				});
 				if (setting?.channelId) {
-					channel = guild.channels.cache.get(setting.channelId);
+					channel = await container.helpers.discord.getChannelSafe(
+						guild,
+						setting.channelId,
+					);
 				}
 				if (!channel) {
 					channel = guild.systemChannel;

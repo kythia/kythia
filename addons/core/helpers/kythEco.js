@@ -104,13 +104,19 @@ async function broadcastToGuilds(
 		if (client.shard) {
 			await client.shard.broadcastEval(
 				async (c, { channelId, msg }) => {
-					const ch = c.channels.cache.get(channelId);
+					const ch = await c.container.helpers.discord.getChannelGlobalSafe(
+						c,
+						channelId,
+					);
 					if (ch) await ch.send(msg);
 				},
 				{ context: { channelId: targetChannelId, msg: text } },
 			);
 		} else {
-			const ch = client.channels.cache.get(targetChannelId);
+			const ch = await client.container.helpers.discord.getChannelGlobalSafe(
+				client,
+				targetChannelId,
+			);
 			if (ch) await ch.send(text);
 		}
 	} catch (_e) {}

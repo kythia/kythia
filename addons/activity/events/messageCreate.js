@@ -106,12 +106,14 @@ class MessageCreateEvent extends BaseEvent {
 			}
 
 			// Talking to myself: reply to own message
-			if (
-				message.reference?.messageId &&
-				message.channel.messages?.cache.get(message.reference.messageId)?.author
-					?.id === userId
-			) {
-				specialFlags.push('talking_to_myself');
+			if (message.reference?.messageId) {
+				const refMsg = await container.helpers.discord.getMessageSafe(
+					message.channel,
+					message.reference.messageId,
+				);
+				if (refMsg?.author?.id === userId) {
+					specialFlags.push('talking_to_myself');
+				}
 			}
 
 			// Fire-and-forget achievement check (non-blocking)

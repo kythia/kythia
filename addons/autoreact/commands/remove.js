@@ -41,11 +41,14 @@ class RemoveCommand extends BaseCommand {
 			limit: 25,
 		});
 
-		await interaction.respond(
-			choices.map((choice) => {
+		const responseChoices = await Promise.all(
+			choices.map(async (choice) => {
 				let display = choice.trigger;
 				if (choice.type === 'channel') {
-					const channel = interaction.guild.channels.cache.get(choice.trigger);
+					const channel = await container.helpers.discord.getChannelSafe(
+						interaction.guild,
+						choice.trigger,
+					);
 					display = channel
 						? `#${channel.name}`
 						: `Deleted Channel (${choice.trigger})`;
@@ -58,6 +61,7 @@ class RemoveCommand extends BaseCommand {
 				};
 			}),
 		);
+		await interaction.respond(responseChoices);
 	}
 
 	async execute(interaction) {

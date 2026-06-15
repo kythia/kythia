@@ -268,7 +268,8 @@ class MusicManager {
 			}
 			// Voice channel empty auto-destroy
 			try {
-				const voiceChannel = this.client.channels.cache.get(
+				const voiceChannel = await this.helpers.discord.getChannelGlobalSafe(
+					this.client,
 					player.voiceChannel,
 				);
 
@@ -300,7 +301,8 @@ class MusicManager {
 
 			// Set voice channel status
 			try {
-				const voiceChannel = this.client.channels.cache.get(
+				const voiceChannel = await this.helpers.discord.getChannelGlobalSafe(
+					this.client,
 					player.voiceChannel,
 				);
 				await this.setVoiceChannelStatus(
@@ -396,10 +398,14 @@ class MusicManager {
 		 * 🔄 Handles when the queue ends, including autoplay logic.
 		 */
 		poru.on('queueEnd', async (player) => {
-			const channel = this.client.channels.cache.get(player.textChannel);
+			const channel = await this.helpers.discord.getChannelGlobalSafe(
+				this.client,
+				player.textChannel,
+			);
 			let shouldContinue = true;
 			try {
-				const voiceChannel = this.client.channels.cache.get(
+				const voiceChannel = await this.helpers.discord.getChannelGlobalSafe(
+					this.client,
 					player.voiceChannel,
 				);
 				if (voiceChannel) {
@@ -588,7 +594,8 @@ class MusicManager {
 				);
 				if (player.updateInterval) clearInterval(player.updateInterval);
 
-				const voiceChannel = this.client.channels.cache.get(
+				const voiceChannel = await this.helpers.discord.getChannelGlobalSafe(
+					this.client,
 					player.voiceChannel,
 				);
 				try {
@@ -620,9 +627,11 @@ class MusicManager {
 					// Re-fetch the channel at timeout time; the channel captured in the
 					// queueEnd closure may have been deleted or become unavailable by now,
 					// which would throw DiscordAPIError[10003]: Unknown Channel.
-					const timeoutChannel = this.client.channels.cache.get(
-						player.textChannel,
-					);
+					const timeoutChannel =
+						await this.helpers.discord.getChannelGlobalSafe(
+							this.client,
+							player.textChannel,
+						);
 					if (timeoutChannel) {
 						try {
 							const components = await this.simpleContainer(
@@ -665,7 +674,10 @@ class MusicManager {
 				} catch (_e) {}
 				player.buttonCollector = null;
 			}
-			const voiceChannel = this.client.channels.cache.get(player.voiceChannel);
+			const voiceChannel = await this.helpers.discord.getChannelGlobalSafe(
+				this.client,
+				player.voiceChannel,
+			);
 			try {
 				this.setVoiceChannelStatus(
 					voiceChannel,
@@ -842,7 +854,10 @@ class MusicManager {
 			const kythia = this.config;
 			const t = this.t;
 
-			const voiceChannel = client.channels.cache.get(player.voiceChannel);
+			const voiceChannel = await this.helpers.discord.getChannelGlobalSafe(
+				client,
+				player.voiceChannel,
+			);
 			if (voiceChannel && !player._247) {
 				const realUsers = voiceChannel.members.filter((m) => !m.user.bot);
 				if (realUsers.size === 0) {
@@ -854,7 +869,10 @@ class MusicManager {
 			}
 
 			const currentTrack = options.track || player.currentTrack;
-			const channel = client.channels.cache.get(player.textChannel);
+			const channel = await this.helpers.discord.getChannelGlobalSafe(
+				client,
+				player.textChannel,
+			);
 			if (!currentTrack || !channel) return;
 			if (typeof player.nowPlayingMessage === 'undefined')
 				player.nowPlayingMessage = null;
@@ -1165,7 +1183,10 @@ class MusicManager {
 			channel =
 				channel ||
 				player.nowPlayingMessage.channel ||
-				client?.channels.cache.get(player.textChannel);
+				(await this.helpers.discord.getChannelGlobalSafe(
+					client,
+					player.textChannel,
+				));
 			let endedText, artistText, requestedByText, artworkUrl, title, _url;
 			if (track?.info) {
 				const cleanTitle = track.info.title.replace(

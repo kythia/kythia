@@ -29,7 +29,10 @@ async function updateStats(client, activeSettings) {
 		)
 			continue;
 
-		const guild = client.guilds.cache.get(setting.guildId);
+		const guild = await container.helpers.discord.getGuildSafe(
+			client,
+			setting.guildId,
+		);
 		if (!guild) continue;
 
 		try {

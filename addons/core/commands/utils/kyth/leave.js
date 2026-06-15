@@ -72,7 +72,10 @@ class LeaveCommand extends BaseCommand {
 		if (client.shard) {
 			const results = await client.shard.broadcastEval(
 				async (c, context) => {
-					const g = c.guilds.cache.get(context.guildId);
+					const g = await c.container.helpers.discord.getGuildSafe(
+						c,
+						context.guildId,
+					);
 					if (g) {
 						const gName = g.name;
 						const mCount = g.memberCount;
@@ -91,7 +94,10 @@ class LeaveCommand extends BaseCommand {
 				memberCount = successResult.members;
 			}
 		} else {
-			const guild = client.guilds.cache.get(guildId);
+			const guild = await container.helpers.discord.getGuildSafe(
+				client,
+				guildId,
+			);
 			if (guild) {
 				found = true;
 				guildName = guild.name;
