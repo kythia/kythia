@@ -89,14 +89,14 @@ const handleFavorite = async (interaction, container, index) => {
 
 	await interaction.deferUpdate();
 
-	let user = await NsfwUser.getCache({ userId: interaction.user.id });
-	if (!user) {
-		user = await NsfwUser.create({
+	const [user] = await NsfwUser.getOrCreateCache(
+		{ userId: interaction.user.id },
+		{
 			userId: interaction.user.id,
 			nsfwFav: [],
 			nsfwCount: 0,
-		});
-	}
+		},
+	);
 
 	const { category, images: currentImages } = await extractInteractionData(
 		interaction,

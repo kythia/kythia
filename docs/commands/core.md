@@ -524,6 +524,24 @@
 
 
 
+### `/testevent`
+
+**Description:** 🧪 Trigger a Discord event for testing purposes
+
+### Usage
+
+`/testevent <event> [type]`
+
+### Options
+
+- **`event*`**
+  - **Description:** The event to trigger
+  - **Type:** Text
+- **`type`**
+  - **Description:** The specific scenario to test
+  - **Type:** Text
+
+
 ### `/userinfo`
 
 **Description:** 📄 Displays information about a user.

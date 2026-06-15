@@ -69,15 +69,14 @@ class EditCommand extends BaseCommand {
 
 		await interaction.deferReply();
 
-		let setting = await BirthdaySetting.getCache({
-			guildId: interaction.guild.id,
-		});
-
-		if (!setting) {
-			setting = await BirthdaySetting.create({
+		const [setting] = await BirthdaySetting.getOrCreateCache(
+			{
 				guildId: interaction.guild.id,
-			});
-		}
+			},
+			{
+				guildId: interaction.guild.id,
+			},
+		);
 
 		const channel = interaction.options.getChannel('channel');
 		const role = interaction.options.getRole('role');

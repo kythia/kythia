@@ -4,7 +4,7 @@ async function generateListContainer(
 	interaction,
 	page,
 	replies,
-	accentColor,
+	_accentColor,
 	navDisabled = false,
 ) {
 	const { t } = interaction.client.container;

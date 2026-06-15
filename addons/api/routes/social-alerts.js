@@ -135,13 +135,11 @@ app.patch('/settings/:guildId', async (c) => {
 	const body = await c.req.json();
 
 	try {
-		let result = await SocialAlertSetting.getCache({ where: { guildId } });
-
-		if (!result) {
-			result = await SocialAlertSetting.create({ guildId, ...body });
-		} else {
-			await result.update(body);
-		}
+		const [result] = await SocialAlertSetting.getOrCreateCache(
+			{ where: { guildId } },
+			{ guildId, ...body },
+		);
+		await result.update(body);
 
 		await result.save();
 		return c.json({ success: true, data: result });

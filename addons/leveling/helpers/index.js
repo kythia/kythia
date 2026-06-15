@@ -117,13 +117,10 @@ const addXp = async (guildId, userId, xpToAdd, message, channel) => {
 	const usernameColor = levelingSetting?.levelingUsernameColor || '#FFFFFF';
 	const tagColor = levelingSetting?.levelingTagColor || botColor;
 	const accentColorHex = levelingSetting?.levelingAccentColor || botColor;
-	// ----------------------------------------------------------------------------
-
-	let user = await User.getCache({ userId: userId, guildId: guildId });
-
-	if (!user) {
-		user = await User.create({ guildId, userId, xp: 0, level: 1 });
-	}
+	const [user] = await User.getOrCreateCache(
+		{ userId: userId, guildId: guildId },
+		{ guildId, userId, xp: 0, level: 1 },
+	);
 
 	// If user is already at max level, do nothing
 	if (maxLevel !== null && user.level >= maxLevel) return;

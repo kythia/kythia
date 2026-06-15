@@ -59,15 +59,14 @@ class GetCommand extends BaseCommand {
 
 		await interaction.deferReply({ ephemeral });
 
-		// Get user data
-		let user = await NsfwUser.getCache({ userId: interaction.user.id });
-		if (!user) {
-			user = await NsfwUser.create({
+		const [user] = await NsfwUser.getOrCreateCache(
+			{ userId: interaction.user.id },
+			{
 				userId: interaction.user.id,
 				nsfwFav: [],
 				nsfwCount: 0,
-			});
-		}
+			},
+		);
 
 		// State for current images
 		let currentImages = [];

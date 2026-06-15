@@ -22,16 +22,15 @@ class GuildMemberAddEvent extends BaseEvent {
 		const bot = { client: this.client, container: this.container };
 
 		const { models, helpers, logger, t } = container;
-		const { ServerSetting, User } = models;
+		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 
 		const guildId = member.guild.id;
 
-		// ── Ensure user record exists ─────────────────────────────────
-		let user = await User.getCache({ userId: member.user.id, guildId });
-		if (!user) {
-			user = await User.create({ userId: member.user.id, guildId });
-		}
+		// const [user] = await User.getOrCreateCache(
+		// 	{ userId: member.user.id, guildId },
+		// 	{ userId: member.user.id, guildId },
+		// );
 
 		// ── Audit log ────────────────────────────────────────────────
 		const setting = await ServerSetting.getCache({ guildId });

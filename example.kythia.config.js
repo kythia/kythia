@@ -312,6 +312,9 @@ function loadKythiaConfig() {
 				// get yours at: https://manage.exchangeratesapi.io/signup/free
 				exchangerateApi: process.env.EXCHANGERATE_API,
 			},
+			counting: {
+				active: true,
+			},
 			economy: {
 				active: true,
 				// economy cooldown in second
@@ -493,6 +496,9 @@ function loadKythiaConfig() {
 				apiUrls: process.env.QUEST_API_URLS, // seperate with comma
 			},
 			reactionRole: {
+				active: true,
+			},
+			reminder: {
 				active: true,
 			},
 			server: {

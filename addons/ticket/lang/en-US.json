@@ -1,7 +1,7 @@
 {
 	"ticket": {
 		"ticket": {
-			"dm": "## Added To Ticket\nYou have been added to a ticket: ${channel} in **${guild}**\nPlease check the channel to help or discuss."
+			"dm": "## Added To Ticket\nYou have been added to a ticket: {channel} in **{guild}**\nPlease check the channel to help or discuss."
 		},
 		"util": {
 			"remove_success": "## ✅ Success\nRemoved {userTag} from this ticket.",

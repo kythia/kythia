@@ -41,15 +41,12 @@ class AddCommand extends BaseCommand {
 
 		try {
 			// Get or create KythiaUser
-			let userRecord = await KythiaUser.getCache({ userId: targetUser.id });
+			const [userRecord, created] = await KythiaUser.getOrCreateCache(
+				{ userId: targetUser.id },
+				{ userId: targetUser.id, votePoints: amount },
+			);
 
-			if (!userRecord) {
-				userRecord = await KythiaUser.create({
-					userId: targetUser.id,
-					votePoints: amount,
-				});
-				await userRecord.save();
-			} else {
+			if (!created) {
 				userRecord.votePoints = (userRecord.votePoints || 0) + amount;
 				await userRecord.save();
 			}

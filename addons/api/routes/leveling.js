@@ -95,10 +95,10 @@ app.patch('/:guildId/settings', async (c) => {
 	}
 
 	try {
-		let setting = await LevelingSetting.getCache({ where: { guildId } });
-		if (!setting) {
-			setting = await LevelingSetting.create({ guildId });
-		}
+		const [setting] = await LevelingSetting.getOrCreateCache(
+			{ where: { guildId } },
+			{ guildId },
+		);
 
 		// Allowed writable fields (excludes guildId, timestamps)
 		const ALLOWED = new Set([

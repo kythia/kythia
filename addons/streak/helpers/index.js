@@ -8,17 +8,19 @@
 
 async function getOrCreateStreak(container, userId, guildId) {
 	const { Streak } = container.models;
-	let userStreak = await Streak.getCache({ userId: userId, guildId: guildId });
-	if (!userStreak) {
-		userStreak = await Streak.create({
+
+	const [userStreak] = await Streak.getOrCreateCache(
+		{ userId: userId, guildId: guildId },
+		{
 			userId,
 			guildId,
 			currentStreak: 0,
 			highestStreak: 0,
 			lastClaimTimestamp: null,
 			streakFreezes: 0,
-		});
-	}
+		},
+	);
+
 	return userStreak;
 }
 

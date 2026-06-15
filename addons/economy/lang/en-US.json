@@ -886,7 +886,7 @@
 					}
 				},
 				"success": {
-					"desc": "## ✅ Asset Sold!\nYou have successfully sold **{quantity} {asset}** for **🪙 {amount}**.\n\n> Avg. Buy Price: `${avgBuyPrice}`\n> Sell Price: `${sellPrice}`\n> P/L on this sale: `{pnlEmoji} {pnlSign}${pnl}`",
+					"desc": "## ✅ Asset Sold!\nYou have successfully sold **{quantity} {asset}** for **🪙 {amount}**.\n\n> Avg. Buy Price: `{avgBuyPrice}`\n> Sell Price: `{sellPrice}`\n> P/L on this sale: `{pnlEmoji} {pnlSign}{pnl}`",
 					"title": "✅ Asset Sold!"
 				},
 				"error": {
@@ -1066,12 +1066,12 @@
 			"limit": {
 				"buy": {
 					"success": {
-						"desc": "## Limit Buy Order Placed\nSuccessfully placed a limit buy order for **{quantity} {asset}** at **${price}** per asset."
+						"desc": "## Limit Buy Order Placed\nSuccessfully placed a limit buy order for **{quantity} {asset}** at **{price}** per asset."
 					}
 				},
 				"sell": {
 					"success": {
-						"desc": "## Limit Sell Order Placed\nSuccessfully placed a limit sell order for **{quantity} {asset}** at **${price}** per asset."
+						"desc": "## Limit Sell Order Placed\nSuccessfully placed a limit sell order for **{quantity} {asset}** at **{price}** per asset."
 					}
 				},
 				"error": {
@@ -1098,7 +1098,7 @@
 			"stoploss": {
 				"sell": {
 					"success": {
-						"desc": "## Stop-Loss Order Placed\nSuccessfully placed a stop-loss order to sell **{quantity} {asset}** if the price drops to **${price}** per asset."
+						"desc": "## Stop-Loss Order Placed\nSuccessfully placed a stop-loss order to sell **{quantity} {asset}** if the price drops to **{price}** per asset."
 					}
 				},
 				"error": {
@@ -1305,18 +1305,18 @@
 				"error": {
 					"members": "Your server must have at least **{required} members** to launch a Guild Stock. You currently have {current} members.",
 					"ticker": "The ticker must be between 2 and 4 letters (A-Z) only.",
-					"exists": "This server already has an active stock: **${ticker}**",
-					"taken": "The ticker **${ticker}** is already in use by another server.",
+					"exists": "This server already has an active stock: **{ticker}**",
+					"taken": "The ticker **{ticker}** is already in use by another server.",
 					"funds": "You need **{totalCost} KYTH** to launch this stock ({fee} KYTH listing fee + {liquidity} KYTH initial liquidity).\nYou only have **{balance} KYTH**.",
 					"db": "An error occurred while launching the stock. Please try again."
 				},
 				"success": {
-					"title": "🎉 Guild Stock Launched: ${ticker}",
+					"title": "🎉 Guild Stock Launched: {ticker}",
 					"desc": "Congratulations! The local stock market for **{guildName}** is now live!",
-					"price": "1 ${ticker} = **{price} KYTH**",
+					"price": "1 {ticker} = **{price} KYTH**",
 					"liquidity": "{liquidity} KYTH",
-					"supply": "{supply} ${ticker}",
-					"footer": "Listing Fee: {fee} KYTH | Founder Reward: {reward} ${ticker}"
+					"supply": "{supply} {ticker}",
+					"footer": "Listing Fee: {fee} KYTH | Founder Reward: {reward} {ticker}"
 				}
 			},
 			"portfolio": {
@@ -1329,10 +1329,10 @@
 			},
 			"view": {
 				"error": {
-					"not_found": "No stock found with the ticker **${ticker}**.",
+					"not_found": "No stock found with the ticker **{ticker}**.",
 					"no_guild_stock": "This server has not launched a stock yet. The owner can use `/eco guild_stock create` to launch one."
 				},
-				"title": "📊 ${ticker} Stock Overview",
+				"title": "📊 {ticker} Stock Overview",
 				"halted": "⚠️ **TRADING HALTED**",
 				"active": "✅ Trading Active",
 				"price": "**{price}** KYTH",
@@ -1350,16 +1350,16 @@
 			},
 			"swap": {
 				"error": {
-					"not_found": "No stock found with the ticker **${ticker}**.",
-					"halted": "Trading for **${ticker}** is currently halted by the Central Bank.",
+					"not_found": "No stock found with the ticker **{ticker}**.",
+					"halted": "Trading for **{ticker}** is currently halted by the Central Bank.",
 					"liquidity": "Not enough stock in the pool to fulfill this order.",
 					"kyth_liquidity": "The pool does not have enough KYTH liquidity to fulfill this sell order.",
-					"funds": "You need **{cost} KYTH** to buy {amount} ${ticker}.\nYou only have **{balance} KYTH**.",
-					"balance": "You don't have enough ${ticker}. You only have **{balance}**."
+					"funds": "You need **{cost} KYTH** to buy {amount} {ticker}.\nYou only have **{balance} KYTH**.",
+					"balance": "You don't have enough {ticker}. You only have **{balance}**."
 				},
 				"success": {
-					"buy": "You bought **{amount} ${ticker}** for **{cost} KYTH**.\nYour new balance: **{balance} ${ticker}**",
-					"sell": "You sold **{amount} ${ticker}** and received **{earned} KYTH**.\nYour new balance: **{balance} ${ticker}**"
+					"buy": "You bought **{amount} {ticker}** for **{cost} KYTH**.\nYour new balance: **{balance} {ticker}**",
+					"sell": "You sold **{amount} {ticker}** and received **{earned} KYTH**.\nYour new balance: **{balance} {ticker}**"
 				}
 			},
 			"central_bank": {

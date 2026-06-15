@@ -148,23 +148,22 @@ async function saveScore(container, userId, username, score) {
 	const { models } = container;
 	const { MathScore } = models;
 
-	let record = await MathScore.getCache({ userId });
-
-	if (!record) {
-		record = await MathScore.create({
+	const [record] = await MathScore.getOrCreateCache(
+		{ userId },
+		{
 			userId,
 			username,
 			bestScore: score,
 			totalGames: 1,
-		});
-	} else {
-		record.totalGames = (record.totalGames ?? 0) + 1;
-		if (score > (record.bestScore ?? 0)) {
-			record.bestScore = score;
-		}
-		record.username = username;
-		await record.save();
+		},
+	);
+
+	record.totalGames = (record.totalGames ?? 0) + 1;
+	if (score > (record.bestScore ?? 0)) {
+		record.bestScore = score;
 	}
+	record.username = username;
+	await record.save();
 
 	return record;
 }

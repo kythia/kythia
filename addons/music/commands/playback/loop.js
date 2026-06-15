@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const { GuildMember, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
@@ -35,10 +35,16 @@ class LoopCommand extends BaseCommand {
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 
-		if (!(member instanceof GuildMember) || !member.voice.channel) {
+		if (!member?.voice?.channel) {
 			return interaction.reply({
-				content: await t(interaction, 'music.music.voice.channel.not.found'),
-				flags: MessageFlags.Ephemeral,
+				components: await simpleContainer(
+					interaction,
+					await t(interaction, 'music.music.voice.channel.not.found'),
+					{
+						color: 'Red',
+					},
+				),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 
@@ -50,14 +56,20 @@ class LoopCommand extends BaseCommand {
 				{ color: 'Red' },
 			);
 			return interaction.reply({
-				components: reply.components,
+				components: reply,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
 		if (member.voice.channel.id !== player.voiceChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'music.music.required'),
-				flags: MessageFlags.Ephemeral,
+				components: await simpleContainer(
+					interaction,
+					await t(interaction, 'music.music.required'),
+					{
+						color: 'Red',
+					},
+				),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 

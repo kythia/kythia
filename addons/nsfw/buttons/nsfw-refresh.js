@@ -38,14 +38,14 @@ class NsfwRefreshButton extends BaseButton {
 		);
 		const amount = images.length || 1;
 
-		let user = await NsfwUser.getCache({ userId: interaction.user.id });
-		if (!user) {
-			user = await NsfwUser.create({
+		const [user] = await NsfwUser.getOrCreateCache(
+			{ userId: interaction.user.id },
+			{
 				userId: interaction.user.id,
 				nsfwFav: [],
 				nsfwCount: 0,
-			});
-		}
+			},
+		);
 
 		// Fetch images in parallel
 		const fetchPromises = Array.from({ length: amount }, () =>

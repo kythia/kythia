@@ -45,6 +45,7 @@
   - **Type:** Integer
 **`/birthday setting edit [<channel>] [<role>] [<ping_role>] [<show_age>] [<message>] [<color>] [<image>]`**
 > ✍️ Edit birthday settings.
+> _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
 - **`channel`**

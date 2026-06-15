@@ -7,10 +7,8 @@ async function generateLeaderboardContainer(
 	totalUsers,
 	navDisabled = false,
 ) {
-	const { t, kythiaConfig, helpers } = interaction.client.container;
+	const { t, helpers } = interaction.client.container;
 	const { createPaginationContainer } = helpers.discord;
-	const { convertColor } = helpers.color;
-	const { chunkTextDisplay } = helpers.discord;
 
 	const totalPages = Math.max(1, Math.ceil(totalUsers / USERS_PER_PAGE));
 	page = Math.max(1, Math.min(page, totalPages));

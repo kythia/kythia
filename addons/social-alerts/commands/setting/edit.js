@@ -44,15 +44,14 @@ class EditCommand extends BaseCommand {
 
 		await interaction.deferReply();
 
-		let setting = await SocialAlertSetting.getCache({
-			guildId: interaction.guild.id,
-		});
-
-		if (!setting) {
-			setting = await SocialAlertSetting.create({
+		const [setting] = await SocialAlertSetting.getOrCreateCache(
+			{
 				guildId: interaction.guild.id,
-			});
-		}
+			},
+			{
+				guildId: interaction.guild.id,
+			},
+		);
 
 		const mentionRole = interaction.options.getRole('mention_role');
 		const changes = [];

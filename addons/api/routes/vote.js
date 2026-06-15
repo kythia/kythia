@@ -113,10 +113,10 @@ app.patch('/user/:userId/points', async (c) => {
 	const { KythiaUser } = models;
 
 	try {
-		let user = await KythiaUser.getCache({ where: { userId } });
-		if (!user) {
-			user = await KythiaUser.create({ userId, votePoints: 0 });
-		}
+		const [user] = await KythiaUser.getOrCreateCache(
+			{ where: { userId } },
+			{ userId, votePoints: 0 },
+		);
 
 		if (typeof increment === 'number') {
 			user.votePoints = (user.votePoints || 0) + increment;
@@ -162,13 +162,12 @@ app.put('/user/:userId/points', async (c) => {
 	}
 
 	try {
-		let user = await KythiaUser.getCache({ where: { userId } });
-		if (!user) {
-			user = await KythiaUser.create({ userId, votePoints: points });
-		} else {
-			user.votePoints = points;
-			await user.save();
-		}
+		const [user] = await KythiaUser.getOrCreateCache(
+			{ where: { userId } },
+			{ userId, votePoints: points },
+		);
+		user.votePoints = points;
+		await user.save();
 
 		await KythiaUser.clearCache({ userId });
 
@@ -224,10 +223,10 @@ app.put('/user/:userId/status', async (c) => {
 	const { KythiaUser } = models;
 
 	try {
-		let user = await KythiaUser.getCache({ where: { userId } });
-		if (!user) {
-			user = await KythiaUser.create({ userId, votePoints: 0 });
-		}
+		const [user] = await KythiaUser.getOrCreateCache(
+			{ where: { userId } },
+			{ userId, votePoints: 0 },
+		);
 
 		user.isVoted = true;
 

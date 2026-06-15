@@ -134,7 +134,7 @@
 				"bully": "{user} wants to bully someone! 😈"
 			},
 			"errors": {
-				"invalid_action": "❌ That's not a valid action! Use one of: ${VALID_ACTIONS.join(', ')}"
+				"invalid_action": "❌ That's not a valid action! Use one of: {VALID_ACTIONS.join(', ')}"
 			}
 		},
 		"8ball": {
