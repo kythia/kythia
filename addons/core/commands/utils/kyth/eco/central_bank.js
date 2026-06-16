@@ -6,6 +6,8 @@
  * @version 26.0.0-rc.1
  */
 
+const { MessageFlags } = require('discord.js');
+
 const { BaseCommand } = require('kythia-core');
 
 class CentralBankCommand extends BaseCommand {
@@ -53,7 +55,6 @@ class CentralBankCommand extends BaseCommand {
 		await interaction.deferReply();
 		const { t, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-		const { MessageFlags } = require('discord.js');
 
 		const { KythLiquidityPool } = models;
 		const pool = await KythLiquidityPool.getCache({ id: 1 });

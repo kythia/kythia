@@ -6,6 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
+const { MessageFlags } = require('discord.js');
 /**
  * Search YouTube channels by query using YouTube Data API v3.
  * @param {string} query
@@ -84,8 +85,6 @@ async function fetchLatestVideo(channelId) {
 }
 
 module.exports = { searchYouTubeChannels, fetchLatestVideo };
-
-const { MessageFlags } = require('discord.js');
 
 async function handleYouTubeAdd({
 	interaction,

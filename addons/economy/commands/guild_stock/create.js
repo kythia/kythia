@@ -1,3 +1,4 @@
+const { MessageFlags } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 
 /**
@@ -49,11 +50,9 @@ class CreateCommand extends BaseCommand {
 	async execute(interaction) {
 		const container = this.container;
 		await interaction.deferReply();
-		const { t, models, helpers, kythiaConfig, GuildLiquidityPool, logger } =
-			container;
-		const { KythiaUser, GuildTokenHolding } = models;
+		const { t, models, helpers, kythiaConfig, logger } = container;
+		const { KythiaUser, GuildTokenHolding, GuildLiquidityPool } = models;
 		const { simpleContainer } = helpers.discord;
-		const { MessageFlags } = require('discord.js');
 		const guildId = interaction.guild.id;
 		const userId = interaction.user.id;
 

@@ -6,6 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
+const { MessageFlags } = require('discord.js');
 /**
  * Validate an Instagram username and resolve the display name.
  * Uses the public Instagram oEmbed endpoint (no auth required for public display).
@@ -132,8 +133,6 @@ module.exports = {
 	fetchLatestInstagram,
 	handleInstagramAdd,
 };
-
-const { MessageFlags } = require('discord.js');
 
 async function handleInstagramAdd({
 	interaction,

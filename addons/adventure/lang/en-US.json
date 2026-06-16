@@ -20,7 +20,6 @@
 			"use": {
 				"title": "🔮 Use Item",
 				"desc": "Select an item to use from your inventory.",
-
 				"item": {
 					"button": "Use Item"
 				}
@@ -83,7 +82,8 @@
 			},
 			"category": {
 				"equipment": "⚔️ Equipment",
-				"consumables": "🧪 Consumables"
+				"consumables": "🧪 Consumables",
+				"all": "📦 All"
 			},
 			"items": {
 				"stick": {

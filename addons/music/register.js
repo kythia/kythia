@@ -8,6 +8,7 @@
 
 const MusicHandlers = require('./helpers/handlers/MusicHandlers');
 const MusicManager = require('./helpers/MusicManager');
+const { ShardClientUtil } = require('discord.js');
 const path = require('node:path');
 const fs = require('node:fs');
 
@@ -45,7 +46,6 @@ module.exports = {
 				return;
 			}
 
-			const { ShardClientUtil } = require('discord.js');
 			let restoredCount = 0;
 			for (const session of sessions) {
 				// If sharding is active, only process guilds that belong to this shard

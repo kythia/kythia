@@ -75,6 +75,18 @@ class AdoptCommand extends BaseCommand {
 		const selectedPet =
 			weightedPets[Math.floor(Math.random() * weightedPets.length)];
 
+		if (!selectedPet) {
+			const components = await simpleContainer(
+				interaction,
+				`## ❌ No Pets Available\nThere are no pets available to adopt right now.`,
+				{ color: 'Red' },
+			);
+			return interaction.editReply({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+			});
+		}
+
 		const name = interaction.options.getString('name');
 
 		await UserPet.create({

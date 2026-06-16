@@ -13,7 +13,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kythia/kythia/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-CC%20BYNC%204.0-blue?style=flat" alt="License"></a>
+  <a href="https://github.com/kythia/kythia"><img src="https://img.shields.io/github/stars/kythia/kythia" alt="Kythia" /></a>
+  <a href="https://top.gg/bots/1379246675171999826"><img src="https://top.gg/api/widget/upvotes/1379246675171999826.svg" alt="Kythia bot" /></a>
+  <a href="https://www.npmjs.com/package/kythia-core"><img src="https://img.shields.io/npm/v/kythia-core?label=kythia-core" alt="kythia-core" /></a>
 </p>
 
 <p align="center">
@@ -41,39 +43,44 @@ Kythia is packed with a massive amount of features, all organized into a clean, 
 Here's a glimpse of what Kythia has to offer:
 
 ### 🛡️ Core & Moderation
-*   **Core Systems (`core`):** Essential tools, settings, advanced moderation commands (`ban`, `kick`, `mute`, `warn`, `clear`), currency conversion, and maintenance mode.
-*   **Automod (`automod`):** Automatically detect and manage spam, duplicate messages, zalgo, fast messages, and bad words.
-*   **Verification (`verification`):** Secure your server with a robust verification system.
-*   **Welcomer (`welcomer`):** Welcome new members with customizable cards featuring avatar decorations and badges!
-*   **Logging:** Comprehensive logging for errors, votes, and events.
+
+- **Core Systems (`core`):** Essential tools, settings, advanced moderation commands (`ban`, `kick`, `mute`, `warn`, `clear`), currency conversion, and maintenance mode.
+- **Automod (`automod`):** Automatically detect and manage spam, duplicate messages, zalgo, fast messages, and bad words.
+- **Verification (`verification`):** Secure your server with a robust verification system.
+- **Welcomer (`welcomer`):** Welcome new members with customizable cards featuring avatar decorations and badges!
+- **Logging:** Comprehensive logging for errors, votes, and events.
 
 ### 🎉 Engagement & Fun
-*   **Economy (`economy`):** Earn virtual currency, work, daily rewards, rob your friends, and gamble your way to riches.
-*   **Adventure Game (`adventure`):** Embark on an epic text-based RPG adventure, fight monsters, and collect loot!
-*   **Pets (`pet`):** Adopt, raise, and gacha your own virtual pets.
-*   **Music (`music`):** Listen to your favorite tunes with a feature-rich, Lavalink-powered music player with Spotify support.
-*   **Leveling (`leveling`):** Reward your users for their activity with a customizable leveling system and profile cards.
-*   **Fun & Games (`fun`):** Enjoy interactive games like Wordle.
-*   **Global Chat (`globalchat`):** Connect and chat with users across different servers!
+
+- **Economy (`economy`):** Earn virtual currency, work, daily rewards, rob your friends, and gamble your way to riches.
+- **Adventure Game (`adventure`):** Embark on an epic text-based RPG adventure, fight monsters, and collect loot!
+- **Pets (`pet`):** Adopt, raise, and gacha your own virtual pets.
+- **Music (`music`):** Listen to your favorite tunes with a feature-rich, Lavalink-powered music player with Spotify support.
+- **Leveling (`leveling`):** Reward your users for their activity with a customizable leveling system and profile cards.
+- **Fun & Games (`fun`):** Enjoy interactive games like Wordle.
+- **Global Chat (`globalchat`):** Connect and chat with users across different servers!
 
 ### 🚀 Server Management & Utility
-*   **Ticket System (`ticket`):** A complete ticket system and `modmail` to help you manage user support requests.
-*   **Suggestions (`suggestion`):** Allow users to submit suggestions and vote on their favorites.
-*   **Social Alerts (`social-alerts`):** Get notified for new content from YouTube and TikTok.
-*   **Temporary Voice (`tempvoice`):** Allow users to create and manage their own temporary voice channels.
-*   **Giveaways (`giveaway`):** Host and manage giveaways easily.
-*   **Reaction Roles (`reaction-role`):** Allow members to self-assign roles using interactive emoji buttons or sleek Discord **Dropdown Menus** with custom labels.
+
+- **Ticket System (`ticket`):** A complete ticket system and `modmail` to help you manage user support requests.
+- **Suggestions (`suggestion`):** Allow users to submit suggestions and vote on their favorites.
+- **Social Alerts (`social-alerts`):** Get notified for new content from YouTube and TikTok.
+- **Temporary Voice (`tempvoice`):** Allow users to create and manage their own temporary voice channels.
+- **Giveaways (`giveaway`):** Host and manage giveaways easily.
+- **Reaction Roles (`reaction-role`):** Allow members to self-assign roles using interactive emoji buttons or sleek Discord **Dropdown Menus** with custom labels.
 
 ### ✨ And Many More Addons!
+
 Kythia comes with a huge collection of modular addons, including:
-*   `ai` (Powered by Google Gemini)
-*   `autoreact` & `autoreply`
-*   `birthday` & `checklist`
-*   `embed-builder` & `image`
-*   `invite` tracking
-*   `minecraft` integration
-*   `pro` (Cloudflare integration)
-*   `quest`, `server`, `store`, `streak`, `testimony`
+
+- `ai` (Powered by Google Gemini)
+- `autoreact` & `autoreply`
+- `birthday` & `checklist`
+- `embed-builder` & `image`
+- `invite` tracking
+- `minecraft` integration
+- `pro` (Cloudflare integration)
+- `quest`, `server`, `store`, `streak`, `testimony`
 
 ...and the list is always growing!
 
@@ -83,11 +90,11 @@ Kythia comes with a huge collection of modular addons, including:
 
 There are many Discord bots out there, but Kythia stands out from the crowd. Here's why:
 
-*   **🤖 Modular by Design:** Kythia is built on a powerful addon system, allowing you to enable only the features you need. This keeps the bot lightweight and efficient.
-*   **✨ Feature-Rich:** With a massive collection of addons, Kythia offers a huge range of features, from advanced moderation to fun games and a full-fledged economy system.
-*   **🔧 Fully Customizable:** Almost every aspect of Kythia can be configured to your liking. From custom welcome messages to fine-tuned automod settings, you're in control.
-*   **🛡️ Rock-Solid Stability:** Built completely around Discord's modern Components V2 architecture with rigorous dynamic input validation and safe length truncation so the bot never crashes on your community.
-*   **🚀 Actively Developed:** Kythia is constantly being improved with new features, bug fixes, and performance enhancements.
+- **🤖 Modular by Design:** Kythia is built on a powerful addon system, allowing you to enable only the features you need. This keeps the bot lightweight and efficient.
+- **✨ Feature-Rich:** With a massive collection of addons, Kythia offers a huge range of features, from advanced moderation to fun games and a full-fledged economy system.
+- **🔧 Fully Customizable:** Almost every aspect of Kythia can be configured to your liking. From custom welcome messages to fine-tuned automod settings, you're in control.
+- **🛡️ Rock-Solid Stability:** Built completely around Discord's modern Components V2 architecture with rigorous dynamic input validation and safe length truncation so the bot never crashes on your community.
+- **🚀 Actively Developed:** Kythia is constantly being improved with new features, bug fixes, and performance enhancements.
 
 ---
 
@@ -96,12 +103,14 @@ There are many Discord bots out there, but Kythia stands out from the crowd. Her
 By using Kythia, you agree to our Terms of Service. Please be aware that this bot collects certain telemetry data to ensure stability, performance, and license compliance.
 
 ### 📊 Information We Collect
+
 - **Server Information:** Server ID, name, and member count.
 - **Usage Statistics:** Command usage frequency and performance metrics.
 - **System Information:** Basic system specs (Node.js version, OS) for troubleshooting.
 - **License Data:** HWID and IP address for license verification purposes.
 
 ### 🔒 Why We Collect This
+
 This information is used solely to improve the bot's functionality, monitor for errors, and verify that the bot is running with a valid license. We do not sell your data to third parties.
 
 ---
@@ -127,7 +136,6 @@ Before running this bot, please ensure you have the following installed:
 Ensure you have the following software installed:
 
 1. **Node.js**
-
    - Download and install [Node.js](https://nodejs.org/).
    - Verify installation in your terminal:
      ```bash
@@ -163,7 +171,6 @@ Kythia uses `sharding.js` as its main entry point. This spawns and manages multi
 
 1. Ensure all configurations are correct.
 2. Choose how you want to run the bot:
-
    - **For a quick test (in foreground):**
 
      ```bash
@@ -213,9 +220,9 @@ If you enabled the dashboard in `kythia.config.js`, you **MUST** configure the R
 2.  Go to the **OAuth2** tab (General, not URL Generator).
 3.  Find the **"Redirects"** section.
 4.  Click **Add Redirect** and enter your dashboard callback URL:
-    * If on Localhost: `http://localhost:3000/auth/discord/callback`
-    * If on VPS (IP): `http://YOUR_VPS_IP:3000/auth/discord/callback`
-    * If using Domain: `https://yourdomain.com/auth/discord/callback`
+    - If on Localhost: `http://localhost:3000/auth/discord/callback`
+    - If on VPS (IP): `http://YOUR_VPS_IP:3000/auth/discord/callback`
+    - If using Domain: `https://yourdomain.com/auth/discord/callback`
 5.  **Save Changes**.
 6.  Make sure this URL matches exactly with `API_URL` in your `.env` file (minus the `/auth...` part).
 
@@ -227,10 +234,10 @@ Once Kythia is in your server, you can start using her commands. All commands ar
 
 Here are a few commands to get you started:
 
-*   `/help`: Shows a list of all available commands.
-*   `/ping`: Checks the bot's latency.
-*   `/serverinfo`: Displays information about the server.
-*   `/userinfo`: Displays information about a user.
+- `/help`: Shows a list of all available commands.
+- `/ping`: Checks the bot's latency.
+- `/serverinfo`: Displays information about the server.
+- `/userinfo`: Displays information about a user.
 
 For a full list of commands and their detailed usage, please see the [Command Documentation](https://portal.kythia.xyz/docs/).
 
@@ -240,18 +247,18 @@ For a full list of commands and their detailed usage, please see the [Command Do
 
 Contributions to Kythia are managed by the internal development team. If you are a member of the team and would like to contribute, please follow the established development workflow.
 
-*   **🐛 Reporting Bugs:** If you find a bug, please report it to the team through the designated channels. Be sure to include as much detail as possible, including steps to reproduce the bug.
-*   **💡 Suggesting Features:** Have an idea for a new feature? We'd love to hear it! Please share your suggestion with the team.
+- **🐛 Reporting Bugs:** If you find a bug, please report it to the team through the designated channels. Be sure to include as much detail as possible, including steps to reproduce the bug.
+- **💡 Suggesting Features:** Have an idea for a new feature? We'd love to hear it! Please share your suggestion with the team.
 
 ---
 
 ## 📜 License
 
-This project is licensed under the CC BY-NC 4.0 License. See the [LICENSE](LICENSE) file for details.
-Copyright © 2025 Kythia Labs - All rights reserved.
+This project is licensed under the EULA. See the [LICENSE](LICENSE) file for details.
+Copyright © 2026 Kythia Labs - All rights reserved.
 
 > [!IMPORTANT]
-> **License Required:** Use of this bot requires a valid license from the author. For commercial use or to obtain a license, please contact me at [kenndeclouv@gmail.com](mailto:kenndeclouv@gmail.com) OR join official discord server [Discord](https://dsc.gg/kythia)
+> **License Required:** Use of this bot requires a valid license from the author. For commercial use or to obtain a license, please contact me at [me@kenndeclouv.com](mailto:me@kenndeclouv.com) OR join official discord server [Discord](https://dsc.gg/kythia)
 
 ---
 
@@ -259,24 +266,24 @@ Copyright © 2025 Kythia Labs - All rights reserved.
 
 Need help or want to connect with other Kythia users? Join our community!
 
-*   **🌐 Website:** [kythia.xyz](https://kythia.xyz)
-*   **🔑 Portal:** [portal.kythia.xyz](https://portal.kythia.xyz)
-*   **💬 Discord Server:** [dsc.gg/kythia](https://dsc.gg/kythia)
-*   **📧 Email:** [kenndeclouv@gmail.com](mailto:kenndeclouv@gmail.com)
-
+- **🌐 Website:** [kythia.xyz](https://kythia.xyz)
+- **🔑 Portal:** [portal.kythia.xyz](https://portal.kythia.xyz)
+- **💬 Discord Server:** [dsc.gg/kythia](https://dsc.gg/kythia)
+- **📧 Email:** [me@kenndeclouv.com](mailto:me@kenndeclouv.com)
 
 ## 🫶 Special Thanks
 
-* **One and only GOD**
-* **Contributors**
-   - [idMJA](https://github.com/idMJA)
-* **Testers**
-   - [Naquth](https://github.com/naquth)
-   - [Razaeldotexe](https://github.com/razaeldotexe)
-   - [Aryandita](https://github.com/Aryandita)
-* **Special Mention**
-   - [Colly](https://github.com/collygit1)
- 
+- **One and only GOD**
+- **Lead Illustrators**
+  - [rihaadeclouv](https://instagram.com/rihaadeclouv)
+- **Contributors**
+  - [idMJA](https://github.com/idMJA)
+- **Testers**
+  - [Naquth](https://github.com/naquth)
+  - [Razaeldotexe](https://github.com/razaeldotexe)
+  - [Aryandita](https://github.com/Aryandita)
+- **Special Mention**
+  - [Colly](https://github.com/collygit1)
 
 ## 🌟 Star History
 

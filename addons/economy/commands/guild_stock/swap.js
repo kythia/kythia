@@ -6,6 +6,8 @@
  * @version 26.0.0-rc.1
  */
 
+const { MessageFlags } = require('discord.js');
+
 const { BaseCommand } = require('kythia-core');
 
 class SwapCommand extends BaseCommand {
@@ -41,11 +43,11 @@ class SwapCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		await interaction.deferReply();
-		const { t, models, GuildLiquidityPool, helpers } = container;
-		const { KythiaUser, GuildTokenHolding } = models;
+		const { t, models, helpers } = container;
+		const { KythiaUser, GuildTokenHolding, GuildLiquidityPool } = models;
 		const { simpleContainer } = helpers.discord;
-		const { MessageFlags } = require('discord.js');
+
+		await interaction.deferReply();
 
 		const ticker = interaction.options
 			.getString('ticker')

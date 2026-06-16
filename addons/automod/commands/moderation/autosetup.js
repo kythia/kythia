@@ -33,6 +33,7 @@ class AutosetupCommand extends BaseCommand {
 
 		try {
 			const guild = interaction.guild;
+			await Promise.all([guild.channels.fetch(), guild.roles.fetch()]);
 			let modLogChannel = guild.channels.cache.find(
 				(c) => c.name === 'mod-log',
 			);

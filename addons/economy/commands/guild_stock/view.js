@@ -6,6 +6,8 @@
  * @version 26.0.0-rc.1
  */
 
+const { MessageFlags } = require('discord.js');
+
 const { BaseCommand } = require('kythia-core');
 
 class ViewCommand extends BaseCommand {
@@ -30,7 +32,6 @@ class ViewCommand extends BaseCommand {
 		const { t, models, helpers } = container;
 		const { GuildLiquidityPool, GuildTokenHolding } = models;
 		const { simpleContainer } = helpers.discord;
-		const { MessageFlags } = require('discord.js');
 
 		let ticker = interaction.options.getString('ticker');
 		let pool = null;

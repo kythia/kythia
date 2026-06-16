@@ -524,10 +524,15 @@ class AIMessageHandler {
 					safetySettings: SAFETY_SETTINGS,
 				};
 				if (tools) {
+					const activeModel = useModelFallback
+						? FALLBACK_MODEL
+						: PREFERRED_MODEL;
 					chatConfig.tools = tools;
-					chatConfig.toolConfig = {
-						includeServerSideToolInvocations: true,
-					};
+					if (!activeModel.includes('lite')) {
+						chatConfig.toolConfig = {
+							includeServerSideToolInvocations: true,
+						};
+					}
 				}
 				const activeModel = useModelFallback ? FALLBACK_MODEL : PREFERRED_MODEL;
 

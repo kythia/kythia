@@ -512,7 +512,6 @@ class PrefixCommandHandler {
 				return {
 					allowed: false,
 					response: {
-						content: '\u200b',
 						components: [errorContainer],
 						flags: MessageFlags.IsComponentsV2,
 					},
@@ -568,7 +567,6 @@ class PrefixCommandHandler {
 				return {
 					allowed: false,
 					response: {
-						content: '\u200b',
 						components: [voteContainer],
 						flags: MessageFlags.IsComponentsV2,
 					},

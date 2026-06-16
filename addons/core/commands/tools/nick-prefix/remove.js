@@ -51,7 +51,6 @@ class RemoveCommand extends BaseCommand {
 			} catch (_e) {
 				await interaction.channel
 					.send({
-						content: `<@${interaction.user.id}>`,
 						components: successComponents,
 						flags: MessageFlags.IsComponentsV2,
 					})
@@ -70,7 +69,6 @@ class RemoveCommand extends BaseCommand {
 			} catch (_e) {
 				await interaction.channel
 					.send({
-						content: `<@${interaction.user.id}>`,
 						components: errorComponents,
 						flags: MessageFlags.IsComponentsV2,
 					})

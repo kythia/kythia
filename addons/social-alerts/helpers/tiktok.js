@@ -6,6 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
+const { MessageFlags } = require('discord.js');
 const TIKTOK_TOKEN_URL = 'https://open.tiktokapis.com/v2/oauth/token/';
 const TIKTOK_USER_INFO_URL =
 	'https://open.tiktokapis.com/v2/research/user/info/';
@@ -222,8 +223,6 @@ module.exports = {
 	validateTikTokUser,
 	handleTikTokAdd,
 };
-
-const { MessageFlags } = require('discord.js');
 const TIKTOK_LOGO_URL =
 	'https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/tiktok/webapp/main/webapp-desktop/8152caf0c8e8bc67ae0d.png';
 

@@ -7,6 +7,8 @@
  */
 const { buildQuestNotification } = require('../helpers/questHelper');
 const { Op } = require('sequelize');
+const { BaseTask } = require('kythia-core');
+const { ShardClientUtil } = require('discord.js');
 
 /**
  * Try a list of API URLs and return the first successful quests response.
@@ -59,7 +61,6 @@ async function fetchQuestsFromAny(urls, logger) {
 	}
 	return null;
 }
-const { BaseTask } = require('kythia-core');
 class QuestSchedulerTask extends BaseTask {
 	task = {
 		taskName: 'quest-notifier',
@@ -69,7 +70,6 @@ class QuestSchedulerTask extends BaseTask {
 		const { models, logger, client, kythiaConfig } =
 			container || this.container;
 		const { QuestConfig, QuestGuildLog } = models;
-		const { ShardClientUtil } = require('discord.js');
 		logger.info(`Running cron job...`, {
 			label: 'questnotifier',
 		});

@@ -134,8 +134,8 @@ class HireCommand extends BaseCommand {
 		});
 
 		const message = await interaction.editReply({
-			content: `<@${targetUser.id}>`,
 			components: [...components, row],
+			flags: MessageFlags.IsComponentsV2,
 		});
 
 		const filter = (i) => i.user.id === targetUser.id;
@@ -166,8 +166,8 @@ class HireCommand extends BaseCommand {
 					},
 				);
 				await i.update({
-					content: '',
 					components: successComponents,
+					flags: MessageFlags.IsComponentsV2,
 				});
 			} else {
 				const declineMsg = await t(
@@ -185,8 +185,8 @@ class HireCommand extends BaseCommand {
 					},
 				);
 				await i.update({
-					content: '',
 					components: declineComponents,
+					flags: MessageFlags.IsComponentsV2,
 				});
 			}
 			collector.stop('responded');
@@ -203,8 +203,8 @@ class HireCommand extends BaseCommand {
 					},
 				);
 				await interaction.editReply({
-					content: '',
 					components: timeoutComponents,
+					flags: MessageFlags.IsComponentsV2,
 				});
 			}
 		});
