@@ -6,10 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
+const { BaseRegister } = require('kythia-core');
+
 const GiveawayManager = require('./helpers/GiveawayManager');
 
-module.exports = {
-	initialize(bot) {
+class GiveawayRegister extends BaseRegister {
+	register() {
+		const bot = this.kythia;
 		const container = bot.client.container;
 		const client = bot.client;
 		const summary = [];
@@ -33,5 +36,7 @@ module.exports = {
 		}
 
 		return summary;
-	},
-};
+	}
+}
+
+exports.default = GiveawayRegister;

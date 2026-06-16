@@ -6,8 +6,11 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	initialize(bot) {
+const { BaseRegister } = require('kythia-core');
+
+class ModmailRegister extends BaseRegister {
+	register() {
+		const bot = this.kythia;
 		const container = bot.client.container;
 		const { logger, models } = container;
 		const client = bot.client;
@@ -52,5 +55,7 @@ module.exports = {
 			`  ╰┈➤ Hook: clientReady (repopulate ${'{n}'} active sessions from DB)`,
 		);
 		return summary;
-	},
-};
+	}
+}
+
+exports.default = ModmailRegister;

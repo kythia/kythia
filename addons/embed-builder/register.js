@@ -6,10 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
+const { BaseRegister } = require('kythia-core');
+
 const editCommand = require('./commands/embed-builder/edit');
 
-module.exports = {
-	initialize(bot) {
+class EmbedBuilderRegister extends BaseRegister {
+	register() {
+		const bot = this.kythia;
 		const summary = [];
 
 		// Register the modal handler for /embed-builder edit (classic embed mode)
@@ -21,5 +24,7 @@ module.exports = {
 		summary.push('   ╰┈➤ 🎨 Embed Builder loaded (modal handler registered)');
 
 		return summary;
-	},
-};
+	}
+}
+
+exports.default = EmbedBuilderRegister;

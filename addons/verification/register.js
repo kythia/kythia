@@ -6,8 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	initialize(_bot) {
+const { BaseRegister } = require('kythia-core');
+
+class VerificationRegister extends BaseRegister {
+	register() {
+		const _bot = this.kythia;
 		return [];
-	},
-};
+	}
+}
+
+exports.default = VerificationRegister;

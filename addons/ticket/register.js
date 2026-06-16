@@ -6,8 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	initialize(_bot) {
+const { BaseRegister } = require('kythia-core');
+
+class TicketRegister extends BaseRegister {
+	register() {
+		const _bot = this.kythia;
 		return [];
-	},
-};
+	}
+}
+
+exports.default = TicketRegister;

@@ -6,10 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
+const { BaseRegister } = require('kythia-core');
+
 const CloudflareApi = require('./helpers/CloudflareApi');
 
-module.exports = {
-	initialize(bot) {
+class ProRegister extends BaseRegister {
+	register() {
+		const bot = this.kythia;
 		const summary = [];
 
 		bot.addClientReadyHook((_sequelize) => {
@@ -42,5 +45,7 @@ module.exports = {
 		});
 
 		return summary;
-	},
-};
+	}
+}
+
+exports.default = ProRegister;

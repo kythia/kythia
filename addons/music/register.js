@@ -6,14 +6,17 @@
  * @version 26.0.0-rc.1
  */
 
+const { BaseRegister } = require('kythia-core');
+
 const MusicHandlers = require('./helpers/handlers/MusicHandlers');
 const MusicManager = require('./helpers/MusicManager');
 const { ShardClientUtil } = require('discord.js');
 const path = require('node:path');
 const fs = require('node:fs');
 
-module.exports = {
-	async initialize(bot) {
+class MusicRegister extends BaseRegister {
+	async register() {
+		const bot = this.kythia;
 		const container = bot.client.container;
 		const { logger, helpers } = container;
 		const { getChannelSafe } = helpers.discord;
@@ -105,5 +108,7 @@ module.exports = {
 		}
 
 		return summary;
-	},
-};
+	}
+}
+
+exports.default = MusicRegister;

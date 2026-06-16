@@ -6,12 +6,15 @@
  * @version 26.0.0-rc.1
  */
 
+const { BaseRegister } = require('kythia-core');
+
 // const { generateCommandSchema } = require('./helpers/command-schema');
 const promptBuilder = require('./helpers/promptBuilder');
 const geminiHelper = require('./helpers/gemini');
 
-module.exports = {
-	initialize(bot) {
+class AiRegister extends BaseRegister {
+	register() {
+		const bot = this.kythia;
 		const logger = bot.container.logger;
 		const isOwner = bot.container.helpers.discord.isOwner;
 		const summery = [];
@@ -31,5 +34,7 @@ module.exports = {
 		// });
 
 		return summery;
-	},
-};
+	}
+}
+
+exports.default = AiRegister;

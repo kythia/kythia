@@ -6,10 +6,13 @@
  * @version 26.0.0-rc.1
  */
 
+const { BaseRegister } = require('kythia-core');
+
 const initializeServer = require('./server');
 
-module.exports = {
-	async initialize(bot) {
+class ApiRegister extends BaseRegister {
+	async register() {
+		const bot = this.kythia;
 		const summary = [];
 		const server = await initializeServer(bot);
 		if (server) {
@@ -17,5 +20,7 @@ module.exports = {
 		}
 
 		return summary;
-	},
-};
+	}
+}
+
+exports.default = ApiRegister;

@@ -6,10 +6,14 @@
  * @version 26.0.0-rc.1
  */
 
-module.exports = {
-	initialize() {
+const { BaseRegister } = require('kythia-core');
+
+class QuestRegister extends BaseRegister {
+	register() {
 		const summary = [];
 
 		return summary;
-	},
-};
+	}
+}
+
+exports.default = QuestRegister;
