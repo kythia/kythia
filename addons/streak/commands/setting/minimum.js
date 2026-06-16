@@ -18,8 +18,8 @@ class MinimumCommand extends BaseCommand {
 		subcommand
 			.setName('minimum')
 			.setDescription('🔥 Set minimum streak')
-			.addIntegerOption((opt) =>
-				opt
+			.addIntegerOption((option) =>
+				option
 					.setName('minimum')
 					.setDescription('Minimum streak')
 					.setRequired(true),
@@ -47,7 +47,7 @@ class MinimumCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'core.setting.setting.streak.minimum.set', {
+			await t(interaction, 'streak.streak.setting.minimum.set', {
 				minimum,
 			}),
 			{ color: 'Green' },

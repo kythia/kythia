@@ -75,7 +75,13 @@ class TktPanelCreateModal extends BaseModal {
 			const panelContainer = new ContainerBuilder()
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(`## ${title}`),
+					new TextDisplayBuilder().setContent(
+						await interaction.client.container.t(
+							interaction,
+							'ticket.helpers.panel_title_md',
+							{ title },
+						),
+					),
 				)
 				.addSeparatorComponents(
 					new SeparatorBuilder()

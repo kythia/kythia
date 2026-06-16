@@ -440,29 +440,6 @@
 					"set": "✅ Testimony count has been set to {count}!"
 				}
 			},
-			"streak": {
-				"rolereward": {
-					"add": "Role {role} has been added as a reward for streak `{streak}`!",
-					"notfound": "No role reward found for streak `{streak}`!",
-					"remove": "Role reward for streak `{streak}` has been removed!"
-				},
-				"minimum": {
-					"set": "✅ Minimum streak set to `{minimum}` days."
-				},
-				"emoji": {
-					"set": "✅ Streak emoji set to `{emoji}`."
-				},
-				"nickname": {
-					"set": "✅ Streak auto-nickname has been **{status}**."
-				},
-				"quota": {
-					"disabled": "⏸️ Streak restores have been **disabled** for this server. Members can no longer restore their streaks.",
-					"set": "✅ Monthly streak restore quota set to **{quota}** per member."
-				},
-				"timezone": {
-					"set": "✅ Streak timezone set to **{timezone}**. Daily streak resets will now follow this timezone."
-				}
-			},
 			"no": {
 				"config": "❌ No settings have been saved for this server.",
 				"configured": "ℹ️ No settings have been configured."

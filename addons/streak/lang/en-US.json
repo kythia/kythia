@@ -23,7 +23,8 @@
 					"title": "✅ Daily Streak Claimed!"
 				},
 				"footer": "Keep your streak going!",
-				"desc": "`🔥` Current Streak\n{currentStreak} days\n`🏆` Highest Record\n{highestStreak} days\n`❄️` Streak Freeze\n{streakFreezes}"
+				"desc": "`🔥` Current Streak\n{currentStreak} days\n`🏆` Highest Record\n{highestStreak} days\n`❄️` Streak Freeze\n{streakFreezes}",
+				"title_md": "## 🔥 Daily Streak"
 			},
 			"me": {
 				"status": {
@@ -57,18 +58,21 @@
 					"your": {
 						"interaction": "You cannot use this interaction!"
 					}
-				}
+				},
+				"title_md": "## 🏆 Streak Leaderboard"
 			},
 			"reset": {
 				"title": "🔄 Streak Reset",
 				"already": {
 					"zero": "Your streak is already 0. No need to reset."
 				},
-				"success": "Your streak has been reset to 0. Start again tomorrow!"
+				"success": "Your streak has been reset to 0. Start again tomorrow!",
+				"title_md": "## 🗑️ Streak Reset"
 			},
 			"user": {
 				"title": {
-					"user": "📊 {username}'s Streak Status"
+					"user": "📊 {username}'s Streak Status",
+					"user_md": "## 🔥 {user}'s Streak"
 				},
 				"not": {
 					"found": {
@@ -78,6 +82,29 @@
 				}
 			},
 			"error": {},
+			"setting": {
+				"rolereward": {
+					"add": "Role {role} has been added as a reward for streak `{streak}`!",
+					"notfound": "No role reward found for streak `{streak}`!",
+					"remove": "Role reward for streak `{streak}` has been removed!"
+				},
+				"minimum": {
+					"set": "✅ Minimum streak set to `{minimum}` days."
+				},
+				"emoji": {
+					"set": "✅ Streak emoji set to `{emoji}`."
+				},
+				"nickname": {
+					"set": "✅ Streak auto-nickname has been **{status}**."
+				},
+				"quota": {
+					"disabled": "⏸️ Streak restores have been **disabled** for this server. Members can no longer restore their streaks.",
+					"set": "✅ Monthly streak restore quota set to **{quota}** per member."
+				},
+				"timezone": {
+					"set": "✅ Streak timezone set to **{timezone}**. Daily streak resets will now follow this timezone."
+				}
+			},
 			"restore": {
 				"title": "🔁 Streak Restore",
 				"desc": "You missed claiming yesterday, but your streak of **{streak} {emoji}** can be saved!\n\nVote for Kythia on **top.gg** and click the button below to restore your streak.",
@@ -89,13 +116,14 @@
 				"success": "Your streak of **{streak} {emoji}** has been restored and extended! Keep it up! 🎉",
 				"expired": "You didn't restore your streak in time. Your streak has been reset. Start fresh! 💪",
 				"last": {
-					"title": "🔄 Streak Restore",
-					"nothing": "You don't have a lost streak to restore! Keep claiming daily to maintain your {emoji} streak.",
-					"already": "You've already restored your streak this cycle. Keep claiming daily to keep your {emoji} streak alive!",
-					"quota_exceeded": "You've used all **{quota}** of your monthly streak restores. Your {emoji} streak restore quota resets at the start of next month.",
-					"success": "{user}'s streak has been restored to **{streak} {emoji}**! Keep it up!",
-					"quota_remaining": "{remaining}/{quota} restores remaining this month."
-				}
+					"title_md": "## ♻️ Restore Last Streak",
+					"nothing": "You have no previous streak to restore, {emoji}. Keep counting from 1!",
+					"already": "You have already restored your streak this period, {emoji}. Keep it going!",
+					"quota_exceeded": "You have used all **{quota}** of your restore quota for this period, {emoji}. Keep counting from 1!",
+					"quota_remaining": "Restores remaining this period: **{remaining}/{quota}**",
+					"success": "✅ {user}'s previous streak has been restored to **{streak} days** {emoji}! Keep it up! 🎉"
+				},
+				"title_md": "## ♻️ Restore Streak"
 			}
 		}
 	}

@@ -94,6 +94,10 @@
 		"claim": {
 			"success": "## 🛄 Ticket Claimed\nThis ticket will now be handled by {user}.",
 			"already_claimed": "## ❌ Error\nThis ticket has already been claimed by <@{userId}>."
+		},
+		"helpers": {
+			"type_title_md": "## {typeName}",
+			"panel_title_md": "## {title}"
 		}
 	}
 }

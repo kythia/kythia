@@ -118,7 +118,13 @@ class TicketClaimButton extends BaseButton {
 			const mainContainer = new ContainerBuilder()
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(`## ${ticketConfig.typeName}`),
+					new TextDisplayBuilder().setContent(
+						await interaction.client.container.t(
+							interaction,
+							'ticket.helpers.type_title_md',
+							{ typeName: ticketConfig.typeName },
+						),
+					),
 				)
 				.addSeparatorComponents(
 					new SeparatorBuilder()

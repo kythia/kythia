@@ -22,8 +22,8 @@ class QuotaCommand extends BaseCommand {
 			.setDescription(
 				'🔄 Set monthly restore quota (how many times members can restore their streak per month)',
 			)
-			.addIntegerOption((opt) =>
-				opt
+			.addIntegerOption((option) =>
+				option
 					.setName('quota')
 					.setDescription(
 						`Restores allowed per month (${MIN_QUOTA}–${MAX_QUOTA}, 0 = disabled)`,
@@ -59,8 +59,8 @@ class QuotaCommand extends BaseCommand {
 			await t(
 				interaction,
 				isDisabled
-					? 'core.setting.setting.streak.quota.disabled'
-					: 'core.setting.setting.streak.quota.set',
+					? 'streak.streak.setting.quota.disabled'
+					: 'streak.streak.setting.quota.set',
 				{ quota },
 			),
 			{ color: isDisabled ? 'Red' : 'Green' },

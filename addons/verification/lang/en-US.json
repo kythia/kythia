@@ -78,5 +78,15 @@
 			},
 			"success": "✅ Verification panel has been generated and sent to {channel}!"
 		}
+	},
+	"verification": {
+		"panel": {
+			"send": {
+				"content_md": "## {title}\\n\\n{description}"
+			}
+		},
+		"helpers": {
+			"verify_md": "## 🛡️ Server Verification\\n\\nWelcome to **{guildName}**!\\nPlease complete the captcha below to get access.\\n\\nYou have **{attempts}** attempt(s) and **{seconds}s** to complete this.\\n"
+		}
 	}
 }

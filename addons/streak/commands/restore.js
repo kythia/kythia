@@ -40,11 +40,12 @@ class RestoreCommand extends BaseCommand {
 			await restoreLastStreak(container, targetMember, serverSetting);
 
 		if (status === 'NO_STREAK_TO_RESTORE') {
-			const msg = `## ${await t(interaction, 'streak.streak.restore.last.title')}\n${await t(
-				interaction,
-				'streak.streak.restore.last.nothing',
-				{ emoji: streakEmoji },
-			)}`;
+			const msg =
+				(await t(interaction, 'streak.streak.restore.last.title_md')) +
+				'\n' +
+				(await t(interaction, 'streak.streak.restore.last.nothing', {
+					emoji: streakEmoji,
+				}));
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -55,11 +56,12 @@ class RestoreCommand extends BaseCommand {
 		}
 
 		if (status === 'ALREADY_RESTORED') {
-			const msg = `## ${await t(interaction, 'streak.streak.restore.last.title')}\n${await t(
-				interaction,
-				'streak.streak.restore.last.already',
-				{ emoji: streakEmoji },
-			)}`;
+			const msg =
+				(await t(interaction, 'streak.streak.restore.last.title_md')) +
+				'\n' +
+				(await t(interaction, 'streak.streak.restore.last.already', {
+					emoji: streakEmoji,
+				}));
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -70,14 +72,13 @@ class RestoreCommand extends BaseCommand {
 		}
 
 		if (status === 'QUOTA_EXCEEDED') {
-			const msg = `## ${await t(interaction, 'streak.streak.restore.last.title')}\n${await t(
-				interaction,
-				'streak.streak.restore.last.quota_exceeded',
-				{
+			const msg =
+				(await t(interaction, 'streak.streak.restore.last.title_md')) +
+				'\n' +
+				(await t(interaction, 'streak.streak.restore.last.quota_exceeded', {
 					quota: restoreQuota,
 					emoji: streakEmoji,
-				},
-			)}`;
+				}));
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -106,27 +107,27 @@ class RestoreCommand extends BaseCommand {
 
 		const targetMention = interaction.user.toString();
 
-		const msg = `## ${await t(interaction, 'streak.streak.restore.last.title')}\n${await t(
-			interaction,
-			'streak.streak.restore.last.success',
-			{
+		const msg =
+			(await t(interaction, 'streak.streak.restore.last.title_md')) +
+			'\n' +
+			(await t(interaction, 'streak.streak.restore.last.success', {
 				user: targetMention,
 				streak: streak.currentStreak,
 				emoji: streakEmoji,
-			},
-		)}${rewardMsg}\n\n${await t(interaction, 'streak.streak.claim.desc', {
-			currentStreak: streak.currentStreak,
-			highestStreak: streak.highestStreak,
-			streakFreezes: streak.streakFreezes ?? 0,
-			emoji: streakEmoji,
-		})}\n-# ${await t(
-			interaction,
-			'streak.streak.restore.last.quota_remaining',
-			{
+			})) +
+			rewardMsg +
+			'\n\n' +
+			(await t(interaction, 'streak.streak.claim.desc', {
+				currentStreak: streak.currentStreak,
+				highestStreak: streak.highestStreak,
+				streakFreezes: streak.streakFreezes ?? 0,
+				emoji: streakEmoji,
+			})) +
+			'\n-# ' +
+			(await t(interaction, 'streak.streak.restore.last.quota_remaining', {
 				remaining: restoreQuota - restoreCount,
 				quota: restoreQuota,
-			},
-		)}`;
+			}));
 
 		const components = await simpleContainer(interaction, msg);
 		return interaction.editReply({

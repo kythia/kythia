@@ -37,7 +37,7 @@ const romanToInt = (s) => {
 
 const parseInputToNumber = (content, mode = 'decimal', mathEnabled = true) => {
 	try {
-		if (!content || content.length > 50) return null;
+		if (!content || content.length > 200) return null;
 		const trimmed = content.trim();
 
 		if (mode === 'binary') {
@@ -58,23 +58,42 @@ const parseInputToNumber = (content, mode = 'decimal', mathEnabled = true) => {
 
 		// Decimal mode (default)
 		if (mathEnabled) {
-			const validCharsRegex = /^[0-9\s+\-*/().^%]+$/;
-			if (!validCharsRegex.test(trimmed)) return null;
+			// Preprocess common natural math symbols to mathjs syntax
+			const processed = trimmed
+				.replace(/×/g, '*')
+				.replace(/÷/g, '/')
+				.replace(/π/g, 'pi')
+				.replace(/√/g, 'sqrt');
 
-			const result = math.evaluate(trimmed);
-			// Check if result is a BigNumber and an integer
+			// Hardcoded easter egg for the meme equation
+			const memeEq =
+				'lim(x→∞) ∑(n=1 to x) (27 / 2ⁿ) + ∫(0 to π) 4 sin(t) dt + det[ e^(iπ)  -2 ;  2  1 ]';
 			if (
-				!result ||
-				typeof result.isInteger !== 'function' ||
-				!result.isInteger()
+				trimmed.replace(/\s+/g, '').toLowerCase() ===
+				memeEq.replace(/\s+/g, '').toLowerCase()
 			) {
+				return 38n;
+			}
+
+			try {
+				const result = math.evaluate(processed);
+				// Check if result is a BigNumber and an integer
+				if (
+					result !== null &&
+					result !== undefined &&
+					typeof result.isInteger === 'function' &&
+					result.isInteger()
+				) {
+					return BigInt(result.toString());
+				}
 				// Fallback if it evaluates to a primitive number for some reason
 				if (typeof result === 'number' && Number.isInteger(result)) {
 					return BigInt(result);
 				}
 				return null;
+			} catch (e) {
+				return null;
 			}
-			return BigInt(result.toString());
 		} else {
 			const validDecimalRegex = /^[0-9]+$/;
 			if (!validDecimalRegex.test(trimmed)) return null;

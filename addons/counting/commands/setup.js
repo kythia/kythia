@@ -129,12 +129,13 @@ class SetupCommand extends BaseCommand {
 		const targetChannel = await getChannelSafe(interaction.client, channel.id);
 		const desc = await t(interaction, 'counting.setup.start');
 
-		targetChannel.send({
+		const sentMessage = await targetChannel.send({
 			components: await simpleContainer(interaction, desc, {
 				color: 'Green',
 			}),
 			flags: MessageFlags.IsComponentsV2,
 		});
+		await sentMessage.pin().catch(() => {});
 		await interaction.editReply({
 			components: await simpleContainer(
 				interaction,

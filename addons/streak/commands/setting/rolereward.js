@@ -18,8 +18,8 @@ class RolerewardCommand extends BaseCommand {
 		subcommand
 			.setName('rolereward')
 			.setDescription('🔥 Set role reward for a specific streak')
-			.addStringOption((opt) =>
-				opt
+			.addStringOption((option) =>
+				option
 					.setName('action')
 					.setDescription('Add or remove role reward')
 					.setRequired(true)
@@ -28,14 +28,14 @@ class RolerewardCommand extends BaseCommand {
 						{ name: 'Remove', value: 'remove' },
 					),
 			)
-			.addIntegerOption((opt) =>
-				opt
+			.addIntegerOption((option) =>
+				option
 					.setName('streak')
 					.setDescription('Required streak')
 					.setRequired(true),
 			)
-			.addRoleOption((opt) =>
-				opt
+			.addRoleOption((option) =>
+				option
 					.setName('role')
 					.setDescription('Role to be given')
 					.setRequired(true),
@@ -70,7 +70,7 @@ class RolerewardCommand extends BaseCommand {
 			serverSetting.streakRoleRewards.push({ streak, role: role.id });
 			components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.setting.setting.streak.rolereward.add', {
+				await t(interaction, 'streak.streak.setting.rolereward.add', {
 					role: `<@&${role.id}>`,
 					streak,
 				}),
@@ -84,21 +84,17 @@ class RolerewardCommand extends BaseCommand {
 			if (serverSetting.streakRoleRewards.length === initial) {
 				components = await simpleContainer(
 					interaction,
-					await t(
-						interaction,
-						'core.setting.setting.streak.rolereward.notfound',
-						{ streak },
-					),
+					await t(interaction, 'streak.streak.setting.rolereward.notfound', {
+						streak,
+					}),
 					{ color: 'Red' },
 				);
 			} else {
 				components = await simpleContainer(
 					interaction,
-					await t(
-						interaction,
-						'core.setting.setting.streak.rolereward.remove',
-						{ streak },
-					),
+					await t(interaction, 'streak.streak.setting.rolereward.remove', {
+						streak,
+					}),
 					{ color: 'Green' },
 				);
 			}

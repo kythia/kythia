@@ -20,8 +20,8 @@ class TimezoneCommand extends BaseCommand {
 		subcommand
 			.setName('timezone')
 			.setDescription('🌐 Set the timezone used for streak day resets')
-			.addStringOption((opt) =>
-				opt
+			.addStringOption((option) =>
+				option
 					.setName('timezone')
 					.setDescription('Timezone for streak day calculations')
 					.setRequired(true)
@@ -65,7 +65,7 @@ class TimezoneCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'core.setting.setting.streak.timezone.set', {
+			await t(interaction, 'streak.streak.setting.timezone.set', {
 				timezone,
 			}),
 			{ color: 'Green' },

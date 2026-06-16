@@ -46,10 +46,10 @@ class ResetCommand extends BaseCommand {
 		const streak = await getOrCreateStreak(container, userId, guildId);
 
 		if (streak.currentStreak === 0) {
-			const msg = `## ${await t(interaction, 'streak.streak.reset.title')}\n${await t(
-				interaction,
-				'streak.streak.reset.already.zero',
-			)}`;
+			const msg =
+				(await t(interaction, 'streak.streak.reset.title_md')) +
+				'\n' +
+				(await t(interaction, 'streak.streak.reset.already.zero'));
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -71,7 +71,10 @@ class ResetCommand extends BaseCommand {
 
 		await syncStreakRoles(interaction.member, 0, streakRoleReward);
 
-		const msg = `## ${await t(interaction, 'streak.streak.reset.title')}\n${await t(interaction, 'streak.streak.reset.success')}`;
+		const msg =
+			(await t(interaction, 'streak.streak.reset.title_md')) +
+			'\n' +
+			(await t(interaction, 'streak.streak.reset.success'));
 
 		const components = await simpleContainer(interaction, msg);
 

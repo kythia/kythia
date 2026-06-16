@@ -83,7 +83,11 @@ async function refreshTicketPanel(panelMessageId, container) {
 		const panelContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`## ${panel.title}`),
+				new TextDisplayBuilder().setContent(
+					await t(fakeInteraction, 'ticket.helpers.panel_title_md', {
+						title: panel.title,
+					}),
+				),
 			)
 			.addSeparatorComponents(
 				new SeparatorBuilder()
@@ -305,7 +309,11 @@ async function createTicketChannel(
 		const mainContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`## ${ticketConfig.typeName}`),
+				new TextDisplayBuilder().setContent(
+					await t(interaction, 'ticket.helpers.type_title_md', {
+						typeName: ticketConfig.typeName,
+					}),
+				),
 			)
 			.addSeparatorComponents(
 				new SeparatorBuilder()

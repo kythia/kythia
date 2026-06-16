@@ -101,7 +101,12 @@ class SendCommand extends BaseCommand {
 		const containerPayload = new ContainerBuilder()
 			.setAccentColor(color || kythiaConfig.bot.color)
 			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`## ${title}\n\n${description}`),
+				new TextDisplayBuilder().setContent(
+					await t(interaction, 'verification.panel.send.content_md', {
+						title,
+						description,
+					}),
+				),
 			)
 			.addSeparatorComponents(
 				new SeparatorBuilder()

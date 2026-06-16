@@ -79,14 +79,13 @@ class ClaimCommand extends BaseCommand {
 					.setAccentColor(accentColor)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							`## ${await t(interaction, 'streak.streak.restore.title')}\n${await t(
-								interaction,
-								'streak.streak.restore.desc',
-								{
+							[
+								await t(interaction, 'streak.streak.restore.title_md'),
+								await t(interaction, 'streak.streak.restore.desc', {
 									streak: streak.currentStreak,
 									emoji: streakEmoji,
-								},
-							)}`,
+								}),
+							].join('\n'),
 						),
 					)
 					.addSeparatorComponents(
@@ -145,14 +144,13 @@ class ClaimCommand extends BaseCommand {
 						.setAccentColor(accentColor)
 						.addTextDisplayComponents(
 							new TextDisplayBuilder().setContent(
-								`## ${await t(interaction, 'streak.streak.restore.title')}\n${await t(
-									interaction,
-									'streak.streak.restore.vote.required',
-									{
+								[
+									await t(interaction, 'streak.streak.restore.title_md'),
+									await t(interaction, 'streak.streak.restore.vote.required', {
 										streak: streak.currentStreak,
 										emoji: streakEmoji,
-									},
-								)}`,
+									}),
+								].join('\n'),
 							),
 						)
 						.addSeparatorComponents(
@@ -213,19 +211,22 @@ class ClaimCommand extends BaseCommand {
 					})}`;
 				}
 
-				const successMsg = `## ${await t(interaction, 'streak.streak.restore.title')}\n${await t(
-					interaction,
-					'streak.streak.restore.success',
-					{
+				const successMsg = [
+					await t(interaction, 'streak.streak.restore.title_md'),
+					await t(interaction, 'streak.streak.restore.success', {
 						streak: restoredStreak.currentStreak,
 						emoji: streakEmoji,
-					},
-				)}${rewardMsg}\n${await t(interaction, 'streak.streak.claim.desc', {
-					currentStreak: restoredStreak.currentStreak,
-					highestStreak: restoredStreak.highestStreak,
-					streakFreezes: restoredStreak.streakFreezes,
-					emoji: streakEmoji,
-				})}`;
+					}),
+					rewardMsg,
+					await t(interaction, 'streak.streak.claim.desc', {
+						currentStreak: restoredStreak.currentStreak,
+						highestStreak: restoredStreak.highestStreak,
+						streakFreezes: restoredStreak.streakFreezes,
+						emoji: streakEmoji,
+					}),
+				]
+					.filter(Boolean)
+					.join('\n');
 
 				const successComponents = await simpleContainer(
 					interaction,
@@ -249,15 +250,16 @@ class ClaimCommand extends BaseCommand {
 					streak.lastClaimTimestamp = new Date();
 					await streak.save();
 
-					const expiredMsg = `## ${await t(interaction, 'streak.streak.claim.title')}\n${await t(
-						interaction,
-						'streak.streak.restore.expired',
-					)}\n${await t(interaction, 'streak.streak.claim.desc', {
-						currentStreak: streak.currentStreak,
-						highestStreak: streak.highestStreak,
-						streakFreezes: streak.streakFreezes,
-						emoji: streakEmoji,
-					})}`;
+					const expiredMsg = [
+						await t(interaction, 'streak.streak.claim.title_md'),
+						await t(interaction, 'streak.streak.restore.expired'),
+						await t(interaction, 'streak.streak.claim.desc', {
+							currentStreak: streak.currentStreak,
+							highestStreak: streak.highestStreak,
+							streakFreezes: streak.streakFreezes,
+							emoji: streakEmoji,
+						}),
+					].join('\n');
 
 					const expiredComponents = await simpleContainer(
 						interaction,
@@ -301,17 +303,19 @@ class ClaimCommand extends BaseCommand {
 			})}`;
 		}
 
-		const title = await t(interaction, 'streak.streak.claim.title');
-		const finalMessage = `## ${title}\n${message}\n${rewardMsg}\n${await t(
-			interaction,
-			'streak.streak.claim.desc',
-			{
+		const finalMessage = [
+			await t(interaction, 'streak.streak.claim.title_md'),
+			message,
+			rewardMsg,
+			await t(interaction, 'streak.streak.claim.desc', {
 				currentStreak: streak.currentStreak,
 				highestStreak: streak.highestStreak,
 				streakFreezes: streak.streakFreezes,
 				emoji: streakEmoji,
-			},
-		)}`;
+			}),
+		]
+			.filter(Boolean)
+			.join('\n');
 		const components = await simpleContainer(interaction, finalMessage);
 		return interaction.editReply({
 			components,

@@ -18,8 +18,8 @@ class EmojiCommand extends BaseCommand {
 		subcommand
 			.setName('emoji')
 			.setDescription('🔥 Set streak emoji')
-			.addStringOption((opt) =>
-				opt.setName('emoji').setDescription('Emoji').setRequired(true),
+			.addStringOption((option) =>
+				option.setName('emoji').setDescription('Emoji').setRequired(true),
 			);
 
 	async execute(interaction) {
@@ -44,7 +44,7 @@ class EmojiCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'core.setting.setting.streak.emoji.set', {
+			await t(interaction, 'streak.streak.setting.emoji.set', {
 				emoji,
 			}),
 			{ color: 'Green' },

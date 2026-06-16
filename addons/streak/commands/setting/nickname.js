@@ -18,8 +18,8 @@ class NicknameCommand extends BaseCommand {
 		subcommand
 			.setName('nickname')
 			.setDescription('🔥 Toggle auto-nickname for streak')
-			.addStringOption((opt) =>
-				opt
+			.addStringOption((option) =>
+				option
 					.setName('status')
 					.setDescription('Select status')
 					.setRequired(true)
@@ -51,7 +51,7 @@ class NicknameCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'core.setting.setting.streak.nickname.set', {
+			await t(interaction, 'streak.streak.setting.nickname.set', {
 				status: status === 'enable' ? 'Enabled' : 'Disabled',
 			}),
 			{ color: status === 'enable' ? 'Green' : 'Red' },

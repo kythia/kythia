@@ -48,17 +48,22 @@ async function sendLog(guild, config, text) {
 // ---------------------------------------------------------------------------
 // Build the captcha message payload based on type
 // ---------------------------------------------------------------------------
-function buildCaptchaPayload(member, config) {
+async function buildCaptchaPayload(member, config) {
 	const { captchaType } = config;
 	const userId = member.id;
 	const header = new ContainerBuilder()
 		.setAccentColor(0x5865f2)
 		.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`## 🛡️ Server Verification\n\n` +
-					`Welcome to **${member.guild.name}**!\n` +
-					`Please complete the captcha below to get access.\n\n` +
-					`You have **${config.maxAttempts}** attempt(s) and **${config.timeoutSeconds}s** to complete this.\n`,
+				await member.guild.client.container.t(
+					member.guild,
+					'verification.helpers.verify_md',
+					{
+						guildName: member.guild.name,
+						attempts: config.maxAttempts,
+						seconds: config.timeoutSeconds,
+					},
+				),
 			),
 		)
 		.addSeparatorComponents(

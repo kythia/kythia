@@ -61,14 +61,19 @@ class UserCommand extends BaseCommand {
 			member = null;
 		}
 		const displayName = member ? member.displayName : target.username;
-		const msg = `## ${await t(interaction, 'streak.streak.user.title.user', {
-			username: displayName,
-		})}\n${status}\n\n${await t(interaction, 'streak.streak.claim.desc', {
-			currentStreak: streak.currentStreak,
-			highestStreak: streak.highestStreak,
-			streakFreezes: streak.streakFreezes ?? 0,
-			emoji: streakEmoji,
-		})}`;
+		const msg =
+			(await t(interaction, 'streak.streak.user.title.user_md', {
+				username: displayName,
+			})) +
+			'\n' +
+			status +
+			'\n\n' +
+			(await t(interaction, 'streak.streak.claim.desc', {
+				currentStreak: streak.currentStreak,
+				highestStreak: streak.highestStreak,
+				streakFreezes: streak.streakFreezes ?? 0,
+				emoji: streakEmoji,
+			}));
 		const components = await simpleContainer(interaction, msg);
 		return interaction.editReply({
 			components,

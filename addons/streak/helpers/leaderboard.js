@@ -51,7 +51,7 @@ async function generateLeaderboardContainer(
 	const [leaderboardContainer] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: `## ${await t(interaction, 'streak.streak.leaderboard.title')}`,
+		title: await t(interaction, 'streak.streak.leaderboard.title_md'),
 		content: leaderboardText,
 		footer: await t(interaction, 'streak.streak.leaderboard.footer', {
 			server: interaction.guild.name,

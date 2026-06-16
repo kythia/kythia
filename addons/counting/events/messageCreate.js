@@ -74,23 +74,10 @@ class MessageCreateEvent extends BaseEvent {
 		const successReaction = quickSetting.successReaction || '🌸';
 		const failReaction = quickSetting.failReaction || '❌';
 
-		// Parse the first line immediately to reject invalid input without clogging the queue
+		// Can't be parsed at all = plain chat message, delete it silently
 		const firstInput = parseInputToNumber(lines[0], mode, mathEnabled);
 		if (firstInput === null) {
-			const warning = await t(message, 'counting.game.invalid_input', {
-				mode: mode,
-			});
-			const components = await simpleContainer(
-				message,
-				`${message.author}, ${warning}`,
-				{
-					color: 'Red',
-				},
-			);
-			await message.reply({
-				components,
-				flags: MessageFlags.IsComponentsV2,
-			});
+			await message.delete().catch(() => {});
 			return;
 		}
 
@@ -213,17 +200,17 @@ class MessageCreateEvent extends BaseEvent {
 					await userStat.save();
 					const isStrict = setting.strictEnabled;
 					let desc;
-					const formattedNext = formatNumberByMode(expectedFromDB, mode);
+					const formattedPrev = formatNumberByMode(expectedFromDB - 1n, mode);
 					if (isStrict) {
 						desc = await t(message, 'counting.game.wrong_number_reset', {
-							number: formattedNext,
+							number: formattedPrev,
 							user: message.author.toString(),
 						});
 						setting.currentCount = 0;
 						setting.lastUserId = null;
 					} else {
 						desc = await t(message, 'counting.game.wrong_number', {
-							number: formattedNext,
+							number: formattedPrev,
 							user: message.author.toString(),
 						});
 					}
@@ -273,17 +260,17 @@ class MessageCreateEvent extends BaseEvent {
 					userStat.ruinedCounts += 1;
 					const isStrict = setting.strictEnabled;
 					let desc;
-					const formattedNext = formatNumberByMode(simulatedNext, mode);
+					const formattedPrev = formatNumberByMode(simulatedNext - 1n, mode);
 					if (isStrict) {
 						desc = await t(message, 'counting.game.wrong_number_reset', {
-							number: formattedNext,
+							number: formattedPrev,
 							user: message.author.toString(),
 						});
 						setting.currentCount = 0;
 						setting.lastUserId = null;
 					} else {
 						desc = await t(message, 'counting.game.wrong_number', {
-							number: formattedNext,
+							number: formattedPrev,
 							user: message.author.toString(),
 						});
 						setting.currentCount = Number(simulatedNext - 1n);

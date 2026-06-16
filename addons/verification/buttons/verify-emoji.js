@@ -76,7 +76,7 @@ class VerifyEmojiButton extends BaseButton {
 			} else {
 				const attempts = incrementAttempts(guildId, interaction.user.id);
 				await handleFail(member, config, attempts, async (remaining) => {
-					const payload = buildCaptchaPayload(member, config);
+					const payload = await buildCaptchaPayload(member, config);
 					await interaction
 						.editReply({
 							content: `❌ Wrong emoji! **${remaining}** attempt(s) remaining. New challenge:`,
