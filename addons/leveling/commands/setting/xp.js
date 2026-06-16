@@ -18,8 +18,8 @@ class XpCommand extends BaseCommand {
 		subcommand
 			.setName('xp')
 			.setDescription('🎮 Set XP amount per message')
-			.addIntegerOption((opt) =>
-				opt
+			.addIntegerOption((option) =>
+				option
 					.setName('xp')
 					.setDescription('XP gained per message')
 					.setRequired(true),

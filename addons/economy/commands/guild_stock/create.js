@@ -228,7 +228,11 @@ class CreateCommand extends BaseCommand {
 				{ fee: LISTING_FEE_KYTH, reward: founderReward, ticker },
 			);
 
-			const fullText = `## ${title}\n${desc}\n\n**Initial Price:** ${priceText}\n**Initial Liquidity:** ${liquidityText}\n**Initial Supply:** ${supplyText}\n\n> ${footer}`;
+			const fullText = await t(
+				interaction,
+				'economy.guild_stock.create.title_md',
+				{ title, desc, priceText, liquidityText, supplyText, footer },
+			);
 			const components = await simpleContainer(interaction, fullText, {
 				color: 'Green',
 			});

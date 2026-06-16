@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/verification/helpers/captcha-image.js
+ * @namespace: addons/verification/helpers/captchaImage.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/core/helpers/reload-node.js
+ * @namespace: addons/core/helpers/reloadNode.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

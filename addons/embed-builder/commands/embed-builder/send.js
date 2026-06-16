@@ -18,21 +18,21 @@ class SendCommand extends BaseCommand {
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('send')
 		.setDescription('📤 Send a saved embed to a channel')
-		.addStringOption((o) =>
-			o
+		.addStringOption((option) =>
+			option
 				.setName('id')
 				.setDescription('The embed to send')
 				.setRequired(true)
 				.setAutocomplete(true),
 		)
-		.addChannelOption((o) =>
-			o
+		.addChannelOption((option) =>
+			option
 				.setName('channel')
 				.setDescription('Target channel (defaults to current channel)')
 				.setRequired(false),
 		)
-		.addStringOption((o) =>
-			o
+		.addStringOption((option) =>
+			option
 				.setName('allowed_mentions')
 				.setDescription('Who can be mentioned in the embed (default: everyone)')
 				.setRequired(false)

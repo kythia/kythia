@@ -59,21 +59,21 @@ class EditCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('edit')
 		.setDescription('📈 Edit the format of an existing stat channel')
-		.addStringOption((opt) =>
-			opt
+		.addStringOption((option) =>
+			option
 				.setName('stats')
 				.setDescription('Select the stat to edit')
 				.setRequired(true)
 				.setAutocomplete(true),
 		)
-		.addChannelOption((opt) =>
-			opt
+		.addChannelOption((option) =>
+			option
 				.setName('channel')
 				.setDescription('📈 Edit stat channel')
 				.setRequired(false),
 		)
-		.addStringOption((opt) =>
-			opt
+		.addStringOption((option) =>
+			option
 				.setName('format')
 				.setDescription('📈 Edit stat format, e.g.: {membersonline}')
 				.setRequired(false),
@@ -140,7 +140,7 @@ class EditCommand extends BaseCommand {
 		const statsId = interaction.options.getString('stats');
 		const format = interaction.options.getString('format');
 		const stat = serverSetting.serverStats?.find(
-			(s) => s.channelId === statsId,
+			(subcommand) => subcommand.channelId === statsId,
 		);
 
 		if (!stat) {

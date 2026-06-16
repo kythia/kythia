@@ -108,13 +108,14 @@ class PortfolioCommand extends BaseCommand {
 			}
 			if (!currentAssetData) {
 				portfolioSections.push(
-					`### 💠 ${holding.assetId.toUpperCase()}\n${await t(
-						interaction,
-						'economy.market.portfolio.data.unavailable',
-						{
-							quantity: holding.quantity,
-						},
-					)}`,
+					await t(interaction, 'economy.market.portfolio.holding_md', {
+						assetId: holding.assetId.toUpperCase(),
+						desc: await t(
+							interaction,
+							'economy.market.portfolio.holding_desc',
+							{ ...holding },
+						),
+					}),
 				);
 				continue;
 			}
@@ -146,7 +147,10 @@ class PortfolioCommand extends BaseCommand {
 				currentAssetData.usd_24h_change,
 			);
 			const lines = [
-				`### 💠 ${holding.assetId.toUpperCase()}${pnl > 0 ? '  📈' : pnl < 0 ? '  📉' : ''}`,
+				await t(interaction, 'economy.market.portfolio.holding_pnl_md', {
+					assetId: holding.assetId.toUpperCase(),
+					pnlIndicator: pnl > 0 ? '  📈' : pnl < 0 ? '  📉' : '',
+				}),
 				`> **${await t(interaction, 'economy.market.portfolio.field.quantity')}** \`${holding.quantity}\``,
 				`> **${await t(interaction, 'economy.market.portfolio.field.avg.buy.price')}** \`$${holding.avgBuyPrice.toLocaleString(
 					undefined,
@@ -198,9 +202,11 @@ class PortfolioCommand extends BaseCommand {
 				? ((totalPnl / totalInvested) * 100).toFixed(2)
 				: '0.00';
 		const summaryLines = [
-			`## ${await t(interaction, 'economy.market.portfolio.title', {
-				username: interaction.user.username,
-			})}`,
+			await t(interaction, 'economy.market.portfolio.title_md', {
+				title: await t(interaction, 'economy.market.portfolio.title', {
+					username: interaction.user.username,
+				}),
+			}),
 			`**${await t(interaction, 'economy.market.portfolio.summary.total.invested')}** \`$${totalInvested.toLocaleString(
 				undefined,
 				{

@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/core/helpers/kythEco.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 // ── Config param definitions ───────────────────────────────────────────────────
 const CONFIG_PARAMS = {
 	// Format: key → { column, type, label, validate(v), desc }

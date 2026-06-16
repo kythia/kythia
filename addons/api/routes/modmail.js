@@ -556,7 +556,13 @@ app.post('/:id/note', async (c) => {
 			.setAccentColor(0x808080) // grey accent for notes
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`## 👁️ Staff Note\n-# by <@${staffId}> (${staff.username})`,
+					await c
+						.get('client')
+						.container.t(
+							{ locale: 'en-US' },
+							'api.routes.modmail.staff_note_md',
+							{ staffId, staffUsername: staff.username },
+						),
 				),
 			)
 			.addSeparatorComponents(

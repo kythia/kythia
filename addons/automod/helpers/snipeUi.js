@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/automod/helpers/snipeUi.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const SNIPES_PER_PAGE = 1;
 
 async function generateSnipeContainer(

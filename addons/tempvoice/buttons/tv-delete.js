@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_delete.js
+ * @namespace: addons/tempvoice/buttons/tv-delete.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

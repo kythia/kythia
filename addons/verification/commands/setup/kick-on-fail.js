@@ -17,8 +17,8 @@ class KickOnFailCommand extends BaseCommand {
 		subcommand
 			.setName('kick-on-fail')
 			.setDescription('Kick member if they exceed max attempts')
-			.addBooleanOption((o) =>
-				o.setName('enabled').setDescription('Enable?').setRequired(true),
+			.addBooleanOption((option) =>
+				option.setName('enabled').setDescription('Enable?').setRequired(true),
 			);
 
 	async execute(interaction) {

@@ -17,8 +17,11 @@ class RoleCommand extends BaseCommand {
 		subcommand
 			.setName('role')
 			.setDescription('Set the role given to verified members')
-			.addRoleOption((o) =>
-				o.setName('role').setDescription('Verified role').setRequired(true),
+			.addRoleOption((option) =>
+				option
+					.setName('role')
+					.setDescription('Verified role')
+					.setRequired(true),
 			);
 
 	async execute(interaction) {

@@ -20,8 +20,8 @@ class EditCommand extends BaseCommand {
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('edit')
 		.setDescription('✏️ Edit a saved embed')
-		.addStringOption((o) =>
-			o
+		.addStringOption((option) =>
+			option
 				.setName('id')
 				.setDescription('The embed to edit')
 				.setRequired(true)

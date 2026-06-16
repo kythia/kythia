@@ -16,8 +16,11 @@ class ResetCommand extends BaseCommand {
 		subcommand
 			.setName('reset')
 			.setDescription('Re-send captcha to a member')
-			.addUserOption((o) =>
-				o.setName('member').setDescription('Target member').setRequired(true),
+			.addUserOption((option) =>
+				option
+					.setName('member')
+					.setDescription('Target member')
+					.setRequired(true),
 			);
 	async execute(interaction) {
 		const container = this.container;

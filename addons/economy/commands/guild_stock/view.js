@@ -99,7 +99,17 @@ class ViewCommand extends BaseCommand {
 			guildId: pool.guildId,
 		});
 
-		const fullText = `## ${title}\n${status}\n\n**Current Price:** ${priceStr}\n**Market Cap:** ${capStr}\n**Holders:** ${holdersStr}\n\n**KYTH Liquidity (X):** ${xStr}\n**Token Reserve (Y):** ${yStr}\n**Trading Fee:** ${feeStr}\n\n> ${footer}`;
+		const fullText = await t(interaction, 'economy.guild_stock.view.title_md', {
+			title,
+			status,
+			priceStr,
+			capStr,
+			holdersStr,
+			xStr,
+			yStr,
+			feeStr,
+			footer,
+		});
 
 		const components = await simpleContainer(interaction, fullText, {
 			color: 'Blue',

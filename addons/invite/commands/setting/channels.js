@@ -18,8 +18,8 @@ class ChannelsCommand extends BaseCommand {
 		subcommand
 			.setName('invite')
 			.setDescription('📢 Set invite log channel')
-			.addChannelOption((opt) =>
-				opt.setName('channel').setDescription('Channel').setRequired(true),
+			.addChannelOption((option) =>
+				option.setName('channel').setDescription('Channel').setRequired(true),
 			);
 
 	async execute(interaction) {

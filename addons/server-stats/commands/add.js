@@ -64,14 +64,14 @@ class AddCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('add')
 		.setDescription('📈 Add a new stat for a specific channel')
-		.addStringOption((opt) =>
-			opt
+		.addStringOption((option) =>
+			option
 				.setName('format')
 				.setDescription('Stat format, e.g.: {memberstotal}')
 				.setRequired(true),
 		)
-		.addChannelOption((opt) =>
-			opt
+		.addChannelOption((option) =>
+			option
 				.setName('channel')
 				.setDescription(
 					'📈 Select a channel to use as stat (if not selected, the bot will create a new channel)',
@@ -139,7 +139,7 @@ class AddCommand extends BaseCommand {
 		}
 
 		const already = serverSetting.serverStats?.find(
-			(s) => s.channelId === channel.id,
+			(subcommand) => subcommand.channelId === channel.id,
 		);
 		if (already) {
 			const components = await simpleContainer(

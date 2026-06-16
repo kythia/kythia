@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/core/helpers/premium-server.js
+ * @namespace: addons/core/helpers/premiumServer.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

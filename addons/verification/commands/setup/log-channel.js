@@ -17,8 +17,11 @@ class LogChannelCommand extends BaseCommand {
 		subcommand
 			.setName('log-channel')
 			.setDescription('Channel to log verification events')
-			.addChannelOption((o) =>
-				o.setName('channel').setDescription('Log channel').setRequired(true),
+			.addChannelOption((option) =>
+				option
+					.setName('channel')
+					.setDescription('Log channel')
+					.setRequired(true),
 			);
 
 	async execute(interaction) {

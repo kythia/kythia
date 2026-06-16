@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/select_menus/tv_transfer_menu.js
+ * @namespace: addons/tempvoice/select_menus/tv-transfer-menu.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

@@ -1,6 +1,6 @@
 /**
- * @namespace: addons/server/commands/server/_helpers.js
- * @type: Command
+ * @namespace: addons/server/helpers/server.js
+ * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1

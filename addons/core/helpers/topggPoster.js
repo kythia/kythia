@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/core/helpers/topgg-poster.js
+ * @namespace: addons/core/helpers/topggPoster.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

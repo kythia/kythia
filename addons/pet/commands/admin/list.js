@@ -36,7 +36,7 @@ class ListCommand extends BaseCommand {
 		if (totalPets === 0) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.admin.list.list.empty.title')}\n${await t(interaction, 'pet.admin.list.list.empty.desc')}`,
+				await t(interaction, 'pet.admin.list.list.empty.msg_md'),
 				{
 					color: 'Red',
 				},

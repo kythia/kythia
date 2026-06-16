@@ -120,7 +120,7 @@ async function buildQuestNotification(container, quest, role) {
 						(await t(fakeInteraction, 'quest.helper.expires_md', {
 							expiresTimestamp,
 						})) +
-						`${role ? `### Notify: \n${role}\n` : ''}`,
+						`${role ? await t(fakeInteraction, 'quest.helper.notify_md', { role }) : ''}`,
 				),
 			)
 			.setThumbnailAccessory(

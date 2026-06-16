@@ -23,7 +23,8 @@
 							"not": {
 								"found": "❌ Lyrics not found for the song."
 							}
-						}
+						},
+						"title_md": "## **{artist} - {title}**"
 					},
 					"configured": "❌ Spotify integration is not configured by the bot owner. Please contact the developer.",
 					"failed": "❌ An error occurred while processing your music request.",
@@ -288,7 +289,8 @@
 					"no_results": "❌ No radio stations found for **{query}**.",
 					"select_desc": "Found multiple results for **{query}**. Please select a station below within 30 seconds.",
 					"timeout": "❌ Selection timed out. Please use the command again.",
-					"live_title": "## 🔴 LIVE RADIO STARTED"
+					"live_title": "## 🔴 LIVE RADIO STARTED",
+					"search_results_md": "## 📻 Search Results: \"{query}\""
 				}
 			},
 			"musicManager": {

@@ -140,7 +140,10 @@ class StartCommand extends BaseCommand {
 			new SectionBuilder()
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						`## ${await t(interaction, 'adventure.start.success.title')}\n${await t(interaction, 'adventure.start.success.desc')}`,
+						await t(interaction, 'adventure.start.success.title_md', {
+							title: await t(interaction, 'adventure.start.success.title'),
+							desc: await t(interaction, 'adventure.start.success.desc'),
+						}),
 					),
 				)
 				.setThumbnailAccessory(

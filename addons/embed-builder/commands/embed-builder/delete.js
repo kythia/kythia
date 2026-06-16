@@ -16,15 +16,15 @@ class DeleteCommand extends BaseCommand {
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('delete')
 		.setDescription('🗑️ Delete a saved embed')
-		.addStringOption((o) =>
-			o
+		.addStringOption((option) =>
+			option
 				.setName('id')
 				.setDescription('The embed to delete')
 				.setRequired(true)
 				.setAutocomplete(true),
 		)
-		.addBooleanOption((o) =>
-			o
+		.addBooleanOption((option) =>
+			option
 				.setName('delete_message')
 				.setDescription(
 					'Also delete the Discord message if the embed was sent (default: false)',

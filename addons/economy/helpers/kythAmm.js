@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/economy/helpers/kyth-amm.js
+ * @namespace: addons/economy/helpers/kythAmm.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

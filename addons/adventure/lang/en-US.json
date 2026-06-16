@@ -366,7 +366,8 @@
 			},
 			"success": {
 				"title": "## ✨ Character Created Successfully!",
-				"desc": "Your character has been created! You are ready to start your adventure! 🎉\n\nUse `/adventure battle` to start fighting or `/adventure stats` to view your status."
+				"desc": "Your character has been created! You are ready to start your adventure! 🎉\n\nUse `/adventure battle` to start fighting or `/adventure stats` to view your status.",
+				"title_md": "## {title}\n{desc}"
 			},
 			"choose": {
 				"char": {

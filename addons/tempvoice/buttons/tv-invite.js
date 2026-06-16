@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_invite.js
+ * @namespace: addons/tempvoice/buttons/tv-invite.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

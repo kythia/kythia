@@ -17,8 +17,8 @@ class TimeoutCommand extends BaseCommand {
 		subcommand
 			.setName('timeout')
 			.setDescription('How long members have to complete the captcha (seconds)')
-			.addIntegerOption((o) =>
-				o
+			.addIntegerOption((option) =>
+				option
 					.setName('seconds')
 					.setDescription('Timeout in seconds (30-600)')
 					.setRequired(true)

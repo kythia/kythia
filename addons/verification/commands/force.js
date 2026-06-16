@@ -15,8 +15,11 @@ class ForceCommand extends BaseCommand {
 		subcommand
 			.setName('force')
 			.setDescription('Manually verify a member (skip captcha)')
-			.addUserOption((o) =>
-				o.setName('member').setDescription('Target member').setRequired(true),
+			.addUserOption((option) =>
+				option
+					.setName('member')
+					.setDescription('Target member')
+					.setRequired(true),
 			);
 	async execute(interaction) {
 		const container = this.container;

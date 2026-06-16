@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/pet/helpers/ui.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const PETS_PER_PAGE = 10;
 
 async function generatePetListContainer(

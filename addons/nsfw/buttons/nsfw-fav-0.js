@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/nsfw/buttons/nsfw_fav_0.js
+ * @namespace: addons/nsfw/buttons/nsfw-fav-0.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

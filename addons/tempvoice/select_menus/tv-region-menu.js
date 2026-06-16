@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/select_menus/tv_region_menu.js
+ * @namespace: addons/tempvoice/select_menus/tv-region-menu.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

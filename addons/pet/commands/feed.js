@@ -34,7 +34,7 @@ class FeedCommand extends BaseCommand {
 		if (!userPet) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.feed.no.pet.title')}\n${await t(interaction, 'pet.feed.no.pet.desc')}`,
+				await t(interaction, 'pet.feed.no.pet.msg_md'),
 				{ color: 'Red' }, // 0xed4245 is Red
 			);
 			return interaction.editReply({
@@ -45,7 +45,7 @@ class FeedCommand extends BaseCommand {
 		if (userPet.isDead) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.feed.dead.title')}\n${await t(interaction, 'pet.feed.dead.desc')}`,
+				await t(interaction, 'pet.feed.dead.msg_md'),
 				{ color: 'Red' }, // 0xed4245 is Red
 			);
 			return interaction.editReply({
@@ -61,7 +61,7 @@ class FeedCommand extends BaseCommand {
 		if (!petFood) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.feed.no.food.title')}\n${await t(interaction, 'pet.feed.no.food.desc')}`,
+				await t(interaction, 'pet.feed.no.food.msg_md'),
 				{ color: 'Red' }, // 0xed4245 is Red
 			);
 			return interaction.editReply({
@@ -78,7 +78,7 @@ class FeedCommand extends BaseCommand {
 		if (userPet.hunger >= 100) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.feed.full.title')}\n${await t(interaction, 'pet.feed.full.desc')}`,
+				await t(interaction, 'pet.feed.full.msg_md'),
 				{ color: '#57f287' }, // 0x57f287
 			);
 			return interaction.editReply({
@@ -89,16 +89,12 @@ class FeedCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'pet.feed.success.title')}\n${await t(
-				interaction,
-				'pet.feed.success.desc',
-				{
-					icon: userPet.pet.icon,
-					name: userPet.pet.name,
-					rarity: userPet.pet.rarity,
-					hunger: userPet.hunger,
-				},
-			)}`,
+			await t(interaction, 'pet.feed.success.msg_md', {
+				icon: userPet.pet.icon,
+				name: userPet.pet.name,
+				rarity: userPet.pet.rarity,
+				hunger: userPet.hunger,
+			}),
 			{ color: kythiaConfig.bot.color },
 		);
 

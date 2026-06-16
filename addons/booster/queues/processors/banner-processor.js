@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/booster/queues/processors/bannerProcessor.js
+ * @namespace: addons/booster/queues/processors/banner-processor.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

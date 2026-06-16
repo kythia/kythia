@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/api/helpers/owner-guard.js
+ * @namespace: addons/api/helpers/ownerGuard.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

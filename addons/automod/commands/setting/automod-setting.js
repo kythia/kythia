@@ -35,8 +35,8 @@ function ensureArray(dbField) {
 	return [];
 }
 
-const createToggleOption = () => (opt) =>
-	opt
+const createToggleOption = () => (option) =>
+	option
 		.setName('status')
 		.setDescription('Select status')
 		.setRequired(true)
@@ -81,8 +81,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('add')
 						.setDescription('Add a user or role to the whitelist')
-						.addMentionableOption((opt) =>
-							opt
+						.addMentionableOption((option) =>
+							option
 								.setName('target')
 								.setDescription('User or role')
 								.setRequired(true),
@@ -92,8 +92,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('remove')
 						.setDescription('Remove a user or role from the whitelist')
-						.addMentionableOption((opt) =>
-							opt
+						.addMentionableOption((option) =>
+							option
 								.setName('target')
 								.setDescription('User or role')
 								.setRequired(true),
@@ -113,8 +113,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('add')
 						.setDescription('Add a word to the blocklist')
-						.addStringOption((opt) =>
-							opt
+						.addStringOption((option) =>
+							option
 								.setName('word')
 								.setDescription('Word to block')
 								.setRequired(true),
@@ -124,8 +124,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('remove')
 						.setDescription('Remove a word from the blocklist')
-						.addStringOption((opt) =>
-							opt
+						.addStringOption((option) =>
+							option
 								.setName('word')
 								.setDescription('Word to unblock')
 								.setRequired(true),
@@ -147,8 +147,8 @@ class AutomodSettingCommand extends BaseCommand {
 						.setDescription(
 							'Whitelist a word (allow even if it contains badwords)',
 						)
-						.addStringOption((opt) =>
-							opt
+						.addStringOption((option) =>
+							option
 								.setName('word')
 								.setDescription('Word to allow')
 								.setRequired(true),
@@ -158,8 +158,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('remove')
 						.setDescription('Remove a word from the badword whitelist')
-						.addStringOption((opt) =>
-							opt
+						.addStringOption((option) =>
+							option
 								.setName('word')
 								.setDescription('Word to remove')
 								.setRequired(true),
@@ -179,8 +179,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('add')
 						.setDescription('Add a channel to the exception list')
-						.addChannelOption((opt) =>
-							opt
+						.addChannelOption((option) =>
+							option
 								.setName('channel')
 								.setDescription('Channel to ignore')
 								.setRequired(true),
@@ -190,8 +190,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('remove')
 						.setDescription('Remove a channel from the exception list')
-						.addChannelOption((opt) =>
-							opt
+						.addChannelOption((option) =>
+							option
 								.setName('channel')
 								.setDescription('Channel to remove')
 								.setRequired(true),
@@ -213,8 +213,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('mod-log')
 						.setDescription('Set the mod log channel (automod warnings)')
-						.addChannelOption((opt) =>
-							opt
+						.addChannelOption((option) =>
+							option
 								.setName('channel')
 								.setDescription('Channel for mod logs')
 								.setRequired(true),
@@ -224,8 +224,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('audit-log')
 						.setDescription('Set the audit log channel (message edits/deletes)')
-						.addChannelOption((opt) =>
-							opt
+						.addChannelOption((option) =>
+							option
 								.setName('channel')
 								.setDescription('Channel for audit logs')
 								.setRequired(true),
@@ -260,8 +260,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('toggle')
 						.setDescription('Enable or disable the entire AntiNuke system')
-						.addStringOption((opt) =>
-							opt
+						.addStringOption((option) =>
+							option
 								.setName('status')
 								.setDescription('Enable or disable')
 								.setRequired(true)
@@ -275,8 +275,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('module')
 						.setDescription('Enable or disable a specific AntiNuke module')
-						.addStringOption((opt) =>
-							opt
+						.addStringOption((option) =>
+							option
 								.setName('module')
 								.setDescription('Which module')
 								.setRequired(true)
@@ -290,8 +290,8 @@ class AutomodSettingCommand extends BaseCommand {
 									{ name: 'Admin Grant', value: 'adminGrant' },
 								),
 						)
-						.addStringOption((opt) =>
-							opt
+						.addStringOption((option) =>
+							option
 								.setName('status')
 								.setDescription('Enable or disable this module')
 								.setRequired(true)
@@ -305,8 +305,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('threshold')
 						.setDescription('Set threshold (count + window) for a module')
-						.addStringOption((opt) =>
-							opt
+						.addStringOption((option) =>
+							option
 								.setName('module')
 								.setDescription('Which module')
 								.setRequired(true)
@@ -319,16 +319,16 @@ class AutomodSettingCommand extends BaseCommand {
 									{ name: 'Webhook Create', value: 'webhookCreate' },
 								),
 						)
-						.addIntegerOption((opt) =>
-							opt
+						.addIntegerOption((option) =>
+							option
 								.setName('count')
 								.setDescription('Number of actions before triggering (e.g. 3)')
 								.setRequired(true)
 								.setMinValue(1)
 								.setMaxValue(20),
 						)
-						.addIntegerOption((opt) =>
-							opt
+						.addIntegerOption((option) =>
+							option
 								.setName('seconds')
 								.setDescription('Time window in seconds (e.g. 10)')
 								.setRequired(true)
@@ -340,8 +340,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('action')
 						.setDescription('Set the punishment action for a module')
-						.addStringOption((opt) =>
-							opt
+						.addStringOption((option) =>
+							option
 								.setName('module')
 								.setDescription('Which module')
 								.setRequired(true)
@@ -355,8 +355,8 @@ class AutomodSettingCommand extends BaseCommand {
 									{ name: 'Admin Grant', value: 'adminGrant' },
 								),
 						)
-						.addStringOption((opt) =>
-							opt
+						.addStringOption((option) =>
+							option
 								.setName('action')
 								.setDescription('Action to take')
 								.setRequired(true)
@@ -372,8 +372,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('whitelist')
 						.setDescription('Add or remove a user/role from antinuke immunity')
-						.addStringOption((opt) =>
-							opt
+						.addStringOption((option) =>
+							option
 								.setName('action')
 								.setDescription('Add or remove')
 								.setRequired(true)
@@ -382,8 +382,8 @@ class AutomodSettingCommand extends BaseCommand {
 									{ name: 'Remove', value: 'remove' },
 								),
 						)
-						.addMentionableOption((opt) =>
-							opt
+						.addMentionableOption((option) =>
+							option
 								.setName('target')
 								.setDescription('User or role')
 								.setRequired(true),
@@ -393,8 +393,8 @@ class AutomodSettingCommand extends BaseCommand {
 					sub
 						.setName('log-channel')
 						.setDescription('Set a dedicated channel for AntiNuke alerts')
-						.addChannelOption((opt) =>
-							opt
+						.addChannelOption((option) =>
+							option
 								.setName('channel')
 								.setDescription('Log channel')
 								.setRequired(true),

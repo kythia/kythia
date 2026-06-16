@@ -15,8 +15,8 @@ class EnableCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('enable')
 		.setDescription('📈 Enable stat channel')
-		.addStringOption((opt) =>
-			opt
+		.addStringOption((option) =>
+			option
 				.setName('stats')
 				.setDescription('Select the stat to enable')
 				.setRequired(true)
@@ -83,7 +83,7 @@ class EnableCommand extends BaseCommand {
 
 		const statsId = interaction.options.getString('stats');
 		const stat = serverSetting.serverStats?.find(
-			(s) => s.channelId === statsId,
+			(subcommand) => subcommand.channelId === statsId,
 		);
 
 		if (!stat) {

@@ -17,8 +17,8 @@ class ChannelCommand extends BaseCommand {
 		subcommand
 			.setName('channel')
 			.setDescription('Channel where captcha is sent (leave blank for DM only)')
-			.addChannelOption((o) =>
-				o
+			.addChannelOption((option) =>
+				option
 					.setName('channel')
 					.setDescription('Verification channel')
 					.setRequired(false),

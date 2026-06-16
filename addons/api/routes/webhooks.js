@@ -92,8 +92,14 @@ app.post('/topgg', async (c) => {
 			);
 			const { simpleContainer } = helpers.discord;
 			const msg = isNew
-				? `## \`👤\` Kythia Account Created!\nThanks for voting! You got **1,000 Kythia Coins** and unlock **vote only** command as a thank you. \nDont forget to vote for Kythia tomorrow!`
-				: `## \`🩷\` Thanks for voting!\nYou got **1,000 Kythia Coins** and unlock **vote only** command as a thank you. \nDont forget to vote for Kythia tomorrow!`;
+				? await client.container.t(
+						{ locale: 'en-US' },
+						'api.webhooks.account_created_md',
+					)
+				: await client.container.t(
+						{ locale: 'en-US' },
+						'api.webhooks.thanks_voting_md',
+					);
 			const components = await simpleContainer(
 				{
 					client,
@@ -147,7 +153,12 @@ app.post('/topgg', async (c) => {
 					.addSectionComponents(
 						new SectionBuilder()
 							.addTextDisplayComponents(
-								new TextDisplayBuilder().setContent(`## New Vote!`),
+								new TextDisplayBuilder().setContent(
+									await client.container.t(
+										{ locale: 'en-US' },
+										'api.webhooks.new_vote_md',
+									),
+								),
 							)
 							.setThumbnailAccessory(
 								new ThumbnailBuilder()
@@ -292,7 +303,11 @@ app.post('/license-created', async (c) => {
 				},
 				404,
 			);
-		const msg = `## \`🎉\` Purchase Successful!\nThank you for purchasing **Kythia Dashboard / Addons**.\n\nHere is your **License Key**:\n\`\`\`${licenseKey}\`\`\`\n\n**Transaction ID**: \`${transactionId}\`\n\n> *Please keep this key safe. Do not share it with anyone.*`;
+		const msg = await client.container.t(
+			{ locale: 'en-US' },
+			'api.webhooks.purchase_md',
+			{ licenseKey, transactionId },
+		);
 		const components = await simpleContainer(
 			{
 				client,

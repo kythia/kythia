@@ -2194,7 +2194,11 @@ class MusicHandlers {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`## **${embedArtist} - ${embedTitle}**`,
+					await this.t(
+						interaction,
+						'music.helpers.handlers.music.lyrics.title_md',
+						{ artist: embedArtist, title: embedTitle },
+					),
 				),
 			)
 			.addSeparatorComponents(
@@ -4310,7 +4314,11 @@ class MusicHandlers {
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						`## 📻 Search Results: "${query}"`,
+						await this.t(
+							interaction,
+							'music.helpers.handlers.radio.search_results_md',
+							{ query },
+						),
 					),
 				)
 				.addSeparatorComponents(

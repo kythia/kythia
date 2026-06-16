@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/verification/helpers/captcha-math.js
+ * @namespace: addons/verification/helpers/captchaMath.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

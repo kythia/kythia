@@ -17,8 +17,8 @@ class WelcomeMessageCommand extends BaseCommand {
 		subcommand
 			.setName('welcome-message')
 			.setDescription('DM sent to members after they verify')
-			.addStringOption((o) =>
-				o
+			.addStringOption((option) =>
+				option
 					.setName('message')
 					.setDescription('Welcome message text (or "none" to disable)')
 					.setRequired(true),

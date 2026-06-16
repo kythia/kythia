@@ -19,8 +19,8 @@ class TypeCommand extends BaseCommand {
 		subcommand
 			.setName('type')
 			.setDescription('Captcha challenge type')
-			.addStringOption((o) =>
-				o
+			.addStringOption((option) =>
+				option
 					.setName('type')
 					.setDescription('Type of captcha')
 					.setRequired(true)

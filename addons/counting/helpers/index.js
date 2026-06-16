@@ -91,7 +91,7 @@ const parseInputToNumber = (content, mode = 'decimal', mathEnabled = true) => {
 					return BigInt(result);
 				}
 				return null;
-			} catch (e) {
+			} catch (_e) {
 				return null;
 			}
 		} else {

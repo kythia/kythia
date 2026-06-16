@@ -23,8 +23,8 @@ class RpsCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('rps')
 		.setDescription('✂️ Play Rock Paper Scissors — against the bot or a friend!')
-		.addUserOption((o) =>
-			o
+		.addUserOption((option) =>
+			option
 				.setName('opponent')
 				.setDescription('Challenge a friend (leave empty to play vs bot)')
 				.setRequired(false),

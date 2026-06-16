@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/core/helpers/help-utils.js
+ * @namespace: addons/core/helpers/helpUtils.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

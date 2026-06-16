@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/ai/helpers/listUi.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const CHANNELS_PER_PAGE = 10;
 
 async function generateAIListContainer(

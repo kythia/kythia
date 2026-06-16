@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/core/helpers/testallMock.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const { ChannelType, ApplicationCommandOptionType } = require('discord.js');
 
 const BLACKLIST_COMMANDS = [

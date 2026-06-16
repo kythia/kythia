@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/nsfw/buttons/nsfw_delete.js
+ * @namespace: addons/nsfw/buttons/nsfw-delete.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

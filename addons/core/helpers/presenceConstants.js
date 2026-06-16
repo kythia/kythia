@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/core/helpers/presenceConstants.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const { ActivityType, PresenceUpdateStatus } = require('discord.js');
 
 const STATUS_OPTIONS = Object.entries(PresenceUpdateStatus)

@@ -15,8 +15,8 @@ class DisableCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('disable')
 		.setDescription('📈 Disable stat channel')
-		.addStringOption((opt) =>
-			opt
+		.addStringOption((option) =>
+			option
 				.setName('stats')
 				.setDescription('Select the stat to disable')
 				.setRequired(true)
@@ -83,7 +83,7 @@ class DisableCommand extends BaseCommand {
 
 		const statsId = interaction.options.getString('stats');
 		const stat = serverSetting.serverStats?.find(
-			(s) => s.channelId === statsId,
+			(subcommand) => subcommand.channelId === statsId,
 		);
 
 		if (!stat) {

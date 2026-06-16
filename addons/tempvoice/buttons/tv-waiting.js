@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_waiting.js
+ * @namespace: addons/tempvoice/buttons/tv-waiting.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

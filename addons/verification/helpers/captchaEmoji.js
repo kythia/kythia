@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/verification/helpers/captcha-emoji.js
+ * @namespace: addons/verification/helpers/captchaEmoji.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

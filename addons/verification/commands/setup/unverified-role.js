@@ -17,8 +17,11 @@ class UnverifiedRoleCommand extends BaseCommand {
 		subcommand
 			.setName('unverified-role')
 			.setDescription('Role assigned on join (restricts unverified members)')
-			.addRoleOption((o) =>
-				o.setName('role').setDescription('Unverified role').setRequired(true),
+			.addRoleOption((option) =>
+				option
+					.setName('role')
+					.setDescription('Unverified role')
+					.setRequired(true),
 			);
 
 	async execute(interaction) {

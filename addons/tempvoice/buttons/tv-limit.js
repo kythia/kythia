@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_limit.js
+ * @namespace: addons/tempvoice/buttons/tv-limit.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

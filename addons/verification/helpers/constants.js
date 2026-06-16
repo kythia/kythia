@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/verification/helpers/constants.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const CAPTCHA_TYPES = [
 	{ name: 'Math (multiple choice buttons)', value: 'math' },
 	{ name: 'Emoji click (buttons)', value: 'emoji' },

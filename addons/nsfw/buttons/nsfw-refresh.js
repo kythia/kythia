@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/nsfw/buttons/nsfw_refresh.js
+ * @namespace: addons/nsfw/buttons/nsfw-refresh.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

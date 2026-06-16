@@ -74,7 +74,7 @@ class StoplossCommand extends BaseCommand {
 		if (assetId === 'kyth') {
 			const components = await simpleContainer(
 				interaction,
-				'## ❌ Unsupported Asset\nStop-loss orders are **not supported** for the `KYTH` token due to the real-time Automated Market Maker mechanics. Please use `/eco market sell` directly.',
+				await t(interaction, 'economy.market.stoploss.unsupported_md'),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({

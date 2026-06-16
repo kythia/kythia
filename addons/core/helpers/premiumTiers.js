@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/core/helpers/premium-tiers.js
+ * @namespace: addons/core/helpers/premiumTiers.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

@@ -4,10 +4,10 @@
 			"messageCreate": {
 				"memory": {
 					"added": "Okay, I'll remember that! ^-^",
-					"duplicate": "I already know that! \ud83d\ude09",
+					"duplicate": "I already know that! 😉",
 					"empty": "What fact should I remember? >,<",
 					"token": {
-						"limit": "Sorry, the AI token limit has been reached for this minute. I need a short break, please try again in a minute! \ud83d\ude25"
+						"limit": "Sorry, the AI token limit has been reached for this minute. I need a short break, please try again in a minute! 😥"
 					},
 					"api": {
 						"key": {
@@ -27,105 +27,106 @@
 					"everyone": {}
 				},
 				"mention": "Hey, what do you want to say? >,<",
-				"cooldown": "Slow down a bit! \ud83d\ude05 You're sending messages too fast. Please wait **{seconds}s** before chatting with me again. ^-^"
+				"cooldown": "Slow down a bit! 😅 You're sending messages too fast. Please wait **{seconds}s** before chatting with me again. ^-^"
 			}
 		},
 		"translate": {
-			"limit": "## \u274c Limit Reached\nSorry, the AI token limit has been reached for this minute. I need a short break, please try again in a minute! \ud83d\ude25",
-			"success": "## \ud83c\udf10 Translated\n### Language: `{lang}`\n### Input: ```{text}```\n### Translated: ```{translated}```",
-			"error": "## \u274c Error\nAn error occurred while translating the text. Please try again later! ><",
+			"limit": "## ❌ Limit Reached\nSorry, the AI token limit has been reached for this minute. I need a short break, please try again in a minute! 😥",
+			"success": "## 🌐 Translated\n### Language: `{lang}`\n### Input: ```{text}```\n### Translated: ```{translated}```",
+			"error": "## ❌ Error\nAn error occurred while translating the text. Please try again later! ><",
 			"no": {
-				"result": "## \u274c Error\nNo translation result."
+				"result": "## ❌ Error\nNo translation result."
 			}
 		},
 		"ai": {
 			"manage": {
 				"already": {
-					"enabled": "## \ud83e\udd16 AI Enable\nAI is already enabled in this channel! You can start chatting with the AI here."
+					"enabled": "## 🤖 AI Enable\nAI is already enabled in this channel! You can start chatting with the AI here."
 				},
 				"enable": {
-					"success": "## \u2705 AI Enabled\nAI has been enabled in this channel! Feel free to start chatting with the AI \ud83c\udf89"
+					"success": "## ✅ AI Enabled\nAI has been enabled in this channel! Feel free to start chatting with the AI 🎉"
 				},
 				"not": {
-					"enabled": "## \u274c AI Disable\nAI is not enabled in this channel. Nothing to disable."
+					"enabled": "## ❌ AI Disable\nAI is not enabled in this channel. Nothing to disable."
 				},
 				"disable": {
-					"success": "## \ud83d\uded1 AI Disabled\nAI has been disabled in this channel. See you again!"
+					"success": "## 🛑 AI Disabled\nAI has been disabled in this channel. See you again!"
 				},
 				"unknown": {
-					"subcommand": "## \u274c Error\nUnknown subcommand. Use `/ai enable` or `/ai disable`."
+					"subcommand": "## ❌ Error\nUnknown subcommand. Use `/ai enable` or `/ai disable`."
 				}
 			},
 			"list": {
-				"empty": "\ud83e\udd16 There are no AI-enabled channels in this server yet.",
+				"empty": "🤖 There are no AI-enabled channels in this server yet.",
 				"title": "## AI-Enabled Channels",
-				"footer": "Page {page} of {totalPages} \u2022 Total AI Channels: {totalChannels}",
+				"footer": "Page {page} of {totalPages} • Total AI Channels: {totalChannels}",
 				"nav": {
-					"first": "\u23ea\ufe0f First",
-					"prev": "\u25c0\ufe0f Prev",
-					"next": "Next \u25b6\ufe0f",
-					"last": "Last \u23e9\ufe0f"
+					"first": "⏪️ First",
+					"prev": "◀️ Prev",
+					"next": "Next ▶️",
+					"last": "Last ⏩️"
 				},
 				"not": {
 					"your": {
-						"interaction": "\u274c This is not your interaction! Use the command yourself to view the AI channel list."
+						"interaction": "❌ This is not your interaction! Use the command yourself to view the AI channel list."
 					}
 				}
 			},
 			"facts": {
-				"empty": "\ud83e\udde0 I haven't learned any facts about you yet! Chat with me to help me remember things about you.",
+				"empty": "🧠 I haven't learned any facts about you yet! Chat with me to help me remember things about you.",
 				"title": "## Facts I Remember About You",
-				"footer": "Page {page} of {totalPages} \u2022 Total Facts: {totalFacts}",
+				"footer": "Page {page} of {totalPages} • Total Facts: {totalFacts}",
 				"nav": {
-					"first": "\u23ea\ufe0f First",
-					"prev": "\u25c0\ufe0f Prev",
-					"next": "Next \u25b6\ufe0f",
-					"last": "Last \u23e9\ufe0f"
+					"first": "⏪️ First",
+					"prev": "◀️ Prev",
+					"next": "Next ▶️",
+					"last": "Last ⏩️"
 				},
 				"not": {
 					"your": {
-						"interaction": "\u274c This is not your interaction! Use the command yourself to view your facts."
+						"interaction": "❌ This is not your interaction! Use the command yourself to view your facts."
 					}
 				}
 			},
 			"forget": {
-				"success": "## \ud83e\uddf9 Memory Cleared\nI've cleared our conversation history! We can start fresh from here. Your saved facts are still remembered though."
+				"success": "## 🧹 Memory Cleared\nI've cleared our conversation history! We can start fresh from here. Your saved facts are still remembered though."
 			},
 			"help": {
-				"title": "\ud83c\udf38 AI Help Guide",
-				"how_to_chat": "### \ud83d\udcac How to Chat with AI\n\n**Three ways to talk to me:**\n1. **DM me** - Just send me a direct message!\n2. **@mention me** - Tag me in any channel: @Kythia hello!\n3. **AI-enabled channels** - Admins can enable AI in specific channels with `/ai enable`\n\nI remember our conversation context, so you can have natural back-and-forth discussions!",
-				"commands": "### \ud83d\udccb Available Commands\n\n**`/ai enable`** - Enable AI in current channel (Admin only)\n**`/ai disable`** - Disable AI in current channel (Admin only)\n**`/ai list`** - View all AI-enabled channels\n**`/ai facts`** - See all facts I've learned about you\n**`/ai fact-delete`** - Delete a specific fact by number\n**`/ai forget`** - Clear conversation history\n**`/ai personality`** - Change my conversation style\n**`/ai help`** - Show this help guide",
-				"memory": "### \ud83e\udde0 Memory & Facts System\n\nI can remember facts about you! Just say:\n\u2022 **\"Remember that I like pizza\"**\n\u2022 **\"Ingat aku suka coding\"**\n\u2022 **\"Catat bahwa saya dari Jakarta\"**\n\nSupported languages: English, Indonesian\n\nI categorize facts into types like:\n\u2022 Birthday, Name, Hobbies\n\u2022 Location, Job, Education\n\u2022 Preferences (food, music, games, etc.)\n\nView your facts with `/ai facts` anytime!",
-				"features": "### \u2728 AI Features\n\n**\ud83d\uddbc\ufe0f Multi-Media Support**\n\u2022 Send images - I can describe and analyze them\n\u2022 Share videos - I can understand video content\n\u2022 Upload PDFs - I can read documents\n\u2022 Share YouTube links - I can discuss videos\n\n**\ud83d\udee0\ufe0f Command Execution**\n\u2022 Ask me to roll dice, check ping, play music\n\u2022 I can execute bot commands for you!\n\n**\ud83c\udf10 Web Search**\n\u2022 Ask me current questions\n\u2022 I can search the web for answers",
-				"tips": "### \ud83d\udca1 Tips & Tricks\n\n\u2705 **Be conversational** - Talk to me naturally!\n\u2705 **Use context** - I remember our previous messages\n\u2705 **Ask follow-ups** - Continue the conversation\n\u2705 **Share media** - I can see images and videos\n\u2705 **Save facts** - Tell me things to remember\n\n\u26a0\ufe0f **Privacy Notes:**\n\u2022 Conversation history is cached for 30 minutes\n\u2022 Facts are stored until you delete them\n\u2022 Use `/ai forget` to clear history\n\u2022 Use `/ai facts` to manage your data"
+				"title": "🌸 AI Help Guide",
+				"how_to_chat": "### 💬 How to Chat with AI\n\n**Three ways to talk to me:**\n1. **DM me** - Just send me a direct message!\n2. **@mention me** - Tag me in any channel: @Kythia hello!\n3. **AI-enabled channels** - Admins can enable AI in specific channels with `/ai enable`\n\nI remember our conversation context, so you can have natural back-and-forth discussions!",
+				"commands": "### 📋 Available Commands\n\n**`/ai enable`** - Enable AI in current channel (Admin only)\n**`/ai disable`** - Disable AI in current channel (Admin only)\n**`/ai list`** - View all AI-enabled channels\n**`/ai facts`** - See all facts I've learned about you\n**`/ai fact-delete`** - Delete a specific fact by number\n**`/ai forget`** - Clear conversation history\n**`/ai personality`** - Change my conversation style\n**`/ai help`** - Show this help guide",
+				"memory": "### 🧠 Memory & Facts System\n\nI can remember facts about you! Just say:\n• **\"Remember that I like pizza\"**\n• **\"Ingat aku suka coding\"**\n• **\"Catat bahwa saya dari Jakarta\"**\n\nSupported languages: English, Indonesian\n\nI categorize facts into types like:\n• Birthday, Name, Hobbies\n• Location, Job, Education\n• Preferences (food, music, games, etc.)\n\nView your facts with `/ai facts` anytime!",
+				"features": "### ✨ AI Features\n\n**🖼️ Multi-Media Support**\n• Send images - I can describe and analyze them\n• Share videos - I can understand video content\n• Upload PDFs - I can read documents\n• Share YouTube links - I can discuss videos\n\n**🛠️ Command Execution**\n• Ask me to roll dice, check ping, play music\n• I can execute bot commands for you!\n\n**🌐 Web Search**\n• Ask me current questions\n• I can search the web for answers",
+				"tips": "### 💡 Tips & Tricks\n\n✅ **Be conversational** - Talk to me naturally!\n✅ **Use context** - I remember our previous messages\n✅ **Ask follow-ups** - Continue the conversation\n✅ **Share media** - I can see images and videos\n✅ **Save facts** - Tell me things to remember\n\n⚠️ **Privacy Notes:**\n• Conversation history is cached for 30 minutes\n• Facts are stored until you delete them\n• Use `/ai forget` to clear history\n• Use `/ai facts` to manage your data",
+				"title_md": "## {title}"
 			},
 			"fact_delete": {
-				"no_facts": "## \u274c Error\nYou don't have any saved facts to delete!",
-				"invalid_number": "## \u274c Error\nInvalid fact number! You only have {max} fact(s). Use `/ai facts` to see all your facts.",
-				"success": "## \u2705 Fact Deleted\nSuccessfully deleted fact: **{fact}**"
+				"no_facts": "## ❌ Error\nYou don't have any saved facts to delete!",
+				"invalid_number": "## ❌ Error\nInvalid fact number! You only have {max} fact(s). Use `/ai facts` to see all your facts.",
+				"success": "## ✅ Fact Deleted\nSuccessfully deleted fact: **{fact}**"
 			},
 			"personality": {
-				"success": "## \ud83c\udfad Personality Updated\nAI personality changed to **{personality}**!\n{description}\n\nTry chatting with me now to experience the new style!",
-				"reset": "## \ud83d\udd04 Personality Reset\nAI personality reset to config default!\n\nI'll now use the default personality set by the bot administrator."
+				"success": "## 🎭 Personality Updated\nAI personality changed to **{personality}**!\n{description}\n\nTry chatting with me now to experience the new style!",
+				"reset": "## 🔄 Personality Reset\nAI personality reset to config default!\n\nI'll now use the default personality set by the bot administrator."
 			},
 			"optout": {
-				"database_error": "## \u274c Error\nDatabase not initialized. Please try again later.",
-				"success": "## \u2705 Opted Out\nYou have successfully **opted out** of AI features. The bot will no longer process your messages, and your existing AI memories have been permanently deleted. Use this command again to opt back in.",
-				"revert": "## \u2705 Opted In\nYou have successfully **opted back in** to AI features. The bot will now interact with you normally.",
-				"error": "## \u274c Error\nAn unexpected error occurred while processing your request."
+				"database_error": "## ❌ Error\nDatabase not initialized. Please try again later.",
+				"success": "## ✅ Opted Out\nYou have successfully **opted out** of AI features. The bot will no longer process your messages, and your existing AI memories have been permanently deleted. Use this command again to opt back in.",
+				"revert": "## ✅ Opted In\nYou have successfully **opted back in** to AI features. The bot will now interact with you normally.",
+				"error": "## ❌ Error\nAn unexpected error occurred while processing your request."
 			}
 		},
 		"imagen": {
-			"no_input": "## \u274c Error\nPlease provide a prompt and/or an image to generate from.",
-			"invalid_attachment": "## \u274c Error\nThe attached file must be an image.",
-			"limit": "## \u274c Limit Reached\nYou have reached your daily limit of **{limit}** image generations. Please try again tomorrow!",
-			"loading": "## \ud83c\udfa8 Generating\nYour image is generating now, please wait...",
-			"loading_transform": "## \ud83d\uddbc\ufe0f Transforming\nTransforming your image{prompt}...",
-			"fetch_error": "## \u274c Error\nFailed to fetch the source image. Please try again.",
-			"rate_limit": "## \u274c Rate Limit\nAI is currently rate limited. Please try again later.",
-			"result": "## \ud83c\udfa8 Generated Image\nPrompt: {prompt}",
-			"result_transform": "## \ud83d\uddbc\ufe0f Transformed Image\nPrompt: {prompt}",
-			"error": "## \u274c Error\nFailed to generate image: {error}"
+			"no_input": "## ❌ Error\nPlease provide a prompt and/or an image to generate from.",
+			"invalid_attachment": "## ❌ Error\nThe attached file must be an image.",
+			"limit": "## ❌ Limit Reached\nYou have reached your daily limit of **{limit}** image generations. Please try again tomorrow!",
+			"loading": "## 🎨 Generating\nYour image is generating now, please wait...",
+			"loading_transform": "## 🖼️ Transforming\nTransforming your image{prompt}...",
+			"fetch_error": "## ❌ Error\nFailed to fetch the source image. Please try again.",
+			"rate_limit": "## ❌ Rate Limit\nAI is currently rate limited. Please try again later.",
+			"result": "## 🎨 Generated Image\nPrompt: {prompt}",
+			"result_transform": "## 🖼️ Transformed Image\nPrompt: {prompt}",
+			"error": "## ❌ Error\nFailed to generate image: {error}"
 		}
 	}
 }

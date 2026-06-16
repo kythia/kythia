@@ -1,6 +1,6 @@
 /**
- * @namespace: addons/core/commands/utils/convert/_helpers.js
- * @type: Module
+ * @namespace: addons/core/helpers/convert.js
+ * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
  * @version 26.0.0-rc.1

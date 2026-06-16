@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/economy/helpers/constants.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const ITEMS_PER_PAGE = 5;
 const REQUIRED_MEMBERS = 1000;
 const LISTING_FEE_KYTH = 50;

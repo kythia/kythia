@@ -928,7 +928,10 @@
 				"timeout": {
 					"desc": "⏱️ Confirmation timed out. Trade cancelled."
 				},
-				"preview_title": "## 💰 KYTH Sell Preview"
+				"preview_title": "## 💰 KYTH Sell Preview",
+				"insufficient_kyth_md": "## ❌ Insufficient KYTH\nYou only have **{userKyth} KYTH**. Cannot sell **{sellQuantity} KYTH**.",
+				"amm_unavailable_md": "## ❌ AMM Unavailable\nThe KYTH liquidity pool is not initialized.",
+				"insufficient_liquidity_md": "## ❌ Insufficient Pool Liquidity\nThe pool does not have enough Coin to fill your sell order."
 			},
 			"view": {
 				"asset": {
@@ -939,7 +942,8 @@
 					}
 				},
 				"chart": {
-					"title": "## 📈 {timeframe} Day Chart for {asset}"
+					"title": "## 📈 {timeframe} Day Chart for {asset}",
+					"title_md": "## {title}"
 				},
 				"price": {
 					"label": "Price (USD)"
@@ -964,7 +968,10 @@
 					"orders": {
 						"label": "Your Open Orders"
 					}
-				}
+				},
+				"pool_not_found_md": "## ❌ KYTH Pool Not Found\nThe AMM has not been initialized.",
+				"title_md": "## 💎 KYTH Coin — AMM Market Data",
+				"token_title_md": "## {title}\n**Token Address:** `{contractAddress}`\n\n**Current Price:** 🪙 {price}\n**Market Cap:** 🪙 {cap}\n**Total Supply:** {supply}\n\n**Price Change (24h):** {priceChange24h}\n**Volume (24h):** {volume24h}\n**Holders:** {holders}"
 			},
 			"buy": {
 				"insufficient": {
@@ -1064,7 +1071,11 @@
 						"gains": "Unrealized Gains",
 						"losses": "Unrealized Losses"
 					}
-				}
+				},
+				"holding_md": "### 💠 {assetId}\n{desc}",
+				"holding_pnl_md": "### 💠 {assetId}{pnlIndicator}",
+				"holding_desc": "### {tokenName} ({tokenCode})\n**Balance:** `{balance} Tokens`\n**Average Price:** `🪙 {avgPrice}`\n**Current Price:** `🪙 {currentPrice}`\n**P/L:** {plEmoji} `{plValue}%`",
+				"title_md": "## 📊 Your Crypto Portfolio"
 			},
 			"limit": {
 				"buy": {
@@ -1096,7 +1107,8 @@
 					"sell_insufficient": {
 						"desc": "## ❌ Insufficient Asset\nYou do not have enough {asset} to place this sell order."
 					}
-				}
+				},
+				"unsupported_md": "## ❌ Unsupported Asset\nLimit orders are **not supported** for the `KYTH` token due to the real-time Automated Market Maker mechanics. Please use `/eco market buy` or `/eco market sell` directly."
 			},
 			"stoploss": {
 				"sell": {
@@ -1111,7 +1123,8 @@
 					"insufficient": {
 						"desc": "## ❌ Insufficient Asset\nYou do not have enough {asset} to place this stop-loss order."
 					}
-				}
+				},
+				"unsupported_md": "## ❌ Unsupported Asset\nStop-loss orders are **not supported** for the `KYTH` token due to the real-time Automated Market Maker mechanics. Please use `/eco market sell` directly."
 			},
 			"order": {
 				"error": {
@@ -1125,7 +1138,8 @@
 				},
 				"error": {
 					"desc": "## ❌ Error\nAn unexpected error occurred while fetching your transaction history."
-				}
+				},
+				"title_md": "## {title}\n{desc}"
 			},
 			"cancel": {
 				"not": {
@@ -1325,7 +1339,8 @@
 					"liquidity": "{liquidity} KYTH",
 					"supply": "{supply} {ticker}",
 					"footer": "Listing Fee: {fee} KYTH | Founder Reward: {reward} {ticker}"
-				}
+				},
+				"title_md": "## {title}\n{desc}\n\n**Initial Price:** {priceText}\n**Initial Liquidity:** {liquidityText}\n**Initial Supply:** {supplyText}\n\n> {footer}"
 			},
 			"portfolio": {
 				"empty": {
@@ -1333,7 +1348,9 @@
 				},
 				"title": "## 📈 Your Guild Portfolio",
 				"desc": "Total Portfolio Value: **{value} KYTH**",
-				"field": "**Balance:** {balance}\n**Value:** {value} KYTH"
+				"field": "**Balance:** {balance}\n**Value:** {value} KYTH",
+				"holding_md": "### ${ticker}\n{fieldText}",
+				"title_md": "## {title}\n{desc}\n\n{fieldsText}"
 			},
 			"view": {
 				"error": {
@@ -1349,12 +1366,15 @@
 				"x": "**{x}**",
 				"y": "**{y}**",
 				"fee": "**{fee}%**",
-				"footer": "Guild ID: {guildId}"
+				"footer": "Guild ID: {guildId}",
+				"title_md": "## {title}\n{status}\n\n**Current Price:** {priceStr}\n**Market Cap:** {capStr}\n**Holders:** {holdersStr}\n\n**KYTH Liquidity (X):** {xStr}\n**Token Reserve (Y):** {yStr}\n**Trading Fee:** {feeStr}\n\n> {footer}"
 			},
 			"top": {
 				"empty": "No guild stocks have been created yet.",
 				"title": "## 🌐 The Kythia S&P 500",
-				"desc": "Top 10 Server Stocks ranked by Market Cap."
+				"desc": "Top 10 Server Stocks ranked by Market Cap.",
+				"title_md": "## {title}\n{msg}",
+				"full_title_md": "## {title}\n{desc}\n\n{description}"
 			},
 			"swap": {
 				"error": {

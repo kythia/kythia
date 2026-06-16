@@ -101,7 +101,10 @@ class SellCommand extends BaseCommand {
 			if (userKyth < sellQuantity) {
 				const components = await simpleContainer(
 					interaction,
-					`## ❌ Insufficient KYTH\nYou only have **${userKyth.toFixed(6)} KYTH**. Cannot sell **${sellQuantity.toFixed(6)} KYTH**.`,
+					await t(interaction, 'economy.market.sell.insufficient_kyth_md', {
+						userKyth: userKyth.toFixed(6),
+						sellQuantity: sellQuantity.toFixed(6),
+					}),
 					{
 						color: 'Red',
 					},
@@ -122,7 +125,7 @@ class SellCommand extends BaseCommand {
 			if (!pool) {
 				const components = await simpleContainer(
 					interaction,
-					'## ❌ AMM Unavailable\nThe KYTH liquidity pool is not initialized.',
+					await t(interaction, 'economy.market.sell.amm_unavailable_md'),
 					{
 						color: 'Red',
 					},
@@ -175,7 +178,7 @@ class SellCommand extends BaseCommand {
 			if (result.coinOut <= 0) {
 				const components = await simpleContainer(
 					interaction,
-					'## ❌ Insufficient Pool Liquidity\nThe pool does not have enough Coin to fill your sell order.',
+					await t(interaction, 'economy.market.sell.insufficient_liquidity_md'),
 					{
 						color: 'Red',
 					},

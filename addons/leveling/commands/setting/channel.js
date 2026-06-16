@@ -18,8 +18,8 @@ class ChannelCommand extends BaseCommand {
 		subcommand
 			.setName('channel')
 			.setDescription('🎮 Set channel for level up messages')
-			.addChannelOption((opt) =>
-				opt
+			.addChannelOption((option) =>
+				option
 					.setName('channel')
 					.setDescription('Channel for level up messages')
 					.setRequired(true),

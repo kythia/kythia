@@ -20,8 +20,8 @@ class AutobuildCommand extends BaseCommand {
 			.setDescription(
 				'automatically build server structure from a JSON template',
 			)
-			.addStringOption((o) =>
-				o
+			.addStringOption((option) =>
+				option
 					.setName('template')
 					.setDescription(
 						'template key (e.g. store, gaming, saas, company, tech-community)',
@@ -29,32 +29,32 @@ class AutobuildCommand extends BaseCommand {
 					.setRequired(true)
 					.setAutocomplete(true),
 			)
-			.addBooleanOption((o) =>
-				o
+			.addBooleanOption((option) =>
+				option
 					.setName('reset')
 					.setDescription('reset server first')
 					.setRequired(true),
 			)
-			.addBooleanOption((o) =>
-				o
+			.addBooleanOption((option) =>
+				option
 					.setName('dry_run')
 					.setDescription('simulation only')
 					.setRequired(false),
 			)
-			.addBooleanOption((o) =>
-				o
+			.addBooleanOption((option) =>
+				option
 					.setName('include_voice')
 					.setDescription('include voice category')
 					.setRequired(false),
 			)
-			.addBooleanOption((o) =>
-				o
+			.addBooleanOption((option) =>
+				option
 					.setName('private_staff')
 					.setDescription('force staff private')
 					.setRequired(false),
 			)
-			.addStringOption((o) =>
-				o.setName('locale').setDescription('id/en').setRequired(false),
+			.addStringOption((option) =>
+				option.setName('locale').setDescription('id/en').setRequired(false),
 			);
 
 	async execute(interaction) {

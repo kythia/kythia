@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/streak/helpers/leaderboard.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const USERS_PER_PAGE = 10;
 
 async function generateLeaderboardContainer(

@@ -18,8 +18,8 @@ class CooldownCommand extends BaseCommand {
 		subcommand
 			.setName('cooldown')
 			.setDescription('🎮 Set XP gain cooldown')
-			.addIntegerOption((opt) =>
-				opt
+			.addIntegerOption((option) =>
+				option
 					.setName('cooldown')
 					.setDescription('Cooldown in seconds')
 					.setRequired(true),

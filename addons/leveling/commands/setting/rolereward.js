@@ -18,8 +18,8 @@ class RolerewardCommand extends BaseCommand {
 		subcommand
 			.setName('rolereward')
 			.setDescription('🎮 Set role reward for a specific level')
-			.addStringOption((opt) =>
-				opt
+			.addStringOption((option) =>
+				option
 					.setName('action')
 					.setDescription('Add or remove role reward')
 					.setRequired(true)
@@ -28,11 +28,14 @@ class RolerewardCommand extends BaseCommand {
 						{ name: 'Remove', value: 'remove' },
 					),
 			)
-			.addIntegerOption((opt) =>
-				opt.setName('level').setDescription('Required level').setRequired(true),
+			.addIntegerOption((option) =>
+				option
+					.setName('level')
+					.setDescription('Required level')
+					.setRequired(true),
 			)
-			.addRoleOption((opt) =>
-				opt
+			.addRoleOption((option) =>
+				option
 					.setName('role')
 					.setDescription('Role to be given')
 					.setRequired(true),

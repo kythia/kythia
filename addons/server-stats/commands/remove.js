@@ -15,8 +15,8 @@ class RemoveCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('remove')
 		.setDescription('📈 Delete the stat and its channel')
-		.addStringOption((opt) =>
-			opt
+		.addStringOption((option) =>
+			option
 				.setName('stats')
 				.setDescription('Select the stat to delete')
 				.setRequired(true)
@@ -86,7 +86,7 @@ class RemoveCommand extends BaseCommand {
 		const before = serverSetting.serverStats?.length || 0;
 
 		serverSetting.serverStats = serverSetting.serverStats?.filter(
-			(s) => s.channelId !== statsId,
+			(subcommand) => subcommand.channelId !== statsId,
 		);
 
 		const after = serverSetting.serverStats?.length || 0;

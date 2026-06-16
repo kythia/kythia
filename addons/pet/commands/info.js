@@ -32,7 +32,7 @@ class InfoCommand extends BaseCommand {
 		if (!userPet) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.info.no.pet.title')}\n${await t(interaction, 'pet.info.no.pet.desc')}`,
+				await t(interaction, 'pet.info.no.pet.msg_md'),
 				{ color: kythiaConfig.bot.color },
 			);
 			return interaction.editReply({
@@ -43,7 +43,7 @@ class InfoCommand extends BaseCommand {
 		if (userPet.isDead) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.info.dead.title')}\n${await t(interaction, 'pet.info.dead.desc')}`,
+				await t(interaction, 'pet.info.dead.msg_md'),
 				{ color: kythiaConfig.bot.color },
 			);
 			return interaction.editReply({

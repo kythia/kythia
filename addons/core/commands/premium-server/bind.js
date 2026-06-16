@@ -43,7 +43,10 @@ class BindCommand extends BaseCommand {
 				await t(interaction, 'core.premium_server.no_server_id'),
 				{ color: 'Red' },
 			);
-			return interaction.reply({ components, flags: MessageFlags.Ephemeral });
+			return interaction.reply({
+				components,
+				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+			});
 		}
 
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
@@ -74,7 +77,10 @@ class BindCommand extends BaseCommand {
 				await t(interaction, 'core.premium_server.access_denied'),
 				{ color: 'Red' },
 			);
-			return interaction.editReply({ components });
+			return interaction.editReply({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+			});
 		}
 
 		const existingBinds = await PremiumServerBind.getAllCache({
@@ -89,7 +95,10 @@ class BindCommand extends BaseCommand {
 				}),
 				{ color: 'Red' },
 			);
-			return interaction.editReply({ components });
+			return interaction.editReply({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+			});
 		}
 
 		const existingGuildBind = await PremiumServerBind.getCache({
@@ -102,14 +111,20 @@ class BindCommand extends BaseCommand {
 					await t(interaction, 'core.premium_server.bind.already_bound_self'),
 					{ color: 'Yellow' },
 				);
-				return interaction.editReply({ components });
+				return interaction.editReply({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
 			}
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.premium_server.bind.already_bound_other'),
 				{ color: 'Red' },
 			);
-			return interaction.editReply({ components });
+			return interaction.editReply({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+			});
 		}
 
 		await PremiumServerBind.create({ guildId: targetGuildId, userId });

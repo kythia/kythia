@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/api/queues/processors/canvasProcessor.js
+ * @namespace: addons/api/queues/processors/canvas-processor.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

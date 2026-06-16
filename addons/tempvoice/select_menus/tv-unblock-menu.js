@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/select_menus/tv_unblock_menu.js
+ * @namespace: addons/tempvoice/select_menus/tv-unblock-menu.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

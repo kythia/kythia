@@ -17,8 +17,8 @@ class AttemptsCommand extends BaseCommand {
 		subcommand
 			.setName('attempts')
 			.setDescription('Max wrong attempts before failing')
-			.addIntegerOption((o) =>
-				o
+			.addIntegerOption((option) =>
+				option
 					.setName('count')
 					.setDescription('Max attempts (1-10)')
 					.setRequired(true)

@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/modals/tv_fix_config.js
+ * @namespace: addons/tempvoice/modals/tv-fix-config.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

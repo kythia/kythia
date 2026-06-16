@@ -33,7 +33,10 @@ class TopCommand extends BaseCommand {
 			const title = await t(interaction, 'economy.guild_stock.top.title');
 			const components = await simpleContainer(
 				interaction,
-				`## ${title}\n${msg}`,
+				await t(interaction, 'economy.guild_stock.top.title_md', {
+					title,
+					msg,
+				}),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -72,7 +75,11 @@ class TopCommand extends BaseCommand {
 			description += `${medal} **$${p.ticker}** — **${p.marketCap.toFixed(2)}** KYTH (Price: ${p.price.toFixed(4)})\n`;
 		}
 
-		const fullText = `## ${title}\n${desc}\n\n${description}`;
+		const fullText = await t(
+			interaction,
+			'economy.guild_stock.top.full_title_md',
+			{ title, desc, description },
+		);
 
 		const components = await simpleContainer(interaction, fullText, {
 			color: 'Blue',

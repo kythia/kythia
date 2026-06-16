@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/economy/helpers/blackmarket-items.js
+ * @namespace: addons/economy/helpers/blackmarketItems.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

@@ -17,8 +17,8 @@ class ButtonCommand extends BaseCommand {
 		subcommand
 			.setName('button')
 			.setDescription('Set the text on the verification panel button')
-			.addStringOption((o) =>
-				o
+			.addStringOption((option) =>
+				option
 					.setName('label')
 					.setDescription('Button text (e.g. Verify Me)')
 					.setRequired(true),

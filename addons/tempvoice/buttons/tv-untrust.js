@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_untrust.js
+ * @namespace: addons/tempvoice/buttons/tv-untrust.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_privacy.js
+ * @namespace: addons/tempvoice/buttons/tv-privacy.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

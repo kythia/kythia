@@ -63,8 +63,8 @@ try {
 // }
 
 const createToggleOption = () => {
-	return (opt) =>
-		opt
+	return (option) =>
+		option
 			.setName('status')
 			.setDescription('Select status')
 			.setRequired(true)
@@ -109,14 +109,14 @@ class SettingCommand extends BaseCommand {
 					sub
 						.setName('set')
 						.setDescription('🌐 Set bot language')
-						.addStringOption((opt) =>
+						.addStringOption((option) =>
 							Array.isArray(availableLanguages) && availableLanguages.length > 0
-								? opt
+								? option
 										.setName('lang')
 										.setDescription('Choose language')
 										.setRequired(true)
 										.addChoices(...availableLanguages)
-								: opt
+								: option
 										.setName('lang')
 										.setDescription('Choose language')
 										.setRequired(true),

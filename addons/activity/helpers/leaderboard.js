@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/activity/helpers/leaderboard.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const USERS_PER_PAGE = 10;
 const MAX_USERS = 100;
 

@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/modals/tv_limit_modal.js
+ * @namespace: addons/tempvoice/modals/tv-limit-modal.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

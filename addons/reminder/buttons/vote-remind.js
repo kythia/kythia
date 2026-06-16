@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/reminder/buttons/vote_remind.js
+ * @namespace: addons/reminder/buttons/vote-remind.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

@@ -18,8 +18,8 @@ class CategoryCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('category')
 		.setDescription('📈 Set category for server stats channels')
-		.addChannelOption((opt) =>
-			opt
+		.addChannelOption((option) =>
+			option
 				.setName('category')
 				.setDescription('Category channel')
 				.setRequired(true),

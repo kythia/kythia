@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/core/helpers/stats.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const path = require('node:path');
 const fs = require('node:fs');
 

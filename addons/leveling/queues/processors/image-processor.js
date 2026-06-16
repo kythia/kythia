@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/leveling/queues/processors/imageProcessor.js
+ * @namespace: addons/leveling/queues/processors/image-processor.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

@@ -64,7 +64,12 @@ class PortfolioCommand extends BaseCommand {
 					'economy.guild_stock.portfolio.field',
 					{ balance: holding.balance.toFixed(2), value: kythValue.toFixed(4) },
 				);
-				fieldsText.push(`### $${pool.ticker}\n${fieldText}`);
+				fieldsText.push(
+					await t(interaction, 'economy.guild_stock.portfolio.holding_md', {
+						ticker: pool.ticker,
+						fieldText,
+					}),
+				);
 			}
 		}
 
@@ -72,7 +77,11 @@ class PortfolioCommand extends BaseCommand {
 		const desc = await t(interaction, 'economy.guild_stock.portfolio.desc', {
 			value: totalKythValue.toFixed(4),
 		});
-		const fullText = `## ${title}\n${desc}\n\n${fieldsText.join('\n\n')}`;
+		const fullText = await t(
+			interaction,
+			'economy.guild_stock.portfolio.title_md',
+			{ title, desc, fieldsText: fieldsText.join('\n\n') },
+		);
 
 		const components = await simpleContainer(interaction, fullText, {
 			color: 'Blue',

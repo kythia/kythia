@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/activity/helpers/achievementUi.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 /** Emoji for each rarity tier */
 const RARITY_EMOJI = {
 	common: '⚪',

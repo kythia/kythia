@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_rename.js
+ * @namespace: addons/tempvoice/buttons/tv-rename.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

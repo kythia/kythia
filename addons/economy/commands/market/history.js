@@ -64,9 +64,12 @@ class HistoryCommand extends BaseCommand {
 				})
 				.join('\n\n');
 
-			const msg = `## ${await t(interaction, 'economy.market.history.title', {
-				username: interaction.user.username,
-			})}\n\n${description}`;
+			const msg = await t(interaction, 'economy.market.history.title_md', {
+				title: await t(interaction, 'economy.market.history.title', {
+					username: interaction.user.username,
+				}),
+				desc: description,
+			});
 
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,

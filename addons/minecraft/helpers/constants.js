@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/minecraft/helpers/constants.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const SKIN_API_BASE = 'https://starlightskins.lunareclipse.studio/render';
 const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,16}$/;
 const HOST_REGEX = /^[a-zA-Z0-9._-]+(:\d{1,5})?$/;

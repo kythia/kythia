@@ -393,7 +393,13 @@ app.post('/panels', async (c) => {
 		const panelContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`## ${title}`),
+				new TextDisplayBuilder().setContent(
+					await c
+						.get('client')
+						.container.t({ locale: 'en-US' }, 'api.routes.tickets.title_md', {
+							title,
+						}),
+				),
 			)
 			.addSeparatorComponents(
 				new SeparatorBuilder()
@@ -653,7 +659,13 @@ app.post('/panels/:id/resend', async (c) => {
 		const panelContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`## ${panel.title}`),
+				new TextDisplayBuilder().setContent(
+					await c
+						.get('client')
+						.container.t({ locale: 'en-US' }, 'api.routes.tickets.title_md', {
+							title: panel.title,
+						}),
+				),
 			)
 			.addSeparatorComponents(
 				new SeparatorBuilder()

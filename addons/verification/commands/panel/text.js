@@ -19,11 +19,11 @@ class TextCommand extends BaseCommand {
 			.setDescription(
 				'Set the title and description for the verification panel',
 			)
-			.addStringOption((o) =>
-				o.setName('title').setDescription('Panel title').setRequired(true),
+			.addStringOption((option) =>
+				option.setName('title').setDescription('Panel title').setRequired(true),
 			)
-			.addStringOption((o) =>
-				o
+			.addStringOption((option) =>
+				option
 					.setName('description')
 					.setDescription('Panel description')
 					.setRequired(true),

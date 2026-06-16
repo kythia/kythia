@@ -1,4 +1,12 @@
 /**
+ * @namespace: addons/core/helpers/ping.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
+/**
  * Get Lavalink nodes ping/latency information
  * @param {object} client - Discord client instance
  * @returns {Promise<Array>} Array of node information with ping

@@ -36,7 +36,7 @@ class GachaCommand extends BaseCommand {
 		if (!userPet) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.gacha.no.pet.title')}\n${await t(interaction, 'pet.gacha.no.pet.desc')}`,
+				await t(interaction, 'pet.gacha.no.pet.msg_md'),
 				{ color: kythiaConfig.bot.color },
 			);
 			return interaction.editReply({
@@ -53,7 +53,9 @@ class GachaCommand extends BaseCommand {
 		if (cooldown.remaining) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.gacha.cooldown.title')}\n${await t(interaction, 'pet.gacha.cooldown.desc', { time: cooldown.time })}`,
+				await t(interaction, 'pet.gacha.cooldown.msg_md', {
+					time: cooldown.time,
+				}),
 				{ color: kythiaConfig.bot.color },
 			);
 			return interaction.editReply({
@@ -106,16 +108,12 @@ class GachaCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'pet.gacha.success.title')}\n${await t(
-				interaction,
-				'pet.gacha.success.desc',
-				{
-					icon: selectedPet.icon,
-					name: selectedPet.name,
-					rarity: selectedPet.rarity,
-					level: newLevel,
-				},
-			)}`,
+			await t(interaction, 'pet.gacha.success.msg_md', {
+				icon: selectedPet.icon,
+				name: selectedPet.name,
+				rarity: selectedPet.rarity,
+				level: newLevel,
+			}),
 			{ color: kythiaConfig.bot.color },
 		);
 

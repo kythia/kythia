@@ -42,16 +42,12 @@ class EditnameCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'pet.editname.success.title')}\n${await t(
-				interaction,
-				'pet.editname.success.desc',
-				{
-					icon: userPet.pet.icon,
-					name: userPet.pet.name,
-					rarity: userPet.pet.rarity,
-					petName: userPet.petName,
-				},
-			)}`,
+			await t(interaction, 'pet.editname.success.msg_md', {
+				icon: userPet.pet.icon,
+				name: userPet.pet.name,
+				rarity: userPet.pet.rarity,
+				petName: userPet.petName,
+			}),
 			{ color: kythiaConfig.bot.color },
 		);
 

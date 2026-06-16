@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/api/helpers/addon-guard.js
+ * @namespace: addons/api/helpers/addonGuard.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

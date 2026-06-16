@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/streak/helpers/constants.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const MIN_QUOTA = 0; // 0 = disable restores entirely
 const MAX_QUOTA = 30;
 

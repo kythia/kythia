@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/select_menus/tv_invite_menu.js
+ * @namespace: addons/tempvoice/select_menus/tv-invite-menu.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

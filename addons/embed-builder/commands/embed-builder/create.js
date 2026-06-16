@@ -18,8 +18,8 @@ class CreateCommand extends BaseCommand {
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('create')
 		.setDescription('✨ Create a new saved embed')
-		.addStringOption((o) =>
-			o
+		.addStringOption((option) =>
+			option
 				.setName('name')
 				.setDescription(
 					'A label to identify this embed (e.g. "welcome-message")',
@@ -27,8 +27,8 @@ class CreateCommand extends BaseCommand {
 				.setRequired(true)
 				.setMaxLength(100),
 		)
-		.addStringOption((o) =>
-			o
+		.addStringOption((option) =>
+			option
 				.setName('mode')
 				.setDescription('Builder type (default: embed)')
 				.setRequired(false)

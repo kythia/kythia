@@ -19,7 +19,7 @@
 			"game_md": "### Game: \\n{gameTitle}\\n",
 			"publisher_md": "### Publisher: \\n{gamePublisher}\\n",
 			"expires_md": "### Expires: \\n<t:{expiresTimestamp}:f> (<t:{expiresTimestamp}:R>)\\n",
-			"notify_md": "### Notify: \\n{role}\\n"
+			"notify_md": "### Notify: \n{role}\n"
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/core/helpers/role-unprefix.js
+ * @namespace: addons/core/helpers/roleUnprefix.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

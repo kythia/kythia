@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/core/helpers/announcement.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const { PermissionFlagsBits, MessageFlags } = require('discord.js');
 async function sendToAllGuilds(container, interaction, payload) {
 	const { t } = container;

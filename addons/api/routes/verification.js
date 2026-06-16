@@ -769,7 +769,15 @@ app.post('/:guildId/panel/send', async (c) => {
 		const containerPayload = new ContainerBuilder()
 			.setAccentColor(color || c.get('config').bot.color)
 			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`## ${title}\n\n${description}`),
+				new TextDisplayBuilder().setContent(
+					await c
+						.get('client')
+						.container.t(
+							{ locale: 'en-US' },
+							'api.routes.verification.title_md',
+							{ title, description },
+						),
+				),
 			)
 			.addSeparatorComponents(
 				new SeparatorBuilder().setSpacing(2).setDivider(true),
@@ -895,7 +903,15 @@ app.post('/:guildId/panel/resend', async (c) => {
 		const containerPayload = new ContainerBuilder()
 			.setAccentColor(color || c.get('config').bot.color)
 			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`## ${title}\n\n${description}`),
+				new TextDisplayBuilder().setContent(
+					await c
+						.get('client')
+						.container.t(
+							{ locale: 'en-US' },
+							'api.routes.verification.title_md',
+							{ title, description },
+						),
+				),
 			)
 			.addSeparatorComponents(
 				new SeparatorBuilder().setSpacing(2).setDivider(true),

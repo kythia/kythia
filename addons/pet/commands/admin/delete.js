@@ -39,7 +39,9 @@ class DeleteCommand extends BaseCommand {
 		if (deleted) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.admin.delete.delete.success.title')}\n${await t(interaction, 'pet.admin.delete.delete.success.desc', { name })}`,
+				await t(interaction, 'pet.admin.delete.delete.success.msg_md', {
+					name,
+				}),
 				{ color: kythiaConfig.bot.color },
 			);
 			return interaction.editReply({
@@ -49,7 +51,7 @@ class DeleteCommand extends BaseCommand {
 		} else {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.admin.delete.delete.notfound.title')}\n${await t(interaction, 'pet.admin.delete.delete.notfound.desc')}`,
+				await t(interaction, 'pet.admin.delete.delete.notfound.msg_md'),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({

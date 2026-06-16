@@ -43,7 +43,10 @@ class UnbindCommand extends BaseCommand {
 				await t(interaction, 'core.premium_server.no_server_id'),
 				{ color: 'Red' },
 			);
-			return interaction.reply({ components, flags: MessageFlags.Ephemeral });
+			return interaction.reply({
+				components,
+				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+			});
 		}
 
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
@@ -58,7 +61,10 @@ class UnbindCommand extends BaseCommand {
 				await t(interaction, 'core.premium_server.unbind.not_bound_self'),
 				{ color: 'Red' },
 			);
-			return interaction.editReply({ components });
+			return interaction.editReply({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+			});
 		}
 
 		await bind.destroy();

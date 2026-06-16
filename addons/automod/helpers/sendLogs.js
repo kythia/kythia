@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/automod/helpers/send-logs.js
+ * @namespace: addons/automod/helpers/sendLogs.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

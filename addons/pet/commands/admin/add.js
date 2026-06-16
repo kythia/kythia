@@ -72,11 +72,9 @@ class AddCommand extends BaseCommand {
 		const bonusValue = interaction.options.getInteger('bonus_value');
 
 		await Pet.create({ name, icon, rarity, bonusType, bonusValue });
-		const msg = `## ${await t(interaction, 'pet.admin.add.add.success.title')}\n${await t(
-			interaction,
-			'pet.admin.add.add.success.desc',
-			{ name },
-		)}`;
+		const msg = await t(interaction, 'pet.admin.add.add.success.msg_md', {
+			name,
+		});
 
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,

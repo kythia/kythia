@@ -28,8 +28,8 @@ class GrabCommand extends BaseCommand {
 			sub
 				.setName('sticker')
 				.setDescription('grab a sticker from a message')
-				.addStringOption((opt) =>
-					opt
+				.addStringOption((option) =>
+					option
 						.setName('sticker_id')
 						.setDescription('Sticker ID to grab')
 						.setRequired(true),
@@ -39,8 +39,8 @@ class GrabCommand extends BaseCommand {
 			sub
 				.setName('emoji')
 				.setDescription('grab a custom emoji from a message')
-				.addStringOption((opt) =>
-					opt
+				.addStringOption((option) =>
+					option
 						.setName('emoji')
 						.setDescription('Emoji to grab (custom emoji format)')
 						.setRequired(true),
@@ -52,14 +52,14 @@ class GrabCommand extends BaseCommand {
 				.setDescription(
 					'grab an image from a message and turn it into a sticker',
 				)
-				.addStringOption((opt) =>
-					opt
+				.addStringOption((option) =>
+					option
 						.setName('message_id')
 						.setDescription('ID of the message containing the image')
 						.setRequired(true),
 				)
-				.addStringOption((opt) =>
-					opt
+				.addStringOption((option) =>
+					option
 						.setName('name')
 						.setDescription('Name for the new sticker (max 30 chars)')
 						.setRequired(false),

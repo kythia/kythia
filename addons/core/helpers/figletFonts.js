@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/core/helpers/figlet-fonts.js
+ * @namespace: addons/core/helpers/figletFonts.js
  * @type: Helper Script
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

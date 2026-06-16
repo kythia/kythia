@@ -140,7 +140,7 @@ class ViewCommand extends BaseCommand {
 			if (!pool) {
 				const components = await simpleContainer(
 					interaction,
-					'## ❌ KYTH Pool Not Found\nThe AMM has not been initialized.',
+					await t(interaction, 'economy.market.view.pool_not_found_md'),
 					{
 						color: 'Red',
 					},
@@ -244,7 +244,7 @@ class ViewCommand extends BaseCommand {
 				}
 			}
 			const description = [
-				`## 💎 KYTH Coin — AMM Market Data`,
+				await t(interaction, 'economy.market.view.title_md'),
 				`*Powered by Kythia's on-chain Automated Market Maker (X×Y=K)*`,
 				``,
 				`**💰 Spot Price:** ${stats.spotPrice} Coin/KYTH`,
@@ -338,12 +338,14 @@ class ViewCommand extends BaseCommand {
 				assetName = data.symbol;
 			}
 			emoji = marketuiHelper.getChangeEmoji(percent);
-			let description = `## ${await t(
+			let description = `${await t(
 				interaction,
-				'economy.market.view.chart.title',
+				'economy.market.view.chart.title_md',
 				{
-					asset: assetName,
-					timeframe: timeframe,
+					title: await t(interaction, 'economy.market.view.chart.title', {
+						asset: assetName,
+						timeframe,
+					}),
 				},
 			)}\n\n`;
 			description += `**${await t(interaction, 'economy.market.view.price.label')}:** $${price.toLocaleString(

@@ -17,8 +17,8 @@ class KickOnTimeoutCommand extends BaseCommand {
 		subcommand
 			.setName('kick-on-timeout')
 			.setDescription('Kick member if they time out')
-			.addBooleanOption((o) =>
-				o.setName('enabled').setDescription('Enable?').setRequired(true),
+			.addBooleanOption((option) =>
+				option.setName('enabled').setDescription('Enable?').setRequired(true),
 			);
 
 	async execute(interaction) {

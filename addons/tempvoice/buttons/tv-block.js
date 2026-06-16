@@ -1,5 +1,5 @@
 /**
- * @namespace: addons/tempvoice/buttons/tv_block.js
+ * @namespace: addons/tempvoice/buttons/tv-block.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa

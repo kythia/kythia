@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/economy/helpers/marketUi.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const { MessageFlags } = require('discord.js');
 
 function formatMarketTable(rows) {

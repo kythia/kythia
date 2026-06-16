@@ -17,8 +17,8 @@ class ColorCommand extends BaseCommand {
 		subcommand
 			.setName('color')
 			.setDescription('Set the color of the verification panel')
-			.addStringOption((o) =>
-				o
+			.addStringOption((option) =>
+				option
 					.setName('hex')
 					.setDescription('HEX color code (e.g. #ff0000)')
 					.setRequired(true),

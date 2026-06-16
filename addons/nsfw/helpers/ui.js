@@ -1,3 +1,11 @@
+/**
+ * @namespace: addons/nsfw/helpers/ui.js
+ * @type: Helper Script
+ * @copyright © 2026 kenndeclouv
+ * @assistant graa & chaa
+ * @version 26.0.0-rc.1
+ */
+
 const IMAGES_PER_PAGE = 4;
 
 async function generateFavContainer(
@@ -24,7 +32,10 @@ async function generateFavContainer(
 	const [containerBody] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: '## Your NSFW Favorites ❤️',
+		title: await interaction.client.container.t(
+			interaction,
+			'nsfw.helpers.ui.favorite.title_md',
+		),
 		media: pageImages,
 		footer: `Total Favorites: ${allFavorites.length}`,
 		customIdPrefix: 'nsfw_fav',

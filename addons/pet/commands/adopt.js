@@ -46,7 +46,7 @@ class AdoptCommand extends BaseCommand {
 		if (existingPet) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.adopt.already.title')}\n${await t(interaction, 'pet.adopt.already.desc')}`,
+				await t(interaction, 'pet.adopt.already.msg_md'),
 				{ color: kythiaConfig.bot.color },
 			);
 			return interaction.editReply({
@@ -78,7 +78,7 @@ class AdoptCommand extends BaseCommand {
 		if (!selectedPet) {
 			const components = await simpleContainer(
 				interaction,
-				`## ❌ No Pets Available\nThere are no pets available to adopt right now.`,
+				await t(interaction, 'pet.adopt.no.pets.msg_md'),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -97,15 +97,11 @@ class AdoptCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'pet.adopt.success.title', {
+			await t(interaction, 'pet.adopt.success.msg_md', {
 				name: selectedPet.name,
 				icon: selectedPet.icon ?? '',
 				rarity: selectedPet.rarity,
-			})}\n${await t(interaction, 'pet.adopt.success.simple', {
-				name: selectedPet.name,
-				icon: selectedPet.icon ?? '',
-				rarity: selectedPet.rarity,
-			})}`,
+			}),
 			{ color: kythiaConfig.bot.color },
 		);
 

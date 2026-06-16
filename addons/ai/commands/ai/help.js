@@ -33,7 +33,9 @@ class HelpCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`## ${await t(interaction, 'ai.ai.help.title')}`,
+					await t(interaction, 'ai.ai.help.title_md', {
+						title: await t(interaction, 'ai.ai.help.title'),
+					}),
 				),
 			)
 			.addSeparatorComponents(

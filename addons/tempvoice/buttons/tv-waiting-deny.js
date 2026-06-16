@@ -1,7 +1,7 @@
 const { MessageFlags } = require('discord.js');
 
 /**
- * @namespace: addons/tempvoice/buttons/tv_waiting_deny.js
+ * @namespace: addons/tempvoice/buttons/tv-waiting-deny.js
  * @type: Module
  * @copyright © 2026 kenndeclouv
  * @assistant graa & chaa
