@@ -44,43 +44,88 @@ class TktTypeStep2ShowButton extends BaseButton {
 
 			const modal = new ModalBuilder()
 				.setCustomId(`tkt-type-step2-submit:${messageId}`)
-				.setTitle('Create Type - Step 2/3: Core Config')
+				.setTitle(
+					await interaction.client.container.t(
+						interaction,
+						'ticket.ui.create_type_2',
+					),
+				)
 				.addLabelComponents(
 					new LabelBuilder()
-						.setLabel('Select Staff Role')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.select_staff',
+							),
+						)
 						.setRoleSelectMenuComponent(
 							new RoleSelectMenuBuilder()
 								.setCustomId('staffRoleId')
-								.setPlaceholder('Select one role...')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_select_role',
+									),
+								)
 								.setMinValues(1)
 								.setMaxValues(1),
 						),
 					new LabelBuilder()
-						.setLabel('Select Log Channel')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.select_log',
+							),
+						)
 						.setChannelSelectMenuComponent(
 							new ChannelSelectMenuBuilder()
 								.setCustomId('logsChannelId')
-								.setPlaceholder('Select one channel...')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_select_channel',
+									),
+								)
 								.addChannelTypes(ChannelType.GuildText)
 								.setMinValues(1)
 								.setMaxValues(1),
 						),
 					new LabelBuilder()
-						.setLabel('Select Transcript Channel')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.select_transcript',
+							),
+						)
 						.setChannelSelectMenuComponent(
 							new ChannelSelectMenuBuilder()
 								.setCustomId('transcriptChannelId')
-								.setPlaceholder('Select one channel...')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_select_channel',
+									),
+								)
 								.addChannelTypes(ChannelType.GuildText)
 								.setMinValues(1)
 								.setMaxValues(1),
 						),
 					new LabelBuilder()
-						.setLabel('Ticket Category (Optional, Channel Style)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.ticket_category',
+							),
+						)
 						.setChannelSelectMenuComponent(
 							new ChannelSelectMenuBuilder()
 								.setCustomId('ticketCategoryId')
-								.setPlaceholder('Select a category (optional)...')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_select_category',
+									),
+								)
 								.addChannelTypes(ChannelType.GuildCategory)
 								.setRequired(false)
 								.setMinValues(0)

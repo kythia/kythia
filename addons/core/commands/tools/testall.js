@@ -46,7 +46,12 @@ class TestallCommand extends BaseCommand {
 		};
 		const schema = interaction.client.applicationCommandsData;
 		if (!schema || schema.length === 0) {
-			return interaction.editReply('❌ No command schema found to test.');
+			return interaction.editReply(
+				await interaction.client.container.t(
+					interaction,
+					'core.testall.no_schema',
+				),
+			);
 		}
 		let totalCommands = 0;
 		// Count all testable endpoints

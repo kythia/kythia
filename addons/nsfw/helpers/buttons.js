@@ -13,7 +13,13 @@ const {
 	MessageFlags,
 } = require('discord.js');
 
-const buildComponentRows = (images, userNsfwFav = [], disabled = false) => {
+const buildComponentRows = (
+	images,
+	userNsfwFav = [],
+	disabled = false,
+	refreshLabel = '🔁 Refresh',
+	deleteLabel = '🗑️ Delete',
+) => {
 	const favRow = new ActionRowBuilder();
 	const actionRow = new ActionRowBuilder();
 
@@ -32,12 +38,12 @@ const buildComponentRows = (images, userNsfwFav = [], disabled = false) => {
 	actionRow.addComponents(
 		new ButtonBuilder()
 			.setCustomId('nsfw_refresh')
-			.setLabel('🔁 Refresh')
+			.setLabel(refreshLabel)
 			.setStyle(ButtonStyle.Primary)
 			.setDisabled(disabled),
 		new ButtonBuilder()
 			.setCustomId('nsfw_delete')
-			.setLabel('🗑️ Delete')
+			.setLabel(deleteLabel)
 			.setStyle(ButtonStyle.Danger)
 			.setDisabled(disabled),
 	);
@@ -122,7 +128,13 @@ const handleFavorite = async (interaction, container, index) => {
 		{
 			title: category,
 			media: currentImages,
-			components: buildComponentRows(currentImages, user.nsfwFav || []),
+			components: buildComponentRows(
+				currentImages,
+				user.nsfwFav || [],
+				false,
+				await container.t(interaction, 'nsfw.ui.refresh'),
+				await container.t(interaction, 'nsfw.ui.delete'),
+			),
 		},
 	);
 

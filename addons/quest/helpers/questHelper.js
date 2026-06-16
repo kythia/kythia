@@ -146,7 +146,7 @@ async function buildQuestNotification(container, quest, role) {
 		containerBuilder.addActionRowComponents(
 			new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
-					.setLabel('View Quest')
+					.setLabel(await t(fakeInteraction, 'quest.ui.view'))
 					.setStyle(ButtonStyle.Link)
 					.setURL(ctaLink)
 					.setEmoji('🌸'),

@@ -3,9 +3,6 @@
 		"events": {
 			"messageCreate": {
 				"memory": {
-					"added": "Okay, I'll remember that! ^-^",
-					"duplicate": "I already know that! 😉",
-					"empty": "What fact should I remember? >,<",
 					"token": {
 						"limit": "Sorry, the AI token limit has been reached for this minute. I need a short break, please try again in a minute! 😥"
 					},
@@ -14,12 +11,6 @@
 							"not": {}
 						}
 					}
-				},
-				"command": {
-					"not": {
-						"found": "Oops, the AI asked me to run a command I don't recognize. >,<"
-					},
-					"error": "Oops, something went wrong when I tried to run the command. >,<"
 				},
 				"error": "Oops, I'm feeling dizzy right now. Please try again later! ><",
 				"filter": {
@@ -51,21 +42,12 @@
 				},
 				"disable": {
 					"success": "## 🛑 AI Disabled\nAI has been disabled in this channel. See you again!"
-				},
-				"unknown": {
-					"subcommand": "## ❌ Error\nUnknown subcommand. Use `/ai enable` or `/ai disable`."
 				}
 			},
 			"list": {
 				"empty": "🤖 There are no AI-enabled channels in this server yet.",
 				"title": "## AI-Enabled Channels",
 				"footer": "Page {page} of {totalPages} • Total AI Channels: {totalChannels}",
-				"nav": {
-					"first": "⏪️ First",
-					"prev": "◀️ Prev",
-					"next": "Next ▶️",
-					"last": "Last ⏩️"
-				},
 				"not": {
 					"your": {
 						"interaction": "❌ This is not your interaction! Use the command yourself to view the AI channel list."
@@ -76,12 +58,6 @@
 				"empty": "🧠 I haven't learned any facts about you yet! Chat with me to help me remember things about you.",
 				"title": "## Facts I Remember About You",
 				"footer": "Page {page} of {totalPages} • Total Facts: {totalFacts}",
-				"nav": {
-					"first": "⏪️ First",
-					"prev": "◀️ Prev",
-					"next": "Next ▶️",
-					"last": "Last ⏩️"
-				},
 				"not": {
 					"your": {
 						"interaction": "❌ This is not your interaction! Use the command yourself to view your facts."

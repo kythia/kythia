@@ -89,16 +89,6 @@
 				"failed": "❌ Failed to lock the channel. Please check my permissions and try again."
 			},
 			"mute": {
-				"user": {
-					"not": {
-						"found": "That user is not in this server!",
-						"in": {
-							"voice": "❌ That user is not in a voice channel."
-						}
-					}
-				},
-				"reason": "Muted by command.",
-				"failed": "❌ Failed to mute the user. Please check my permissions and try again.",
 				"embed": {
 					"desc": "## 🔇 Muted\n**{tag}** has been muted by **{moderator}** via command."
 				}
@@ -229,37 +219,6 @@
 			}
 		},
 		"setting": {
-			"stats": {
-				"enabled": {
-					"text": "✅ Stats enabled.",
-					"msg": "✅ Stat in {channel} has been enabled."
-				},
-				"disabled": {
-					"text": "✅ Stats disabled. ",
-					"msg": "⛔ Stat in {channel} has been disabled."
-				},
-				"format": {
-					"invalid": "❌ The format must contain one of the following placeholders:\n{placeholders}"
-				},
-				"already": "⚠️ This channel is already registered! Use `/set stats edit` to change the format.",
-				"add": "✅ Stat for {channel} has been added!\nFormat: `{format}`",
-				"notfound": "❌ This stat is not registered!",
-				"edit": "✏️ Stat format in {channel} has been changed{format, select, undefined {} other { to: `{format}`}",
-				"remove": {
-					"notfound": "⚠️ This stat was not found in the stats data!",
-					"success": "🗑️ Stat and channel have been removed."
-				},
-				"category": {
-					"invalid": "❌ The selected channel must be a category.",
-					"set": "✅ Server stats category set to {category}."
-				}
-			},
-			"embed": {
-				"title": {
-					"text": "⚙️ Setting",
-					"view": "🛠️ Bot Settings in This Server"
-				}
-			},
 			"whitelist": {
 				"already": "This user/role is already in the whitelist.",
 				"add": {
@@ -271,9 +230,6 @@
 					"role": "Role {role} has been removed from the whitelist!",
 					"user": "User {user} has been removed from the whitelist!"
 				},
-				"invalid": {
-					"action": "Invalid action for whitelist. Use 'add' or 'remove'."
-				},
 				"empty": "The automod whitelist is empty.",
 				"list": "Automod whitelist:\n{list}"
 			},
@@ -281,9 +237,6 @@
 				"id": "Invalid ID: {id}"
 			},
 			"badword": {
-				"word": {
-					"required": "The word to add or remove must be provided."
-				},
 				"already": "That word is already in the badword list.",
 				"add": "Word `{word}` has been added to the badword list.",
 				"notfound": "That word is not in the badword list.",
@@ -305,9 +258,6 @@
 					"add": "Channel {channel} has been added to the exception list!",
 					"notfound": "This channel is not in the exception list.",
 					"remove": "Channel {channel} has been removed from the exception list!",
-					"invalid": {
-						"action": "Invalid action for exception channel. Use 'add' or 'remove'."
-					},
 					"empty": "The exception channel list is empty.",
 					"list": "Exception Channels:\n{list}"
 				}
@@ -340,147 +290,9 @@
 				"disabled": "✅ The **{feature}** feature has been **disabled**."
 			},
 			"cooldown": {},
-			"command": {
-				"not": {
-					"found": "❌ Command not found."
-				}
-			},
-			"welcome": {
-				"in": {
-					"channel": {
-						"set": "Channel {channel} has been set as the welcome channel!"
-					},
-					"text": {
-						"set": "Welcome in text has been set to:\n`{text}`"
-					},
-					"background": {
-						"set": "Welcome in background has been set to:\n`{background}`",
-						"invalid": "❌ Invalid background. Please provide a valid URL."
-					}
-				},
-				"out": {
-					"channel": {
-						"set": "Channel {channel} has been set as the welcome out channel!"
-					},
-					"text": {
-						"set": "Welcome out text has been set to:\n`{text}`"
-					},
-					"background": {
-						"set": "Welcome out background has been set to:\n`{background}`",
-						"invalid": "❌ Invalid background. Please provide a valid URL."
-					}
-				},
-				"role": {
-					"set": "Role {role} has been set as the welcome role!"
-				}
-			},
-			"leveling": {
-				"channel": {
-					"set": "Channel {channel} has been set as the level up channel!"
-				},
-				"cooldown": {
-					"set": "Leveling cooldown has been set to `{cooldown}` seconds!"
-				},
-				"xp": {
-					"set": "XP per message has been set to `{xp}` XP!"
-				},
-				"rolereward": {
-					"add": "Role {role} has been added as a reward for level `{level}`!",
-					"notfound": "No role reward found for level `{level}`!",
-					"remove": "Role reward for level `{level}` has been removed!"
-				}
-			},
-			"minecraft": {
-				"ip": {
-					"set": "Minecraft server IP has been set to `{ip}`!",
-					"channel": {
-						"set": "Channel for displaying Minecraft IP has been set to {channel}!"
-					}
-				},
-				"port": {
-					"set": "Minecraft server port has been set to `{port}`!",
-					"channel": {
-						"set": "Channel for displaying Minecraft port has been set to {channel}!"
-					}
-				},
-				"status": {
-					"channel": {
-						"set": "Channel for Minecraft server status has been set to {channel}!"
-					}
-				},
-				"players": {
-					"channel": {
-						"set": "Channel for Minecraft server players has been set to {channel}!"
-					}
-				}
-			},
-			"language": {
-				"set": "✅ Bot language has been set to `{lang}`!"
-			},
-			"testimony": {
-				"channel": {
-					"invalid": "❌ Invalid channel. Please select a text channel.",
-					"set": "✅ Testimony channel has been set to {channel}!"
-				},
-				"feedback": {
-					"channel": {
-						"set": "✅ Testimony feedback channel has been set to {channel}!"
-					}
-				},
-				"count": {
-					"channel": {
-						"set": "✅ Testimony counter channel has been set to {channel}!"
-					},
-					"format": {
-						"invalid": "❌ Format must contain `{count}`. Example: `testimony-{count}`",
-						"set": "✅ Testimony counter channel name format has been set to `{format}`!"
-					},
-					"reset": "✅ Testimony count has been reset to 0!",
-					"invalid": "❌ Testimony count must be a positive number.",
-					"set": "✅ Testimony count has been set to {count}!"
-				}
-			},
-			"no": {
-				"config": "❌ No settings have been saved for this server.",
-				"configured": "ℹ️ No settings have been configured."
-			},
-			"empty": "Empty",
-			"not": {
-				"set": "Not set"
-			},
-			"section": {
-				"boolean": "Active / Inactive Features",
-				"umum": "General Settings",
-				"array": "Structured Data",
-				"lainnya": "Others"
-			},
-			"announcement": {
-				"channel": {
-					"set": "✅ Announcement channel set to {channel}."
-				}
-			},
-			"invite": {
-				"channel": {
-					"set": "✅ Invite log channel set to {channel}."
-				}
-			},
-			"ai": {
-				"channel": {
-					"add": "✅ AI enabled in {channel}.",
-					"remove": "✅ AI disabled in {channel}.",
-					"empty": "ℹ️ No AI-enabled channels in this server.",
-					"list": "🤖 AI-enabled channels:\n{list}"
-				}
-			},
 			"clan": {
 				"category": {},
 				"forum": {}
-			},
-			"raw": {
-				"field": {
-					"invalid": "❌ Unknown field: `{field}`."
-				},
-				"set": "✅ Field `{field}` updated to {value}."
 			},
 			"antinuke": {
 				"toggle": {
@@ -509,6 +321,16 @@
 					"modules": "### Modules\n{modules}",
 					"immunity": "### Immunity List\n👤 Users: {users}\n🎭 Roles: {roles}"
 				}
+			}
+		},
+		"snipe": {
+			"not_yours": "❌ You cannot interact with this menu."
+		},
+		"clear": {
+			"ui": {
+				"nuke": "Nuke Channel",
+				"bulk": "Bulk Delete All",
+				"cancel": "Cancel"
 			}
 		}
 	}

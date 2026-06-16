@@ -1,0 +1,8 @@
+{
+	"nsfw": {
+		"ui": {
+			"delete": "🗑️ Delete",
+			"refresh": "🔄 Refresh"
+		}
+	}
+}

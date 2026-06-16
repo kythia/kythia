@@ -1,17 +1,11 @@
 {
 	"counting": {
 		"setup": {
-			"description": "Configure the counting channel.",
-			"channel": {
-				"description": "The channel to use for counting."
-			},
-			"option": "channel",
 			"success": "Counting has been enabled in {channel}. Start from 1!",
 			"already_configured": "Counting is already configured for this server.",
 			"start": "## `🔢` Counting Game Has Started!\nCounting has been enabled in this channel. Start from **1**!\n\n**✨ Advanced Math Supported!**\nYou don't have to just type plain numbers. You can show off your big brain by using advanced mathematical formulas to reach the next number! Here are examples that evaluate to **11**:\n\n- **Trigonometry**: `11 * sin(π/2)`\n- **Logarithms**: `log(1000, 10) + 3! + 2`\n- **Combinatorics**: `combinations(5, 2) + 1`\n- **Matrices (Determinant)**: `det([5, 2; 2, 3])`\n- **Roots & Powers**: `√121` or `cube(2) + 3`\n\n**📋 Channel Rules**\n- Only numbers or valid math expressions are allowed.\n- **No plain chat.** Any message that isn't a number or math will be automatically deleted.\n- You **cannot count twice in a row** — wait for someone else first.\n- Wrong numbers will be flagged. If strict mode is on, the count resets to 0!"
 		},
 		"disable": {
-			"description": "Disable the counting channel.",
 			"success": "Counting has been disabled.",
 			"not_enabled": "Counting is not enabled in this server."
 		},
@@ -35,10 +29,6 @@
 			"double_count": "You cannot count twice in a row! Wait for someone else.",
 			"wrong_number": "Wrong number, {user}! The previous count was **{number}**.",
 			"wrong_number_reset": "Wrong number, {user}! The previous count was **{number}**. The count has been reset to 0!",
-			"only_numbers": "Only numbers or math expressions are allowed in this channel!",
-			"invalid_input": "Invalid input for mode **{mode}**. Please try again!",
-			"invalid_characters": "Your message contains invalid characters. Only numbers and math allowed!",
-			"reset": "The count has been reset to 0.",
 			"not_enabled": "Counting is not enabled in this server.",
 			"milestone": "🎉 **MILESTONE REACHED!** {user} just hit **{number}**! Keep it going!"
 		}

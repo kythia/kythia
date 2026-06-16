@@ -1,7 +1,5 @@
 {
 	"reaction-role": {
-		"invalid_link": "❌ invalid message link provided. Please make sure it's a valid link from this server.",
-		"invalid_guild": "❌ The message link is not from this server.",
 		"invalid_channel": "❌ Invalid channel or channel is not a text channel.",
 		"invalid_message": "❌ Could not find the message. It might have been deleted.",
 		"invalid_emoji": "❌ Failed to react with that emoji. Make sure I have access to it.",
@@ -23,13 +21,39 @@
 			},
 			"list": {
 				"empty_md": "### 🎭 Reaction Role Panels\n\n> No panels found. Use `/reaction-role panel create` to set one up.",
-				"content_md": "### 🎭 Reaction Role Panels ({count})\n\n{description}"
+				"content_md": "### 🎭 Reaction Role Panels ({count})\n\n{description}",
+				"error": "An error occurred while listing panels."
+			},
+			"delete": {
+				"error": "An error occurred while deleting the panel."
 			}
 		},
 		"helpers": {
 			"title_url_md": "## [{title}]({url})",
 			"title_md": "## {title}",
 			"simple_title_md": "## {title}"
+		},
+		"ui": {
+			"create_panel": "Create Reaction Role Panel",
+			"mode": "Mode",
+			"panel_type": "Panel Type",
+			"channel": "Channel",
+			"msg_id": "Message ID (only for \"use_message\" mode)",
+			"panel_title": "Panel Title (for post_embed mode)",
+			"panel_desc": "Panel Description (optional)",
+			"ph_post_embed": "post_embed",
+			"ph_reaction": "reaction",
+			"ph_select_channel": "Select a channel...",
+			"ph_leave_empty": "Leave empty for post_embed mode",
+			"ph_pick_roles": "e.g. 🎭 Pick Your Roles",
+			"ph_react_below": "React below to pick up a role.",
+			"emoji": "Emoji",
+			"role_id": "Role ID",
+			"ph_emoji": "🎮",
+			"ph_role_id": "123456789012345678",
+			"setup_panel": "Setup Reaction Role Panel",
+			"add_emoji": "Add Emoji → Role",
+			"ph_select_role": "Select a role…"
 		}
 	}
 }

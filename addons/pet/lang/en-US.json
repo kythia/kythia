@@ -10,7 +10,6 @@
 				}
 			},
 			"success": {
-				"simple": "Congratulations! You successfully adopted a {icon} **{name}** ({rarity})!",
 				"msg_md": "## Pet Adopted!"
 			}
 		},
@@ -43,7 +42,6 @@
 				"title_md": "## 🪦 Pet is Dead\nYour pet is currently dead and cannot play. Revive it first!"
 			},
 			"success": {
-				"msg_md": "## 🎾 Played with your Pet\n{icon} **{name}** ({rarity}) is now happier ({happiness}/100)",
 				"desc": "You played with your pet.",
 				"title_md": "## Play Time!\n{desc}"
 			}
@@ -51,18 +49,13 @@
 		"info": {
 			"no": {
 				"pet": {
-					"title": "No Pet",
-					"desc": "❌ You don't have a pet!",
 					"msg_md": "## {title}\n{desc}"
 				}
 			},
 			"dead": {
-				"title": "Pet is Dead",
-				"desc": "💀 Your pet is dead! You can adopt a new pet with `/pet adopt`.",
 				"msg_md": "## {title}\n{desc}"
 			},
 			"title_md": "## 🐾 {bot}'s Pet Profile",
-			"msg_md": "## Your Pet Info\n{icon} {name} ({rarity}) named **{petName}**, bonus type {bonusType} with value **{bonusValue}**, happiness **{happiness}**, hunger **{hunger}**, pet level **{level}**",
 			"desc": "Your pet info"
 		},
 		"use": {
@@ -78,7 +71,6 @@
 				"title_md": "## 🪦 Pet is Dead\nYour pet is currently dead. Use a revive item to bring it back!"
 			},
 			"success": {
-				"msg_md": "## 🦴 Item Used\n{icon} **{name}** ({rarity}) gained a level! Level: {level}. Bonus: {bonusType} +{bonusValue}",
 				"desc": "You used an item.",
 				"title_md": "## Item Used\n{desc}"
 			}
@@ -109,7 +101,6 @@
 		"leaderboard": {
 			"entry": "{index}. {username} ({userId}) {icon} {rarity} {name}, level {level}",
 			"empty": "❌ There are no pets on the leaderboard.",
-			"msg_md": "## ## 🏆 Pet Leaderboard",
 			"title": "Pet Leaderboard"
 		},
 		"editname": {
@@ -121,14 +112,12 @@
 			"list": {
 				"list": {
 					"empty": {
-						"title": "No Pets",
 						"desc": "❌ There are no pets in the system!",
 						"msg_md": "## {title}\nNo pets available."
 					},
 					"field": "**Rarity**: {rarity}\n**Bonus**: {bonusType} +{bonusValue}",
 					"footer": "Total Pets: {count}",
-					"title_md": "## 🐾 Registered Pets",
-					"msg_md": "## Pet List\nThis Discord system has pets you can adopt and play with. The available pets are:"
+					"title_md": "## 🐾 Registered Pets"
 				}
 			},
 			"delete": {

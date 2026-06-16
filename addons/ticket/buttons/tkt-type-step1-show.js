@@ -63,38 +63,78 @@ class TktTypeStep1ShowButton extends BaseButton {
 
 			const modal = new ModalBuilder()
 				.setCustomId(`tkt-type-step1-submit:${messageId}`)
-				.setTitle('Create Type - Step 1/3: Basic Info')
+				.setTitle(
+					await interaction.client.container.t(
+						interaction,
+						'ticket.ui.create_type_1',
+					),
+				)
 				.addLabelComponents(
 					new LabelBuilder()
-						.setLabel('Select Target Panel')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.select_target_panel',
+							),
+						)
 						.setStringSelectMenuComponent(
 							new StringSelectMenuBuilder()
 								.setCustomId('panelId')
-								.setPlaceholder('Select panel...')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_select_panel',
+									),
+								)
 								.addOptions(panelOptions)
 								.setMinValues(1)
 								.setMaxValues(1),
 						),
 					new LabelBuilder()
-						.setLabel('Ticket Type Name (Menu Label)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.ticket_type_name',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('typeName')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('e.g. Bug Report')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_bug_report',
+									),
+								)
 								.setRequired(true),
 						),
 					new LabelBuilder()
-						.setLabel('Type Emoji (Optional)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.type_emoji',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('typeEmoji')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('e.g. 🎟️')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_emoji',
+									),
+								)
 								.setRequired(false),
 						),
 					new LabelBuilder()
-						.setLabel('Ticket Opening Message (Optional)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.ticket_opening_msg',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('ticketOpenMessage')
@@ -105,12 +145,22 @@ class TktTypeStep1ShowButton extends BaseButton {
 								.setRequired(false),
 						),
 					new LabelBuilder()
-						.setLabel('Ticket Opening Image (Optional)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.ticket_opening_img',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('ticketOpenImage')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('https://... (Image URL)')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_img_url',
+									),
+								)
 								.setRequired(false),
 						),
 				);

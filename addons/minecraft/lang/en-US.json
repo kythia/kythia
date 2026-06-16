@@ -51,13 +51,7 @@
 		},
 		"server": {
 			"status": {
-				"title": "Minecraft Server Status",
-				"online": "Online",
-				"offline": "Offline",
 				"unknown": "`Unknown`",
-				"info_header": "💻 Server Information",
-				"players_header": "👥 Players",
-				"motd_header": "📋 MOTD",
 				"last_updated": "-# Last updated | {timestamp}",
 				"type": {
 					"java": "☕ Java",
@@ -88,10 +82,8 @@
 					"category": "❌ Failed to create the category: {error}"
 				},
 				"success": {
-					"title": "Minecraft Stats Auto-Setup Complete!",
 					"server": "**Server:**",
 					"category": "**Category:**",
-					"channels": "📢 Channels Created",
 					"note": "Channels will update automatically every 5 minutes. Make sure the bot has permission to rename voice channels!",
 					"title_md": "## ✅ Minecraft Stats Auto-Setup Complete!",
 					"channels_md": "### 📢 Channels Created"

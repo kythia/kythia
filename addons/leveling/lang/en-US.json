@@ -5,8 +5,7 @@
 				"leveling": {
 					"profile": {
 						"up": {
-							"title": "## Level Up!",
-							"desc": "{mention} ({username}) has reached level **{level}**! Keep up your good work! 🎉\n-# next level exp: {nextLevelXp}"
+							"title": "## Level Up!"
 						}
 					},
 					"role": {

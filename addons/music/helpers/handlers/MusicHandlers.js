@@ -1556,12 +1556,18 @@ class MusicHandlers {
 			try {
 				if (!interaction.deferred && !interaction.replied) {
 					return await interaction.reply({
-						content: '❌ An error occurred while trying to go back.',
+						content: await interaction.client.container.t(
+							interaction,
+							'music.handlers.error.go_back',
+						),
 						flags: MessageFlags.Ephemeral,
 					});
 				}
 				return await interaction.editReply({
-					content: '❌ An error occurred while trying to go back.',
+					content: await interaction.client.container.t(
+						interaction,
+						'music.handlers.error.go_back',
+					),
 				});
 			} catch (_e) {
 				// Interaction may have expired — nothing we can do
@@ -2301,7 +2307,10 @@ class MusicHandlers {
 		const channel = interaction.channel;
 		if (!channel) {
 			return interaction.reply({
-				content: '❌ Could not find text channel.',
+				content: await interaction.client.container.t(
+					interaction,
+					'music.handlers.error.no_channel',
+				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -4306,7 +4315,12 @@ class MusicHandlers {
 
 			const selectMenu = new StringSelectMenuBuilder()
 				.setCustomId('radio_select')
-				.setPlaceholder('Select a radio station...')
+				.setPlaceholder(
+					await interaction.client.container.t(
+						interaction,
+						'music.ui.ph_radio',
+					),
+				)
 				.addOptions(options);
 			const row = new ActionRowBuilder().addComponents(selectMenu);
 

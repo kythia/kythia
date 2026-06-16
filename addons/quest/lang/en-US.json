@@ -20,6 +20,9 @@
 			"publisher_md": "### Publisher: \\n{gamePublisher}\\n",
 			"expires_md": "### Expires: \\n<t:{expiresTimestamp}:f> (<t:{expiresTimestamp}:R>)\\n",
 			"notify_md": "### Notify: \n{role}\n"
+		},
+		"ui": {
+			"view": "View Quest"
 		}
 	}
 }

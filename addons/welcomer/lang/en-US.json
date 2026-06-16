@@ -55,11 +55,6 @@
 			},
 			"test": {
 				"success": "Successfully emitted the **{type}** event for testing. Check the configured channel!"
-			},
-			"error": {
-				"unknown": {
-					"subcommand": "❓ Unknown subcommand."
-				}
 			}
 		}
 	}

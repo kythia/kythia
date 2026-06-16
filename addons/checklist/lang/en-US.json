@@ -62,13 +62,7 @@
 					"empty": {
 						"desc": "There are no items in this checklist yet."
 					},
-					"title": "## 📋 {scope} Checklist",
-					"field": {
-						"title": {
-							"multi": "Item List ({index})",
-							"single": "Item List"
-						}
-					}
+					"title": "## 📋 {scope} Checklist"
 				}
 			},
 			"clear": {

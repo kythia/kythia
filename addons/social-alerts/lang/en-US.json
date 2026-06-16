@@ -1,7 +1,6 @@
 {
 	"social-alert": {
 		"error": {
-			"no_permission": "❌ You need **Manage Server** permission to manage social alerts.",
 			"limit": "❌ This server has reached the maximum of **{limit}** subscriptions. Remove one before adding more.",
 			"failed": "❌ Failed: {error}",
 			"not_found": "❌ Subscription not found. It may have already been removed.",
@@ -68,8 +67,7 @@
 				"default_message": "**{channel}** just shared a new Instagram post!",
 				"label": "📸 New Post!",
 				"watch": "📸 View on Instagram"
-			},
-			"footer": "-# 📡 {bot} · Social Alerts"
+			}
 		}
 	},
 	"social-alerts": {

@@ -367,12 +367,6 @@
 			"empty": "No users found in the economy system yet.",
 			"entry": "### {medal} **{username}**\n> 💰 Total Wealth: **🪙 {wealth}**\n> 🪙 Coin: ** {coin}** | 🏦 Bank: **🪙 {bank}**",
 			"footer": "Total Users: {totalUsers}",
-			"nav": {
-				"first": "⏪ First",
-				"prev": "◀️ Back",
-				"next": "Next ▶️",
-				"last": "Last ⏩"
-			},
 			"not": {
 				"your": {
 					"interaction": "You cannot use this interaction!"
@@ -388,17 +382,6 @@
 			"work": {
 				"cooldown": {
 					"desc": "## Tired!\n🕒 You are exhausted! Try working again in **{time}**."
-				},
-				"no": {
-					"job": {
-						"desc": "## No Jobs Available\n❌ It seems there are no jobs available for you at the moment."
-					}
-				},
-				"levelup": {
-					"text": "**✨ Your work experience increased! Career Level: {level}**"
-				},
-				"result": {
-					"author": "You worked as {job} {emoji}"
 				},
 				"basepay": {
 					"field": "Base Pay"
@@ -465,7 +448,6 @@
 				"spinning": {
 					"desc": "## undefined\n## 🎰 Spinning the Wheels\nThe slot machine is spinning... Good luck!\n\n🎰 | 🎰 | 🎰"
 				},
-				"author": "{username}'s Slot Game",
 				"bet": {
 					"field": "Bet"
 				},
@@ -607,15 +589,7 @@
 					"no": {
 						"bank": "❌ | The target has no money in their bank to hack."
 					}
-				},
-				"in": {
-					"progress": "## 💵 Hacking in Progress...\n{user} is hacking {target}... with a success chance of **{chance}%**"
-				},
-				"success": {
-					"text": "## 💵 Hack Successful!\n🎉 | You successfully hacked **{target}** and took all their bank money!",
-					"dm": "## 💵 You were hacked!\n**{hacker}** has hacked you and stole **{amount}** from your bank!"
-				},
-				"failure": "## 💵 Hack Failed!\nYou failed to hack **{target}** and lost **{penalty}** money from your bank."
+				}
 			}
 		},
 		"give": {
@@ -875,9 +849,6 @@
 				"insufficient": {
 					"asset": {
 						"desc": "## ❌ Insufficient Assets\nYou do not own enough **{asset}** to sell that amount."
-					},
-					"kyth": {
-						"desc": "## ❌ Insufficient KYTH\nYou only have **💎 {balance} KYTH**."
 					}
 				},
 				"asset": {
@@ -893,34 +864,15 @@
 				},
 				"error": {
 					"desc": "## ❌ Sale Error\nAn error occurred while processing your sale. Please try again.",
-					"amm_unavailable": {
-						"desc": "## ❌ AMM Unavailable\nThe KYTH liquidity pool has not been initialized yet. Contact an admin."
-					},
 					"trading_halted": {
 						"desc": "## 🚫 KYTH Trading Halted\nThe admin has temporarily halted all KYTH trading. Check back later."
-					},
-					"below_minimum": {
-						"desc": "## ❌ Below Minimum\nMinimum trade size is **💎 {minTrade} KYTH**."
-					},
-					"exceeds_maximum": {
-						"desc": "## ❌ Exceeds Maximum\nMax trade size is **💎 {maxTrade} KYTH** (anti-whale limit). Split your order!"
 					},
 					"invalid_parameters": {
 						"desc": "## ❌ Invalid trade parameters."
 					},
-					"insufficient_liquidity": {
-						"desc": "## ❌ Insufficient Liquidity\nThe pool does not have enough Coin to fill your order."
-					},
 					"slippage": {
 						"desc": "## ⚠️ Slippage Exceeded\nMarket moved. You'd receive **🪙 {received}** but your minimum is **🪙 {minOut}**.\nPlease try again."
 					}
-				},
-				"preview": {
-					"desc": "## 🪙 KYTH Sell Preview\n\n**You Sell:** 💎 {sellQuantity} KYTH\n**Protocol Fee ({feeRate}%):** 💎 {feeKythAmount} KYTH\n**You Receive:** 🪙 {coinOut} Coin\n\n**Mid Price:** {midPrice} Coin/KYTH\n**Execution Price:** {executionPrice} Coin/KYTH\n**Price After:** {priceAfter} Coin/KYTH\n{impactEmoji} **Price Impact:** {priceImpactPct}%\n**Min. Received:** 🪙 {minCoinOut} (0.5% slippage tol.)"
-				},
-				"warning": {
-					"high_impact": "\n\n⚠️ **High price impact.** Your trade is large relative to pool size. You are selling at a significant discount.",
-					"extreme_impact": "\n\n🚨 **EXTREME PRICE IMPACT!** This trade will move the market by a lot. You are selling at a very high discount. Are you absolutely sure?"
 				},
 				"cancel": {
 					"desc": "Sell cancelled."
@@ -970,8 +922,7 @@
 					}
 				},
 				"pool_not_found_md": "## ❌ KYTH Pool Not Found\nThe AMM has not been initialized.",
-				"title_md": "## 💎 KYTH Coin — AMM Market Data",
-				"token_title_md": "## {title}\n**Token Address:** `{contractAddress}`\n\n**Current Price:** 🪙 {price}\n**Market Cap:** 🪙 {cap}\n**Total Supply:** {supply}\n\n**Price Change (24h):** {priceChange24h}\n**Volume (24h):** {volume24h}\n**Holders:** {holders}"
+				"title_md": "## 💎 KYTH Coin — AMM Market Data"
 			},
 			"buy": {
 				"insufficient": {
@@ -1032,9 +983,6 @@
 				"empty": {
 					"desc": "## Your Asset Portfolio is Empty\nYou don't own any assets yet. Use /eco market buy to purchase assets from the global market!"
 				},
-				"data": {
-					"unavailable": "Market data for this asset is currently unavailable. (Holding: {quantity})"
-				},
 				"field": {
 					"quantity": "Quantity",
 					"avg": {
@@ -1088,40 +1036,12 @@
 						"desc": "## Limit Sell Order Placed\nSuccessfully placed a limit sell order for **{quantity} {asset}** at **{price}** per asset."
 					}
 				},
-				"error": {
-					"invalid": {
-						"desc": "## ❌ Invalid Parameters\nPrice must be greater than 0."
-					},
-					"below_minimum": {
-						"desc": "## ❌ Below Minimum\nYou must spend at least 🪙 {minTrade}."
-					},
-					"exceeds_maximum": {
-						"desc": "## ❌ Exceeds Maximum\nYou can spend at most 🪙 {maxTrade} per order."
-					},
-					"insufficient_funds": {
-						"desc": "## ❌ Insufficient Funds\nYou don't have enough KythiaCoin to place this buy order. You need 🪙 {amount}."
-					},
-					"sell_invalid": {
-						"desc": "## ❌ Invalid Parameters\nQuantity and price must be greater than 0."
-					},
-					"sell_insufficient": {
-						"desc": "## ❌ Insufficient Asset\nYou do not have enough {asset} to place this sell order."
-					}
-				},
 				"unsupported_md": "## ❌ Unsupported Asset\nLimit orders are **not supported** for the `KYTH` token due to the real-time Automated Market Maker mechanics. Please use `/eco market buy` or `/eco market sell` directly."
 			},
 			"stoploss": {
 				"sell": {
 					"success": {
 						"desc": "## Stop-Loss Order Placed\nSuccessfully placed a stop-loss order to sell **{quantity} {asset}** if the price drops to **{price}** per asset."
-					}
-				},
-				"error": {
-					"invalid": {
-						"desc": "## ❌ Invalid Parameters\nQuantity and price must be greater than 0."
-					},
-					"insufficient": {
-						"desc": "## ❌ Insufficient Asset\nYou do not have enough {asset} to place this stop-loss order."
 					}
 				},
 				"unsupported_md": "## ❌ Unsupported Asset\nStop-loss orders are **not supported** for the `KYTH` token due to the real-time Automated Market Maker mechanics. Please use `/eco market sell` directly."
@@ -1183,9 +1103,6 @@
 				},
 				"status": {
 					"desc": "## 🏦 KYTH Staking Status\n**💎 KYTH in Wallet:** {wallet}\n**🔒 KYTH Staked:** {staked}\n\nStaked KYTH earns a share of the daily dividend pool (50% of all protocol fees collected).\n{bankStatus}"
-				},
-				"status_none": {
-					"desc": "## 🏦 Solara Mutual Staking\nYou do not have an active staking position.\n\n> **Current APY:** ~{apy}%\nUse `/market stake action:Stake amount:<amount>` to start earning daily dividends!"
 				}
 			}
 		},
@@ -1316,7 +1233,6 @@
 					}
 				},
 				"result": {
-					"exp_gain": "\n\n📈 You gained **+10 Job EXP**! (Total: {exp})",
 					"tool_broke": "\n⚠️ **Oh no! Your {tool} broke while working!**",
 					"title": "## {emoji} You worked as a **{title}**!"
 				}
@@ -1392,7 +1308,6 @@
 			},
 			"central_bank": {
 				"error": {
-					"owner": "Only the Bot Owner (Central Bank Governor) can use this command.",
 					"db": "Global Liquidity Pool not found."
 				},
 				"title": "## 🏦 Central Bank Policy",
@@ -1561,6 +1476,20 @@
 			"loan": {
 				"defaulted": "## 🚨 LOAN DEFAULTED!\nYou failed to repay your loan in time. The bank has **seized all your cash and bank balance**, and your credit score has tanked!"
 			}
+		},
+		"ui": {
+			"premium": {
+				"cute": "Cute Tier",
+				"powerful": "Powerful Tier",
+				"yours": "Yours Tier"
+			},
+			"back": "Back",
+			"cancel": "Cancel",
+			"ph_duration": "Select Subscription Duration...",
+			"ph_profession": "Select a profession...",
+			"ph_bank": "Select a new bank...",
+			"ph_blackmarket": "Select an item to purchase...",
+			"confirm_sell": "Confirm Sell"
 		}
 	},
 	"fun": {

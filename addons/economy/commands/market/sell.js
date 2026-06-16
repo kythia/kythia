@@ -241,7 +241,12 @@ class SellCommand extends BaseCommand {
 			const row = new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
 					.setCustomId('kyth_sell_confirm')
-					.setLabel('Confirm Sell')
+					.setLabel(
+						await interaction.client.container.t(
+							interaction,
+							'economy.ui.confirm_sell',
+						),
+					)
 					.setStyle(
 						impactLevel === 'danger' ? ButtonStyle.Danger : ButtonStyle.Primary,
 					),

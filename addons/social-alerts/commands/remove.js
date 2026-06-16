@@ -12,6 +12,7 @@ const { BaseCommand } = require('kythia-core');
 
 class RemoveCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -63,17 +64,6 @@ class RemoveCommand extends BaseCommand {
 		const { models, helpers, t, logger } = container;
 		const { SocialAlertSubscription } = models;
 		const { simpleContainer } = helpers.discord;
-
-		if (!interaction.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-			return interaction.reply({
-				components: await simpleContainer(
-					interaction,
-					await t(interaction, 'social-alert.error.no_permission'),
-					{ color: 'Red' },
-				),
-				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
-			});
-		}
 
 		await interaction.deferReply();
 

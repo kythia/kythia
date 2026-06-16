@@ -50,7 +50,7 @@ class GetCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { helpers, models, logger } = container;
+		const { t, helpers, models, logger } = container;
 		const { NsfwUser } = models;
 
 		const ephemeral = interaction.options.getBoolean('private') ?? false;
@@ -96,7 +96,16 @@ class GetCommand extends BaseCommand {
 				{
 					title: category,
 					media: currentImages,
-					components: buildComponentRows(currentImages, user?.nsfwFav || []),
+					components: buildComponentRows(
+						currentImages,
+						user?.nsfwFav || [],
+						false,
+						await interaction.client.container.t(
+							interaction,
+							'nsfw.ui.refresh',
+						),
+						await t(interaction, 'nsfw.ui.delete'),
+					),
 				},
 			);
 

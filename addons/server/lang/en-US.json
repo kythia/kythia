@@ -2,7 +2,6 @@
 	"server": {
 		"server": {
 			"progress": {
-				"title": "⚙️ Server Autobuild Progress",
 				"step": "Step {step} of {totalSteps}",
 				"creating": {
 					"roles": "Creating roles...",
@@ -11,46 +10,19 @@
 				},
 				"title_md": "## ⏳ Progress"
 			},
-			"command": {
-				"no": {
-					"guild": "This command can only be used in a server."
-				}
-			},
 			"autobuild": {
 				"template": {
 					"not": {
 						"found_md": "## ❌ Template Not Found\nNo such template `{key}` found."
 					}
 				},
-				"progress": {
-					"start": "⏳ Starting server autobuild process..."
-				},
-				"success": {
-					"title": "✅ Server autobuild completed for **{name}**!",
-					"desc": "Mode: `{mode}`\nLocale: `{locale}`\nVoice: `{voice}`\nStaff: `{staff}`\nRoles created: `{roleCreated}` (skipped: `{roleSkipped}`)\nCategories created: `{catCreated}` (skipped: `{catSkipped}`)\nChannels created: `{chCreated}` (skipped: `{chSkipped}`)\nFailed: `{failed}`"
-				},
-				"failed": "❌ Server autobuild failed!\nError: {error}",
-				"start": "⏳ Starting autobuild for **{template}**...{dryRun, select, true { (Dry Run)} other {}}",
-				"done": "✅ Autobuild complete for **{template}**!",
 				"stats": "**Roles:** {rolesCreated} created ({rolesSkipped} skipped)\n**Categories:** {catCreated} created ({catSkipped} skipped)\n**Channels:** {chCreated} created ({chSkipped} skipped)\n**Failed:** {failed}{dryRun, select, true {\n\n> ⚠️ Dry run — no changes were made.} other {}}",
 				"start_md": "## 🚀 Starting Autobuild\nApplying `{template}`... {dryRun}",
 				"failed_md": "## ❌ Autobuild Failed\n{error}",
 				"done_md": "## ✅ Autobuild Complete\nTemplate `{template}` has been applied successfully!"
 			},
 			"backup": {
-				"no": {
-					"guild": "This command can only be used in a server."
-				},
-				"progress": {
-					"start": "⏳ Collecting server data...",
-					"settings": "✅ Server settings collected...",
-					"roles": "✅ Roles data collected...",
-					"channels": "✅ Channels data collected...",
-					"emojis": "✅ Emojis & stickers data collected...",
-					"soundboard": "✅ Soundboard data collected..."
-				},
 				"dm": {
-					"content": "Here is your backup for **{name}**!",
 					"failed": "## ❌ Failed!\nFailed to send backup to your DM. Please enable DMs from server members."
 				},
 				"success": "## ✅ Complete!\nServer backup completed and sent to your DM!",
@@ -63,16 +35,13 @@
 			},
 			"restore": {
 				"progress": {
-					"start": "⏳ Server restore in progress...",
 					"start_md": "## 🚀 Starting Restoration",
 					"generic_md": "## {text}"
 				},
 				"file": {
-					"invalid": "❌ Invalid backup file. Please upload a valid .json backup file.",
 					"invalid_md": "## ❌ Invalid File\nThe file provided is not a valid Kythia backup JSON."
 				},
 				"data": {
-					"invalid": "❌ Invalid backup data.",
 					"invalid_md": "## ❌ Invalid Data\nThe backup data is missing or corrupted."
 				},
 				"clearing": "🧹 Clearing all channels, roles, emojis, and stickers...",
@@ -89,22 +58,14 @@
 					"progress": "📁 Restoring categories... ({current}/{total})"
 				},
 				"assets": "🎨 Restoring emojis, stickers, and soundboard...",
-				"success": "✅ Server restore completed for **{name}**!",
-				"failed": "❌ Server restore failed.",
 				"success_md": "## ✅ Restoration Complete\nRestored successfully.\n> Channels: **{channels}**\n> Roles: **{roles}**\n> Emojis: **{emojis}**\n> Soundboard: **{soundboard}**\n> Settings: **{settings}**",
 				"failed_md": "## ❌ Restoration Failed\nAn error occurred during restoration."
 			},
 			"reset": {
 				"no": {
-					"guild": "This command can only be used in a server.",
 					"guild_md": "## ❌ Unknown Guild\nCould not fetch guild information."
 				},
 				"progress": {
-					"start": "⏳ Deleting channels, roles, emojis, and stickers...",
-					"channels": "⏳ Deleting channels... ({current}/{total})",
-					"roles": "⏳ Deleting roles... ({current}/{total})",
-					"emojis": "⏳ Deleting emojis... ({current}/{total})",
-					"stickers": "⏳ Deleting stickers... ({current}/{total})",
 					"start_md": "## 🚀 Starting Reset",
 					"channels_md": "## 🗑️ Deleting Channels ({current}/{total})",
 					"roles_md": "## 🗑️ Deleting Roles ({current}/{total})",

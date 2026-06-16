@@ -76,12 +76,15 @@ class SendCommand extends BaseCommand {
 		});
 
 		if (!record) {
+			const { simpleContainer } = container.helpers.discord;
+			const { t } = container;
 			return interaction.editReply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(0xef4444)
-						.setDescription('❌ Embed not found in this server.'),
-				],
+				components: await simpleContainer(
+					interaction,
+					await t(interaction, 'embed-builder.send.not_found'),
+					{ color: 'Red' },
+				),
+				flags: MessageFlags.IsComponentsV2,
 			});
 		}
 
@@ -132,14 +135,15 @@ class SendCommand extends BaseCommand {
 
 				// Re-build from raw JSON using ContainerBuilder if it's a container type
 				if (componentsData.length === 0) {
+					const { simpleContainer } = container.helpers.discord;
+					const { t } = container;
 					return interaction.editReply({
-						embeds: [
-							new EmbedBuilder()
-								.setColor(0xf59e0b)
-								.setDescription(
-									'⚠️ This Components V2 embed has no components yet. Edit it via the dashboard first.',
-								),
-						],
+						components: await simpleContainer(
+							interaction,
+							await t(interaction, 'embed-builder.send.no_components'),
+							{ color: 'Yellow' },
+						),
+						flags: MessageFlags.IsComponentsV2,
 					});
 				}
 
@@ -157,27 +161,36 @@ class SendCommand extends BaseCommand {
 				allowedMentions,
 			});
 
+			const { createContainer } = container.helpers.discord;
+			const { t } = container;
 			return interaction.editReply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(0x22c55e)
-						.setTitle('✅ Embed Sent!')
-						.setDescription(
-							`**"${record.name}"** was posted to <#${targetChannel.id}>!\n[Jump to message](https://discord.com/channels/${interaction.guild.id}/${targetChannel.id}/${message.id})`,
-						),
-				],
+				components: await createContainer(interaction, {
+					title: await t(interaction, 'embed-builder.ui.sent'),
+					description: await t(interaction, 'embed-builder.ui.sent_desc', {
+						name: record.name,
+						channelId: targetChannel.id,
+						url: `https://discord.com/channels/${interaction.guild.id}/${targetChannel.id}/${message.id}`,
+					}),
+					color: 'Green',
+				}),
+				flags: MessageFlags.IsComponentsV2,
 			});
 		} catch (error) {
 			container.logger.error(
 				`[embed-builder:send] Error: ${error.message || String(error)}`,
 				{ label: 'embed-builder:send' },
 			);
+			const { simpleContainer } = container.helpers.discord;
+			const { t } = container;
 			return interaction.editReply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(0xef4444)
-						.setDescription(`❌ Failed to send: \`${error.message}\``),
-				],
+				components: await simpleContainer(
+					interaction,
+					await t(interaction, 'embed-builder.send.error', {
+						error: error.message,
+					}),
+					{ color: 'Red' },
+				),
+				flags: MessageFlags.IsComponentsV2,
 			});
 		}
 	}

@@ -69,7 +69,13 @@ class NsfwRefreshButton extends BaseButton {
 		const [containerBody] = await helpers.discord.createContainer(interaction, {
 			title: category,
 			media: currentImages,
-			components: buildComponentRows(currentImages, user.nsfwFav || []),
+			components: buildComponentRows(
+				currentImages,
+				user.nsfwFav || [],
+				false,
+				await t(interaction, 'nsfw.ui.refresh'),
+				await t(interaction, 'nsfw.ui.delete'),
+			),
 		});
 
 		await interaction.editReply({

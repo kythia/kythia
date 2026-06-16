@@ -46,17 +46,32 @@ class TktTypeStep3ShowButton extends BaseButton {
 
 			const modal = new ModalBuilder()
 				.setCustomId(`tkt-type-step3-submit:${messageId}`)
-				.setTitle('Create Type - Step 3/3: Advanced')
+				.setTitle(
+					await interaction.client.container.t(
+						interaction,
+						'ticket.ui.create_type_3',
+					),
+				)
 				.addLabelComponents(
 					new LabelBuilder()
-						.setLabel('Ticket Style')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.ticket_style',
+							),
+						)
 						.setDescription(
 							'Channel = new private channel per ticket. Thread = new private thread inside a text channel.',
 						)
 						.setStringSelectMenuComponent(
 							new StringSelectMenuBuilder()
 								.setCustomId('ticketStyle')
-								.setPlaceholder('Select ticket style...')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_select_style',
+									),
+								)
 								.addOptions([
 									{
 										label: 'Channel (Default)',
@@ -75,21 +90,36 @@ class TktTypeStep3ShowButton extends BaseButton {
 								.setMaxValues(1),
 						),
 					new LabelBuilder()
-						.setLabel('Thread Parent Channel (For Thread Style)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.thread_parent',
+							),
+						)
 						.setDescription(
 							'Required for Thread style. Tickets will open as threads in this channel.',
 						)
 						.setChannelSelectMenuComponent(
 							new ChannelSelectMenuBuilder()
 								.setCustomId('ticketThreadChannelId')
-								.setPlaceholder('Select a text channel for threads...')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_select_thread',
+									),
+								)
 								.addChannelTypes(ChannelType.GuildText)
 								.setRequired(false)
 								.setMinValues(0)
 								.setMaxValues(1),
 						),
 					new LabelBuilder()
-						.setLabel('Ticket Creator Reason Question')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.creator_reason',
+							),
+						)
 						.setDescription(
 							'If filled, the user will be prompted. If empty, the ticket will be created immediately.',
 						)

@@ -40,7 +40,12 @@ class CreateCommand extends BaseCommand {
 
 		const setupButton = new ButtonBuilder()
 			.setCustomId('rr-panel-setup-show')
-			.setLabel('Setup Reaction Role Panel')
+			.setLabel(
+				await interaction.client.container.t(
+					interaction,
+					'reaction-role.ui.setup_panel',
+				),
+			)
 			.setStyle(ButtonStyle.Primary)
 			.setEmoji('🎭');
 

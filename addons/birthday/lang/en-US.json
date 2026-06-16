@@ -2,8 +2,7 @@
 	"birthday": {
 		"set": {
 			"error": {
-				"invalid_date": "That date doesn't seem valid. Please check the day and month!",
-				"future_year": "You cannot be born in the future! 🔮"
+				"invalid_date": "That date doesn't seem valid. Please check the day and month!"
 			},
 			"success": "📅 Successfully set your birthday to **{date}**!"
 		},

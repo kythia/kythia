@@ -103,7 +103,12 @@ class BlackmarketCommand extends BaseCommand {
 			const selectRow = new ActionRowBuilder().addComponents(
 				new StringSelectMenuBuilder()
 					.setCustomId('bm_buy_item')
-					.setPlaceholder('Select an item to purchase...')
+					.setPlaceholder(
+						await interaction.client.container.t(
+							interaction,
+							'economy.ui.ph_blackmarket',
+						),
+					)
 					.addOptions(selectOptions)
 					.setDisabled(pageItems.length === 0),
 			);

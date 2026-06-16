@@ -29,9 +29,11 @@ class DebugCommand extends BaseCommand {
 
 		if (!Playlist || !PlaylistTrack) {
 			return interaction.reply({
-				content:
+				components: await simpleContainer(
+					interaction,
 					'❌ Model `Playlist` atau `PlaylistTrack` tidak ditemukan di container.',
-				flags: MessageFlags.Ephemeral,
+				),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 

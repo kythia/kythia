@@ -6,7 +6,6 @@
 				"new": "{emoji} **Streak started!** Keep chatting to build it up!"
 			},
 			"claim": {
-				"title": "🔥 Streak Claim",
 				"already": {
 					"title": "👋 You have already claimed today!",
 					"desc": "Your streak is safe! You can claim again tomorrow.\n\n{emoji} **Current Streak:** {streak} days"
@@ -19,10 +18,6 @@
 				},
 				"continue": "Your streak continues! Congrats! 🎉",
 				"reward": "🎁 **You received a role reward:** {roles}",
-				"success": {
-					"title": "✅ Daily Streak Claimed!"
-				},
-				"footer": "Keep your streak going!",
 				"desc": "`🔥` Current Streak\n{currentStreak} days\n`🏆` Highest Record\n{highestStreak} days\n`❄️` Streak Freeze\n{streakFreezes}",
 				"title_md": "## 🔥 Daily Streak"
 			},
@@ -32,28 +27,12 @@
 					"not": {
 						"claimed": "❌ Not claimed today!"
 					}
-				},
-				"title": "🔥 {username}'s Streak Status"
-			},
-			"footer": {
-				"requested": {
-					"by": "Requested by {username}"
 				}
 			},
 			"leaderboard": {
-				"title": "🏆 Top Streak Leaderboard",
 				"empty": "No one has started a streak in this server yet. Be the first with `/streak claim`!",
-				"unknown": {
-					"user": "User (ID: {id}...)"
-				},
 				"entry": "{medal} {username} — {emoji} {current} days (Max: {highest}) ❄️{freeze}",
 				"footer": "Streak data in server {server}",
-				"nav": {
-					"first": "⏪ First",
-					"prev": "◀️ Back",
-					"next": "Next ▶️",
-					"last": "Last ⏩"
-				},
 				"not": {
 					"your": {
 						"interaction": "You cannot use this interaction!"
@@ -62,7 +41,6 @@
 				"title_md": "## 🏆 Streak Leaderboard"
 			},
 			"reset": {
-				"title": "🔄 Streak Reset",
 				"already": {
 					"zero": "Your streak is already 0. No need to reset."
 				},
@@ -71,7 +49,6 @@
 			},
 			"user": {
 				"title": {
-					"user": "📊 {username}'s Streak Status",
 					"user_md": "## 🔥 {user}'s Streak"
 				},
 				"not": {
@@ -106,7 +83,6 @@
 				}
 			},
 			"restore": {
-				"title": "🔁 Streak Restore",
 				"desc": "You missed claiming yesterday, but your streak of **{streak} {emoji}** can be saved!\n\nVote for Kythia on **top.gg** and click the button below to restore your streak.",
 				"button": "🔁 Restore Streak",
 				"vote": {

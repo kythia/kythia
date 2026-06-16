@@ -163,25 +163,6 @@
 			}
 		},
 		"guessnumber": {
-			"desc": "I'm thinking of a number between **1 - {maxNumber}** 😋\nType your guess in the chat!",
-			"hint": "Just type your number in the chat! 😋",
-			"mode": {
-				"field": "Mode"
-			},
-			"timeleft": {
-				"field": "Time Left"
-			},
-			"dm": {
-				"sent": {
-					"desc": "Check your DM for the game! 😋"
-				}
-			},
-			"win": {
-				"desc": "## 🎉 You Win!\n🎯 The number was **{number}** 😋\nYou found it in **{attempts}** guesses!"
-			},
-			"lose": {
-				"desc": "## ⏰ Time's Up 😭\nTime's up! 😋\nThe answer was **{number}**"
-			},
 			"feedback": {
 				"almost": {}
 			}
@@ -319,12 +300,6 @@
 			"title": "## ✂️ Rock Paper Scissors",
 			"choose": "Pick your weapon!",
 			"waiting": "Waiting for {opponent} to pick their weapon...",
-			"not_your_game": "❌ This isn't your game to play!",
-			"choices": {
-				"rock": "🪨 Rock",
-				"paper": "📄 Paper",
-				"scissors": "✂️ Scissors"
-			},
 			"result": {
 				"win": "🎉 **{winner}** wins!\n{winnerChoice} beats {loserChoice}!",
 				"draw": "🤝 It's a draw!\nYou both picked {choice}!",
@@ -348,9 +323,6 @@
 			"wrong": "❌ Wrong! The answer was `{answer}`.\nFinal streak: **{score}**",
 			"timeout": "⏰ Time's up! The answer was `{answer}`.\nFinal streak: **{score}**",
 			"new_best": "🏆 New personal best: **{score}**!",
-			"button": {
-				"answer": "Answer"
-			},
 			"modal": {
 				"title": "Your Answer",
 				"label": "Enter the answer (numbers only)"

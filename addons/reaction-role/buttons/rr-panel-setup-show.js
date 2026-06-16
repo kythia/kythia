@@ -30,11 +30,21 @@ class RrPanelSetupShowButton extends BaseButton {
 		try {
 			const modal = new ModalBuilder()
 				.setCustomId(`rr-panel-create:${originalMessageId}`)
-				.setTitle('Create Reaction Role Panel')
+				.setTitle(
+					await interaction.client.container.t(
+						interaction,
+						'reaction-role.ui.create_panel',
+					),
+				)
 				.addLabelComponents(
 					// Mode selection
 					new LabelBuilder()
-						.setLabel('Mode')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'reaction-role.ui.mode',
+							),
+						)
 						.setDescription(
 							'"post_embed" — bot posts new embed | "use_message" — use existing message ID',
 						)
@@ -42,14 +52,24 @@ class RrPanelSetupShowButton extends BaseButton {
 							new TextInputBuilder()
 								.setCustomId('mode')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('post_embed')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'reaction-role.ui.ph_post_embed',
+									),
+								)
 								.setValue('post_embed')
 								.setRequired(true),
 						),
 
 					// Panel type — reaction or dropdown
 					new LabelBuilder()
-						.setLabel('Panel Type')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'reaction-role.ui.panel_type',
+							),
+						)
 						.setDescription(
 							'"reaction" — users react with emoji | "dropdown" — users pick from a select menu',
 						)
@@ -57,21 +77,36 @@ class RrPanelSetupShowButton extends BaseButton {
 							new TextInputBuilder()
 								.setCustomId('panelType')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('reaction')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'reaction-role.ui.ph_reaction',
+									),
+								)
 								.setValue('reaction')
 								.setRequired(true),
 						),
 
 					// Channel: used for both modes
 					new LabelBuilder()
-						.setLabel('Channel')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'reaction-role.ui.channel',
+							),
+						)
 						.setDescription(
 							'The channel where the panel message is (or will be sent).',
 						)
 						.setChannelSelectMenuComponent(
 							new ChannelSelectMenuBuilder()
 								.setCustomId('channelId')
-								.setPlaceholder('Select a channel...')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'reaction-role.ui.ph_select_channel',
+									),
+								)
 								.addChannelTypes(ChannelType.GuildText)
 								.setMinValues(1)
 								.setMaxValues(1),
@@ -79,34 +114,64 @@ class RrPanelSetupShowButton extends BaseButton {
 
 					// Message ID — only required for use_message mode
 					new LabelBuilder()
-						.setLabel('Message ID (only for "use_message" mode)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'reaction-role.ui.msg_id',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('messageId')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('Leave empty for post_embed mode')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'reaction-role.ui.ph_leave_empty',
+									),
+								)
 								.setRequired(false),
 						),
 
 					// Panel title — used as embed heading for post_embed mode
 					new LabelBuilder()
-						.setLabel('Panel Title (for post_embed mode)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'reaction-role.ui.panel_title',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('title')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('e.g. 🎭 Pick Your Roles')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'reaction-role.ui.ph_pick_roles',
+									),
+								)
 								.setRequired(false),
 						),
 
 					// Panel description
 					new LabelBuilder()
-						.setLabel('Panel Description (optional)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'reaction-role.ui.panel_desc',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('description')
 								.setStyle(TextInputStyle.Paragraph)
-								.setPlaceholder('React below to pick up a role.')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'reaction-role.ui.ph_react_below',
+									),
+								)
 								.setRequired(false),
 						),
 				);

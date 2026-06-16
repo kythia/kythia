@@ -54,7 +54,12 @@ class RrPanelAddEmojiShowButton extends BaseButton {
 				)
 				.addLabelComponents(
 					new LabelBuilder()
-						.setLabel('Emoji')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'reaction-role.ui.emoji',
+							),
+						)
 						.setDescription(
 							'Unicode emoji (e.g. 🎮) or custom emoji string (e.g. <:name:id>)',
 						)
@@ -62,7 +67,12 @@ class RrPanelAddEmojiShowButton extends BaseButton {
 							new TextInputBuilder()
 								.setCustomId('emoji')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('🎮')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'reaction-role.ui.ph_emoji',
+									),
+								)
 								.setRequired(true),
 						),
 
@@ -88,13 +98,23 @@ class RrPanelAddEmojiShowButton extends BaseButton {
 					...(isDropdown
 						? [
 								new LabelBuilder()
-									.setLabel('Role ID')
+									.setLabel(
+										await interaction.client.container.t(
+											interaction,
+											'reaction-role.ui.role_id',
+										),
+									)
 									.setDescription('Paste the Discord role ID to assign.')
 									.setTextInputComponent(
 										new TextInputBuilder()
 											.setCustomId('roleId')
 											.setStyle(TextInputStyle.Short)
-											.setPlaceholder('123456789012345678')
+											.setPlaceholder(
+												await interaction.client.container.t(
+													interaction,
+													'reaction-role.ui.ph_role_id',
+												),
+											)
 											.setRequired(true),
 									),
 							]

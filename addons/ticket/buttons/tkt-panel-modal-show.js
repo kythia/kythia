@@ -29,10 +29,20 @@ class TktPanelModalShowButton extends BaseButton {
 		try {
 			const modal = new ModalBuilder()
 				.setCustomId(`tkt-panel-create:${originalMessageId}`)
-				.setTitle('Create New Panel')
+				.setTitle(
+					await interaction.client.container.t(
+						interaction,
+						'ticket.ui.create_panel',
+					),
+				)
 				.addLabelComponents(
 					new LabelBuilder()
-						.setLabel('Panel Channel ID')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.panel_channel_id',
+							),
+						)
 						.setDescription(
 							'Paste the ID of the channel where this panel will be sent.',
 						)
@@ -40,35 +50,70 @@ class TktPanelModalShowButton extends BaseButton {
 							new TextInputBuilder()
 								.setCustomId('channelId')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('e.g. 123456789012345678')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_panel_id',
+									),
+								)
 								.setRequired(true),
 						),
 
 					new LabelBuilder()
-						.setLabel('Panel Title')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.panel_title',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('title')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('e.g. Kythia Support Center')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_kythia_support',
+									),
+								)
 								.setRequired(true),
 						),
 					new LabelBuilder()
-						.setLabel('Panel Description')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.panel_desc',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('description')
 								.setStyle(TextInputStyle.Paragraph)
-								.setPlaceholder('Select the type of ticket you need below.')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_select_type',
+									),
+								)
 								.setRequired(false),
 						),
 					new LabelBuilder()
-						.setLabel('Panel Image URL (Optional)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.panel_img',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('image')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('https://... (Image URL for panel)')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_img_panel',
+									),
+								)
 								.setRequired(false),
 						),
 				);

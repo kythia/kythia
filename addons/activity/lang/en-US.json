@@ -2,7 +2,7 @@
 	"activity": {
 		"achievement": {
 			"list": {
-				"header": "## \ud83d\udccb Achievements \u2014 {username}\n\u2705 **{unlockedCount}/{totalCount}** unlocked",
+				"header": "## 📋 Achievements — {username}\n✅ **{unlockedCount}/{totalCount}** unlocked",
 				"empty": "_No achievements found._"
 			},
 			"messages_250": {
@@ -199,7 +199,7 @@
 			},
 			"server_age_1w": {
 				"name": "In Server for 1 Week",
-				"desc": "One week in \u2014 you survived! Let's see how long you last."
+				"desc": "One week in — you survived! Let's see how long you last."
 			},
 			"server_age_1m": {
 				"name": "In Server for 1 Month",
@@ -215,11 +215,11 @@
 			},
 			"server_age_1y": {
 				"name": "In Server for 1 Year",
-				"desc": "One year! You didn't rage-quit \u2014 impressive!"
+				"desc": "One year! You didn't rage-quit — impressive!"
 			},
 			"server_age_2y": {
 				"name": "In Server for 2 Years",
-				"desc": "Two years! You're still here\u2026 voluntarily? Wild."
+				"desc": "Two years! You're still here… voluntarily? Wild."
 			},
 			"server_age_3y": {
 				"name": "In Server for 3 Years",
@@ -231,7 +231,7 @@
 			},
 			"server_age_5y": {
 				"name": "In Server for 5 Years",
-				"desc": "Half a decade with us \u2014 incredible!"
+				"desc": "Half a decade with us — incredible!"
 			},
 			"collector_10": {
 				"name": "Achievement Collector I",
@@ -279,27 +279,27 @@
 			},
 			"server_booster": {
 				"name": "Server Booster",
-				"desc": "Boost magic deployed \u2014 you're a legend!"
+				"desc": "Boost magic deployed — you're a legend!"
 			}
 		},
 		"commands": {
 			"achievement": {
 				"list": {
 					"category_header": "### {label}",
-					"achievement_item": "{status} {rarityEmoji} **{localizedName}** \u2014 {localizedDesc}"
+					"achievement_item": "{status} {rarityEmoji} **{localizedName}** — {localizedDesc}"
 				},
 				"profile": {
-					"title": "## \ud83c\udfc6 Achievement Profile \u2014 {username}",
+					"title": "## 🏆 Achievement Profile — {username}",
 					"status": "**{unlockedCount}** out of **{totalCount}** achievements unlocked."
 				},
 				"setup": {
-					"enabled": "## \u2699\ufe0f Setup Updated\n\u2705 **Achievement Notifications** will now be sent to <#{channelId}>.",
-					"disabled": "## \u2699\ufe0f Setup Updated\n\u2705 **Achievement Notifications** have been **disabled** (no channel set)."
+					"enabled": "## ⚙️ Setup Updated\n✅ **Achievement Notifications** will now be sent to <#{channelId}>.",
+					"disabled": "## ⚙️ Setup Updated\n✅ **Achievement Notifications** have been **disabled** (no channel set)."
 				}
 			},
 			"stats": {
-				"title": "## Activity Stats \u2014 {periodLabel}",
-				"desc": "Here are the raw activity stats for **{username}**:\n\n\ud83d\udce8 **Total Messages:** {messages}\n\ud83c\udf99\ufe0f **Total Voice Time:** {voiceTime}"
+				"title": "## Activity Stats — {periodLabel}",
+				"desc": "Here are the raw activity stats for **{username}**:\n\n📨 **Total Messages:** {messages}\n🎙️ **Total Voice Time:** {voiceTime}"
 			},
 			"leaderboard": {
 				"period": {
@@ -311,28 +311,22 @@
 				"not_your_interaction": "This is not your leaderboard to navigate."
 			},
 			"setup": {
-				"enabled": "## \u2699\ufe0f Activity Setup\n\u2705 **Activity Tracking** has been **enabled** for this server.",
-				"disabled": "## \u2699\ufe0f Activity Setup\n\u2705 **Activity Tracking** has been **disabled** for this server."
+				"enabled": "## ⚙️ Activity Setup\n✅ **Activity Tracking** has been **enabled** for this server.",
+				"disabled": "## ⚙️ Activity Setup\n✅ **Activity Tracking** has been **disabled** for this server."
 			}
 		},
 		"helpers": {
 			"leaderboard": {
 				"empty": "No activity data yet. Start chatting or join a voice channel!",
-				"entry": "{medal} <@{userId}> \u2014 **{value}**",
+				"entry": "{medal} <@{userId}> — **{value}**",
 				"title": {
-					"messages": "## Most Active \u2014 Messages \u2014 {periodLabel}",
-					"voice": "## Most Active \u2014 Voice Time \u2014 {periodLabel}"
+					"messages": "## Most Active — Messages — {periodLabel}",
+					"voice": "## Most Active — Voice Time — {periodLabel}"
 				},
-				"footer": "-# Activity leaderboard for **{server}**",
-				"nav": {
-					"first": "\u23ee First",
-					"prev": "\u25c0 Prev",
-					"next": "Next \u25b6",
-					"last": "Last \u23ed"
-				}
+				"footer": "-# Activity leaderboard for **{server}**"
 			},
 			"achievementChecker": {
-				"unlocked": "## \ud83c\udfc6 Achievement Unlocked\n<@{userId}> unlocked **{nameText}**!"
+				"unlocked": "## 🏆 Achievement Unlocked\n<@{userId}> unlocked **{nameText}**!"
 			}
 		}
 	}

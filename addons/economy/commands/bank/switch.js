@@ -72,7 +72,12 @@ class SwitchCommand extends BaseCommand {
 		const row = new ActionRowBuilder().addComponents(
 			new StringSelectMenuBuilder()
 				.setCustomId('select_bank')
-				.setPlaceholder('Select a new bank...')
+				.setPlaceholder(
+					await interaction.client.container.t(
+						interaction,
+						'economy.ui.ph_bank',
+					),
+				)
 				.addOptions(options),
 		);
 

@@ -6,11 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const {
-	EmbedBuilder,
-	MessageFlags,
-	SlashCommandSubcommandBuilder,
-} = require('discord.js');
+const { MessageFlags, SlashCommandSubcommandBuilder } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
@@ -54,14 +50,14 @@ class CreateCommand extends BaseCommand {
 		});
 
 		if (existing) {
+			const { simpleContainer } = container.helpers.discord;
 			return interaction.editReply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(0xef4444)
-						.setDescription(
-							await t(interaction, 'embed-builder.create.duplicate', { name }),
-						),
-				],
+				components: await simpleContainer(
+					interaction,
+					await t(interaction, 'embed-builder.create.duplicate', { name }),
+					{ color: 'Red' },
+				),
+				flags: MessageFlags.IsComponentsV2,
 			});
 		}
 
@@ -107,19 +103,18 @@ class CreateCommand extends BaseCommand {
 			channelId: null,
 		});
 
+		const { createContainer } = container.helpers.discord;
 		return interaction.editReply({
-			embeds: [
-				new EmbedBuilder()
-					.setColor(0x22c55e)
-					.setTitle(await t(interaction, 'embed-builder.create.success.title'))
-					.setDescription(
-						await t(interaction, 'embed-builder.create.success.desc', {
-							name,
-							mode,
-							id: record.id,
-						}),
-					),
-			],
+			components: await createContainer(interaction, {
+				title: await t(interaction, 'embed-builder.create.success.title'),
+				description: await t(interaction, 'embed-builder.create.success.desc', {
+					name,
+					mode,
+					id: record.id,
+				}),
+				color: 'Green',
+			}),
+			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }

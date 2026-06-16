@@ -116,7 +116,6 @@
 						"desc": "❌ Nothing is currently playing.",
 						"previous": "⏮️ Playing the previous track: **{title}**."
 					},
-					"resume": "❌ An error occurred while resuming the track.",
 					"skip": "❌ An error occurred while skipping the track.",
 					"skipped": "⏭️ Skipped the current track.",
 					"stopped": "⏹️ Stopped music and cleared the queue.",
@@ -199,7 +198,6 @@
 						"failed": "⚠️ Could not start Karaoke Mode. Please contact developer.",
 						"mode": "### 🎤 Karaoke Mode\n-# {title}{author_divider}{author}",
 						"powered": "-# Powered by LavaLyrics",
-						"powered_ends": "-# Powered by LavaLyrics | Ends with track",
 						"loading": "> *⏳ Loading lyrics...*",
 						"waiting": "> *⏳ Waiting for lyrics to start...*",
 						"not_found_title": "### 🎤 Karaoke — {title}\n-# by {author}",
@@ -336,11 +334,6 @@
 		},
 		"music": {
 			"error": {},
-			"subcommand": {
-				"not": {
-					"found": "❌ Unknown music subcommand."
-				}
-			},
 			"player": {
 				"not": {
 					"found": "❌ No music player is active in this server."
@@ -368,6 +361,15 @@
 					"list": {}
 				}
 			}
+		},
+		"handlers": {
+			"error": {
+				"go_back": "❌ An error occurred while trying to go back.",
+				"no_channel": "❌ Could not find text channel."
+			}
+		},
+		"ui": {
+			"ph_radio": "Select a radio station..."
 		}
 	}
 }

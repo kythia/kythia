@@ -32,14 +32,20 @@ class VerifyEmojiButton extends BaseButton {
 
 			if (interaction.user.id !== targetUserId) {
 				return interaction.reply({
-					content: '❌ This captcha is not for you!',
+					content: await interaction.client.container.t(
+						interaction,
+						'verification.verify.error.not_for_you',
+					),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
 
 			if (!getSession(guildId, interaction.user.id)) {
 				return interaction.reply({
-					content: '⏰ This captcha has expired.',
+					content: await interaction.client.container.t(
+						interaction,
+						'verification.verify.error.expired',
+					),
 					flags: MessageFlags.Ephemeral,
 				});
 			}

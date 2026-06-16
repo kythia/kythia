@@ -9,7 +9,6 @@
 			"transcript_success": "## ✅ Success\nTranscript sent to {channel}."
 		},
 		"errors": {
-			"mega_modal_missing": "## ❌ Error\nRole Staff, Log, and Transcript channels are required.",
 			"no_panels_found": "## ❌ Error\nYou haven't created any V2 panels yet. Please create a panel first using `/ticket panel create`.",
 			"not_a_ticket": "## ❌ Error\nThis is not an active ticket channel.",
 			"config_missing": "## ❌ Error\nConfiguration for this ticket type could not be found (it may have been deleted).",
@@ -98,6 +97,45 @@
 		"helpers": {
 			"type_title_md": "## {typeName}",
 			"panel_title_md": "## {title}"
+		},
+		"ui": {
+			"create_type_2": "Create Type - Step 2/3: Core Config",
+			"create_type_3": "Create Type - Step 3/3: Advanced",
+			"create_type_1": "Create Type - Step 1/3: Basic Info",
+			"create_type_modal": "Create New Ticket Type",
+			"create_panel": "Create New Panel",
+			"select_staff": "Select Staff Role",
+			"select_log": "Select Log Channel",
+			"select_transcript": "Select Transcript Channel",
+			"ticket_category": "Ticket Category (Optional, Channel Style)",
+			"ticket_style": "Ticket Style",
+			"thread_parent": "Thread Parent Channel (For Thread Style)",
+			"creator_reason": "Ticket Creator Reason Question",
+			"select_target_panel": "Select Target Panel",
+			"ticket_type_name": "Ticket Type Name (Menu Label)",
+			"type_emoji": "Type Emoji (Optional)",
+			"ticket_opening_msg": "Ticket Opening Message (Optional)",
+			"ticket_opening_img": "Ticket Opening Image (Optional)",
+			"channel_category_id": "Channel Category ID (Optional)",
+			"panel_channel_id": "Panel Channel ID",
+			"panel_title": "Panel Title",
+			"panel_desc": "Panel Description",
+			"panel_img": "Panel Image URL (Optional)",
+			"ph_select_role": "Select one role...",
+			"ph_select_channel": "Select one channel...",
+			"ph_select_category": "Select a category (optional)...",
+			"ph_select_panel": "Select panel...",
+			"ph_bug_report": "e.g. Bug Report",
+			"ph_emoji": "e.g. 🎟️",
+			"ph_emoji_2": "e.g. 🌸",
+			"ph_img_url": "https://... (Image URL)",
+			"ph_img_ticket": "https://... (Image URL for the ticket)",
+			"ph_panel_id": "e.g. 123456789012345678",
+			"ph_kythia_support": "e.g. Kythia Support Center",
+			"ph_select_type": "Select the type of ticket you need below.",
+			"ph_img_panel": "https://... (Image URL for panel)",
+			"ph_select_style": "Select ticket style...",
+			"ph_select_thread": "Select a text channel for threads..."
 		}
 	}
 }

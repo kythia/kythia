@@ -6,11 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const {
-	EmbedBuilder,
-	MessageFlags,
-	SlashCommandSubcommandBuilder,
-} = require('discord.js');
+const { MessageFlags, SlashCommandSubcommandBuilder } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 class DeleteCommand extends BaseCommand {
 	slashCommand = new SlashCommandSubcommandBuilder()
@@ -48,12 +44,15 @@ class DeleteCommand extends BaseCommand {
 			},
 		});
 		if (!record) {
+			const { simpleContainer } = container.helpers.discord;
+			const { t } = container;
 			return interaction.editReply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(0xef4444)
-						.setDescription('❌ Embed not found in this server.'),
-				],
+				components: await simpleContainer(
+					interaction,
+					await t(interaction, 'embed-builder.delete.not_found'),
+					{ color: 'Red' },
+				),
+				flags: MessageFlags.IsComponentsV2,
 			});
 		}
 		const embedName = record.name;
@@ -77,14 +76,18 @@ class DeleteCommand extends BaseCommand {
 			}
 		}
 		await record.destroy();
+		const { simpleContainer } = container.helpers.discord;
+		const { t } = container;
+		const baseMsg = await t(interaction, 'embed-builder.delete.success', {
+			name: embedName,
+		});
+		const finalMsg =
+			baseMsg + (deleteMessage ? ' (including the Discord message)' : '');
 		return interaction.editReply({
-			embeds: [
-				new EmbedBuilder()
-					.setColor(0x22c55e)
-					.setDescription(
-						`🗑️ **"${embedName}"** has been deleted${deleteMessage ? ' (including the Discord message)' : ''}.`,
-					),
-			],
+			components: await simpleContainer(interaction, finalMsg, {
+				color: 'Green',
+			}),
+			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }

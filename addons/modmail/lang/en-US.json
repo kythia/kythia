@@ -11,8 +11,7 @@
 			"config_missing": "## ❌ Config Missing\nThe modmail configuration for this server could not be found.",
 			"generic": "## ❌ Error\nAn unexpected error occurred. Please try again.",
 			"close_failed": "## ❌ Close Failed\nFailed to close this modmail thread. Please try again.",
-			"dm_closed": "## ⚠️ DMs Closed\nYour message was sent, but we were unable to DM the user — they may have DMs disabled.",
-			"invalid_color": "## ❌ Invalid Color\n`{field}` must be a valid hex color (e.g. `#5865F2` or `#FFF`)."
+			"dm_closed": "## ⚠️ DMs Closed\nYour message was sent, but we were unable to DM the user — they may have DMs disabled."
 		},
 		"guild_reply": {
 			"sent_title": "Message Sent",
@@ -71,7 +70,6 @@
 			"sent_title": "Message Sent",
 			"staff_reply_prefix": "📨 <@{userId}> replied:",
 			"anon_reply_prefix": "📨 **Staff** replied:",
-			"user_message": "Message Received\n{username}({userId})\n{content",
 			"received_title_md": "## 📩 {title}\n-# 👤 {user}",
 			"sent_title_md": "## ✅ {title}\n-# 👤 {user}"
 		},

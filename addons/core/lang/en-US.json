@@ -24,8 +24,7 @@
 		"utils": {
 			"legal": {
 				"embed": {
-					"title": "# Legal Information",
-					"desc": "Here are the legal documents for {username}. Please read them carefully."
+					"title": "# Legal Information"
 				},
 				"button": {
 					"tos": "Terms of Service",
@@ -94,7 +93,6 @@
 				}
 			},
 			"ping": {
-				"loading": "`⌛` Pinging Database, Cache & Lavalink...",
 				"embed": {
 					"title": "## 🏓 Pong!"
 				},
@@ -114,13 +112,9 @@
 					"lavalink": {
 						"nodes": "`🎵` Lavalink Nodes"
 					}
-				},
-				"button": {
-					"refresh": "🔄 Refresh"
 				}
 			},
 			"presence": {
-				"success": "✅ Presence changed to: `{type} {activity}` (status: {status}) 😋",
 				"error": "❌ An error occurred: {error}",
 				"invalid": {
 					"url": "❌ Invalid URL. Please provide a valid URL. https://www.twitch.tv or https://www.youtube.com"
@@ -379,8 +373,7 @@
 				},
 				"set": {
 					"success": "✅ You are now AFK. Reason: **{reason}**"
-				},
-				"error": "❌ An error occurred while trying to set your AFK status."
+				}
 			},
 			"grab": {
 				"sticker": {
@@ -426,11 +419,6 @@
 					"failed": "❌ Failed to convert currency. Please try again later.",
 					"error": "❌ Error fetching currency conversion."
 				},
-				"timezone": {
-					"title": "⏰ Timezone Conversion",
-					"result": "**{time}** ({from}) = **{converted}** ({to})",
-					"failed": "❌ Failed to parse or convert time. Please check your input."
-				},
 				"length": {
 					"title": "📏 Length Conversion",
 					"result": "{value} {from} = **{result} {to}**",
@@ -460,9 +448,6 @@
 					"title": "🧪 Volume Conversion",
 					"result": "{value} {from} = **{result} {to}**",
 					"failed": "❌ Invalid volume unit. Please check your units."
-				},
-				"unknown": {
-					"subcommand": "❌ Unknown subcommand."
 				}
 			},
 			"vote": {
@@ -715,9 +700,6 @@
 					},
 					"success": "✅ Sticky message has been set! 😋"
 				},
-				"embed": {
-					"title": "📌 Sticky Message"
-				},
 				"remove": {
 					"error": {
 						"not": {
@@ -811,8 +793,7 @@
 				},
 				"encrypted": {
 					"data": "Encrypted Data"
-				},
-				"error": "❌ An error occurred while encrypting the text."
+				}
 			},
 			"decrypt": {
 				"invalid": {
@@ -887,163 +868,6 @@
 					}
 				}
 			},
-			"leave-guild": {
-				"target": {
-					"protected": "🛡️ **Protected Guild**\nID: `{guildId}` is exempted and cannot be left.",
-					"not": {
-						"found": "❌ **Guild Not Found**\nID: `{guildId}`"
-					},
-					"success": "✅ **Successfully Left Guild**\n\n**Name:** {guildName}\n**ID:** `{guildId}`\n**Members:** {memberCount}\n\n📉 Server Count is now: **{serverCount}**"
-				},
-				"cleanup": {
-					"goodbye": "👋 **Good Bye!**\n\nI am leaving this server because it has fewer than {threshold} members (Cleanup Policy).\nIf you want to use me, please invite me to a more active server!",
-					"empty": "✅ **No Cleanup Needed**\nNo guilds found with less than {threshold} members.",
-					"success": "🧹 **Cleanup Complete**\n\n**Threshold:** < {threshold} members\n**Success:** {leftCount} guilds\n**Failed:** {errorCount} guilds",
-					"list": "\n\n**Left Guilds:**\n```\n{names}```",
-					"more": "...and {count} more"
-				}
-			},
-			"kyth": {
-				"team": {
-					"add": {
-						"already": "❌ **{tag}** is already in the Kythia Team!",
-						"title": "✅ Team Member Added",
-						"success": "Successfully added **{tag}** to Kythia Team!\n\n**User ID:** {id}\n**Name/Role:** {name}",
-						"error": "❌ Failed to add team member: {error}"
-					},
-					"delete": {
-						"not": {
-							"found": "❌ **{tag}** is not in the Kythia Team!"
-						},
-						"title": "✅ Team Member Removed",
-						"success": "Successfully removed **{tag}** from Kythia Team!\n\n**User ID:** {id}",
-						"error": "❌ Failed to remove team member: {error}"
-					},
-					"list": {
-						"empty": "📋 The Kythia Team is currently empty.",
-						"title": "👥 Kythia Team Members",
-						"total": "Total members: **{count}**",
-						"unknown": "Unknown User",
-						"no": {
-							"role": "No role specified"
-						},
-						"row": "**{name}**\n**ID:** {id}\n**Role:** {role}",
-						"error": "❌ Failed to list team members: {error}"
-					}
-				},
-				"servers": {
-					"title": "🌐 Bot Servers",
-					"empty": "The bot is not in any servers.",
-					"entry": "**{rank}.** {name} ({id})",
-					"footer": "Page {page} of {totalPages} | Total Servers: {totalServers}"
-				},
-				"chat": {
-					"success": {
-						"title": "✅ Message Sent",
-						"desc": "Successfully sent the message to **{tag}**."
-					},
-					"error": "❌ Failed to send message (user may have DMs disabled): {error}"
-				},
-				"blacklist": {
-					"no": {
-						"reason": "No reason provided"
-					},
-					"guild": {
-						"add": {
-							"already": "❌ Guild {id}",
-							"title": "🚫 Guild Blacklisted",
-							"success": "Successfully blacklisted guild {id}",
-							"left": "\n\n⚡ Bot was in this guild and has **left** immediately.",
-							"error": "❌ Failed to blacklist guild: {error}"
-						},
-						"remove": {
-							"not": {
-								"found": "❌ Guild {id}"
-							},
-							"title": "✅ Guild Removed from Blacklist",
-							"success": "Successfully removed guild {id}",
-							"error": "❌ Failed to remove guild from blacklist: {error}"
-						},
-						"list": {
-							"empty": "📋 No guilds are currently blacklisted.",
-							"title": "🚫 Blacklisted Guilds",
-							"total": "Total blacklisted: **{count}**",
-							"row": "**ID:** {id}",
-							"error": "❌ Failed to list blacklisted guilds: {error}"
-						}
-					},
-					"user": {
-						"add": {
-							"already": "❌ **{tag}** is already blacklisted!",
-							"title": "🚫 User Blacklisted",
-							"success": "Successfully blacklisted **{tag}**!\n\n**User ID:** {id}\n**Reason:** {reason}",
-							"error": "❌ Failed to blacklist user: {error}"
-						},
-						"remove": {
-							"not": {
-								"found": "❌ **{tag}** is not in the blacklist!"
-							},
-							"title": "✅ User Removed from Blacklist",
-							"success": "Successfully removed **{tag}** from the blacklist!\n\n**User ID:** {id}",
-							"error": "❌ Failed to remove user from blacklist: {error}"
-						},
-						"list": {
-							"empty": "📋 No users are currently blacklisted.",
-							"title": "🚫 Blacklisted Users",
-							"total": "Total blacklisted: **{count}**",
-							"unknown": "Unknown User",
-							"row": "**{tag}**\n**ID:** {id}\n**Reason:** {reason}",
-							"error": "❌ Failed to list blacklisted users: {error}"
-						}
-					}
-				},
-				"leave": {
-					"protected": "🛡️ **Protected Guild**\nID: `{guildId}` is exempted and cannot be left.",
-					"not": {
-						"found": "❌ **Guild Not Found**\nID: `{guildId}`"
-					},
-					"success": "✅ **Successfully Left Guild**\n\n**Name:** {guildName}\n**ID:** `{guildId}`\n**Members:** {memberCount}\n\n📉 Server Count is now: **{serverCount}**"
-				},
-				"mass-leave": {
-					"goodbye": "👋 **Good Bye!**\n\nI am leaving this server because it has fewer than {threshold} members (Cleanup Policy).\nIf you want to use me, please invite me to a more active server!",
-					"empty": "✅ **No Cleanup Needed**\nNo guilds found with less than {threshold} members.",
-					"success": "🧹 **Cleanup Complete**\n\n**Threshold:** < {threshold} members\n**Success:** {leftCount} guilds\n**Failed:** {errorCount} guilds",
-					"more": "...and {count} more",
-					"list": "\n\n**Left Guilds:**\n```\n{names}```"
-				}
-			},
-			"global-announcement": {
-				"simple": {
-					"modal": {
-						"title": "📝 Create Embed Announcement",
-						"label": {
-							"title": "Title",
-							"content": "Content (Markdown)"
-						}
-					},
-					"prefix": "## 📢 {title}\n\n{content}",
-					"footer": "Announcement from Developer {username} • <t:{timestamp}:R>"
-				},
-				"complex": {
-					"modal": {
-						"title": "📝 Create Container Announcement",
-						"label": "Paste JSON Payload Here",
-						"placeholder": "Copy the JSON from Discohook and paste it here..."
-					},
-					"invalid": {
-						"json": "❌ Invalid JSON! Please make sure you copied everything correctly.\n\nError: `{error}`"
-					}
-				},
-				"delivery": {
-					"start": "⏳ Starting to send the announcement to all servers...",
-					"report": {
-						"title": "## ✅ Announcement Delivery Report",
-						"success": "**Successfully Sent:** {count} server(s)",
-						"failed": "**Failed to Send:** {count} server(s)",
-						"list": "\n\n**Failed Server List:**\n```{names}```"
-					}
-				}
-			},
 			"testall": {
 				"done": "✅ Done! Results posted above."
 			}
@@ -1077,79 +901,7 @@
 				},
 				"embed": {
 					"title": {
-						"text": "⚙️ Setting",
 						"view": "## 🛠️ Bot Settings in This Server"
-					}
-				},
-				"whitelist": {
-					"already": "This user/role is already in the whitelist.",
-					"add": {
-						"role": "Role {role} has been added to the whitelist!",
-						"user": "User {user} has been added to the whitelist!"
-					},
-					"notfound": "This user/role is not in the whitelist.",
-					"remove": {
-						"role": "Role {role} has been removed from the whitelist!",
-						"user": "User {user} has been removed from the whitelist!"
-					},
-					"invalid": {
-						"action": "Invalid action for whitelist. Use 'add' or 'remove'."
-					},
-					"empty": "The automod whitelist is empty.",
-					"list": "Automod whitelist:\n{list}"
-				},
-				"invalid": {
-					"id": "Invalid ID: {id}"
-				},
-				"badword": {
-					"word": {
-						"required": "The word to add or remove must be provided."
-					},
-					"already": "That word is already in the badword list.",
-					"add": "Word `{word}` has been added to the badword list.",
-					"notfound": "That word is not in the badword list.",
-					"remove": "Word `{word}` has been removed from the badword list.",
-					"empty": "The automod badword list is empty.",
-					"list": "Automod badword list:\n{list}",
-					"whitelist": {
-						"already": "That word is already in the badword whitelist.",
-						"add": "Word `{word}` has been added to the badword whitelist.",
-						"notfound": "That word is not in the badword whitelist.",
-						"remove": "Word `{word}` has been removed from the badword whitelist.",
-						"empty": "The automod badword whitelist is empty.",
-						"list": "Automod badword whitelist:\n{list}"
-					}
-				},
-				"exception": {
-					"channel": {
-						"already": "This channel is already in the exception list.",
-						"add": "Channel {channel} has been added to the exception list!",
-						"notfound": "This channel is not in the exception list.",
-						"remove": "Channel {channel} has been removed from the exception list!",
-						"invalid": {
-							"action": "Invalid action for exception channel. Use 'add' or 'remove'."
-						},
-						"empty": "The exception channel list is empty.",
-						"list": "Exception Channels:\n{list}"
-					}
-				},
-				"log": {
-					"channel": {
-						"invalid": "The selected channel must be a text channel."
-					}
-				},
-				"mod": {
-					"log": {
-						"channel": {
-							"set": "Channel {channel} has been set as the automod log channel!"
-						}
-					}
-				},
-				"audit": {
-					"log": {
-						"channel": {
-							"set": "Channel {channel} has been set as the audit log channel!"
-						}
 					}
 				},
 				"feature": {
@@ -1164,35 +916,6 @@
 				"command": {
 					"not": {
 						"found": "❌ Command not found."
-					}
-				},
-				"welcome": {
-					"in": {
-						"channel": {
-							"set": "Channel {channel} has been set as the welcome channel!"
-						},
-						"text": {
-							"set": "Welcome in text has been set to:\n`{text}`"
-						},
-						"background": {
-							"set": "Welcome in background has been set to:\n`{background}`",
-							"invalid": "❌ Invalid background. Please provide a valid URL."
-						}
-					},
-					"out": {
-						"channel": {
-							"set": "Channel {channel} has been set as the welcome out channel!"
-						},
-						"text": {
-							"set": "Welcome out text has been set to:\n`{text}`"
-						},
-						"background": {
-							"set": "Welcome out background has been set to:\n`{background}`",
-							"invalid": "❌ Invalid background. Please provide a valid URL."
-						}
-					},
-					"role": {
-						"set": "Role {role} has been set as the welcome role!"
 					}
 				},
 				"leveling": {
@@ -1228,61 +951,10 @@
 						"channel": {
 							"set": "Channel for Minecraft server status has been set to {channel}!"
 						}
-					},
-					"players": {
-						"channel": {
-							"set": "Channel for Minecraft server players has been set to {channel}!"
-						}
 					}
 				},
 				"language": {
 					"set": "✅ Bot language has been set to `{lang}`!"
-				},
-				"testimony": {
-					"channel": {
-						"invalid": "❌ Invalid channel. Please select a text channel.",
-						"set": "✅ Testimony channel has been set to {channel}!"
-					},
-					"feedback": {
-						"channel": {
-							"set": "✅ Testimony feedback channel has been set to {channel}!"
-						}
-					},
-					"count": {
-						"channel": {
-							"set": "✅ Testimony counter channel has been set to {channel}!"
-						},
-						"format": {
-							"invalid": "❌ Format must contain `{count}`. Example: `testimony-{count}`",
-							"set": "✅ Testimony counter channel name format has been set to `{format}`!"
-						},
-						"reset": "✅ Testimony count has been reset to 0!",
-						"invalid": "❌ Testimony count must be a positive number.",
-						"set": "✅ Testimony count has been set to {count}!"
-					}
-				},
-				"streak": {
-					"rolereward": {
-						"add": "Role {role} has been added as a reward for streak `{streak}`!",
-						"notfound": "No role reward found for streak `{streak}`!",
-						"remove": "Role reward for streak `{streak}` has been removed!"
-					},
-					"minimum": {
-						"set": "✅ Minimum streak set to `{minimum}` days."
-					},
-					"emoji": {
-						"set": "✅ Streak emoji set to `{emoji}`."
-					},
-					"nickname": {
-						"set": "✅ Streak auto-nickname has been **{status}**."
-					},
-					"quota": {
-						"disabled": "⏸️ Streak restores have been **disabled** for this server. Members can no longer restore their streaks.",
-						"set": "✅ Monthly streak restore quota set to **{quota}** per member."
-					},
-					"timezone": {
-						"set": "✅ Streak timezone set to **{timezone}**. Daily streak resets will now follow this timezone."
-					}
 				},
 				"no": {
 					"config": "❌ No settings have been saved for this server.",
@@ -1298,33 +970,14 @@
 					"array": "### 🗃️ Structured Data",
 					"lainnya": "### ❓ Others"
 				},
-				"announcement": {
-					"channel": {
-						"set": "✅ Announcement channel set to {channel}."
-					}
-				},
 				"invite": {
 					"channel": {
 						"set": "✅ Invite log channel set to {channel}."
 					}
 				},
-				"ai": {
-					"channel": {
-						"add": "✅ AI enabled in {channel}.",
-						"remove": "✅ AI disabled in {channel}.",
-						"empty": "ℹ️ No AI-enabled channels in this server.",
-						"list": "🤖 AI-enabled channels:\n{list}"
-					}
-				},
 				"clan": {
 					"category": {},
 					"forum": {}
-				},
-				"raw": {
-					"field": {
-						"invalid": "❌ Unknown field: `{field}`."
-					},
-					"set": "✅ Field `{field}` updated to {value}."
 				}
 			}
 		},
@@ -1347,12 +1000,6 @@
 					"title": "## Premium Users",
 					"item": "{index}. {user} - expires {expires}",
 					"footer": "Page {page} of {totalPages} • Total Premium Users: {totalUsers}",
-					"nav": {
-						"first": "⏪️ First",
-						"prev": "◀️ Prev",
-						"next": "Next ▶️",
-						"last": "Last ⏩️"
-					},
 					"not": {
 						"your": {
 							"interaction": "❌ This is not your interaction! Use the command yourself to view the premium list."
@@ -1374,224 +1021,6 @@
 						"inactive": "Inactive"
 					}
 				}
-			}
-		},
-		"moderation": {
-			"announce": {
-				"default": {
-					"title": "Announcement"
-				},
-				"failed": "❌ Failed to send announcement: {error}",
-				"footer": "Announced by {user}",
-				"success": "✅ Announcement sent successfully!"
-			},
-			"autosetup": {
-				"created": {
-					"channel": "✅ Created channel {channel}",
-					"role": "✅ Created role {role}"
-				},
-				"failed": "❌ Auto setup failed: {error}",
-				"nothing": {
-					"new": "⚠️ Nothing new to setup."
-				},
-				"success": {
-					"title": "Auto Setup Complete"
-				}
-			},
-			"ban": {
-				"failed": "❌ Failed to ban user: {error}",
-				"success": {
-					"desc": "✅ **{user}** has been banned for: {reason}",
-					"title": "User Banned"
-				},
-				"default": {
-					"reason": "No reason provided"
-				}
-			},
-			"clear": {
-				"cancelled": "❌ Clear command cancelled.",
-				"failed": "❌ Failed to clear messages: {error}",
-				"not": {
-					"allowed": "❌ I cannot delete messages older than 14 days."
-				},
-				"nuked": {
-					"success": "✅ Channel has been nuked!"
-				},
-				"timeout": "❌ Clear command timed out.",
-				"text": {
-					"only": "❌ This command can only be used in text channels."
-				},
-				"nothing": {
-					"deleted": "❌ No messages were deleted. Maybe they are too old or already deleted."
-				},
-				"embed": {
-					"desc": "✅Completely deleted {count} messages have been deleted!"
-				},
-				"error": "❌ An error occurred while deleting messages.",
-				"options": {
-					"title": "Clear Channel Options",
-					"desc": "Choose how you want to clear the channel. You can nuke (clone & delete) or bulk delete all messages.",
-					"nuke": {
-						"value": "Completely wipes the channel by cloning and deleting it. All settings and permissions are preserved."
-					},
-					"bulk": {
-						"value": "Deletes all messages that can be bulk deleted (from the last 14 days)."
-					}
-				}
-			},
-			"kick": {
-				"failed": "❌ Failed to kick user: {error}",
-				"success": {
-					"desc": "✅ **{user}** has been kicked for: {reason}",
-					"title": "User Kicked"
-				},
-				"default": {
-					"reason": "No reason provided"
-				},
-				"modlog": {
-					"desc": "**Member:** {member}\n**Kicked by:** {kicker}\n**Reason:** {reason}"
-				}
-			},
-			"lock": {
-				"confirm": "✅ Channel locked!",
-				"default": {
-					"reason": "No reason provided"
-				},
-				"success": {
-					"desc": "🔒 Channel has been locked for: {reason}",
-					"title": "Channel Locked"
-				},
-				"failed": "❌ Failed to lock the channel. Please check my permissions and try again."
-			},
-			"mute": {
-				"user": {
-					"not": {
-						"found": "That user is not in this server!",
-						"in": {
-							"voice": "❌ That user is not in a voice channel."
-						}
-					}
-				},
-				"reason": "Muted by command.",
-				"failed": "❌ Failed to mute the user. Please check my permissions and try again.",
-				"embed": {
-					"desc": "## 🔇 Muted\n**{tag}** has been muted by **{moderator}** via command."
-				}
-			},
-			"pin": {
-				"already": {
-					"pinned": "⚠️ This message is already pinned."
-				},
-				"success": {
-					"desc": "📌 Message has been pinned.",
-					"title": "Message Pinned"
-				},
-				"not": {
-					"found": "❌ Message not found!"
-				},
-				"failed": "❌ Failed to pin the message. Please check my permissions and try again."
-			},
-			"role": {
-				"added": {
-					"desc": "✅ Role {role} has been added to {user}.",
-					"title": "Role Added"
-				},
-				"failed": "❌ Failed to modify roles: {error}",
-				"removed": {
-					"desc": "✅ Role {role} has been removed from {user}.",
-					"title": "Role Removed"
-				}
-			},
-			"say": {
-				"failed": "❌ Failed to send message: {error}",
-				"success": "✅ Message sent successfully."
-			},
-			"slowmode": {
-				"confirm": "✅ Slowmode set!",
-				"default": {
-					"reason": "No reason provided"
-				},
-				"failed": "❌ Failed to set slowmode: {error}",
-				"success": {
-					"desc": "✅ Slowmode set to {time} for: {reason}",
-					"title": "Slowmode Set"
-				}
-			},
-			"timeout": {
-				"default": {
-					"reason": "No reason provided"
-				},
-				"success": {
-					"desc": "✅ **{user}** has been timed out until {time} for: {reason}",
-					"title": "User Timed Out"
-				},
-				"failed": "❌ Failed to timeout user: {error}"
-			},
-			"unban": {
-				"success": {
-					"desc": "✅ **{user}** has been unbanned.",
-					"title": "User Unbanned"
-				},
-				"failed": "❌ Failed to unban user: {error}"
-			},
-			"unlock": {
-				"confirm": "✅ Channel unlocked!",
-				"default": {
-					"reason": "No reason provided"
-				},
-				"failed": "❌ Failed to unlock channel: {error}",
-				"success": {
-					"desc": "🔓 Channel has been unlocked for: {reason}",
-					"title": "Channel Unlocked"
-				}
-			},
-			"unmute": {
-				"failed": "❌ Failed to unmute user: {error}",
-				"not": {
-					"in": {
-						"voice": "❌ User is not in a voice channel."
-					}
-				},
-				"success": {
-					"desc": "✅ **{user}** has been unmuted.",
-					"title": "User Unmuted"
-				}
-			},
-			"unpin": {
-				"not": {
-					"pinned": "⚠️ This message is not pinned.",
-					"found": "❌ Message not found."
-				},
-				"success": {
-					"desc": "Message has been unpinned.",
-					"title": "Message Unpinned"
-				},
-				"failed": "❌ Failed to unpin message."
-			},
-			"warn": {
-				"cannot": {
-					"self": "❌ You cannot warn yourself."
-				},
-				"default": {
-					"reason": "No reason provided"
-				},
-				"dm": {
-					"desc": "You have been warned in **{guild}** for: {reason}",
-					"title": "Warned"
-				},
-				"failed": "❌ Failed to warn user: {error}",
-				"modlog": {
-					"desc": "**{user}** has been warned by **{moderator}** for: {reason}"
-				},
-				"success": {
-					"desc": "✅ **{user}** has been warned for: {reason}",
-					"title": "User Warned"
-				}
-			},
-			"warnings": {
-				"failed": "❌ Failed to fetch warnings: {error}",
-				"title": "Warnings for {user}",
-				"none": "✅ {user} has no warnings."
 			}
 		},
 		"embed": {
@@ -1629,91 +1058,9 @@
 				}
 			}
 		},
-		"autosetup": {
-			"autosetup": {
-				"invalid": {
-					"category": {
-						"id": "❌ The category ID is invalid!"
-					}
-				},
-				"testimony": {
-					"category": {
-						"name": "📝・testimony"
-					},
-					"channel": {
-						"name": "📦・testimony"
-					},
-					"count": {
-						"channel": {
-							"name": "{count} Testimonies"
-						}
-					},
-					"success": "✅ Testimony setup successful!\n\n📦 <#{testimonyChannel}>\n💬 <#{feedbackChannel}>\n🔢 <#{countChannel}>"
-				},
-				"feedback": {
-					"channel": {
-						"name": "💬・feedback"
-					}
-				},
-				"serverstats": {
-					"category": {
-						"name": "📊・server-stats"
-					},
-					"total": "👥 Total: {memberstotal}",
-					"boosts": "🚀 Boosts: {boosts}",
-					"success": "✅ Server stats setup successful!\n\n👥 <#{total}>\n🚀 <#{boosts}>"
-				},
-				"minecraft": {
-					"category": {
-						"name": "🌐・minecraft-stats"
-					},
-					"ip": {
-						"channel": "🌐 {ip}"
-					},
-					"port": {
-						"channel": "🔌 {port}"
-					},
-					"status": {
-						"channel": "🔵 DONE SETUP"
-					},
-					"players": {
-						"channel": "🎮 {players}/{max}"
-					},
-					"success": "✅ Minecraft server stat channels setup successful! 😋\n\n🌐 <#{ip}>\n🔌 <#{port}>\n🔵 <#{status}>\n🎮 <#{players}>"
-				},
-				"store": {
-					"category": {
-						"name": "🛒・store"
-					},
-					"open": {
-						"channel": {
-							"name": "🟢・store-open"
-						},
-						"title": "🟢 STORE OPEN",
-						"desc": "The store is OPEN! Please order now."
-					},
-					"close": {
-						"channel": {
-							"name": "🔴・store-closed"
-						},
-						"title": "🔴 STORE CLOSE",
-						"desc": "The store is CLOSED. Please come back later."
-					},
-					"missing": {
-						"embed": {
-							"fields": "❌ | Because you chose a type that sends an embed, you must fill in `open_title`, `open_description`, `close_title`, and `close_description`."
-						}
-					},
-					"success": "✅ Store open/close setup successful!\n\n🛒 <#{storeChannel}>"
-				}
-			}
-		},
 		"events": {
 			"messageCreate": {
 				"error": "❌ An error occurred while executing this command",
-				"sticky": {
-					"title": "📌 Sticky Message"
-				},
 				"subcommand": {
 					"required": "❌ | The command `{command}` requires a subcommand. Please use `/help {command}` for more information."
 				},
@@ -1762,13 +1109,7 @@
 				"events": {
 					"channel": {
 						"delete": {
-							"id": {},
-							"antinuke": {
-								"reason": "🚨 Anti-nuke: Channel deletion spam",
-								"kick": {
-									"log": "🚨 **{user}** has been **KICKED** for attempting NUKING by spamming channel deletion!"
-								}
-							}
+							"id": {}
 						}
 					}
 				}
@@ -1777,13 +1118,7 @@
 				"events": {
 					"channel": {
 						"create": {
-							"id": {},
-							"antinuke": {
-								"reason": "🚨 Anti-nuke: Channel creation spam",
-								"kick": {
-									"log": "🚨 **{user}** has been **KICKED** for attempting NUKING by spamming channel creation!"
-								}
-							}
+							"id": {}
 						}
 					}
 				}
@@ -1897,12 +1232,8 @@
 				}
 			}
 		},
-		"buttons": {
-			"reactrole": {
-				"found": "❌ Role not found.",
-				"removed": "✅ Role **{roleName}** has been removed!",
-				"added": "✅ Role **{roleName}** has been added!"
-			}
+		"testall": {
+			"no_schema": "❌ No command schema found to test."
 		}
 	},
 	"system": {

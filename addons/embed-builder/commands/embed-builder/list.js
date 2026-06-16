@@ -6,11 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const {
-	EmbedBuilder,
-	MessageFlags,
-	SlashCommandSubcommandBuilder,
-} = require('discord.js');
+const { MessageFlags, SlashCommandSubcommandBuilder } = require('discord.js');
 
 const { BaseCommand } = require('kythia-core');
 
@@ -32,14 +28,15 @@ class ListCommand extends BaseCommand {
 		});
 
 		if (embeds.length === 0) {
+			const { simpleContainer } = container.helpers.discord;
+			const { t } = container;
 			return interaction.editReply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(0x5865f2)
-						.setDescription(
-							'📭 No saved embeds yet.\nUse `/embed-builder create` to get started!',
-						),
-				],
+				components: await simpleContainer(
+					interaction,
+					await t(interaction, 'embed-builder.list.empty'),
+					{ color: 'Yellow' },
+				),
+				flags: MessageFlags.IsComponentsV2,
 			});
 		}
 
@@ -60,16 +57,18 @@ class ListCommand extends BaseCommand {
 				? `\n\n_...and ${embeds.length - perPage} more. Use the dashboard to see all._`
 				: '';
 
+		const { createContainer } = container.helpers.discord;
+		const { t } = container;
 		return interaction.editReply({
-			embeds: [
-				new EmbedBuilder()
-					.setColor(0x5865f2)
-					.setTitle(`🎨 Saved Embeds — ${interaction.guild.name}`)
-					.setDescription(lines.join('\n') + footer)
-					.setFooter({
-						text: `${embeds.length} embed${embeds.length !== 1 ? 's' : ''} total`,
-					}),
-			],
+			components: await createContainer(interaction, {
+				title: await t(interaction, 'embed-builder.list.title'),
+				description: lines.join('\n') + footer,
+				color: '#5865F2',
+				footer: {
+					text: `${embeds.length} embed${embeds.length !== 1 ? 's' : ''} total`,
+				},
+			}),
+			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }

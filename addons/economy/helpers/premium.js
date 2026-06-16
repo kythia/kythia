@@ -40,17 +40,32 @@ async function buildPremiumMainMenu(container, interaction, kythiaUser) {
 	const row = new ActionRowBuilder().addComponents(
 		new ButtonBuilder()
 			.setCustomId('tier_cute')
-			.setLabel('Cute Tier')
+			.setLabel(
+				await interaction.client.container.t(
+					interaction,
+					'economy.ui.premium.cute',
+				),
+			)
 			.setEmoji('🎀')
 			.setStyle(ButtonStyle.Secondary),
 		new ButtonBuilder()
 			.setCustomId('tier_powerful')
-			.setLabel('Powerful Tier')
+			.setLabel(
+				await interaction.client.container.t(
+					interaction,
+					'economy.ui.premium.powerful',
+				),
+			)
 			.setEmoji('⚔️')
 			.setStyle(ButtonStyle.Secondary),
 		new ButtonBuilder()
 			.setCustomId('tier_yours')
-			.setLabel('Yours Tier')
+			.setLabel(
+				await interaction.client.container.t(
+					interaction,
+					'economy.ui.premium.yours',
+				),
+			)
 			.setEmoji('👑')
 			.setStyle(ButtonStyle.Secondary),
 	);
@@ -67,6 +82,7 @@ async function buildPremiumDurationMenu(
 ) {
 	const { simpleContainer } = container.helpers.discord;
 	const { formatNumber } = require('kythia-core').utils;
+	const { t } = container;
 
 	const contentText = `**${tierData.name}**\n\n${tierData.desc}\n\nSelect a duration below to see the price.`;
 
@@ -76,7 +92,12 @@ async function buildPremiumDurationMenu(
 
 	const durationSelect = new StringSelectMenuBuilder()
 		.setCustomId('premium_duration')
-		.setPlaceholder('Select Subscription Duration...')
+		.setPlaceholder(
+			await interaction.client.container.t(
+				interaction,
+				'economy.ui.ph_duration',
+			),
+		)
 		.addOptions([
 			{
 				label: '7 Days',
@@ -99,7 +120,7 @@ async function buildPremiumDurationMenu(
 	const row2 = new ActionRowBuilder().addComponents(
 		new ButtonBuilder()
 			.setCustomId('back_main')
-			.setLabel('Back')
+			.setLabel(await t(interaction, 'economy.ui.back'))
 			.setStyle(ButtonStyle.Secondary),
 	);
 
@@ -116,6 +137,7 @@ async function buildPremiumConfirmMenu(
 ) {
 	const { simpleContainer } = container.helpers.discord;
 	const { formatNumber } = require('kythia-core').utils;
+	const { t } = container;
 
 	const contentText = `**${tierData.name} (${selectedDuration} Days)**\n\nPrice: **${formatNumber(price)} KC**\n\nAre you sure you want to purchase this?`;
 
@@ -130,7 +152,7 @@ async function buildPremiumConfirmMenu(
 			.setStyle(ButtonStyle.Success),
 		new ButtonBuilder()
 			.setCustomId('back_main')
-			.setLabel('Cancel')
+			.setLabel(await t(interaction, 'economy.ui.cancel'))
 			.setStyle(ButtonStyle.Danger),
 	);
 

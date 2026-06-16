@@ -43,7 +43,10 @@ class FavoritesCommand extends BaseCommand {
 		});
 		if (!user?.nsfwFav || user.nsfwFav.length === 0) {
 			return interaction.editReply({
-				content: "You haven't favorited any NSFW images yet! 💔",
+				content: await interaction.client.container.t(
+					interaction,
+					'nsfw.favorites.empty',
+				),
 			});
 		}
 		const allFavorites = user.nsfwFav;
@@ -65,7 +68,10 @@ class FavoritesCommand extends BaseCommand {
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
-					content: 'This is not your interaction!',
+					content: await interaction.client.container.t(
+						interaction,
+						'nsfw.favorites.not_yours',
+					),
 					flags: MessageFlags.Ephemeral,
 				});
 			}

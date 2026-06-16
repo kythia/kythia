@@ -106,15 +106,30 @@ async function showClearOptions(interaction, t, container) {
 	const row = new ActionRowBuilder().addComponents(
 		new ButtonBuilder()
 			.setCustomId('confirmNuke')
-			.setLabel('Nuke Channel')
+			.setLabel(
+				await interaction.client.container.t(
+					interaction,
+					'automod.clear.ui.nuke',
+				),
+			)
 			.setStyle(ButtonStyle.Danger),
 		new ButtonBuilder()
 			.setCustomId('confirmBulk')
-			.setLabel('Bulk Delete All')
+			.setLabel(
+				await interaction.client.container.t(
+					interaction,
+					'automod.clear.ui.bulk',
+				),
+			)
 			.setStyle(ButtonStyle.Primary),
 		new ButtonBuilder()
 			.setCustomId('cancelClear')
-			.setLabel('Cancel')
+			.setLabel(
+				await interaction.client.container.t(
+					interaction,
+					'automod.clear.ui.cancel',
+				),
+			)
 			.setStyle(ButtonStyle.Secondary),
 	);
 

@@ -88,7 +88,10 @@ class SnipeCommand extends BaseCommand {
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
-					content: '❌ You cannot interact with this menu.',
+					content: await interaction.client.container.t(
+						interaction,
+						'automod.snipe.not_yours',
+					),
 					flags: MessageFlags.Ephemeral,
 				});
 			}

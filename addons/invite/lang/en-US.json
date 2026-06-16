@@ -43,9 +43,6 @@
 				"user": {
 					"stats": "{user} has {invites} invites (fake: {fake}, leaves: {leaves})."
 				},
-				"no": {
-					"permission": "You need the ManageGuild permission."
-				},
 				"leaderboard": {
 					"title": "## 🏆 Invite Leaderboard\n**Page {page} of {totalPages}**",
 					"empty": "No data yet.",

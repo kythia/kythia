@@ -33,16 +33,22 @@ class VerifyMathButton extends BaseButton {
 			// Only the right user can click
 			if (interaction.user.id !== targetUserId) {
 				return interaction.reply({
-					content: '❌ This captcha is not for you!',
+					content: await interaction.client.container.t(
+						interaction,
+						'verification.verify.error.not_for_you',
+					),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
 
 			if (!getSession(guildId, interaction.user.id)) {
+				const { simpleContainer } = container.helpers.discord;
 				return interaction.reply({
-					content:
+					components: await simpleContainer(
+						interaction,
 						'⏰ This captcha has expired. Please wait for a new one to be sent.',
-					flags: MessageFlags.Ephemeral,
+					),
+					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
 

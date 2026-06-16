@@ -105,7 +105,10 @@ class DeleteCommand extends BaseCommand {
 				label: 'reaction-role:panel:delete',
 			});
 			return interaction.editReply({
-				content: 'An error occurred while deleting the panel.',
+				content: await interaction.client.container.t(
+					interaction,
+					'reaction-role.panel.delete.error',
+				),
 			});
 		}
 	}

@@ -75,7 +75,12 @@ class ApplyCommand extends BaseCommand {
 		const row = new ActionRowBuilder().addComponents(
 			new StringSelectMenuBuilder()
 				.setCustomId('select_profession')
-				.setPlaceholder('Select a profession...')
+				.setPlaceholder(
+					await interaction.client.container.t(
+						interaction,
+						'economy.ui.ph_profession',
+					),
+				)
 				.addOptions(options),
 		);
 

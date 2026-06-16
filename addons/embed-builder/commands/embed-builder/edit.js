@@ -39,13 +39,15 @@ class EditCommand extends BaseCommand {
 			},
 		});
 		if (!record) {
+			const { simpleContainer } = container.helpers.discord;
+			const { t } = container;
 			return interaction.reply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(0xef4444)
-						.setDescription('❌ Embed not found in this server.'),
-				],
-				flags: MessageFlags.Ephemeral,
+				components: await simpleContainer(
+					interaction,
+					await t(interaction, 'embed-builder.edit.not_found'),
+					{ color: 'Red' },
+				),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 		const data = record.data || {};
@@ -113,16 +115,22 @@ class EditCommand extends BaseCommand {
 		}
 
 		// components_v2: modal can't hold full JSON, guide to dashboard instead
+		const { createContainer } = container.helpers.discord;
+		const { t } = container;
 		return interaction.reply({
-			embeds: [
-				new EmbedBuilder()
-					.setColor(0x5865f2)
-					.setTitle('🧩 Components V2 — Dashboard Required')
-					.setDescription(
-						`**"${record.name}"** uses Components V2 mode. The full visual editor is available on the dashboard.\n\nYou can also update this embed via the API:\n\`PATCH /api/embed-builder/${record.id}\``,
-					),
-			],
-			flags: MessageFlags.Ephemeral,
+			components: await createContainer(interaction, {
+				title: await t(interaction, 'embed-builder.ui.components_v2'),
+				description: await t(
+					interaction,
+					'embed-builder.ui.components_v2_desc',
+					{
+						name: record.name,
+						id: record.id,
+					},
+				),
+				color: '#5865F2',
+			}),
+			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 	async modal(interaction) {
@@ -139,13 +147,15 @@ class EditCommand extends BaseCommand {
 			},
 		});
 		if (!record) {
+			const { simpleContainer } = container.helpers.discord;
+			const { t } = container;
 			return interaction.reply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(0xef4444)
-						.setDescription('❌ Embed not found. It may have been deleted.'),
-				],
-				flags: MessageFlags.Ephemeral,
+				components: await simpleContainer(
+					interaction,
+					await t(interaction, 'embed-builder.edit.not_found'),
+					{ color: 'Red' },
+				),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 		const title = interaction.fields.getTextInputValue('title');
@@ -214,18 +224,19 @@ class EditCommand extends BaseCommand {
 				// Best-effort — don't fail the whole response if Discord edit fails
 			}
 		}
+		const { createContainer } = container.helpers.discord;
+		const { t } = container;
 		return interaction.reply({
-			embeds: [
-				new EmbedBuilder()
-					.setColor(0x22c55e)
-					.setTitle('✅ Embed Updated!')
-					.setDescription(
-						messageUrl
-							? `**"${record.name}"** has been saved and the Discord message was updated!\n[Jump to message](${messageUrl})`
-							: `**"${record.name}"** has been saved.\nUse \`/embed-builder send\` to post it to a channel.`,
-					),
-			],
-			flags: MessageFlags.Ephemeral,
+			components: await createContainer(interaction, {
+				title: await t(interaction, 'embed-builder.ui.updated'),
+				description: messageUrl
+					? await t(interaction, 'embed-builder.ui.updated_desc_msg', {
+							url: messageUrl,
+						})
+					: await t(interaction, 'embed-builder.ui.updated_desc_nomsg'),
+				color: 'Green',
+			}),
+			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }

@@ -114,7 +114,10 @@ class ListCommand extends BaseCommand {
 				label: 'reaction-role:panel:list',
 			});
 			return interaction.editReply({
-				content: 'An error occurred while listing panels.',
+				content: await interaction.client.container.t(
+					interaction,
+					'reaction-role.panel.list.error',
+				),
 			});
 		}
 	}

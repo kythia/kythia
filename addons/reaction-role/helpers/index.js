@@ -212,7 +212,12 @@ async function buildLayoutContainer(
 				new ActionRowBuilder().addComponents(
 					new StringSelectMenuBuilder()
 						.setCustomId(`rr-dropdown-select:${panelData.id}`)
-						.setPlaceholder('Select a role…')
+						.setPlaceholder(
+							await container.t(
+								{ locale: container.client.kythiaConfig.defaultLocale },
+								'reaction-role.ui.ph_select_role',
+							),
+						)
 						.setMinValues(1)
 						.setMaxValues(1)
 						.setOptions(options),
@@ -302,7 +307,12 @@ async function buildLayoutContainer(
 			new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
 					.setCustomId(`rr-panel-add-emoji-show:${panelData.id}`)
-					.setLabel('Add Emoji → Role')
+					.setLabel(
+						await container.t(
+							{ locale: container.client.kythiaConfig.defaultLocale },
+							'reaction-role.ui.add_emoji',
+						),
+					)
 					.setStyle(ButtonStyle.Success)
 					.setEmoji('➕'),
 			),
@@ -398,7 +408,12 @@ async function buildPanelEmbed(panelData, reactionRoles, container) {
 				new ActionRowBuilder().addComponents(
 					new StringSelectMenuBuilder()
 						.setCustomId(`rr-dropdown-select:${panelData.id}`)
-						.setPlaceholder('Select a role…')
+						.setPlaceholder(
+							await container.t(
+								{ locale: container.client.kythiaConfig.defaultLocale },
+								'reaction-role.ui.ph_select_role',
+							),
+						)
 						.setMinValues(1)
 						.setMaxValues(1)
 						.setOptions(options),
@@ -458,7 +473,12 @@ async function buildPanelEmbed(panelData, reactionRoles, container) {
 			new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
 					.setCustomId(`rr-panel-add-emoji-show:${panelData.id}`)
-					.setLabel('Add Emoji → Role')
+					.setLabel(
+						await container.t(
+							{ locale: container.client.kythiaConfig.defaultLocale },
+							'reaction-role.ui.add_emoji',
+						),
+					)
 					.setStyle(ButtonStyle.Success)
 					.setEmoji('➕'),
 			),

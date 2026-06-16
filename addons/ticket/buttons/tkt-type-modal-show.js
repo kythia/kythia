@@ -30,40 +30,80 @@ class TktTypeModalShowButton extends BaseButton {
 		try {
 			const modal = new ModalBuilder()
 				.setCustomId('tkt-type-create')
-				.setTitle('Create New Ticket Type')
+				.setTitle(
+					await interaction.client.container.t(
+						interaction,
+						'ticket.ui.create_type_modal',
+					),
+				)
 				.addLabelComponents(
 					new LabelBuilder()
-						.setLabel('Ticket Type Name (Label in Menu)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.ticket_type_name',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('typeName')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('e.g. Bug Report')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_bug_report',
+									),
+								)
 								.setRequired(true),
 						),
 					new LabelBuilder()
-						.setLabel('Type Emoji (Optional)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.type_emoji',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('typeEmoji')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('e.g. 🌸')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_emoji_2',
+									),
+								)
 								.setRequired(false),
 						),
 					new LabelBuilder()
-						.setLabel('Channel Category ID (Optional)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.channel_category_id',
+							),
+						)
 						.setDescription('Category ID where new tickets are created')
 						.setChannelSelectMenuComponent(
 							new ChannelSelectMenuBuilder()
 								.setCustomId('ticketCategoryId')
-								.setPlaceholder('Select a category...')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_select_category',
+									),
+								)
 								.addChannelTypes(ChannelType.GuildCategory)
 								.setRequired(true)
 								.setMinValues(1)
 								.setMaxValues(1),
 						),
 					new LabelBuilder()
-						.setLabel('Opening Ticket Message (Optional)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.ticket_opening_msg',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('ticketOpenMessage')
@@ -74,12 +114,22 @@ class TktTypeModalShowButton extends BaseButton {
 								.setRequired(false),
 						),
 					new LabelBuilder()
-						.setLabel('Opening Ticket Image (Optional)')
+						.setLabel(
+							await interaction.client.container.t(
+								interaction,
+								'ticket.ui.ticket_opening_img',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('ticketOpenImage')
 								.setStyle(TextInputStyle.Short)
-								.setPlaceholder('https://... (Image URL for the ticket)')
+								.setPlaceholder(
+									await interaction.client.container.t(
+										interaction,
+										'ticket.ui.ph_img_ticket',
+									),
+								)
 								.setRequired(false),
 						),
 				);

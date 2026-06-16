@@ -12,6 +12,7 @@ const { BaseCommand } = require('kythia-core');
 
 class ViewCommand extends BaseCommand {
 	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
 		subcommand
@@ -23,15 +24,6 @@ class ViewCommand extends BaseCommand {
 		const { t, models, helpers } = container;
 		const { BirthdaySetting } = models;
 		const { simpleContainer } = helpers.discord;
-
-		// Permission Check
-		if (!interaction.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-			const msg = await t(interaction, 'common.error.no_permission');
-			return interaction.reply({
-				components: await simpleContainer(interaction, msg),
-				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
-			});
-		}
 
 		await interaction.deferReply();
 
