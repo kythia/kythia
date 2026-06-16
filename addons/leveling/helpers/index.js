@@ -6,8 +6,6 @@
  * @version 26.0.0-rc.1
  */
 
-const { rankCard } = require('kythia-arts');
-
 const {
 	MessageFlags,
 	ContainerBuilder,
@@ -75,7 +73,7 @@ const calculateLevelAndXp = (
 
 const addXp = async (guildId, userId, xpToAdd, message, channel) => {
 	const { container } = message.client;
-	const { helpers, t, models, kythiaConfig, logger } = container;
+	const { helpers, t, models, kythiaConfig, logger, queueManager } = container;
 	const { LevelingSetting, User } = models;
 	const { getTextChannelSafe } = helpers.discord;
 	const { convertColor } = helpers.color;
@@ -190,33 +188,40 @@ const addXp = async (guildId, userId, xpToAdd, message, channel) => {
 					},
 				})) + 1;
 
-			buffer = await rankCard(userId, {
-				botToken: kythiaConfig.bot.token,
-				customTag: `Level Up!`,
-				customSubtitle: `New Level: ${user.level}`,
-				customWidth: 1024,
-				customHeight: 450,
-				customDate: new Date().toISOString(),
-				customBackground: backgroundUrl,
-				font: 'NOTO_SANS',
-				usernameColor,
-				tagColor,
-				borderColor,
-				rankData: {
-					currentXp: user.xp,
-					requiredXp: levelUpXp(user.level, curve, multiplier),
-					level: user.level,
-					barColor,
-					levelColor: tagColor,
-					rank,
+			const job = await queueManager.dispatch('kythia-image-queue', 'profile', {
+				type: 'profileImage',
+				userId: userId,
+				options: {
+					botToken: kythiaConfig.bot.token,
+					customTag: `Level Up!`,
+					customSubtitle: `New Level: ${user.level}`,
+					customWidth: 1024,
+					customHeight: 450,
+					customDate: new Date().toISOString(),
+					customBackground: backgroundUrl,
+					font: 'NOTO_SANS',
+					usernameColor,
+					tagColor,
+					borderColor,
+					rankData: {
+						currentXp: user.xp,
+						requiredXp: levelUpXp(user.level, curve, multiplier),
+						level: user.level,
+						barColor,
+						levelColor: tagColor,
+						rank,
+					},
+					customFont: 'BagelFatOne-Regular',
+					fontWeight: 'normal',
+					badgesFrame: false,
+					disabledBadges: false,
+					squareAvatar: false,
+					moreBackgroundBlur: false,
 				},
-				customFont: 'BagelFatOne-Regular',
-				fontWeight: 'normal',
-				badgesFrame: false,
-				disabledBadges: false,
-				squareAvatar: false,
-				moreBackgroundBlur: false,
 			});
+
+			const result = await queueManager.waitFor(job, 'kythia-image-queue');
+			buffer = Buffer.from(result.data);
 		} catch (err) {
 			logger.error(`Failed to generate level up image: ${err.message || err}`, {
 				label: 'leveling:helpers',

@@ -7,9 +7,6 @@
  */
 
 const setupTopGGPoster = require('./helpers/topggPoster');
-const { loadFonts } = require('kythia-arts');
-
-const path = require('node:path');
 
 const initialize = (bot) => {
 	const container = bot.client.container;
@@ -35,12 +32,6 @@ const initialize = (bot) => {
 		);
 	}
 
-	bot.addClientReadyHook(() => {
-		logger.info(
-			`🔠 Total Fonts Loaded: ${loadFonts(path.join(__dirname, 'assets', 'fonts'))}`,
-			{ label: 'core' },
-		);
-	});
 	return summary;
 };
 

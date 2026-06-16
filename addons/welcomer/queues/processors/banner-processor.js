@@ -6,7 +6,11 @@
  * @version 26.0.0-rc.1
  */
 
-const { welcomeBanner } = require('kythia-arts');
+const { welcomeBanner, loadFonts } = require('kythia-arts');
+
+const path = require('node:path');
+// Initialize fonts for this worker process
+loadFonts(path.join(process.cwd(), 'addons', 'core', 'assets', 'fonts'));
 
 /**
  * @param {import('bullmq').Job} job
