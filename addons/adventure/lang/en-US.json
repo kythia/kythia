@@ -15,10 +15,10 @@
 			}
 		},
 		"inventory": {
-			"title": "🎒 {username}'s Inventory",
+			"title": "## 🎒 {username}'s Inventory",
 			"empty": "## 🔍 Your inventory is empty!\nYou can collect items here!",
 			"use": {
-				"title": "🔮 Use Item",
+				"title": "## 🔮 Use Item",
 				"desc": "Select an item to use from your inventory.",
 				"item": {
 					"button": "Use Item"
@@ -77,7 +77,7 @@
 			"desc": "## 🏰 {bot}'s Adventure Shop - {category}\nWelcome to the adventure shop! Here you can buy items to aid you on your journey.\n> Your gold: **🪙 {gold}**",
 			"footer": "Page {page} of {totalPages}",
 			"empty": {
-				"title": "No Items Available",
+				"title": "## No Items Available",
 				"desc": "There are no items available in this category at the moment."
 			},
 			"category": {
@@ -365,7 +365,7 @@
 				"have": "You already have an adventure character!\nUse `/adventure profile` to view your status."
 			},
 			"success": {
-				"title": "✨ Character Created Successfully!",
+				"title": "## ✨ Character Created Successfully!",
 				"desc": "Your character has been created! You are ready to start your adventure! 🎉\n\nUse `/adventure battle` to start fighting or `/adventure stats` to view your status."
 			},
 			"choose": {

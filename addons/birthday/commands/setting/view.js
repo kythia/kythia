@@ -28,8 +28,8 @@ class ViewCommand extends BaseCommand {
 		if (!interaction.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
 			const msg = await t(interaction, 'common.error.no_permission');
 			return interaction.reply({
-				content: msg,
-				flags: MessageFlags.Ephemeral,
+				components: await simpleContainer(interaction, msg),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 
@@ -78,7 +78,7 @@ class ViewCommand extends BaseCommand {
 		].join('\n');
 
 		const components = await simpleContainer(interaction, desc, {
-			title: '⚙️ Birthday Settings',
+			title: await t(interaction, 'birthday.setting.view.title'),
 		});
 
 		return interaction.editReply({

@@ -120,7 +120,10 @@ class RestartCommand extends BaseCommand {
 					hours > 23 ||
 					mins > 59
 				) {
-					const msg = '❌ Invalid time format! Use HH:mm (e.g. 23:59)';
+					const msg = await t(
+						interaction,
+						'core.utils.kyth.restart.invalid_time',
+					);
 					const components = await simpleContainer(interaction, msg, {
 						color: 'Red',
 					});
@@ -196,7 +199,7 @@ class RestartCommand extends BaseCommand {
 
 				interaction.client.kythiaRestartTimestamp = null;
 
-				const msg = '✅ **Scheduled restart cancelled.**';
+				const msg = await t(interaction, 'core.utils.kyth.restart.cancelled');
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Green',
 				});

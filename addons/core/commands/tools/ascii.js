@@ -79,7 +79,10 @@ class AsciiCommand extends BaseCommand {
 		}
 
 		if (allFonts) {
-			const msg = `🎨 Generating ASCII art for "${text}" with ${figletFonts.length} fonts... this might take a moment!`;
+			const msg = await t(interaction, 'core.tools.ascii.generating', {
+				text,
+				count: figletFonts.length,
+			});
 			await interaction.editReply({
 				components: await simpleContainer(interaction, msg),
 				flags: MessageFlags.IsComponentsV2,

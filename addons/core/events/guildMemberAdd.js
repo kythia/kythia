@@ -52,7 +52,7 @@ class GuildMemberAddEvent extends BaseEvent {
 						)
 						.addTextDisplayComponents(
 							new TextDisplayBuilder().setContent(
-								`## Member Join\n\n` +
+								`Member Join\n\n` +
 									`**User:** ${member.user.tag} (<@${member.user.id}>)\n` +
 									`**User ID:** ${member.user.id}\n` +
 									`**Account Created:** <t:${Math.floor(member.user.createdTimestamp / 1000)}:F>\n` +

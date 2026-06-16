@@ -30,14 +30,14 @@ class ReloadConfigCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { logger } = container;
+		const { logger, t } = container;
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 		try {
 			reloadConfig();
 
 			await interaction.followUp({
-				content: '✅ Kythia Configuration has been hot-reloaded successfully!',
+				content: await t(interaction, 'core.utils.kyth.reload_config'),
 			});
 		} catch (error) {
 			logger.error(`Failed to reload config: ${error.message || error}`, {

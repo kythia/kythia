@@ -44,7 +44,7 @@ class InstagramCommand extends BaseCommand {
 			) &&
 			!/^https?:\/\/instagr\.am\/[a-zA-Z0-9_-]+\/?/.test(instaUrl)
 		) {
-			const msg = `## ${invalidUrlTitle}\n${invalidUrlDesc}`;
+			const msg = `${invalidUrlTitle}\n${invalidUrlDesc}`;
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -138,7 +138,7 @@ class InstagramCommand extends BaseCommand {
 				) {
 					const components = await simpleContainer(
 						interaction,
-						`## ${tooLargeTitle}\n${tooLargeDesc}`,
+						`${tooLargeTitle}\n${tooLargeDesc}`,
 						{ color: 'Red' },
 					);
 					await interaction.editReply({
@@ -171,7 +171,7 @@ class InstagramCommand extends BaseCommand {
 
 			const components = await simpleContainer(
 				interaction,
-				`## ${title}\n${desc}`,
+				`${title}\n${desc}`,
 				{ color: 'Red' },
 			);
 			await interaction.editReply({

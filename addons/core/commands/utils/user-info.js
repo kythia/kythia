@@ -90,13 +90,13 @@ class UserInfoCommand extends BaseCommand {
 
 		// Make General Content
 		const generalSection =
-			`### ${await t(interaction, 'core.utils.userinfo.field.username')}\n${user.username}\n` +
-			`### ${await t(interaction, 'core.utils.userinfo.field.userid')}\n${user.id}\n`;
+			`${await t(interaction, 'core.utils.userinfo.field.username')}\n${user.username}\n` +
+			`${await t(interaction, 'core.utils.userinfo.field.userid')}\n${user.id}\n`;
 		const datesSection =
-			`### ${await t(interaction, 'core.utils.userinfo.field.created')}\n<t:${Math.floor(user.createdTimestamp / 1000)}:F>\n` +
-			`### ${await t(interaction, 'core.utils.userinfo.field.joined.text')}\n${joinedAt}\n`;
+			`${await t(interaction, 'core.utils.userinfo.field.created')}\n<t:${Math.floor(user.createdTimestamp / 1000)}:F>\n` +
+			`${await t(interaction, 'core.utils.userinfo.field.joined.text')}\n${joinedAt}\n`;
 		const rolesSection =
-			`### ${await t(interaction, 'core.utils.userinfo.field.roles')}\n` +
+			`${await t(interaction, 'core.utils.userinfo.field.roles')}\n` +
 			(roles || (await t(interaction, 'core.utils.userinfo.value.no.roles')));
 		let marriageBlock = null;
 		let marriage = null;
@@ -149,7 +149,7 @@ class UserInfoCommand extends BaseCommand {
 				: defaultAvatar;
 			marriageBlock =
 				`${(await t(interaction, 'fun.marry.profile.title', {}, null)) || 'Marriage'}\n` +
-				`-# **${partnerLabel}**\n### ${partner?.username || 'Unknown'}\n\n` +
+				`-# **${partnerLabel}**\n${partner?.username || 'Unknown'}\n\n` +
 				`${(await t(interaction, 'fun.marry.profile.married.since', {}, null)) || 'Married Since'}\n${marriedAtDate}\n` +
 				(marriedFor !== null
 					? `${(await t(interaction, 'fun.marry.profile.days.married', {}, null)) || 'Days Together'}\n${marriedFor} days\n`
@@ -175,7 +175,7 @@ class UserInfoCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`## ${await t(interaction, 'core.utils.userinfo.embed.title')}\n${await t(
+					`${await t(interaction, 'core.utils.userinfo.embed.title')}\n${await t(
 						interaction,
 						'core.utils.userinfo.embed.desc',
 						{

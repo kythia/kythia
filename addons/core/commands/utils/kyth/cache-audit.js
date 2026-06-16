@@ -210,7 +210,7 @@ class CacheAuditCommand extends BaseCommand {
 			const statusColor = grandStale > 0 ? 'Red' : 'Green';
 			const statusIcon = grandStale > 0 ? '⚠️' : '✅';
 
-			let desc = `### ${statusIcon} Cache Audit: **${modelName ? modelName : 'ALL MODELS'}**\n\n`;
+			let desc = `${statusIcon} Cache Audit: **${modelName ? modelName : 'ALL MODELS'}**\n\n`;
 			desc += `**Total Keys in Redis:** \`${grandTotalKeys}\`\n`;
 			desc += `**Rows Sampled:** \`${grandSampled}\`\n\n`;
 

@@ -137,8 +137,11 @@ class EditCommand extends BaseCommand {
 
 		if (changes.length === 0) {
 			return interaction.editReply({
-				content: await t(interaction, 'common.error.no_changes'),
-				flags: MessageFlags.Ephemeral,
+				components: await simpleContainer(
+					interaction,
+					await t(interaction, 'common.error.no_changes'),
+				),
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 

@@ -54,7 +54,7 @@ class TemperatureCommand extends BaseCommand {
 		if (result == null) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'core.utils.convert.temperature.failed')}`,
+				`${await t(interaction, 'core.utils.convert.temperature.failed')}`,
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -64,7 +64,7 @@ class TemperatureCommand extends BaseCommand {
 		}
 
 		const desc =
-			'## ' +
+			'' +
 			(await t(interaction, 'core.utils.convert.temperature.title')) +
 			'\n' +
 			(await t(interaction, 'core.utils.convert.temperature.result', {

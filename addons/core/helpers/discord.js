@@ -244,7 +244,7 @@ async function createContainer(interaction, options = {}) {
 	}
 	const container = new ContainerBuilder().setAccentColor(accentColor);
 	if (title) {
-		container.addTextDisplayComponents(...chunkTextDisplay(`## ${title}`));
+		container.addTextDisplayComponents(...chunkTextDisplay(title));
 		container.addSeparatorComponents(
 			new SeparatorBuilder()
 				.setSpacing(SeparatorSpacingSize.Small)

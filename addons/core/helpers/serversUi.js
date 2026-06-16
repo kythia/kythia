@@ -37,7 +37,7 @@ async function generateServersContainer(
 	const [containerStr] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: `## ${await t(interaction, 'core.utils.kyth.servers.title')}`,
+		title: await t(interaction, 'core.utils.kyth.servers.title'),
 		content: contentText,
 		footer: await t(interaction, 'core.utils.kyth.servers.footer', {
 			page,

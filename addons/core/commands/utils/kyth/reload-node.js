@@ -28,14 +28,14 @@ class ReloadNodeCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { logger } = container;
+		const { logger, t } = container;
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 		try {
 			await reloadLavalinkNodes(interaction.client);
 
 			await interaction.followUp({
-				content: '✅ Config and Lavalink nodes have been reloaded!',
+				content: await t(interaction, 'core.utils.kyth.reload_node'),
 			});
 		} catch (error) {
 			logger.error(`Failed to reload nodes: ${error.message || error}`, {

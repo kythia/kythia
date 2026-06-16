@@ -38,7 +38,7 @@ async function generateListContainer(
 	const [listContainer] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: `## ${await t(interaction, 'autoreply.list.title', { page, totalPages })}`,
+		title: await t(interaction, 'autoreply.list.title', { page, totalPages }),
 		content,
 		footer: await t(interaction, 'autoreply.list.footer', {
 			page,

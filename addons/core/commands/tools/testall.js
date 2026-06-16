@@ -33,7 +33,7 @@ class TestallCommand extends BaseCommand {
 	mainGuildOnly = true;
 	async execute(interaction) {
 		const container = this.container;
-		const { logger, helpers, kythiaConfig: cfg } = container;
+		const { t, logger, helpers, kythiaConfig: cfg } = container;
 
 		// Acknowledge immediately so the interaction token stays alive
 		await interaction.deferReply({
@@ -291,7 +291,7 @@ class TestallCommand extends BaseCommand {
 		const headerContainer = new ContainerBuilder().setAccentColor(accentColor);
 		headerContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`## 🧪 Command Test Results\n${statusLine}\n-# Tested **${processed}/${totalCommands}** commands · Pass rate **${successRate}%** · <t:${Math.floor(Date.now() / 1000)}:R>`,
+				`🧪 Command Test Results\n${statusLine}\n-# Tested **${processed}/${totalCommands}** commands · Pass rate **${successRate}%** · <t:${Math.floor(Date.now() / 1000)}:R>`,
 			),
 		);
 		await sendContainer(headerContainer);
@@ -302,7 +302,7 @@ class TestallCommand extends BaseCommand {
 		);
 		successHeaderContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`### ✅ Passed (${results.success.length})`,
+				`✅ Passed (${results.success.length})`,
 			),
 		);
 		await sendContainer(successHeaderContainer);
@@ -347,7 +347,7 @@ class TestallCommand extends BaseCommand {
 			);
 			headerContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`### ❌ Failed (${results.failed.length})`,
+					`❌ Failed (${results.failed.length})`,
 				),
 			);
 			await sendContainer(headerContainer);
@@ -369,7 +369,7 @@ class TestallCommand extends BaseCommand {
 			);
 			skippedHeaderContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`### ⏭️ Skipped (${results.skipped.length})`,
+					`⏭️ Skipped (${results.skipped.length})`,
 				),
 			);
 			await sendContainer(skippedHeaderContainer);
@@ -394,7 +394,7 @@ class TestallCommand extends BaseCommand {
 		await sendContainer(footerContainer);
 		await interaction
 			.editReply({
-				content: '✅ Done! Results posted above.',
+				content: await t(interaction, 'core.tools.testall.done'),
 			})
 			.catch((err) =>
 				logger.warn(`testall editReply failed: ${err.message || err}`, {

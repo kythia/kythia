@@ -57,7 +57,7 @@ class CurrencyCommand extends BaseCommand {
 			if (result == null) {
 				const components = await simpleContainer(
 					interaction,
-					`## ${await t(interaction, 'core.utils.convert.currency.failed')}`,
+					`${await t(interaction, 'core.utils.convert.currency.failed')}`,
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -67,7 +67,7 @@ class CurrencyCommand extends BaseCommand {
 			}
 
 			const desc =
-				'## ' +
+				'' +
 				(await t(interaction, 'core.utils.convert.currency.title')) +
 				'\n' +
 				(await t(interaction, 'core.utils.convert.currency.result', {

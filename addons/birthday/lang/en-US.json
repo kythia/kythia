@@ -27,7 +27,7 @@
 		},
 		"setting": {
 			"view": {
-				"title": "⚙️ Birthday Settings",
+				"title": "## ⚙️ Birthday Settings",
 				"channel": "**📢 Channel:** {channel}",
 				"role": "**🎁 Birthday Role:** {role}",
 				"ping_role": "**🔔 Ping Role:** {role}",
@@ -41,7 +41,7 @@
 				"no": "❌ No"
 			},
 			"edit": {
-				"title": "### ✅ Settings Updated",
+				"title": "## ✅ Settings Updated",
 				"channel_set": "📢 Channel set to {channel}",
 				"role_set": "🎁 Birthday Role set to {role}",
 				"ping_role_set": "🔔 Ping Role set to {role}",

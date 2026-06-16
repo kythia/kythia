@@ -58,7 +58,7 @@ class FlushCommand extends BaseCommand {
 			await interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-					`## ✅ Redis flush successful!\n🧹 Cleared ${sizeBefore} keys.`,
+					`✅ Redis flush successful!\n🧹 Cleared ${sizeBefore} keys.`,
 					{
 						color: 'Green',
 					},
@@ -69,7 +69,7 @@ class FlushCommand extends BaseCommand {
 			await interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-					`## ⚠️ REDIS FLUSHALL\ncommand sent, but DB size is still: ${dbsize}.`,
+					`⚠️ REDIS FLUSHALL\ncommand sent, but DB size is still: ${dbsize}.`,
 					{
 						color: 'Orange',
 					},

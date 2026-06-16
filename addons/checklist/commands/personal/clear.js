@@ -59,8 +59,7 @@ class ClearCommand extends BaseCommand {
 			await checklist.update({ items: '[]' });
 		} catch (_e) {
 			await interaction.deferReply({ ephemeral });
-			const msg =
-				'Checklist Error\nFailed to clear checklist. Please try again.';
+			const msg = await t(interaction, 'checklist.error.clear');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});

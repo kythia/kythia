@@ -3,7 +3,9 @@
 		"unknown": {
 			"subcommand": {}
 		},
-		"error": {},
+		"error": {
+			"clear": "## ❌ Checklist Error\nFailed to clear checklist. Please try again."
+		},
 		"scope": {
 			"personal": "Personal",
 			"server": "Server"
@@ -19,19 +21,19 @@
 			"toggle": {
 				"invalid": {
 					"index": {
-						"title": "❌ Invalid Item Number",
+						"title": "## ❌ Invalid Item Number",
 						"desc": "Please check the item number you want to select."
 					}
 				},
 				"empty": {
-					"title": "❌ {scope} Checklist is Empty"
+					"title": "## ❌ {scope} Checklist is Empty"
 				},
 				"toggle": {
 					"empty": {
 						"desc": "There are no items to toggle."
 					},
 					"success": {
-						"title": "🔄 Checklist Item Status Changed ({scope})"
+						"title": "## 🔄 Checklist Item Status Changed ({scope})"
 					}
 				},
 				"item": {
@@ -47,7 +49,7 @@
 						"desc": "There are no items to remove."
 					},
 					"success": {
-						"title": "🗑️ Item Removed from {scope} Checklist",
+						"title": "## 🗑️ Item Removed from {scope} Checklist",
 						"desc": "**Item:**\n> `{item}`"
 					}
 				},
@@ -60,7 +62,7 @@
 					"empty": {
 						"desc": "There are no items in this checklist yet."
 					},
-					"title": "📋 {scope} Checklist",
+					"title": "## 📋 {scope} Checklist",
 					"field": {
 						"title": {
 							"multi": "Item List ({index})",
@@ -72,7 +74,7 @@
 			"clear": {
 				"already": {
 					"empty": {
-						"title": "❌ {scope} Checklist Already Empty"
+						"title": "## ❌ {scope} Checklist Already Empty"
 					}
 				},
 				"clear": {
@@ -80,7 +82,7 @@
 						"desc": "There are no items to clear."
 					},
 					"success": {
-						"title": "🧹 {scope} Checklist Cleared",
+						"title": "## 🧹 {scope} Checklist Cleared",
 						"desc": "All items have been removed from this checklist."
 					}
 				}
@@ -99,7 +101,7 @@
 				"error": "## ❌ Checklist Error\nFailed to update checklist. Please try again.",
 				"add": {
 					"success": {
-						"title": "✅ Item Added to {scope} Checklist",
+						"title": "## ✅ Item Added to {scope} Checklist",
 						"desc": "**Item:**\n> `{item}`"
 					}
 				}

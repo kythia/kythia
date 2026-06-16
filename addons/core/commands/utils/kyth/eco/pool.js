@@ -55,7 +55,7 @@ class PoolCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { models, kythiaConfig, helpers } = container;
+		const { models, kythiaConfig, helpers, t } = container;
 		const { KythLiquidityPool } = models;
 		const { simpleContainer } = helpers.discord;
 
@@ -69,7 +69,7 @@ class PoolCommand extends BaseCommand {
 		if (!pool) {
 			const components = await simpleContainer(
 				interaction,
-				'## ❌ Pool Not Found\nThe KYTH liquidity pool (id=1) does not exist. Run the database migration first.',
+				'❌ Pool Not Found\nThe KYTH liquidity pool (id=1) does not exist. Run the database migration first.',
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -81,7 +81,7 @@ class PoolCommand extends BaseCommand {
 		if (action === 'status') {
 			const stats = formatPoolStats(pool);
 			const msg = [
-				`## 🏊 KYTH Liquidity Pool Status`,
+				`🏊 KYTH Liquidity Pool Status`,
 				``,
 				`**💰 Coin Reserve (X):** 🪙 ${stats.coinReserve}`,
 				`**💎 KYTH Reserve (Y):** ${stats.kythReserve} KYTH`,
@@ -140,7 +140,7 @@ class PoolCommand extends BaseCommand {
 				kythReserve: Number(pool.kythReserve),
 			});
 			const msg = [
-				`## ✅ Pool Injection Complete`,
+				`✅ Pool Injection Complete`,
 				`**Coin:** ${oldCoin.toLocaleString()} → ${Number(pool.coinReserve).toLocaleString()} (${coinDelta !== null ? (coinDelta >= 0 ? '+' : '') + coinDelta.toLocaleString() : 'unchanged'})`,
 				`**KYTH:** ${oldKyth.toFixed(4)} → ${Number(pool.kythReserve).toFixed(4)} (${kythDelta !== null ? (kythDelta >= 0 ? '+' : '') + kythDelta.toFixed(4) : 'unchanged'})`,
 				`**New K:** ${pool.kConstant.toLocaleString()}`,
@@ -187,7 +187,12 @@ class PoolCommand extends BaseCommand {
 				coinReserve: Number(pool.coinReserve),
 				kythReserve: Number(pool.kythReserve),
 			});
-			const msg = `## ✅ Pool Updated\n**Coin Reserve:** ${Number(pool.coinReserve).toLocaleString()}\n**KYTH Reserve:** ${Number(pool.kythReserve).toFixed(4)}\n**New K:** ${pool.kConstant.toLocaleString()}\n**New Price:** ${newPrice.toFixed(4)} Coin/KYTH`;
+			const msg = await t(interaction, 'core.utils.kyth.eco.pool.update', {
+				coin: Number(pool.coinReserve).toLocaleString(),
+				kyth: Number(pool.kythReserve).toFixed(4),
+				k: pool.kConstant.toLocaleString(),
+				price: newPrice.toFixed(4),
+			});
 
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
@@ -204,7 +209,10 @@ class PoolCommand extends BaseCommand {
 			pool.changed('kConstant', true);
 			await pool.save();
 
-			const msg = `## ✅ K Recalculated\nOld K: ${Number(oldK).toLocaleString()}\nNew K: ${pool.kConstant.toLocaleString()}`;
+			const msg = await t(interaction, 'core.utils.kyth.eco.pool.recalc', {
+				old: Number(oldK).toLocaleString(),
+				new: pool.kConstant.toLocaleString(),
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});

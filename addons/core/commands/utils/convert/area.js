@@ -54,7 +54,7 @@ class AreaCommand extends BaseCommand {
 		if (result == null) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'core.utils.convert.area.failed')}`,
+				`${await t(interaction, 'core.utils.convert.area.failed')}`,
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -64,7 +64,7 @@ class AreaCommand extends BaseCommand {
 		}
 
 		const desc =
-			'## ' +
+			'' +
 			(await t(interaction, 'core.utils.convert.area.title')) +
 			'\n' +
 			(await t(interaction, 'core.utils.convert.area.result', {

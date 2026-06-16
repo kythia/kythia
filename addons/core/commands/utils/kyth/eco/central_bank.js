@@ -66,7 +66,7 @@ class CentralBankCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				`## ❌ Database Error\n${msg}`,
+				`❌ Database Error\n${msg}`,
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -120,7 +120,7 @@ class CentralBankCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				`## ${title}\n${msg}`,
+				`${title}\n${msg}`,
 				{ color: 'Blue' },
 			);
 			return interaction.editReply({
@@ -142,7 +142,7 @@ class CentralBankCommand extends BaseCommand {
 		);
 		const components = await simpleContainer(
 			interaction,
-			`## ${title} Updated\n${msg}`,
+			`${title} Updated\n${msg}`,
 			{ color: 'Green' },
 		);
 		return interaction.editReply({

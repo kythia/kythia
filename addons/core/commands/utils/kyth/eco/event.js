@@ -71,7 +71,7 @@ class EventCommand extends BaseCommand {
 			);
 	async execute(interaction) {
 		const container = this.container;
-		const { models, kythiaConfig, helpers } = container;
+		const { models, kythiaConfig, helpers, t } = container;
 		const { KythLiquidityPool } = models;
 		const { simpleContainer } = helpers.discord;
 		await interaction.deferReply({
@@ -92,7 +92,7 @@ class EventCommand extends BaseCommand {
 		if (!pool && type !== 'announce') {
 			const components = await simpleContainer(
 				interaction,
-				'## ❌ Pool Not Found\nThe KYTH liquidity pool has not been initialized.',
+				'❌ Pool Not Found\nThe KYTH liquidity pool has not been initialized.',
 				{
 					color: 'Red',
 				},
@@ -145,7 +145,12 @@ class EventCommand extends BaseCommand {
 				channelId,
 				announcement,
 			);
-			const msg = `## ✅ Whale Dump Executed\n**${kythToSell} KYTH** dumped by NPC.\nPrice: ${oldPrice.toFixed(4)} → ${newPrice.toFixed(4)} (${priceDrop}%)`;
+			const msg = await t(interaction, 'core.utils.kyth.eco.event.whale', {
+				kyth: kythToSell,
+				old: oldPrice.toFixed(4),
+				new: newPrice.toFixed(4),
+				drop: priceDrop,
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -194,7 +199,12 @@ class EventCommand extends BaseCommand {
 				channelId,
 				announcement,
 			);
-			const msg = `## ✅ Token Burn Executed\nBurned: ${burnAmount.toFixed(4)} KYTH\nPrice: ${oldPrice.toFixed(4)} → ${newPrice.toFixed(4)} (+${priceIncrease}%)`;
+			const msg = await t(interaction, 'core.utils.kyth.eco.event.burn', {
+				amount: burnAmount.toFixed(4),
+				old: oldPrice.toFixed(4),
+				new: newPrice.toFixed(4),
+				inc: priceIncrease,
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -251,7 +261,12 @@ class EventCommand extends BaseCommand {
 				channelId,
 				announcement,
 			);
-			const msg = `## ✅ Bull Run Triggered\nInjected: 🪙 ${coinToInject.toLocaleString()} Coin\nPrice: ${oldPrice.toFixed(6)} → ${newPrice.toFixed(6)} (+${priceIncrease}%)`;
+			const msg = await t(interaction, 'core.utils.kyth.eco.event.bull', {
+				coin: coinToInject.toLocaleString(),
+				old: oldPrice.toFixed(6),
+				new: newPrice.toFixed(6),
+				inc: priceIncrease,
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -280,7 +295,7 @@ class EventCommand extends BaseCommand {
 				interaction.client,
 				kythiaConfig,
 				channelId,
-				`## 📢 KYTH Market Update\n${message}`,
+				`📢 KYTH Market Update\n${message}`,
 			);
 			const components = await simpleContainer(
 				interaction,

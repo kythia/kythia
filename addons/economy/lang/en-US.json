@@ -175,7 +175,7 @@
 			"footer": "Page {page} of {totalPages}",
 			"empty": {
 				"desc": "There are no items available in this category.",
-				"title": "Empty!"
+				"title": "## Empty!"
 			},
 			"category": {
 				"all": "All Items",
@@ -476,16 +476,16 @@
 					"field": "Current Kythia Coins"
 				},
 				"lose": {
-					"title": "😞 You Lost!"
+					"title": "## 😞 You Lost!"
 				},
 				"jackpot": {
-					"title": "🎰 JACKPOT!!!"
+					"title": "## 🎰 JACKPOT!!!"
 				},
 				"bigwin": {
-					"title": "🎉 Big Win!"
+					"title": "## 🎉 Big Win!"
 				},
 				"lucky": {
-					"title": "🍀 Lucky Hit!"
+					"title": "## 🍀 Lucky Hit!"
 				}
 			}
 		},
@@ -496,7 +496,6 @@
 						"self": "❌ You cannot rob yourself!"
 					}
 				},
-
 				"target": {
 					"no": {
 						"account": {
@@ -542,7 +541,7 @@
 		},
 		"profile": {
 			"profile": {
-				"title": "🗃️ Profile",
+				"title": "## 🗃️ Profile",
 				"user": {
 					"line": "> **{username}** <@{userId}>"
 				},
@@ -559,7 +558,7 @@
 					"xp": {}
 				},
 				"finance": {
-					"title": "💰 Finances"
+					"title": "## 💰 Finances"
 				},
 				"bank": {
 					"line": "> 🏦 **Kythia Bank:** \n> `{bank}` {bankType}"
@@ -572,7 +571,7 @@
 		"lootbox": {
 			"lootbox": {
 				"cooldown": "🕒 | You can open another lootbox in **{time}**!",
-				"title": "🎁 Lootbox Result",
+				"title": "## 🎁 Lootbox Result",
 				"success": "You opened a lootbox and received **{amount} kythia coin**!"
 			}
 		},
@@ -702,7 +701,7 @@
 					"desc": "## 💵 Bank Balance\n**{username}**, you have **{cash} kythia coin** and **{bank} in {bankType} bank**, total **{total} money**."
 				},
 				"stats": {
-					"title": "🏦 Bank Statistics"
+					"title": "## 🏦 Bank Statistics"
 				},
 				"pros": "Pros",
 				"cons": "Cons"
@@ -887,7 +886,7 @@
 				},
 				"success": {
 					"desc": "## ✅ Asset Sold!\nYou have successfully sold **{quantity} {asset}** for **🪙 {amount}**.\n\n> Avg. Buy Price: `{avgBuyPrice}`\n> Sell Price: `{sellPrice}`\n> P/L on this sale: `{pnlEmoji} {pnlSign}{pnl}`",
-					"title": "✅ Asset Sold!"
+					"title": "## ✅ Asset Sold!"
 				},
 				"error": {
 					"desc": "## ❌ Sale Error\nAn error occurred while processing your sale. Please try again.",
@@ -936,7 +935,7 @@
 					}
 				},
 				"chart": {
-					"title": "📈 {timeframe} Day Chart for {asset}"
+					"title": "## 📈 {timeframe} Day Chart for {asset}"
 				},
 				"price": {
 					"label": "Price (USD)"
@@ -948,7 +947,7 @@
 					"vol": {}
 				},
 				"all": {
-					"title": "🌐 Kythia Global Market - Real-Time Prices"
+					"title": "## 🌐 Kythia Global Market - Real-Time Prices"
 				},
 				"error": {},
 				"market": {
@@ -1018,7 +1017,7 @@
 				}
 			},
 			"portfolio": {
-				"title": "Your Portfolio, {username}",
+				"title": "## Your Portfolio, {username}",
 				"empty": {
 					"desc": "## Your Asset Portfolio is Empty\nYou don't own any assets yet. Use /eco market buy to purchase assets from the global market!"
 				},
@@ -1116,7 +1115,7 @@
 				}
 			},
 			"history": {
-				"title": "Transaction History for {username}",
+				"title": "## Transaction History for {username}",
 				"empty": {
 					"desc": "## Transaction History\nYour transaction history is empty."
 				},
@@ -1311,7 +1310,7 @@
 					"db": "An error occurred while launching the stock. Please try again."
 				},
 				"success": {
-					"title": "🎉 Guild Stock Launched: {ticker}",
+					"title": "## 🎉 Guild Stock Launched: {ticker}",
 					"desc": "Congratulations! The local stock market for **{guildName}** is now live!",
 					"price": "1 {ticker} = **{price} KYTH**",
 					"liquidity": "{liquidity} KYTH",
@@ -1323,7 +1322,7 @@
 				"empty": {
 					"desc": "You do not own any Guild Stocks. Use `/eco guild_stock view` to discover stocks to buy!"
 				},
-				"title": "📈 Your Guild Portfolio",
+				"title": "## 📈 Your Guild Portfolio",
 				"desc": "Total Portfolio Value: **{value} KYTH**",
 				"field": "**Balance:** {balance}\n**Value:** {value} KYTH"
 			},
@@ -1332,7 +1331,7 @@
 					"not_found": "No stock found with the ticker **{ticker}**.",
 					"no_guild_stock": "This server has not launched a stock yet. The owner can use `/eco guild_stock create` to launch one."
 				},
-				"title": "📊 {ticker} Stock Overview",
+				"title": "## 📊 {ticker} Stock Overview",
 				"halted": "⚠️ **TRADING HALTED**",
 				"active": "✅ Trading Active",
 				"price": "**{price}** KYTH",
@@ -1345,7 +1344,7 @@
 			},
 			"top": {
 				"empty": "No guild stocks have been created yet.",
-				"title": "🌐 The Kythia S&P 500",
+				"title": "## 🌐 The Kythia S&P 500",
 				"desc": "Top 10 Server Stocks ranked by Market Cap."
 			},
 			"swap": {
@@ -1367,7 +1366,7 @@
 					"owner": "Only the Bot Owner (Central Bank Governor) can use this command.",
 					"db": "Global Liquidity Pool not found."
 				},
-				"title": "🏦 Central Bank Policy",
+				"title": "## 🏦 Central Bank Policy",
 				"current": "Current Policies:\n- Fee Rate: **{fee}%**\n- Dividend Split: **{dividend}%**\n- Burn Rate: **{burn}%**\n- Trading Halted: **{halted}**\n\nProvide options to update the policy.",
 				"success": "The global monetary policy has been updated by the Governor.\n\n{changes}"
 			}

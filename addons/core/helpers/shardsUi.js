@@ -36,7 +36,7 @@ async function generateShardsContainer(
 	const [containerStr] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: `## ${await t(interaction, 'core.utils.kyth.shards.title')}`,
+		title: await t(interaction, 'core.utils.kyth.shards.title'),
 		content: contentText,
 		footer: await t(interaction, 'core.utils.kyth.shards.footer', {
 			page,

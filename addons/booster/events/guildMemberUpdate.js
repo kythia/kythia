@@ -264,11 +264,19 @@ class GuildMemberUpdateEvent extends BaseEvent {
 				);
 		} else {
 			// ── Plain text mode (no card, no embed) ───────────────────
-			channel.send({ content: safeBoosterText }).catch((err) =>
-				logger.error(`Failed to send plain booster: ${err.message || err}`, {
-					label: 'booster:guildMemberUpdate:send',
-				}),
+			const boosterContainer = new ContainerBuilder().addTextDisplayComponents(
+				...chunkTextDisplay(safeBoosterText),
 			);
+			channel
+				.send({
+					components: [boosterContainer],
+					flags: MessageFlags.IsComponentsV2,
+				})
+				.catch((err) =>
+					logger.error(`Failed to send plain booster: ${err.message || err}`, {
+						label: 'booster:guildMemberUpdate:send',
+					}),
+				);
 		}
 	}
 }

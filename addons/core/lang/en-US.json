@@ -350,18 +350,18 @@
 					}
 				},
 				"embed": {
-					"title": "📊 User Info",
+					"title": "## 📊 User Info",
 					"desc": "Information for user **{tag}**"
 				},
 				"field": {
-					"username": "Username",
-					"userid": "User ID",
-					"created": "Account Created",
+					"username": "### Username",
+					"userid": "### User ID",
+					"created": "### Account Created",
 					"joined": {
-						"text": "Joined Server",
+						"text": "### Joined Server",
 						"unknown": "Unknown join date"
 					},
-					"roles": "Roles"
+					"roles": "### Roles"
 				},
 				"value": {
 					"no": {
@@ -467,7 +467,7 @@
 			},
 			"vote": {
 				"leaderboard": {
-					"title": "Vote Leaderboard",
+					"title": "## 🏆 Vote Leaderboard",
 					"empty": "❌ There are no voters on the leaderboard.",
 					"entry": "**{index}.** {user} - **{votes}** votes"
 				},
@@ -528,13 +528,13 @@
 					}
 				},
 				"servers": {
-					"title": "🌐 Bot Servers",
+					"title": "## 🌐 Bot Servers",
 					"empty": "The bot is not in any servers.",
 					"entry": "**{rank}.** {name} ({id}",
 					"footer": "-# Page {page} of {totalPages} | Total Servers: {totalServers}"
 				},
 				"shards": {
-					"title": "🧩 Bot Shards",
+					"title": "## 🧩 Bot Shards",
 					"empty": "No shards found.",
 					"entry": "## Shard #{id}\n- Uptime: {uptime}\n- Users: **{users}** | Guilds: **{guilds}**",
 					"footer": "-# Page {page} of {totalPages} | Total Shards: {totalShards}"
@@ -612,6 +612,24 @@
 					"success": "🧹 **Cleanup Complete**\n\n**Threshold:** < {threshold} members\n**Success:** {leftCount} guilds\n**Failed:** {errorCount} guilds",
 					"more": "...and {count} more",
 					"list": "\n\n**Left Guilds:**\n```\n{names}```"
+				},
+				"eco": {
+					"event": {
+						"whale": "✅ Whale Dump Executed\n**{kyth} KYTH** dumped by NPC.\nPrice: {old} → {new} ({drop}%)",
+						"burn": "✅ Token Burn Executed\nBurned: {amount} KYTH\nPrice: {old} → {new} (+{inc}%)",
+						"bull": "✅ Bull Run Triggered\nInjected: 🪙 {coin} Coin\nPrice: {old} → {new} (+{inc}%)"
+					},
+					"pool": {
+						"update": "✅ Pool Updated\n**Coin Reserve:** {coin}\n**KYTH Reserve:** {kyth}\n**New K:** {k}\n**New Price:** {price} Coin/KYTH",
+						"recalc": "✅ K Recalculated\nOld K: {old}\nNew K: {new}"
+					}
+				},
+				"debug": "🛠️ Kythia Cache Debugger (Complete)\n\n{logs}",
+				"reload_config": "✅ Kythia Configuration has been hot-reloaded successfully!",
+				"reload_node": "✅ Config and Lavalink nodes have been reloaded!",
+				"restart": {
+					"invalid_time": "❌ Invalid time format! Use HH:mm (e.g. 23:59)",
+					"cancelled": "✅ **Scheduled restart cancelled.**"
 				}
 			},
 			"global-announcement": {
@@ -741,7 +759,8 @@
 					"text": {
 						"allfonts": "❌ Invalid text. Please provide a valid text."
 					}
-				}
+				},
+				"generating": "🎨 Generating ASCII art for \"{text}\" with {count} fonts... this might take a moment!"
 			},
 			"hash": {
 				"invalid": {
@@ -819,24 +838,24 @@
 				"error": {
 					"invalid": {
 						"url": {
-							"title": "Invalid TikTok Link",
+							"title": "## Invalid TikTok Link",
 							"desc": "❌ Please provide a valid TikTok link. Example: https://www.tiktok.com/@user/video/1234567890 or https://vt.tiktok.com/ZSyfhrXxX/"
 						}
 					},
 					"too": {
 						"large": {
-							"title": "Video Too Large",
+							"title": "## Video Too Large",
 							"desc": "The video is too large to be sent via Discord! 😭\n\n[Click here to watch the video]({url})"
 						}
 					},
 					"no": {
 						"video": {
-							"title": "Failed to Get Video",
+							"title": "## Failed to Get Video",
 							"desc": "❌ Failed to fetch the video. The video may be private, deleted, or the API is down."
 						}
 					},
 					"unknown": {
-						"title": "Error Processing TikTok Link",
+						"title": "## Error Processing TikTok Link",
 						"desc": "❌ An error occurred while processing the TikTok link."
 					}
 				}
@@ -846,24 +865,24 @@
 				"error": {
 					"invalid": {
 						"url": {
-							"title": "Invalid Instagram Link",
+							"title": "## Invalid Instagram Link",
 							"desc": "❌ Please provide a valid Instagram post/reel link. Example: https://www.instagram.com/p/ABC123/ or https://www.instagram.com/reel/XYZ456/"
 						}
 					},
 					"too": {
 						"large": {
-							"title": "Media Too Large",
+							"title": "## Media Too Large",
 							"desc": "The media file is too large to be sent via Discord! 😭\n\n[Click here to view the media]({url})"
 						}
 					},
 					"no": {
 						"media": {
-							"title": "Failed to Get Media",
+							"title": "## Failed to Get Media",
 							"desc": "❌ Failed to fetch the media. The post may be private, deleted, or the API is down."
 						}
 					},
 					"unknown": {
-						"title": "Error Processing Instagram Link",
+						"title": "## Error Processing Instagram Link",
 						"desc": "❌ An error occurred while processing the Instagram link."
 					}
 				}
@@ -1024,6 +1043,9 @@
 						"list": "\n\n**Failed Server List:**\n```{names}```"
 					}
 				}
+			},
+			"testall": {
+				"done": "✅ Done! Results posted above."
 			}
 		},
 		"setting": {
@@ -1056,7 +1078,7 @@
 				"embed": {
 					"title": {
 						"text": "⚙️ Setting",
-						"view": "🛠️ Bot Settings in This Server"
+						"view": "## 🛠️ Bot Settings in This Server"
 					}
 				},
 				"whitelist": {
@@ -1271,10 +1293,10 @@
 					"set": "Not set"
 				},
 				"section": {
-					"boolean": "Active / Inactive Features",
-					"umum": "General Settings",
-					"array": "Structured Data",
-					"lainnya": "Others"
+					"boolean": "### ⭕ Active / Inactive Features",
+					"umum": "### ⚙️ General Settings",
+					"array": "### 🗃️ Structured Data",
+					"lainnya": "### ❓ Others"
 				},
 				"announcement": {
 					"channel": {
@@ -1322,7 +1344,7 @@
 				},
 				"list": {
 					"empty": "There are currently no premium users.",
-					"title": "Premium Users",
+					"title": "## Premium Users",
 					"item": "{index}. {user} - expires {expires}",
 					"footer": "Page {page} of {totalPages} • Total Premium Users: {totalUsers}",
 					"nav": {
@@ -1853,6 +1875,14 @@
 						"zalgo": {
 							"detected": "🚨 Zalgo text detected! Please use normal characters."
 						}
+					}
+				}
+			},
+			"handlers": {
+				"errorhandler": {
+					"webhook": {
+						"title": "## ❌ Error at {user}",
+						"footer": "-# {context}"
 					}
 				}
 			}

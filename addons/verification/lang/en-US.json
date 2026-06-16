@@ -62,7 +62,7 @@
 			"success": "✅ Verification revoked for {user}. They will need to verify again."
 		},
 		"status": {
-			"title": "🛡️ Verification Status",
+			"title": "## 🛡️ Verification Status",
 			"not": {
 				"configured": "⚠️ Verification not configured yet. Use `/verify setup role` to start."
 			},

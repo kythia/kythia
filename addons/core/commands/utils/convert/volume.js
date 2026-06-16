@@ -54,7 +54,7 @@ class VolumeCommand extends BaseCommand {
 		if (result == null) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'core.utils.convert.volume.failed')}`,
+				`${await t(interaction, 'core.utils.convert.volume.failed')}`,
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -64,7 +64,7 @@ class VolumeCommand extends BaseCommand {
 		}
 
 		const desc =
-			'## ' +
+			'' +
 			(await t(interaction, 'core.utils.convert.volume.title')) +
 			'\n' +
 			(await t(interaction, 'core.utils.convert.volume.result', {

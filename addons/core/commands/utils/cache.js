@@ -62,16 +62,16 @@ class CacheCommand extends BaseCommand {
 				});
 				cacheStatus = statusList.join('\n');
 			} else {
-				cacheStatus = '### `✅` **Kythia Redis (Online)**';
+				cacheStatus = '`✅` **Kythia Redis (Online)**';
 			}
 		} else if (!KythiaModel.isShardMode) {
-			cacheStatus = '### `⚠️` **In-Memory (Fallback)**';
+			cacheStatus = '`⚠️` **In-Memory (Fallback)**';
 		} else {
-			cacheStatus = '### `❌` **DISABLED (Sharding)**';
+			cacheStatus = '`❌` **DISABLED (Sharding)**';
 		}
 
 		const desc = [
-			'## 📊 Cache Engine Statistics',
+			'📊 Cache Engine Statistics',
 			cacheStatus,
 			'',
 			`**Redis Hits:** \`${stats.redisHits || 0}\``,

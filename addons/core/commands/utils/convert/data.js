@@ -54,7 +54,7 @@ class DataCommand extends BaseCommand {
 		if (result == null) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'core.utils.convert.data.failed')}`,
+				`${await t(interaction, 'core.utils.convert.data.failed')}`,
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -64,7 +64,7 @@ class DataCommand extends BaseCommand {
 		}
 
 		const desc =
-			'## ' +
+			'' +
 			(await t(interaction, 'core.utils.convert.data.title')) +
 			'\n' +
 			(await t(interaction, 'core.utils.convert.data.result', {

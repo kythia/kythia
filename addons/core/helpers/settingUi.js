@@ -132,33 +132,25 @@ async function handleViewSettings(
 	const allLines = [];
 
 	if (kategori.boolean.length) {
-		allLines.push(
-			`### ⭕ ${await t(interaction, 'core.setting.setting.section.boolean')}`,
-		);
+		allLines.push(await t(interaction, 'core.setting.setting.section.boolean'));
 		allLines.push(...kategori.boolean);
 		allLines.push('');
 	}
 
 	if (kategori.umum.length) {
-		allLines.push(
-			`### ⚙️ ${await t(interaction, 'core.setting.setting.section.umum')}`,
-		);
+		allLines.push(await t(interaction, 'core.setting.setting.section.umum'));
 		allLines.push(...kategori.umum);
 		allLines.push('');
 	}
 
 	if (kategori.array.length) {
-		allLines.push(
-			`### 🗃️ ${await t(interaction, 'core.setting.setting.section.array')}`,
-		);
+		allLines.push(await t(interaction, 'core.setting.setting.section.array'));
 		allLines.push(...kategori.array);
 		allLines.push('');
 	}
 
 	if (kategori.lainnya.length) {
-		allLines.push(
-			`### ❓ ${await t(interaction, 'core.setting.setting.section.lainnya')}`,
-		);
+		allLines.push(await t(interaction, 'core.setting.setting.section.lainnya'));
 		allLines.push(...kategori.lainnya);
 		allLines.push('');
 	}
@@ -191,7 +183,7 @@ async function handleViewSettings(
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`## ${await t(interaction, 'core.setting.setting.embed.title.view')}`,
+					await t(interaction, 'core.setting.setting.embed.title.view'),
 				),
 			)
 			.addTextDisplayComponents(

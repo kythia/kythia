@@ -39,7 +39,7 @@ async function generatePremiumListContainer(
 	const [premiumListContainer] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: `## ${await t(interaction, 'core.premium.premium.list.title')}`,
+		title: await t(interaction, 'core.premium.premium.list.title'),
 		content: listText,
 		footer: await t(interaction, 'core.premium.premium.list.footer', {
 			page,

@@ -136,7 +136,7 @@ class WidgetCommand extends BaseCommand {
 			});
 			if (response.ok) {
 				const components = await createContainer(interaction, {
-					description: `## ✅ Widget Updated!\nYour widget has been successfully refreshed! Check your Discord profile! 😉\n\n*-# Belum pernah setup? Klik tombol di bawah buat authorize Kythia Widget ya!*`,
+					description: `✅ Widget Updated!\nYour widget has been successfully refreshed! Check your Discord profile! 😉\n\n*-# Belum pernah setup? Klik tombol di bawah buat authorize Kythia Widget ya!*`,
 					color: kythiaConfig.bot.color,
 					components: [row],
 				});
@@ -148,7 +148,7 @@ class WidgetCommand extends BaseCommand {
 				const errText = await response.text();
 				logger.error('[WIDGET ERROR]', errText);
 				const components = await createContainer(interaction, {
-					description: `## ❌ Update Failed\nOh no, failed to update your widget right now 😭\n\n*-# Kalau kamu belum pernah setup widget, wajib authorize dulu lewat tombol di bawah ya!*`,
+					description: `❌ Update Failed\nOh no, failed to update your widget right now 😭\n\n*-# Kalau kamu belum pernah setup widget, wajib authorize dulu lewat tombol di bawah ya!*`,
 					color: 'Red',
 					components: [row],
 				});
@@ -161,7 +161,7 @@ class WidgetCommand extends BaseCommand {
 			logger.error('[WIDGET FETCH ERROR]', error);
 			const components = await simpleContainer(
 				interaction,
-				`## ❌ Error\nAn error occurred while contacting Discord.`,
+				`❌ Error\nAn error occurred while contacting Discord.`,
 				{
 					color: 'Red',
 				},

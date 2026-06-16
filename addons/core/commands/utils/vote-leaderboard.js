@@ -75,7 +75,7 @@ class VoteLeaderboardCommand extends BaseCommand {
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						`## 🏆 ${await t(interaction, 'core.utils.vote.leaderboard.title')}`,
+						await t(interaction, 'core.utils.vote.leaderboard.title'),
 					),
 				)
 				.addSeparatorComponents(

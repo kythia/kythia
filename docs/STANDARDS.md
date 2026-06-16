@@ -242,6 +242,13 @@ await interaction.editReply({
 });
 ```
 
+> If theres container deconstructed, example: const { t, helpers } = interaction.client.container;
+> DONT USE interaction.client.container.t() instead use t() if its not deconstructed, then make a deconstruction, ONLY WHAT YOU NEED, don't deconstruct everything
+> the standards is 
+> const container = this.container // this if on commands file
+> const { t, kythiaConfig, helpers, models ... } = container;
+> then use t(interaction, "key") not t(i, "key")
+
 ## 5. Localization (i18n) - VERY IMPORTANT
 
 Hardcoded strings in user-facing replies are strictly prohibited. You must **always** use the `t()` function from the container for all text. AI systems frequently misinterpret this function, so follow these exact rules:

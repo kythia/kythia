@@ -224,9 +224,15 @@ class SettingCommand extends BaseCommand {
 					const [settingKey, featureName] = featureMap[sub];
 					serverSetting[settingKey] = status === 'enable';
 					await serverSetting.save();
+					const isEnabled = status === 'enable';
+					const translationKey = isEnabled
+						? 'core.setting.setting.feature.enabled'
+						: 'core.setting.setting.feature.disabled';
 					const components = await simpleContainer(
 						interaction,
-						`✅ Fitur **${featureName}** telah **di-${status === 'enable' ? 'aktifkan' : 'nonaktifkan'}**.`,
+						await t(interaction, translationKey, {
+							feature: featureName,
+						}),
 						{
 							color: status === 'enable' ? 'Green' : 'Red',
 						},

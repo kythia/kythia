@@ -330,7 +330,9 @@ class DebugCommand extends BaseCommand {
 
 			playlistId = null; // Prevent finally from running again
 
-			const msg = `## 🛠️ Kythia Cache Debugger (Complete)\n\n${logs.join('\n')}`;
+			const msg = await container.t(interaction, 'core.utils.kyth.debug', {
+				logs: logs.join('\n'),
+			});
 
 			if (msg.length > 3500) {
 				const attachment = new AttachmentBuilder(Buffer.from(logs.join('\n')), {
@@ -338,7 +340,7 @@ class DebugCommand extends BaseCommand {
 				});
 				const components = await simpleContainer(
 					interaction,
-					`## 🛠️ Kythia Cache Debugger\nLogs are too long, see the attached file for full results.`,
+					`🛠️ Kythia Cache Debugger\nLogs are too long, see the attached file for full results.`,
 				);
 				return interaction.editReply({
 					components,
@@ -357,7 +359,7 @@ class DebugCommand extends BaseCommand {
 				label: 'core',
 			});
 
-			const errorMsg = `## 💥 CRITICAL FAILURE\n\n${logs.join('\n')}\n\n**ERROR at Step ${step}:**\n\`\`\`js\n${error.message}\n\`\`\``;
+			const errorMsg = `💥 CRITICAL FAILURE\n\n${logs.join('\n')}\n\n**ERROR at Step ${step}:**\n\`\`\`js\n${error.message}\n\`\`\``;
 
 			if (errorMsg.length > 3500) {
 				const attachment = new AttachmentBuilder(
@@ -366,7 +368,7 @@ class DebugCommand extends BaseCommand {
 				);
 				const components = await simpleContainer(
 					interaction,
-					`## 💥 CRITICAL FAILURE\nLogs attached.`,
+					`💥 CRITICAL FAILURE\nLogs attached.`,
 				);
 				return interaction.editReply({
 					components,

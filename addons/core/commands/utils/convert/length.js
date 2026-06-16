@@ -54,7 +54,7 @@ class LengthCommand extends BaseCommand {
 		if (result == null) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'core.utils.convert.length.failed')}`,
+				`${await t(interaction, 'core.utils.convert.length.failed')}`,
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -64,7 +64,7 @@ class LengthCommand extends BaseCommand {
 		}
 
 		const desc =
-			'## ' +
+			'' +
 			(await t(interaction, 'core.utils.convert.length.title')) +
 			'\n' +
 			(await t(interaction, 'core.utils.convert.length.result', {

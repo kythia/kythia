@@ -21,7 +21,7 @@ class ListCommand extends BaseCommand {
 			.setDescription('📋 List all sticky messages in this server.');
 	async execute(interaction) {
 		const container = this.container;
-		const { models, helpers, kythiaConfig } = container;
+		const { models, helpers, kythiaConfig, t } = container;
 		const { StickyMessage } = models;
 		const { convertColor } = helpers.color;
 		const { generateListContainer } = stickyuiHelper;
@@ -64,7 +64,10 @@ class ListCommand extends BaseCommand {
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
-					content: 'This interaction is not for you.',
+					content: await t(
+						interaction,
+						'common.pagination.not.your.interaction',
+					),
 					flags: MessageFlags.Ephemeral,
 				});
 			}

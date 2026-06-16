@@ -41,7 +41,7 @@ class TiktokCommand extends BaseCommand {
 			!/^https?:\/\/(www\.)?tiktok\.com\/.+/.test(tiktokUrl) &&
 			!/^https?:\/\/vt\.tiktok\.com\/.+/.test(tiktokUrl)
 		) {
-			const msg = `## ${invalidUrlTitle}\n${invalidUrlDesc}`;
+			const msg = `${invalidUrlTitle}\n${invalidUrlDesc}`;
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -93,7 +93,7 @@ class TiktokCommand extends BaseCommand {
 					fileError.code === 40005 ||
 					fileError.message?.includes('Request entity too large')
 				) {
-					const msg = `## ${tooLargeTitle}\n${tooLargeDesc}`;
+					const msg = `${tooLargeTitle}\n${tooLargeDesc}`;
 					const components = await simpleContainer(interaction, msg, {
 						color: 'Red',
 					});
@@ -118,7 +118,7 @@ class TiktokCommand extends BaseCommand {
 				desc = await t(interaction, 'core.tools.tiktok.error.unknown.desc');
 			}
 
-			const msg = `## ${title}\n${desc}`;
+			const msg = `${title}\n${desc}`;
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});

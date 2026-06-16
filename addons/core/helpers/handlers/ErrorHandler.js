@@ -42,7 +42,7 @@ class ErrorHandler {
 		await this.sendUserError(message, container);
 
 		// Webhook logging
-		await this.sendWebhookLog(error, message, kythiaConfig, logger);
+		await this.sendWebhookLog(error, message, container);
 	}
 
 	sendToSentry(error, message, kythiaConfig) {
@@ -135,7 +135,8 @@ class ErrorHandler {
 		}
 	}
 
-	async sendWebhookLog(error, message, kythiaConfig, logger) {
+	async sendWebhookLog(error, message, container) {
+		const { kythiaConfig, logger, t } = container;
 		try {
 			if (
 				kythiaConfig.api?.webhookErrorLogs &&
@@ -146,13 +147,31 @@ class ErrorHandler {
 					url: kythiaConfig.api.webhookErrorLogs,
 				});
 
+				const title = await t(
+					message,
+					'core.helpers.handlers.errorhandler.webhook.title',
+					{
+						user: message.author ? message.author.tag : '???',
+					},
+				);
+
+				const footerContext = message.guild
+					? `Error from server ${message.guild.name}`
+					: 'Error from DM';
+				const footer = await t(
+					message,
+					'core.helpers.handlers.errorhandler.webhook.footer',
+					{
+						context: footerContext,
+					},
+				);
+
 				// Use Components V2 for webhook
 				const errorContainer = new ContainerBuilder()
 					.setAccentColor(16711680) // Red in decimal
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							`## ❌ Error at ${message.author ? message.author.tag : '???'}\n` +
-								`\`\`\`${error?.stack ? error.stack : `${error}`}\`\`\``,
+							`${title}\n\`\`\`${error?.stack ? error.stack : `${error}`}\`\`\``,
 						),
 					)
 					.addSeparatorComponents(
@@ -161,9 +180,7 @@ class ErrorHandler {
 							.setDivider(true),
 					)
 					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`-# ${message.guild ? `Error from server ${message.guild.name}` : 'Error from DM'}`,
-						),
+						new TextDisplayBuilder().setContent(footer),
 					);
 
 				await webhookClient.send({
