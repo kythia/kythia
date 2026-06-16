@@ -40,42 +40,12 @@ class ListCommand extends BaseCommand {
 					.setDescription('Filter by category.')
 					.setRequired(false)
 					.addChoices(
-						{
-							name: '💬 Messages (All-Time)',
-							value: 'messages',
-						},
-						{
-							name: '📅 Messages (Daily)',
-							value: 'messages_daily',
-						},
-						{
-							name: '📆 Messages (Weekly)',
-							value: 'messages_weekly',
-						},
-						{
-							name: '🎙️ Voice Hours',
-							value: 'voice',
-						},
-						{
-							name: '🔔 Voice Joins',
-							value: 'voice_joins',
-						},
-						{
-							name: '😄 Reactions',
-							value: 'reactions',
-						},
-						{
-							name: '📅 Server Age',
-							value: 'server_age',
-						},
-						{
-							name: '🏅 Collectors',
-							value: 'collector',
-						},
-						{
-							name: '⭐ Special',
-							value: 'special',
-						},
+						...Object.entries(achievementuiHelper.CATEGORY_LABELS).map(
+							([key, label]) => ({
+								name: label,
+								value: key,
+							}),
+						),
 					),
 			)
 			.addUserOption((option) =>

@@ -17,14 +17,14 @@ const { BaseCommand } = require('kythia-core');
 
 class SetupCommand extends BaseCommand {
 	premiumLocked = 'cute';
-	defaultMemberPermissions = PermissionFlagsBits.ManageGuild;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	subcommand = true;
 
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('setup')
-			.setDescription('⚙️ Enable or disable activity tracking for this server.')
+			.setDescription('Enable or disable activity tracking for this server.')
 			.addBooleanOption((option) =>
 				option
 					.setName('enabled')

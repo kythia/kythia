@@ -15,7 +15,7 @@ class ActivityCommand extends BaseCommand {
 
 	slashCommand = new SlashCommandBuilder()
 		.setName('activity')
-		.setDescription('📊 All commands related to activity statistics.')
+		.setDescription('All commands related to activity statistics.')
 		.setContexts(InteractionContextType.Guild);
 }
 

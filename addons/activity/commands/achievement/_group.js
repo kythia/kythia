@@ -14,7 +14,7 @@ class GroupCommand extends BaseCommand {
 	slashCommand = (group) =>
 		group
 			.setName('achievement')
-			.setDescription('🏆 View and track your achievements.');
+			.setDescription('View and track your achievements.');
 }
 
 exports.default = GroupCommand;

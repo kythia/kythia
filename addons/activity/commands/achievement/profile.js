@@ -26,7 +26,7 @@ class ProfileCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('profile')
-			.setDescription('🏆 View your achievement profile banner.')
+			.setDescription('View your achievement profile banner.')
 			.addUserOption((option) =>
 				option
 					.setName('user')

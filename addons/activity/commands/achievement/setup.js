@@ -17,14 +17,13 @@ const {
 const { BaseCommand } = require('kythia-core');
 
 class SetupCommand extends BaseCommand {
-	defaultMemberPermissions = PermissionFlagsBits.ManageGuild;
-
 	subcommand = true;
+	permissions = [PermissionFlagsBits.ManageGuild];
 
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('setup')
-			.setDescription('⚙️ Setup the achievement notification channel.')
+			.setDescription('Setup the achievement notification channel.')
 			.addChannelOption((option) =>
 				option
 					.setName('channel')

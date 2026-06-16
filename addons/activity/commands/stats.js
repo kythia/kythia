@@ -58,7 +58,7 @@ class StatsCommand extends BaseCommand {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { ActivityStat, ActivityLog } = models;
-		const { simpleContainer } = helpers.discord;
+		const { createContainer } = helpers.discord;
 
 		await interaction.deferReply();
 
@@ -112,7 +112,90 @@ class StatsCommand extends BaseCommand {
 			voiceTime: leaderboardHelper.formatDuration(totalVoiceTime),
 		});
 
-		const components = await simpleContainer(interaction, `${title}\n${desc}`, {
+		// QuickChart config for the last 30 days
+		const thirtyDaysAgo = new Date();
+		thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+		const startDateStr = thirtyDaysAgo.toISOString().split('T')[0];
+
+		const logs = await ActivityLog.getAllCache({
+			where: {
+				guildId,
+				userId,
+				date: {
+					[Op.gte]: startDateStr,
+				},
+			},
+			attributes: ['date', 'messages'],
+			order: [['date', 'ASC']],
+			raw: true,
+		});
+
+		const labels = [];
+		const dataPoints = [];
+		const activityMap = new Map();
+		for (const log of logs) {
+			activityMap.set(log.date, Number(log.messages));
+		}
+
+		for (let i = 29; i >= 0; i--) {
+			const d = new Date();
+			d.setDate(d.getDate() - i);
+			const dStr = d.toISOString().split('T')[0];
+			const shortDate = dStr.slice(5).replace('-', '/'); // MM/DD
+			labels.push(shortDate);
+			dataPoints.push(activityMap.get(dStr) || 0);
+		}
+
+		const primaryColor = kythiaConfig.bot.color?.startsWith('#')
+			? kythiaConfig.bot.color
+			: `#${kythiaConfig.bot.color || '5c5cff'}`;
+
+		const chartConfig = {
+			type: 'line',
+			data: {
+				labels: labels,
+				datasets: [
+					{
+						label: 'Messages',
+						data: dataPoints,
+						borderColor: primaryColor,
+						backgroundColor: `${primaryColor}1A`, // 10% opacity
+						borderWidth: 2,
+						pointRadius: 0,
+						fill: true,
+						tension: 0.4,
+					},
+				],
+			},
+			options: {
+				legend: { display: false },
+				scales: {
+					xAxes: [
+						{
+							gridLines: { display: false },
+							ticks: { fontColor: '#888', maxTicksLimit: 6 },
+						},
+					],
+					yAxes: [
+						{
+							gridLines: { color: 'rgba(255,255,255,0.05)' },
+							ticks: { fontColor: '#888', beginAtZero: true, maxTicksLimit: 5 },
+						},
+					],
+				},
+				layout: {
+					padding: { left: 10, right: 10, top: 10, bottom: 10 },
+				},
+			},
+		};
+
+		const encodedConfig = encodeURIComponent(JSON.stringify(chartConfig));
+		const chartUrl = `https://quickchart.io/chart?w=600&h=300&bkg=1A1B1E&c=${encodedConfig}`;
+
+		const components = await createContainer(interaction, {
+			title: title,
+			description: desc,
+			media: [chartUrl],
 			color: kythiaConfig.bot.color,
 		});
 

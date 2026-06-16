@@ -7,10 +7,10 @@
  */
 
 const { MessageFlags } = require('discord.js');
-const { fn, Op, col, literal } = require('sequelize');
 
 const { BaseCommand } = require('kythia-core');
 
+const { fn, Op, col, literal } = require('sequelize');
 const leaderboardHelper = require('../helpers/leaderboard');
 
 class LeaderboardCommand extends BaseCommand {
@@ -19,7 +19,7 @@ class LeaderboardCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leaderboard')
-			.setDescription('📊 Activity leaderboard for this server.')
+			.setDescription('Activity leaderboard for this server.')
 			.addStringOption((option) =>
 				option
 					.setName('type')
