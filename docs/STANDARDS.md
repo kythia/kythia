@@ -33,7 +33,7 @@ Kythia uses a highly modular directory structure to split complex commands (subc
 
 If a command has no subcommands, it is a single file exporting an ES6 class extending `BaseCommand`.
 
->[!WARNING]
+> [!WARNING]
 > Never Write Helpers in commands file, instead write it on my-addon/helpers/
 
 ```javascript
@@ -247,10 +247,12 @@ await interaction.editReply({
 Hardcoded strings in user-facing replies are strictly prohibited. You must **always** use the `t()` function from the container for all text. AI systems frequently misinterpret this function, so follow these exact rules:
 
 ### Translation Key Namespace Concept
+
 Kythia uses a strictly defined namespace hierarchy for translation keys. The structure must directly map to the file path of the code executing the translation:
 `{addon}.{folder}.{file}.[subfile...].{action_or_response}`
 
 **Examples:**
+
 - If you are in `addons/ai/events/messageCreate.js` handling memory addition:
   `ai.events.messageCreate.memory.added`
 - If you are in `addons/economy/commands/market/limit.js` returning a success message:
@@ -260,15 +262,17 @@ Kythia uses a strictly defined namespace hierarchy for translation keys. The str
 
 **JSON Structure Mapping:**
 The keys must be mapped to a deeply nested JSON object in the addon's `lang/en-US.json` file. **Do not use flat keys** like `"ai.events.messageCreate": "..."`.
+
 ```json
 {
   "ai": {
     "events": {
       "messageCreate": {
         "memory": {
+          "title": "## Remembered!\n",
           "added": "Okay, I'll remember that! ^-^",
           "duplicate": "I already know that! 😉",
-		  "variable": "if needed {variable}"
+          "variable": "if needed {variable}"
         }
       }
     }
@@ -288,10 +292,14 @@ The `t()` function takes exactly two or three arguments:
 
 ```javascript
 const text = await t(interaction, "economy.commands.market.limit.invalid_side");
-const textWithVars = await t(interaction, "economy.commands.market.limit.success", {
-  side: side.toUpperCase(),
-  quantity: formatNumber(quantity),
-});
+const textWithVars = await t(
+  interaction,
+  "economy.commands.market.limit.success",
+  {
+    side: side.toUpperCase(),
+    quantity: formatNumber(quantity),
+  },
+);
 ```
 
 **❌ INCORRECT USAGE:**

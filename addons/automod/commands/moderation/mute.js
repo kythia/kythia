@@ -42,7 +42,7 @@ class MuteCommand extends BaseCommand {
 
 		const reply = await createContainer(interaction, {
 			color: 'Red',
-			description: await t(interaction, 'core.moderation.mute.embed.desc', {
+			description: await t(interaction, 'automod.moderation.mute.embed.desc', {
 				tag: user.tag,
 				moderator: interaction.user.tag,
 			}),

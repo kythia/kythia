@@ -35,7 +35,7 @@ class ProfileCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { models, kythiaConfig, helpers, queueManager } = container;
+		const { t, models, kythiaConfig, helpers, queueManager } = container;
 		const { UserAchievement } = models;
 		const { convertColor } = helpers.color;
 
@@ -93,7 +93,9 @@ class ProfileCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`## 🏆 Achievement Profile — ${targetUser.username}`,
+					await t(interaction, 'activity.commands.achievement.profile.title', {
+						username: targetUser.username,
+					}),
 				),
 			)
 			.addSeparatorComponents(
@@ -103,7 +105,10 @@ class ProfileCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`**${unlockedCount}** out of **${totalCount}** achievements unlocked.`,
+					await t(interaction, 'activity.commands.achievement.profile.status', {
+						unlockedCount,
+						totalCount,
+					}),
 				),
 			)
 			.addMediaGalleryComponents(

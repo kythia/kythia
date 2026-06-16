@@ -44,7 +44,7 @@ class WarningsCommand extends BaseCommand {
 			if (!userRecord?.warnings || userRecord.warnings.length === 0) {
 				const reply = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.moderation.warnings.none', {
+					await t(interaction, 'automod.moderation.warnings.none', {
 						user: targetUser.tag,
 					}),
 					{ color: 'Green' },
@@ -64,7 +64,7 @@ class WarningsCommand extends BaseCommand {
 
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
-				title: await t(interaction, 'core.moderation.warnings.title', {
+				title: await t(interaction, 'automod.moderation.warnings.title', {
 					user: targetUser.tag,
 				}),
 				description: warningsList,
@@ -77,7 +77,7 @@ class WarningsCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.warnings.failed', {
+				await t(interaction, 'automod.moderation.warnings.failed', {
 					error: error.message,
 				}),
 				{ color: 'Red' },

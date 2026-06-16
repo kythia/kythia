@@ -41,17 +41,20 @@ class SlowmodeCommand extends BaseCommand {
 		const seconds = interaction.options.getInteger('seconds');
 		const reason =
 			interaction.options.getString('reason') ||
-			(await t(interaction, 'core.moderation.slowmode.default.reason'));
+			(await t(interaction, 'automod.moderation.slowmode.default.reason'));
 
 		try {
 			await interaction.channel.setRateLimitPerUser(seconds, reason);
 
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
-				title: await t(interaction, 'core.moderation.slowmode.success.title'),
+				title: await t(
+					interaction,
+					'automod.moderation.slowmode.success.title',
+				),
 				description: await t(
 					interaction,
-					'core.moderation.slowmode.success.desc',
+					'automod.moderation.slowmode.success.desc',
 					{
 						channel: interaction.channel.toString(),
 						seconds,
@@ -67,7 +70,7 @@ class SlowmodeCommand extends BaseCommand {
 
 			const confirmReply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.slowmode.confirm'),
+				await t(interaction, 'automod.moderation.slowmode.confirm'),
 				{ color: 'Green' },
 			);
 			return interaction.editReply({
@@ -77,7 +80,7 @@ class SlowmodeCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.slowmode.failed', {
+				await t(interaction, 'automod.moderation.slowmode.failed', {
 					error: error.message,
 				}),
 				{ color: 'Red' },

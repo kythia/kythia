@@ -40,7 +40,7 @@ class AnnounceCommand extends BaseCommand {
 		const message = interaction.options.getString('message');
 		const title =
 			interaction.options.getString('title') ||
-			(await t(interaction, 'core.moderation.announce.default.title'));
+			(await t(interaction, 'automod.moderation.announce.default.title'));
 
 		try {
 			const announcement = await createContainer(interaction, {
@@ -49,7 +49,7 @@ class AnnounceCommand extends BaseCommand {
 				description: message,
 				thumbnail: interaction.guild.iconURL(),
 				footer: {
-					text: await t(interaction, 'core.moderation.announce.footer', {
+					text: await t(interaction, 'automod.moderation.announce.footer', {
 						user: interaction.user.tag,
 					}),
 					iconURL: interaction.user.displayAvatarURL(),
@@ -60,7 +60,7 @@ class AnnounceCommand extends BaseCommand {
 
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.announce.success'),
+				await t(interaction, 'automod.moderation.announce.success'),
 				{ color: 'Green' },
 			);
 			return interaction.editReply({
@@ -70,7 +70,7 @@ class AnnounceCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.announce.failed', {
+				await t(interaction, 'automod.moderation.announce.failed', {
 					error: error.message,
 				}),
 				{ color: 'Red' },

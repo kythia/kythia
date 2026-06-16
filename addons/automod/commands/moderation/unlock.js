@@ -34,7 +34,7 @@ class UnlockCommand extends BaseCommand {
 
 		const reason =
 			interaction.options.getString('reason') ||
-			(await t(interaction, 'core.moderation.unlock.default.reason'));
+			(await t(interaction, 'automod.moderation.unlock.default.reason'));
 
 		try {
 			await interaction.channel.permissionOverwrites.edit(
@@ -47,10 +47,10 @@ class UnlockCommand extends BaseCommand {
 
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
-				title: await t(interaction, 'core.moderation.unlock.success.title'),
+				title: await t(interaction, 'automod.moderation.unlock.success.title'),
 				description: await t(
 					interaction,
-					'core.moderation.unlock.success.desc',
+					'automod.moderation.unlock.success.desc',
 					{
 						channel: interaction.channel.toString(),
 						reason,
@@ -65,7 +65,7 @@ class UnlockCommand extends BaseCommand {
 
 			const confirmReply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.unlock.confirm'),
+				await t(interaction, 'automod.moderation.unlock.confirm'),
 				{ color: 'Green' },
 			);
 			return interaction.editReply({
@@ -75,7 +75,7 @@ class UnlockCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.unlock.failed', {
+				await t(interaction, 'automod.moderation.unlock.failed', {
 					error: error.message,
 				}),
 				{ color: 'Red' },

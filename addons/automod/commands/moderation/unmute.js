@@ -36,10 +36,13 @@ class UnmuteCommand extends BaseCommand {
 				await member.voice.setMute(false);
 				const reply = await createContainer(interaction, {
 					color: kythiaConfig.bot.color,
-					title: await t(interaction, 'core.moderation.unmute.success.title'),
+					title: await t(
+						interaction,
+						'automod.moderation.unmute.success.title',
+					),
 					description: await t(
 						interaction,
-						'core.moderation.unmute.success.desc',
+						'automod.moderation.unmute.success.desc',
 						{
 							user: user.tag,
 						},
@@ -53,7 +56,7 @@ class UnmuteCommand extends BaseCommand {
 			} else {
 				const reply = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.moderation.unmute.not.in.voice'),
+					await t(interaction, 'automod.moderation.unmute.not.in.voice'),
 					{
 						color: 'Red',
 					},
@@ -66,7 +69,7 @@ class UnmuteCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.unmute.failed', {
+				await t(interaction, 'automod.moderation.unmute.failed', {
 					error: error.message,
 				}),
 				{

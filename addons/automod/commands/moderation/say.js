@@ -41,7 +41,7 @@ class SayCommand extends BaseCommand {
 
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.say.success'),
+				await t(interaction, 'automod.moderation.say.success'),
 				{ color: 'Green' },
 			);
 			return interaction.editReply({
@@ -51,7 +51,7 @@ class SayCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.say.failed', {
+				await t(interaction, 'automod.moderation.say.failed', {
 					error: error.message,
 				}),
 				{ color: 'Red' },

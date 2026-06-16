@@ -70,7 +70,7 @@ async function generateLeaderboardContainer(
 	if (pageStats.length === 0) {
 		leaderboardText = await t(
 			interaction,
-			'activity.leaderboard.activity.leaderboard.empty',
+			'activity.helpers.leaderboard.empty',
 		);
 	} else {
 		const entries = await Promise.all(
@@ -90,15 +90,11 @@ async function generateLeaderboardContainer(
 						? formatDuration(stat.totalVoiceTime)
 						: Number(BigInt(stat.totalMessages)).toLocaleString();
 
-				return t(
-					interaction,
-					'activity.leaderboard.activity.leaderboard.entry',
-					{
-						medal,
-						userId: stat.userId,
-						value,
-					},
-				);
+				return t(interaction, 'activity.helpers.leaderboard.entry', {
+					medal,
+					userId: stat.userId,
+					value,
+				});
 			}),
 		);
 		leaderboardText = entries.join('\n');
@@ -106,21 +102,17 @@ async function generateLeaderboardContainer(
 
 	const titleKey =
 		type === 'voice'
-			? 'activity.leaderboard.activity.leaderboard.title.voice'
-			: 'activity.leaderboard.activity.leaderboard.title.messages';
+			? 'activity.helpers.leaderboard.title.voice'
+			: 'activity.helpers.leaderboard.title.messages';
 
 	const [leaderboardContainer] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: `## ${await t(interaction, titleKey)} — ${periodLabel}`,
+		title: await t(interaction, titleKey, { periodLabel }),
 		content: leaderboardText,
-		footer: await t(
-			interaction,
-			'activity.leaderboard.activity.leaderboard.footer',
-			{
-				server: interaction.guild.name,
-			},
-		),
+		footer: await t(interaction, 'activity.helpers.leaderboard.footer', {
+			server: interaction.guild.name,
+		}),
 		customIdPrefix: 'activity_lb',
 		navDisabled,
 	});

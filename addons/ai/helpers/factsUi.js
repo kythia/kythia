@@ -45,7 +45,7 @@ async function generateFactsContainer(
 	const [factsContainer] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: `## ${await t(interaction, 'ai.ai.facts.title')}`,
+		title: await t(interaction, 'ai.ai.facts.title'),
 		content: listText,
 		footer: await t(interaction, 'ai.ai.facts.footer', {
 			page,

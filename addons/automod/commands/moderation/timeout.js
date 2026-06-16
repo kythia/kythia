@@ -42,7 +42,7 @@ class TimeoutCommand extends BaseCommand {
 		const duration = interaction.options.getInteger('duration');
 		const reason =
 			interaction.options.getString('reason') ||
-			(await t(interaction, 'core.moderation.timeout.default.reason'));
+			(await t(interaction, 'automod.moderation.timeout.default.reason'));
 		try {
 			const member = await helpers.discord.getMemberSafe(
 				interaction.guild,
@@ -51,10 +51,10 @@ class TimeoutCommand extends BaseCommand {
 			await member.timeout(duration * 60 * 1000, reason);
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
-				title: await t(interaction, 'core.moderation.timeout.success.title'),
+				title: await t(interaction, 'automod.moderation.timeout.success.title'),
 				description: await t(
 					interaction,
-					'core.moderation.timeout.success.desc',
+					'automod.moderation.timeout.success.desc',
 					{
 						user: user.tag,
 						duration,
@@ -70,7 +70,7 @@ class TimeoutCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.timeout.failed', {
+				await t(interaction, 'automod.moderation.timeout.failed', {
 					error: error.message,
 				}),
 				{

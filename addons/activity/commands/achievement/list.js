@@ -127,7 +127,13 @@ class ListCommand extends BaseCommand {
 		for (const [catKey, achievements] of categories) {
 			if (!achievements || achievements.length === 0) continue;
 			const label = achievementuiHelper.CATEGORY_LABELS[catKey] ?? catKey;
-			lines.push(`### ${label}`);
+			lines.push(
+				await container.t(
+					interaction,
+					'activity.commands.achievement.list.category_header',
+					{ label },
+				),
+			);
 			for (const a of achievements) {
 				const unlocked = unlockedSet.has(a.id);
 				const rarityEmoji = achievementuiHelper.RARITY_EMOJI[a.rarity] ?? '⚪';
@@ -135,7 +141,16 @@ class ListCommand extends BaseCommand {
 				const localizedName = await container.t(interaction, a.nameKey);
 				const localizedDesc = await container.t(interaction, a.descKey);
 				lines.push(
-					`${status} ${rarityEmoji} **${localizedName}** — ${localizedDesc}`,
+					await container.t(
+						interaction,
+						'activity.commands.achievement.list.achievement_item',
+						{
+							status,
+							rarityEmoji,
+							localizedName,
+							localizedDesc,
+						},
+					),
 				);
 			}
 			lines.push('');

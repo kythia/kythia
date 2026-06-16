@@ -43,12 +43,12 @@ class WarnCommand extends BaseCommand {
 		const targetUser = interaction.options.getUser('user');
 		const reason =
 			interaction.options.getString('reason') ||
-			(await t(interaction, 'core.moderation.warn.default.reason'));
+			(await t(interaction, 'automod.moderation.warn.default.reason'));
 
 		if (targetUser.id === interaction.user.id) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.warn.cannot.self'),
+				await t(interaction, 'automod.moderation.warn.cannot.self'),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -94,10 +94,10 @@ class WarnCommand extends BaseCommand {
 			try {
 				const dmReply = await createContainer(interaction, {
 					color: 'Orange',
-					title: await t(interaction, 'core.moderation.warn.dm.title', {
+					title: await t(interaction, 'automod.moderation.warn.dm.title', {
 						guild: interaction.guild.name,
 					}),
-					description: await t(interaction, 'core.moderation.warn.dm.desc', {
+					description: await t(interaction, 'automod.moderation.warn.dm.desc', {
 						reason,
 						moderator: interaction.user.tag,
 					}),
@@ -120,10 +120,10 @@ class WarnCommand extends BaseCommand {
 			if (modLogChannel) {
 				const modLogReply = await createContainer(interaction, {
 					color: 'Orange',
-					title: 'Warn',
+					title: await t(interaction, 'automod.moderation.warn.modlog.title'),
 					description: await t(
 						interaction,
-						'core.moderation.warn.modlog.desc',
+						'automod.moderation.warn.modlog.desc',
 						{
 							user: `${targetUser.tag} (${targetUser.id})`,
 							moderator: interaction.user.tag,
@@ -140,11 +140,15 @@ class WarnCommand extends BaseCommand {
 
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
-				title: await t(interaction, 'core.moderation.warn.success.title'),
-				description: await t(interaction, 'core.moderation.warn.success.desc', {
-					user: targetUser.tag,
-					reason,
-				}),
+				title: await t(interaction, 'automod.moderation.warn.success.title'),
+				description: await t(
+					interaction,
+					'automod.moderation.warn.success.desc',
+					{
+						user: targetUser.tag,
+						reason,
+					},
+				),
 				thumbnail: targetUser.displayAvatarURL(),
 			});
 			return interaction.editReply({
@@ -154,7 +158,7 @@ class WarnCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.warn.failed', {
+				await t(interaction, 'automod.moderation.warn.failed', {
 					error: error.message,
 				}),
 				{ color: 'Red' },

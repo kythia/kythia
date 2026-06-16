@@ -34,7 +34,7 @@ class SetupCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { models, kythiaConfig, helpers } = container;
+		const { t, models, kythiaConfig, helpers } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 
@@ -63,7 +63,12 @@ class SetupCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`✅ **Activity Tracking** has been **${enabled ? 'enabled' : 'disabled'}** for this server.`,
+					await t(
+						interaction,
+						enabled
+							? 'activity.commands.setup.enabled'
+							: 'activity.commands.setup.disabled',
+					),
 				),
 			);
 

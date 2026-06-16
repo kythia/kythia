@@ -13,9 +13,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kythia/kythia"><img src="https://img.shields.io/github/stars/kythia/kythia" alt="Kythia" /></a>
-  <a href="https://top.gg/bots/1379246675171999826"><img src="https://top.gg/api/widget/upvotes/1379246675171999826.svg" alt="Kythia bot" /></a>
-  <a href="https://www.npmjs.com/package/kythia-core"><img src="https://img.shields.io/npm/v/kythia-core?label=kythia-core" alt="kythia-core" /></a>
+  <a href="https://github.com/kythia/kythia" target="_blank"><img src="https://img.shields.io/github/stars/kythia/kythia" alt="Kythia" /></a>
+  <a href="https://top.gg/bots/1379246675171999826" target="_blank"><img src="https://top.gg/api/widget/upvotes/1379246675171999826.svg" alt="Kythia bot" /></a>
+  <a href="https://www.npmjs.com/package/kythia-core" target="_blank"><img src="https://img.shields.io/npm/v/kythia-core?label=kythia-core" alt="kythia-core" /></a>
 </p>
 
 <p align="center">

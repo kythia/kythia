@@ -70,7 +70,7 @@ class StatsCommand extends BaseCommand {
 
 		const periodLabel = await t(
 			interaction,
-			`activity.leaderboard.activity.leaderboard.period.${period}`,
+			`activity.commands.leaderboard.period.${period}`,
 		);
 
 		let totalMessages = 0;
@@ -103,8 +103,10 @@ class StatsCommand extends BaseCommand {
 			totalVoiceTime = row?.totalVoiceTime ? Number(row.totalVoiceTime) : 0;
 		}
 
-		const title = `## ${await t(interaction, 'activity.stats.activity.stats.title')} — ${periodLabel}`;
-		const desc = await t(interaction, 'activity.stats.activity.stats.desc', {
+		const title = await t(interaction, 'activity.commands.stats.title', {
+			periodLabel,
+		});
+		const desc = await t(interaction, 'activity.commands.stats.desc', {
 			username: targetUser.username,
 			messages: totalMessages.toLocaleString(),
 			voiceTime: leaderboardHelper.formatDuration(totalVoiceTime),

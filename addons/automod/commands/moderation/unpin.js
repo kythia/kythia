@@ -35,7 +35,7 @@ class UnpinCommand extends BaseCommand {
 			if (!message) {
 				const reply = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.moderation.unpin.not.found'),
+					await t(interaction, 'automod.moderation.unpin.not.found'),
 					{
 						color: 'Red',
 					},
@@ -48,7 +48,7 @@ class UnpinCommand extends BaseCommand {
 			if (!message.pinned) {
 				const reply = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.moderation.unpin.not.pinned'),
+					await t(interaction, 'automod.moderation.unpin.not.pinned'),
 					{
 						color: 'Red',
 					},
@@ -61,10 +61,10 @@ class UnpinCommand extends BaseCommand {
 			await message.unpin();
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
-				title: await t(interaction, 'core.moderation.unpin.success.title'),
+				title: await t(interaction, 'automod.moderation.unpin.success.title'),
 				description: await t(
 					interaction,
-					'core.moderation.unpin.success.desc',
+					'automod.moderation.unpin.success.desc',
 					{
 						messageUrl: message.url,
 					},
@@ -78,7 +78,7 @@ class UnpinCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.unpin.failed', {
+				await t(interaction, 'automod.moderation.unpin.failed', {
 					error: error.message,
 				}),
 				{

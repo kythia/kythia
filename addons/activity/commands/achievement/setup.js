@@ -37,7 +37,7 @@ class SetupCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { models, kythiaConfig, helpers } = container;
+		const { t, models, kythiaConfig, helpers } = container;
 		const { ServerSetting } = models;
 		const { convertColor } = helpers.color;
 
@@ -61,8 +61,10 @@ class SetupCommand extends BaseCommand {
 		await setting.save();
 
 		const message = channel
-			? `✅ **Achievement Notifications** will now be sent to <#${channel.id}>.`
-			: `✅ **Achievement Notifications** have been **disabled** (no channel set).`;
+			? await t(interaction, 'activity.commands.achievement.setup.enabled', {
+					channelId: channel.id,
+				})
+			: await t(interaction, 'activity.commands.achievement.setup.disabled');
 
 		const successContainer = new ContainerBuilder()
 			.setAccentColor(

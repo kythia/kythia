@@ -15,10 +15,19 @@ async function generateSnipeContainer(
 
 	const targetSnipe = snipes[page - 1];
 
+	const { t } = interaction.client.container;
 	const content =
-		`**Author:** <@${targetSnipe.authorId}> (${targetSnipe.authorTag})\n` +
-		`**Sent:** <t:${Math.floor(targetSnipe.timestamp / 1000)}:R>\n\n` +
-		(targetSnipe.content || '*(No text content)*');
+		(await t(interaction, 'automod.moderation.snipe.ui.author', {
+			author: `<@${targetSnipe.authorId}>`,
+			tag: targetSnipe.authorTag,
+		})) +
+		'\n' +
+		(await t(interaction, 'automod.moderation.snipe.ui.sent', {
+			time: `<t:${Math.floor(targetSnipe.timestamp / 1000)}:R>`,
+		})) +
+		'\n\n' +
+		(targetSnipe.content ||
+			(await t(interaction, 'automod.moderation.snipe.ui.no_content')));
 
 	const media = targetSnipe.image ? [targetSnipe.image] : undefined;
 
@@ -27,7 +36,10 @@ async function generateSnipeContainer(
 		totalPages,
 		content,
 		media,
-		footer: `- Snipe ${page} of ${totalPages}`,
+		footer: await t(interaction, 'automod.moderation.snipe.ui.footer', {
+			page,
+			totalPages,
+		}),
 		customIdPrefix: 'snipe',
 		navDisabled,
 	});

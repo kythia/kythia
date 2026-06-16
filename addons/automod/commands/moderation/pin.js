@@ -35,7 +35,7 @@ class PinCommand extends BaseCommand {
 			if (!message) {
 				const reply = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.moderation.pin.not.found'),
+					await t(interaction, 'automod.moderation.pin.not.found'),
 					{
 						color: 'Red',
 					},
@@ -48,7 +48,7 @@ class PinCommand extends BaseCommand {
 			if (message.pinned) {
 				const reply = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.moderation.pin.already.pinned'),
+					await t(interaction, 'automod.moderation.pin.already.pinned'),
 					{
 						color: 'Red',
 					},
@@ -61,10 +61,14 @@ class PinCommand extends BaseCommand {
 			await message.pin();
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
-				title: await t(interaction, 'core.moderation.pin.success.title'),
-				description: await t(interaction, 'core.moderation.pin.success.desc', {
-					messageUrl: message.url,
-				}),
+				title: await t(interaction, 'automod.moderation.pin.success.title'),
+				description: await t(
+					interaction,
+					'automod.moderation.pin.success.desc',
+					{
+						messageUrl: message.url,
+					},
+				),
 				thumbnail: interaction.guild.iconURL(),
 			});
 			return interaction.editReply({
@@ -74,7 +78,7 @@ class PinCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.pin.failed', {
+				await t(interaction, 'automod.moderation.pin.failed', {
 					error: error.message,
 				}),
 				{

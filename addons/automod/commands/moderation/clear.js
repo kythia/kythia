@@ -40,7 +40,7 @@ class ClearCommand extends BaseCommand {
 		if (typeof interaction.channel.bulkDelete !== 'function') {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.clear.text.only'),
+				await t(interaction, 'automod.moderation.clear.text.only'),
 				{
 					color: 'Orange',
 				},
@@ -56,7 +56,7 @@ class ClearCommand extends BaseCommand {
 			if (totalDeleted === 0) {
 				const reply = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.moderation.clear.nothing.deleted'),
+					await t(interaction, 'automod.moderation.clear.nothing.deleted'),
 					{
 						color: 'Orange',
 					},
@@ -68,7 +68,7 @@ class ClearCommand extends BaseCommand {
 			}
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.clear.embed.desc', {
+				await t(interaction, 'automod.moderation.clear.embed.desc', {
 					count: totalDeleted,
 				}),
 				{
@@ -82,7 +82,7 @@ class ClearCommand extends BaseCommand {
 		} catch (_e) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.clear.error'),
+				await t(interaction, 'automod.moderation.clear.error'),
 				{
 					color: 'Red',
 				},
@@ -120,13 +120,13 @@ async function showClearOptions(interaction, t, container) {
 
 	// Re-creating description with fields info
 	const desc =
-		(await t(interaction, 'core.moderation.clear.options.desc')) +
+		(await t(interaction, 'automod.moderation.clear.options.desc')) +
 		'\n\n' +
-		`**💥 Nuke Channel**\n${await t(interaction, 'core.moderation.clear.options.nuke.value')}\n\n` +
-		`**🗑️ Bulk Delete**\n${await t(interaction, 'core.moderation.clear.options.bulk.value')}`;
+		`**💥 Nuke Channel**\n${await t(interaction, 'automod.moderation.clear.options.nuke.value')}\n\n` +
+		`**🗑️ Bulk Delete**\n${await t(interaction, 'automod.moderation.clear.options.bulk.value')}`;
 	const replyWithFields = await createContainer(interaction, {
 		color: 'Orange',
-		title: await t(interaction, 'core.moderation.clear.options.title'),
+		title: await t(interaction, 'automod.moderation.clear.options.title'),
 		description: desc,
 		components: [row],
 	});
@@ -142,7 +142,7 @@ async function showClearOptions(interaction, t, container) {
 		if (i.user.id !== interaction.user.id) {
 			const reply = await simpleContainer(
 				i,
-				await t(i, 'core.moderation.clear.not.allowed'),
+				await t(i, 'automod.moderation.clear.not.allowed'),
 				{
 					color: 'Red',
 				},
@@ -164,7 +164,7 @@ async function showClearOptions(interaction, t, container) {
 			await i.deferUpdate();
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.clear.cancelled'),
+				await t(interaction, 'automod.moderation.clear.cancelled'),
 				{
 					color: 'Red',
 				},
@@ -180,7 +180,7 @@ async function showClearOptions(interaction, t, container) {
 		if (reason === 'time') {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.clear.timeout'),
+				await t(interaction, 'automod.moderation.clear.timeout'),
 				{
 					color: 'Red',
 				},
@@ -203,7 +203,7 @@ async function handleNuke(interaction, t, container) {
 		await newChannel.setPosition(oldPosition);
 		const successReply = await simpleContainer(
 			interaction,
-			await t(interaction, 'core.moderation.clear.nuked.success'),
+			await t(interaction, 'automod.moderation.clear.nuked.success'),
 			{
 				color: 'Green',
 			},
@@ -217,7 +217,7 @@ async function handleNuke(interaction, t, container) {
 		});
 		const reply = await simpleContainer(
 			interaction,
-			await t(interaction, 'core.moderation.clear.failed', {
+			await t(interaction, 'automod.moderation.clear.failed', {
 				error: err.message,
 			}),
 			{
@@ -260,7 +260,7 @@ async function handleBulkDelete(interaction, t, container) {
 		}
 		const doneReply = await simpleContainer(
 			interaction,
-			await t(interaction, 'core.moderation.clear.embed.desc', {
+			await t(interaction, 'automod.moderation.clear.embed.desc', {
 				count: totalDeleted,
 			}),
 			{
@@ -277,7 +277,7 @@ async function handleBulkDelete(interaction, t, container) {
 		});
 		const reply = await simpleContainer(
 			interaction,
-			await t(interaction, 'core.moderation.clear.error'),
+			await t(interaction, 'automod.moderation.clear.error'),
 			{
 				color: 'Red',
 			},

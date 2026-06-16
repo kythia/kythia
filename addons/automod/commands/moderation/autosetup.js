@@ -53,7 +53,7 @@ class AutosetupCommand extends BaseCommand {
 					],
 				});
 				createdItems.push(
-					await t(interaction, 'core.moderation.autosetup.created.channel', {
+					await t(interaction, 'automod.moderation.autosetup.created.channel', {
 						channel: modLogChannel.toString(),
 					}),
 				);
@@ -66,7 +66,7 @@ class AutosetupCommand extends BaseCommand {
 					permissions: [],
 				});
 				createdItems.push(
-					await t(interaction, 'core.moderation.autosetup.created.role', {
+					await t(interaction, 'automod.moderation.autosetup.created.role', {
 						role: muteRole.name,
 					}),
 				);
@@ -95,11 +95,14 @@ class AutosetupCommand extends BaseCommand {
 			const description =
 				createdItems.length > 0
 					? createdItems.join('\n')
-					: await t(interaction, 'core.moderation.autosetup.nothing.new');
+					: await t(interaction, 'automod.moderation.autosetup.nothing.new');
 
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
-				title: await t(interaction, 'core.moderation.autosetup.success.title'),
+				title: await t(
+					interaction,
+					'automod.moderation.autosetup.success.title',
+				),
 				description,
 				thumbnail: guild.iconURL(),
 			});
@@ -110,7 +113,7 @@ class AutosetupCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.autosetup.failed', {
+				await t(interaction, 'automod.moderation.autosetup.failed', {
 					error: error.message,
 				}),
 				{ color: 'Red' },

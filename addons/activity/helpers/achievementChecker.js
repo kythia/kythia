@@ -276,7 +276,11 @@ async function checkAndUnlock(triggerType, ctx) {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							`🏆 <@${userId}> unlocked **${nameText}**!`,
+							await container.t(
+								{ guildId },
+								'activity.helpers.achievementChecker.unlocked',
+								{ userId, nameText },
+							),
 						),
 					)
 					.addMediaGalleryComponents(

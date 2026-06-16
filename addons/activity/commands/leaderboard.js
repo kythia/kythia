@@ -77,7 +77,7 @@ class LeaderboardCommand extends BaseCommand {
 		const orderColumn = type === 'voice' ? 'totalVoiceTime' : 'totalMessages';
 		const periodLabel = await t(
 			interaction,
-			`activity.leaderboard.activity.leaderboard.period.${period}`,
+			`activity.commands.leaderboard.period.${period}`,
 		);
 
 		let allStats;
@@ -162,7 +162,7 @@ class LeaderboardCommand extends BaseCommand {
 				return i.reply({
 					content: await t(
 						i,
-						'activity.leaderboard.activity.leaderboard.not.your.interaction',
+						'activity.commands.leaderboard.not_your_interaction',
 					),
 					flags: MessageFlags.Ephemeral,
 				});

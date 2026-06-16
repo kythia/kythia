@@ -443,8 +443,8 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(
 						interaction,
 						status === 'enable'
-							? 'core.setting.setting.feature.enabled'
-							: 'core.setting.setting.feature.disabled',
+							? 'automod.setting.feature.enabled'
+							: 'automod.setting.feature.disabled',
 						{ feature: featureName },
 					),
 					{ color: status === 'enable' ? 'Green' : 'Red' },
@@ -467,7 +467,7 @@ class AutomodSettingCommand extends BaseCommand {
 				if (whitelist.includes(targetId)) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.setting.setting.whitelist.already'),
+						await t(interaction, 'automod.setting.whitelist.already'),
 						{ color: 'Yellow' },
 					);
 					return interaction.editReply({
@@ -484,10 +484,10 @@ class AutomodSettingCommand extends BaseCommand {
 				const components = await simpleContainer(
 					interaction,
 					isRole
-						? await t(interaction, 'core.setting.setting.whitelist.add.role', {
+						? await t(interaction, 'automod.setting.whitelist.add.role', {
 								role: `<@&${targetId}>`,
 							})
-						: await t(interaction, 'core.setting.setting.whitelist.add.user', {
+						: await t(interaction, 'automod.setting.whitelist.add.user', {
 								user: `<@${targetId}>`,
 							}),
 					{ color: 'Green' },
@@ -502,7 +502,7 @@ class AutomodSettingCommand extends BaseCommand {
 				if (!whitelist.includes(targetId)) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.setting.setting.whitelist.notfound'),
+						await t(interaction, 'automod.setting.whitelist.notfound'),
 						{ color: 'Red' },
 					);
 					return interaction.editReply({
@@ -519,20 +519,12 @@ class AutomodSettingCommand extends BaseCommand {
 				const components = await simpleContainer(
 					interaction,
 					isRole
-						? await t(
-								interaction,
-								'core.setting.setting.whitelist.remove.role',
-								{
-									role: `<@&${targetId}>`,
-								},
-							)
-						: await t(
-								interaction,
-								'core.setting.setting.whitelist.remove.user',
-								{
-									user: `<@${targetId}>`,
-								},
-							),
+						? await t(interaction, 'automod.setting.whitelist.remove.role', {
+								role: `<@&${targetId}>`,
+							})
+						: await t(interaction, 'automod.setting.whitelist.remove.user', {
+								user: `<@${targetId}>`,
+							}),
 					{ color: 'Green' },
 				);
 				return interaction.editReply({
@@ -545,7 +537,7 @@ class AutomodSettingCommand extends BaseCommand {
 				if (whitelist.length === 0) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.setting.setting.whitelist.empty'),
+						await t(interaction, 'automod.setting.whitelist.empty'),
 						{ color: 'Yellow' },
 					);
 					return interaction.editReply({
@@ -562,7 +554,7 @@ class AutomodSettingCommand extends BaseCommand {
 					.join('\n');
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.setting.setting.whitelist.list', {
+					await t(interaction, 'automod.setting.whitelist.list', {
 						list: whitelistString,
 					}),
 					{ color: kythiaConfig.bot.color },
@@ -585,7 +577,7 @@ class AutomodSettingCommand extends BaseCommand {
 				if (badwords.includes(word.toLowerCase())) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.setting.setting.badword.already'),
+						await t(interaction, 'automod.setting.badword.already'),
 						{ color: 'Yellow' },
 					);
 					return interaction.editReply({
@@ -599,7 +591,7 @@ class AutomodSettingCommand extends BaseCommand {
 				await serverSetting.save();
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.setting.setting.badword.add', { word }),
+					await t(interaction, 'automod.setting.badword.add', { word }),
 					{ color: 'Green' },
 				);
 				return interaction.editReply({
@@ -612,7 +604,7 @@ class AutomodSettingCommand extends BaseCommand {
 				if (!badwords.includes(word.toLowerCase())) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.setting.setting.badword.notfound'),
+						await t(interaction, 'automod.setting.badword.notfound'),
 						{ color: 'Red' },
 					);
 					return interaction.editReply({
@@ -626,7 +618,7 @@ class AutomodSettingCommand extends BaseCommand {
 				await serverSetting.save();
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.setting.setting.badword.remove', { word }),
+					await t(interaction, 'automod.setting.badword.remove', { word }),
 					{ color: 'Green' },
 				);
 				return interaction.editReply({
@@ -639,7 +631,7 @@ class AutomodSettingCommand extends BaseCommand {
 				if (badwords.length === 0) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.setting.setting.badword.empty'),
+						await t(interaction, 'automod.setting.badword.empty'),
 						{ color: 'Yellow' },
 					);
 					return interaction.editReply({
@@ -650,7 +642,7 @@ class AutomodSettingCommand extends BaseCommand {
 				const badwordsString = badwords.map((w) => `• \`${w}\``).join('\n');
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.setting.setting.badword.list', {
+					await t(interaction, 'automod.setting.badword.list', {
 						list: badwordsString,
 					}),
 					{ color: kythiaConfig.bot.color },
@@ -673,10 +665,7 @@ class AutomodSettingCommand extends BaseCommand {
 				if (badwordWhitelist.includes(word.toLowerCase())) {
 					const components = await simpleContainer(
 						interaction,
-						await t(
-							interaction,
-							'core.setting.setting.badword.whitelist.already',
-						),
+						await t(interaction, 'automod.setting.badword.whitelist.already'),
 						{ color: 'Yellow' },
 					);
 					return interaction.editReply({
@@ -690,7 +679,7 @@ class AutomodSettingCommand extends BaseCommand {
 				await serverSetting.save();
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.setting.setting.badword.whitelist.add', {
+					await t(interaction, 'automod.setting.badword.whitelist.add', {
 						word,
 					}),
 					{ color: 'Green' },
@@ -705,10 +694,7 @@ class AutomodSettingCommand extends BaseCommand {
 				if (!badwordWhitelist.includes(word.toLowerCase())) {
 					const components = await simpleContainer(
 						interaction,
-						await t(
-							interaction,
-							'core.setting.setting.badword.whitelist.notfound',
-						),
+						await t(interaction, 'automod.setting.badword.whitelist.notfound'),
 						{ color: 'Red' },
 					);
 					return interaction.editReply({
@@ -724,11 +710,9 @@ class AutomodSettingCommand extends BaseCommand {
 				await serverSetting.save();
 				const components = await simpleContainer(
 					interaction,
-					await t(
-						interaction,
-						'core.setting.setting.badword.whitelist.remove',
-						{ word },
-					),
+					await t(interaction, 'automod.setting.badword.whitelist.remove', {
+						word,
+					}),
 					{ color: 'Green' },
 				);
 				return interaction.editReply({
@@ -741,10 +725,7 @@ class AutomodSettingCommand extends BaseCommand {
 				if (badwordWhitelist.length === 0) {
 					const components = await simpleContainer(
 						interaction,
-						await t(
-							interaction,
-							'core.setting.setting.badword.whitelist.empty',
-						),
+						await t(interaction, 'automod.setting.badword.whitelist.empty'),
 						{ color: 'Yellow' },
 					);
 					return interaction.editReply({
@@ -755,7 +736,7 @@ class AutomodSettingCommand extends BaseCommand {
 				const list = badwordWhitelist.map((w) => `• \`${w}\``).join('\n');
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.setting.setting.badword.whitelist.list', {
+					await t(interaction, 'automod.setting.badword.whitelist.list', {
 						list,
 					}),
 					{ color: kythiaConfig.bot.color },
@@ -778,10 +759,7 @@ class AutomodSettingCommand extends BaseCommand {
 				if (ignoredChannels.includes(targetId)) {
 					const components = await simpleContainer(
 						interaction,
-						await t(
-							interaction,
-							'core.setting.setting.exception.channel.already',
-						),
+						await t(interaction, 'automod.setting.exception.channel.already'),
 						{ color: 'Yellow' },
 					);
 					return interaction.editReply({
@@ -795,7 +773,7 @@ class AutomodSettingCommand extends BaseCommand {
 				await serverSetting.save();
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.setting.setting.exception.channel.add', {
+					await t(interaction, 'automod.setting.exception.channel.add', {
 						channel: `<#${targetId}>`,
 					}),
 					{ color: 'Green' },
@@ -810,10 +788,7 @@ class AutomodSettingCommand extends BaseCommand {
 				if (!ignoredChannels.includes(targetId)) {
 					const components = await simpleContainer(
 						interaction,
-						await t(
-							interaction,
-							'core.setting.setting.exception.channel.notfound',
-						),
+						await t(interaction, 'automod.setting.exception.channel.notfound'),
 						{ color: 'Red' },
 					);
 					return interaction.editReply({
@@ -827,13 +802,9 @@ class AutomodSettingCommand extends BaseCommand {
 				await serverSetting.save();
 				const components = await simpleContainer(
 					interaction,
-					await t(
-						interaction,
-						'core.setting.setting.exception.channel.remove',
-						{
-							channel: `<#${targetId}>`,
-						},
-					),
+					await t(interaction, 'automod.setting.exception.channel.remove', {
+						channel: `<#${targetId}>`,
+					}),
 					{ color: 'Green' },
 				);
 				return interaction.editReply({
@@ -846,10 +817,7 @@ class AutomodSettingCommand extends BaseCommand {
 				if (ignoredChannels.length === 0) {
 					const components = await simpleContainer(
 						interaction,
-						await t(
-							interaction,
-							'core.setting.setting.exception.channel.empty',
-						),
+						await t(interaction, 'automod.setting.exception.channel.empty'),
 						{ color: 'Yellow' },
 					);
 					return interaction.editReply({
@@ -862,12 +830,12 @@ class AutomodSettingCommand extends BaseCommand {
 						const ch = await getChannelSafe(interaction.guild, id);
 						return ch
 							? `<#${id}>`
-							: await t(interaction, 'core.setting.setting.invalid.id', { id });
+							: await t(interaction, 'automod.setting.invalid.id', { id });
 					}),
 				);
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.setting.setting.exception.channel.list', {
+					await t(interaction, 'automod.setting.exception.channel.list', {
 						list: listItems.join('\n'),
 					}),
 					{ color: kythiaConfig.bot.color },
@@ -886,7 +854,7 @@ class AutomodSettingCommand extends BaseCommand {
 			if (!channel?.isTextBased()) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.setting.setting.log.channel.invalid'),
+					await t(interaction, 'automod.setting.log.channel.invalid'),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -900,7 +868,7 @@ class AutomodSettingCommand extends BaseCommand {
 				await serverSetting.save();
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.setting.setting.mod.log.channel.set', {
+					await t(interaction, 'automod.setting.mod.log.channel.set', {
 						channel: `<#${channel.id}>`,
 					}),
 					{ color: 'Green' },
@@ -916,7 +884,7 @@ class AutomodSettingCommand extends BaseCommand {
 				await serverSetting.save();
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.setting.setting.audit.log.channel.set', {
+					await t(interaction, 'automod.setting.audit.log.channel.set', {
 						channel: `<#${channel.id}>`,
 					}),
 					{ color: 'Green' },
@@ -946,7 +914,9 @@ class AutomodSettingCommand extends BaseCommand {
 				await saveConfig(config);
 				const components = await simpleContainer(
 					interaction,
-					`🛡️ AntiNuke system **${status === 'enable' ? 'enabled' : 'disabled'}** successfully.`,
+					await t(interaction, 'automod.setting.antinuke.toggle.success', {
+						status: status === 'enable' ? 'enabled' : 'disabled',
+					}),
 					{ color: status === 'enable' ? 'Green' : 'Red' },
 				);
 				return interaction.editReply({
@@ -968,7 +938,10 @@ class AutomodSettingCommand extends BaseCommand {
 				await saveConfig(config);
 				const components = await simpleContainer(
 					interaction,
-					`🛡️ Module **${moduleName}** ${status === 'enable' ? 'enabled' : 'disabled'}.`,
+					await t(interaction, 'automod.setting.antinuke.module.success', {
+						module: moduleName,
+						status: status === 'enable' ? 'enabled' : 'disabled',
+					}),
 					{ color: status === 'enable' ? 'Green' : 'Red' },
 				);
 				return interaction.editReply({
@@ -992,7 +965,11 @@ class AutomodSettingCommand extends BaseCommand {
 				await saveConfig(config);
 				const components = await simpleContainer(
 					interaction,
-					`🛡️ **${moduleName}** threshold set to **${count} actions** in **${seconds}s**.`,
+					await t(interaction, 'automod.setting.antinuke.threshold.success', {
+						module: moduleName,
+						count: count,
+						seconds: seconds,
+					}),
 					{ color: 'Green' },
 				);
 				return interaction.editReply({
@@ -1013,7 +990,10 @@ class AutomodSettingCommand extends BaseCommand {
 				await saveConfig(config);
 				const components = await simpleContainer(
 					interaction,
-					`🛡️ **${moduleName}** action set to **${action}**.`,
+					await t(interaction, 'automod.setting.antinuke.action.success', {
+						module: moduleName,
+						action: action,
+					}),
 					{ color: 'Green' },
 				);
 				return interaction.editReply({
@@ -1038,7 +1018,10 @@ class AutomodSettingCommand extends BaseCommand {
 				await saveConfig(config);
 				const components = await simpleContainer(
 					interaction,
-					`🛡️ ${isRole ? `<@&${targetId}>` : `<@${targetId}>`} **${action === 'add' ? 'added to' : 'removed from'}** AntiNuke immunity list.`,
+					await t(interaction, 'automod.setting.antinuke.whitelist.success', {
+						target: isRole ? `<@&${targetId}>` : `<@${targetId}>`,
+						action: action === 'add' ? 'added to' : 'removed from',
+					}),
 					{ color: 'Green' },
 				);
 				return interaction.editReply({
@@ -1052,7 +1035,10 @@ class AutomodSettingCommand extends BaseCommand {
 				if (!logCh?.isTextBased()) {
 					const components = await simpleContainer(
 						interaction,
-						'❌ That is not a text channel.',
+						await t(
+							interaction,
+							'automod.setting.antinuke.log_channel.invalid',
+						),
 						{ color: 'Red' },
 					);
 					return interaction.editReply({
@@ -1064,7 +1050,9 @@ class AutomodSettingCommand extends BaseCommand {
 				await saveConfig(config);
 				const components = await simpleContainer(
 					interaction,
-					`🛡️ AntiNuke log channel set to <#${logCh.id}>.`,
+					await t(interaction, 'automod.setting.antinuke.log_channel.success', {
+						channel: `<#${logCh.id}>`,
+					}),
 					{ color: 'Green' },
 				);
 				return interaction.editReply({
@@ -1094,13 +1082,43 @@ class AutomodSettingCommand extends BaseCommand {
 					? `<#${config.logChannelId}>`
 					: 'Defaults to audit log channel';
 
+				const title = await t(
+					interaction,
+					'automod.setting.antinuke.status.title',
+				);
+				const systemStr = await t(
+					interaction,
+					'automod.setting.antinuke.status.system',
+					{
+						status: config.enabled ? '🟢 Enabled' : '🔴 Disabled',
+					},
+				);
+				const logChannelStr = await t(
+					interaction,
+					'automod.setting.antinuke.status.log_channel',
+					{
+						channel: logCh,
+					},
+				);
+				const modulesStr = await t(
+					interaction,
+					'automod.setting.antinuke.status.modules',
+					{
+						modules: moduleLines,
+					},
+				);
+				const immunityStr = await t(
+					interaction,
+					'automod.setting.antinuke.status.immunity',
+					{
+						users: wlUsers,
+						roles: wlRoles,
+					},
+				);
+
 				const components = await simpleContainer(
 					interaction,
-					`## 🛡️ AntiNuke Status\n\n` +
-						`**System:** ${config.enabled ? '🟢 Enabled' : '🔴 Disabled'}\n` +
-						`**Log Channel:** ${logCh}\n\n` +
-						`### Modules\n${moduleLines}\n\n` +
-						`### Immunity List\n👤 Users: ${wlUsers}\n🎭 Roles: ${wlRoles}`,
+					`${title}\n\n${systemStr}\n${logChannelStr}\n\n${modulesStr}\n\n${immunityStr}`,
 					{ color: kythiaConfig.bot.color },
 				);
 				return interaction.editReply({

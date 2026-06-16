@@ -43,17 +43,21 @@ class KickCommand extends BaseCommand {
 		const user = interaction.options.getUser('user');
 		const reason =
 			interaction.options.getString('reason') ||
-			(await t(interaction, 'core.moderation.kick.default.reason'));
+			(await t(interaction, 'automod.moderation.kick.default.reason'));
 
 		try {
 			await interaction.guild.members.kick(user, reason);
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
-				title: await t(interaction, 'core.moderation.kick.success.title'),
-				description: await t(interaction, 'core.moderation.kick.success.desc', {
-					user: user.tag,
-					reason,
-				}),
+				title: await t(interaction, 'automod.moderation.kick.success.title'),
+				description: await t(
+					interaction,
+					'automod.moderation.kick.success.desc',
+					{
+						user: user.tag,
+						reason,
+					},
+				),
 				thumbnail: user.displayAvatarURL(),
 			});
 
@@ -68,10 +72,10 @@ class KickCommand extends BaseCommand {
 			if (modLogChannel) {
 				const modLogReply = await createContainer(interaction, {
 					color: 'Orange',
-					title: 'Kick',
+					title: await t(interaction, 'automod.moderation.kick.modlog.title'),
 					description: await t(
 						interaction,
-						'core.moderation.kick.modlog.desc',
+						'automod.moderation.kick.modlog.desc',
 						{
 							user: `${user.tag} (${user.id})`,
 							moderator: interaction.user.tag,
@@ -93,7 +97,7 @@ class KickCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.moderation.kick.failed', {
+				await t(interaction, 'automod.moderation.kick.failed', {
 					error: error.message,
 				}),
 				{ color: 'Red' },

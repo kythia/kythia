@@ -1,0 +1,538 @@
+{
+	"automod": {
+		"moderation": {
+			"announce": {
+				"default": {
+					"title": "## Announcement"
+				},
+				"failed": "\u274c Failed to send announcement: {error}",
+				"footer": "Announced by {user}",
+				"success": "\u2705 Announcement sent successfully!"
+			},
+			"autosetup": {
+				"created": {
+					"channel": "\u2705 Created channel {channel}",
+					"role": "\u2705 Created role {role}"
+				},
+				"failed": "\u274c Auto setup failed: {error}",
+				"nothing": {
+					"new": "\u26a0\ufe0f Nothing new to setup."
+				},
+				"success": {
+					"title": "## Auto Setup Complete"
+				}
+			},
+			"ban": {
+				"failed": "\u274c Failed to ban user: {error}",
+				"success": {
+					"desc": "\u2705 **{user}** has been banned for: {reason}",
+					"title": "## User Banned"
+				},
+				"default": {
+					"reason": "No reason provided"
+				}
+			},
+			"clear": {
+				"cancelled": "\u274c Clear command cancelled.",
+				"failed": "\u274c Failed to clear messages: {error}",
+				"not": {
+					"allowed": "\u274c I cannot delete messages older than 14 days."
+				},
+				"nuked": {
+					"success": "\u2705 Channel has been nuked!"
+				},
+				"timeout": "\u274c Clear command timed out.",
+				"text": {
+					"only": "\u274c This command can only be used in text channels."
+				},
+				"nothing": {
+					"deleted": "\u274c No messages were deleted. Maybe they are too old or already deleted."
+				},
+				"embed": {
+					"desc": "\u2705Completely deleted {count} messages have been deleted!"
+				},
+				"error": "\u274c An error occurred while deleting messages.",
+				"options": {
+					"title": "## Clear Channel Options",
+					"desc": "Choose how you want to clear the channel. You can nuke (clone & delete) or bulk delete all messages.",
+					"nuke": {
+						"value": "Completely wipes the channel by cloning and deleting it. All settings and permissions are preserved."
+					},
+					"bulk": {
+						"value": "Deletes all messages that can be bulk deleted (from the last 14 days)."
+					}
+				}
+			},
+			"kick": {
+				"failed": "\u274c Failed to kick user: {error}",
+				"success": {
+					"desc": "\u2705 **{user}** has been kicked for: {reason}",
+					"title": "## User Kicked"
+				},
+				"default": {
+					"reason": "No reason provided"
+				},
+				"modlog": {
+					"desc": "**Member:** {member}\n**Kicked by:** {kicker}\n**Reason:** {reason}",
+					"title": "Kick"
+				}
+			},
+			"lock": {
+				"confirm": "\u2705 Channel locked!",
+				"default": {
+					"reason": "No reason provided"
+				},
+				"success": {
+					"desc": "\ud83d\udd12 Channel has been locked for: {reason}",
+					"title": "## Channel Locked"
+				},
+				"failed": "\u274c Failed to lock the channel. Please check my permissions and try again."
+			},
+			"mute": {
+				"user": {
+					"not": {
+						"found": "That user is not in this server!",
+						"in": {
+							"voice": "\u274c That user is not in a voice channel."
+						}
+					}
+				},
+				"reason": "Muted by command.",
+				"failed": "\u274c Failed to mute the user. Please check my permissions and try again.",
+				"embed": {
+					"desc": "## \ud83d\udd07 Muted\n**{tag}** has been muted by **{moderator}** via command."
+				}
+			},
+			"pin": {
+				"already": {
+					"pinned": "\u26a0\ufe0f This message is already pinned."
+				},
+				"success": {
+					"desc": "\ud83d\udccc Message has been pinned.",
+					"title": "## Message Pinned"
+				},
+				"not": {
+					"found": "\u274c Message not found!"
+				},
+				"failed": "\u274c Failed to pin the message. Please check my permissions and try again."
+			},
+			"role": {
+				"added": {
+					"desc": "\u2705 Role {role} has been added to {user}.",
+					"title": "## Role Added"
+				},
+				"failed": "\u274c Failed to modify roles: {error}",
+				"removed": {
+					"desc": "\u2705 Role {role} has been removed from {user}.",
+					"title": "## Role Removed"
+				}
+			},
+			"say": {
+				"failed": "\u274c Failed to send message: {error}",
+				"success": "\u2705 Message sent successfully."
+			},
+			"slowmode": {
+				"confirm": "\u2705 Slowmode set!",
+				"default": {
+					"reason": "No reason provided"
+				},
+				"failed": "\u274c Failed to set slowmode: {error}",
+				"success": {
+					"desc": "\u2705 Slowmode set to {time} for: {reason}",
+					"title": "## Slowmode Set"
+				}
+			},
+			"timeout": {
+				"default": {
+					"reason": "No reason provided"
+				},
+				"success": {
+					"desc": "\u2705 **{user}** has been timed out until {time} for: {reason}",
+					"title": "## User Timed Out"
+				},
+				"failed": "\u274c Failed to timeout user: {error}"
+			},
+			"unban": {
+				"success": {
+					"desc": "\u2705 **{user}** has been unbanned.",
+					"title": "## User Unbanned"
+				},
+				"failed": "\u274c Failed to unban user: {error}"
+			},
+			"unlock": {
+				"confirm": "\u2705 Channel unlocked!",
+				"default": {
+					"reason": "No reason provided"
+				},
+				"failed": "\u274c Failed to unlock channel: {error}",
+				"success": {
+					"desc": "\ud83d\udd13 Channel has been unlocked for: {reason}",
+					"title": "## Channel Unlocked"
+				}
+			},
+			"unmute": {
+				"failed": "\u274c Failed to unmute user: {error}",
+				"not": {
+					"in": {
+						"voice": "\u274c User is not in a voice channel."
+					}
+				},
+				"success": {
+					"desc": "\u2705 **{user}** has been unmuted.",
+					"title": "## User Unmuted"
+				}
+			},
+			"unpin": {
+				"not": {
+					"pinned": "\u26a0\ufe0f This message is not pinned.",
+					"found": "\u274c Message not found."
+				},
+				"success": {
+					"desc": "Message has been unpinned.",
+					"title": "## Message Unpinned"
+				},
+				"failed": "\u274c Failed to unpin message."
+			},
+			"warn": {
+				"cannot": {
+					"self": "\u274c You cannot warn yourself."
+				},
+				"default": {
+					"reason": "No reason provided"
+				},
+				"dm": {
+					"desc": "You have been warned in **{guild}** for: {reason}",
+					"title": "## Warned"
+				},
+				"failed": "\u274c Failed to warn user: {error}",
+				"modlog": {
+					"desc": "**{user}** has been warned by **{moderator}** for: {reason}",
+					"title": "Warn"
+				},
+				"success": {
+					"desc": "\u2705 **{user}** has been warned for: {reason}",
+					"title": "## User Warned"
+				}
+			},
+			"warnings": {
+				"failed": "\u274c Failed to fetch warnings: {error}",
+				"title": "## Warnings for {user}",
+				"none": "\u2705 {user} has no warnings."
+			},
+			"snipe": {
+				"ui": {
+					"author": "**Author:** {author} ({tag})",
+					"sent": "**Sent:** {time}",
+					"no_content": "*(No text content)*",
+					"footer": "- Snipe {page} of {totalPages}"
+				}
+			}
+		},
+		"setting": {
+			"stats": {
+				"enabled": {
+					"text": "\u2705 Stats enabled.",
+					"msg": "\u2705 Stat in {channel} has been enabled."
+				},
+				"disabled": {
+					"text": "\u2705 Stats disabled. ",
+					"msg": "\u26d4 Stat in {channel} has been disabled."
+				},
+				"format": {
+					"invalid": "\u274c The format must contain one of the following placeholders:\n{placeholders}"
+				},
+				"already": "\u26a0\ufe0f This channel is already registered! Use `/set stats edit` to change the format.",
+				"add": "\u2705 Stat for {channel} has been added!\nFormat: `{format}`",
+				"notfound": "\u274c This stat is not registered!",
+				"edit": "\u270f\ufe0f Stat format in {channel} has been changed{format, select, undefined {} other { to: `{format}`}",
+				"remove": {
+					"notfound": "\u26a0\ufe0f This stat was not found in the stats data!",
+					"success": "\ud83d\uddd1\ufe0f Stat and channel have been removed."
+				},
+				"category": {
+					"invalid": "\u274c The selected channel must be a category.",
+					"set": "\u2705 Server stats category set to {category}."
+				}
+			},
+			"embed": {
+				"title": {
+					"text": "\u2699\ufe0f Setting",
+					"view": "\ud83d\udee0\ufe0f Bot Settings in This Server"
+				}
+			},
+			"whitelist": {
+				"already": "This user/role is already in the whitelist.",
+				"add": {
+					"role": "Role {role} has been added to the whitelist!",
+					"user": "User {user} has been added to the whitelist!"
+				},
+				"notfound": "This user/role is not in the whitelist.",
+				"remove": {
+					"role": "Role {role} has been removed from the whitelist!",
+					"user": "User {user} has been removed from the whitelist!"
+				},
+				"invalid": {
+					"action": "Invalid action for whitelist. Use 'add' or 'remove'."
+				},
+				"empty": "The automod whitelist is empty.",
+				"list": "Automod whitelist:\n{list}"
+			},
+			"invalid": {
+				"id": "Invalid ID: {id}"
+			},
+			"badword": {
+				"word": {
+					"required": "The word to add or remove must be provided."
+				},
+				"already": "That word is already in the badword list.",
+				"add": "Word `{word}` has been added to the badword list.",
+				"notfound": "That word is not in the badword list.",
+				"remove": "Word `{word}` has been removed from the badword list.",
+				"empty": "The automod badword list is empty.",
+				"list": "Automod badword list:\n{list}",
+				"whitelist": {
+					"already": "That word is already in the badword whitelist.",
+					"add": "Word `{word}` has been added to the badword whitelist.",
+					"notfound": "That word is not in the badword whitelist.",
+					"remove": "Word `{word}` has been removed from the badword whitelist.",
+					"empty": "The automod badword whitelist is empty.",
+					"list": "Automod badword whitelist:\n{list}"
+				}
+			},
+			"exception": {
+				"channel": {
+					"already": "This channel is already in the exception list.",
+					"add": "Channel {channel} has been added to the exception list!",
+					"notfound": "This channel is not in the exception list.",
+					"remove": "Channel {channel} has been removed from the exception list!",
+					"invalid": {
+						"action": "Invalid action for exception channel. Use 'add' or 'remove'."
+					},
+					"empty": "The exception channel list is empty.",
+					"list": "Exception Channels:\n{list}"
+				}
+			},
+			"log": {
+				"channel": {
+					"invalid": "The selected channel must be a text channel."
+				}
+			},
+			"mod": {
+				"log": {
+					"channel": {
+						"set": "Channel {channel} has been set as the automod log channel!"
+					}
+				}
+			},
+			"audit": {
+				"log": {
+					"channel": {
+						"set": "Channel {channel} has been set as the audit log channel!"
+					}
+				}
+			},
+			"feature": {
+				"anti": {},
+				"server": {},
+				"welcome": {},
+				"minecraft": {},
+				"enabled": "\u2705 The **{feature}** feature has been **enabled**.",
+				"disabled": "\u2705 The **{feature}** feature has been **disabled**."
+			},
+			"cooldown": {},
+			"command": {
+				"not": {
+					"found": "\u274c Command not found."
+				}
+			},
+			"welcome": {
+				"in": {
+					"channel": {
+						"set": "Channel {channel} has been set as the welcome channel!"
+					},
+					"text": {
+						"set": "Welcome in text has been set to:\n`{text}`"
+					},
+					"background": {
+						"set": "Welcome in background has been set to:\n`{background}`",
+						"invalid": "\u274c Invalid background. Please provide a valid URL."
+					}
+				},
+				"out": {
+					"channel": {
+						"set": "Channel {channel} has been set as the welcome out channel!"
+					},
+					"text": {
+						"set": "Welcome out text has been set to:\n`{text}`"
+					},
+					"background": {
+						"set": "Welcome out background has been set to:\n`{background}`",
+						"invalid": "\u274c Invalid background. Please provide a valid URL."
+					}
+				},
+				"role": {
+					"set": "Role {role} has been set as the welcome role!"
+				}
+			},
+			"leveling": {
+				"channel": {
+					"set": "Channel {channel} has been set as the level up channel!"
+				},
+				"cooldown": {
+					"set": "Leveling cooldown has been set to `{cooldown}` seconds!"
+				},
+				"xp": {
+					"set": "XP per message has been set to `{xp}` XP!"
+				},
+				"rolereward": {
+					"add": "Role {role} has been added as a reward for level `{level}`!",
+					"notfound": "No role reward found for level `{level}`!",
+					"remove": "Role reward for level `{level}` has been removed!"
+				}
+			},
+			"minecraft": {
+				"ip": {
+					"set": "Minecraft server IP has been set to `{ip}`!",
+					"channel": {
+						"set": "Channel for displaying Minecraft IP has been set to {channel}!"
+					}
+				},
+				"port": {
+					"set": "Minecraft server port has been set to `{port}`!",
+					"channel": {
+						"set": "Channel for displaying Minecraft port has been set to {channel}!"
+					}
+				},
+				"status": {
+					"channel": {
+						"set": "Channel for Minecraft server status has been set to {channel}!"
+					}
+				},
+				"players": {
+					"channel": {
+						"set": "Channel for Minecraft server players has been set to {channel}!"
+					}
+				}
+			},
+			"language": {
+				"set": "\u2705 Bot language has been set to `{lang}`!"
+			},
+			"testimony": {
+				"channel": {
+					"invalid": "\u274c Invalid channel. Please select a text channel.",
+					"set": "\u2705 Testimony channel has been set to {channel}!"
+				},
+				"feedback": {
+					"channel": {
+						"set": "\u2705 Testimony feedback channel has been set to {channel}!"
+					}
+				},
+				"count": {
+					"channel": {
+						"set": "\u2705 Testimony counter channel has been set to {channel}!"
+					},
+					"format": {
+						"invalid": "\u274c Format must contain `{count}`. Example: `testimony-{count}`",
+						"set": "\u2705 Testimony counter channel name format has been set to `{format}`!"
+					},
+					"reset": "\u2705 Testimony count has been reset to 0!",
+					"invalid": "\u274c Testimony count must be a positive number.",
+					"set": "\u2705 Testimony count has been set to {count}!"
+				}
+			},
+			"streak": {
+				"rolereward": {
+					"add": "Role {role} has been added as a reward for streak `{streak}`!",
+					"notfound": "No role reward found for streak `{streak}`!",
+					"remove": "Role reward for streak `{streak}` has been removed!"
+				},
+				"minimum": {
+					"set": "\u2705 Minimum streak set to `{minimum}` days."
+				},
+				"emoji": {
+					"set": "\u2705 Streak emoji set to `{emoji}`."
+				},
+				"nickname": {
+					"set": "\u2705 Streak auto-nickname has been **{status}**."
+				},
+				"quota": {
+					"disabled": "\u23f8\ufe0f Streak restores have been **disabled** for this server. Members can no longer restore their streaks.",
+					"set": "\u2705 Monthly streak restore quota set to **{quota}** per member."
+				},
+				"timezone": {
+					"set": "\u2705 Streak timezone set to **{timezone}**. Daily streak resets will now follow this timezone."
+				}
+			},
+			"no": {
+				"config": "\u274c No settings have been saved for this server.",
+				"configured": "\u2139\ufe0f No settings have been configured."
+			},
+			"empty": "Empty",
+			"not": {
+				"set": "Not set"
+			},
+			"section": {
+				"boolean": "Active / Inactive Features",
+				"umum": "General Settings",
+				"array": "Structured Data",
+				"lainnya": "Others"
+			},
+			"announcement": {
+				"channel": {
+					"set": "\u2705 Announcement channel set to {channel}."
+				}
+			},
+			"invite": {
+				"channel": {
+					"set": "\u2705 Invite log channel set to {channel}."
+				}
+			},
+			"ai": {
+				"channel": {
+					"add": "\u2705 AI enabled in {channel}.",
+					"remove": "\u2705 AI disabled in {channel}.",
+					"empty": "\u2139\ufe0f No AI-enabled channels in this server.",
+					"list": "\ud83e\udd16 AI-enabled channels:\n{list}"
+				}
+			},
+			"clan": {
+				"category": {},
+				"forum": {}
+			},
+			"raw": {
+				"field": {
+					"invalid": "\u274c Unknown field: `{field}`."
+				},
+				"set": "\u2705 Field `{field}` updated to {value}."
+			},
+			"antinuke": {
+				"toggle": {
+					"success": "## \u2705 AntiNuke Updated\n\ud83d\udee1\ufe0f AntiNuke system **{status}** successfully."
+				},
+				"module": {
+					"success": "## \u2705 Module Updated\n\ud83d\udee1\ufe0f Module **{module}** {status}."
+				},
+				"threshold": {
+					"success": "## \u2705 Threshold Updated\n\ud83d\udee1\ufe0f **{module}** threshold set to **{count} actions** in **{seconds}s**."
+				},
+				"action": {
+					"success": "## \u2705 Action Updated\n\ud83d\udee1\ufe0f **{module}** action set to **{action}**."
+				},
+				"whitelist": {
+					"success": "## \u2705 Immunity Updated\n\ud83d\udee1\ufe0f {target} **{action}** AntiNuke immunity list."
+				},
+				"log_channel": {
+					"invalid": "## \u274c Error\nThat is not a text channel.",
+					"success": "## \u2705 Log Channel Updated\n\ud83d\udee1\ufe0f AntiNuke log channel set to {channel}."
+				},
+				"status": {
+					"title": "## \ud83d\udee1\ufe0f AntiNuke Status",
+					"system": "**System:** {status}",
+					"log_channel": "**Log Channel:** {channel}",
+					"modules": "### Modules\n{modules}",
+					"immunity": "### Immunity List\n\ud83d\udc64 Users: {users}\n\ud83c\udfad Roles: {roles}"
+				}
+			}
+		}
+	}
+}
