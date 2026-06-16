@@ -151,11 +151,10 @@ async function sendCaptcha(member, config, interaction = null) {
 	} else {
 		// Try channel first (for non-interaction commands like /verify reset)
 		if (config.channelId) {
-			const ch =
-				await interaction.client.container.helpers.discord.getChannelSafe(
-					guild,
-					config.channelId,
-				);
+			const ch = await guild.client.container.helpers.discord.getChannelSafe(
+				guild,
+				config.channelId,
+			);
 			if (ch?.isTextBased()) {
 				const msg = await ch.send(payload).catch(() => null);
 				if (msg) {

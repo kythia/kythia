@@ -66,7 +66,7 @@ class ComplexCommand extends BaseCommand {
 				label: 'core',
 			});
 		await modalSubmit.deferReply({
-			flags: MessageFlags.Ephemeral,
+			flags: Number(MessageFlags.Ephemeral),
 		});
 		const jsonString =
 			modalSubmit.fields.getTextInputValue('announcement-json');

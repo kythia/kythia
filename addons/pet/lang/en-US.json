@@ -1,5 +1,8 @@
 {
 	"pet": {
+		"error": {
+			"not_found": "## ❌ No Pet Found\nUser <@{user}> does not have a pet!"
+		},
 		"adopt": {
 			"already": {
 				"msg_md": "## Already Have a Pet\nYou already have a pet! use `/pet play` and `/pet use` to interact with them!"

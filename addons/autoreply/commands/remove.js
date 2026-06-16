@@ -63,23 +63,25 @@ class RemoveCommand extends BaseCommand {
 		const triggerInput = interaction.options.getString('trigger');
 		let deleted = 0;
 
+		let trigger;
 		if (triggerInput.startsWith('id:')) {
 			const id = triggerInput.split(':')[1];
-			const trigger = await AutoReply.getCache({
+			trigger = await AutoReply.getCache({
 				where: {
 					guildId: interaction.guild.id,
 					id: id,
 				},
 			});
-			trigger.destroy();
-			deleted = 1;
 		} else {
-			const trigger = await AutoReply.getCache({
+			trigger = await AutoReply.getCache({
 				where: {
 					guildId: interaction.guild.id,
 					trigger: triggerInput,
 				},
 			});
+		}
+
+		if (trigger) {
 			trigger.destroy();
 			deleted = 1;
 		}

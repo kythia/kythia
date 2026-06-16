@@ -239,15 +239,7 @@ class ShopCommand extends BaseCommand {
 		});
 
 		collector.on('end', () => {
-			replyMessage
-				.edit({
-					components: [],
-				})
-				.catch((err) =>
-					logger.error(`Error: ${err.message || err}`, {
-						label: 'adventure',
-					}),
-				);
+			// Session ended, buttons will just stop responding
 		});
 	}
 }

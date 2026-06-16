@@ -20,7 +20,10 @@ async function sendToAllGuilds(container, interaction, payload) {
 	let failCount = 0;
 	const failedServers = [];
 	const executeOnShard = async (clientContext, data) => {
-		const { payload, SendMessages, ViewChannel } = data;
+		// const { PermissionFlagsBits: PFB } = require('discord.js');
+		const { payload } = data;
+		const SendMessages = PermissionFlagsBits.SendMessages;
+		const ViewChannel = PermissionFlagsBits.ViewChannel;
 		let sCount = 0;
 		let fCount = 0;
 		const fServers = [];
@@ -86,27 +89,22 @@ async function sendToAllGuilds(container, interaction, payload) {
 			fServers,
 		};
 	};
-	if (interaction.client.shard) {
-		const results = await interaction.client.shard.broadcastEval(
-			executeOnShard,
-			{
-				context: {
-					payload,
-					SendMessages: PermissionFlagsBits.SendMessages,
-					ViewChannel: PermissionFlagsBits.ViewChannel,
-				},
+	const client =
+		interaction.client || container.client || interaction.guild?.client;
+	if (client?.shard) {
+		const results = await client.shard.broadcastEval(executeOnShard, {
+			context: {
+				payload,
 			},
-		);
+		});
 		for (const res of results) {
 			successCount += res.sCount;
 			failCount += res.fCount;
 			failedServers.push(...res.fServers);
 		}
 	} else {
-		const res = await executeOnShard(interaction.client, {
+		const res = await executeOnShard(client, {
 			payload,
-			SendMessages: PermissionFlagsBits.SendMessages,
-			ViewChannel: PermissionFlagsBits.ViewChannel,
 		});
 		successCount = res.sCount;
 		failCount = res.fCount;

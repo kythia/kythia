@@ -95,11 +95,12 @@ class SendCommand extends BaseCommand {
 			panelConfig.description ||
 			'Welcome! To gain access to the rest of the server, please click the button below to verify yourself.';
 		const buttonText = panelConfig.buttonText || 'Verify Me';
+		const { convertColor } = helpers.color;
 		const color = panelConfig.color
 			? parseInt(panelConfig.color.replace('#', ''), 16)
-			: null;
+			: convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' });
 		const containerPayload = new ContainerBuilder()
-			.setAccentColor(color || kythiaConfig.bot.color)
+			.setAccentColor(color)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
 					await t(interaction, 'verification.panel.send.content_md', {

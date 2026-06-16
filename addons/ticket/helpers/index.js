@@ -64,8 +64,12 @@ async function refreshTicketPanel(panelMessageId, container) {
 		const panel = await TicketPanel.getCache({
 			messageId: panelMessageId,
 		});
-		if (!panel)
-			throw new Error(`Panel with messageId ${panelMessageId} not found.`);
+		if (!panel) {
+			logger.warn(`Panel with messageId ${panelMessageId} not found.`, {
+				label: 'core:helpers:ticket:refresh-ticket-panel',
+			});
+			return;
+		}
 		const allTypes = await TicketConfig.getAllCache({
 			panelMessageId,
 		});

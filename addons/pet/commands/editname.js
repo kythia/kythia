@@ -35,6 +35,21 @@ class EditnameCommand extends BaseCommand {
 			},
 			include: [{ model: Pet, as: 'pet' }],
 		});
+
+		if (!userPet) {
+			const components = await simpleContainer(
+				interaction,
+				await t(interaction, 'pet.error.not_found', {
+					user: interaction.user.id,
+				}),
+				{ color: 'Red' },
+			);
+			return await interaction.editReply({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+			});
+		}
+
 		const newName = interaction.options.getString('name');
 		userPet.petName = newName;
 		userPet.changed('petName', true);

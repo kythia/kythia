@@ -531,7 +531,11 @@ class BattleCommand extends BaseCommand {
 						flags: MessageFlags.IsComponentsV2,
 					});
 				} catch (e) {
-					logger.error(`Error: ${e.message || e}`, { label: 'adventure' });
+					if (e.message?.includes('time')) {
+						await itemSelectReply.delete().catch(() => {});
+					} else {
+						logger.error(`Error: ${e.message || e}`, { label: 'adventure' });
+					}
 				}
 
 				return;

@@ -78,7 +78,7 @@ class SimpleCommand extends BaseCommand {
 				label: 'core',
 			});
 		await modalSubmit.deferReply({
-			flags: MessageFlags.Ephemeral,
+			flags: Number(MessageFlags.Ephemeral),
 		});
 		const title = modalSubmit.fields.getTextInputValue('announcement-title');
 		const content = modalSubmit.fields.getTextInputValue(
@@ -115,7 +115,7 @@ class SimpleCommand extends BaseCommand {
 			);
 		const payload = {
 			components: [containerMsg],
-			flags: MessageFlags.IsComponentsV2,
+			flags: Number(MessageFlags.IsComponentsV2),
 		};
 		await announcementHelper.sendToAllGuilds(container, modalSubmit, payload);
 	}
