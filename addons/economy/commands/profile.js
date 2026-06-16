@@ -61,12 +61,12 @@ class ProfileCommand extends BaseCommand {
 
 		// Build message
 		const msg = [
-			`## ${await t(interaction, 'economy.profile.profile.title')}`,
+			await t(interaction, 'economy.profile.profile.title'),
 			await t(interaction, 'economy.profile.profile.user.line', {
 				username: targetUser.username,
 				userId: targetUser.id,
 			}),
-			`### ${await t(interaction, 'economy.profile.profile.finance.title')}`,
+			await t(interaction, 'economy.profile.profile.finance.title'),
 			await t(interaction, 'economy.profile.profile.bank.line', {
 				bank: bank.toLocaleString(),
 				bankType: bankDisplay || '',

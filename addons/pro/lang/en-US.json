@@ -44,7 +44,8 @@
 				"no_record": "ℹ️ You have no DNS records set for this subdomain. Use `/pro dns set` to add one.",
 				"has_record": "Displaying **{count}** DNS record(s) for this subdomain.",
 				"record_title": "Record ID: {id}  •  Type: {type}",
-				"record_value": "`Name:` {name}\n`Value:` {value}"
+				"record_value": "`Name:` {name}\n`Value:` {value}",
+				"display_md": "## {title}\\n{description}"
 			},
 			"help": {
 				"title": "## DNS Record Type Reference",

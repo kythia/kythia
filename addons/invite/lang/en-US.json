@@ -39,7 +39,7 @@
 		},
 		"invite": {
 			"command": {
-				"title": "Invites",
+				"title": "## Invites",
 				"user": {
 					"stats": "{user} has {invites} invites (fake: {fake}, leaves: {leaves})."
 				},

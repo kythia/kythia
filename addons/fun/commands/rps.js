@@ -193,7 +193,7 @@ class RpsCommand extends BaseCommand {
 		collector.on('collect', async (i) => {
 			if (picks[i.user.id]) {
 				return i.reply({
-					content: '✅ You already locked in! Waiting for the other player...',
+					content: await t(interaction, 'fun.rps.duel.already_locked'),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
@@ -212,7 +212,7 @@ class RpsCommand extends BaseCommand {
 					.setStyle(ButtonStyle.Secondary),
 			);
 			await i.reply({
-				content: '🤫 Pick your weapon — only you can see this!',
+				content: await t(interaction, 'fun.rps.duel.pick_weapon'),
 				components: [epRow],
 				flags: MessageFlags.Ephemeral,
 			});
@@ -229,7 +229,9 @@ class RpsCommand extends BaseCommand {
 			epCollector.on('collect', async (b) => {
 				picks[b.user.id] = b.customId.replace('rps_duel_', '');
 				await b.update({
-					content: `✅ Locked in: **${EMOJI[picks[b.user.id]]}** — waiting for the other player!`,
+					content: await t(interaction, 'fun.rps.duel.locked_in', {
+						emoji: EMOJI[picks[b.user.id]],
+					}),
 					components: [],
 				});
 				if (picks[challenger.id] && picks[opponent.id]) {

@@ -165,7 +165,7 @@ class SlotsCommand extends BaseCommand {
 		].join('\n');
 
 		const resultMsg = [
-			`## ${resultTitle}`,
+			`${resultTitle}`,
 			slotDisplay,
 			'',
 			`**${await t(interaction, 'economy.slots.slots.bet.field')}:** 🪙 ${bet.toLocaleString()}`,

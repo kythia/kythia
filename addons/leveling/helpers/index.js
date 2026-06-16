@@ -251,7 +251,10 @@ const addXp = async (guildId, userId, xpToAdd, message, channel) => {
 		.addTextDisplayComponents(new TextDisplayBuilder().setContent(descText));
 
 	if (rewardRoleName && rewardLevel) {
-		const rewardTitle = `### ${await t(message, 'leveling.helpers.index.leveling.role.reward.title')}`;
+		const rewardTitle = await t(
+			message,
+			'leveling.helpers.index.leveling.role.reward.title',
+		);
 		const rewardDesc = await t(
 			message,
 			'leveling.helpers.index.leveling.role.reward.desc',

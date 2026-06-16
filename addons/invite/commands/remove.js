@@ -57,7 +57,7 @@ class RemoveCommand extends BaseCommand {
 			total: row.invites,
 		});
 
-		const msg = `## ${title}\n${successMsg}`;
+		const msg = `${title}\n${successMsg}`;
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Green',
 		});

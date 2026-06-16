@@ -10,5 +10,16 @@
 			"disabled_no_perms": "⚠️ **Quest Notifier Disabled**\nI don't have permission to send Quest Notifications to the configured channel. I have automatically disabled the Quest Notifier for this server. Please re-enable it by setting a new channel with `/quest setup`."
 		},
 		"trigger": {}
+	},
+	"quest": {
+		"helper": {
+			"title_md": "## `🎁` {questName}",
+			"reward_md": "### Reward: \\n{rewardName}\\n",
+			"tasks_md": "### Tasks: \\n{taskList}\\n",
+			"game_md": "### Game: \\n{gameTitle}\\n",
+			"publisher_md": "### Publisher: \\n{gamePublisher}\\n",
+			"expires_md": "### Expires: \\n<t:{expiresTimestamp}:f> (<t:{expiresTimestamp}:R>)\\n",
+			"notify_md": "### Notify: \\n{role}\\n"
+		}
 	}
 }

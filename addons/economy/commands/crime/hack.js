@@ -138,7 +138,12 @@ class HackCommand extends BaseCommand {
 				: 'Network seems standard.';
 			const nodeNames = ['Proxy Server', 'Firewall Bypass', 'Mainframe Access'];
 			const containerDef = await createContainer(interaction, {
-				description: `## 💻 Hacking Sequence (Node ${nodeNum}/${totalNodes})\nTargeting: **${nodeNames[nodeNum - 1]}**\n\n${difficultyText}\n\nChoose an attack vector quickly!`,
+				description: await t(interaction, 'economy.crime.hack.sequence', {
+					nodeNum,
+					totalNodes,
+					nodeName: nodeNames[nodeNum - 1],
+					difficultyText,
+				}),
 				components: [row],
 			});
 			return containerDef;
@@ -247,7 +252,10 @@ class HackCommand extends BaseCommand {
 					);
 					const dmComponents = await simpleContainer(
 						i,
-						`## 🚨 BANK COMPROMISED\n${interaction.user.username} bypassed your security and drained your bank of **🪙 ${totalHacked.toLocaleString()}**!`,
+						await t(interaction, 'economy.crime.hack.compromised', {
+							user: interaction.user.username,
+							hacked: totalHacked.toLocaleString(),
+						}),
 						{
 							color: 'Red',
 						},
@@ -257,7 +265,11 @@ class HackCommand extends BaseCommand {
 						flags: MessageFlags.IsComponentsV2,
 					});
 				} catch (_e) {}
-				const successMsg = `## 💻 Mainframe Breached!\nYou successfully hacked ${targetUser.username}'s bank account and stole **🪙 ${totalHacked.toLocaleString()}**!\nYour bounty increased by **🪙 ${Math.floor(totalHacked * 0.5).toLocaleString()}**!`;
+				const successMsg = await t(interaction, 'economy.crime.hack.breached', {
+					target: targetUser.username,
+					hacked: totalHacked.toLocaleString(),
+					bounty: Math.floor(totalHacked * 0.5).toLocaleString(),
+				});
 				const components = await simpleContainer(i, successMsg, {
 					color: 'Green',
 				});
@@ -271,7 +283,7 @@ class HackCommand extends BaseCommand {
 			if (reason === 'time' && !failed) {
 				const components = await simpleContainer(
 					interaction,
-					'## ⏱️ Connection Timed Out\nYou took too long to inject the payload. Connection dropped.',
+					await t(interaction, 'economy.crime.hack.timeout'),
 					{
 						color: 'Yellow',
 					},

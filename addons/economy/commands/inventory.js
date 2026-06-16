@@ -71,7 +71,7 @@ class InventoryCommand extends BaseCommand {
 			itemList.push(`**${name}:** ${value}`);
 		}
 
-		const msg = `## ${await t(interaction, 'economy.inventory.inventory.title')}\n\n${itemList.join('\n')}`;
+		const msg = `${await t(interaction, 'economy.inventory.inventory.title')}\n\n${itemList.join('\n')}`;
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,
 		});

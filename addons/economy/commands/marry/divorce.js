@@ -168,7 +168,7 @@ class DivorceCommand extends BaseCommand {
 			} catch {}
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'fun.marry.divorced.title')}\n${await t(interaction, 'fun.marry.divorced.description')}${splitMsg}`,
+				`${await t(interaction, 'fun.marry.divorced.title')}\n${await t(interaction, 'fun.marry.divorced.description')}${splitMsg}`,
 				{
 					color: 'Red',
 				},

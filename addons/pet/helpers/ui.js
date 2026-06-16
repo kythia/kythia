@@ -39,7 +39,7 @@ async function generatePetListContainer(
 	const [petListContainer] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: `## ${await t(interaction, 'pet.admin.list.list.title')}`,
+		title: await t(interaction, 'pet.admin.list.list.title_md'),
 		content: petListText,
 		footer: await t(interaction, 'pet.admin.list.list.footer', {
 			page,

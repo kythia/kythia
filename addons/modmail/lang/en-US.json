@@ -17,7 +17,8 @@
 		"guild_reply": {
 			"sent_title": "Message Sent",
 			"sent_by": "<@{userId}> (`{username}`)",
-			"sent_by_anon": "Staff (anonymous)"
+			"sent_by_anon": "Staff (anonymous)",
+			"sent_title_md": "## ✅ {title}\n-# 👤 {user}"
 		},
 		"setup": {
 			"success_title": "## ✅ Modmail Configured!",
@@ -27,7 +28,8 @@
 		"thread": {
 			"open_title": "New Modmail Thread",
 			"user_info": "**User:** <@{userId}> (`{username}`)\n**Account Created:** {createdAt}\n\n-# Use `/modmail reply` to respond · `/modmail areply` to reply anonymously · `/modmail close` to close",
-			"close_button": "Close Thread"
+			"close_button": "Close Thread",
+			"open_title_md": "## 📬 {title}"
 		},
 		"close": {
 			"confirm_title": "## ⚠️ Close Modmail?",
@@ -69,7 +71,9 @@
 			"sent_title": "Message Sent",
 			"staff_reply_prefix": "📨 <@{userId}> replied:",
 			"anon_reply_prefix": "📨 **Staff** replied:",
-			"user_message": "Message Received\n{username}({userId})\n{content"
+			"user_message": "Message Received\n{username}({userId})\n{content",
+			"received_title_md": "## 📩 {title}\n-# 👤 {user}",
+			"sent_title_md": "## ✅ {title}\n-# 👤 {user}"
 		},
 		"transcript": {
 			"title": "## 📄 Modmail Transcript #{modmailId}",
@@ -81,7 +85,9 @@
 			"blocked": "## ❌ Blocked\nYou are not able to open a modmail thread in this server.",
 			"cooldown": "## ⏳ Please Wait\nYou recently had a modmail thread closed. Please wait **{minutes} more minute(s)** before opening a new one.",
 			"staff_reply": "Reply from {name}",
-			"staff_reply_anon": "Reply from Staff"
+			"staff_reply_anon": "Reply from Staff",
+			"title_md": "## 📨 {title}",
+			"title_user_md": "## 📨 {title}\n-# 👤 {user}"
 		}
 	}
 }

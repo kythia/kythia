@@ -249,7 +249,7 @@ class GuildMemberAddEvent extends BaseEvent {
 							);
 							embedDesc = `${joinedUnknown}\n${accountAgeStr}`;
 						}
-						finalContent = `## ${title}\n${embedDesc}`;
+						finalContent = `${title}\n${embedDesc}`;
 					}
 					const components = await simpleContainer(member, finalContent, {
 						color: convertColor(kythiaConfig.bot.color, {

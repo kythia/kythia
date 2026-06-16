@@ -81,7 +81,7 @@ class LootboxCommand extends BaseCommand {
 
 		await user.save();
 
-		const msg = `## ${await t(interaction, 'economy.lootbox.lootbox.title')}\n${await t(
+		const msg = `${await t(interaction, 'economy.lootbox.lootbox.title')}\n${await t(
 			interaction,
 			'economy.lootbox.lootbox.success',
 			{

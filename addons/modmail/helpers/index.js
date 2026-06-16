@@ -238,7 +238,9 @@ async function createModmailThread(
 		);
 		const openContainer = buildModmailContainer(
 			accentColor,
-			`## 📬 ${titleText}`,
+			await t(fakeInteraction, 'modmail.thread.open_title_md', {
+				title: titleText,
+			}),
 			userInfoText,
 			footerText,
 			closeRow,
@@ -262,9 +264,10 @@ async function createModmailThread(
 		const firstMsgCard = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(
-					`## 📩 ${receivedTitle}\n-# 👤 ${fromLine}`,
-				),
+				await t(fakeInteraction, 'modmail.relay.received_title_md', {
+					title: receivedTitle,
+					user: fromLine,
+				}),
 			)
 			.addSeparatorComponents(
 				new SeparatorBuilder()
@@ -439,9 +442,11 @@ async function relayUserMessage(message, modmail, container) {
 			userId: message.author.id,
 			username: message.author.username,
 		});
-		const headerText = bodyText
-			? `## 📩 ${receivedTitle}\n-# 👤 ${fromLine}`
-			: `## 📩 ${receivedTitle}\n-# 👤 ${fromLine}`;
+		const headerText = await t(
+			fakeInteraction,
+			'modmail.relay.received_title_md',
+			{ title: receivedTitle, user: fromLine },
+		);
 		const threadCard = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(new TextDisplayBuilder().setContent(headerText))
@@ -493,9 +498,10 @@ async function relayUserMessage(message, modmail, container) {
 			const sentCard = new ContainerBuilder()
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(
-						`## ✅ ${sentTitle}\n-# 👤 ${message.author.username}`,
-					),
+					await t(fakeInteraction, 'modmail.relay.sent_title_md', {
+						title: sentTitle,
+						user: message.author.username,
+					}),
 				)
 				.addSeparatorComponents(
 					new SeparatorBuilder()
@@ -589,7 +595,7 @@ async function relayStaffReply(interaction, content, anonymous, container) {
 		});
 		const dmContainer = buildModmailContainer(
 			accentColor,
-			`## 📨 ${dmTitle}`,
+			await t(interaction, 'modmail.dm.title_md', { title: dmTitle }),
 			content,
 			footerText,
 		);
@@ -717,9 +723,10 @@ async function relayGuildReply(
 	const threadCard = new ContainerBuilder()
 		.setAccentColor(accentColor)
 		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(
-				`## ✅ ${threadTitle}\n-# 👤 ${sentByLine}`,
-			),
+			await t(fakeInteraction, 'modmail.guild_reply.sent_title_md', {
+				title: threadTitle,
+				user: sentByLine,
+			}),
 		)
 		.addSeparatorComponents(
 			new SeparatorBuilder()
@@ -776,9 +783,10 @@ async function relayGuildReply(
 	const dmCard = new ContainerBuilder()
 		.setAccentColor(accentColor)
 		.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(
-				`## 📨 ${dmTitle}\n-# 👤 ${displayName}`,
-			),
+			await t(fakeInteraction, 'modmail.dm.title_user_md', {
+				title: dmTitle,
+				user: displayName,
+			}),
 		)
 		.addSeparatorComponents(
 			new SeparatorBuilder()

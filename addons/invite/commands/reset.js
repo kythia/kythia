@@ -40,7 +40,7 @@ class ResetCommand extends BaseCommand {
 			'invite.invite.command.reset.success',
 		);
 
-		const msg = `## ${title}\n${successMsg}`;
+		const msg = `${title}\n${successMsg}`;
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Red',
 		});

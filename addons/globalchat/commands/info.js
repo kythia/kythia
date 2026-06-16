@@ -31,7 +31,7 @@ class InfoCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { kythiaConfig, helpers, logger } = container;
+		const { kythiaConfig, helpers, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const apiUrl = kythiaConfig?.addons?.globalchat?.apiUrl;
 
@@ -65,7 +65,7 @@ class InfoCommand extends BaseCommand {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							'❌ Gagal mengambil data statistik Global Chat dari API.',
+							await t(interaction, 'globalchat.info.error.fetch'),
 						),
 					),
 			];
@@ -92,7 +92,7 @@ class InfoCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						`## 🌏 **Kythia Global Chat Information**`,
+						await t(interaction, 'globalchat.info.title'),
 					),
 				)
 				.addSeparatorComponents(

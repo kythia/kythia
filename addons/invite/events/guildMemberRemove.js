@@ -99,7 +99,7 @@ class GuildMemberRemoveEvent extends BaseEvent {
 						},
 					);
 					const typeMsg = wasFake ? '(Fake)' : '(Real)';
-					logMessage = `## ${title}\n${leftMsg} ${typeMsg}`;
+					logMessage = `${title}\n${leftMsg} ${typeMsg}`;
 				}
 			}
 		} else {
@@ -134,7 +134,7 @@ class GuildMemberRemoveEvent extends BaseEvent {
 						username: member?.user?.username,
 					},
 				);
-				logMessage = `## ${title}\n${leftUnknown}`;
+				logMessage = `${title}\n${leftUnknown}`;
 			}
 		}
 		if (inviteChannelId && logMessage) {

@@ -29,9 +29,15 @@
 				}
 			},
 			"success": "✅ Global chat channel successfully set: {channel}",
-			"title": "🌐 Global Chat Setup",
+			"title": "## 🌐 Global Chat Setup",
 			"intro": {
 				"desc": "This is your new global chat channel! Interact with users from other servers."
+			}
+		},
+		"info": {
+			"title": "## 🌏 **Kythia Global Chat Information**",
+			"error": {
+				"fetch": "❌ Failed to fetch Global Chat statistics data from the API."
 			}
 		}
 	}

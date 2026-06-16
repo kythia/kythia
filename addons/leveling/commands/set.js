@@ -49,7 +49,7 @@ class SetCommand extends BaseCommand {
 		if (!user) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'leveling.set.leveling.user.not.found.title')}\n${await t(interaction, 'leveling.set.leveling.user.not.found.desc')}`,
+				`${await t(interaction, 'leveling.set.leveling.user.not.found.title')}\n${await t(interaction, 'leveling.set.leveling.user.not.found.desc')}`,
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -66,7 +66,7 @@ class SetCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'leveling.set.leveling.level.set.title')}\n` +
+			`${await t(interaction, 'leveling.set.leveling.level.set.title')}\n` +
 				(await t(interaction, 'leveling.set.leveling.level.set.desc', {
 					username: targetUser.username,
 					newLevel: user.level,

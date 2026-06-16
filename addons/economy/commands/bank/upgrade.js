@@ -73,7 +73,11 @@ class UpgradeCommand extends BaseCommand {
 		);
 
 		const confirmContainer = await createContainer(interaction, {
-			description: `## 🏦 Upgrade Bank Capacity\nAre you sure you want to spend **🪙 ${UPGRADE_COST.toLocaleString()}** cash to increase your bank capacity by **${CAPACITY_INCREASE.toLocaleString()}**?\n\nCurrent Extra Capacity: **${(user.extraBankCapacity || 0).toLocaleString()}**`,
+			description: await t(interaction, 'economy.bank.upgrade.prompt.desc', {
+				cost: UPGRADE_COST.toLocaleString(),
+				increase: CAPACITY_INCREASE.toLocaleString(),
+				current: (user.extraBankCapacity || 0).toLocaleString(),
+			}),
 			components: [row],
 		});
 

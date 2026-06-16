@@ -64,7 +64,7 @@ class LeaderboardCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'leveling.leaderboard.leveling.leaderboard.title')}\n${leaderboard}`,
+			`${await t(interaction, 'leveling.leaderboard.leveling.leaderboard.title')}\n${leaderboard}`,
 			{ color: kythiaConfig.bot.color },
 		);
 

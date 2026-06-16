@@ -25,7 +25,7 @@ class ListCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { models, helpers, kythiaConfig, logger } = container;
+		const { models, helpers, kythiaConfig, logger, t } = container;
 		const { ReactionRolePanel, ReactionRole } = models;
 		const { convertColor } = helpers.color;
 		const { chunkTextDisplay } = helpers.discord;
@@ -47,7 +47,7 @@ class ListCommand extends BaseCommand {
 					.setAccentColor(accentColor)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							'### 🎭 Reaction Role Panels\n\n> No panels found. Use `/reaction-role panel create` to set one up.',
+							await t(interaction, 'reaction-role.panel.list.empty_md'),
 						),
 					);
 
@@ -88,7 +88,10 @@ class ListCommand extends BaseCommand {
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
 					...chunkTextDisplay(
-						`### 🎭 Reaction Role Panels (${panels.length})\n\n${description}`,
+						await t(interaction, 'reaction-role.panel.list.content_md', {
+							count: panels.length,
+							description,
+						}),
 					),
 				)
 				.addSeparatorComponents(

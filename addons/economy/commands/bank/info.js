@@ -120,7 +120,10 @@ class InfoCommand extends BaseCommand {
 			pros.push(await t(interaction, 'economy.bank.pro.max.unlimited'));
 
 		const descriptionParts = [
-			`## ${bank.emoji} ${bank.name}`,
+			await t(interaction, 'economy.bank.info.title_format', {
+				emoji: bank.emoji,
+				name: bank.name,
+			}),
 			await t(interaction, 'economy.bank.bank.balance.desc', {
 				username: interaction.user.username,
 				cash: user.kythiaCoin.toLocaleString(),
@@ -130,7 +133,7 @@ class InfoCommand extends BaseCommand {
 					toBigIntSafe(user.kythiaCoin) + toBigIntSafe(user.kythiaBank)
 				).toLocaleString(),
 			}),
-			`### ${await t(interaction, 'economy.bank.bank.stats.title')}`,
+			await t(interaction, 'economy.bank.bank.stats.title'),
 			stats.map((s) => `> ${s.label}: **${s.val}**`).join('\n'),
 		];
 

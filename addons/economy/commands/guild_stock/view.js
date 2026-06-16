@@ -52,7 +52,7 @@ class ViewCommand extends BaseCommand {
 			const msg = await t(interaction, errorKey, { ticker });
 			const components = await simpleContainer(
 				interaction,
-				`## ❌ Not Found\n${msg}`,
+				await t(interaction, 'economy.stock.view.not_found', { msg }),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({

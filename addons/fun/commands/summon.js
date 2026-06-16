@@ -82,7 +82,7 @@ class SummonCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						`## ${await t(interaction, 'fun.summon.dm.title')}`,
+						await t(interaction, 'fun.summon.dm.title'),
 					),
 				)
 				.addSeparatorComponents(new SeparatorBuilder().setDivider(true))

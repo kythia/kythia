@@ -184,7 +184,17 @@ class PollerTask extends BaseTask {
 						new SectionBuilder()
 							.addTextDisplayComponents(
 								new TextDisplayBuilder().setContent(
-									`## ${platformLabel}\n${alertMessage}\n\n### ${latest.title}${mentionText}${publishTimestamp}`,
+									await container.t(
+										{ locale: container.client.kythiaConfig.defaultLocale },
+										'social-alerts.poller.alert_md',
+										{
+											platform: platformLabel,
+											message: alertMessage,
+											title: latest.title,
+											mention: mentionText,
+											timestamp: publishTimestamp,
+										},
+									),
 								),
 							)
 							.setThumbnailAccessory(

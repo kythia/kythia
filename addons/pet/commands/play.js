@@ -34,7 +34,7 @@ class PlayCommand extends BaseCommand {
 		if (!userPet) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.play.no.pet.title')}\n${await t(interaction, 'pet.play.no.pet.desc')}`,
+				await t(interaction, 'pet.play.no.pet.title_md'),
 				{ color: kythiaConfig.bot.color },
 			);
 			return interaction.editReply({
@@ -45,7 +45,7 @@ class PlayCommand extends BaseCommand {
 		if (userPet.isDead) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.play.dead.title')}\n${await t(interaction, 'pet.play.dead.desc')}`,
+				await t(interaction, 'pet.play.dead.title_md'),
 				{ color: kythiaConfig.bot.color },
 			);
 			return interaction.editReply({
@@ -60,16 +60,14 @@ class PlayCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'pet.play.success.title')}\n${await t(
-				interaction,
-				'pet.play.success.desc',
-				{
+			(await t(interaction, 'pet.play.success.title_md')) +
+				'\n' +
+				(await t(interaction, 'pet.play.success.desc', {
 					icon: userPet.pet.icon,
 					name: userPet.pet.name,
 					rarity: userPet.pet.rarity,
 					happiness: userPet.happiness,
-				},
-			)}`,
+				})),
 			{ color: kythiaConfig.bot.color },
 		);
 

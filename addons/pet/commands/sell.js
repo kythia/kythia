@@ -35,7 +35,7 @@ class SellCommand extends BaseCommand {
 		if (!userPet) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.sell.no.pet.title')}\n${await t(interaction, 'pet.sell.no.pet.desc')}`,
+				await t(interaction, 'pet.sell.no.pet.title_md'),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -59,7 +59,7 @@ class SellCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'pet.sell.success.title')}\n${await t(interaction, 'pet.sell.success.desc', { value: petValue })}`,
+			await t(interaction, 'pet.sell.success.title_md', { value: petValue }),
 			{ color: kythiaConfig.bot.color },
 		);
 		return interaction.editReply({

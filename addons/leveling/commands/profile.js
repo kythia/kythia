@@ -82,7 +82,10 @@ class ProfileCommand extends BaseCommand {
 				level: 1,
 			});
 
-			const title = `## ${await t(interaction, 'leveling.profile.leveling.profile.created.title')}`;
+			const title = await t(
+				interaction,
+				'leveling.profile.leveling.profile.created.title',
+			);
 			const desc = await t(
 				interaction,
 				'leveling.profile.leveling.profile.created.desc',
@@ -185,7 +188,10 @@ class ProfileCommand extends BaseCommand {
 			to: 'decimal',
 		});
 
-		const titleText = `## ${await t(interaction, 'leveling.profile.leveling.profile.title')}`;
+		const titleText = await t(
+			interaction,
+			'leveling.profile.leveling.profile.title',
+		);
 		const descText = await t(
 			interaction,
 			'leveling.profile.leveling.profile.desc',

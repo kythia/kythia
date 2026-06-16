@@ -72,7 +72,7 @@ function generateQuestion(score) {
 }
 
 async function buildMathContainer(interaction, { body, footer, accentColor }) {
-	const { helpers, kythiaConfig } = interaction.client.container;
+	const { helpers, kythiaConfig, t } = interaction.client.container;
 	const { convertColor } = helpers.color;
 
 	return new ContainerBuilder()
@@ -84,7 +84,7 @@ async function buildMathContainer(interaction, { body, footer, accentColor }) {
 		)
 		.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`${await interaction.client.container.t(interaction, 'fun.math.title')}\n\n${body}`,
+				`${await t(interaction, 'fun.math.title')}\n\n${body}`,
 			),
 		)
 		.addSeparatorComponents(

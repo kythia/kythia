@@ -37,7 +37,7 @@ class UseCommand extends BaseCommand {
 		if (!userPet) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.use.no.pet.title')}\n${await t(interaction, 'pet.use.no.pet.desc')}`,
+				await t(interaction, 'pet.use.no.pet.title_md'),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -59,7 +59,7 @@ class UseCommand extends BaseCommand {
 			}
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.use.dead.title')}\n${await t(interaction, 'pet.use.dead.desc')}`,
+				await t(interaction, 'pet.use.dead.title_md'),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -76,7 +76,9 @@ class UseCommand extends BaseCommand {
 		if (cooldown.remaining) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'pet.use.cooldown.title')}\n${await t(interaction, 'pet.use.cooldown.desc', { time: cooldown.time })}`,
+				await t(interaction, 'pet.use.cooldown.title_md', {
+					time: cooldown.time,
+				}),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -117,18 +119,16 @@ class UseCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'pet.use.success.title')}\n${await t(
-				interaction,
-				'pet.use.success.desc',
-				{
+			(await t(interaction, 'pet.use.success.title_md')) +
+				'\n' +
+				(await t(interaction, 'pet.use.success.desc', {
 					icon: updatedPet.pet.icon,
 					name: updatedPet.pet.name,
 					rarity: updatedPet.pet.rarity,
 					bonusType: bonusTypeDisplay,
 					bonusValue: bonusValue,
 					level: updatedPet.level,
-				},
-			)}`,
+				})),
 			{ color: kythiaConfig.bot.color },
 		);
 

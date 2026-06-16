@@ -77,7 +77,9 @@ class AutobuildCommand extends BaseCommand {
 		if (!tpl) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'server.server.autobuild.template.not.found', { key: templateKey })}`,
+				await t(interaction, 'server.server.autobuild.template.not.found_md', {
+					key: templateKey,
+				}),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -92,7 +94,10 @@ class AutobuildCommand extends BaseCommand {
 
 		let components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'server.server.autobuild.start', { template: tpl?.meta?.display ?? templateKey, dryRun })}`,
+			await t(interaction, 'server.server.autobuild.start_md', {
+				template: tpl?.meta?.display ?? templateKey,
+				dryRun,
+			}),
 			{ color: 'Blurple' },
 		);
 		await interaction.editReply({
@@ -112,7 +117,9 @@ class AutobuildCommand extends BaseCommand {
 			});
 			components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'server.server.autobuild.failed', { error: err.message })}`,
+				await t(interaction, 'server.server.autobuild.failed_md', {
+					error: err.message,
+				}),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -122,7 +129,10 @@ class AutobuildCommand extends BaseCommand {
 		}
 
 		const desc =
-			`## ${await t(interaction, 'server.server.autobuild.done', { template: tpl?.meta?.display ?? templateKey })}\n` +
+			(await t(interaction, 'server.server.autobuild.done_md', {
+				template: tpl?.meta?.display ?? templateKey,
+			})) +
+			'\n' +
 			`${await t(interaction, 'server.server.autobuild.stats', {
 				rolesCreated: stats.role.created,
 				rolesSkipped: stats.role.skipped,

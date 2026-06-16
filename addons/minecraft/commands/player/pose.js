@@ -107,7 +107,11 @@ class PoseCommand extends BaseCommand {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`## ${playerName} — ${poseLabel}\n-# Crop: ${crop}`,
+					await t(interaction, 'minecraft.player.pose.title_md', {
+						player: playerName,
+						pose: poseLabel,
+						crop,
+					}),
 				),
 			)
 			.addSeparatorComponents(

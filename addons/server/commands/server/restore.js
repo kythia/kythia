@@ -37,7 +37,7 @@ class RestoreCommand extends BaseCommand {
 		await interaction.deferReply();
 		let components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'server.server.restore.progress.start')}`,
+			await t(interaction, 'server.server.restore.progress.start_md'),
 			{
 				color: kythiaConfig.bot.color,
 			},
@@ -50,7 +50,7 @@ class RestoreCommand extends BaseCommand {
 		if (!file?.name.endsWith('.json')) {
 			components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'server.server.restore.file.invalid')}`,
+				await t(interaction, 'server.server.restore.file.invalid_md'),
 				{
 					color: 'Red',
 				},
@@ -74,9 +74,15 @@ class RestoreCommand extends BaseCommand {
 			}
 		};
 		const updateStatus = async (text) => {
-			const comps = await simpleContainer(interaction, `## ${text}`, {
-				color: kythiaConfig.bot.color,
-			});
+			const comps = await simpleContainer(
+				interaction,
+				await t(interaction, 'server.server.restore.progress.generic_md', {
+					text,
+				}),
+				{
+					color: kythiaConfig.bot.color,
+				},
+			);
 			await interaction
 				.editReply({
 					components: comps,
@@ -92,7 +98,7 @@ class RestoreCommand extends BaseCommand {
 			if (!backup?.metadata) {
 				components = await simpleContainer(
 					interaction,
-					`## ${await t(interaction, 'server.server.restore.data.invalid')}`,
+					await t(interaction, 'server.server.restore.data.invalid_md'),
 					{
 						color: 'Red',
 					},
@@ -382,9 +388,9 @@ class RestoreCommand extends BaseCommand {
 			// ─────────────────────────── DONE ─────────────────────────
 			components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'server.server.restore.success', {
+				await t(interaction, 'server.server.restore.success_md', {
 					name: backup.metadata.guildName,
-				})}`,
+				}),
 				{
 					color: 'Green',
 				},
@@ -399,7 +405,7 @@ class RestoreCommand extends BaseCommand {
 			});
 			components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'server.server.restore.failed')}`,
+				await t(interaction, 'server.server.restore.failed_md'),
 				{
 					color: 'Red',
 				},

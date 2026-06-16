@@ -63,7 +63,7 @@ class XpSetCommand extends BaseCommand {
 		if (!user) {
 			const components = await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'leveling.xp-set.leveling.user.not.found.title')}\n${await t(interaction, 'leveling.xp-set.leveling.user.not.found.desc')}`,
+				`${await t(interaction, 'leveling.xp-set.leveling.user.not.found.title')}\n${await t(interaction, 'leveling.xp-set.leveling.user.not.found.desc')}`,
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -86,7 +86,7 @@ class XpSetCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'leveling.xp-set.leveling.xp.set.title')}\n` +
+			`${await t(interaction, 'leveling.xp-set.leveling.xp.set.title')}\n` +
 				(await t(interaction, 'leveling.xp-set.leveling.xp.set.desc', {
 					username: targetUser.username,
 					newLevel: user.level,

@@ -88,15 +88,21 @@ async function buildStatusComponents(
 	);
 
 	let bodyText =
-		`### ${await t(interaction, 'minecraft.server.status.info_header')}\n` +
+		(await t(interaction, 'minecraft.server.status.info_header_md')) +
+		'\n' +
 		`${await t(interaction, 'minecraft.server.status.field.ip')} ${address}\n` +
 		`${await t(interaction, 'minecraft.server.status.field.type')} ${typeLabel}\n` +
 		`${await t(interaction, 'minecraft.server.status.field.version')} ${version}\n\n` +
-		`### ${await t(interaction, 'minecraft.server.status.players_header')}\n` +
+		(await t(interaction, 'minecraft.server.status.players_header_md')) +
+		'\n' +
 		`${await t(interaction, 'minecraft.server.status.field.online')} \`${onlinePlayers}/${maxPlayers}\``;
 
 	if (motd) {
-		bodyText += `\n\n### ${await t(interaction, 'minecraft.server.status.motd_header')}\n${motd}`;
+		bodyText +=
+			'\n\n' +
+			(await t(interaction, 'minecraft.server.status.motd_header_md', {
+				motd,
+			}));
 	}
 
 	bodyText += `\n\n${lastUpdated}`;
@@ -110,7 +116,9 @@ async function buildStatusComponents(
 		.setStyle(ButtonStyle.Secondary)
 		.setEmoji('🔄');
 
-	const title = `## ${statusEmoji} ${await t(interaction, 'minecraft.server.status.title')}`;
+	const title = await t(interaction, 'minecraft.server.status.title_md', {
+		emoji: statusEmoji,
+	});
 
 	const serverContainer = new ContainerBuilder()
 		.setAccentColor(accentColor)

@@ -53,10 +53,9 @@ class InfoCommand extends BaseCommand {
 		}
 		const components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'pet.info.title')}\n${await t(
-				interaction,
-				'pet.info.desc',
-				{
+			(await t(interaction, 'pet.info.title_md')) +
+				'\n' +
+				(await t(interaction, 'pet.info.desc', {
 					icon: userPet.pet.icon,
 					name: userPet.pet.name,
 					rarity: userPet.pet.rarity,
@@ -66,8 +65,7 @@ class InfoCommand extends BaseCommand {
 					happiness: userPet.happiness,
 					hunger: userPet.hunger,
 					level: userPet.level,
-				},
-			)}`,
+				})),
 			{ color: kythiaConfig.bot.color },
 		);
 

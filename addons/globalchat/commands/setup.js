@@ -107,7 +107,7 @@ class SetupCommand extends BaseCommand {
 
 				// Send simple welcome message
 				await channel.send({
-					content: `## ${await t(interaction, 'globalchat.setup.title')}\n${await t(interaction, 'globalchat.setup.intro.desc')}`,
+					content: `${await t(interaction, 'globalchat.setup.title')}\n${await t(interaction, 'globalchat.setup.intro.desc')}`,
 				});
 			} catch (_err) {
 				const components = await simpleContainer(
@@ -169,7 +169,7 @@ class SetupCommand extends BaseCommand {
 
 				// Send simple welcome message
 				await channel.send({
-					content: `## ${await t(interaction, 'globalchat.setup.title')}\n${await t(interaction, 'globalchat.setup.intro.desc')}`,
+					content: `${await t(interaction, 'globalchat.setup.title')}\n${await t(interaction, 'globalchat.setup.intro.desc')}`,
 				});
 			} catch (err) {
 				logger.error(

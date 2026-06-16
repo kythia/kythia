@@ -151,7 +151,16 @@ async function ensureChannel(guild, category, spec, stats) {
 							}),
 				);
 				let content = '';
-				if (msg.title) content += `## ${msg.title}\n\n`;
+				const { t } = kythiaConfig.container || guild.client.container;
+				const fakeInteraction = { client: guild.client };
+				if (msg.title)
+					content += `${await t(
+						fakeInteraction,
+						'server.server.reset.msg_title_md',
+						{
+							title: msg.title,
+						},
+					)}\n\n`;
 				if (msg.description) content += msg.description;
 				container.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(content),
@@ -202,7 +211,8 @@ async function updateProgress(interaction, progress) {
 	const bar = '█'.repeat(filledLength) + '░'.repeat(barLength - filledLength);
 	const components = await simpleContainer(
 		interaction,
-		`## ${await t(interaction, 'server.server.progress.title')}\n` +
+		(await t(interaction, 'server.server.progress.title_md')) +
+			'\n' +
 			`**${progress.label}**\n` +
 			`\`${bar}\` ${percent}%\n` +
 			`(${progress.current}/${progress.total})\n\n` +
@@ -332,7 +342,7 @@ async function resetServer(interaction) {
 	if (!guild) {
 		components = await simpleContainer(
 			interaction,
-			`## ${await t(interaction, 'server.server.reset.no.guild')}`,
+			await t(interaction, 'server.server.reset.no.guild_md'),
 			{ color: 'Red' },
 		);
 		return interaction.editReply({
@@ -343,7 +353,7 @@ async function resetServer(interaction) {
 
 	components = await simpleContainer(
 		interaction,
-		`## ${await t(interaction, 'server.server.reset.progress.start')}`,
+		await t(interaction, 'server.server.reset.progress.start_md'),
 		{ color: kythiaConfig.bot.color },
 	);
 	await interaction.editReply({
@@ -362,7 +372,10 @@ async function resetServer(interaction) {
 		if (chIdx % 5 === 0 || chIdx === channelsArr.length) {
 			await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'server.server.reset.progress.channels', { current: chIdx, total: channelsArr.length })}`,
+				await t(interaction, 'server.server.reset.progress.channels_md', {
+					current: chIdx,
+					total: channelsArr.length,
+				}),
 				{ color: kythiaConfig.bot.color, editReply: true },
 			);
 		}
@@ -379,7 +392,10 @@ async function resetServer(interaction) {
 		if (roleIdx % 5 === 0 || roleIdx === rolesArr.length) {
 			await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'server.server.reset.progress.roles', { current: roleIdx, total: rolesArr.length })}`,
+				await t(interaction, 'server.server.reset.progress.roles_md', {
+					current: roleIdx,
+					total: rolesArr.length,
+				}),
 				{ color: kythiaConfig.bot.color, editReply: true },
 			);
 		}
@@ -394,7 +410,10 @@ async function resetServer(interaction) {
 		if (emojiIdx % 5 === 0 || emojiIdx === emojisArr.length) {
 			await simpleContainer(
 				interaction,
-				`## ${await t(interaction, 'server.server.reset.progress.emojis', { current: emojiIdx, total: emojisArr.length })}`,
+				await t(interaction, 'server.server.reset.progress.emojis_md', {
+					current: emojiIdx,
+					total: emojisArr.length,
+				}),
 				{ color: kythiaConfig.bot.color, editReply: true },
 			);
 		}
@@ -409,7 +428,10 @@ async function resetServer(interaction) {
 			if (stickerIdx % 2 === 0 || stickerIdx === stickersArr.length) {
 				await simpleContainer(
 					interaction,
-					`## ${await t(interaction, 'server.server.reset.progress.stickers', { current: stickerIdx, total: stickersArr.length })}`,
+					await t(interaction, 'server.server.reset.progress.stickers_md', {
+						current: stickerIdx,
+						total: stickersArr.length,
+					}),
 					{ color: kythiaConfig.bot.color, editReply: true },
 				);
 			}

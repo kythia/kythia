@@ -37,17 +37,15 @@
 		"play": {
 			"no": {
 				"pet": {
-					"title": "No Pet",
-					"desc": "❌ You don't have a pet!"
+					"title_md": "## ❌ No Pet Found\nYou do not own a pet to play with. Adopt one using `/pet adopt`!"
 				}
 			},
 			"dead": {
-				"title": "Pet is Dead",
-				"desc": "💀 Your pet is dead! You can adopt a new pet with `/pet adopt`."
+				"title_md": "## 🪦 Pet is Dead\nYour pet is currently dead and cannot play. Revive it first!"
 			},
 			"success": {
-				"title": "Played With Pet!",
-				"desc": "{icon} **{name}** ({rarity}) played with you."
+				"title_md": "## 🎾 Played with your Pet",
+				"desc": "{icon} **{name}** ({rarity}) is now happier ({happiness}/100)"
 			}
 		},
 		"info": {
@@ -62,26 +60,24 @@
 				"desc": "💀 Your pet is dead! You can adopt a new pet with `/pet adopt`."
 			},
 			"title": "Your Pet Info",
-			"desc": "{icon} {name} ({rarity}) named **{petName}**, bonus type {bonusType} with value **{bonusValue}**, happiness **{happiness}**, hunger **{hunger}**, pet level **{level}**"
+			"desc": "{icon} {name} ({rarity}) named **{petName}**, bonus type {bonusType} with value **{bonusValue}**, happiness **{happiness}**, hunger **{hunger}**, pet level **{level}**",
+			"title_md": "## 🐾 {bot}'s Pet Profile"
 		},
 		"use": {
 			"no": {
 				"pet": {
-					"title": "No Pet",
-					"desc": "❌ You don't have a pet!"
+					"title_md": "## ❌ No Pet Found\nYou do not own a pet to use items on."
 				}
 			},
 			"cooldown": {
-				"title": "Pet Cooldown",
-				"desc": "🕒 | You can use your pet again in **{time}**!"
+				"title_md": "## ⏳ On Cooldown\nYou can use items on your pet again in **{time}**."
 			},
 			"dead": {
-				"title": "Pet is Dead",
-				"desc": "💀 Your pet is dead! You can adopt a new pet with `/pet adopt`."
+				"title_md": "## 🪦 Pet is Dead\nYour pet is currently dead. Use a revive item to bring it back!"
 			},
 			"success": {
-				"title": "Pet Used!",
-				"desc": "{icon} **{name}** ({rarity}), you got bonus {bonusType} +{bonusValue}"
+				"title_md": "## 🦴 Item Used",
+				"desc": "{icon} **{name}** ({rarity}) gained a level! Level: {level}. Bonus: {bonusType} +{bonusValue}"
 			}
 		},
 		"gacha": {
@@ -103,13 +99,11 @@
 		"sell": {
 			"no": {
 				"pet": {
-					"title": "No Pet",
-					"desc": "❌ You don't have a pet to sell!"
+					"title_md": "## ❌ No Pet Found\nYou do not own a pet to sell."
 				}
 			},
 			"success": {
-				"title": "Pet Sold!",
-				"desc": "✅ Pet sold! You got {value}"
+				"title_md": "## 💰 Pet Sold!\nYou sold your pet for **🪙 {value}**."
 			}
 		},
 		"leaderboard": {
@@ -133,7 +127,8 @@
 					"title": "Pet List",
 					"desc": "This Discord system has pets you can adopt and play with. The available pets are:",
 					"field": "**Rarity**: {rarity}\n**Bonus**: {bonusType} +{bonusValue}",
-					"footer": "Total Pets: {count}"
+					"footer": "Total Pets: {count}",
+					"title_md": "## 🐾 Registered Pets"
 				}
 			},
 			"delete": {

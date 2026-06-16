@@ -71,8 +71,20 @@ class ProfileCommand extends BaseCommand {
 			month: 'short',
 			day: 'numeric',
 		});
-		const selfBlock = `-# ${(await t(interaction, 'fun.marry.profile.you.label', {}, null)) || 'YOU'}\n## ${self.username}\n`;
-		const partnerBlock = `-# ${(await t(interaction, 'fun.marry.profile.partner.label', {}, null)) || 'YOUR PARTNER'}\n## ${partner?.username || 'Unknown'}\n`;
+		const labelYou =
+			(await t(interaction, 'fun.marry.profile.you.label', {}, null)) || 'YOU';
+		const selfBlock = await t(interaction, 'fun.marry.profile.you.block', {
+			label: labelYou,
+			name: self.username,
+		});
+		const labelPartner =
+			(await t(interaction, 'fun.marry.profile.partner.label', {}, null)) ||
+			'YOUR PARTNER';
+		const partnerBlock = await t(
+			interaction,
+			'fun.marry.profile.partner.block',
+			{ label: labelPartner, name: partner?.username || 'Unknown' },
+		);
 		const defaultAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
 		const selfAvatar = self.displayAvatarURL
 			? self.displayAvatarURL({

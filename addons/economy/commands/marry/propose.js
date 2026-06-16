@@ -95,9 +95,16 @@ class ProposeCommand extends BaseCommand {
 			? targetUser.displayAvatarURL({ extension: 'png', size: 256 })
 			: 'https://cdn.discordapp.com/embed/avatars/0.png';
 
-		const proposalTitle = `## ${await t(interaction, 'fun.marry.proposal.title')}`;
-		const proposerBlock = `## ${proposer.username}\n-# ${proposerId}`;
-		const targetBlock = `## ${targetUser.username}\n-# ${targetId}`;
+		const proposalTitle = await t(interaction, 'fun.marry.proposal.title');
+		const proposerBlock = await t(
+			interaction,
+			'fun.marry.proposal.user_block',
+			{ user: proposer.username, id: proposerId },
+		);
+		const targetBlock = await t(interaction, 'fun.marry.proposal.user_block', {
+			user: targetUser.username,
+			id: targetId,
+		});
 		const proposalText = await t(
 			interaction,
 			'fun.marry.proposal.description',

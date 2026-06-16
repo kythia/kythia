@@ -223,7 +223,9 @@ class BackupCommand extends BaseCommand {
 			const fileComponent = new FileBuilder()
 				.setURL(`attachment://${filename}`)
 				.setSpoiler(false);
-			const titleLine = `## 📦 Server Backup — **${guild.name}**`;
+			const titleLine = await t(interaction, 'server.server.backup.title_md', {
+				name: guild.name,
+			});
 			const metaLine = [
 				`> **Guild ID:** \`${guild.id}\``,
 				`> **Created:** <t:${ts}:F>`,

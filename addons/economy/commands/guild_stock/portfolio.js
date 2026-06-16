@@ -38,7 +38,7 @@ class PortfolioCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				`## 📉 Empty Portfolio\n${msg}`,
+				await t(interaction, 'economy.stock.portfolio.empty', { msg }),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({

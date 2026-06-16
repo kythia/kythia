@@ -16,7 +16,7 @@ class FleaProcessorTask extends BaseTask {
 		active: true,
 	};
 	async execute(container) {
-		const { client, models, logger } = container || this.container;
+		const { client, models, logger, t } = container || this.container;
 		const { FleaMarketListing, Inventory, KythiaUser } = models;
 		if (client.shard && !client.shard.ids.includes(0)) {
 			return;
@@ -50,7 +50,10 @@ class FleaProcessorTask extends BaseTask {
 									listing.sellerId,
 								);
 							await sellerDiscord.send(
-								`## 📦 Auction Ended!\nYour auction for **${listing.itemName}** has ended!\nAfter the 10% market tax, you received **🪙 ${profit.toLocaleString()}**.`,
+								await t(null, 'economy.tasks.flea.auction_ended', {
+									itemName: listing.itemName,
+									profit: profit.toLocaleString(),
+								}),
 							);
 						} catch (_e) {}
 					}
@@ -65,7 +68,10 @@ class FleaProcessorTask extends BaseTask {
 								listing.highestBidderId,
 							);
 						await winnerDiscord.send(
-							`## 🔨 Auction Won!\nYou won the auction for **${listing.itemName}** with a bid of **🪙 ${listing.currentBid.toLocaleString()}**! The item is now in your inventory.`,
+							await t(null, 'economy.tasks.flea.auction_won', {
+								itemName: listing.itemName,
+								bid: listing.currentBid.toLocaleString(),
+							}),
 						);
 					} catch (_e) {}
 				} else {
@@ -80,7 +86,9 @@ class FleaProcessorTask extends BaseTask {
 								listing.sellerId,
 							);
 						await sellerDiscord.send(
-							`## 📦 Listing Expired\nYour listing for **${listing.itemName}** expired without selling. The item has been returned to your inventory.`,
+							await t(null, 'economy.tasks.flea.listing_expired', {
+								itemName: listing.itemName,
+							}),
 						);
 					} catch (_e) {}
 				}

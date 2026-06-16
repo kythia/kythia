@@ -470,13 +470,13 @@
 					"field": "Bet"
 				},
 				"win": {
-					"field": "Winnings"
+					"field": "## 🎰 Jackpot! You Won!"
 				},
 				"cash": {
 					"field": "Current Kythia Coins"
 				},
 				"lose": {
-					"title": "## 😞 You Lost!"
+					"title": "## 🎰 Better Luck Next Time"
 				},
 				"jackpot": {
 					"title": "## 🎰 JACKPOT!!!"
@@ -558,7 +558,7 @@
 					"xp": {}
 				},
 				"finance": {
-					"title": "## 💰 Finances"
+					"title": "### ## 💰 Finances"
 				},
 				"bank": {
 					"line": "> 🏦 **Kythia Bank:** \n> `{bank}` {bankType}"
@@ -701,7 +701,7 @@
 					"desc": "## 💵 Bank Balance\n**{username}**, you have **{cash} kythia coin** and **{bank} in {bankType} bank**, total **{total} money**."
 				},
 				"stats": {
-					"title": "## 🏦 Bank Statistics"
+					"title": "### ## 🏦 Bank Statistics"
 				},
 				"pros": "Pros",
 				"cons": "Cons"
@@ -794,7 +794,7 @@
 					}
 				},
 				"prompt": {
-					"desc": "## 🏦 Upgrade Bank Capacity\nAre you sure you want to spend **🪙 {cost}** cash to increase your bank capacity by **{capacity}**?\n\nCurrent Extra Capacity: **{currentCapacity}**"
+					"desc": "## 🏦 Upgrade Bank Capacity\nAre you sure you want to spend **🪙 {cost}** cash to increase your bank capacity by **{increase}**?\n\nCurrent Extra Capacity: **{current}**"
 				},
 				"success": {
 					"desc": "## 🏦 Bank Upgraded!\nYou successfully spent **🪙 {cost}** to increase your bank capacity by **{capacity}**.\nTotal Extra Capacity: **{newCapacity}**"
@@ -839,6 +839,9 @@
 						"desc": "## 🏦 Loan Repayment\nYou repaid **🪙 {amount}**. Remaining balance: **🪙 {balance}**.{extra}"
 					}
 				}
+			},
+			"info": {
+				"title_format": "## {emoji} {name}"
 			}
 		},
 		"account": {
@@ -924,7 +927,8 @@
 				},
 				"timeout": {
 					"desc": "⏱️ Confirmation timed out. Trade cancelled."
-				}
+				},
+				"preview_title": "## 💰 KYTH Sell Preview"
 			},
 			"view": {
 				"asset": {
@@ -1242,7 +1246,11 @@
 					"busted": {
 						"desc": "## 🚨 Connection Traced!\nYou triggered the security alarms at Node {node}!\nPenalty paid: **🪙 {penalty}**"
 					}
-				}
+				},
+				"sequence": "## 💻 Hacking Sequence (Node {nodeNum}/{totalNodes})\nTargeting: **{nodeName}**\n\n{difficultyText}\n\nChoose an attack vector quickly!",
+				"compromised": "## 🚨 BANK COMPROMISED\n{user} bypassed your security and drained your bank of **🪙 {hacked}**!",
+				"breached": "## 💻 Mainframe Breached!\nYou successfully hacked {target}'s bank account and stole **🪙 {hacked}**!\nYour bounty increased by **🪙 {bounty}**!",
+				"timeout": "## ⏱️ Connection Timed Out\nYou took too long to inject the payload. Connection dropped."
 			},
 			"rob": {
 				"event": {
@@ -1252,7 +1260,8 @@
 					"lockpick_fail": {
 						"desc": "## ❌ Lockpick Broke!\nYou tried to pick {target}'s padlock, but your lockpick broke and the padlock held strong! The robbery was blocked."
 					}
-				}
+				},
+				"fake_wallet": "## 👛 Fake Wallet Triggered!\nYou robbed {target}, but they had a Fake Wallet! You only got 🪙 {robAmount}.\nYour bounty increased by 🪙 {bounty}!{stealthMsg}{lockpickMsg}"
 			}
 		},
 		"job": {
@@ -1454,6 +1463,9 @@
 				"energydrink": "You chugged an Energy Drink 🥫. You feel invincible! ALL of your economy cooldowns have been instantly reset!",
 				"lottery_win": "🎉 JACKPOT! Your lottery ticket was a winner! You just received 🪙 10,000 Kythia Coin!",
 				"lottery_lose": "😔 Better luck next time... Your lottery ticket was a dud."
+			},
+			"item": {
+				"used": "## 🎒 Item Used\n{msg}"
 			}
 		},
 		"collect": {
@@ -1486,6 +1498,63 @@
 				},
 				"success": "## 🏃‍♂️ Resigned!\nYou have successfully resigned from your employer.",
 				"dm": "## 🏢 Resignation\nYour employee **{employee}** has resigned from your company."
+			}
+		},
+		"trade": {
+			"buy_success": "## 💎 KYTH Purchased!",
+			"sell_success": "## 💰 KYTH Sold!",
+			"fail": "## ❌ Transaction Failed\n{err}"
+		},
+		"stock": {
+			"create": {
+				"failed": "## ❌ Listing Failed\n{msg}",
+				"invalid_ticker": "## ❌ Invalid Ticker\n{msg}",
+				"already_listed": "## ❌ Already Listed\n{msg}",
+				"ticker_taken": "## ❌ Ticker Taken\n{msg}",
+				"insufficient_funds": "## ❌ Insufficient Funds\n{msg}",
+				"db_error": "## ❌ Database Error\n{msg}"
+			},
+			"portfolio": {
+				"empty": "## 📉 Empty Portfolio\n{msg}"
+			},
+			"swap": {
+				"not_found": "## ❌ Not Found\n{msg}",
+				"halted": "## ⚠️ Trading Halted\n{msg}",
+				"liquidity_error": "## ❌ Liquidity Error\n{msg}",
+				"insufficient_funds": "## ❌ Insufficient Funds\n{msg}",
+				"insufficient_balance": "## ❌ Insufficient Balance\n{msg}",
+				"success": "## ✅ Swap Successful\n{msg}"
+			},
+			"view": {
+				"not_found": "## ❌ Not Found\n{msg}"
+			}
+		},
+		"tasks": {
+			"flea": {
+				"auction_ended": "## 📦 Auction Ended!\nYour auction for **{itemName}** has ended!\nAfter the 10% market tax, you received **🪙 {profit}**.",
+				"auction_won": "## 🔨 Auction Won!\nYou won the auction for **{itemName}** with a bid of **🪙 {bid}**! The item is now in your inventory.",
+				"listing_expired": "## 📦 Listing Expired\nYour listing for **{itemName}** expired without selling. The item has been returned to your inventory."
+			},
+			"dividend": {
+				"title": "## 💰 KYTH Staking Dividend!"
+			},
+			"loan": {
+				"defaulted": "## 🚨 LOAN DEFAULTED!\nYou failed to repay your loan in time. The bank has **seized all your cash and bank balance**, and your credit score has tanked!"
+			}
+		}
+	},
+	"fun": {
+		"marry": {
+			"profile": {
+				"you": {
+					"block": "-# {label}\n## {name}\n"
+				},
+				"partner": {
+					"block": "-# {label}\n## {name}\n"
+				}
+			},
+			"proposal": {
+				"user_block": "## {user}\n-# {id}"
 			}
 		}
 	}

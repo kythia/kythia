@@ -15,7 +15,7 @@ class KythDividendTask extends BaseTask {
 		active: true,
 	};
 	async execute(container) {
-		const { client, models, logger } = container || this.container;
+		const { client, models, logger, t } = container || this.container;
 		const { KythLiquidityPool, KythiaUser } = models;
 		if (client.shard && !client.shard.ids.includes(0)) return;
 		logger.info('Checking KYTH staking dividends...', {
@@ -112,7 +112,8 @@ class KythDividendTask extends BaseTask {
 							staker.userId,
 						);
 					await discordUser.send(
-						`## 💰 KYTH Staking Dividend!\n` +
+						(await t(null, 'economy.tasks.dividend.title')) +
+							'\n' +
 							`You earned **🪙 ${reward.toLocaleString()} Coin** as your daily dividend!\n` +
 							`Your stake: **${Number(staker.kythStaked).toFixed(6)} KYTH** (${(share * 100).toFixed(2)}% of pool)\n` +
 							`Dividend pool today: **🪙 ${dividendPool.toLocaleString()} Coin**`,

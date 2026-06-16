@@ -72,7 +72,7 @@ class FriendButton extends BaseButton {
 				user1Display = 'Unknown';
 			}
 			user2Display = interaction.user.toString();
-			const congratsTitle = `## ${await t(interaction, 'fun.friend.congrats.title')}`;
+			const congratsTitle = await t(interaction, 'fun.friend.congrats.title');
 			const congratsDesc = await t(
 				interaction,
 				'fun.friend.congrats.description',

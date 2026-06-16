@@ -113,7 +113,7 @@ class UseCommand extends BaseCommand {
 
 		const components = await simpleContainer(
 			interaction,
-			`## 🎒 Item Used\n${resultMsg}`,
+			await t(interaction, 'economy.use.item.used', { msg: resultMsg }),
 			{
 				color,
 			},

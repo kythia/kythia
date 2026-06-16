@@ -180,12 +180,12 @@ class AutosetupCommand extends BaseCommand {
 		});
 
 		const lines = [
-			`## ✅ ${await t(interaction, 'minecraft.set.autosetup.success.title')}`,
+			await t(interaction, 'minecraft.set.autosetup.success.title_md'),
 			``,
 			`**${await t(interaction, 'minecraft.set.autosetup.success.server')}** \`${rawHost}:${port}\``,
 			`**${await t(interaction, 'minecraft.set.autosetup.success.category')}** <#${category.id}>`,
 			``,
-			`### ${await t(interaction, 'minecraft.set.autosetup.success.channels')}`,
+			await t(interaction, 'minecraft.set.autosetup.success.channels_md'),
 		];
 
 		const fieldLabels = {

@@ -65,7 +65,7 @@ class CreateCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				`## ❌ Listing Failed\n${msg}`,
+				await t(interaction, 'economy.stock.create.failed', { msg }),
 				{ color: kythiaConfig.bot.color },
 			);
 			return interaction.editReply({
@@ -85,7 +85,7 @@ class CreateCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				`## ❌ Invalid Ticker\n${msg}`,
+				await t(interaction, 'economy.stock.create.invalid_ticker', { msg }),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -106,7 +106,7 @@ class CreateCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				`## ❌ Already Listed\n${msg}`,
+				await t(interaction, 'economy.stock.create.already_listed', { msg }),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -127,7 +127,7 @@ class CreateCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				`## ❌ Ticker Taken\n${msg}`,
+				await t(interaction, 'economy.stock.create.ticker_taken', { msg }),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -159,7 +159,9 @@ class CreateCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				`## ❌ Insufficient Funds\n${msg}`,
+				await t(interaction, 'economy.stock.create.insufficient_funds', {
+					msg,
+				}),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -241,7 +243,7 @@ class CreateCommand extends BaseCommand {
 			const msg = await t(interaction, 'economy.guild_stock.create.error.db');
 			const components = await simpleContainer(
 				interaction,
-				`## ❌ Database Error\n${msg}`,
+				await t(interaction, 'economy.stock.create.db_error', { msg }),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({

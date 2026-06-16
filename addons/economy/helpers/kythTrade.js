@@ -96,7 +96,7 @@ async function executeBuyKyth({
 		});
 
 		const successMsg = [
-			`## 💎 KYTH Purchased!`,
+			await t(interactionOrI, 'economy.trade.buy_success'),
 			``,
 			`**Spent:** 🪙 ${amountToSpend.toLocaleString()} Coin`,
 			`**Received:** 💎 ${result.kythOut.toFixed(6)} KYTH`,
@@ -117,7 +117,9 @@ async function executeBuyKyth({
 		});
 		const components = await simpleContainer(
 			interactionOrI,
-			`## ❌ Transaction Failed\n${err.message || 'Unknown error.'}`,
+			await t(interactionOrI, 'economy.trade.fail', {
+				err: err.message || 'Unknown error.',
+			}),
 			{ color: 'Red' },
 		);
 		await interactionOrI[method]({
@@ -221,7 +223,7 @@ async function executeSellKyth({
 		});
 
 		const successMsg = [
-			`## 💰 KYTH Sold!`,
+			await t(interactionOrI, 'economy.trade.sell_success'),
 			``,
 			`**Sold:** 💎 ${sellQuantity.toFixed(6)} KYTH`,
 			`**Received:** 🪙 ${result.coinOut.toLocaleString(undefined, { maximumFractionDigits: 2 })} Coin`,
@@ -242,7 +244,9 @@ async function executeSellKyth({
 		});
 		const components = await simpleContainer(
 			interactionOrI,
-			`## ❌ Transaction Failed\n${err.message || 'Unknown error.'}`,
+			await t(interactionOrI, 'economy.trade.fail', {
+				err: err.message || 'Unknown error.',
+			}),
 			{ color: 'Red' },
 		);
 		await interactionOrI[method]({

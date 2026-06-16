@@ -11,7 +11,7 @@
 					},
 					"role": {
 						"reward": {
-							"title": "## Role Awarded",
+							"title": "### ## Role Awarded",
 							"desc": "{mention} get role **{role}** for reaching level **{level}**.\nKeep up the good work! 🎉"
 						}
 					}
@@ -23,14 +23,14 @@
 				"user": {
 					"not": {
 						"found": {
-							"title": "User Not Found",
+							"title": "## User Not Found",
 							"desc": "The user was not found."
 						}
 					}
 				},
 				"xp": {
 					"set": {
-						"title": "XP Set",
+						"title": "## XP Set",
 						"desc": "Successfully set XP for **{username}**. Now their level is **{newLevel}** and XP is **{newXp}**."
 					}
 				}
@@ -40,7 +40,7 @@
 			"leveling": {
 				"xp": {
 					"add": {
-						"title": "XP Added",
+						"title": "## XP Added",
 						"desc": "Successfully added **{xp}** XP to **{username}**. Now their level is **{newLevel}** and XP is **{newXp}**."
 					}
 				}
@@ -50,14 +50,14 @@
 			"leveling": {
 				"level": {
 					"set": {
-						"title": "Level Set",
+						"title": "## Level Set",
 						"desc": "Successfully set the level of **{username}**. Now their level is **{newLevel}**. XP has been reset to 0."
 					}
 				},
 				"user": {
 					"not": {
 						"found": {
-							"title": "User Not Found",
+							"title": "## User Not Found",
 							"desc": "The user was not found."
 						}
 					}
@@ -68,10 +68,10 @@
 			"leveling": {
 				"profile": {
 					"created": {
-						"title": "Profile Created",
+						"title": "## Profile Created",
 						"desc": "You did not have a level profile, one has been created for you."
 					},
-					"title": "Level Profile",
+					"title": "## Level Profile",
 					"desc": "**{username}**, you are at level **{level}** with a total of **{xp}** XP. **Current XP:** {xp}/{nextLevelXp}."
 				}
 			}
@@ -81,7 +81,7 @@
 				"leaderboard": {
 					"empty": "No data yet.",
 					"entry": "{rank}. <@{userId}> - Level **{level}** ({xp} XP)",
-					"title": "Level Leaderboard"
+					"title": "## Level Leaderboard"
 				}
 			}
 		},
@@ -89,14 +89,14 @@
 			"leveling": {
 				"level": {
 					"add": {
-						"title": "Level Added",
+						"title": "## Level Added",
 						"desc": "Successfully added **{level}** level(s) to **{username}**. Now their level is **{newLevel}**. XP has been reset to 0."
 					}
 				},
 				"user": {
 					"not": {
 						"found": {
-							"title": "User Not Found",
+							"title": "## User Not Found",
 							"desc": "The user was not found."
 						}
 					}

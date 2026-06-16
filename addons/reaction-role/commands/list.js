@@ -67,7 +67,11 @@ class ListCommand extends BaseCommand {
 			}
 
 			const title = await t(interaction, 'reaction-role.list.title');
-			const fullContent = `### ${title}\n\n${description}`;
+			const fullContent = await t(
+				interaction,
+				'reaction-role.list.content_md',
+				{ title, description },
+			);
 
 			const chunks = chunkTextDisplay(fullContent);
 			const listContainer = new ContainerBuilder()

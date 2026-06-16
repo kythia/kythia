@@ -199,7 +199,7 @@ class SellCommand extends BaseCommand {
 				result.newCoinReserve / result.newKythReserve
 			).toFixed(6);
 			const previewLines = [
-				`## 💰 KYTH Sell Preview`,
+				await t(interaction, 'economy.market.sell.preview_title'),
 				``,
 				`**You Sell:**  💎 ${sellQuantity.toFixed(6)} KYTH`,
 				`**Protocol Fee (${(result.feeRate * 100).toFixed(1)}%):**  💎 ${kythFeeAmt} KYTH`,
@@ -390,7 +390,7 @@ class SellCommand extends BaseCommand {
 			const pnl = (currentPrice - avgBuyPrice) * sellQuantity;
 			const pnlSign = pnl >= 0 ? '+' : '';
 			const pnlEmoji = pnl >= 0 ? '📈' : '📉';
-			const msg = `## ${await t(interaction, 'economy.market.sell.success.title')}\n${await t(
+			const msg = `${await t(interaction, 'economy.market.sell.success.title')}\n${await t(
 				interaction,
 				'economy.market.sell.success.desc',
 				{

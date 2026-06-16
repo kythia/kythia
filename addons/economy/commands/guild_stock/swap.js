@@ -67,7 +67,7 @@ class SwapCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				`## ❌ Not Found\n${msg}`,
+				await t(interaction, 'economy.stock.swap.not_found', { msg }),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -84,7 +84,7 @@ class SwapCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				`## ⚠️ Trading Halted\n${msg}`,
+				await t(interaction, 'economy.stock.swap.halted', { msg }),
 				{ color: 'Red' },
 			);
 			return interaction.editReply({
@@ -115,7 +115,7 @@ class SwapCommand extends BaseCommand {
 				);
 				const components = await simpleContainer(
 					interaction,
-					`## ❌ Liquidity Error\n${msg}`,
+					await t(interaction, 'economy.stock.swap.liquidity_error', { msg }),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -142,7 +142,9 @@ class SwapCommand extends BaseCommand {
 				);
 				const components = await simpleContainer(
 					interaction,
-					`## ❌ Insufficient Funds\n${msg}`,
+					await t(interaction, 'economy.stock.swap.insufficient_funds', {
+						msg,
+					}),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -168,7 +170,7 @@ class SwapCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				`## ✅ Swap Successful\n${msg}`,
+				await t(interaction, 'economy.stock.swap.success', { msg }),
 				{ color: 'Green' },
 			);
 			return interaction.editReply({
@@ -184,7 +186,9 @@ class SwapCommand extends BaseCommand {
 				);
 				const components = await simpleContainer(
 					interaction,
-					`## ❌ Insufficient Balance\n${msg}`,
+					await t(interaction, 'economy.stock.swap.insufficient_balance', {
+						msg,
+					}),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -206,7 +210,7 @@ class SwapCommand extends BaseCommand {
 				);
 				const components = await simpleContainer(
 					interaction,
-					`## ❌ Liquidity Error\n${msg}`,
+					await t(interaction, 'economy.stock.swap.liquidity_error', { msg }),
 					{ color: 'Red' },
 				);
 				return interaction.editReply({
@@ -236,7 +240,7 @@ class SwapCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				`## ✅ Swap Successful\n${msg}`,
+				await t(interaction, 'economy.stock.swap.success', { msg }),
 				{ color: 'Green' },
 			);
 			return interaction.editReply({

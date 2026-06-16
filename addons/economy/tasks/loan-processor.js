@@ -17,7 +17,7 @@ class LoanProcessorTask extends BaseTask {
 		active: true,
 	};
 	async execute(container) {
-		const { client, models, logger } = container || this.container;
+		const { client, models, logger, t } = container || this.container;
 		const { KythiaUser } = models;
 		if (client.shard && !client.shard.ids.includes(0)) {
 			return;
@@ -56,7 +56,7 @@ class LoanProcessorTask extends BaseTask {
 								user.userId,
 							);
 						await discordUser.send(
-							`## 🚨 LOAN DEFAULTED!\nYou failed to repay your loan in time. The bank has **seized all your cash and bank balance**, and your credit score has tanked!`,
+							await t(null, 'economy.tasks.loan.defaulted'),
 						);
 					} catch (_e) {}
 				} else {

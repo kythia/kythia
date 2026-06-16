@@ -40,7 +40,7 @@ class CreateCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { models } = container;
+		const { models, t } = container;
 		const { EmbedBuilder: EmbedModel } = models;
 
 		const name = interaction.options.getString('name');
@@ -59,7 +59,7 @@ class CreateCommand extends BaseCommand {
 					new EmbedBuilder()
 						.setColor(0xef4444)
 						.setDescription(
-							`❌ An embed named **"${name}"** already exists in this server.\nUse \`/embed-builder edit\` to modify it.`,
+							await t(interaction, 'embed-builder.create.duplicate', { name }),
 						),
 				],
 			});
@@ -69,9 +69,14 @@ class CreateCommand extends BaseCommand {
 		const defaultData =
 			mode === 'embed'
 				? {
-						title: 'My Embed',
-						description:
-							'Edit this embed using the dashboard or /embed-builder edit.',
+						title: await t(
+							interaction,
+							'embed-builder.create.default.embed_title',
+						),
+						description: await t(
+							interaction,
+							'embed-builder.create.default.embed_desc',
+						),
 						color: 0x5865f2,
 					}
 				: {
@@ -82,7 +87,10 @@ class CreateCommand extends BaseCommand {
 								components: [
 									{
 										type: 10, // TextDisplay
-										content: 'Edit this component using the dashboard.',
+										content: await t(
+											interaction,
+											'embed-builder.create.default.component_content',
+										),
 									},
 								],
 							},
@@ -103,9 +111,13 @@ class CreateCommand extends BaseCommand {
 			embeds: [
 				new EmbedBuilder()
 					.setColor(0x22c55e)
-					.setTitle('🎨 Embed Created!')
+					.setTitle(await t(interaction, 'embed-builder.create.success.title'))
 					.setDescription(
-						`**Name:** \`${name}\`\n**Mode:** \`${mode}\`\n**ID:** \`${record.id}\`\n\nUse \`/embed-builder edit\` or the dashboard to customise it, then \`/embed-builder send\` to post it.`,
+						await t(interaction, 'embed-builder.create.success.desc', {
+							name,
+							mode,
+							id: record.id,
+						}),
 					),
 			],
 		});

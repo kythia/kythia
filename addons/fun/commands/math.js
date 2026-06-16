@@ -111,7 +111,7 @@ class MathCommand extends BaseCommand {
 						const parsed = Number(raw);
 						if (Number.isNaN(parsed) || !Number.isFinite(parsed)) {
 							await submitted.reply({
-								content: '❌ Please enter a valid number.',
+								content: await t(interaction, 'fun.math.invalid.number'),
 								flags: MessageFlags.Ephemeral,
 							});
 							resolve({

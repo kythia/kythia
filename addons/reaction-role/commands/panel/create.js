@@ -30,7 +30,7 @@ class CreateCommand extends BaseCommand {
 
 	async execute(interaction) {
 		const container = this.container;
-		const { kythiaConfig, helpers } = container;
+		const { kythiaConfig, helpers, t } = container;
 		const { convertColor } = helpers.color;
 
 		const accentColor = convertColor(kythiaConfig.bot.color, {
@@ -48,7 +48,7 @@ class CreateCommand extends BaseCommand {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					'## 🎭 Reaction Role Panel Setup\n\nClick the button below to create a new reaction role panel.\n\n**What is a panel?**\nA panel is a message that users can react to in order to receive roles. You can set up two modes:\n- **Post Embed** — the bot posts a new embed to a channel you choose.\n- **Use Message ID** — the bot attaches reactions to an existing message.',
+					await t(interaction, 'reaction-role.panel.create.intro_md'),
 				),
 			)
 			.addSeparatorComponents(

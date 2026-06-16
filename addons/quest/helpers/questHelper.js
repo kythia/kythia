@@ -35,7 +35,9 @@ async function buildQuestNotification(container, quest, role) {
 	});
 	const fakeInteraction = { client: container.client };
 
-	const title = `## \`🎁\` ${config.messages.quest_name}`;
+	const title = await t(fakeInteraction, 'quest.helper.title_md', {
+		questName: config.messages.quest_name,
+	});
 	const gameTitle = config.messages.game_title;
 	const gamePublisher = config.messages.game_publisher;
 
@@ -109,11 +111,15 @@ async function buildQuestNotification(container, quest, role) {
 		new SectionBuilder()
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`### Reward: \n${rewardName}\n` +
-						`### Tasks: \n${taskList}\n` +
-						`### Game: \n${gameTitle}\n` +
-						`### Publisher: \n${gamePublisher}\n` +
-						`### Expires: \n<t:${expiresTimestamp}:f> (<t:${expiresTimestamp}:R>)\n` +
+					(await t(fakeInteraction, 'quest.helper.reward_md', { rewardName })) +
+						(await t(fakeInteraction, 'quest.helper.tasks_md', { taskList })) +
+						(await t(fakeInteraction, 'quest.helper.game_md', { gameTitle })) +
+						(await t(fakeInteraction, 'quest.helper.publisher_md', {
+							gamePublisher,
+						})) +
+						(await t(fakeInteraction, 'quest.helper.expires_md', {
+							expiresTimestamp,
+						})) +
 						`${role ? `### Notify: \n${role}\n` : ''}`,
 				),
 			)

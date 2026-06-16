@@ -8,7 +8,8 @@
 					"roles": "Creating roles...",
 					"categories": "Creating categories...",
 					"channels": "Creating channels in category **{category}**..."
-				}
+				},
+				"title_md": "## ⏳ Progress"
 			},
 			"command": {
 				"no": {
@@ -18,7 +19,7 @@
 			"autobuild": {
 				"template": {
 					"not": {
-						"found": "Template not found: `{key}`"
+						"found_md": "## ❌ Template Not Found\nNo such template `{key}` found."
 					}
 				},
 				"progress": {
@@ -31,7 +32,10 @@
 				"failed": "❌ Server autobuild failed!\nError: {error}",
 				"start": "⏳ Starting autobuild for **{template}**...{dryRun, select, true { (Dry Run)} other {}}",
 				"done": "✅ Autobuild complete for **{template}**!",
-				"stats": "**Roles:** {rolesCreated} created ({rolesSkipped} skipped)\n**Categories:** {catCreated} created ({catSkipped} skipped)\n**Channels:** {chCreated} created ({chSkipped} skipped)\n**Failed:** {failed}{dryRun, select, true {\n\n> ⚠️ Dry run — no changes were made.} other {}}"
+				"stats": "**Roles:** {rolesCreated} created ({rolesSkipped} skipped)\n**Categories:** {catCreated} created ({catSkipped} skipped)\n**Channels:** {chCreated} created ({chSkipped} skipped)\n**Failed:** {failed}{dryRun, select, true {\n\n> ⚠️ Dry run — no changes were made.} other {}}",
+				"start_md": "## 🚀 Starting Autobuild\nApplying `{template}`... {dryRun}",
+				"failed_md": "## ❌ Autobuild Failed\n{error}",
+				"done_md": "## ✅ Autobuild Complete\nTemplate `{template}` has been applied successfully!"
 			},
 			"backup": {
 				"no": {
@@ -54,17 +58,22 @@
 				"start": "⏳ Creating backup for this server...",
 				"too": {
 					"large": "## ⚠️ Too Large!\nBackup file is too large to send via DM. Please contact support."
-				}
+				},
+				"title_md": "## 📦 Server Backup — **{name}**"
 			},
 			"restore": {
 				"progress": {
-					"start": "⏳ Server restore in progress..."
+					"start": "⏳ Server restore in progress...",
+					"start_md": "## 🚀 Starting Restoration",
+					"generic_md": "## {text}"
 				},
 				"file": {
-					"invalid": "❌ Invalid backup file. Please upload a valid .json backup file."
+					"invalid": "❌ Invalid backup file. Please upload a valid .json backup file.",
+					"invalid_md": "## ❌ Invalid File\nThe file provided is not a valid Kythia backup JSON."
 				},
 				"data": {
-					"invalid": "❌ Invalid backup data."
+					"invalid": "❌ Invalid backup data.",
+					"invalid_md": "## ❌ Invalid Data\nThe backup data is missing or corrupted."
 				},
 				"clearing": "🧹 Clearing all channels, roles, emojis, and stickers...",
 				"settings": "⚙️ Restoring server settings...",
@@ -81,20 +90,29 @@
 				},
 				"assets": "🎨 Restoring emojis, stickers, and soundboard...",
 				"success": "✅ Server restore completed for **{name}**!",
-				"failed": "❌ Server restore failed."
+				"failed": "❌ Server restore failed.",
+				"success_md": "## ✅ Restoration Complete\nRestored successfully.\n> Channels: **{channels}**\n> Roles: **{roles}**\n> Emojis: **{emojis}**\n> Soundboard: **{soundboard}**\n> Settings: **{settings}**",
+				"failed_md": "## ❌ Restoration Failed\nAn error occurred during restoration."
 			},
 			"reset": {
 				"no": {
-					"guild": "This command can only be used in a server."
+					"guild": "This command can only be used in a server.",
+					"guild_md": "## ❌ Unknown Guild\nCould not fetch guild information."
 				},
 				"progress": {
 					"start": "⏳ Deleting channels, roles, emojis, and stickers...",
 					"channels": "⏳ Deleting channels... ({current}/{total})",
 					"roles": "⏳ Deleting roles... ({current}/{total})",
 					"emojis": "⏳ Deleting emojis... ({current}/{total})",
-					"stickers": "⏳ Deleting stickers... ({current}/{total})"
+					"stickers": "⏳ Deleting stickers... ({current}/{total})",
+					"start_md": "## 🚀 Starting Reset",
+					"channels_md": "## 🗑️ Deleting Channels ({current}/{total})",
+					"roles_md": "## 🗑️ Deleting Roles ({current}/{total})",
+					"emojis_md": "## 🗑️ Deleting Emojis ({current}/{total})",
+					"stickers_md": "## 🗑️ Deleting Stickers ({current}/{total})"
 				},
-				"success": "✅ Server reset completed successfully!"
+				"success": "✅ Server reset completed successfully!",
+				"msg_title_md": "## {title}"
 			}
 		}
 	}

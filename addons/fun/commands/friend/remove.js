@@ -69,7 +69,7 @@ class RemoveCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`## ${await t(interaction, 'fun.friend.removed.title')}`,
+					await t(interaction, 'fun.friend.removed.title'),
 				),
 			)
 			.addSeparatorComponents(new SeparatorBuilder().setDivider(true))

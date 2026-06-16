@@ -459,7 +459,7 @@ class ViewCommand extends BaseCommand {
 			const cryptoTable = marketuiHelper.formatMarketTable(assetRows);
 			const stockTable = marketuiHelper.formatMarketTable(stockRows);
 			const msg =
-				`## ${await t(interaction, 'economy.market.view.all.title')}\n` +
+				`${await t(interaction, 'economy.market.view.all.title')}\n` +
 				`**Top Crypto**\n${cryptoTable}\n` +
 				`**Top Stocks**\n${stockTable}`;
 			const components = await simpleContainer(interaction, msg, {

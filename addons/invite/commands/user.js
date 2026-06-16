@@ -44,7 +44,7 @@ class UserCommand extends BaseCommand {
 			fake,
 			leaves,
 		});
-		const content = `## ${title}\n${stats}`;
+		const content = `${title}\n${stats}`;
 
 		const containers = await simpleContainer(interaction, content, {
 			color: convertColor(kythiaConfig.bot.color, {

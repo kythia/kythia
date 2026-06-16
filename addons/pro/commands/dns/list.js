@@ -123,7 +123,9 @@ class ListCommand extends BaseCommand {
 		}
 
 		mainContainer.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(`## ${title}\n${description}`),
+			new TextDisplayBuilder().setContent(
+				await t(interaction, 'pro.dns.list.display_md', { title, description }),
+			),
 		);
 
 		for (const record of records) {

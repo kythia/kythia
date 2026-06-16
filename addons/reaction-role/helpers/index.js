@@ -103,8 +103,21 @@ async function buildLayoutContainer(
 	// --- Title ---
 	if (layout.title) {
 		const titleText = layout.titleUrl
-			? `## [${layout.title}](${layout.titleUrl})`
-			: `## ${layout.title}`;
+			? await container.t(
+					{ locale: container.client.kythiaConfig.defaultLocale },
+					'reaction-role.helpers.title_url_md',
+					{
+						title: layout.title,
+						url: layout.titleUrl,
+					},
+				)
+			: await container.t(
+					{ locale: container.client.kythiaConfig.defaultLocale },
+					'reaction-role.helpers.title_md',
+					{
+						title: layout.title,
+					},
+				);
 		builder.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(titleText),
 		);
@@ -329,7 +342,13 @@ async function buildPanelEmbed(panelData, reactionRoles, container) {
 	// Title
 	const title = panelData.title || '🎭 Reaction Roles';
 	builder.addTextDisplayComponents(
-		new TextDisplayBuilder().setContent(`## ${title}`),
+		new TextDisplayBuilder().setContent(
+			await container.t(
+				{ locale: container.client.kythiaConfig.defaultLocale },
+				'reaction-role.helpers.simple_title_md',
+				{ title },
+			),
+		),
 	);
 	builder.addSeparatorComponents(
 		new SeparatorBuilder()

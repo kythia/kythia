@@ -264,7 +264,13 @@ class RobCommand extends BaseCommand {
 			await target.save();
 
 			const msgText = fakeWallet
-				? `## 👛 Fake Wallet Triggered!\nYou robbed ${targetUser.username}, but they had a Fake Wallet! You only got 🪙 ${finalRobAmount.toLocaleString()}.\nYour bounty increased by 🪙 ${bountyIncrease.toLocaleString()}!${stealthMsg}${lockpickMsg}`
+				? await t(interaction, 'economy.crime.rob.fake_wallet', {
+						target: targetUser.username,
+						robAmount: finalRobAmount.toLocaleString(),
+						bounty: bountyIncrease.toLocaleString(),
+						stealthMsg,
+						lockpickMsg,
+					})
 				: (await t(interaction, 'economy.rob.rob.success.text', {
 						amount: finalRobAmount,
 						target: targetUser.username,

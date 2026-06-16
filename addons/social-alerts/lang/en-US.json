@@ -71,5 +71,10 @@
 			},
 			"footer": "-# 📡 {bot} · Social Alerts"
 		}
+	},
+	"social-alerts": {
+		"poller": {
+			"alert_md": "## {platform}\\n{message}\\n\\n### {title}{mention}{timestamp}"
+		}
 	}
 }

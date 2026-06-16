@@ -73,7 +73,7 @@ class MarryButton extends BaseButton {
 				user1Display = 'Unknown';
 			}
 			user2Display = interaction.user.toString();
-			const congratsTitle = `## ${await t(interaction, 'fun.marry.congrats.title')}`;
+			const congratsTitle = await t(interaction, 'fun.marry.congrats.title');
 			const congratsDesc = await t(
 				interaction,
 				'fun.marry.congrats.description',

@@ -264,7 +264,7 @@
 			},
 			"no": {},
 			"congrats": {
-				"title": "💕 Congratulations!",
+				"title": "## 💕 Congratulations!",
 				"description": "{user1} and {user2} are now married! May your love last forever! 💖"
 			},
 			"divorced": {
@@ -334,6 +334,11 @@
 			"footer": {
 				"play": "Click a button to make your move!",
 				"end": "Play again with /rps"
+			},
+			"duel": {
+				"already_locked": "✅ You already locked in! Waiting for the other player...",
+				"pick_weapon": "🤫 Pick your weapon — only you can see this!",
+				"locked_in": "✅ Locked in: **{emoji}** — waiting for the other player!"
 			}
 		},
 		"math": {
@@ -358,6 +363,9 @@
 				"title": "## 🏆 Math Quiz — Global Leaderboard",
 				"empty": "No scores yet! Be the first to play with `/math`.",
 				"entry": "{rank}. **{user}** — `{score}` pts"
+			},
+			"invalid": {
+				"number": "❌ Please enter a valid number."
 			}
 		},
 		"friend": {
@@ -375,10 +383,11 @@
 				"found": "❌ Friend request not found or already processed."
 			},
 			"request": {
-				"title": "🤝 Friend Request",
+				"title": "## 🤝 Friend Request",
 				"description": "{proposer} wants to be friends with {target}! Will you accept?",
 				"expired": "This friend request has expired or been cancelled.",
-				"rejected": "❌ The friend request from {user1} to {user2} was rejected."
+				"rejected": "❌ The friend request from {user1} to {user2} was rejected.",
+				"user_block": "## {user}\n-# {id}"
 			},
 			"accept": {
 				"button": "Accept Friend"
@@ -387,11 +396,11 @@
 				"button": "Reject"
 			},
 			"congrats": {
-				"title": "🎉 New Friendship!",
+				"title": "## 🎉 New Friendship!",
 				"description": "{user1} and {user2} are now friends!"
 			},
 			"removed": {
-				"title": "💔 Friend Removed",
+				"title": "## 💔 Friend Removed",
 				"description": "You are no longer friends with {user}."
 			},
 			"list": {
@@ -406,7 +415,7 @@
 			},
 			"dm": {
 				"failed": "❌ I couldn't DM {user}. Their DMs might be closed.",
-				"title": "🔔 You have been summoned!",
+				"title": "## 🔔 You have been summoned!",
 				"description": "You were summoned by **{author}** in the server **{server}**!\nClick the button below to jump to the channel."
 			},
 			"success": "✅ Successfully summoned {user} via DM!",
