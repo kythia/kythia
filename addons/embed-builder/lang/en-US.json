@@ -3,7 +3,7 @@
 		"create": {
 			"success": {
 				"title": "🎨 Embed Created!",
-				"desc": "**Name:** \n**Mode:** \n**ID:** \n\nUse  or the dashboard to customise it, then  to post it."
+				"desc": "**Name:** {name}\n**Mode:** {mode}\n**ID:** {id}\n\nUse `/embed-builder edit` or the dashboard to customise it, then `/embed-builder send` to post it."
 			},
 			"duplicate": "❌ An embed named **\"{name}\"** already exists in this server.\nUse  to modify it.",
 			"default": {

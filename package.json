@@ -43,7 +43,7 @@
 		"ioredis": "^5.4.1",
 		"javascript-obfuscator": "^4.1.1",
 		"kythia-arts": "^26.0.0-rc.2",
-		"kythia-core": "file:.yalc/kythia-core",
+		"kythia-core": "^26.1.1",
 		"luxon": "^3.7.2",
 		"marked": "^4.3.0",
 		"mathjs": "^15.1.0",

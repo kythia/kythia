@@ -80,6 +80,11 @@ class AIMessageHandler {
 			cleanupInterval: 5 * 60 * 1000,
 			maxHistoryLength: 12,
 		});
+		this.container.metrics?.registerCache(
+			'AI',
+			'conversations',
+			this.conversationManager.cache,
+		);
 		this.mediaProcessor = new MediaProcessor({
 			tempDir: path.join(__dirname, '..', 'temp'),
 			logger: this.logger,

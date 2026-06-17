@@ -99,4 +99,5 @@ module.exports = {
 	incrementAttempts,
 	clearSession,
 	hasSession,
+	sessions,
 };

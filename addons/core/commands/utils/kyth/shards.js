@@ -35,6 +35,8 @@ class ShardsCommand extends BaseCommand {
 					0,
 				),
 				uptime: c.uptime,
+				rss: process.memoryUsage().rss,
+				telemetry: c.container.metrics?.getCacheTelemetry() || [],
 			}));
 			shards = results;
 		} else {
@@ -47,6 +49,8 @@ class ShardsCommand extends BaseCommand {
 						0,
 					),
 					uptime: interaction.client.uptime,
+					rss: process.memoryUsage().rss,
+					telemetry: container.metrics?.getCacheTelemetry() || [],
 				},
 			];
 		}

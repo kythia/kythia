@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 const { AuditLogEvent } = require('discord.js');
-const { checkInstant, revertTampering } = require('../helpers/antinuke');
+const { checkInstant } = require('../helpers/antinuke');
 
 const { BaseEvent } = require('kythia-core');
 
@@ -44,15 +44,13 @@ class GuildUpdateEvent extends BaseEvent {
 			if (iconChanged) detail += `Icon changed. `;
 			if (vanityChanged) detail += `Vanity URL changed. `;
 
-			// Revert changes
-			await revertTampering(newGuild, oldGuild, 'guild');
-
 			await checkInstant({
 				bot,
 				guild: newGuild,
 				executor: entry.executor,
 				moduleName: 'serverUpdate',
 				detail: detail.trim(),
+				tamperData: { entity: newGuild, oldState: oldGuild, type: 'guild' },
 			});
 		} catch (err) {
 			this.container.logger.error(`guildUpdate error: ${err.message || err}`, {

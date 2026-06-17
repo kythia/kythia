@@ -26,7 +26,7 @@
 		},
 		"thread": {
 			"open_title": "New Modmail Thread",
-			"user_info": "**User:** <@{userId}> (`{username}`)\n**Account Created:** {createdAt}\n\n-# Use `/modmail reply` to respond · `/modmail areply` to reply anonymously · `/modmail close` to close",
+			"user_info": "**User:** <@{userId}> (`{username}` - `{tag}`)\n**Account Created:** {createdAt}\n\n-# Use `/modmail reply` to respond · `/modmail areply` to reply anonymously · `/modmail close` to close",
 			"close_button": "Close Thread",
 			"open_title_md": "## 📬 {title}"
 		},

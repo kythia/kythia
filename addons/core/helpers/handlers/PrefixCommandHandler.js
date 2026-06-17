@@ -547,7 +547,7 @@ class PrefixCommandHandler {
 							new ButtonBuilder()
 								.setLabel(
 									await t(message, 'common.error.vote.locked.button', {
-										botName: message.client.user.username,
+										username: message.client.user.username,
 									}),
 								)
 								.setStyle(ButtonStyle.Link)

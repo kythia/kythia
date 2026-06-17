@@ -96,7 +96,7 @@ class AutobuildCommand extends BaseCommand {
 			interaction,
 			await t(interaction, 'server.server.autobuild.start_md', {
 				template: tpl?.meta?.display ?? templateKey,
-				dryRun,
+				dryRunMsg: dryRun ? '\n> ⚠️ Dry run — no changes will be made.' : '',
 			}),
 			{ color: 'Blurple' },
 		);
@@ -141,7 +141,7 @@ class AutobuildCommand extends BaseCommand {
 				chCreated: stats.channel.created,
 				chSkipped: stats.channel.skipped,
 				failed: stats.failed,
-				dryRun,
+				dryRunMsg: dryRun ? '\n\n> ⚠️ Dry run — no changes were made.' : '',
 			})}`;
 		components = await simpleContainer(interaction, desc, { color: 'Green' });
 		return interaction.editReply({

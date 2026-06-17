@@ -48,7 +48,7 @@ class UserCommand extends BaseCommand {
 		const streak = await getOrCreateStreak(container, targetId, guildId);
 		const today = getTodayDateString();
 		const lastClaimDateStr = streak.lastClaimTimestamp
-			? streak.lastClaimTimestamp.toISOString().slice(0, 10)
+			? new Date(streak.lastClaimTimestamp).toISOString().slice(0, 10)
 			: null;
 		const status =
 			lastClaimDateStr === today

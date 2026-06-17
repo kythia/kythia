@@ -73,7 +73,7 @@
 					"reason": "No reason provided"
 				},
 				"modlog": {
-					"desc": "**Member:** {member}\n**Kicked by:** {kicker}\n**Reason:** {reason}",
+					"desc": "**Member:** {user}\n**Kicked by:** {moderator}\n**Reason:** {reason}",
 					"title": "## Kick"
 				}
 			},
@@ -83,10 +83,10 @@
 					"reason": "No reason provided"
 				},
 				"success": {
-					"desc": "🔒 Channel has been locked for: {reason}",
+					"desc": "🔒 {channel} has been locked for: {reason}",
 					"title": "## Channel Locked"
 				},
-				"failed": "❌ Failed to lock the channel. Please check my permissions and try again."
+				"failed": "❌ Failed to lock the channel: {error}"
 			},
 			"mute": {
 				"embed": {
@@ -98,13 +98,13 @@
 					"pinned": "⚠️ This message is already pinned."
 				},
 				"success": {
-					"desc": "📌 Message has been pinned.",
+					"desc": "📌 Message has been pinned. [Jump to Message]({messageUrl})",
 					"title": "## Message Pinned"
 				},
 				"not": {
 					"found": "❌ Message not found!"
 				},
-				"failed": "❌ Failed to pin the message. Please check my permissions and try again."
+				"failed": "❌ Failed to pin the message: {error}"
 			},
 			"role": {
 				"added": {
@@ -128,7 +128,7 @@
 				},
 				"failed": "❌ Failed to set slowmode: {error}",
 				"success": {
-					"desc": "✅ Slowmode set to {time} for: {reason}",
+					"desc": "✅ Slowmode for {channel} set to {seconds} seconds for: {reason}",
 					"title": "## Slowmode Set"
 				}
 			},
@@ -137,14 +137,14 @@
 					"reason": "No reason provided"
 				},
 				"success": {
-					"desc": "✅ **{user}** has been timed out until {time} for: {reason}",
+					"desc": "✅ **{user}** has been timed out for {duration} for: {reason}",
 					"title": "## User Timed Out"
 				},
 				"failed": "❌ Failed to timeout user: {error}"
 			},
 			"unban": {
 				"success": {
-					"desc": "✅ **{user}** has been unbanned.",
+					"desc": "✅ <@{userId}> has been unbanned.",
 					"title": "## User Unbanned"
 				},
 				"failed": "❌ Failed to unban user: {error}"
@@ -156,7 +156,7 @@
 				},
 				"failed": "❌ Failed to unlock channel: {error}",
 				"success": {
-					"desc": "🔓 Channel has been unlocked for: {reason}",
+					"desc": "🔓 {channel} has been unlocked for: {reason}",
 					"title": "## Channel Unlocked"
 				}
 			},
@@ -178,10 +178,10 @@
 					"found": "❌ Message not found."
 				},
 				"success": {
-					"desc": "Message has been unpinned.",
+					"desc": "Message has been unpinned. [Jump to Message]({messageUrl})",
 					"title": "## Message Unpinned"
 				},
-				"failed": "❌ Failed to unpin message."
+				"failed": "❌ Failed to unpin message: {error}"
 			},
 			"warn": {
 				"cannot": {
@@ -191,8 +191,8 @@
 					"reason": "No reason provided"
 				},
 				"dm": {
-					"desc": "You have been warned in **{guild}** for: {reason}",
-					"title": "## Warned"
+					"desc": "You have been warned by **{moderator}** for: {reason}",
+					"title": "## Warned in {guild}"
 				},
 				"failed": "❌ Failed to warn user: {error}",
 				"modlog": {

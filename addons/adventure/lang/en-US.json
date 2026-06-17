@@ -6,7 +6,7 @@
 			},
 			"revive": "## 😇 You Revived!\nYou were revived by 🍶 Revival and your HP is restored to **{hp}**.\nYou're ready to fight again!",
 			"lose": "## 💀 You Lost!\nYou were defeated by the monster! But you rise again with **{hp} HP**.",
-			"levelup": "## 🎉 Level Up!\nYou reached level **{level}**!\nYour stats increased! 💪\nYour HP is restored to **{hp}**.",
+			"levelup": "## 🎉 Level Up!\nYou reached level **{level}**!\nYour stats increased! 💪\nYour HP is restored to **{hp} / {maxHp}**.",
 			"win": "## 🎉 You Won!\nYou defeated **{monster}**!\nYou earned **{gold} gold** and **{xp} XP**!",
 			"round": "## ⚔️ Adventure Battle!\n**{user}** attacks **{monster}**, dealing **{playerDamage}** damage!\n**{monster}** strikes back, dealing **{monsterDamage}** damage!",
 			"hp": {

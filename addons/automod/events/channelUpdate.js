@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 const { AuditLogEvent } = require('discord.js');
-const { checkThreshold, revertTampering } = require('../helpers/antinuke');
+const { checkThreshold } = require('../helpers/antinuke');
 
 const { BaseEvent } = require('kythia-core');
 
@@ -41,15 +41,17 @@ class ChannelUpdateEvent extends BaseEvent {
 
 			const detail = `Channel renamed: ${oldChannel.name} -> ${newChannel.name}`;
 
-			// Revert changes
-			await revertTampering(newChannel, oldChannel, 'channel');
-
 			await checkThreshold({
 				bot,
 				guild,
 				executor: entry.executor,
 				moduleName: 'channelUpdate',
 				detail,
+				tamperData: {
+					entity: newChannel,
+					oldState: oldChannel,
+					type: 'channel',
+				},
 			});
 		} catch (err) {
 			this.container.logger.error(

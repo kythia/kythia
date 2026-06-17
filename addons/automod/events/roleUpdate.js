@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 const { AuditLogEvent } = require('discord.js');
-const { checkThreshold, revertTampering } = require('../helpers/antinuke');
+const { checkThreshold } = require('../helpers/antinuke');
 
 const { BaseEvent } = require('kythia-core');
 
@@ -53,15 +53,13 @@ class RoleUpdateEvent extends BaseEvent {
 			let detail = `Role modified: ${oldRole.name}`;
 			if (nameChanged) detail += ` (renamed to ${newRole.name})`;
 
-			// Revert changes
-			await revertTampering(newRole, oldRole, 'role');
-
 			await checkThreshold({
 				bot,
 				guild,
 				executor: entry.executor,
 				moduleName: 'roleUpdate',
 				detail,
+				tamperData: { entity: newRole, oldState: oldRole, type: 'role' },
 			});
 		} catch (err) {
 			this.container.logger.error(`roleUpdate error: ${err.message || err}`, {

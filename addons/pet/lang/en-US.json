@@ -13,7 +13,7 @@
 				}
 			},
 			"success": {
-				"msg_md": "## Pet Adopted!"
+				"msg_md": "## Pet Adopted!\nYou adopted {icon} **{name}** ({rarity})!"
 			}
 		},
 		"feed": {
@@ -32,7 +32,7 @@
 				"msg_md": "## Pet is Full\n🎉 Your pet is already full!"
 			},
 			"success": {
-				"msg_md": "## Pet Fed!\n{icon} **{name}** ({rarity}) has been fed."
+				"msg_md": "## Pet Fed!\n{icon} **{name}** ({rarity}) has been fed. Hunger +{hunger}."
 			}
 		},
 		"play": {
@@ -45,7 +45,7 @@
 				"title_md": "## 🪦 Pet is Dead\nYour pet is currently dead and cannot play. Revive it first!"
 			},
 			"success": {
-				"desc": "You played with your pet.",
+				"desc": "{icon} **{name}** ({rarity}) played with you! Happiness +{happiness}.",
 				"title_md": "## Play Time!\n{desc}"
 			}
 		},
@@ -59,7 +59,7 @@
 				"msg_md": "## {title}\n{desc}"
 			},
 			"title_md": "## 🐾 {bot}'s Pet Profile",
-			"desc": "Your pet info"
+			"desc": "{icon} **{name}** ({rarity})\nName: {petName}\nLevel: {level}\nHappiness: {happiness}/100\nHunger: {hunger}/100\nBonus: {bonusType} +{bonusValue}"
 		},
 		"use": {
 			"no": {
@@ -74,7 +74,7 @@
 				"title_md": "## 🪦 Pet is Dead\nYour pet is currently dead. Use a revive item to bring it back!"
 			},
 			"success": {
-				"desc": "You used an item.",
+				"desc": "{icon} **{name}** ({rarity}) Level {level} gained {bonusType} +{bonusValue}!",
 				"title_md": "## Item Used\n{desc}"
 			}
 		},
@@ -119,7 +119,7 @@
 						"msg_md": "## {title}\nNo pets available."
 					},
 					"field": "**Rarity**: {rarity}\n**Bonus**: {bonusType} +{bonusValue}",
-					"footer": "Total Pets: {count}",
+					"footer": "Page {page} of {totalPages} | Total Pets: {total}",
 					"title_md": "## 🐾 Registered Pets"
 				}
 			},

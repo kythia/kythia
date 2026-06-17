@@ -64,6 +64,11 @@ class MusicManager {
 		this.convertColor = this.helpers.color.convertColor;
 
 		this.guildStates = new Map();
+		this.container.metrics?.registerCache(
+			'Music',
+			'guildStates',
+			this.guildStates,
+		);
 
 		this.TICKER_INTERVAL = 5000;
 	}

@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 const { AuditLogEvent } = require('discord.js');
-const { checkThreshold, revertTampering } = require('../helpers/antinuke');
+const { checkThreshold } = require('../helpers/antinuke');
 
 const { BaseEvent } = require('kythia-core');
 
@@ -41,15 +41,13 @@ class EmojiUpdateEvent extends BaseEvent {
 
 			const detail = `Emoji renamed: :${oldEmoji.name}: -> :${newEmoji.name}:`;
 
-			// Revert changes
-			await revertTampering(newEmoji, oldEmoji, 'emoji');
-
 			await checkThreshold({
 				bot,
 				guild,
 				executor: entry.executor,
 				moduleName: 'emojiUpdate',
 				detail,
+				tamperData: { entity: newEmoji, oldState: oldEmoji, type: 'emoji' },
 			});
 		} catch (err) {
 			this.container.logger.error(`emojiUpdate error: ${err.message || err}`, {

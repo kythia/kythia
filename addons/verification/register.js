@@ -7,10 +7,12 @@
  */
 
 const { BaseRegister } = require('kythia-core');
+const { sessions } = require('./helpers/session');
 
 class VerificationRegister extends BaseRegister {
 	register() {
 		const _bot = this.kythia;
+		this.registerCache('sessions', sessions);
 		return [];
 	}
 }

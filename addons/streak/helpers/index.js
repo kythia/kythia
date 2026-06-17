@@ -185,7 +185,7 @@ async function claimStreak(container, member, settings) {
 	const today = getTodayDateString(timezone);
 	const yesterday = getYesterdayDateString(timezone);
 	const lastClaimDateStr = streak.lastClaimTimestamp
-		? streak.lastClaimTimestamp.toISOString().slice(0, 10)
+		? new Date(streak.lastClaimTimestamp).toISOString().slice(0, 10)
 		: null;
 	if (lastClaimDateStr === today) {
 		return {

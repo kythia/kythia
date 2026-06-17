@@ -605,11 +605,11 @@
 				},
 				"not": {
 					"enough": {
-						"cash": "❌ You do not have enough kythia coin to give that amount."
+						"cash": "❌ You do not have enough kythia coin to give that amount (including {fee} kythia coin fee)."
 					}
 				},
-				"success": "## 💵 Give Result\nYou gave **{amount} kythia coin** to **{target}**!",
-				"confirm": "## 💵 Give Confirmation\nAre you sure you want to give **{amount}** kythia coin to **{target}**? This action cannot be undone.",
+				"success": "## 💵 Give Result\nYou gave **{amount} kythia coin** to **{target}**! (Fee: **{fee}** kythia coin)",
+				"confirm": "## 💵 Give Confirmation\nAre you sure you want to give **{amount}** kythia coin to **{target}**? (Transfer fee: **{fee}** kythia coin). This action cannot be undone.",
 				"btn": {
 					"confirm": "Confirm",
 					"cancel": "Cancel"
@@ -1023,17 +1023,17 @@
 				"holding_md": "### 💠 {assetId}\n{desc}",
 				"holding_pnl_md": "### 💠 {assetId}{pnlIndicator}",
 				"holding_desc": "### {tokenName} ({tokenCode})\n**Balance:** `{balance} Tokens`\n**Average Price:** `🪙 {avgPrice}`\n**Current Price:** `🪙 {currentPrice}`\n**P/L:** {plEmoji} `{plValue}%`",
-				"title_md": "## 📊 Your Crypto Portfolio"
+				"title_md": "## {title}"
 			},
 			"limit": {
 				"buy": {
 					"success": {
-						"desc": "## Limit Buy Order Placed\nSuccessfully placed a limit buy order for **{quantity} {asset}** at **{price}** per asset."
+						"desc": "## Limit Buy Order Placed\nSuccessfully placed a limit buy order `#{orderId}` for **{quantity} {asset}** at **{price}** per asset."
 					}
 				},
 				"sell": {
 					"success": {
-						"desc": "## Limit Sell Order Placed\nSuccessfully placed a limit sell order for **{quantity} {asset}** at **{price}** per asset."
+						"desc": "## Limit Sell Order Placed\nSuccessfully placed a limit sell order `#{orderId}` for **{quantity} {asset}** at **{price}** per asset."
 					}
 				},
 				"unsupported_md": "## ❌ Unsupported Asset\nLimit orders are **not supported** for the `KYTH` token due to the real-time Automated Market Maker mechanics. Please use `/eco market buy` or `/eco market sell` directly."
@@ -1041,7 +1041,7 @@
 			"stoploss": {
 				"sell": {
 					"success": {
-						"desc": "## Stop-Loss Order Placed\nSuccessfully placed a stop-loss order to sell **{quantity} {asset}** if the price drops to **{price}** per asset."
+						"desc": "## Stop-Loss Order Placed\nSuccessfully placed a stop-loss order `#{orderId}` to sell **{quantity} {asset}** if the price drops to **{price}** per asset."
 					}
 				},
 				"unsupported_md": "## ❌ Unsupported Asset\nStop-loss orders are **not supported** for the `KYTH` token due to the real-time Automated Market Maker mechanics. Please use `/eco market sell` directly."

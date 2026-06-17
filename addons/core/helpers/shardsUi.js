@@ -30,15 +30,76 @@ async function generateShardsContainer(
 	} else {
 		const entries = await Promise.all(
 			pageShards.map(async (shard) => {
+				let shardRss = shard.rss;
+				if (shardRss) {
+					shardRss = `${(shardRss / 1024 / 1024).toFixed(2)} MB`;
+				} else {
+					shardRss = 'N/A';
+				}
 				return await t(interaction, 'core.utils.kyth.shards.entry', {
 					id: shard.id,
 					uptime: `<t:${Math.floor((Date.now() - shard.uptime) / 1000)}:R>`,
 					users: shard.users,
 					guilds: shard.guilds,
+					shardRss,
 				});
 			}),
 		);
 		contentText = entries.join('\n\n');
+	}
+
+	// Calculate and append Telemetry & Memory info on the first page or every page (to keep it visible)
+	// We'll append it at the end of contentText
+	if (shardList.length > 0 && page === 1) {
+		let totalRss = 0;
+		const telemetryData = [];
+
+		for (const shard of shardList) {
+			if (shard.rss) {
+				totalRss += shard.rss;
+			}
+			if (shard.telemetry) {
+				for (const item of shard.telemetry) {
+					const existing = telemetryData.find((t) => t.key === item.key);
+					if (existing) {
+						existing.items += item.items;
+					} else {
+						telemetryData.push({ ...item });
+					}
+				}
+			}
+		}
+
+		telemetryData.sort((a, b) => b.items - a.items);
+		const telemetryOutput =
+			telemetryData.length > 0
+				? (
+						await Promise.all(
+							telemetryData.map(
+								async (tItem) =>
+									await t(
+										interaction,
+										'core.utils.kyth.shards.telemetry_entry',
+										{
+											key: tItem.key,
+											items: tItem.items,
+										},
+									),
+							),
+						)
+					).join('\n')
+				: await t(interaction, 'core.utils.kyth.shards.telemetry_empty');
+
+		const memoryInfo = await t(
+			interaction,
+			'core.utils.kyth.shards.memory_telemetry',
+			{
+				totalRss: (totalRss / 1024 / 1024).toFixed(2),
+				telemetry: telemetryOutput,
+			},
+		);
+
+		contentText += `\n${memoryInfo}`;
 	}
 
 	const [containerStr] = await createPaginationContainer(interaction, {

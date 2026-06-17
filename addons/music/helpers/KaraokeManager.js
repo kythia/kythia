@@ -52,6 +52,7 @@ class KaraokeManager {
 		 * }
 		 */
 		this.sessions = new Map();
+		this.container.metrics?.registerCache('Karaoke', 'sessions', this.sessions);
 
 		// Track nodes we've already attached listeners to
 		this._attachedNodes = new WeakSet();

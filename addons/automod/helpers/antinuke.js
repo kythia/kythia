@@ -18,7 +18,7 @@ const {
 // Default config
 // ---------------------------------------------------------------------------
 const DEFAULT_MODULE = (threshold = 3, window = 10000, action = 'kick') => ({
-	enabled: true,
+	enabled: false,
 	threshold,
 	window,
 	action,
@@ -33,7 +33,7 @@ const DEFAULT_CONFIG = () => ({
 		roleDelete: DEFAULT_MODULE(3, 10000, 'kick'),
 		webhookCreate: DEFAULT_MODULE(5, 10000, 'kick'),
 		adminGrant: {
-			enabled: true,
+			enabled: false,
 			action: 'kick',
 		},
 		fakeAccount: {
@@ -280,8 +280,16 @@ async function sendAlert(
  * @param {object} opts.executor  - Discord User object of the person who did the action
  * @param {string} opts.moduleName - e.g. 'channelDelete'
  * @param {string} [opts.detail]   - extra context for the log
+ * @param {object} [opts.tamperData] - data to revert tampering if not whitelisted
  */
-async function checkThreshold({ bot, guild, executor, moduleName, detail }) {
+async function checkThreshold({
+	bot,
+	guild,
+	executor,
+	moduleName,
+	detail,
+	tamperData,
+}) {
 	if (!executor || executor.bot) return;
 	const container = bot.client.container;
 	const { ServerSetting } = container.models;
@@ -303,6 +311,15 @@ async function checkThreshold({ bot, guild, executor, moduleName, detail }) {
 		// Bot itself and whitelisted users are immune
 		if (!member.user || member.user.bot) return;
 		if (isWhitelisted(member, config)) return;
+
+		if (tamperData) {
+			await revertTampering(
+				tamperData.entity,
+				tamperData.oldState,
+				tamperData.type,
+			);
+		}
+
 		const count = _track(guild.id, moduleName, executor.id, mod.window);
 		if (count < mod.threshold) return;
 
@@ -331,7 +348,14 @@ async function checkThreshold({ bot, guild, executor, moduleName, detail }) {
 /**
  * Check an instant-trigger event (adminGrant — no threshold, fires immediately).
  */
-async function checkInstant({ bot, guild, executor, moduleName, detail }) {
+async function checkInstant({
+	bot,
+	guild,
+	executor,
+	moduleName,
+	detail,
+	tamperData,
+}) {
 	if (!executor || executor.bot) return;
 	const container = bot.client.container;
 	const { ServerSetting } = container.models;
@@ -351,6 +375,15 @@ async function checkInstant({ bot, guild, executor, moduleName, detail }) {
 		if (!member) return;
 		if (!member.user || member.user.bot) return;
 		if (isWhitelisted(member, config)) return;
+
+		if (tamperData) {
+			await revertTampering(
+				tamperData.entity,
+				tamperData.oldState,
+				tamperData.type,
+			);
+		}
+
 		const reason = `[AntiNuke] ${moduleName}: unauthorized action`;
 		const actioned = await executeAction(guild, member, mod.action, reason);
 		if (actioned) {

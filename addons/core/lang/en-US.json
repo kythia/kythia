@@ -515,14 +515,17 @@
 				"servers": {
 					"title": "## 🌐 Bot Servers",
 					"empty": "The bot is not in any servers.",
-					"entry": "**{rank}.** {name} ({id}",
+					"entry": "**{rank}.** {name} ({id}) - **{members} members**",
 					"footer": "-# Page {page} of {totalPages} | Total Servers: {totalServers}"
 				},
 				"shards": {
 					"title": "## 🧩 Bot Shards",
 					"empty": "No shards found.",
-					"entry": "## Shard #{id}\n- Uptime: {uptime}\n- Users: **{users}** | Guilds: **{guilds}**",
-					"footer": "-# Page {page} of {totalPages} | Total Shards: {totalShards}"
+					"entry": "## Shard #{id}\n- Uptime: {uptime}\n- Users: **{users}** | Guilds: **{guilds}**\n- Memory: **{shardRss}**",
+					"footer": "-# Page {page} of {totalPages} | Total Shards: {totalShards}",
+					"memory_telemetry": "\n## System Memory (RSS)\n- **Total RSS**: {totalRss} MB\n\n## Addon Cache Telemetry\n{telemetry}",
+					"telemetry_entry": "- **{key}**: {items} items",
+					"telemetry_empty": "- No caches registered."
 				},
 				"chat": {
 					"success": {
@@ -539,7 +542,7 @@
 						"add": {
 							"already": "❌ Guild {id}",
 							"title": "🚫 Guild Blacklisted",
-							"success": "Successfully blacklisted guild {id}",
+							"success": "Successfully blacklisted guild {id}\n**Reason:** {reason}{left}",
 							"left": "\n\n⚡ Bot was in this guild and has **left** immediately.",
 							"error": "❌ Failed to blacklist guild: {error}"
 						},
@@ -555,7 +558,7 @@
 							"empty": "📋 No guilds are currently blacklisted.",
 							"title": "🚫 Blacklisted Guilds",
 							"total": "Total blacklisted: **{count}**",
-							"row": "**ID:** {id}",
+							"row": "**ID:** {id}\n**Reason:** {reason}",
 							"error": "❌ Failed to list blacklisted guilds: {error}"
 						}
 					},
