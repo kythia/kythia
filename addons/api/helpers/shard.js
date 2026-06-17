@@ -420,7 +420,7 @@ async function broadcastGetUsers(client, userIds) {
 	if (!client.shard) {
 		const found = [];
 		for (const id of userIds) {
-			const { getUserSafe } = require('../../core/helpers/discord.js');
+			const { getUserSafe } = client.container.helpers.discord;
 			const u = await getUserSafe(client, id);
 			if (u) {
 				found.push({
@@ -437,7 +437,7 @@ async function broadcastGetUsers(client, userIds) {
 		async (c, { ids }) => {
 			const localFound = [];
 			for (const id of ids) {
-				const { getUserSafe } = require('../../core/helpers/discord.js');
+				const { getUserSafe } = c.container.helpers.discord;
 				const u = await getUserSafe(c, id);
 				if (u) {
 					localFound.push({
