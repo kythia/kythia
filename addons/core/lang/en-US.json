@@ -79,6 +79,11 @@
 						"placeholder": "{username} Help Menu"
 					}
 				},
+				"compact": {
+					"title": "{category} Commands",
+					"no_info": "No additional information available",
+					"no_commands": "No commands available."
+				},
 				"button": {
 					"go": {
 						"home": "Home"

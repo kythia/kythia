@@ -53,6 +53,10 @@ class ClientReadyEvent extends BaseEvent {
 		const _bot = { client: this.client, container: this.container };
 
 		setBotPresence(client);
+
+		const { logger } = this.container;
+		const readyTime = process.uptime().toFixed(2);
+		logger.info(`✅ Bot ready in ${readyTime} seconds.`, { label: 'core' });
 	}
 }
 

@@ -18,7 +18,8 @@ class HelpMenuSelectMenu extends BaseSelectMenu {
 		const { t, helpers } = container;
 		const { getHelpData, buildHelpReply } = helpers.helpUtils;
 
-		const [_, userId, categoryPageStr] = interaction.customId.split(':');
+		const [_, userId, categoryPageStr, _docPageStr, modeFromId] =
+			interaction.customId.split(':');
 
 		if (interaction.user.id !== userId) {
 			return interaction.reply({
@@ -37,7 +38,8 @@ class HelpMenuSelectMenu extends BaseSelectMenu {
 		const selectedCategory = interaction.values[0];
 		const docPage = 0;
 
-		const helpData = await getHelpData(container, interaction);
+		const mode = modeFromId || 'detailed';
+		const helpData = await getHelpData(container, interaction, mode);
 		const totalCategoryPages = Math.ceil(
 			helpData.allCategories.length / helpData.CATEGORIES_PER_PAGE,
 		);
@@ -47,6 +49,7 @@ class HelpMenuSelectMenu extends BaseSelectMenu {
 			categoryPage: Math.max(0, Math.min(categoryPage, totalCategoryPages - 1)),
 			selectedCategory,
 			docPage,
+			mode,
 		};
 
 		const updatedReply = await buildHelpReply(

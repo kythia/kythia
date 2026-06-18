@@ -15,8 +15,15 @@ class HelpBtnButton extends BaseButton {
 		const { t, helpers } = container;
 		const { getHelpData, buildHelpReply } = helpers.helpUtils;
 
-		const [_, action, userId, categoryPageStr, selectedCategory, docPageStr] =
-			interaction.customId.split(':');
+		const [
+			_,
+			action,
+			userId,
+			categoryPageStr,
+			selectedCategory,
+			docPageStr,
+			modeFromId,
+		] = interaction.customId.split(':');
 
 		if (interaction.user.id !== userId) {
 			return interaction.reply({
@@ -35,7 +42,8 @@ class HelpBtnButton extends BaseButton {
 		let docPage = parseInt(docPageStr, 10);
 		let category = selectedCategory === '-' ? null : selectedCategory;
 
-		const helpData = await getHelpData(container, interaction);
+		const mode = modeFromId || 'detailed';
+		const helpData = await getHelpData(container, interaction, mode);
 
 		if (action === 'cp') categoryPage--;
 		if (action === 'cn') categoryPage++;
@@ -61,6 +69,7 @@ class HelpBtnButton extends BaseButton {
 			categoryPage,
 			selectedCategory: category,
 			docPage,
+			mode,
 		};
 
 		const updatedReply = await buildHelpReply(

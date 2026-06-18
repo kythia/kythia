@@ -117,17 +117,117 @@ function smartSplit(content, maxLength = 3500) {
 	return chunks;
 }
 
-function getMarkdownContent(category, rootDir) {
+async function parseCompactMarkdown(content, container, interaction) {
+	const { t } = container;
+	let categoryName = 'Category';
+	const catMatch = content.match(/## Command Category:\s*(.+)/i);
+	if (catMatch) {
+		categoryName = catMatch[1].trim();
+	}
+
+	const lines = content.split('\n');
+	const commandsTitle = await t(interaction, 'core.utils.help.compact.title', {
+		category: categoryName,
+	});
+	const compactLines = [`## ${commandsTitle}`];
+	let hasCommands = false;
+
+	let baseCommand = null;
+	const noInfoText = await t(interaction, 'core.utils.help.compact.no_info');
+	let baseDesc = noInfoText;
+	let baseHasSubcommands = false;
+
+	for (let i = 0; i < lines.length; i++) {
+		const line = lines[i].trim();
+
+		if (
+			line.startsWith('### `/') &&
+			!line.includes('Usage') &&
+			!line.includes('Subcommands') &&
+			!line.includes('Options') &&
+			!line.includes('Details')
+		) {
+			if (baseCommand && !baseHasSubcommands) {
+				compactLines.push(`> **${baseCommand}** - ${baseDesc}`);
+				hasCommands = true;
+			}
+
+			const cmdMatch = line.match(/### `(\/[^`]+)`/);
+			if (cmdMatch) {
+				baseCommand = cmdMatch[1];
+				baseDesc = noInfoText;
+				baseHasSubcommands = false;
+
+				for (let j = i + 1; j < Math.min(i + 5, lines.length); j++) {
+					if (lines[j].startsWith('**Description:**')) {
+						baseDesc = lines[j].replace('**Description:**', '').trim();
+						break;
+					}
+				}
+			}
+		} else if (line.startsWith('### Subcommands')) {
+			baseHasSubcommands = true;
+		} else if (
+			line.startsWith('**`/') &&
+			line.endsWith('`**') &&
+			!line.includes('Options for this subcommand:')
+		) {
+			const subMatch = line.match(/\*\*`(\/[^`]+)`\*\*/);
+			if (subMatch) {
+				let nameWithArgs = subMatch[1];
+				nameWithArgs = nameWithArgs.replace(/\[(<[^>]+>)\]/g, '$1');
+				nameWithArgs = nameWithArgs.replace(/\[([a-zA-Z0-9_-]+)\]/g, '<$1>');
+
+				let desc = noInfoText;
+				for (let j = i + 1; j < Math.min(i + 3, lines.length); j++) {
+					if (lines[j].trim().startsWith('> ')) {
+						desc = lines[j].trim().substring(2).trim();
+						break;
+					}
+				}
+				compactLines.push(`> **${nameWithArgs}** - ${desc}`);
+				hasCommands = true;
+			}
+		}
+	}
+
+	if (baseCommand && !baseHasSubcommands) {
+		compactLines.push(`> **${baseCommand}** - ${baseDesc}`);
+		hasCommands = true;
+	}
+
+	if (!hasCommands)
+		return await t(interaction, 'core.utils.help.compact.no_commands');
+
+	return compactLines.join('\n');
+}
+
+async function getMarkdownContent(
+	category,
+	rootDir,
+	mode = 'detailed',
+	container = null,
+	interaction = null,
+) {
 	const docName = CATEGORY_DOC_ALIAS[category] ?? category;
 	const filePath = path.join(rootDir, 'docs', 'commands', `${docName}.md`);
 	if (!fs.existsSync(filePath)) return [null];
 	const content = fs.readFileSync(filePath, 'utf-8');
 	if (!content || content.trim() === '') return [null];
+
+	if (mode === 'compact' && container && interaction) {
+		const compactContent = await parseCompactMarkdown(
+			content,
+			container,
+			interaction,
+		);
+		return smartSplit(compactContent);
+	}
 	return smartSplit(content);
 }
 
 module.exports = {
-	getHelpData: async (container, interaction) => {
+	getHelpData: async (container, interaction, mode = 'detailed') => {
 		const { kythiaConfig, t } = container;
 		const rootDir = path.join(__dirname, '..', '..', '..');
 		const addonsDir = path.join(rootDir, 'addons');
@@ -177,7 +277,13 @@ module.exports = {
 						const categoryName = categoryFolder.name;
 						if (!isCoreCategoryActive(categoryName)) continue;
 
-						const categoryPages = getMarkdownContent(categoryName, rootDir);
+						const categoryPages = await getMarkdownContent(
+							categoryName,
+							rootDir,
+							mode,
+							container,
+							interaction,
+						);
 						if (categoryPages[0] === null) continue;
 
 						allCategories.push({
@@ -196,7 +302,13 @@ module.exports = {
 			} else {
 				const manifestPath = path.join(addonsDir, addonName, 'addon.json');
 				if (fs.existsSync(manifestPath)) {
-					const categoryPages = getMarkdownContent(addonName, rootDir);
+					const categoryPages = await getMarkdownContent(
+						addonName,
+						rootDir,
+						mode,
+						container,
+						interaction,
+					);
 					if (categoryPages[0] === null) continue;
 
 					const manifest = require(manifestPath);
@@ -292,8 +404,10 @@ module.exports = {
 		const categoriesOnPage = allCategories.slice(start, end);
 
 		const selectMenu = new StringSelectMenuBuilder()
-			// Custom ID format: help-menu:userId:categoryPage:docPage
-			.setCustomId(`help-menu:${userId}:${categoryPage}:${docPage}`)
+			// Custom ID format: help-menu:userId:categoryPage:docPage:mode
+			.setCustomId(
+				`help-menu:${userId}:${categoryPage}:${docPage}:${state.mode || 'detailed'}`,
+			)
 			.setPlaceholder(
 				(
 					await t(interaction, 'core.utils.help.select.menu.placeholder', {
@@ -311,9 +425,9 @@ module.exports = {
 			allCategories.length / CATEGORIES_PER_PAGE,
 		);
 
-		// Button ID format: help-btn:<action>:<userId>:<categoryPage>:<selectedCategory>:<docPage>
+		// Button ID format: help-btn:<action>:<userId>:<categoryPage>:<selectedCategory>:<docPage>:<mode>
 		function makeBtnId(action) {
-			return `help-btn:${action}:${userId}:${categoryPage}:${selectedCategory || '-'}:${docPage}`;
+			return `help-btn:${action}:${userId}:${categoryPage}:${selectedCategory || '-'}:${docPage}:${state.mode || 'detailed'}`;
 		}
 
 		if (selectedCategory && selectedCategory !== '-') {
