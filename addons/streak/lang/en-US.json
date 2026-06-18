@@ -18,7 +18,7 @@
 				},
 				"continue": "Your streak continues! Congrats!",
 				"reward": "**You received a role reward:** {roles}",
-				"desc": "{emoji} Current Streak\n{currentStreak} days\n`` Highest Record\n{highestStreak} days\n`` Streak Freeze\n{streakFreezes}",
+				"desc": "{emoji} Current Streak\n{currentStreak} days\nHighest Record\n{highestStreak} days\nStreak Freeze\n{streakFreezes}",
 				"title_md": "## Daily Streak"
 			},
 			"me": {
