@@ -591,10 +591,11 @@ app.post('/:guildId/members/:userId/reset', async (c) => {
 			);
 
 		// Lazy-require to avoid circular deps
-		const { clearSession } = require('../../verification/helpers/session');
-		const { sendCaptcha } = require('../../verification/helpers/verify');
-		clearSession(guildId, userId);
-		await sendCaptcha(member, config);
+		getContainer(c).helpers.verification.session.clearSession(guildId, userId);
+		await getContainer(c).helpers.verification.verify.sendCaptcha(
+			member,
+			config,
+		);
 		return c.json({
 			success: true,
 			message: `Captcha resent to ${member.user.tag}`,
@@ -638,10 +639,11 @@ app.post('/:guildId/members/:userId/force', async (c) => {
 				},
 				404,
 			);
-		const { clearSession } = require('../../verification/helpers/session');
-		const { handleSuccess } = require('../../verification/helpers/verify');
-		clearSession(guildId, userId);
-		await handleSuccess(member, config);
+		getContainer(c).helpers.verification.session.clearSession(guildId, userId);
+		await getContainer(c).helpers.verification.verify.handleSuccess(
+			member,
+			config,
+		);
 		return c.json({
 			success: true,
 			message: `${member.user.tag} manually verified`,

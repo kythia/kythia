@@ -533,11 +533,6 @@ app.delete('/:guildId/logs', async (c) => {
 // ANTINUKE
 // ===========================================================================
 
-const {
-	getAntiNukeConfig,
-	serializeConfig,
-} = require('../../automod/helpers/antinuke');
-
 // Helper: load + save antinuke config
 async function getANConfig(c) {
 	const { ServerSetting } = getModels(c);
@@ -546,12 +541,16 @@ async function getANConfig(c) {
 		where: { guildId },
 		defaults: { guildId },
 	});
-	const config = getAntiNukeConfig(setting);
+	const config = c
+		.get('client')
+		.container.helpers.automod.antinuke.getAntiNukeConfig(setting);
 	return { setting, config, guildId };
 }
 
-async function saveANConfig(setting, config) {
-	setting.antiNukeConfig = serializeConfig(config);
+async function saveANConfig(setting, config, c) {
+	setting.antiNukeConfig = c
+		.get('client')
+		.container.helpers.automod.antinuke.serializeConfig(config);
 	setting.changed('antiNukeConfig', true);
 	await setting.save();
 }
@@ -601,7 +600,7 @@ app.put('/:guildId/antinuke', async (c) => {
 			config.whitelistedRoles = body.whitelistedRoles.map(String);
 		if (body.modules && typeof body.modules === 'object')
 			config.modules = body.modules;
-		await saveANConfig(setting, config);
+		await saveANConfig(setting, config, c);
 		return c.json({ status: 'ok', data: formatANConfig(config) });
 	} catch (error) {
 		getLogger(c).error('PUT antinuke error:', error);
@@ -628,7 +627,7 @@ app.patch('/:guildId/antinuke/toggle', async (c) => {
 	try {
 		const { setting, config } = await getANConfig(c);
 		config.enabled = body.enabled;
-		await saveANConfig(setting, config);
+		await saveANConfig(setting, config, c);
 		return c.json({ status: 'ok', data: { enabled: config.enabled } });
 	} catch (error) {
 		return c.json({ status: 'error', error: error.message }, 500);
@@ -649,7 +648,7 @@ app.patch('/:guildId/antinuke/log-channel', async (c) => {
 	try {
 		const { setting, config } = await getANConfig(c);
 		config.logChannelId = body.channelId || null;
-		await saveANConfig(setting, config);
+		await saveANConfig(setting, config, c);
 		return c.json({
 			status: 'ok',
 			data: { logChannelId: config.logChannelId },
@@ -703,7 +702,7 @@ app.patch('/:guildId/antinuke/modules/:module', async (c) => {
 		if (typeof body.detectGibberish === 'boolean')
 			mod.detectGibberish = body.detectGibberish;
 
-		await saveANConfig(setting, config);
+		await saveANConfig(setting, config, c);
 		return c.json({ status: 'ok', data: { module: moduleName, ...mod } });
 	} catch (error) {
 		return c.json({ status: 'error', error: error.message }, 500);
@@ -750,7 +749,7 @@ app.post('/:guildId/antinuke/whitelist', async (c) => {
 		const key = body.type === 'role' ? 'whitelistedRoles' : 'whitelistedUsers';
 		if (!Array.isArray(config[key])) config[key] = [];
 		if (!config[key].includes(body.id)) config[key].push(String(body.id));
-		await saveANConfig(setting, config);
+		await saveANConfig(setting, config, c);
 		return c.json(
 			{ status: 'ok', data: { added: body.id, type: body.type } },
 			201,
@@ -782,7 +781,7 @@ app.delete('/:guildId/antinuke/whitelist/:type/:id', async (c) => {
 			);
 		}
 		config[key] = config[key].filter((i) => i !== id);
-		await saveANConfig(setting, config);
+		await saveANConfig(setting, config, c);
 		return c.json({ status: 'ok', data: { removed: id, type } });
 	} catch (error) {
 		return c.json({ status: 'error', error: error.message }, 500);

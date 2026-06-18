@@ -22,7 +22,6 @@ const getContainer = (c) => getBot(c).container;
 const getModels = (c) => getContainer(c).models;
 
 // Import modmail helpers
-const modmailHelpers = require('../../modmail/helpers/index.js');
 
 // =============================================================================
 // MODMAIL THREAD endpoints  (/api/modmail)
@@ -254,7 +253,9 @@ app.post('/open', async (c) => {
 				},
 				403,
 			);
-		const modmail = await modmailHelpers.createModmailThread(
+		const modmail = await getContainer(
+			c,
+		).helpers.modmail.index.createModmailThread(
 			user,
 			guildId,
 			initialMessage || '',
@@ -368,7 +369,7 @@ app.post('/:id/close', async (c) => {
 			followUp: async () => {},
 			editReply: async () => {},
 		};
-		await modmailHelpers.closeModmail(
+		await getContainer(c).helpers.modmail.index.closeModmail(
 			mockInteraction,
 			container,
 			reason ?? null,
@@ -461,7 +462,7 @@ app.post('/:id/reply', async (c) => {
 			attachments: new Map(),
 			delete: async () => {},
 		};
-		await modmailHelpers.relayGuildReply(
+		await getContainer(c).helpers.modmail.index.relayGuildReply(
 			mockMessage,
 			modmail,
 			content,

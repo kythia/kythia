@@ -24,7 +24,6 @@ const getContainer = (c) => getBot(c).container;
 const getModels = (c) => getContainer(c).models;
 
 // Import ticket helpers
-const ticketHelpers = require('../../ticket/helpers/index.js');
 
 // =============================================================================
 // TICKET endpoints
@@ -219,7 +218,7 @@ app.post('/open', async (c) => {
 			replied: false,
 			deferred: false,
 		};
-		await ticketHelpers.createTicketChannel(
+		await container.helpers.ticket.index.createTicketChannel(
 			mockInteraction,
 			ticketConfig,
 			container,
@@ -306,7 +305,11 @@ app.post('/:id/close', async (c) => {
 			replied: false,
 			deferred: false,
 		};
-		await ticketHelpers.closeTicket(mockInteraction, container, reason ?? null);
+		await container.helpers.ticket.index.closeTicket(
+			mockInteraction,
+			container,
+			reason ?? null,
+		);
 		return c.json({
 			success: true,
 			message: 'Ticket closing initiated',
@@ -493,7 +496,10 @@ app.patch('/panels/:id', async (c) => {
 
 		// Refresh the live Discord panel message
 		if (panel.messageId) {
-			await ticketHelpers.refreshTicketPanel(panel.messageId, container);
+			await container.helpers.ticket.index.refreshTicketPanel(
+				panel.messageId,
+				container,
+			);
 		}
 		return c.json({
 			success: true,
@@ -577,7 +583,10 @@ app.post('/panels/:messageId/refresh', async (c) => {
 	const container = getContainer(c);
 	const messageId = c.req.param('messageId');
 	try {
-		await ticketHelpers.refreshTicketPanel(messageId, container);
+		await container.helpers.ticket.index.refreshTicketPanel(
+			messageId,
+			container,
+		);
 		return c.json({
 			success: true,
 			message: 'Panel refreshed',
@@ -732,7 +741,10 @@ app.post('/panels/:id/resend', async (c) => {
 		}
 
 		// Refresh the panel to populate ticket type buttons
-		await ticketHelpers.refreshTicketPanel(newMessage.id, container);
+		await container.helpers.ticket.index.refreshTicketPanel(
+			newMessage.id,
+			container,
+		);
 		return c.json({
 			success: true,
 			message: `Panel "${panel.title}" resent to channel ${targetChannelId}`,
@@ -876,7 +888,10 @@ app.post('/configs', async (c) => {
 		await config.save();
 
 		// Refresh the parent panel so the new type appears immediately
-		await ticketHelpers.refreshTicketPanel(panelMessageId, container);
+		await container.helpers.ticket.index.refreshTicketPanel(
+			panelMessageId,
+			container,
+		);
 		return c.json({
 			success: true,
 			data: config,
@@ -916,7 +931,10 @@ app.patch('/configs/:id', async (c) => {
 
 		// Refresh the parent panel
 		if (config.panelMessageId) {
-			await ticketHelpers.refreshTicketPanel(config.panelMessageId, container);
+			await container.helpers.ticket.index.refreshTicketPanel(
+				config.panelMessageId,
+				container,
+			);
 		}
 		return c.json({
 			success: true,
@@ -955,7 +973,10 @@ app.delete('/configs/:id', async (c) => {
 		await config.destroy();
 
 		// Refresh the parent panel so the deleted type disappears
-		await ticketHelpers.refreshTicketPanel(panelMessageId, container);
+		await container.helpers.ticket.index.refreshTicketPanel(
+			panelMessageId,
+			container,
+		);
 		return c.json({
 			success: true,
 			message: `Ticket type "${typeName}" deleted successfully`,

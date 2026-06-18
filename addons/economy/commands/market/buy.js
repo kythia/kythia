@@ -78,7 +78,7 @@ class BuyCommand extends BaseCommand {
 			MarketTransaction,
 			KythLiquidityPool,
 		} = models;
-		const { simpleContainer } = helpers.discord;
+		const { simpleContainer, createContainer } = helpers.discord;
 		await interaction.deferReply();
 		const assetId = interaction.options.getString('asset');
 		const amountToSpend = interaction.options.getNumber('amount');
@@ -280,7 +280,7 @@ class BuyCommand extends BaseCommand {
 					interaction,
 					'economy.market.buy.warning.extreme_impact',
 				);
-			if (warningNote) previewLines.push(warningNote);
+			if (warningNote) previewLines.push('', warningNote);
 
 			// Safe trades: execute immediately without confirmation
 			if (impactLevel === 'safe') {
@@ -309,15 +309,13 @@ class BuyCommand extends BaseCommand {
 					.setLabel('Cancel')
 					.setStyle(ButtonStyle.Secondary),
 			);
-			const components = await simpleContainer(
-				interaction,
-				previewLines.join('\n'),
-				{
-					color: impactLevel === 'danger' ? 'Red' : 'Yellow',
-				},
-			);
+			const components = await createContainer(interaction, {
+				description: previewLines.join('\n'),
+				color: impactLevel === 'danger' ? 'Red' : 'Yellow',
+				components: [row],
+			});
 			const message = await interaction.editReply({
-				components: [...components, row],
+				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 			const filter = (i) => i.user.id === interaction.user.id;

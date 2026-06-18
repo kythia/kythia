@@ -16,7 +16,6 @@ const getContainer = (c) => getBot(c).container;
 const getModels = (c) => getContainer(c).models;
 
 // Import reaction-role helpers
-const rrHelpers = require('../../reaction-role/helpers/index.js');
 
 // =============================================================================
 // LIST / GET endpoints
@@ -139,7 +138,10 @@ app.post('/', async (c) => {
 		}
 
 		// Refresh the live Discord message
-		await rrHelpers.refreshReactionRoleMessage(messageId, container);
+		await getContainer(c).helpers.reactionRole.index.refreshReactionRoleMessage(
+			messageId,
+			container,
+		);
 		return c.json({
 			success: true,
 			created,
@@ -273,7 +275,10 @@ app.post('/message/:messageId/refresh', async (c) => {
 	const container = getContainer(c);
 	const messageId = c.req.param('messageId');
 	try {
-		await rrHelpers.refreshReactionRoleMessage(messageId, container);
+		await getContainer(c).helpers.reactionRole.index.refreshReactionRoleMessage(
+			messageId,
+			container,
+		);
 		return c.json({
 			success: true,
 			message: `Message ${messageId} refreshed`,
@@ -457,7 +462,7 @@ app.post('/panels', async (c) => {
 			// post_embed — send an initial embed
 
 			const panelTitle = title || '🎭 Reaction Roles';
-			const embed = rrHelpers.buildPanelEmbed(
+			const embed = getContainer(c).helpers.reactionRole.index.buildPanelEmbed(
 				{
 					title: panelTitle,
 					description: description || null,
@@ -489,7 +494,10 @@ app.post('/panels', async (c) => {
 		});
 
 		// Refresh to render the panel properly
-		await rrHelpers.refreshPanelMessage(panel.id, container);
+		await getContainer(c).helpers.reactionRole.index.refreshPanelMessage(
+			panel.id,
+			container,
+		);
 		return c.json(
 			{
 				success: true,
@@ -668,7 +676,9 @@ app.patch('/panels/:id', async (c) => {
 			} else {
 				// post_embed: post a new embed in the target channel
 				const panelTitle = panel.title || '🎭 Reaction Roles';
-				const embed = rrHelpers.buildPanelEmbed(
+				const embed = getContainer(
+					c,
+				).helpers.reactionRole.index.buildPanelEmbed(
 					{
 						title: panelTitle,
 						description: panel.description,
@@ -723,7 +733,10 @@ app.patch('/panels/:id', async (c) => {
 			}
 		}
 		await panel.save();
-		await rrHelpers.refreshPanelMessage(panel.id, container);
+		await getContainer(c).helpers.reactionRole.index.refreshPanelMessage(
+			panel.id,
+			container,
+		);
 		return c.json({
 			success: true,
 			data: panel,
@@ -897,7 +910,10 @@ app.post('/panels/:id/emoji', async (c) => {
 			if (label !== undefined) rr.label = label || null;
 			await rr.save();
 		}
-		await rrHelpers.refreshPanelMessage(panel.id, container);
+		await getContainer(c).helpers.reactionRole.index.refreshPanelMessage(
+			panel.id,
+			container,
+		);
 		return c.json({
 			success: true,
 			created,
@@ -957,7 +973,11 @@ app.delete('/panels/:id/emoji/:rrId', async (c) => {
 		} catch (_) {}
 		const panelId = rr.panelId;
 		await rr.destroy();
-		if (panelId) await rrHelpers.refreshPanelMessage(panelId, container);
+		if (panelId)
+			await getContainer(c).helpers.reactionRole.index.refreshPanelMessage(
+				panelId,
+				container,
+			);
 		return c.json({
 			success: true,
 			message: `Binding ${rrId} removed`,
@@ -982,7 +1002,10 @@ app.post('/panels/:id/refresh', async (c) => {
 	const container = getContainer(c);
 	const id = c.req.param('id');
 	try {
-		await rrHelpers.refreshPanelMessage(parseInt(id, 10), container);
+		await getContainer(c).helpers.reactionRole.index.refreshPanelMessage(
+			parseInt(id, 10),
+			container,
+		);
 		return c.json({
 			success: true,
 			message: `Panel ${id} refreshed`,
@@ -1074,7 +1097,11 @@ app.patch('/panels/:id/emoji/:rrId', async (c) => {
 			roleId: newRoleId,
 			label: newLabel,
 		});
-		if (rr.panelId) await rrHelpers.refreshPanelMessage(rr.panelId, container);
+		if (rr.panelId)
+			await getContainer(c).helpers.reactionRole.index.refreshPanelMessage(
+				rr.panelId,
+				container,
+			);
 		return c.json({
 			success: true,
 			data: rr,
@@ -1195,7 +1222,10 @@ app.put('/panels/:id/emoji', async (c) => {
 			});
 			created.push(rr);
 		}
-		await rrHelpers.refreshPanelMessage(panel.id, container);
+		await getContainer(c).helpers.reactionRole.index.refreshPanelMessage(
+			panel.id,
+			container,
+		);
 		return c.json({
 			success: true,
 			count: created.length,
@@ -1349,7 +1379,7 @@ app.post('/panels/:id/duplicate', async (c) => {
 		// Post initial embed to target channel
 
 		const newTitle = overrideTitle || sourcePanel.title || '🎭 Reaction Roles';
-		const embed = rrHelpers.buildPanelEmbed(
+		const embed = getContainer(c).helpers.reactionRole.index.buildPanelEmbed(
 			{
 				title: newTitle,
 				description: sourcePanel.description,
@@ -1402,7 +1432,10 @@ app.post('/panels/:id/duplicate', async (c) => {
 		}
 
 		// Refresh to render properly
-		await rrHelpers.refreshPanelMessage(newPanel.id, container);
+		await getContainer(c).helpers.reactionRole.index.refreshPanelMessage(
+			newPanel.id,
+			container,
+		);
 		return c.json(
 			{
 				success: true,
@@ -1542,7 +1575,10 @@ app.patch('/:id', async (c) => {
 		});
 
 		// Refresh the live Discord message
-		await rrHelpers.refreshReactionRoleMessage(rr.messageId, container);
+		await getContainer(c).helpers.reactionRole.index.refreshReactionRoleMessage(
+			rr.messageId,
+			container,
+		);
 		return c.json({
 			success: true,
 			data: rr,
@@ -1617,7 +1653,10 @@ app.delete('/:id', async (c) => {
 		}
 
 		// Refresh the live Discord message with remaining reaction roles
-		await rrHelpers.refreshReactionRoleMessage(messageId, container);
+		await getContainer(c).helpers.reactionRole.index.refreshReactionRoleMessage(
+			messageId,
+			container,
+		);
 		return c.json({
 			success: true,
 			message: `ReactionRole (id=${id}) deleted successfully`,

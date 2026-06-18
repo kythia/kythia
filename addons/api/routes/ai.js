@@ -7,13 +7,14 @@
  */
 
 const { Hono } = require('hono');
-const UserFactsManager = require('../../../addons/ai/helpers/UserFactsManager');
 
 const app = new Hono();
 
 // Helper to access models from request context
-const getModels = (c) => c.get('client').container.models;
-const getLogger = (c) => c.get('client').container.logger;
+const getContainer = (c) => c.get('client').container;
+const getModels = (c) => getContainer(c).models;
+const getLogger = (c) => getContainer(c).logger;
+const getHelpers = (c) => getContainer(c).helpers;
 
 const { requirePremium, requireVote } = require('../helpers/locks');
 
@@ -89,6 +90,7 @@ app.get('/facts/:userId', async (c) => {
 app.post('/facts/:userId', async (c) => {
 	const { UserFact } = getModels(c);
 	const { userId } = c.req.param();
+	const UserFactsManager = getHelpers(c).ai.userFactsManager;
 
 	let body;
 	try {
@@ -106,12 +108,13 @@ app.post('/facts/:userId', async (c) => {
 	}
 
 	// If no type provided, auto-classify
-	const manager = new UserFactsManager({
+	const userFactsManagerInstance = new UserFactsManager({
 		UserFact,
 		logger: getLogger(c),
 		config: {},
 	});
-	const resolvedType = type || manager.classifyFact(fact.trim());
+	const resolvedType =
+		type || userFactsManagerInstance.classifyFact(fact.trim());
 
 	try {
 		const [factInstance, created] = await UserFact.findOrCreateCache({

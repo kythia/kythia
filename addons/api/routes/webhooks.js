@@ -22,6 +22,7 @@ const {
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 const app = new Hono();
+
 app.post('/topgg', async (c) => {
 	const client = c.get('client');
 	const container = client.container;
@@ -69,7 +70,7 @@ app.post('/topgg', async (c) => {
 			},
 		);
 		const voteExpiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000);
-		const [user, isNew] = await KythiaUser.getOrCreateCache(
+		const [user] = await KythiaUser.getOrCreateCache(
 			{
 				userId,
 			},
@@ -85,44 +86,33 @@ app.post('/topgg', async (c) => {
 		user.voteExpiresAt = voteExpiresAt;
 		user.votePoints = (user.votePoints || 0) + 1;
 		await user.save();
+
 		try {
 			const discordUser = await client.container.helpers.discord.getUserSafe(
 				client,
 				userId,
 			);
-			const { simpleContainer } = helpers.discord;
-			const msg = isNew
-				? await client.container.t(
-						{ locale: 'en-US' },
-						'api.webhooks.account_created_md',
-					)
-				: await client.container.t(
-						{ locale: 'en-US' },
-						'api.webhooks.thanks_voting_md',
-					);
-			const components = await simpleContainer(
+			const { createContainer } = helpers.discord;
+			const msg =
+				"## 🌸 Thanks for Voting!\nHiii there! Thank you for voting for **Kythia**! I'm so happy you're here, your support means a lot to me>//<, for your support, I've given you 1000 Kythia Coins and unlocked **vote only** commands, if you need any help, feel free to ask me!";
+			const components = await createContainer(
 				{
 					client,
 				},
-				msg,
 				{
+					description: msg,
 					color: config.bot.color,
+					components: [
+						new ActionRowBuilder().addComponents(
+							new ButtonBuilder()
+								.setCustomId('vote-remind')
+								.setLabel('Remind me in 12h')
+								.setStyle(ButtonStyle.Primary),
+						),
+					],
 				},
 			);
-			components[0]
-				.addSeparatorComponents(
-					new SeparatorBuilder()
-						.setSpacing(SeparatorSpacingSize.Small)
-						.setDivider(true),
-				)
-				.addActionRowComponents(
-					new ActionRowBuilder().addComponents(
-						new ButtonBuilder()
-							.setCustomId('vote-remind')
-							.setLabel('Remind me in 12h')
-							.setStyle(ButtonStyle.Primary),
-					),
-				);
+
 			await discordUser.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -135,10 +125,21 @@ app.post('/topgg', async (c) => {
 				label: 'api',
 			});
 		}
+
 		const accentColor = convertColor(config.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
+
+		const aboveCount = await KythiaUser.countCache({
+			where: {
+				votePoints: {
+					[require('sequelize').Op.gt]: user.votePoints,
+				},
+			},
+		});
+		const voteRank = `#${aboveCount + 1}`;
+
 		if (webhookVoteLogs && client) {
 			try {
 				const user = await client.container.helpers.discord.getUserSafe(
@@ -150,21 +151,8 @@ app.post('/topgg', async (c) => {
 				webhookUrl.searchParams.append('with_components', 'true');
 				const voteContainer = new ContainerBuilder()
 					.setAccentColor(accentColor)
-					.addSectionComponents(
-						new SectionBuilder()
-							.addTextDisplayComponents(
-								new TextDisplayBuilder().setContent(
-									await client.container.t(
-										{ locale: 'en-US' },
-										'api.webhooks.new_vote_md',
-									),
-								),
-							)
-							.setThumbnailAccessory(
-								new ThumbnailBuilder()
-									.setDescription(user.username)
-									.setURL(user.displayAvatarURL()),
-							),
+					.addTextDisplayComponents(
+						new TextDisplayBuilder().setContent(`## New Vote!`),
 					)
 					.addSeparatorComponents(
 						new SeparatorBuilder()
@@ -195,6 +183,16 @@ app.post('/topgg', async (c) => {
 									.setDescription(user.username)
 									.setURL(user.displayAvatarURL()),
 							),
+					)
+					.addSeparatorComponents(
+						new SeparatorBuilder()
+							.setSpacing(SeparatorSpacingSize.Small)
+							.setDivider(true),
+					)
+					.addTextDisplayComponents(
+						new TextDisplayBuilder().setContent(
+							`**Your Vote Ranks**: ${voteRank}\n**Your Vote Points**: ${user.votePoints}`,
+						),
 					)
 					.addSeparatorComponents(
 						new SeparatorBuilder()
@@ -266,6 +264,7 @@ app.post('/topgg', async (c) => {
 		);
 	}
 });
+
 app.post('/license-created', async (c) => {
 	const client = c.get('client');
 	const { logger, helpers } = client.container;

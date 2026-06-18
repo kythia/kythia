@@ -33,7 +33,7 @@ class HireCommand extends BaseCommand {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser, Inventory } = models;
-		const { simpleContainer } = helpers.discord;
+		const { simpleContainer, createContainer } = helpers.discord;
 
 		await interaction.deferReply();
 
@@ -120,21 +120,23 @@ class HireCommand extends BaseCommand {
 
 		const row = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
-				.setCustomId('hire_accept')
+				.setCustomId('hire-accept')
 				.setLabel('Accept Job')
 				.setStyle(ButtonStyle.Success),
 			new ButtonBuilder()
-				.setCustomId('hire_decline')
+				.setCustomId('hire-decline')
 				.setLabel('Decline')
 				.setStyle(ButtonStyle.Danger),
 		);
 
-		const components = await simpleContainer(interaction, promptMsg, {
+		const components = await createContainer(interaction, {
+			description: promptMsg,
 			color: 'Blue',
+			components: [row],
 		});
 
 		const message = await interaction.editReply({
-			components: [...components, row],
+			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 
@@ -145,7 +147,7 @@ class HireCommand extends BaseCommand {
 		});
 
 		collector.on('collect', async (i) => {
-			if (i.customId === 'hire_accept') {
+			if (i.customId === 'hire-accept') {
 				target.employerId = interaction.user.id;
 				target.changed('employerId', true);
 				await target.save();
@@ -169,7 +171,7 @@ class HireCommand extends BaseCommand {
 					components: successComponents,
 					flags: MessageFlags.IsComponentsV2,
 				});
-			} else {
+			} else if (i.customId === 'hire-decline') {
 				const declineMsg = await t(
 					interaction,
 					'economy.company.hire.decline',

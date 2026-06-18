@@ -9,7 +9,6 @@
 const { Hono } = require('hono');
 const app = new Hono();
 const { ChannelType } = require('discord.js');
-const { buildInterface } = require('../../tempvoice/helpers/interface.js');
 
 // Helper to get client and models
 const getClient = (c) => c.get('client');
@@ -160,7 +159,10 @@ app.post('/setup', async (c) => {
 			guildId: guild.id,
 			guild,
 		};
-		const { components, flags } = await buildInterface(mockInteraction);
+		const { components, flags } =
+			await getContainer(c).helpers.tempvoice.interface.buildInterface(
+				mockInteraction,
+			);
 		const interfaceMessage = await controlPanel.send({
 			components,
 			flags,
@@ -266,7 +268,10 @@ app.post('/configs/:guildId/refresh', async (c) => {
 			guildId,
 			guild,
 		};
-		const { components, flags } = await buildInterface(mockInteraction);
+		const { components, flags } =
+			await getContainer(c).helpers.tempvoice.interface.buildInterface(
+				mockInteraction,
+			);
 		let message = null;
 		if (config.interfaceMessageId) {
 			message = await client.container.helpers.discord.getMessageSafe(

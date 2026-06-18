@@ -77,7 +77,7 @@ class SellCommand extends BaseCommand {
 			MarketTransaction,
 			KythLiquidityPool,
 		} = models;
-		const { simpleContainer } = helpers.discord;
+		const { simpleContainer, createContainer } = helpers.discord;
 		await interaction.deferReply();
 		const assetId = interaction.options.getString('asset');
 		const sellQuantity = interaction.options.getNumber('quantity');
@@ -218,14 +218,18 @@ class SellCommand extends BaseCommand {
 					maximumFractionDigits: 2,
 				})} (0.5% slippage tol.)`,
 			];
-			const warningNote = {
-				safe: '',
-				warning:
-					'\n\n⚠️ **High price impact.** Your sell will noticeably push the price down.',
-				danger:
-					'\n\n🚨 **EXTREME DUMP WARNING!** This sell will crash the KYTH price significantly. Are you sure?',
-			}[impactLevel];
-			if (warningNote) previewLines.push(warningNote);
+			let warningNote = '';
+			if (impactLevel === 'warning')
+				warningNote = await t(
+					interaction,
+					'economy.market.sell.warning.high_impact',
+				);
+			else if (impactLevel === 'danger')
+				warningNote = await t(
+					interaction,
+					'economy.market.sell.warning.extreme_impact',
+				);
+			if (warningNote) previewLines.push('', warningNote);
 			if (impactLevel === 'safe') {
 				return kythtradeHelper.executeSellKyth({
 					interactionOrI: interaction,
@@ -255,15 +259,13 @@ class SellCommand extends BaseCommand {
 					.setLabel('Cancel')
 					.setStyle(ButtonStyle.Secondary),
 			);
-			const components = await simpleContainer(
-				interaction,
-				previewLines.join('\n'),
-				{
-					color: impactLevel === 'danger' ? 'Red' : 'Yellow',
-				},
-			);
+			const components = await createContainer(interaction, {
+				description: previewLines.join('\n'),
+				color: impactLevel === 'danger' ? 'Red' : 'Yellow',
+				components: [row],
+			});
 			const message = await interaction.editReply({
-				components: [...components, row],
+				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 			const filter = (i) => i.user.id === interaction.user.id;
@@ -398,28 +400,24 @@ class SellCommand extends BaseCommand {
 			const pnl = (currentPrice - avgBuyPrice) * sellQuantity;
 			const pnlSign = pnl >= 0 ? '+' : '';
 			const pnlEmoji = pnl >= 0 ? '📈' : '📉';
-			const msg = `${await t(interaction, 'economy.market.sell.success.title')}\n${await t(
-				interaction,
-				'economy.market.sell.success.desc',
-				{
-					quantity: sellQuantity.toFixed(6),
-					asset: assetId.toUpperCase(),
-					amount: totalReceived.toLocaleString(undefined, {
-						maximumFractionDigits: 2,
-					}),
-					avgBuyPrice: avgBuyPrice.toLocaleString(undefined, {
-						maximumFractionDigits: 2,
-					}),
-					sellPrice: currentPrice.toLocaleString(undefined, {
-						maximumFractionDigits: 2,
-					}),
-					pnlEmoji,
-					pnlSign,
-					pnl: pnl.toLocaleString(undefined, {
-						maximumFractionDigits: 2,
-					}),
-				},
-			)}`;
+			const msg = await t(interaction, 'economy.market.sell.success.desc', {
+				quantity: sellQuantity.toFixed(6),
+				asset: assetId.toUpperCase(),
+				amount: totalReceived.toLocaleString(undefined, {
+					maximumFractionDigits: 2,
+				}),
+				avgBuyPrice: avgBuyPrice.toLocaleString(undefined, {
+					maximumFractionDigits: 2,
+				}),
+				sellPrice: currentPrice.toLocaleString(undefined, {
+					maximumFractionDigits: 2,
+				}),
+				pnlEmoji,
+				pnlSign,
+				pnl: pnl.toLocaleString(undefined, {
+					maximumFractionDigits: 2,
+				}),
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});

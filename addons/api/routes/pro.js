@@ -7,7 +7,6 @@
  */
 
 const { Hono } = require('hono');
-const CloudflareApi = require('../../pro/helpers/CloudflareApi');
 
 const app = new Hono();
 
@@ -21,7 +20,7 @@ const getLogger = (c) => getContainer(c).logger;
 /** Lazy CloudflareApi — initialised once per request (cheap, stateless after init). */
 function getCfApi(c) {
 	const container = getContainer(c);
-	return new CloudflareApi({
+	return new (getContainer(c).helpers.pro.CloudflareApi)({
 		kythiaConfig: container.kythiaConfig,
 		logger: container.logger,
 		models: container.models,

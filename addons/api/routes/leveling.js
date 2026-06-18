@@ -7,11 +7,6 @@
  */
 
 const { Hono } = require('hono');
-const {
-	calculateLevelAndXp,
-	levelUpXp,
-} = require('../../../addons/leveling/helpers');
-// const { getMemberSafe } = require('../../core/helpers/discord');
 
 const app = new Hono();
 
@@ -48,7 +43,11 @@ async function getGuildLevelingConfig(guildId, models) {
 function getTotalXp(user, curve, multiplier) {
 	let totalXp = user.xp;
 	for (let i = 1; i < user.level; i++) {
-		totalXp += levelUpXp(i, curve, multiplier);
+		totalXp += getContainer(c).helpers.leveling.index.levelUpXp(
+			i,
+			curve,
+			multiplier,
+		);
 	}
 	return totalXp;
 }
@@ -250,7 +249,11 @@ app.get('/:guildId', async (c) => {
 				avatar: userObj?.avatar ?? null,
 				level: u.level ?? 1,
 				xp: u.xp ?? 0,
-				xpRequired: levelUpXp(u.level ?? 1, curve, multiplier),
+				xpRequired: getContainer(c).helpers.leveling.index.levelUpXp(
+					u.level ?? 1,
+					curve,
+					multiplier,
+				),
 				createdAt: u.createdAt,
 				updatedAt: u.updatedAt,
 			};
@@ -331,7 +334,11 @@ app.get('/:guildId/:userId', async (c) => {
 				guildId: user.guildId,
 				level: user.level ?? 1,
 				xp: user.xp ?? 0,
-				xpRequired: levelUpXp(user.level ?? 1, curve, multiplier),
+				xpRequired: getContainer(c).helpers.leveling.index.levelUpXp(
+					user.level ?? 1,
+					curve,
+					multiplier,
+				),
 				rank: aboveCount + 1,
 				totalMembers: rank,
 				createdAt: user.createdAt,
@@ -393,7 +400,11 @@ app.post('/:guildId/:userId', async (c) => {
 					guildId: user.guildId,
 					level: user.level,
 					xp: user.xp,
-					xpRequired: levelUpXp(user.level, curve, multiplier),
+					xpRequired: getContainer(c).helpers.leveling.index.levelUpXp(
+						user.level,
+						curve,
+						multiplier,
+					),
 					createdAt: user.createdAt,
 					updatedAt: user.updatedAt,
 				},
@@ -495,7 +506,9 @@ app.patch('/:guildId/:userId', async (c) => {
 					400,
 				);
 			}
-			const { newLevel, newXp } = calculateLevelAndXp(
+			const { newLevel, newXp } = getContainer(
+				c,
+			).helpers.leveling.index.calculateLevelAndXp(
 				xpToSet,
 				curve,
 				multiplier,
@@ -510,7 +523,9 @@ app.patch('/:guildId/:userId', async (c) => {
 				return c.json({ success: false, error: 'xp must be an integer' }, 400);
 			}
 			const totalXp = getTotalXp(user, curve, multiplier) + xpToAdd;
-			const { newLevel, newXp } = calculateLevelAndXp(
+			const { newLevel, newXp } = getContainer(
+				c,
+			).helpers.leveling.index.calculateLevelAndXp(
 				Math.max(0, totalXp),
 				curve,
 				multiplier,
@@ -535,7 +550,11 @@ app.patch('/:guildId/:userId', async (c) => {
 				guildId: user.guildId,
 				level: user.level,
 				xp: user.xp,
-				xpRequired: levelUpXp(user.level, curve, multiplier),
+				xpRequired: getContainer(c).helpers.leveling.index.levelUpXp(
+					user.level,
+					curve,
+					multiplier,
+				),
 				updatedAt: user.updatedAt,
 			},
 		});

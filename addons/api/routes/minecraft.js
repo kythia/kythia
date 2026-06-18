@@ -8,10 +8,6 @@
 
 const { Hono } = require('hono');
 const { ChannelType, PermissionFlagsBits } = require('discord.js');
-const {
-	fetchMcStatus,
-	runMinecraftStatsUpdater,
-} = require('../../minecraft/helpers/mcstats');
 
 const app = new Hono();
 
@@ -35,7 +31,10 @@ app.get('/status/raw', async (c) => {
 	}
 
 	try {
-		const data = await fetchMcStatus(host, port);
+		const data = await getContainer(c).helpers.minecraft.mcstats.fetchMcStatus(
+			host,
+			port,
+		);
 		return c.json({ success: true, data });
 	} catch (err) {
 		return c.json({ success: false, error: err.message }, 502);
@@ -70,7 +69,10 @@ app.get('/status/:guildId', async (c) => {
 		const host = settings.minecraftIp;
 		const port = settings.minecraftPort ?? 25565;
 
-		const data = await fetchMcStatus(host, port);
+		const data = await getContainer(c).helpers.minecraft.mcstats.fetchMcStatus(
+			host,
+			port,
+		);
 		return c.json({
 			success: true,
 			host,
@@ -181,7 +183,9 @@ app.post('/autosetup/:guildId', async (c) => {
 		// 1. Fetch initial status (best-effort)
 		let initialData = null;
 		try {
-			initialData = await fetchMcStatus(host, port);
+			initialData = await getContainer(
+				c,
+			).helpers.minecraft.mcstats.fetchMcStatus(host, port);
 		} catch {
 			/* offline is fine */
 		}
@@ -328,11 +332,13 @@ app.post('/trigger-update/:guildId', async (c) => {
 	try {
 		if (guildId === 'all') {
 			// Fire and forget — run the full updater cycle in background
-			runMinecraftStatsUpdater(client).catch((e) =>
-				logger.error(`trigger-update all failed: ${e.message || e}`, {
-					label: 'mc-api',
-				}),
-			);
+			getContainer(c)
+				.helpers.minecraft.mcstats.runMinecraftStatsUpdater(client)
+				.catch((e) =>
+					logger.error(`trigger-update all failed: ${e.message || e}`, {
+						label: 'mc-api',
+					}),
+				);
 			return c.json({
 				success: true,
 				message: 'Update cycle triggered for all guilds',
@@ -351,12 +357,14 @@ app.post('/trigger-update/:guildId', async (c) => {
 		}
 
 		// Run updater for this single guild
-		runMinecraftStatsUpdater(client, [settings]).catch((e) =>
-			logger.error(
-				`[MC API] trigger-update ${guildId} failed: ${e.message || e}`,
-				{ label: 'mc-api' },
-			),
-		);
+		getContainer(c)
+			.helpers.minecraft.mcstats.runMinecraftStatsUpdater(client, [settings])
+			.catch((e) =>
+				logger.error(
+					`[MC API] trigger-update ${guildId} failed: ${e.message || e}`,
+					{ label: 'mc-api' },
+				),
+			);
 		return c.json({
 			success: true,
 			message: `Update triggered for guild ${guildId}`,

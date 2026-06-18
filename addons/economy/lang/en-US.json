@@ -859,8 +859,7 @@
 					}
 				},
 				"success": {
-					"desc": "## ✅ Asset Sold!\nYou have successfully sold **{quantity} {asset}** for **🪙 {amount}**.\n\n> Avg. Buy Price: `{avgBuyPrice}`\n> Sell Price: `{sellPrice}`\n> P/L on this sale: `{pnlEmoji} {pnlSign}{pnl}`",
-					"title": "## ✅ Asset Sold!"
+					"desc": "## ✅ Asset Sold!\nYou have successfully sold **{quantity} {asset}** for **🪙 {amount}**.\n\n> Avg. Buy Price: `{avgBuyPrice}`\n> Sell Price: `{sellPrice}`\n> P/L on this sale: `{pnlEmoji} {pnlSign}{pnl}`"
 				},
 				"error": {
 					"desc": "## ❌ Sale Error\nAn error occurred while processing your sale. Please try again.",
@@ -883,7 +882,11 @@
 				"preview_title": "## 💰 KYTH Sell Preview",
 				"insufficient_kyth_md": "## ❌ Insufficient KYTH\nYou only have **{userKyth} KYTH**. Cannot sell **{sellQuantity} KYTH**.",
 				"amm_unavailable_md": "## ❌ AMM Unavailable\nThe KYTH liquidity pool is not initialized.",
-				"insufficient_liquidity_md": "## ❌ Insufficient Pool Liquidity\nThe pool does not have enough Coin to fill your sell order."
+				"insufficient_liquidity_md": "## ❌ Insufficient Pool Liquidity\nThe pool does not have enough Coin to fill your sell order.",
+				"warning": {
+					"high_impact": "⚠️ **High price impact.** Your sell will noticeably push the price down.",
+					"extreme_impact": "🚨 **EXTREME DUMP WARNING!** This sell will crash the KYTH price significantly. Are you sure?"
+				}
 			},
 			"view": {
 				"asset": {
@@ -968,8 +971,8 @@
 					"desc": "## 💎 KYTH Buy Preview\n\n**You Spend:**  🪙 {amountToSpend} Coin\n**Protocol Fee ({feeRate}%):**  🪙 {feeCoinAmount} Coin\n**You Receive:** 💎 {kythOut} KYTH\n\n**Mid Price:** {midPrice} Coin/KYTH\n**Execution Price:** {executionPrice} Coin/KYTH\n**Price After:** {priceAfter} Coin/KYTH\n{impactEmoji} **Price Impact:** {priceImpactPct}%\n**Min. Received:** {minOut} KYTH (0.5% slippage tol.)"
 				},
 				"warning": {
-					"high_impact": "\n\n⚠️ **High price impact.** Your trade is large relative to pool size. You are paying a significant premium.",
-					"extreme_impact": "\n\n🚨 **EXTREME PRICE IMPACT!** This trade will move the market by a lot. You are buying at a very high premium. Are you absolutely sure?"
+					"high_impact": "⚠️ **High price impact.** Your trade is large relative to pool size. You are paying a significant premium.",
+					"extreme_impact": "🚨 **EXTREME PRICE IMPACT!** This trade will move the market by a lot. You are buying at a very high premium. Are you absolutely sure?"
 				},
 				"cancel": {
 					"desc": "Purchase cancelled."

@@ -20,7 +20,6 @@ app.post('/upload', async (c) => {
 	const container = getContainer(c);
 	const { Image } = getModels(c);
 	const { kythiaConfig, logger } = container;
-	const { uploadToR2 } = require('../../image/services/r2');
 	const { v4: uuidv4 } = require('uuid');
 	const path = require('node:path');
 
@@ -71,12 +70,13 @@ app.post('/upload', async (c) => {
 		const ext = path.extname(file.name).toLowerCase() || '.png';
 		const uniqueKey = `images/${userId}/${uuidv4()}${ext}`;
 
-		const { key, publicUrl } = await uploadToR2(
-			buffer,
-			uniqueKey,
-			file.name,
-			r2Config,
-		);
+		const { key, publicUrl } =
+			await require('../../image/services/r2').uploadToR2(
+				buffer,
+				uniqueKey,
+				file.name,
+				r2Config,
+			);
 
 		// Save metadata to database
 		const savedImage = await Image.create({
@@ -217,7 +217,6 @@ app.delete('/:id', async (c) => {
 	const { Image } = getModels(c);
 	const { kythiaConfig, logger } = container;
 	const id = c.req.param('id');
-	const { deleteFromR2 } = require('../../image/services/r2');
 
 	const r2Config = kythiaConfig.addons.image;
 
@@ -228,7 +227,10 @@ app.delete('/:id', async (c) => {
 
 		try {
 			// result.filename stores the R2 key (e.g. "images/<userId>/<uuid>.png")
-			await deleteFromR2(result.filename, r2Config);
+			await require('../../image/services/r2').deleteFromR2(
+				result.filename,
+				r2Config,
+			);
 		} catch (r2Err) {
 			logger.error(
 				`Failed to delete image from R2 (${result.filename}): ${r2Err.message || r2Err}`,
