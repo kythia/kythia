@@ -14,11 +14,10 @@ const serversuiHelper = require('../../../helpers/serversUi');
 
 class ServersCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('servers')
-			.setDescription('🌐 List all servers the bot is in');
+			.setDescription('List all servers the bot is in');
 	async execute(interaction) {
 		const container = this.container;
 		const { t } = container;
@@ -134,5 +133,4 @@ class ServersCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ServersCommand;

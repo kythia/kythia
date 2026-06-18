@@ -7,50 +7,50 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class CooldownCommand extends BaseCommand {
 	subcommand = true;
 	permissions = [PermissionFlagsBits.ManageGuild];
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('cooldown')
-			.setDescription('🎮 Set XP gain cooldown')
+			.setDescription('Set XP gain cooldown')
 			.addIntegerOption((option) =>
 				option
 					.setName('cooldown')
 					.setDescription('Cooldown in seconds')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const guildId = interaction.guild.id;
 		const guildName = interaction.guild.name;
 		const cooldown = interaction.options.getInteger('cooldown');
-
 		const [serverSetting] = await ServerSetting.findOrCreateCache({
-			where: { guildId },
-			defaults: { guildId, guildName },
+			where: {
+				guildId,
+			},
+			defaults: {
+				guildId,
+				guildName,
+			},
 		});
-
 		serverSetting.levelingCooldown = cooldown * 1000;
 		await serverSetting.save();
-
 		const components = await simpleContainer(
 			interaction,
 			await t(interaction, 'core.setting.setting.leveling.cooldown.set', {
 				cooldown,
 			}),
-			{ color: 'Green' },
+			{
+				color: 'Green',
+			},
 		);
 		return interaction.editReply({
 			components,
@@ -58,5 +58,4 @@ class CooldownCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = CooldownCommand;

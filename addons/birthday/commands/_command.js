@@ -6,15 +6,11 @@
  * @version 26.0.0-rc.1
  */
 const { SlashCommandBuilder } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class BirthdayCommand extends BaseCommand {
 	guildOnly = true;
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('birthday')
-		.setDescription('🎂 Manage your birthday settings.');
+		.setDescription('Manage your birthday settings.');
 }
-
 exports.default = BirthdayCommand;

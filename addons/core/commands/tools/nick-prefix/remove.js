@@ -8,41 +8,34 @@
 
 const { roleUnprefix } = require('../../../helpers');
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class RemoveCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
-			.setDescription('📛 Removes the prefix from member nicknames.');
-
+			.setDescription('Removes the prefix from member nicknames.');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const startedMsg = await t(interaction, 'core.tools.prefix.remove.started');
 		const startedComponents = await simpleContainer(interaction, startedMsg);
-
 		await interaction.editReply({
 			components: startedComponents,
 			flags: MessageFlags.IsComponentsV2,
 		});
-
 		try {
 			const updated = await roleUnprefix(interaction.guild, container);
 			const successMsg = await t(
 				interaction,
 				'core.tools.prefix.remove.success',
-				{ count: updated },
+				{
+					count: updated,
+				},
 			);
 			const successComponents = await simpleContainer(interaction, successMsg);
-
 			try {
 				await interaction.editReply({
 					components: successComponents,
@@ -77,5 +70,4 @@ class RemoveCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = RemoveCommand;

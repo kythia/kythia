@@ -18,12 +18,11 @@ const {
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 const wordleHelper = require('../helpers/wordle');
-
 const games = {};
 class WordleCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('wordle')
-		.setDescription('🔡 Play Wordle! Guess the 5-letter word in 6 tries.');
+		.setDescription('Play Wordle! Guess the 5-letter word in 6 tries.');
 	async execute(interaction) {
 		const container = this.container;
 		const { t } = container;
@@ -176,5 +175,4 @@ class WordleCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = WordleCommand;

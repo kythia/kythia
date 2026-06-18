@@ -7,15 +7,12 @@
  */
 
 const { BaseCommand } = require('kythia-core');
-
 class PortfolioCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('portfolio')
-			.setDescription('📈 View all the Guild Stocks you currently own.');
-
+			.setDescription('View all the Guild Stocks you currently own.');
 	async execute(interaction) {
 		const container = this.container;
 		await interaction.deferReply();
@@ -24,13 +21,12 @@ class PortfolioCommand extends BaseCommand {
 		const { simpleContainer } = helpers.discord;
 		const { MessageFlags } = require('discord.js');
 		const userId = interaction.user.id;
-
 		const holdings = await GuildTokenHolding.getAllCache({
-			where: { userId },
+			where: {
+				userId,
+			},
 		});
-
 		const ownedHoldings = holdings.filter((h) => h.balance > 0);
-
 		if (ownedHoldings.length === 0) {
 			const msg = await t(
 				interaction,
@@ -38,31 +34,37 @@ class PortfolioCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.portfolio.empty', { msg }),
-				{ color: 'Red' },
+				await t(interaction, 'economy.stock.portfolio.empty', {
+					msg,
+				}),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		let totalKythValue = 0;
 		const fieldsText = [];
-
 		for (const holding of ownedHoldings) {
 			const pool = await GuildLiquidityPool.getCache({
-				where: { guildId: holding.guildId },
+				where: {
+					guildId: holding.guildId,
+				},
 			});
 			if (pool) {
 				const price = pool.kythReserve / pool.tokenReserve;
 				const kythValue = price * holding.balance;
 				totalKythValue += kythValue;
-
 				const fieldText = await t(
 					interaction,
 					'economy.guild_stock.portfolio.field',
-					{ balance: holding.balance.toFixed(2), value: kythValue.toFixed(4) },
+					{
+						balance: holding.balance.toFixed(2),
+						value: kythValue.toFixed(4),
+					},
 				);
 				fieldsText.push(
 					await t(interaction, 'economy.guild_stock.portfolio.holding_md', {
@@ -72,7 +74,6 @@ class PortfolioCommand extends BaseCommand {
 				);
 			}
 		}
-
 		const title = await t(interaction, 'economy.guild_stock.portfolio.title');
 		const desc = await t(interaction, 'economy.guild_stock.portfolio.desc', {
 			value: totalKythValue.toFixed(4),
@@ -80,9 +81,12 @@ class PortfolioCommand extends BaseCommand {
 		const fullText = await t(
 			interaction,
 			'economy.guild_stock.portfolio.title_md',
-			{ title, desc, fieldsText: fieldsText.join('\n\n') },
+			{
+				title,
+				desc,
+				fieldsText: fieldsText.join('\n\n'),
+			},
 		);
-
 		const components = await simpleContainer(interaction, fullText, {
 			color: 'Blue',
 		});
@@ -92,5 +96,4 @@ class PortfolioCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = PortfolioCommand;

@@ -13,48 +13,36 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class HelpCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('help')
-			.setDescription(
-				'📖 Information and examples about each DNS record type.',
-			);
-
+			.setDescription('Information and examples about each DNS record type.');
 	async execute(interaction) {
 		const container = this.container;
 		const { kythiaConfig, helpers, t } = container;
 		const { convertColor } = helpers.color;
-
 		await interaction.deferReply();
-
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
 		const mainContainer = new ContainerBuilder().setAccentColor(accentColor);
-
 		const title = await t(interaction, 'pro.dns.help.title');
 		const description = await t(interaction, 'pro.dns.help.description');
 		const labels = await t(interaction, 'pro.dns.help.labels');
 		const recordTypes = await t(interaction, 'pro.dns.help.types');
-
 		mainContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(`${title}\n${description}`),
 		);
-
 		for (const recordType of recordTypes) {
 			mainContainer.addSeparatorComponents(
 				new SeparatorBuilder()
 					.setSpacing(SeparatorSpacingSize.Small)
 					.setDivider(true),
 			);
-
 			const content = [
 				`**${labels.description}**`,
 				recordType.desc,
@@ -63,21 +51,17 @@ class HelpCommand extends BaseCommand {
 				`- **${labels.value}** ${recordType.value}`,
 				`- **${labels.name}** ${recordType.name_host}`,
 			];
-
 			if (recordType.priority) {
 				content.push(`- **${labels.priority}** ${recordType.priority}`);
 			}
-
 			content.push('', `**${labels.example}**`);
 			content.push(...recordType.example_lines);
-
 			mainContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
 					`${recordType.name}\n${content.join('\n')}`,
 				),
 			);
 		}
-
 		mainContainer
 			.addSeparatorComponents(
 				new SeparatorBuilder()
@@ -91,12 +75,10 @@ class HelpCommand extends BaseCommand {
 					}),
 				),
 			);
-
 		await interaction.editReply({
 			components: [mainContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = HelpCommand;

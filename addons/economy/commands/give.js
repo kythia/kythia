@@ -23,7 +23,7 @@ class GiveCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('give')
-			.setDescription('💰 Give kythia coin to another user.')
+			.setDescription('Give kythia coin to another user.')
 			.addUserOption((option) =>
 				option
 					.setName('target')

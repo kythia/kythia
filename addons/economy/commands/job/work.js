@@ -19,18 +19,14 @@ const {
 const banks = require('../../helpers/banks');
 const jobs = require('../../helpers/jobs');
 const { toBigIntSafe } = require('../../helpers/bigint');
-
 const { BaseCommand } = require('kythia-core');
-
 class WorkCommand extends BaseCommand {
 	subcommand = true;
 	aliases = ['work'];
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('work')
-			.setDescription('⚒️ Work to earn money with various scenarios!');
-
+			.setDescription('Work to earn money with various scenarios!');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
@@ -38,9 +34,9 @@ class WorkCommand extends BaseCommand {
 		const { simpleContainer, createContainer } = helpers.discord;
 		const { checkCooldown } = helpers.time;
 		await interaction.deferReply();
-
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
-
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
 			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
 			const components = await simpleContainer(interaction, msg, {
@@ -51,22 +47,20 @@ class WorkCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (
 			helpers.jail &&
 			(await helpers.jail.checkJail(interaction, user, container))
 		) {
 			return;
 		}
-
-		const userInventory = await Inventory.getAllCache({ userId: user.userId });
-
+		const userInventory = await Inventory.getAllCache({
+			userId: user.userId,
+		});
 		const cooldown = checkCooldown(
 			user.lastWork,
 			kythiaConfig.addons.economy.workCooldown || 28800,
 			interaction,
 		);
-
 		if (cooldown.remaining) {
 			const msg = await t(interaction, 'economy.work.work.cooldown.desc', {
 				time: cooldown.time,
@@ -79,7 +73,6 @@ class WorkCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (!user.profession) {
 			const msg = await t(
 				interaction,
@@ -93,10 +86,8 @@ class WorkCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		let job = null;
 		let tierObj = null;
-
 		for (const tierKey of Object.keys(jobs)) {
 			const tier = jobs[tierKey];
 			for (const j of tier.jobs) {
@@ -108,7 +99,6 @@ class WorkCommand extends BaseCommand {
 			}
 			if (job) break;
 		}
-
 		if (!job) {
 			user.profession = null;
 			user.changed('profession', true);
@@ -125,11 +115,9 @@ class WorkCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const userItemNames = new Set(userInventory.map((item) => item.itemName));
 		let hasRequirement = false;
 		let requiredItemFound = null;
-
 		if (tierObj.requiredItem === null) {
 			hasRequirement = true;
 		} else if (Array.isArray(tierObj.requiredItem)) {
@@ -146,7 +134,6 @@ class WorkCommand extends BaseCommand {
 				requiredItemFound = tierObj.requiredItem;
 			}
 		}
-
 		if (!hasRequirement) {
 			const reqStr = Array.isArray(tierObj.requiredItem)
 				? tierObj.requiredItem.join(' / ')
@@ -154,7 +141,10 @@ class WorkCommand extends BaseCommand {
 			const msg = await t(
 				interaction,
 				'economy.job.work.error.missing_tool.desc',
-				{ job: await t(interaction, job.nameKey), req: reqStr },
+				{
+					job: await t(interaction, job.nameKey),
+					req: reqStr,
+				},
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -182,16 +172,16 @@ class WorkCommand extends BaseCommand {
 					.setLabel('Decline (Stay Safe)')
 					.setStyle(ButtonStyle.Primary),
 			);
-
 			const eventContainer = await createContainer(interaction, {
 				description: await t(
 					interaction,
 					'economy.job.work.event.crossroads.desc.desc',
-					{ job: await t(interaction, job.nameKey) },
+					{
+						job: await t(interaction, job.nameKey),
+					},
 				),
 				components: [row],
 			});
-
 			const message = await interaction.editReply({
 				components: eventContainer,
 				flags: MessageFlags.IsComponentsV2,
@@ -201,7 +191,6 @@ class WorkCommand extends BaseCommand {
 				filter,
 				time: 30000,
 			});
-
 			collector.on('collect', async (i) => {
 				let outcomeMsg = '';
 				if (i.customId === 'event_accept') {
@@ -243,15 +232,19 @@ class WorkCommand extends BaseCommand {
 				const components = await simpleContainer(i, outcomeMsg, {
 					color: i.customId === 'event_accept' ? 'Red' : 'Green',
 				});
-				await i.update({ components, flags: MessageFlags.IsComponentsV2 });
+				await i.update({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
 			});
-
 			collector.on('end', async (collected) => {
 				if (collected.size === 0) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'economy.job.work.event.timeout.desc'),
-						{ color: 'Yellow' },
+						{
+							color: 'Yellow',
+						},
 					);
 					await interaction.editReply({
 						components,
@@ -272,7 +265,6 @@ class WorkCommand extends BaseCommand {
 		const jobExpNum = Number(user.jobExp || 0);
 		let jobTitlePrefix = 'Junior';
 		let expBonusMultiplier = 1.0;
-
 		if (jobExpNum >= 1000) {
 			jobTitlePrefix = 'Master';
 			expBonusMultiplier = 2.0;
@@ -283,24 +275,21 @@ class WorkCommand extends BaseCommand {
 			jobTitlePrefix = 'Senior';
 			expBonusMultiplier = 1.25;
 		}
-
 		const fullJobTitle = `${jobTitlePrefix} ${jobName}`;
-
 		const baseEarningRaw =
 			Math.floor(Math.random() * (job.basePay[1] - job.basePay[0] + 1)) +
 			job.basePay[0];
 		const baseEarning = Math.floor(baseEarningRaw * expBonusMultiplier);
-
 		const userBank = banks.getBank(user.bankType);
 		const bankBonus = Math.floor(
 			baseEarning * (userBank.incomeBonusPercent / 100),
 		);
 		let finalEarning = Math.floor(baseEarning * scenario.modifier) + bankBonus;
-
 		let employerTax = 0;
-
 		if (user.employerId) {
-			const employer = await KythiaUser.getCache({ userId: user.employerId });
+			const employer = await KythiaUser.getCache({
+				userId: user.employerId,
+			});
 			if (employer) {
 				const companyItem = await Inventory.getCache({
 					userId: user.employerId,
@@ -322,7 +311,6 @@ class WorkCommand extends BaseCommand {
 				user.changed('employerId', true);
 			}
 		}
-
 		user.kythiaCoin =
 			toBigIntSafe(user.kythiaCoin) + toBigIntSafe(finalEarning);
 		user.jobExp = toBigIntSafe(user.jobExp || 0) + toBigIntSafe(10); // Gain 10 EXP per work
@@ -331,7 +319,6 @@ class WorkCommand extends BaseCommand {
 		if (employerTax > 0) {
 			extraText += `\n🏢 **Employer Tax (10%)**: 🪙 ${employerTax.toLocaleString()} was sent to your Boss!`;
 		}
-
 		if (requiredItemFound && Math.random() < 0.05) {
 			const toolToBreak = await Inventory.getCache({
 				userId: user.userId,
@@ -342,18 +329,19 @@ class WorkCommand extends BaseCommand {
 				tool: requiredItemFound,
 			});
 		}
-
 		user.changed('kythiaCoin', true);
 		user.changed('jobExp', true);
 		await user.save();
-
-		const outcomeColors = { success: 'Green', neutral: 'Blue', failure: 'Red' };
+		const outcomeColors = {
+			success: 'Green',
+			neutral: 'Blue',
+			failure: 'Red',
+		};
 		const { convertColor } = helpers.color;
 		const accentColor = convertColor(outcomeColors[scenario.outcome], {
 			from: 'discord',
 			to: 'decimal',
 		});
-
 		const resultContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
@@ -382,16 +370,16 @@ class WorkCommand extends BaseCommand {
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
 					`**${await t(interaction, 'economy.work.work.basepay.field')}:** 🪙 ${baseEarning.toLocaleString()}\n` +
-						`**${await t(interaction, 'economy.work.work.bonus.field', { modifier: scenario.modifier })}:** 🪙 ${(finalEarning - baseEarning).toLocaleString()}\n` +
+						`**${await t(interaction, 'economy.work.work.bonus.field', {
+							modifier: scenario.modifier,
+						})}:** 🪙 ${(finalEarning - baseEarning).toLocaleString()}\n` +
 						`**${await t(interaction, 'economy.work.work.total.field')}:** 💰 ${finalEarning.toLocaleString()}`,
 				),
 			);
-
 		await interaction.editReply({
 			components: [resultContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = WorkCommand;

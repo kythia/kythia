@@ -11,20 +11,15 @@ const {
 	SlashCommandBuilder,
 	InteractionContextType,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ToolsCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ManageNicknames;
 	botPermissions = PermissionFlagsBits.ManageNicknames;
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('nickprefix')
-		.setDescription('📛 Adds or removes a prefix from member nicknames.')
+		.setDescription('Adds or removes a prefix from member nicknames.')
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageNicknames)
 		.setContexts(InteractionContextType.Guild);
-
 	guildOnly = true;
 }
-
 exports.default = ToolsCommand;

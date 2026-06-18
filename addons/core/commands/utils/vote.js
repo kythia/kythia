@@ -19,25 +19,22 @@ const {
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class VoteCommand extends BaseCommand {
 	aliases = ['v'];
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('vote')
-		.setDescription(`❤️ Vote for kythia on top.gg!`);
-
+		.setDescription(`Vote for kythia on top.gg!`);
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
-
 		const mainContainer = new ContainerBuilder().setAccentColor(
-			convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+			convertColor(kythiaConfig.bot.color, {
+				from: 'hex',
+				to: 'decimal',
+			}),
 		);
-
 		if (kythiaConfig.settings?.voteBannerImage) {
 			mainContainer.addMediaGalleryComponents(
 				new MediaGalleryBuilder().addItems([
@@ -52,7 +49,6 @@ class VoteCommand extends BaseCommand {
 					.setDivider(true),
 			);
 		}
-
 		mainContainer
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
@@ -102,12 +98,10 @@ class VoteCommand extends BaseCommand {
 					}),
 				),
 			);
-
 		await interaction.reply({
 			components: [mainContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = VoteCommand;

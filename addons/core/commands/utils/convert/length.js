@@ -8,16 +8,13 @@
 
 const { MessageFlags } = require('discord.js');
 const { convertLength, lengthChoices } = require('../../../helpers/convert');
-
 const { BaseCommand } = require('kythia-core');
-
 class LengthCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('length')
-			.setDescription('📏 Convert length units (e.g. m to km)')
+			.setDescription('Convert length units (e.g. m to km)')
 			.addStringOption((option) =>
 				option
 					.setName('from')
@@ -38,31 +35,28 @@ class LengthCommand extends BaseCommand {
 					.setDescription('Value to convert')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const value = interaction.options.getNumber('value');
 		const from = interaction.options.getString('from');
 		const to = interaction.options.getString('to');
 		const result = convertLength(value, from, to);
-
 		if (result == null) {
 			const components = await simpleContainer(
 				interaction,
 				`${await t(interaction, 'core.utils.convert.length.failed')}`,
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const desc =
 			'' +
 			(await t(interaction, 'core.utils.convert.length.title')) +
@@ -73,7 +67,6 @@ class LengthCommand extends BaseCommand {
 				result,
 				to,
 			}));
-
 		const components = await simpleContainer(interaction, desc);
 		return interaction.editReply({
 			components,
@@ -81,5 +74,4 @@ class LengthCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = LengthCommand;

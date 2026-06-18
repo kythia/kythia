@@ -17,7 +17,7 @@ class RemoveCommand extends BaseCommand {
 	slashCommand = (subcommand) => {
 		return subcommand
 			.setName('remove')
-			.setDescription('➖ Remove an auto-reaction.')
+			.setDescription('Remove an auto-reaction.')
 			.addStringOption((option) =>
 				option
 					.setName('trigger')

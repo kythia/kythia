@@ -12,14 +12,10 @@ const {
 	ButtonBuilder,
 	ActionRowBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 const { items } = require('../helpers/items');
-
 class InventoryCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('inventory')
@@ -28,27 +24,22 @@ class InventoryCommand extends BaseCommand {
 				fr: 'inventaire',
 				ja: 'インベントリ',
 			})
-			.setDescription('🎒 Look at your inventory')
+			.setDescription('Look at your inventory')
 			.setDescriptionLocalizations({
 				id: '🎒 Lihat inventaris yang kamu punya',
 				fr: '🎒 Ton inventaire',
 				ja: '🎒 所持品を確認しよう',
 			});
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { UserAdventure, InventoryAdventure } = models;
 		const { createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const userId = interaction.user.id;
-
 		const user = await UserAdventure.getCache({
 			userId,
 		});
-
 		if (!user) {
 			const msg = await t(interaction, 'adventure.no.character');
 			const components = await createContainer(interaction, {
@@ -60,14 +51,12 @@ class InventoryCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const rawInventory = await InventoryAdventure.getAllCache({
 			where: {
 				userId,
 			},
 			cacheTags: [`InventoryAdventure:inventory:byUser:${userId}`],
 		});
-
 		if (rawInventory.length === 0) {
 			const msg = await t(interaction, 'adventure.inventory.empty');
 			const components = await createContainer(interaction, {
@@ -79,21 +68,20 @@ class InventoryCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const inventoryMap = {};
-
 		for (const item of rawInventory) {
 			const id = item.itemName;
 			if (!inventoryMap[id]) {
-				inventoryMap[id] = { count: 0, id: id };
+				inventoryMap[id] = {
+					count: 0,
+					id: id,
+				};
 			}
 			inventoryMap[id].count += item.quantity ? Number(item.quantity) : 1;
 		}
-
 		const processedInventory = Object.values(inventoryMap).map((itemData) => {
 			const allItems = Object.values(items).flat();
 			const itemDef = allItems.find((i) => i.id === itemData.id);
-
 			return {
 				id: itemData.id,
 				count: itemData.count,
@@ -102,13 +90,11 @@ class InventoryCommand extends BaseCommand {
 				type: itemDef ? itemDef.type : 'misc',
 			};
 		});
-
 		processedInventory.sort((a, b) => {
 			if (a.type === b.type) return 0;
 			if (a.type === 'equipment') return -1;
 			return 1;
 		});
-
 		const generatePage = async (page, showButtons = true) => {
 			const itemsPerPage = 10;
 			const totalPages = Math.ceil(processedInventory.length / itemsPerPage);
@@ -118,7 +104,6 @@ class InventoryCommand extends BaseCommand {
 				startIdx,
 				startIdx + itemsPerPage,
 			);
-
 			let description = '';
 			for (const item of pageItems) {
 				const name = item.nameKey
@@ -126,7 +111,6 @@ class InventoryCommand extends BaseCommand {
 					: item.id;
 				description += `${item.emoji} **${name}** — \`x${item.count}\`\n`;
 			}
-
 			const buttons = [];
 			if (showButtons && totalPages > 1) {
 				buttons.push(
@@ -144,7 +128,6 @@ class InventoryCommand extends BaseCommand {
 					),
 				);
 			}
-
 			const containerData = await createContainer(interaction, {
 				title: await t(interaction, 'adventure.inventory.title', {
 					username: interaction.user.username,
@@ -158,42 +141,36 @@ class InventoryCommand extends BaseCommand {
 				}),
 				components: buttons,
 			});
-
-			return { components: containerData, totalPages };
+			return {
+				components: containerData,
+				totalPages,
+			};
 		};
-
 		let currentPage = 1;
 		const pageData = await generatePage(currentPage);
-
 		const reply = await interaction.editReply({
 			components: pageData.components,
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
-
 		if (pageData.totalPages <= 1) return;
-
 		const collector = reply.createMessageComponentCollector({
 			filter: (i) => i.user.id === interaction.user.id,
 			time: 120_000,
 		});
-
 		collector.on('collect', async (i) => {
 			await i.deferUpdate();
-
 			if (i.customId === 'inv_prev') {
 				currentPage--;
 			} else if (i.customId === 'inv_next') {
 				currentPage++;
 			}
-
 			const newPageData = await generatePage(currentPage);
 			await interaction.editReply({
 				components: newPageData.components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		});
-
 		collector.on('end', async () => {
 			try {
 				const finalPage = await generatePage(currentPage, false);
@@ -205,5 +182,4 @@ class InventoryCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = InventoryCommand;

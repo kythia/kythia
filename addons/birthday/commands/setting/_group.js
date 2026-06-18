@@ -7,17 +7,13 @@
  */
 
 const { BaseCommand } = require('kythia-core');
-
 class GroupCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (group) =>
 		group
 			.setName('setting')
-			.setDescription('⚙️ Configure birthday addon settings.');
-
+			.setDescription('Configure birthday addon settings.');
 	mainGuild = true;
 	teamOnly = true;
 }
-
 exports.default = GroupCommand;

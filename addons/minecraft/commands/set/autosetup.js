@@ -16,25 +16,20 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { fetchMcStatus } = require('../../helpers/mcstats');
-
 const { BaseCommand } = require('kythia-core');
-
 const { HOST_REGEX } = require('../../helpers/constants');
-
 class AutosetupCommand extends BaseCommand {
 	guildOnly = true;
-
 	subcommand = true;
 	permissions = [
 		PermissionFlagsBits.ManageGuild,
 		PermissionFlagsBits.ManageChannels,
 	];
 	botPermissions = [PermissionFlagsBits.ManageChannels];
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('autosetup')
-			.setDescription('⚙️ Auto-create all Minecraft stat channels in one go')
+			.setDescription('Auto-create all Minecraft stat channels in one go')
 			.addStringOption((option) =>
 				option
 					.setName('host')
@@ -55,18 +50,17 @@ class AutosetupCommand extends BaseCommand {
 				option
 					.setName('category_name')
 					.setDescription(
-						'Name for the new category (default: ⛏️ Minecraft Server)',
+						'Name for the new category (default: Minecraft Server)',
 					)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, models, kythiaConfig } = container;
 		const { ServerSetting } = models;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const rawHost = interaction.options.getString('host').trim();
 		const port = interaction.options.getInteger('port') ?? 25565;
 		const categoryName =
@@ -79,7 +73,6 @@ class AutosetupCommand extends BaseCommand {
 				content: await t(interaction, 'minecraft.server.errors.invalid_host'),
 			});
 		}
-
 		const guild = interaction.guild;
 
 		// ── 1. Fetch initial status (best-effort) ────────────────────────
@@ -115,7 +108,11 @@ class AutosetupCommand extends BaseCommand {
 
 		// ── 3. Create the 4 stat voice channels ─────────────────────────
 		const channelDefs = [
-			{ key: 'ip', name: `🖥️ IP: ${rawHost}`, field: 'minecraftIpChannelId' },
+			{
+				key: 'ip',
+				name: `🖥️ IP: ${rawHost}`,
+				field: 'minecraftIpChannelId',
+			},
 			{
 				key: 'port',
 				name: `🔌 Port: ${port}`,
@@ -132,7 +129,6 @@ class AutosetupCommand extends BaseCommand {
 				field: 'minecraftPlayersChannelId',
 			},
 		];
-
 		const createdChannels = {};
 		for (const def of channelDefs) {
 			try {
@@ -159,18 +155,20 @@ class AutosetupCommand extends BaseCommand {
 
 		// ── 4. Save to ServerSetting ────────────────────────────────────
 		const [serverSetting] = await ServerSetting.findOrCreateCache({
-			where: { guildId: guild.id },
-			defaults: { guildId: guild.id, guildName: guild.name },
+			where: {
+				guildId: guild.id,
+			},
+			defaults: {
+				guildId: guild.id,
+				guildName: guild.name,
+			},
 		});
-
 		serverSetting.minecraftIp = rawHost;
 		serverSetting.minecraftPort = port;
 		serverSetting.minecraftStatsOn = true;
-
 		for (const [field, channelId] of Object.entries(createdChannels)) {
 			serverSetting[field] = channelId;
 		}
-
 		await serverSetting.save();
 
 		// ── 5. Build confirmation response ──────────────────────────────
@@ -178,7 +176,6 @@ class AutosetupCommand extends BaseCommand {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const lines = [
 			await t(interaction, 'minecraft.set.autosetup.success.title_md'),
 			``,
@@ -187,26 +184,22 @@ class AutosetupCommand extends BaseCommand {
 			``,
 			await t(interaction, 'minecraft.set.autosetup.success.channels_md'),
 		];
-
 		const fieldLabels = {
 			minecraftIpChannelId: '🖥️ IP',
 			minecraftPortChannelId: '🔌 Port',
 			minecraftStatusChannelId: '📶 Status',
 			minecraftPlayersChannelId: '👥 Players',
 		};
-
 		for (const [field, label] of Object.entries(fieldLabels)) {
 			const id = createdChannels[field];
 			lines.push(
 				id ? `**${label}:** <#${id}>` : `**${label}:** ⚠️ Failed to create`,
 			);
 		}
-
 		lines.push(``);
 		lines.push(
 			`-# ${await t(interaction, 'minecraft.set.autosetup.success.note')}`,
 		);
-
 		const responseContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
@@ -224,12 +217,10 @@ class AutosetupCommand extends BaseCommand {
 					}),
 				),
 			);
-
 		return interaction.editReply({
 			components: [responseContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = AutosetupCommand;

@@ -8,16 +8,13 @@
 
 const { MessageFlags } = require('discord.js');
 const { Op } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
-
 class RemoveCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) => {
 		return subcommand
 			.setName('remove')
-			.setDescription('➖ Remove an auto-reply.')
+			.setDescription('Remove an auto-reply.')
 			.addStringOption((option) =>
 				option
 					.setName('trigger')
@@ -26,21 +23,20 @@ class RemoveCommand extends BaseCommand {
 					.setAutocomplete(true),
 			);
 	};
-
 	async autocomplete(interaction) {
 		const container = this.container;
 		const { models } = container;
 		const { AutoReply } = models;
 		const focusedValue = interaction.options.getFocused();
-
 		const choices = await AutoReply.getAllCache({
 			where: {
 				guildId: interaction.guild.id,
-				trigger: { [Op.like]: `%${focusedValue}%` },
+				trigger: {
+					[Op.like]: `%${focusedValue}%`,
+				},
 			},
 			limit: 25,
 		});
-
 		await interaction.respond(
 			choices.map((choice) => ({
 				name:
@@ -51,18 +47,14 @@ class RemoveCommand extends BaseCommand {
 			})),
 		);
 	}
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { AutoReply } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const triggerInput = interaction.options.getString('trigger');
 		let deleted = 0;
-
 		let trigger;
 		if (triggerInput.startsWith('id:')) {
 			const id = triggerInput.split(':')[1];
@@ -80,12 +72,10 @@ class RemoveCommand extends BaseCommand {
 				},
 			});
 		}
-
 		if (trigger) {
 			trigger.destroy();
 			deleted = 1;
 		}
-
 		if (!deleted) {
 			const msg = await t(interaction, 'autoreply.remove.error.not_found');
 			const components = await simpleContainer(interaction, msg, {
@@ -96,7 +86,6 @@ class RemoveCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const msg = await t(interaction, 'autoreply.remove.success.plain', {
 			trigger: triggerInput,
 		});
@@ -109,5 +98,4 @@ class RemoveCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = RemoveCommand;

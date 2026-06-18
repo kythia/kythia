@@ -19,7 +19,7 @@ const { BaseCommand } = require('kythia-core');
 class EditCommand extends BaseCommand {
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('edit')
-		.setDescription('✏️ Edit a saved embed')
+		.setDescription('Edit a saved embed')
 		.addStringOption((option) =>
 			option
 				.setName('id')
@@ -45,7 +45,9 @@ class EditCommand extends BaseCommand {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'embed-builder.edit.not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
@@ -153,7 +155,9 @@ class EditCommand extends BaseCommand {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'embed-builder.edit.not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});

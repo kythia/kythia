@@ -5,27 +5,27 @@
 				"default": {
 					"title": "## Announcement"
 				},
-				"failed": "❌ Failed to send announcement: {error}",
+				"failed": "Failed to send announcement: {error}",
 				"footer": "Announced by {user}",
-				"success": "✅ Announcement sent successfully!"
+				"success": "Announcement sent successfully!"
 			},
 			"autosetup": {
 				"created": {
-					"channel": "✅ Created channel {channel}",
-					"role": "✅ Created role {role}"
+					"channel": "Created channel {channel}",
+					"role": "Created role {role}"
 				},
-				"failed": "❌ Auto setup failed: {error}",
+				"failed": "Auto setup failed: {error}",
 				"nothing": {
-					"new": "⚠️ Nothing new to setup."
+					"new": "Nothing new to setup."
 				},
 				"success": {
 					"title": "## Auto Setup Complete"
 				}
 			},
 			"ban": {
-				"failed": "❌ Failed to ban user: {error}",
+				"failed": "Failed to ban user: {error}",
 				"success": {
-					"desc": "✅ **{user}** has been banned for: {reason}",
+					"desc": "**{user}** has been banned for: {reason}",
 					"title": "## User Banned"
 				},
 				"default": {
@@ -33,25 +33,25 @@
 				}
 			},
 			"clear": {
-				"cancelled": "❌ Clear command cancelled.",
-				"failed": "❌ Failed to clear messages: {error}",
+				"cancelled": "Clear command cancelled.",
+				"failed": "Failed to clear messages: {error}",
 				"not": {
-					"allowed": "❌ I cannot delete messages older than 14 days."
+					"allowed": "I cannot delete messages older than 14 days."
 				},
 				"nuked": {
-					"success": "✅ Channel has been nuked!"
+					"success": "Channel has been nuked!"
 				},
-				"timeout": "❌ Clear command timed out.",
+				"timeout": "Clear command timed out.",
 				"text": {
-					"only": "❌ This command can only be used in text channels."
+					"only": "This command can only be used in text channels."
 				},
 				"nothing": {
-					"deleted": "❌ No messages were deleted. Maybe they are too old or already deleted."
+					"deleted": "No messages were deleted. Maybe they are too old or already deleted."
 				},
 				"embed": {
-					"desc": "✅Completely deleted {count} messages have been deleted!"
+					"desc": "Completely deleted {count} messages have been deleted!"
 				},
-				"error": "❌ An error occurred while deleting messages.",
+				"error": "An error occurred while deleting messages.",
 				"options": {
 					"title": "## Clear Channel Options",
 					"desc": "Choose how you want to clear the channel. You can nuke (clone & delete) or bulk delete all messages.",
@@ -64,9 +64,9 @@
 				}
 			},
 			"kick": {
-				"failed": "❌ Failed to kick user: {error}",
+				"failed": "Failed to kick user: {error}",
 				"success": {
-					"desc": "✅ **{user}** has been kicked for: {reason}",
+					"desc": "**{user}** has been kicked for: {reason}",
 					"title": "## User Kicked"
 				},
 				"default": {
@@ -78,57 +78,57 @@
 				}
 			},
 			"lock": {
-				"confirm": "✅ Channel locked!",
+				"confirm": "Channel locked!",
 				"default": {
 					"reason": "No reason provided"
 				},
 				"success": {
-					"desc": "🔒 {channel} has been locked for: {reason}",
+					"desc": "{channel} has been locked for: {reason}",
 					"title": "## Channel Locked"
 				},
-				"failed": "❌ Failed to lock the channel: {error}"
+				"failed": "Failed to lock the channel: {error}"
 			},
 			"mute": {
 				"embed": {
-					"desc": "## 🔇 Muted\n**{tag}** has been muted by **{moderator}** via command."
+					"desc": "## Muted\n**{tag}** has been muted by **{moderator}** via command."
 				}
 			},
 			"pin": {
 				"already": {
-					"pinned": "⚠️ This message is already pinned."
+					"pinned": "This message is already pinned."
 				},
 				"success": {
-					"desc": "📌 Message has been pinned. [Jump to Message]({messageUrl})",
+					"desc": "Message has been pinned. [Jump to Message]({messageUrl})",
 					"title": "## Message Pinned"
 				},
 				"not": {
-					"found": "❌ Message not found!"
+					"found": "Message not found!"
 				},
-				"failed": "❌ Failed to pin the message: {error}"
+				"failed": "Failed to pin the message: {error}"
 			},
 			"role": {
 				"added": {
-					"desc": "✅ Role {role} has been added to {user}.",
+					"desc": "Role {role} has been added to {user}.",
 					"title": "## Role Added"
 				},
-				"failed": "❌ Failed to modify roles: {error}",
+				"failed": "Failed to modify roles: {error}",
 				"removed": {
-					"desc": "✅ Role {role} has been removed from {user}.",
+					"desc": "Role {role} has been removed from {user}.",
 					"title": "## Role Removed"
 				}
 			},
 			"say": {
-				"failed": "❌ Failed to send message: {error}",
-				"success": "✅ Message sent successfully."
+				"failed": "Failed to send message: {error}",
+				"success": "Message sent successfully."
 			},
 			"slowmode": {
-				"confirm": "✅ Slowmode set!",
+				"confirm": "Slowmode set!",
 				"default": {
 					"reason": "No reason provided"
 				},
-				"failed": "❌ Failed to set slowmode: {error}",
+				"failed": "Failed to set slowmode: {error}",
 				"success": {
-					"desc": "✅ Slowmode for {channel} set to {seconds} seconds for: {reason}",
+					"desc": "Slowmode for {channel} set to {seconds} seconds for: {reason}",
 					"title": "## Slowmode Set"
 				}
 			},
@@ -137,55 +137,55 @@
 					"reason": "No reason provided"
 				},
 				"success": {
-					"desc": "✅ **{user}** has been timed out for {duration} for: {reason}",
+					"desc": "**{user}** has been timed out for {duration} for: {reason}",
 					"title": "## User Timed Out"
 				},
-				"failed": "❌ Failed to timeout user: {error}"
+				"failed": "Failed to timeout user: {error}"
 			},
 			"unban": {
 				"success": {
-					"desc": "✅ <@{userId}> has been unbanned.",
+					"desc": "<@{userId}> has been unbanned.",
 					"title": "## User Unbanned"
 				},
-				"failed": "❌ Failed to unban user: {error}"
+				"failed": "Failed to unban user: {error}"
 			},
 			"unlock": {
-				"confirm": "✅ Channel unlocked!",
+				"confirm": "Channel unlocked!",
 				"default": {
 					"reason": "No reason provided"
 				},
-				"failed": "❌ Failed to unlock channel: {error}",
+				"failed": "Failed to unlock channel: {error}",
 				"success": {
-					"desc": "🔓 {channel} has been unlocked for: {reason}",
+					"desc": "{channel} has been unlocked for: {reason}",
 					"title": "## Channel Unlocked"
 				}
 			},
 			"unmute": {
-				"failed": "❌ Failed to unmute user: {error}",
+				"failed": "Failed to unmute user: {error}",
 				"not": {
 					"in": {
-						"voice": "❌ User is not in a voice channel."
+						"voice": "User is not in a voice channel."
 					}
 				},
 				"success": {
-					"desc": "✅ **{user}** has been unmuted.",
+					"desc": "**{user}** has been unmuted.",
 					"title": "## User Unmuted"
 				}
 			},
 			"unpin": {
 				"not": {
-					"pinned": "⚠️ This message is not pinned.",
-					"found": "❌ Message not found."
+					"pinned": "This message is not pinned.",
+					"found": "Message not found."
 				},
 				"success": {
 					"desc": "Message has been unpinned. [Jump to Message]({messageUrl})",
 					"title": "## Message Unpinned"
 				},
-				"failed": "❌ Failed to unpin message: {error}"
+				"failed": "Failed to unpin message: {error}"
 			},
 			"warn": {
 				"cannot": {
-					"self": "❌ You cannot warn yourself."
+					"self": "You cannot warn yourself."
 				},
 				"default": {
 					"reason": "No reason provided"
@@ -194,20 +194,20 @@
 					"desc": "You have been warned by **{moderator}** for: {reason}",
 					"title": "## Warned in {guild}"
 				},
-				"failed": "❌ Failed to warn user: {error}",
+				"failed": "Failed to warn user: {error}",
 				"modlog": {
 					"desc": "**{user}** has been warned by **{moderator}** for: {reason}",
 					"title": "## Warn"
 				},
 				"success": {
-					"desc": "✅ **{user}** has been warned for: {reason}",
+					"desc": "**{user}** has been warned for: {reason}",
 					"title": "## User Warned"
 				}
 			},
 			"warnings": {
-				"failed": "❌ Failed to fetch warnings: {error}",
+				"failed": "Failed to fetch warnings: {error}",
 				"title": "## Warnings for {user}",
-				"none": "✅ {user} has no warnings."
+				"none": "{user} has no warnings."
 			},
 			"snipe": {
 				"ui": {
@@ -286,8 +286,8 @@
 				"server": {},
 				"welcome": {},
 				"minecraft": {},
-				"enabled": "✅ The **{feature}** feature has been **enabled**.",
-				"disabled": "✅ The **{feature}** feature has been **disabled**."
+				"enabled": "The **{feature}** feature has been **enabled**.",
+				"disabled": "The **{feature}** feature has been **disabled**."
 			},
 			"cooldown": {},
 			"clan": {
@@ -296,35 +296,35 @@
 			},
 			"antinuke": {
 				"toggle": {
-					"success": "## ✅ AntiNuke Updated\n🛡️ AntiNuke system **{status}** successfully."
+					"success": "## AntiNuke Updated\nAntiNuke system **{status}** successfully."
 				},
 				"module": {
-					"success": "## ✅ Module Updated\n🛡️ Module **{module}** {status}."
+					"success": "## Module Updated\nModule **{module}** {status}."
 				},
 				"threshold": {
-					"success": "## ✅ Threshold Updated\n🛡️ **{module}** threshold set to **{count} actions** in **{seconds}s**."
+					"success": "## Threshold Updated\n**{module}** threshold set to **{count} actions** in **{seconds}s**."
 				},
 				"action": {
-					"success": "## ✅ Action Updated\n🛡️ **{module}** action set to **{action}**."
+					"success": "## Action Updated\n**{module}** action set to **{action}**."
 				},
 				"whitelist": {
-					"success": "## ✅ Immunity Updated\n🛡️ {target} **{action}** AntiNuke immunity list."
+					"success": "## Immunity Updated\n{target} **{action}** AntiNuke immunity list."
 				},
 				"log_channel": {
-					"invalid": "## ❌ Error\nThat is not a text channel.",
-					"success": "## ✅ Log Channel Updated\n🛡️ AntiNuke log channel set to {channel}."
+					"invalid": "## Error\nThat is not a text channel.",
+					"success": "## Log Channel Updated\nAntiNuke log channel set to {channel}."
 				},
 				"status": {
-					"title": "## 🛡️ AntiNuke Status",
+					"title": "## AntiNuke Status",
 					"system": "**System:** {status}",
 					"log_channel": "**Log Channel:** {channel}",
 					"modules": "### Modules\n{modules}",
-					"immunity": "### Immunity List\n👤 Users: {users}\n🎭 Roles: {roles}"
+					"immunity": "### Immunity List\nUsers: {users}\nRoles: {roles}"
 				}
 			}
 		},
 		"snipe": {
-			"not_yours": "❌ You cannot interact with this menu."
+			"not_yours": "You cannot interact with this menu."
 		},
 		"clear": {
 			"ui": {

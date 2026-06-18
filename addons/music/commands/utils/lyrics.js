@@ -16,7 +16,7 @@ class LyricsCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('lyrics')
-			.setDescription('🎤 Show the lyrics of the currently playing song');
+			.setDescription('Show the lyrics of the currently playing song');
 
 	async execute(interaction) {
 		const container = this.container;

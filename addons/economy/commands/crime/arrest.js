@@ -8,32 +8,28 @@
 
 const { MessageFlags } = require('discord.js');
 const { toBigIntSafe } = require('../../helpers/bigint');
-
 const { BaseCommand } = require('kythia-core');
-
 class ArrestCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('arrest')
-			.setDescription('🚓 (Police Only) Arrest a wanted criminal!')
+			.setDescription('(Police Only) Arrest a wanted criminal!')
 			.addUserOption((option) =>
 				option
 					.setName('target')
 					.setDescription('The wanted criminal you want to arrest')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
 			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
 			const components = await simpleContainer(interaction, msg, {
@@ -44,7 +40,6 @@ class ArrestCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (user.profession !== 'economy.jobs.police_officer.name') {
 			const msg = await t(interaction, 'economy.crime.arrest.error.not_police');
 			const components = await simpleContainer(interaction, msg, {
@@ -55,7 +50,6 @@ class ArrestCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const targetUser = interaction.options.getUser('target');
 		if (targetUser.id === interaction.user.id) {
 			const msg = await t(interaction, 'economy.crime.arrest.error.self');
@@ -67,8 +61,9 @@ class ArrestCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
-		const target = await KythiaUser.getCache({ userId: targetUser.id });
+		const target = await KythiaUser.getCache({
+			userId: targetUser.id,
+		});
 		if (!target) {
 			const msg = await t(
 				interaction,
@@ -82,9 +77,7 @@ class ArrestCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const bounty = target.bountyAmount ? BigInt(target.bountyAmount) : 0n;
-
 		if (bounty <= 0n) {
 			const msg = await t(interaction, 'economy.crime.arrest.error.no_bounty', {
 				target: targetUser.username,
@@ -109,15 +102,12 @@ class ArrestCommand extends BaseCommand {
 		user.changed('kythiaCoin', true);
 		target.changed('bountyAmount', true);
 		target.changed('jailTimeUntil', true);
-
 		await user.save();
 		await target.save();
-
 		const msg = await t(interaction, 'economy.crime.arrest.success.text', {
 			target: targetUser.username,
 			bounty: bounty.toLocaleString(),
 		});
-
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Green',
 		});
@@ -130,14 +120,15 @@ class ArrestCommand extends BaseCommand {
 			color: 'Red',
 		});
 		targetUser
-			.send({ components: dmComponents, flags: MessageFlags.IsComponentsV2 })
+			.send({
+				components: dmComponents,
+				flags: MessageFlags.IsComponentsV2,
+			})
 			.catch(() => {});
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = ArrestCommand;

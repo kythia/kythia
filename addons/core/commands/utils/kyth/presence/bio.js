@@ -7,16 +7,13 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class BioCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('bio')
-			.setDescription('📝 Change bot bio/about me')
+			.setDescription('Change bot bio/about me')
 			.addStringOption((option) =>
 				option
 					.setName('bio')
@@ -24,22 +21,24 @@ class BioCommand extends BaseCommand {
 					.setRequired(true)
 					.setMaxLength(190),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		try {
 			const bio = interaction.options.getString('bio');
-			await interaction.client.user.edit({ bio });
-
+			await interaction.client.user.edit({
+				bio,
+			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.bio.success', { bio }),
-				{ color: 'Green' },
+				await t(interaction, 'core.utils.presence.bio.success', {
+					bio,
+				}),
+				{
+					color: 'Green',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -54,7 +53,9 @@ class BioCommand extends BaseCommand {
 				await t(interaction, 'core.utils.presence.error', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -63,5 +64,4 @@ class BioCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = BioCommand;

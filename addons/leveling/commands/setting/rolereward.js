@@ -7,25 +7,28 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class RolerewardCommand extends BaseCommand {
 	subcommand = true;
 	permissions = [PermissionFlagsBits.ManageGuild];
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('rolereward')
-			.setDescription('🎮 Set role reward for a specific level')
+			.setDescription('Set role reward for a specific level')
 			.addStringOption((option) =>
 				option
 					.setName('action')
 					.setDescription('Add or remove role reward')
 					.setRequired(true)
 					.addChoices(
-						{ name: 'Add', value: 'add' },
-						{ name: 'Remove', value: 'remove' },
+						{
+							name: 'Add',
+							value: 'add',
+						},
+						{
+							name: 'Remove',
+							value: 'remove',
+						},
 					),
 			)
 			.addIntegerOption((option) =>
@@ -40,41 +43,47 @@ class RolerewardCommand extends BaseCommand {
 					.setDescription('Role to be given')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const guildId = interaction.guild.id;
 		const guildName = interaction.guild.name;
 		const role = interaction.options.getRole('role');
 		const level = interaction.options.getInteger('level');
 		const action = interaction.options.getString('action');
-
 		const [serverSetting] = await ServerSetting.findOrCreateCache({
-			where: { guildId },
-			defaults: { guildId, guildName },
+			where: {
+				guildId,
+			},
+			defaults: {
+				guildId,
+				guildName,
+			},
 		});
-
 		if (!serverSetting.roleRewards) serverSetting.roleRewards = [];
-
 		let components;
 		if (action === 'add') {
 			serverSetting.roleRewards = serverSetting.roleRewards.filter(
 				(r) => r.level !== level,
 			);
-			serverSetting.roleRewards.push({ level, role: role.id });
+			serverSetting.roleRewards.push({
+				level,
+				role: role.id,
+			});
 			components = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.setting.setting.leveling.rolereward.add', {
 					role: `<@&${role.id}>`,
 					level,
 				}),
-				{ color: 'Green' },
+				{
+					color: 'Green',
+				},
 			);
 		} else if (action === 'remove') {
 			const initial = serverSetting.roleRewards.length;
@@ -87,9 +96,13 @@ class RolerewardCommand extends BaseCommand {
 					await t(
 						interaction,
 						'core.setting.setting.leveling.rolereward.notfound',
-						{ level },
+						{
+							level,
+						},
 					),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 			} else {
 				components = await simpleContainer(
@@ -97,21 +110,22 @@ class RolerewardCommand extends BaseCommand {
 					await t(
 						interaction,
 						'core.setting.setting.leveling.rolereward.remove',
-						{ level },
+						{
+							level,
+						},
 					),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 			}
 		}
-
 		serverSetting.changed('roleRewards', true);
 		await serverSetting.save();
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = RolerewardCommand;

@@ -14,7 +14,7 @@ class RemoveCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
-			.setDescription('💖 Remove a song from your favorites.')
+			.setDescription('Remove a song from your favorites.')
 			.addStringOption((option) =>
 				option
 					.setName('name')

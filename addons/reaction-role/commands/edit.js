@@ -18,7 +18,7 @@ class EditCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('edit')
-			.setDescription('✏️ Edit an existing reaction role on a message.')
+			.setDescription('Edit an existing reaction role on a message.')
 			.addStringOption((option) =>
 				option
 					.setName('message_id')

@@ -7,40 +7,35 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AfkCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('afk')
-			.setDescription('😴 Set bot AFK status')
+			.setDescription('Set bot AFK status')
 			.addBooleanOption((option) =>
 				option
 					.setName('afk')
 					.setDescription('Whether to set as AFK')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		try {
 			const afk = interaction.options.getBoolean('afk');
 			await interaction.client.user.setAFK(afk);
-
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.utils.presence.afk.success', {
 					state: afk ? 'enabled' : 'disabled',
 				}),
-				{ color: 'Green' },
+				{
+					color: 'Green',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -55,7 +50,9 @@ class AfkCommand extends BaseCommand {
 				await t(interaction, 'core.utils.presence.error', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -64,5 +61,4 @@ class AfkCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = AfkCommand;

@@ -7,26 +7,24 @@
  */
 
 const { MessageFlags, SlashCommandSubcommandBuilder } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ListCommand extends BaseCommand {
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('list')
-		.setDescription('📋 List all saved embeds for this server');
-
+		.setDescription('List all saved embeds for this server');
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;
 		const { EmbedBuilder: EmbedModel } = models;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const embeds = await EmbedModel.getAllCache({
-			where: { guildId: interaction.guild.id },
+			where: {
+				guildId: interaction.guild.id,
+			},
 			order: [['createdAt', 'DESC']],
 		});
-
 		if (embeds.length === 0) {
 			const { simpleContainer } = container.helpers.discord;
 			const { t } = container;
@@ -34,7 +32,9 @@ class ListCommand extends BaseCommand {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'embed-builder.list.empty'),
-					{ color: 'Yellow' },
+					{
+						color: 'Yellow',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2,
 			});
@@ -43,7 +43,6 @@ class ListCommand extends BaseCommand {
 		// Chunk into pages of 10
 		const perPage = 10;
 		const page = embeds.slice(0, perPage);
-
 		const lines = page.map((e) => {
 			const modeIcon = e.mode === 'components_v2' ? '🧩' : '📋';
 			const sentInfo = e.messageId
@@ -51,12 +50,10 @@ class ListCommand extends BaseCommand {
 				: '';
 			return `${modeIcon} **${e.name}** \`#${e.id}\`${sentInfo}`;
 		});
-
 		const footer =
 			embeds.length > perPage
 				? `\n\n_...and ${embeds.length - perPage} more. Use the dashboard to see all._`
 				: '';
-
 		const { createContainer } = container.helpers.discord;
 		const { t } = container;
 		return interaction.editReply({
@@ -72,5 +69,4 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ListCommand;

@@ -8,17 +8,12 @@
 
 const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 const crypto = require('node:crypto');
-
 const { BaseCommand } = require('kythia-core');
-
 const SUPPORTED_ALGOS = require('../../helpers/crypto').SUPPORTED_ALGOS;
-
 class HashCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('hash')
-		.setDescription(
-			'🔒 Hash a text string using MD5, SHA, or other algorithms.',
-		)
+		.setDescription('Hash a text string using MD5, SHA, or other algorithms.')
 		.addStringOption((option) =>
 			option
 				.setName('algorithm')
@@ -32,17 +27,13 @@ class HashCommand extends BaseCommand {
 				.setDescription('The text to hash')
 				.setRequired(true),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const algorithm = interaction.options.getString('algorithm');
 		const text = interaction.options.getString('text');
-
 		if (!text || text.length > 1024) {
 			const components = await createContainer(interaction, {
 				description: await t(interaction, 'core.tools.hash.invalid.text'),
@@ -53,7 +44,6 @@ class HashCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const algoObj = SUPPORTED_ALGOS.find((a) => a.value === algorithm);
 		if (!algoObj) {
 			const components = await createContainer(interaction, {
@@ -65,7 +55,6 @@ class HashCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		let hash;
 		try {
 			hash = crypto.createHash(algorithm).update(text, 'utf8').digest('hex');
@@ -79,23 +68,19 @@ class HashCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const description =
 			`**${await t(interaction, 'core.tools.hash.algorithm')}:** ${algoObj.name}\n\n` +
 			`**${await t(interaction, 'core.tools.hash.input')}:**\n\`\`\`${text}\`\`\`\n` +
 			`**${await t(interaction, 'core.tools.hash.hash')}:**\n\`\`\`${hash}\`\`\``;
-
 		const components = await createContainer(interaction, {
 			title: await t(interaction, 'core.tools.hash.result'),
 			description,
 			color: kythiaConfig.bot.color,
 		});
-
 		await interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = HashCommand;

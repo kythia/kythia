@@ -11,19 +11,14 @@ const {
 	SlashCommandBuilder,
 	InteractionContextType,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class WelcomerCommand extends BaseCommand {
 	permissions = [PermissionFlagsBits.ManageGuild];
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('welcomer')
-		.setDescription('👋 Configure the welcome & farewell system')
+		.setDescription('Configure the welcome & farewell system')
 		.setContexts(InteractionContextType.Guild)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
-
 	guildOnly = true;
 }
-
 exports.default = WelcomerCommand;

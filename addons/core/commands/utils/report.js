@@ -13,13 +13,11 @@ const {
 	InteractionContextType,
 	ContextMenuCommandBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ReportCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('report')
-		.setDescription('🚨 Report a user to the moderators.')
+		.setDescription('Report a user to the moderators.')
 		.addUserOption((option) =>
 			option.setName('user').setDescription('User to report').setRequired(true),
 		)
@@ -30,23 +28,18 @@ class ReportCommand extends BaseCommand {
 				.setRequired(true),
 		)
 		.setContexts(InteractionContextType.Guild);
-
 	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('Report User')
 		.setType(ApplicationCommandType.User)
 		.setContexts(InteractionContextType.Guild);
-
 	contextMenuDescription = '🚨 Report a user to the moderators.';
 	guildOnly = true;
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, models } = container;
 		const { createContainer } = helpers.discord;
 		const { ServerSetting } = models;
-
 		await interaction.deferReply();
-
 		const user =
 			interaction.options.getUser('user') ||
 			interaction.targetUser ||
@@ -55,8 +48,9 @@ class ReportCommand extends BaseCommand {
 			interaction.options.getString('reason') ||
 			(await t(interaction, 'core.utils.report.reason'));
 		const guildId = interaction.guild?.id;
-
-		const setting = await ServerSetting.getCache({ guildId });
+		const setting = await ServerSetting.getCache({
+			guildId,
+		});
 		if (!setting.modLogChannelId && !interaction.guild) {
 			const components = await createContainer(interaction, {
 				description: await t(interaction, 'core.utils.report.no.channel'),
@@ -67,7 +61,6 @@ class ReportCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const reportChannel = await container.helpers.discord.getChannelSafe(
 			interaction.guild,
 			setting.modLogChannelId,
@@ -82,7 +75,6 @@ class ReportCommand extends BaseCommand {
 			}),
 			color: 'Red',
 		});
-
 		await reportChannel?.send({
 			components: reportComponents,
 			flags: MessageFlags.IsComponentsV2,
@@ -95,12 +87,10 @@ class ReportCommand extends BaseCommand {
 			}),
 			color: 'Green',
 		});
-
 		return interaction.editReply({
 			components: confirmComponents,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = ReportCommand;

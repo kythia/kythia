@@ -3,32 +3,32 @@
 		"add": {
 			"invalid": {
 				"type": {
-					"desc": "## ❌ Image Upload Failed!\nPlease upload a valid image file (image/* only)."
+					"desc": "## Image Upload Failed!\nPlease upload a valid image file (image/* only)."
 				}
 			},
 			"error": {
-				"upload_failed": "❌ **Failed to upload image:** {error}"
+				"upload_failed": "**Failed to upload image:** {error}"
 			},
 			"success": {
-				"desc": "## ✅ Image Saved!\nYour image has been saved successfully!\nURL: {url}"
+				"desc": "## Image Saved!\nYour image has been saved successfully!\nURL: {url}"
 			}
 		},
 		"delete": {
 			"not": {
 				"found": {
-					"desc": "## ❌ Image Not Found!\nThe image code could not be found or you do not have permission to delete it."
+					"desc": "## Image Not Found!\nThe image code could not be found or you do not have permission to delete it."
 				}
 			},
 			"success": {
-				"desc": "## ✅ Image Deleted!\nThe image has been deleted successfully."
+				"desc": "## Image Deleted!\nThe image has been deleted successfully."
 			}
 		},
 		"commands": {
 			"list": {
 				"empty": "You have not uploaded any images yet.",
 				"title": {
-					"text": "## 📷 **Your Uploaded Images**\nHere are all the images you've uploaded:",
-					"empty": "## 📷 **Your Uploaded Images (cont'd)**"
+					"text": "## **Your Uploaded Images**\nHere are all the images you've uploaded:",
+					"empty": "## **Your Uploaded Images (cont'd)**"
 				},
 				"item": "**Code:** `{code}`\n[View Image]({url})",
 				"footer": {

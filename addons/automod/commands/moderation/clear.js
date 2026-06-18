@@ -21,7 +21,7 @@ class ClearCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('clear')
-			.setDescription('🗑️ Delete messages from a channel.')
+			.setDescription('Delete messages from a channel.')
 			.addIntegerOption((option) =>
 				option
 					.setName('amount')

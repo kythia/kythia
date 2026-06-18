@@ -18,88 +18,104 @@ const {
 	TextDisplayBuilder,
 } = require('discord.js');
 const { Op } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
-
 class ProposeCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('propose')
-			.setDescription('💍 Propose to another user')
+			.setDescription('Propose to another user')
 			.addUserOption((option) =>
 				option
 					.setName('user')
 					.setDescription('The user you want to propose to')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Marriage } = models;
 		const { convertColor } = helpers.color;
-
 		const targetUser = interaction.options.getUser('user');
 		const proposer = interaction.user;
 		const proposerId = proposer.id;
 		const targetId = targetUser.id;
-
 		const existingMarriages = await Marriage.getAllCache({
 			where: {
 				[Op.or]: [
-					{ user1Id: proposerId, status: { [Op.in]: ['pending', 'married'] } },
-					{ user2Id: proposerId, status: { [Op.in]: ['pending', 'married'] } },
-					{ user1Id: targetId, status: { [Op.in]: ['pending', 'married'] } },
-					{ user2Id: targetId, status: { [Op.in]: ['pending', 'married'] } },
+					{
+						user1Id: proposerId,
+						status: {
+							[Op.in]: ['pending', 'married'],
+						},
+					},
+					{
+						user2Id: proposerId,
+						status: {
+							[Op.in]: ['pending', 'married'],
+						},
+					},
+					{
+						user1Id: targetId,
+						status: {
+							[Op.in]: ['pending', 'married'],
+						},
+					},
+					{
+						user2Id: targetId,
+						status: {
+							[Op.in]: ['pending', 'married'],
+						},
+					},
 				],
 			},
 			limit: 1,
 		});
-
 		const existingMarriage =
 			existingMarriages && existingMarriages.length > 0
 				? existingMarriages[0]
 				: null;
-
 		if (existingMarriage) {
 			return interaction.reply({
 				content: await t(interaction, 'fun.marry.already.married'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		if (targetUser.bot) {
 			return interaction.reply({
 				content: await t(interaction, 'fun.marry.bot.error'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		if (targetId === proposerId) {
 			return interaction.reply({
 				content: await t(interaction, 'fun.marry.yourself.error'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		const marriage = await Marriage.create({
 			user1Id: proposerId,
 			user2Id: targetId,
 			status: 'pending',
 		});
-
 		const proposerAvatar =
-			proposer.displayAvatarURL({ extension: 'png', size: 256 }) ||
-			'https://cdn.discordapp.com/embed/avatars/0.png';
+			proposer.displayAvatarURL({
+				extension: 'png',
+				size: 256,
+			}) || 'https://cdn.discordapp.com/embed/avatars/0.png';
 		const targetAvatar = targetUser.displayAvatarURL
-			? targetUser.displayAvatarURL({ extension: 'png', size: 256 })
+			? targetUser.displayAvatarURL({
+					extension: 'png',
+					size: 256,
+				})
 			: 'https://cdn.discordapp.com/embed/avatars/0.png';
-
 		const proposalTitle = await t(interaction, 'fun.marry.proposal.title');
 		const proposerBlock = await t(
 			interaction,
 			'fun.marry.proposal.user_block',
-			{ user: proposer.username, id: proposerId },
+			{
+				user: proposer.username,
+				id: proposerId,
+			},
 		);
 		const targetBlock = await t(interaction, 'fun.marry.proposal.user_block', {
 			user: targetUser.username,
@@ -113,13 +129,14 @@ class ProposeCommand extends BaseCommand {
 				target: targetUser.toString(),
 			},
 		);
-
 		const acceptBtnLabel = await t(interaction, 'fun.marry.accept.button');
 		const rejectBtnLabel = await t(interaction, 'fun.marry.reject.button');
-
 		const proposeContainer = new ContainerBuilder()
 			.setAccentColor(
-				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+				convertColor(kythiaConfig.bot.color, {
+					from: 'hex',
+					to: 'decimal',
+				}),
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(proposalTitle),
@@ -179,12 +196,10 @@ class ProposeCommand extends BaseCommand {
 					}),
 				),
 			);
-
 		await interaction.reply({
 			flags: MessageFlags.IsComponentsV2,
 			components: [proposeContainer],
 		});
 	}
 }
-
 exports.default = ProposeCommand;

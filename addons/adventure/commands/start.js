@@ -15,14 +15,10 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 const characters = require('../helpers/characters');
-
 class StartCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) => {
 		const chars = characters.getAllCharacters();
 		return subcommand
@@ -32,7 +28,7 @@ class StartCommand extends BaseCommand {
 				fr: 'demarrer',
 				ja: 'スタート',
 			})
-			.setDescription('🛩️ Start your journey now!')
+			.setDescription('Start your journey now!')
 			.setDescriptionLocalizations({
 				id: '🛩️ Mulai petualanganmu sekarang!',
 				fr: '🛩️ Commence ton aventure maintenant !',
@@ -51,22 +47,17 @@ class StartCommand extends BaseCommand {
 					),
 			);
 	};
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { UserAdventure } = models;
 		const { createContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
-
 		await interaction.deferReply();
-
 		const userId = interaction.user.id;
-
 		const existing = await UserAdventure.getCache({
 			userId,
 		});
-
 		if (existing) {
 			const msg = await t(interaction, 'adventure.start.already.have');
 			const components = await createContainer(interaction, {
@@ -78,10 +69,8 @@ class StartCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const charId = interaction.options.getString('character');
 		const selected = characters.getChar(charId);
-
 		if (!selected) {
 			const msg = await t(interaction, 'adventure.start.invalid_char');
 			const components = await createContainer(interaction, {
@@ -93,18 +82,15 @@ class StartCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const level = 1;
 		const xp = 0;
 		let baseHp = 100;
 		const gold = 50;
 		let strength = 10;
 		let defense = 5;
-
 		strength += selected.strengthBonus;
 		defense += selected.defenseBonus;
 		baseHp = Math.floor(baseHp * (1 + (selected.hpBonusPercent || 0) / 100));
-
 		await UserAdventure.create({
 			userId,
 			level,
@@ -116,7 +102,6 @@ class StartCommand extends BaseCommand {
 			defense,
 			characterId: selected.id,
 		});
-
 		const charStatsString = await t(
 			interaction,
 			'adventure.start.choose.char.stats',
@@ -128,14 +113,11 @@ class StartCommand extends BaseCommand {
 				gold: `0% (${selected.goldBonusPercent >= 0 ? '+' : ''}${selected.goldBonusPercent}%)`,
 			},
 		);
-
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const startContainer = new ContainerBuilder().setAccentColor(accentColor);
-
 		startContainer.addSectionComponents(
 			new SectionBuilder()
 				.addTextDisplayComponents(
@@ -152,35 +134,29 @@ class StartCommand extends BaseCommand {
 						.setDescription('User Avatar'),
 				),
 		);
-
 		startContainer.addSeparatorComponents(
 			new SeparatorBuilder()
 				.setSpacing(SeparatorSpacingSize.Small)
 				.setDivider(true),
 		);
-
 		startContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
 				`**${await t(interaction, 'adventure.start.selected.char')}**\n${selected.emoji} **${await t(interaction, selected.nameKey)}**\n*${await t(interaction, selected.descKey)}*`,
 			),
 		);
-
 		startContainer.addSeparatorComponents(
 			new SeparatorBuilder()
 				.setSpacing(SeparatorSpacingSize.Small)
 				.setDivider(true),
 		);
-
 		startContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(charStatsString),
 		);
-
 		startContainer.addSeparatorComponents(
 			new SeparatorBuilder()
 				.setSpacing(SeparatorSpacingSize.Small)
 				.setDivider(true),
 		);
-
 		startContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
 				await t(interaction, 'common.container.footer', {
@@ -188,12 +164,10 @@ class StartCommand extends BaseCommand {
 				}),
 			),
 		);
-
 		return interaction.editReply({
 			components: [startContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = StartCommand;

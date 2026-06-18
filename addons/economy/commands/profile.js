@@ -8,17 +8,14 @@
 
 const { MessageFlags } = require('discord.js');
 const banks = require('../helpers/banks');
-
 const { BaseCommand } = require('kythia-core');
-
 class ProfileCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('profile')
 			.setDescription(
-				"🗃️ View a user's full profile, including level, bank, cash, and more.",
+				"View a user's full profile, including level, bank, cash, and more.",
 			)
 			.addUserOption((option) =>
 				option
@@ -26,13 +23,11 @@ class ProfileCommand extends BaseCommand {
 					.setDescription('The user whose profile you want to view')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
 
 		// Get target user or self
@@ -40,7 +35,9 @@ class ProfileCommand extends BaseCommand {
 		const userId = targetUser.id;
 
 		// Fetch user data
-		const userData = await KythiaUser.getCache({ userId: userId });
+		const userData = await KythiaUser.getCache({
+			userId: userId,
+		});
 		if (!userData) {
 			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
 			const components = await simpleContainer(interaction, msg, {
@@ -75,16 +72,13 @@ class ProfileCommand extends BaseCommand {
 				cash: coin.toLocaleString(),
 			}),
 		].join('\n');
-
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,
 		});
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = ProfileCommand;

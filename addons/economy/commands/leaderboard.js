@@ -14,11 +14,10 @@ const leaderboardHelper = require('../helpers/leaderboard');
 
 class LeaderboardCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leaderboard')
-			.setDescription('🏆 View the global economy leaderboard.');
+			.setDescription('View the global economy leaderboard.');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models } = container;
@@ -117,5 +116,4 @@ class LeaderboardCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = LeaderboardCommand;

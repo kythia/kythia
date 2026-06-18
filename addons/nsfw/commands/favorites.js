@@ -15,18 +15,16 @@ const uiHelper = require('../helpers/ui');
 class FavoritesCommand extends BaseCommand {
 	subcommand = true;
 	voteLocked = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('favorites')
-			.setDescription('🌶️ View your favorited mature images')
+			.setDescription('View your favorited mature images')
 			.addBooleanOption((option) =>
 				option
 					.setName('private')
 					.setDescription('Make the message private?')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;
@@ -107,5 +105,4 @@ class FavoritesCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = FavoritesCommand;

@@ -11,28 +11,26 @@ const {
 	SlashCommandBuilder,
 	InteractionContextType,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class UtilsCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('kyth')
-		.setDescription('🛠️ Manage All Kythia related config')
+		.setDescription('Manage All Kythia related config')
 		.setContexts(InteractionContextType.Guild)
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
-
 	ownerOnly = true;
 	mainGuildOnly = true;
-
 	async autocomplete(interaction) {
 		const focusedOption = interaction.options.getFocused(true);
 		if (focusedOption.name === 'guild_id') {
 			const focusedValue = focusedOption.value;
 			let guildList = [];
-
 			if (interaction.client.shard) {
 				const results = await interaction.client.shard.broadcastEval((c) =>
-					c.guilds.cache.map((g) => ({ id: g.id, name: g.name })),
+					c.guilds.cache.map((g) => ({
+						id: g.id,
+						name: g.name,
+					})),
 				);
 				guildList = results.flat();
 			} else {
@@ -41,7 +39,6 @@ class UtilsCommand extends BaseCommand {
 					name: g.name,
 				}));
 			}
-
 			const choices = guildList
 				.filter(
 					(guild) =>
@@ -53,10 +50,8 @@ class UtilsCommand extends BaseCommand {
 					value: guild.id,
 				}))
 				.slice(0, 25);
-
 			await interaction.respond(choices);
 		}
 	}
 }
-
 exports.default = UtilsCommand;

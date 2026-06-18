@@ -7,20 +7,16 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 const { MAX_QUOTA, MIN_QUOTA } = require('../../helpers/constants');
-
 class QuotaCommand extends BaseCommand {
 	subcommand = true;
 	permissions = [PermissionFlagsBits.ManageGuild];
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('quota')
 			.setDescription(
-				'🔄 Set monthly restore quota (how many times members can restore their streak per month)',
+				'Set monthly restore quota (how many times members can restore their streak per month)',
 			)
 			.addIntegerOption((option) =>
 				option
@@ -32,27 +28,28 @@ class QuotaCommand extends BaseCommand {
 					.setMaxValue(MAX_QUOTA)
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const guildId = interaction.guild.id;
 		const guildName = interaction.guild.name;
 		const quota = interaction.options.getInteger('quota');
-
 		const [serverSetting] = await ServerSetting.findOrCreateCache({
-			where: { guildId },
-			defaults: { guildId, guildName },
+			where: {
+				guildId,
+			},
+			defaults: {
+				guildId,
+				guildName,
+			},
 		});
-
 		serverSetting.streakRestoreQuota = quota;
 		await serverSetting.save();
-
 		const isDisabled = quota === 0;
 		const components = await simpleContainer(
 			interaction,
@@ -61,9 +58,13 @@ class QuotaCommand extends BaseCommand {
 				isDisabled
 					? 'streak.streak.setting.quota.disabled'
 					: 'streak.streak.setting.quota.set',
-				{ quota },
+				{
+					quota,
+				},
 			),
-			{ color: isDisabled ? 'Red' : 'Green' },
+			{
+				color: isDisabled ? 'Red' : 'Green',
+			},
 		);
 		return interaction.editReply({
 			components,
@@ -71,5 +72,4 @@ class QuotaCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = QuotaCommand;

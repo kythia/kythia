@@ -18,61 +18,58 @@ const {
 	TextDisplayBuilder,
 } = require('discord.js');
 const { Op } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
-
 class AddCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
-			.setDescription('🤝 Add someone as a friend')
+			.setDescription('Add someone as a friend')
 			.addUserOption((option) =>
 				option
 					.setName('user')
 					.setDescription('The user you want to add as a friend')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Friend } = models;
 		const { convertColor } = helpers.color;
-
 		const targetUser = interaction.options.getUser('user');
 		const proposer = interaction.user;
 		const proposerId = proposer.id;
 		const targetId = targetUser.id;
-
 		if (targetUser.bot) {
 			return interaction.reply({
 				content: await t(interaction, 'fun.friend.bot.error'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		if (targetId === proposerId) {
 			return interaction.reply({
 				content: await t(interaction, 'fun.friend.yourself.error'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		const existingFriendships = await Friend.getAllCache({
 			where: {
 				[Op.or]: [
-					{ user1Id: proposerId, user2Id: targetId },
-					{ user1Id: targetId, user2Id: proposerId },
+					{
+						user1Id: proposerId,
+						user2Id: targetId,
+					},
+					{
+						user1Id: targetId,
+						user2Id: proposerId,
+					},
 				],
 			},
 			limit: 1,
 		});
-
 		const existingFriendship =
 			existingFriendships && existingFriendships.length > 0
 				? existingFriendships[0]
 				: null;
-
 		if (
 			existingFriendship &&
 			['pending', 'accepted'].includes(existingFriendship.status)
@@ -91,19 +88,25 @@ class AddCommand extends BaseCommand {
 			user2Id: targetId,
 			status: 'pending',
 		});
-
 		const proposerAvatar =
-			proposer.displayAvatarURL({ extension: 'png', size: 256 }) ||
-			'https://cdn.discordapp.com/embed/avatars/0.png';
+			proposer.displayAvatarURL({
+				extension: 'png',
+				size: 256,
+			}) || 'https://cdn.discordapp.com/embed/avatars/0.png';
 		const targetAvatar = targetUser.displayAvatarURL
-			? targetUser.displayAvatarURL({ extension: 'png', size: 256 })
+			? targetUser.displayAvatarURL({
+					extension: 'png',
+					size: 256,
+				})
 			: 'https://cdn.discordapp.com/embed/avatars/0.png';
-
 		const requestTitle = await t(interaction, 'fun.friend.request.title');
 		const proposerBlock = await t(
 			interaction,
 			'fun.friend.request.user_block',
-			{ user: proposer.username, id: proposerId },
+			{
+				user: proposer.username,
+				id: proposerId,
+			},
 		);
 		const targetBlock = await t(interaction, 'fun.friend.request.user_block', {
 			user: targetUser.username,
@@ -113,13 +116,14 @@ class AddCommand extends BaseCommand {
 			proposer: proposer.toString(),
 			target: targetUser.toString(),
 		});
-
 		const acceptBtnLabel = await t(interaction, 'fun.friend.accept.button');
 		const rejectBtnLabel = await t(interaction, 'fun.friend.reject.button');
-
 		const addContainer = new ContainerBuilder()
 			.setAccentColor(
-				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+				convertColor(kythiaConfig.bot.color, {
+					from: 'hex',
+					to: 'decimal',
+				}),
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(requestTitle),
@@ -179,12 +183,10 @@ class AddCommand extends BaseCommand {
 					}),
 				),
 			);
-
 		await interaction.reply({
 			flags: MessageFlags.IsComponentsV2,
 			components: [addContainer],
 		});
 	}
 }
-
 exports.default = AddCommand;

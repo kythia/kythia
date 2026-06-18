@@ -7,13 +7,10 @@
  */
 
 const { SlashCommandBuilder } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class CommandsCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('ai')
-		.setDescription('🧠 All commands related to kythia ai system.');
+		.setDescription('All commands related to kythia ai system.');
 }
-
 exports.default = CommandsCommand;

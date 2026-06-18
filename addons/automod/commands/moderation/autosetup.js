@@ -11,26 +11,22 @@ const {
 	MessageFlags,
 	PermissionFlagsBits,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AutosetupCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.Administrator;
 	botPermissions = PermissionFlagsBits.Administrator;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('autosetup')
-			.setDescription('🤖 Automatically setup moderation channels and roles.');
-
+			.setDescription('Automatically setup moderation channels and roles.');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, models, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
 		const { ServerSetting } = models;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		try {
 			const guild = interaction.guild;
 			await Promise.all([guild.channels.fetch(), guild.roles.fetch()]);
@@ -38,9 +34,7 @@ class AutosetupCommand extends BaseCommand {
 				(c) => c.name === 'mod-log',
 			);
 			let muteRole = guild.roles.cache.find((r) => r.name === 'Muted');
-
 			const createdItems = [];
-
 			if (!modLogChannel) {
 				modLogChannel = await guild.channels.create({
 					name: 'mod-log',
@@ -58,7 +52,6 @@ class AutosetupCommand extends BaseCommand {
 					}),
 				);
 			}
-
 			if (!muteRole) {
 				muteRole = await guild.roles.create({
 					name: 'Muted',
@@ -87,16 +80,16 @@ class AutosetupCommand extends BaseCommand {
 			}
 
 			// Save to DB
-			const setting = await ServerSetting.getCache({ guildId: guild.id });
+			const setting = await ServerSetting.getCache({
+				guildId: guild.id,
+			});
 			setting.modLogChannelId = modLogChannel.id;
 			setting.muteRoleId = muteRole.id;
 			await setting.save();
-
 			const description =
 				createdItems.length > 0
 					? createdItems.join('\n')
 					: await t(interaction, 'automod.moderation.autosetup.nothing.new');
-
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
 				title: await t(
@@ -116,7 +109,9 @@ class AutosetupCommand extends BaseCommand {
 				await t(interaction, 'automod.moderation.autosetup.failed', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -125,5 +120,4 @@ class AutosetupCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = AutosetupCommand;

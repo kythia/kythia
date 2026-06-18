@@ -6,17 +6,14 @@
  * @version 26.0.0-rc.1
  */
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AnnounceCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ManageMessages;
 	botPermissions = PermissionFlagsBits.ManageMessages;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('announce')
-			.setDescription('📢 Sends an announcement to the current channel.')
+			.setDescription('Sends an announcement to the current channel.')
 			.addStringOption((option) =>
 				option
 					.setName('message')
@@ -29,19 +26,17 @@ class AnnounceCommand extends BaseCommand {
 					.setDescription('Title for the announcement')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const message = interaction.options.getString('message');
 		const title =
 			interaction.options.getString('title') ||
 			(await t(interaction, 'automod.moderation.announce.default.title'));
-
 		try {
 			const announcement = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
@@ -55,13 +50,15 @@ class AnnounceCommand extends BaseCommand {
 					iconURL: interaction.user.displayAvatarURL(),
 				},
 			});
-
-			await interaction.channel.send({ components: announcement });
-
+			await interaction.channel.send({
+				components: announcement,
+			});
 			const reply = await simpleContainer(
 				interaction,
 				await t(interaction, 'automod.moderation.announce.success'),
-				{ color: 'Green' },
+				{
+					color: 'Green',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -73,7 +70,9 @@ class AnnounceCommand extends BaseCommand {
 				await t(interaction, 'automod.moderation.announce.failed', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -82,5 +81,4 @@ class AnnounceCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = AnnounceCommand;

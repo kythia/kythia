@@ -15,14 +15,12 @@ const {
 } = require('../../../../../economy/helpers/kythAmm');
 const { BaseCommand } = require('kythia-core');
 const kythecoHelper = require('../../../../helpers/kythEco');
-
 class EventCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('event')
-			.setDescription('🌪️ Trigger KYTH market shock events.')
+			.setDescription('Trigger KYTH market shock events.')
 			.addStringOption((option) =>
 				option
 					.setName('type')
@@ -311,5 +309,4 @@ class EventCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = EventCommand;

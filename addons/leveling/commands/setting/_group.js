@@ -7,13 +7,10 @@
  */
 
 const { SlashCommandBuilder } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class GroupCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('setting')
-		.setDescription('🎮 Setting for leveling system');
+		.setDescription('Setting for leveling system');
 }
-
 exports.default = GroupCommand;

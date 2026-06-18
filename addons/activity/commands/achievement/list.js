@@ -28,11 +28,10 @@ class ListCommand extends BaseCommand {
 
 	// must (subcommand) on subcommand case, dont (sub) or (subcmd) etc..
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
-			.setDescription('📋 Browse achievements by category.')
+			.setDescription('Browse achievements by category.')
 			// must (option) dont (opt) or (op) etc..
 			.addStringOption((option) =>
 				option
@@ -84,16 +83,13 @@ class ListCommand extends BaseCommand {
 			attributes: ['achievementId'],
 			raw: true,
 		});
-
 		const unlockedSet = new Set(unlockedRows.map((r) => r.achievementId));
 
 		// Build category list
 		const categories = categoryFilter
 			? [[categoryFilter, achievementDefs[categoryFilter] ?? []]]
 			: Object.entries(achievementDefs);
-
 		const lines = [];
-
 		for (const [catKey, achievements] of categories) {
 			if (!achievements || achievements.length === 0) continue;
 			const label = achievementuiHelper.CATEGORY_LABELS[catKey] ?? catKey;
@@ -101,7 +97,9 @@ class ListCommand extends BaseCommand {
 				await container.t(
 					interaction,
 					'activity.commands.achievement.list.category_header',
-					{ label },
+					{
+						label,
+					},
 				),
 			);
 			for (const a of achievements) {
@@ -141,7 +139,10 @@ class ListCommand extends BaseCommand {
 		const listContainer = new ContainerBuilder()
 			// always use convert color helper if need to convert color for the components v2
 			.setAccentColor(
-				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+				convertColor(kythiaConfig.bot.color, {
+					from: 'hex',
+					to: 'decimal',
+				}),
 			)
 			.addTextDisplayComponents(new TextDisplayBuilder().setContent(header))
 			.addSeparatorComponents(

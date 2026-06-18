@@ -16,7 +16,7 @@ class AddCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
-			.setDescription('💖 Add a song to your favorites.')
+			.setDescription('Add a song to your favorites.')
 			.addStringOption((option) =>
 				option
 					.setName('search')

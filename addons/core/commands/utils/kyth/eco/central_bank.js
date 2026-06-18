@@ -7,16 +7,13 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class CentralBankCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('central_bank')
-			.setDescription("🏦 (Owner) Control Kythia's Global Monetary Policy.")
+			.setDescription("(Owner) Control Kythia's Global Monetary Policy.")
 			.addNumberOption((option) =>
 				option
 					.setName('fee_rate')
@@ -47,18 +44,16 @@ class CentralBankCommand extends BaseCommand {
 					.setDescription('Emergency kill switch to halt all market trading')
 					.setRequired(false),
 			);
-
 	ownerOnly = true;
-
 	async execute(interaction) {
 		const container = this.container;
 		await interaction.deferReply();
 		const { t, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		const { KythLiquidityPool } = models;
-		const pool = await KythLiquidityPool.getCache({ id: 1 });
-
+		const pool = await KythLiquidityPool.getCache({
+			id: 1,
+		});
 		if (!pool) {
 			const msg = await t(
 				interaction,
@@ -67,21 +62,20 @@ class CentralBankCommand extends BaseCommand {
 			const components = await simpleContainer(
 				interaction,
 				`❌ Database Error\n${msg}`,
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const feeRate = interaction.options.getNumber('fee_rate');
 		const dividendSplit = interaction.options.getNumber('dividend_split');
 		const burnRate = interaction.options.getNumber('burn_rate');
 		const haltTrading = interaction.options.getBoolean('halt_trading');
-
 		const changes = [];
-
 		if (feeRate !== null) {
 			changes.push(`**Trading Fee:** ${pool.feeRatePct}% ➔ ${feeRate}%`);
 			pool.feeRatePct = feeRate;
@@ -102,7 +96,6 @@ class CentralBankCommand extends BaseCommand {
 			);
 			pool.tradingHalted = haltTrading;
 		}
-
 		if (changes.length === 0) {
 			const title = await t(
 				interaction,
@@ -121,16 +114,16 @@ class CentralBankCommand extends BaseCommand {
 			const components = await simpleContainer(
 				interaction,
 				`${title}\n${msg}`,
-				{ color: 'Blue' },
+				{
+					color: 'Blue',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		await pool.save();
-
 		const title = await t(
 			interaction,
 			'economy.guild_stock.central_bank.title',
@@ -138,12 +131,16 @@ class CentralBankCommand extends BaseCommand {
 		const msg = await t(
 			interaction,
 			'economy.guild_stock.central_bank.success',
-			{ changes: changes.join('\n') },
+			{
+				changes: changes.join('\n'),
+			},
 		);
 		const components = await simpleContainer(
 			interaction,
 			`${title} Updated\n${msg}`,
-			{ color: 'Green' },
+			{
+				color: 'Green',
+			},
 		);
 		return interaction.editReply({
 			components,
@@ -151,5 +148,4 @@ class CentralBankCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = CentralBankCommand;

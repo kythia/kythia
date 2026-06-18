@@ -17,7 +17,7 @@ class JoinCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('join')
-			.setDescription('🌸 Make Kythia Join the voice channel');
+			.setDescription('Make Kythia Join the voice channel');
 
 	async execute(interaction) {
 		const { simpleContainer } = interaction.client.container.helpers.discord;

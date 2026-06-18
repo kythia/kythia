@@ -18,14 +18,11 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { Op } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
-
 class VoteLeaderboardCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('vote-leaderboard')
-		.setDescription('🏆 View top voters for Kythia!');
-
+		.setDescription('View top voters for Kythia!');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, models } = container;
@@ -35,12 +32,13 @@ class VoteLeaderboardCommand extends BaseCommand {
 		// We assume caching tags will be handled properly if we add a cache tag for user updates,
 		// but since we update KythiaUser for vote points, we might just query the DB.
 		await interaction.deferReply();
-
 		try {
 			// Find top users who have votePoints > 0
 			const leaderboard = await KythiaUser.getAllCache({
 				where: {
-					votePoints: { [Op.gt]: 0 },
+					votePoints: {
+						[Op.gt]: 0,
+					},
 				},
 				order: [['votePoints', 'DESC']],
 				limit: 10,
@@ -57,7 +55,6 @@ class VoteLeaderboardCommand extends BaseCommand {
 					});
 				}),
 			);
-
 			let leaderboardText = entries.join('\n');
 			if (!leaderboardText) {
 				leaderboardText = await t(
@@ -65,12 +62,10 @@ class VoteLeaderboardCommand extends BaseCommand {
 					'core.utils.vote.leaderboard.empty',
 				);
 			}
-
 			const accentColor = convertColor(kythiaConfig.bot.color, {
 				from: 'hex',
 				to: 'decimal',
 			});
-
 			const mainContainer = new ContainerBuilder()
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
@@ -103,7 +98,6 @@ class VoteLeaderboardCommand extends BaseCommand {
 							.setURL(`https://top.gg/bot/${kythiaConfig.bot.clientId}/vote`),
 					),
 				);
-
 			await interaction.editReply({
 				components: [mainContainer],
 				flags: MessageFlags.IsComponentsV2,
@@ -114,17 +108,22 @@ class VoteLeaderboardCommand extends BaseCommand {
 		} catch (error) {
 			container.logger.error(
 				`[vote-leaderboard] Error: ${error.message || String(error)}`,
-				{ label: 'vote-leaderboard' },
+				{
+					label: 'vote-leaderboard',
+				},
 			);
 			const { simpleContainer } = helpers.discord;
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'common.error'),
-				{ mode: 'error' },
+				{
+					mode: 'error',
+				},
 			);
-			await interaction.editReply({ components });
+			await interaction.editReply({
+				components,
+			});
 		}
 	}
 }
-
 exports.default = VoteLeaderboardCommand;

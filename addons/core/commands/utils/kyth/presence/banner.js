@@ -7,51 +7,46 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class BannerCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('banner')
-			.setDescription('🎨 Change bot banner')
+			.setDescription('Change bot banner')
 			.addAttachmentOption((option) =>
 				option
 					.setName('image')
 					.setDescription('New banner image')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		try {
 			const attachment = interaction.options.getAttachment('image');
-
 			if (!attachment.contentType?.startsWith('image/')) {
 				const components = await simpleContainer(
 					interaction,
 					await t(interaction, 'core.utils.presence.banner.invalid'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			await interaction.client.user.setBanner(attachment.url);
-
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.utils.presence.banner.success'),
-				{ color: 'Green' },
+				{
+					color: 'Green',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -66,7 +61,9 @@ class BannerCommand extends BaseCommand {
 				await t(interaction, 'core.utils.presence.error', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -75,5 +72,4 @@ class BannerCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = BannerCommand;

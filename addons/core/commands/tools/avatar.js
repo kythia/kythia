@@ -12,40 +12,34 @@ const {
 	ApplicationCommandType,
 	ContextMenuCommandBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AvatarCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('avatar')
-		.setDescription('🖼️ Show user avatar.')
+		.setDescription('Show user avatar.')
 		.addUserOption((option) =>
 			option
 				.setName('user')
 				.setDescription('The user whose avatar you want to see.')
 				.setRequired(false),
 		);
-
 	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('User Avatar')
 		.setType(ApplicationCommandType.User);
-
 	contextMenuDescription = '🖼️ Show user avatar.';
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const user =
 			interaction.options.getUser('user') ||
 			interaction.targetUser ||
 			interaction.user;
-
-		const avatarURL = user.displayAvatarURL({ dynamic: true, size: 1024 });
-
+		const avatarURL = user.displayAvatarURL({
+			dynamic: true,
+			size: 1024,
+		});
 		const components = await createContainer(interaction, {
 			title: user.tag,
 			description: await t(interaction, 'core.tools.avatar.embed.desc', {
@@ -54,12 +48,10 @@ class AvatarCommand extends BaseCommand {
 			media: [avatarURL],
 			color: kythiaConfig.bot.color,
 		});
-
 		await interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = AvatarCommand;

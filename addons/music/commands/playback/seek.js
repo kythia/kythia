@@ -16,7 +16,7 @@ class SeekCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('seek')
-			.setDescription('⏩ Seeks to a specific time in the current song.')
+			.setDescription('Seeks to a specific time in the current song.')
 			.addStringOption((option) =>
 				option
 					.setName('time')

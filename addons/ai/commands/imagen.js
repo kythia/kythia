@@ -20,15 +20,14 @@ const fs = require('node:fs').promises;
 const http = require('node:http');
 const path = require('node:path');
 const https = require('node:https');
-
 const { BaseCommand } = require('kythia-core');
-
 const tempDirPath = path.join(__dirname, '..', 'temp');
 const usageFilePath = path.join(tempDirPath, 'imagen_usage.json');
-
 async function ensureUsageFile() {
 	try {
-		await fs.mkdir(tempDirPath, { recursive: true });
+		await fs.mkdir(tempDirPath, {
+			recursive: true,
+		});
 	} catch (_e) {}
 	try {
 		await fs.access(usageFilePath);
@@ -36,7 +35,6 @@ async function ensureUsageFile() {
 		await fs.writeFile(usageFilePath, JSON.stringify({}));
 	}
 }
-
 async function checkAndUseLimit(userId, limit) {
 	await ensureUsageFile();
 	let data = {};
@@ -46,24 +44,25 @@ async function checkAndUseLimit(userId, limit) {
 	} catch (_e) {
 		data = {};
 	}
-
 	const today = new Date().toISOString().split('T')[0];
-
-	if (!data[userId]) data[userId] = { date: today, count: 0 };
-
+	if (!data[userId])
+		data[userId] = {
+			date: today,
+			count: 0,
+		};
 	if (data[userId].date !== today) {
-		data[userId] = { date: today, count: 0 };
+		data[userId] = {
+			date: today,
+			count: 0,
+		};
 	}
-
 	if (data[userId].count >= limit) {
 		return false;
 	}
-
 	data[userId].count += 1;
 	await fs.writeFile(usageFilePath, JSON.stringify(data, null, 2));
 	return true;
 }
-
 function fetchUrlAsBase64(url) {
 	return new Promise((resolve, reject) => {
 		const client = url.startsWith('https') ? https : http;
@@ -77,14 +76,12 @@ function fetchUrlAsBase64(url) {
 			.on('error', reject);
 	});
 }
-
 class ImagenCommand extends BaseCommand {
 	voteLocked = true;
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('imagen')
 		.setDescription(
-			'🎨 Generate an image from a prompt or transform an existing image using Gemini AI.',
+			'Generate an image from a prompt or transform an existing image using Gemini AI.',
 		)
 		.addStringOption((option) =>
 			option
@@ -100,38 +97,33 @@ class ImagenCommand extends BaseCommand {
 				.setDescription('Optional source image to transform (image-to-image).')
 				.setRequired(false),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, logger } = container;
 		const { simpleContainer, isOwner } = helpers.discord;
 		const { convertColor } = helpers.color;
-
 		const prompt = interaction.options.getString('prompt');
 		const imageAttachment = interaction.options.getAttachment('image');
-
 		if (!prompt && !imageAttachment) {
 			return interaction.reply({
 				content: await t(interaction, 'ai.imagen.no_input'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		if (imageAttachment && !imageAttachment.contentType?.startsWith('image/')) {
 			return interaction.reply({
 				content: await t(interaction, 'ai.imagen.invalid_attachment'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		await interaction.deferReply();
-
 		const userId = interaction.user.id;
 		const limit = kythiaConfig.addons.ai.imagenLimit || 2;
 		const canUse = await checkAndUseLimit(userId, limit);
-
 		if (!canUse && !isOwner(userId)) {
-			const msg = await t(interaction, 'ai.imagen.limit', { limit });
+			const msg = await t(interaction, 'ai.imagen.limit', {
+				limit,
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -140,27 +132,24 @@ class ImagenCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		logger.debug(
 			`🧠 AI imagen request from ${userId} (image-to-image: ${!!imageAttachment})...`,
-			{ label: 'ai' },
+			{
+				label: 'ai',
+			},
 		);
-
 		const initMsg = imageAttachment
 			? await t(interaction, 'ai.imagen.loading_transform', {
 					prompt: prompt || '',
 				})
 			: await t(interaction, 'ai.imagen.loading');
-
 		const initComponents = await simpleContainer(interaction, initMsg);
 		await interaction.editReply({
 			components: initComponents,
 			flags: MessageFlags.IsComponentsV2,
 		});
-
 		let sourceImageBase64 = null;
 		let sourceImageMimeType = null;
-
 		if (imageAttachment) {
 			try {
 				sourceImageBase64 = await fetchUrlAsBase64(imageAttachment.url);
@@ -172,7 +161,9 @@ class ImagenCommand extends BaseCommand {
 				const components = await simpleContainer(
 					interaction,
 					await t(interaction, 'ai.imagen.fetch_error'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -180,14 +171,12 @@ class ImagenCommand extends BaseCommand {
 				});
 			}
 		}
-
 		const rawImagenKeys = kythiaConfig.addons.ai.imagenApiKeys;
 		const rawFallbackKeys = kythiaConfig.addons.ai.geminiApiKeys;
 		const imagenKeys = (rawImagenKeys || rawFallbackKeys || '')
 			.split(',')
 			.map((k) => k.trim())
 			.filter(Boolean);
-
 		if (imagenKeys.length === 0) {
 			const msg = await t(interaction, 'ai.imagen.rate_limit');
 			const components = await simpleContainer(interaction, msg, {
@@ -198,24 +187,25 @@ class ImagenCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		let success = false;
 		let finalBuffer = null;
 		let lastError = null;
-
 		for (let attempt = 0; attempt < imagenKeys.length; attempt++) {
 			const GEMINI_API_KEY = imagenKeys[attempt];
 			if (!GEMINI_API_KEY) continue;
-
-			const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+			const ai = new GoogleGenAI({
+				apiKey: GEMINI_API_KEY,
+			});
 			const contents = [];
-
 			if (prompt) {
-				contents.push({ text: prompt });
+				contents.push({
+					text: prompt,
+				});
 			} else if (sourceImageBase64) {
-				contents.push({ text: 'Recreate or enhance this image.' });
+				contents.push({
+					text: 'Recreate or enhance this image.',
+				});
 			}
-
 			if (sourceImageBase64) {
 				contents.push({
 					inlineData: {
@@ -224,7 +214,6 @@ class ImagenCommand extends BaseCommand {
 					},
 				});
 			}
-
 			try {
 				const response = await ai.models.generateContent({
 					model:
@@ -232,7 +221,6 @@ class ImagenCommand extends BaseCommand {
 						'gemini-3.1-flash-image-preview',
 					contents,
 				});
-
 				const parts = response.candidates?.[0]?.content?.parts;
 				if (parts) {
 					for (const part of parts) {
@@ -243,11 +231,12 @@ class ImagenCommand extends BaseCommand {
 						}
 					}
 				}
-
 				if (success) {
 					logger.debug(
 						`✅ AI imagen request successful on attempt ${attempt + 1}`,
-						{ label: 'ai' },
+						{
+							label: 'ai',
+						},
 					);
 					break;
 				} else {
@@ -259,7 +248,9 @@ class ImagenCommand extends BaseCommand {
 				lastError = error;
 				logger.error(
 					`Error in /imagen attempt ${attempt + 1}: ${error.message || error}`,
-					{ label: 'ai' },
+					{
+						label: 'ai',
+					},
 				);
 				if (
 					error.message &&
@@ -270,7 +261,6 @@ class ImagenCommand extends BaseCommand {
 				}
 			}
 		}
-
 		if (success && finalBuffer) {
 			const attachment = new AttachmentBuilder(finalBuffer, {
 				name: 'imagen.png',
@@ -279,8 +269,9 @@ class ImagenCommand extends BaseCommand {
 				? await t(interaction, 'ai.imagen.result_transform', {
 						prompt: prompt || '',
 					})
-				: await t(interaction, 'ai.imagen.result', { prompt: prompt || '' });
-
+				: await t(interaction, 'ai.imagen.result', {
+						prompt: prompt || '',
+					});
 			const finalComponents = [
 				new ContainerBuilder()
 					.setAccentColor(
@@ -298,7 +289,6 @@ class ImagenCommand extends BaseCommand {
 						]),
 					),
 			];
-
 			await interaction.editReply({
 				components: finalComponents,
 				files: [attachment],
@@ -312,11 +302,12 @@ class ImagenCommand extends BaseCommand {
 					await fs.writeFile(usageFilePath, JSON.stringify(data, null, 2));
 				}
 			} catch (_e) {}
-
 			const valError = lastError
 				? lastError.message || lastError
 				: 'Unknown error.';
-			const msg = await t(interaction, 'ai.imagen.error', { error: valError });
+			const msg = await t(interaction, 'ai.imagen.error', {
+				error: valError,
+			});
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -327,5 +318,4 @@ class ImagenCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = ImagenCommand;

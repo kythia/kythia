@@ -13,10 +13,9 @@ const { BaseButton } = require('kythia-core');
 class VoteRemindButton extends BaseButton {
 	async execute(interaction) {
 		const container = this.container;
-		const { models, helpers, kythiaConfig } = container;
+		const { models, helpers, kythiaConfig, t } = container;
 		const { KythiaReminder } = models;
 		const { simpleContainer } = helpers.discord;
-		const { t } = helpers.lang;
 
 		// Defer the update so the button stops spinning
 		await interaction.deferUpdate();

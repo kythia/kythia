@@ -24,21 +24,20 @@ class MathCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('math')
 		.setDescription(
-			'🔢 Speed math quiz — answer streaks build your leaderboard score!',
+			'Speed math quiz \u2014 answer streaks build your leaderboard score!',
 		)
 		.addSubcommand((sub) =>
-			sub.setName('play').setDescription('▶️ Start a math quiz'),
+			sub.setName('play').setDescription('\u25B6Start a math quiz'),
 		)
 		.addSubcommand((sub) =>
 			sub
 				.setName('leaderboard')
-				.setDescription('🏆 View the global math leaderboard'),
+				.setDescription('View the global math leaderboard'),
 		);
 	async execute(interaction) {
 		const container = this.container;
 		const { t } = container;
 		const sub = interaction.options.getSubcommand();
-
 		const mathHelpers = mathHelper;
 
 		// ── Leaderboard ──────────────────────────────────────────────────────
@@ -214,5 +213,4 @@ class MathCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = MathCommand;

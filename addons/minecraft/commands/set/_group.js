@@ -7,14 +7,11 @@
  */
 
 const { BaseCommand } = require('kythia-core');
-
 class GroupCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommandGroup) =>
 		subcommandGroup
 			.setName('set')
-			.setDescription('⚙️ Configure Minecraft server settings for this guild');
+			.setDescription('Configure Minecraft server settings for this guild');
 }
-
 exports.default = GroupCommand;

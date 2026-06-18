@@ -8,39 +8,30 @@
 
 const { rolePrefix } = require('../../../helpers');
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AddCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
-			.setDescription('📛 Adds the highest role prefix to member nicknames.');
-
+			.setDescription('Adds the highest role prefix to member nicknames.');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const startedMsg = await t(interaction, 'core.tools.prefix.add.started');
 		const startedComponents = await simpleContainer(interaction, startedMsg);
-
 		await interaction.editReply({
 			components: startedComponents,
 			flags: MessageFlags.IsComponentsV2,
 		});
-
 		try {
 			const updated = await rolePrefix(interaction.guild, container);
 			const successMsg = await t(interaction, 'core.tools.prefix.add.success', {
 				count: updated,
 			});
 			const successComponents = await simpleContainer(interaction, successMsg);
-
 			try {
 				await interaction.editReply({
 					components: successComponents,
@@ -75,5 +66,4 @@ class AddCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = AddCommand;

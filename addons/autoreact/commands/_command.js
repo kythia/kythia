@@ -14,7 +14,7 @@ class AutoreactCommand extends BaseCommand {
 
 	slashCommand = new SlashCommandBuilder()
 		.setName('autoreact')
-		.setDescription('🤖 Manage automatic reactions for the server.')
+		.setDescription('Manage automatic reactions for the server.')
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
 }
 

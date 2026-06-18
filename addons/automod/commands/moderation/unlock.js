@@ -7,44 +7,38 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class UnlockCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ManageChannels;
 	botPermissions = PermissionFlagsBits.ManageChannels;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unlock')
-			.setDescription('🔓 Unlocks the current channel.')
+			.setDescription('Unlocks the current channel.')
 			.addStringOption((option) =>
 				option
 					.setName('reason')
 					.setDescription('Reason for unlocking the channel')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const reason =
 			interaction.options.getString('reason') ||
 			(await t(interaction, 'automod.moderation.unlock.default.reason'));
-
 		try {
 			await interaction.channel.permissionOverwrites.edit(
 				interaction.guild.roles.everyone,
 				{
 					SendMessages: null,
 				},
-				{ reason },
+				{
+					reason,
+				},
 			);
-
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
 				title: await t(interaction, 'automod.moderation.unlock.success.title'),
@@ -62,11 +56,12 @@ class UnlockCommand extends BaseCommand {
 				components: reply,
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			const confirmReply = await simpleContainer(
 				interaction,
 				await t(interaction, 'automod.moderation.unlock.confirm'),
-				{ color: 'Green' },
+				{
+					color: 'Green',
+				},
 			);
 			return interaction.editReply({
 				components: confirmReply,
@@ -78,7 +73,9 @@ class UnlockCommand extends BaseCommand {
 				await t(interaction, 'automod.moderation.unlock.failed', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -87,5 +84,4 @@ class UnlockCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = UnlockCommand;

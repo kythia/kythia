@@ -7,12 +7,9 @@
  */
 
 const { BaseCommand } = require('kythia-core');
-
 class GroupCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommandGroup) =>
-		subcommandGroup.setName('claim').setDescription('🌐 Klaim Your Rewards!');
+		subcommandGroup.setName('claim').setDescription('Klaim Your Rewards!');
 }
-
 exports.default = GroupCommand;

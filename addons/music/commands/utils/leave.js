@@ -17,7 +17,7 @@ class LeaveCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leave')
-			.setDescription('🌸 Make Kythia Leave the voice channel');
+			.setDescription('Make Kythia Leave the voice channel');
 
 	async execute(interaction) {
 		const container = this.container;

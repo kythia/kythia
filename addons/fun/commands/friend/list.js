@@ -13,28 +13,29 @@ const {
 	TextDisplayBuilder,
 } = require('discord.js');
 const { Op } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
-
 class ListCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
-		subcommand.setName('list').setDescription('🤝 List your friends');
-
+		subcommand.setName('list').setDescription('List your friends');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { Friend } = models;
 		const { convertColor } = helpers.color;
-
 		const userId = interaction.user.id;
-
 		const existingFriendships = await Friend.getAllCache({
 			where: {
-				[Op.or]: [{ user1Id: userId }, { user2Id: userId }],
+				[Op.or]: [
+					{
+						user1Id: userId,
+					},
+					{
+						user2Id: userId,
+					},
+				],
 				status: 'accepted',
 			},
 		});
-
 		let formattedList = '';
 		if (!existingFriendships || existingFriendships.length === 0) {
 			formattedList = await t(interaction, 'fun.friend.list.empty');
@@ -50,10 +51,12 @@ class ListCommand extends BaseCommand {
 			}
 			formattedList = arr.join('\n');
 		}
-
 		const listContainer = new ContainerBuilder()
 			.setAccentColor(
-				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+				convertColor(kythiaConfig.bot.color, {
+					from: 'hex',
+					to: 'decimal',
+				}),
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
@@ -72,12 +75,10 @@ class ListCommand extends BaseCommand {
 					}),
 				),
 			);
-
 		await interaction.reply({
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			components: [listContainer],
 		});
 	}
 }
-
 exports.default = ListCommand;

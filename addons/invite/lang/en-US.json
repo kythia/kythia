@@ -44,9 +44,9 @@
 					"stats": "{user} has {invites} invites (fake: {fake}, leaves: {leaves})."
 				},
 				"leaderboard": {
-					"title": "## 🏆 Invite Leaderboard\n**Page {page} of {totalPages}**",
+					"title": "## Invite Leaderboard\n**Page {page} of {totalPages}**",
 					"empty": "No data yet.",
-					"entry": "### {medal} **{username}**\n> 📨 Total Invites: **{invites}**",
+					"entry": "### {medal} **{username}**\n> Total Invites: **{invites}**",
 					"footer": "Total Inviters: {totalUsers}"
 				},
 				"reset": {

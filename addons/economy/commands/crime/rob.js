@@ -9,32 +9,26 @@
 const { MessageFlags } = require('discord.js');
 const banks = require('../../helpers/banks');
 const { toBigIntSafe } = require('../../helpers/bigint');
-
 const { BaseCommand } = require('kythia-core');
-
 class RobCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('rob')
-			.setDescription('💵 Try to rob money from another user.')
+			.setDescription('Try to rob money from another user.')
 			.addUserOption((option) =>
 				option
 					.setName('target')
 					.setDescription('The user you want to rob')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser, Inventory } = models;
 		const { simpleContainer } = helpers.discord;
 		const { checkCooldown } = helpers.time;
-
 		await interaction.deferReply();
-
 		const targetUser = interaction.options.getUser('target');
 		if (targetUser.id === interaction.user.id) {
 			const msg = await t(interaction, 'economy.rob.rob.cannot.rob.self');
@@ -46,8 +40,9 @@ class RobCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
 			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
 			const components = await simpleContainer(interaction, msg, {
@@ -58,15 +53,15 @@ class RobCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (
 			helpers.jail &&
 			(await helpers.jail.checkJail(interaction, user, container))
 		) {
 			return;
 		}
-
-		const target = await KythiaUser.getCache({ userId: targetUser.id });
+		const target = await KythiaUser.getCache({
+			userId: targetUser.id,
+		});
 		if (!target) {
 			const msg = await t(
 				interaction,
@@ -80,13 +75,11 @@ class RobCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const cooldown = checkCooldown(
 			user.lastRob,
 			kythiaConfig.addons.economy.robCooldown || 10800,
 			interaction,
 		);
-
 		if (cooldown.remaining) {
 			const msg = await t(interaction, 'economy.rob.rob.cooldown', {
 				time: cooldown.time,
@@ -99,7 +92,6 @@ class RobCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const guard = await Inventory.getCache({
 			userId: target.userId,
 			itemName: '🚓 Guard',
@@ -132,7 +124,6 @@ class RobCommand extends BaseCommand {
 			userId: user.userId,
 			itemName: '👔 Lawyer Contact',
 		});
-
 		let poison = null;
 		if (!guard && !padlock) {
 			poison = await Inventory.getCache({
@@ -140,7 +131,6 @@ class RobCommand extends BaseCommand {
 				itemName: '🧪 Poison',
 			});
 		}
-
 		let lockpickMsg = '';
 		if (padlock) {
 			if (lockpick) {
@@ -182,12 +172,10 @@ class RobCommand extends BaseCommand {
 				});
 			}
 		}
-
 		const stealthSuit = await Inventory.getCache({
 			userId: user.userId,
 			itemName: '🥷 Stealth Suit',
 		});
-
 		const userBank = banks.getBank(user.bankType);
 		let success = false;
 		if (guard) {
@@ -197,18 +185,14 @@ class RobCommand extends BaseCommand {
 			success = Math.random() < 0.1;
 		} else {
 			let baseSuccessChance = 0.3;
-
 			const successBonus = userBank.robSuccessBonusPercent / 100;
 			baseSuccessChance += successBonus;
 			success = Math.random() < baseSuccessChance;
 		}
-
 		const baseRobAmount = Math.floor(Math.random() * 201) + 50;
-
 		const robSuccessBonusPercent = userBank.robSuccessBonusPercent;
 		const robBonus = Math.floor(baseRobAmount * (robSuccessBonusPercent / 100));
 		const robAmount = baseRobAmount + robBonus;
-
 		if (success) {
 			if (target.kythiaCoin < robAmount) {
 				const msg = await t(
@@ -223,7 +207,6 @@ class RobCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			let finalRobAmount = robAmount;
 			let vaultMsg = '';
 			if (fakeWallet) {
@@ -233,13 +216,11 @@ class RobCommand extends BaseCommand {
 				finalRobAmount = Math.floor(robAmount * 0.2); // Bank vault reduces to 20%
 				vaultMsg = '\n🏦 *Their Bank Vault protected 80% of their cash!*';
 			}
-
 			user.kythiaCoin =
 				toBigIntSafe(user.kythiaCoin) + toBigIntSafe(finalRobAmount);
 			target.kythiaCoin =
 				toBigIntSafe(target.kythiaCoin) - toBigIntSafe(finalRobAmount);
 			user.lastRob = new Date();
-
 			let bountyIncrease = Math.floor(finalRobAmount * 0.5);
 			let stealthMsg = '';
 			if (stealthSuit) {
@@ -252,17 +233,13 @@ class RobCommand extends BaseCommand {
 						'\n🥷 *Your Stealth Suit kept your identity hidden! No bounty added.*';
 				}
 			}
-
 			user.bountyAmount =
 				toBigIntSafe(user.bountyAmount || 0) + toBigIntSafe(bountyIncrease);
-
 			user.changed('kythiaCoin', true);
 			user.changed('bountyAmount', true);
 			target.changed('kythiaCoin', true);
-
 			await user.save();
 			await target.save();
-
 			const msgText = fakeWallet
 				? await t(interaction, 'economy.crime.rob.fake_wallet', {
 						target: targetUser.username,
@@ -276,7 +253,6 @@ class RobCommand extends BaseCommand {
 						target: targetUser.username,
 					})) +
 					`\nYour bounty increased by 🪙 ${bountyIncrease.toLocaleString()}!${stealthMsg}${lockpickMsg}${vaultMsg}`;
-
 			const msg = msgText;
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
@@ -285,7 +261,6 @@ class RobCommand extends BaseCommand {
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			const dmMsg = await t(interaction, 'economy.rob.rob.success.dm', {
 				robber: cctv ? interaction.user.username : 'Someone (Anonymous)',
 				amount: finalRobAmount,
@@ -300,7 +275,6 @@ class RobCommand extends BaseCommand {
 		} else {
 			const robPenaltyMultiplier = userBank ? userBank.robPenaltyMultiplier : 1;
 			const basePenalty = Math.floor(robAmount * robPenaltyMultiplier);
-
 			if (user.kythiaCoin < basePenalty && !poison) {
 				const msg = await t(
 					interaction,
@@ -317,10 +291,8 @@ class RobCommand extends BaseCommand {
 			let penalty = basePenalty;
 			let smokeMsg = '';
 			let lawyerMsg = '';
-
 			if (poison) {
 				penalty = user.kythiaCoin;
-
 				user.kythiaCoin = toBigIntSafe(user.kythiaCoin) - toBigIntSafe(penalty);
 				target.kythiaCoin =
 					toBigIntSafe(target.kythiaCoin) + toBigIntSafe(penalty);
@@ -336,20 +308,15 @@ class RobCommand extends BaseCommand {
 					penalty = Math.floor(basePenalty * 0.5);
 					lawyerMsg = '\n👔 *Your Lawyer intervened and cut your fine by 50%!*';
 				}
-
 				user.kythiaCoin = toBigIntSafe(user.kythiaCoin) - toBigIntSafe(penalty);
 				target.kythiaCoin =
 					toBigIntSafe(target.kythiaCoin) + toBigIntSafe(penalty);
 			}
-
 			user.lastRob = new Date();
-
 			user.changed('kythiaCoin', true);
 			target.changed('kythiaCoin', true);
-
 			await user.save();
 			await target.save();
-
 			const msg = `${await t(interaction, 'economy.rob.rob.fail.text', {
 				target: targetUser.username,
 				penalty: poison
@@ -369,7 +336,6 @@ class RobCommand extends BaseCommand {
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			const dmMsg = await t(interaction, 'economy.rob.rob.fail.dm', {
 				robber: cctv ? interaction.user.username : 'Someone (Anonymous)',
 				amount: robAmount,
@@ -391,5 +357,4 @@ class RobCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = RobCommand;

@@ -7,44 +7,38 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class LockCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ManageChannels;
 	botPermissions = PermissionFlagsBits.ManageChannels;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('lock')
-			.setDescription('🔒 Locks the current channel.')
+			.setDescription('Locks the current channel.')
 			.addStringOption((option) =>
 				option
 					.setName('reason')
 					.setDescription('Reason for locking the channel')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const reason =
 			interaction.options.getString('reason') ||
 			(await t(interaction, 'automod.moderation.lock.default.reason'));
-
 		try {
 			await interaction.channel.permissionOverwrites.edit(
 				interaction.guild.roles.everyone,
 				{
 					SendMessages: false,
 				},
-				{ reason },
+				{
+					reason,
+				},
 			);
-
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
 				title: await t(interaction, 'automod.moderation.lock.success.title'),
@@ -62,11 +56,12 @@ class LockCommand extends BaseCommand {
 				components: reply,
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			const confirmReply = await simpleContainer(
 				interaction,
 				await t(interaction, 'automod.moderation.lock.confirm'),
-				{ color: 'Green' },
+				{
+					color: 'Green',
+				},
 			);
 			return interaction.editReply({
 				components: confirmReply,
@@ -78,7 +73,9 @@ class LockCommand extends BaseCommand {
 				await t(interaction, 'automod.moderation.lock.failed', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -87,5 +84,4 @@ class LockCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = LockCommand;

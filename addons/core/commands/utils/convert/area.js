@@ -8,16 +8,13 @@
 
 const { MessageFlags } = require('discord.js');
 const { areaChoices, convertArea } = require('../../../helpers/convert');
-
 const { BaseCommand } = require('kythia-core');
-
 class AreaCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('area')
-			.setDescription('🟦 Convert area units (e.g. m² to acre)')
+			.setDescription('Convert area units (e.g. m\xB2 to acre)')
 			.addStringOption((option) =>
 				option
 					.setName('from')
@@ -38,31 +35,28 @@ class AreaCommand extends BaseCommand {
 					.setDescription('Value to convert')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const value = interaction.options.getNumber('value');
 		const from = interaction.options.getString('from');
 		const to = interaction.options.getString('to');
 		const result = convertArea(value, from, to);
-
 		if (result == null) {
 			const components = await simpleContainer(
 				interaction,
 				`${await t(interaction, 'core.utils.convert.area.failed')}`,
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const desc =
 			'' +
 			(await t(interaction, 'core.utils.convert.area.title')) +
@@ -73,7 +67,6 @@ class AreaCommand extends BaseCommand {
 				result,
 				to,
 			}));
-
 		const components = await simpleContainer(interaction, desc);
 		return interaction.editReply({
 			components,
@@ -81,5 +74,4 @@ class AreaCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = AreaCommand;

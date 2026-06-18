@@ -16,7 +16,7 @@ class RemoveCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
-			.setDescription('🗑️ Remove a song from queue')
+			.setDescription('Remove a song from queue')
 			.addIntegerOption((option) =>
 				option
 					.setName('position')

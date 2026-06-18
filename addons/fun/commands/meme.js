@@ -22,11 +22,10 @@ const {
 const axios = require('axios');
 const { BaseCommand } = require('kythia-core');
 const constantsHelper = require('../helpers/constants');
-
 class MemeCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('meme')
-		.setDescription('😂 Get a random meme from Reddit')
+		.setDescription('Get a random meme from Reddit')
 		.addStringOption((option) =>
 			option
 				.setName('subreddit')
@@ -149,5 +148,4 @@ class MemeCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = MemeCommand;

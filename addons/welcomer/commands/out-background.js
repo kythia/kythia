@@ -7,16 +7,13 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class OutBackgroundCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('out-background')
-			.setDescription('👋 Set farewell banner background URL')
+			.setDescription('Set farewell banner background URL')
 			.addStringOption((option) =>
 				option
 					.setName('url')
@@ -25,47 +22,46 @@ class OutBackgroundCommand extends BaseCommand {
 					)
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { WelcomeSetting } = models;
 		const { simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const url = interaction.options.getString('url');
-
 		if (!url.startsWith('http')) {
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'welcomer.welcomer.out.background.invalid.url'),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const [welcomeSetting] = await WelcomeSetting.getOrCreateCache({
 			guildId: interaction.guild.id,
 		});
-
 		welcomeSetting.welcomeOutBackgroundUrl = url;
 		await welcomeSetting.save();
-
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'welcomer.welcomer.out.background.set', { url }),
-			{ color: 'Green' },
+			await t(interaction, 'welcomer.welcomer.out.background.set', {
+				url,
+			}),
+			{
+				color: 'Green',
+			},
 		);
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = OutBackgroundCommand;

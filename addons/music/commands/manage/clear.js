@@ -14,7 +14,7 @@ class ClearCommand extends BaseCommand {
 	subcommand = true;
 
 	slashCommand = (subcommand) =>
-		subcommand.setName('clear').setDescription('🗑️ Clears the current queue.');
+		subcommand.setName('clear').setDescription('Clears the current queue.');
 
 	async execute(interaction) {
 		const container = this.container;

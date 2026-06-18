@@ -17,7 +17,7 @@ const { BaseCommand } = require('kythia-core');
 class CountingCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('counting')
-		.setDescription('🔢 Manage the counting channel.')
+		.setDescription('Manage the counting channel.')
 		.setContexts(InteractionContextType.Guild)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels);
 

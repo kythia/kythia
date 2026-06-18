@@ -8,16 +8,13 @@
 
 const { MessageFlags } = require('discord.js');
 const { STATUS_OPTIONS } = require('../../../../helpers/presenceConstants');
-
 const { BaseCommand } = require('kythia-core');
-
 class StatusCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('status')
-			.setDescription('📊 Set bot status only')
+			.setDescription('Set bot status only')
 			.addStringOption((option) =>
 				option
 					.setName('status')
@@ -25,22 +22,22 @@ class StatusCommand extends BaseCommand {
 					.setRequired(true)
 					.addChoices(...STATUS_OPTIONS),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		try {
 			const status = interaction.options.getString('status');
 			await interaction.client.user.setStatus(status);
-
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.status.success', { status }),
-				{ color: 'Green' },
+				await t(interaction, 'core.utils.presence.status.success', {
+					status,
+				}),
+				{
+					color: 'Green',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -55,7 +52,9 @@ class StatusCommand extends BaseCommand {
 				await t(interaction, 'core.utils.presence.error', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -64,5 +63,4 @@ class StatusCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = StatusCommand;

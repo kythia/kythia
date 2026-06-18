@@ -23,27 +23,20 @@ const {
 	InteractionContextType,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ServerInfoCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('serverinfo')
-		.setDescription('📰 Displays detailed information about the server.')
+		.setDescription('Displays detailed information about the server.')
 		.setContexts(InteractionContextType.Guild);
-
 	guildOnly = true;
-
 	async execute(interaction) {
 		const container = this.container;
 		await interaction.deferReply();
-
 		const { t, helpers, kythiaConfig } = container;
 		const { convertColor } = helpers.color;
-
 		const guild = interaction.guild;
 		const owner = await guild.fetchOwner().catch(() => null);
-
 		const verificationLevels = {
 			0: await t(interaction, 'core.utils.serverinfo.verification.none'),
 			1: await t(interaction, 'core.utils.serverinfo.verification.low'),
@@ -75,7 +68,6 @@ class ServerInfoCommand extends BaseCommand {
 			2: await t(interaction, 'core.utils.serverinfo.boost.level2'),
 			3: await t(interaction, 'core.utils.serverinfo.boost.level3'),
 		};
-
 		const emojis = {
 			name: '🏷️',
 			region: '🌍',
@@ -160,27 +152,33 @@ class ServerInfoCommand extends BaseCommand {
 			serverMaxEmojis: '😃',
 			serverMaxStickers: '🏷️',
 		};
-
 		const createdAt = `<t:${Math.floor(guild.createdTimestamp / 1000)}:F>`;
-
-		const bannerURL = guild.bannerURL({ size: 1024 });
-		const splashURL = guild.splashURL({ size: 1024 });
-		const iconURL = guild.iconURL({ size: 1024, dynamic: true });
-		const discoverySplashURL = guild.discoverySplashURL?.({ size: 1024 });
+		const bannerURL = guild.bannerURL({
+			size: 1024,
+		});
+		const splashURL = guild.splashURL({
+			size: 1024,
+		});
+		const iconURL = guild.iconURL({
+			size: 1024,
+			dynamic: true,
+		});
+		const discoverySplashURL = guild.discoverySplashURL?.({
+			size: 1024,
+		});
 		const widgetURL = guild.widgetEnabled
-			? guild.widgetImageURL({ size: 1024 })
+			? guild.widgetImageURL({
+					size: 1024,
+				})
 			: null;
-
 		const ownerMention = owner
 			? `<@${owner.id}> (${owner.user.tag})`
 			: guild.ownerId
 				? `<@${guild.ownerId}>`
 				: await t(interaction, 'core.utils.serverinfo.unknown');
-
 		const _vanity = guild.vanityURLCode
 			? `https://discord.gg/${guild.vanityURLCode}`
 			: await t(interaction, 'core.utils.serverinfo.none');
-
 		const allChannels = guild.channels.cache;
 		const channelCounts = {
 			categories: allChannels.filter(
@@ -203,7 +201,6 @@ class ServerInfoCommand extends BaseCommand {
 			news: allChannels.filter((c) => c.type === ChannelType.GuildAnnouncement)
 				.size,
 		};
-
 		const roles = guild.roles.cache
 			.sort((a, b) => b.position - a.position)
 			.map((r) => r)
@@ -217,19 +214,16 @@ class ServerInfoCommand extends BaseCommand {
 			(roleCount > 10
 				? `, +${roleCount - 10} ${await t(interaction, 'core.utils.serverinfo.more')}`
 				: '');
-
 		const emojisAll = guild.emojis.cache;
 		const emojiCount = emojisAll.size;
 		const animatedEmojis = emojisAll.filter((e) => e.animated).size;
 		const staticEmojis = emojiCount - animatedEmojis;
 		const stickers = guild.stickers.cache;
 		const stickerCount = stickers.size;
-
 		const features =
 			guild.features.length > 0
 				? guild.features.map((f) => `\`${f}\``).join(', ')
 				: await t(interaction, 'core.utils.serverinfo.none');
-
 		const systemChannel = guild.systemChannel
 			? `<#${guild.systemChannel.id}>`
 			: await t(interaction, 'core.utils.serverinfo.none');
@@ -266,14 +260,12 @@ class ServerInfoCommand extends BaseCommand {
 		const _preferredLocale =
 			guild.preferredLocale ||
 			(await t(interaction, 'core.utils.serverinfo.unknown'));
-
 		let welcomeScreen = null;
 		if (guild.features.includes('WELCOME_SCREEN_ENABLED')) {
 			try {
 				welcomeScreen = await guild.fetchWelcomeScreen();
 			} catch {}
 		}
-
 		const row = new ActionRowBuilder().addComponents(
 			...(iconURL
 				? [
@@ -329,9 +321,7 @@ class ServerInfoCommand extends BaseCommand {
 					]
 				: []),
 		);
-
 		const descLines = [];
-
 		descLines.push(
 			`**\`${emojis.description}\` ${await t(interaction, 'core.utils.serverinfo.field.description')}:** ${guild.description || `*${await t(interaction, 'core.utils.serverinfo.no.description')}*`}`,
 		);
@@ -341,19 +331,42 @@ class ServerInfoCommand extends BaseCommand {
 		descLines.push(
 			`**\`${emojis.created}\` ${await t(interaction, 'core.utils.serverinfo.field.created')}:** ${createdAt}`,
 		);
-
 		descLines.push(
-			`**\`${emojis.roles}\` ${await t(interaction, 'core.utils.serverinfo.field.roles')}:** ${await t(interaction, 'core.utils.serverinfo.roles.total', { count: roleCount })}`,
+			`**\`${emojis.roles}\` ${await t(interaction, 'core.utils.serverinfo.field.roles')}:** ${await t(
+				interaction,
+				'core.utils.serverinfo.roles.total',
+				{
+					count: roleCount,
+				},
+			)}`,
 		);
 		descLines.push(`  ${topRoles}`);
-
 		descLines.push(
-			`**\`${emojis.emojis}\` ${await t(interaction, 'core.utils.serverinfo.field.emojis')}:** ${await t(interaction, 'core.utils.serverinfo.emojis.total', { count: emojiCount })} | ${await t(interaction, 'core.utils.serverinfo.emojis.static', { count: staticEmojis })} | ${await t(interaction, 'core.utils.serverinfo.emojis.animated', { count: animatedEmojis })} | ${await t(interaction, 'core.utils.serverinfo.emojis.max', { count: maxEmojis })}`,
+			`**\`${emojis.emojis}\` ${await t(interaction, 'core.utils.serverinfo.field.emojis')}:** ${await t(
+				interaction,
+				'core.utils.serverinfo.emojis.total',
+				{
+					count: emojiCount,
+				},
+			)} | ${await t(interaction, 'core.utils.serverinfo.emojis.static', {
+				count: staticEmojis,
+			})} | ${await t(interaction, 'core.utils.serverinfo.emojis.animated', {
+				count: animatedEmojis,
+			})} | ${await t(interaction, 'core.utils.serverinfo.emojis.max', {
+				count: maxEmojis,
+			})}`,
 		);
 		descLines.push(
-			`**\`${emojis.stickers}\` ${await t(interaction, 'core.utils.serverinfo.field.stickers')}:** ${await t(interaction, 'core.utils.serverinfo.stickers.total', { count: stickerCount })} | ${await t(interaction, 'core.utils.serverinfo.stickers.max', { count: maxStickers })}`,
+			`**\`${emojis.stickers}\` ${await t(interaction, 'core.utils.serverinfo.field.stickers')}:** ${await t(
+				interaction,
+				'core.utils.serverinfo.stickers.total',
+				{
+					count: stickerCount,
+				},
+			)} | ${await t(interaction, 'core.utils.serverinfo.stickers.max', {
+				count: maxStickers,
+			})}`,
 		);
-
 		descLines.push(
 			`**\`${emojis.categories}\` ${await t(interaction, 'core.utils.serverinfo.field.categories')}:** ${channelCounts.categories}`,
 		);
@@ -373,9 +386,16 @@ class ServerInfoCommand extends BaseCommand {
 			`**\`${emojis.announcement}\` ${await t(interaction, 'core.utils.serverinfo.field.announcement.channels')}:** ${channelCounts.announcement}`,
 		);
 		descLines.push(
-			`**\`${emojis.threads}\` ${await t(interaction, 'core.utils.serverinfo.field.threads')}:** ${await t(interaction, 'core.utils.serverinfo.threads.public', { count: channelCounts.publicThreads })} | ${await t(interaction, 'core.utils.serverinfo.threads.private', { count: channelCounts.privateThreads })}`,
+			`**\`${emojis.threads}\` ${await t(interaction, 'core.utils.serverinfo.field.threads')}:** ${await t(
+				interaction,
+				'core.utils.serverinfo.threads.public',
+				{
+					count: channelCounts.publicThreads,
+				},
+			)} | ${await t(interaction, 'core.utils.serverinfo.threads.private', {
+				count: channelCounts.privateThreads,
+			})}`,
 		);
-
 		descLines.push(
 			`**\`${emojis.verification}\` ${await t(interaction, 'core.utils.serverinfo.field.verification.level')}:** ${verificationLevels[guild.verificationLevel] || (await t(interaction, 'core.utils.serverinfo.unknown'))}`,
 		);
@@ -388,21 +408,18 @@ class ServerInfoCommand extends BaseCommand {
 		descLines.push(
 			`**\`${emojis.mfa}\` ${await t(interaction, 'core.utils.serverinfo.field.mfa')}:** ${mfaLevels[guild.mfaLevel] || (await t(interaction, 'core.utils.serverinfo.unknown'))}`,
 		);
-
 		descLines.push(
 			`**\`${emojis.boost}\` ${await t(interaction, 'core.utils.serverinfo.field.boost.level')}:** ${premiumTiers[guild.premiumTier] || guild.premiumTier} (${guild.premiumTier})`,
 		);
 		descLines.push(
 			`**\`${emojis.boosts}\` ${await t(interaction, 'core.utils.serverinfo.field.total.boosts')}:** ${guild.premiumSubscriptionCount || 0}`,
 		);
-
 		descLines.push(
 			`**\`${emojis.afk}\` ${await t(interaction, 'core.utils.serverinfo.field.afk.channel')}:** ${afkChannel}`,
 		);
 		descLines.push(
 			`**\`${emojis.afkTimeout}\` ${await t(interaction, 'core.utils.serverinfo.field.afk.timeout')}:** ${afkTimeout}`,
 		);
-
 		descLines.push(
 			`**\`${emojis.system}\` ${await t(interaction, 'core.utils.serverinfo.field.system.channel')}:** ${systemChannel}`,
 		);
@@ -412,7 +429,6 @@ class ServerInfoCommand extends BaseCommand {
 		descLines.push(
 			`**\`${emojis.publicUpdates}\` ${await t(interaction, 'core.utils.serverinfo.field.public.updates.channel')}:** ${publicUpdatesChannel}`,
 		);
-
 		descLines.push(
 			`**\`${emojis.features}\` ${await t(interaction, 'core.utils.serverinfo.field.features')}:** ${features}`,
 		);
@@ -428,7 +444,6 @@ class ServerInfoCommand extends BaseCommand {
 		descLines.push(
 			`**\`${emojis.maxVideo}\` ${await t(interaction, 'core.utils.serverinfo.field.max.video.channel.users')}:** ${maxVideoChannelUsers}`,
 		);
-
 		if (welcomeScreen) {
 			descLines.push(
 				`**${emojis.welcome} ${await t(interaction, 'core.utils.serverinfo.field.welcome.screen')}:** ${welcomeScreen.description || `*${await t(interaction, 'core.utils.serverinfo.no.description')}*`}`,
@@ -444,9 +459,11 @@ class ServerInfoCommand extends BaseCommand {
 				}
 			}
 		}
-
 		const mainContainer = new ContainerBuilder().setAccentColor(
-			convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+			convertColor(kythiaConfig.bot.color, {
+				from: 'hex',
+				to: 'decimal',
+			}),
 		);
 
 		// let serverNameSection = new SectionBuilder().addTextDisplayComponents(new TextDisplayBuilder().setContent(`## ${emojis.name} ${guild.name}`));
@@ -469,33 +486,27 @@ class ServerInfoCommand extends BaseCommand {
 				new TextDisplayBuilder().setContent(`# ${emojis.name} ${guild.name}`),
 			);
 		}
-
 		mainContainer.addSeparatorComponents(
 			new SeparatorBuilder()
 				.setSpacing(SeparatorSpacingSize.Small)
 				.setDivider(true),
 		);
-
 		mainContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(descLines.join('\n')),
 		);
-
 		mainContainer.addSeparatorComponents(
 			new SeparatorBuilder()
 				.setSpacing(SeparatorSpacingSize.Small)
 				.setDivider(true),
 		);
-
 		if (row.components.length > 0) {
 			mainContainer.addActionRowComponents(row);
-
 			mainContainer.addSeparatorComponents(
 				new SeparatorBuilder()
 					.setSpacing(SeparatorSpacingSize.Small)
 					.setDivider(true),
 			);
 		}
-
 		const mainImageURL = bannerURL ? bannerURL : splashURL;
 		if (mainImageURL && mainImageURL !== iconURL) {
 			mainContainer.addMediaGalleryComponents(
@@ -504,14 +515,12 @@ class ServerInfoCommand extends BaseCommand {
 				]),
 			);
 		}
-
 		const footerText = await t(interaction, 'common.container.footer', {
 			username: interaction.client.user.username,
 		});
 		mainContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(`${footerText}`),
 		);
-
 		return interaction.editReply({
 			components: [mainContainer],
 			allowedMentions: {
@@ -521,5 +530,4 @@ class ServerInfoCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ServerInfoCommand;

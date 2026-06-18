@@ -18,7 +18,7 @@ class AutoplayCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('autoplay')
-			.setDescription('🔄 Enable or disable autoplay')
+			.setDescription('Enable or disable autoplay')
 			.addStringOption((option) =>
 				option
 					.setName('status')

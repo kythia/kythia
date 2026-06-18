@@ -14,7 +14,7 @@ class TimeoutCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('timeout')
-			.setDescription('⏳ Timeouts a user.')
+			.setDescription('Timeouts a user.')
 			.addUserOption((option) =>
 				option
 					.setName('user')

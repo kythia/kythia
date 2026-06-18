@@ -15,9 +15,7 @@ const {
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 const {
 	CROP_CHOICES,
 	RENDER_TYPES,
@@ -25,14 +23,12 @@ const {
 	USERNAME_REGEX,
 	RENDER_CHOICES_1,
 } = require('../../helpers/constants');
-
 class PoseCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('pose')
-			.setDescription('🎭 Render a player in any Starlight Skins pose')
+			.setDescription('Render a player in any Starlight Skins pose')
 			.addStringOption((option) =>
 				option
 					.setName('player')
@@ -55,16 +51,13 @@ class PoseCommand extends BaseCommand {
 					.setRequired(false)
 					.addChoices(...CROP_CHOICES),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
-
 		const playerName = interaction.options.getString('player');
 		const pose = interaction.options.getString('pose');
 		const renderType = pose;
 		const requestedCrop = interaction.options.getString('crop');
-
 		const validCrops = RENDER_TYPES[renderType];
 		if (!validCrops) {
 			return interaction.reply({
@@ -90,9 +83,7 @@ class PoseCommand extends BaseCommand {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		const imageUrl = `${SKIN_API_BASE}/${renderType}/${encodeURIComponent(playerName)}/${crop}`;
-
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
@@ -102,7 +93,6 @@ class PoseCommand extends BaseCommand {
 		const poseLabel = renderType
 			.replace(/_/g, ' ')
 			.replace(/\b\w/g, (c) => c.toUpperCase());
-
 		const responseContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
@@ -136,12 +126,10 @@ class PoseCommand extends BaseCommand {
 					}),
 				),
 			);
-
 		return interaction.reply({
 			components: [responseContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = PoseCommand;

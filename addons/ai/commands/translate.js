@@ -13,15 +13,12 @@ const {
 	ContextMenuCommandBuilder,
 } = require('discord.js');
 const { GoogleGenAI } = require('@google/genai');
-
 const { BaseCommand } = require('kythia-core');
-
 const { getAndUseNextAvailableToken } = require('../helpers/gemini');
-
 class TranslateCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('translate')
-		.setDescription('🌐 Translate text to another language using Gemini AI.')
+		.setDescription('Translate text to another language using Gemini AI.')
 		.addStringOption((option) =>
 			option
 				.setName('text')
@@ -34,37 +31,29 @@ class TranslateCommand extends BaseCommand {
 				.setDescription('Target language (e.g. en, id, ja, etc)')
 				.setRequired(true),
 		);
-
 	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('Translate Message')
 		.setType(ApplicationCommandType.Message);
-
 	contextMenuDescription =
 		'🌐 Translate message to another language using Gemini AI.';
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		const text =
 			interaction.options?.getString('text') ||
 			interaction.targetMessage?.content;
 		const lang = interaction.options?.getString('lang') || 'en';
-
 		await interaction.deferReply();
-
 		const apiKeysStr = kythiaConfig.addons.ai.geminiApiKeys || '';
 		const totalTokens = apiKeysStr ? apiKeysStr.split(',').length : 0;
 		let success = false;
 		let finalResponse = null;
 		let lastError = null;
-
 		for (let attempt = 0; attempt < totalTokens; attempt++) {
 			logger.debug(`🧠 AI translate attempt ${attempt + 1}/${totalTokens}...`, {
 				label: 'ai',
 			});
-
 			const tokenIdx = await getAndUseNextAvailableToken();
 			if (tokenIdx === -1) {
 				const msg = await t(interaction, 'ai.translate.limit');
@@ -76,7 +65,6 @@ class TranslateCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const GEMINI_API_KEY = apiKeysStr.split(',')[tokenIdx];
 			if (!GEMINI_API_KEY) {
 				logger.warn(`Token index ${tokenIdx} is invalid. Skipping.`, {
@@ -84,23 +72,27 @@ class TranslateCommand extends BaseCommand {
 				});
 				continue;
 			}
-
-			const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+			const ai = new GoogleGenAI({
+				apiKey: GEMINI_API_KEY,
+			});
 			const prompt = `Translate the following text to ${lang}:\n\n${text}\n\nOnly return the translated text, no explanation.`;
-
 			try {
 				const response = await ai.models.generateContent({
 					model: kythiaConfig.addons.ai.model,
 					contents: prompt,
 				});
-
 				let rawText = response.text || response.response?.text || '';
 				rawText = rawText.replace(/[`]/g, '');
-				finalResponse = { ...response, text: rawText };
+				finalResponse = {
+					...response,
+					text: rawText,
+				};
 				success = true;
 				logger.debug(
 					`✅ AI translate request successful on attempt ${attempt + 1}`,
-					{ label: 'ai' },
+					{
+						label: 'ai',
+					},
 				);
 				break;
 			} catch (error) {
@@ -112,18 +104,21 @@ class TranslateCommand extends BaseCommand {
 				) {
 					logger.warn(
 						`Token index ${tokenIdx} hit 429 limit. Retrying with next token...`,
-						{ label: 'ai' },
+						{
+							label: 'ai',
+						},
 					);
 				} else {
 					logger.error(
 						`Error in /translate (non-429): ${error.message || error}`,
-						{ label: 'translate' },
+						{
+							label: 'translate',
+						},
 					);
 					break;
 				}
 			}
 		}
-
 		if (success && finalResponse) {
 			const translated =
 				finalResponse.text ||
@@ -154,5 +149,4 @@ class TranslateCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = TranslateCommand;

@@ -11,64 +11,56 @@ const {
 	MessageFlags,
 	PermissionFlagsBits,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class EditCommand extends BaseCommand {
 	subcommand = true;
 	permissions = [PermissionFlagsBits.ManageGuild];
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('edit')
-			.setDescription('✍️ Edit birthday settings.')
+			.setDescription('Edit birthday settings.')
 			.addChannelOption((option) =>
 				option
 					.setName('channel')
-					.setDescription('📢 Channel for announcements.')
+					.setDescription('Channel for announcements.')
 					.addChannelTypes(ChannelType.GuildText),
 			)
 			.addRoleOption((option) =>
 				option
 					.setName('role')
-					.setDescription('🎁 Role to give to the birthday user.'),
+					.setDescription('Role to give to the birthday user.'),
 			)
 			.addRoleOption((option) =>
 				option
 					.setName('ping_role')
-					.setDescription('🔔 Role to ping in the announcement.'),
+					.setDescription('Role to ping in the announcement.'),
 			)
 			.addBooleanOption((option) =>
 				option
 					.setName('show_age')
-					.setDescription('🎂 Show age in announcements/list?'),
+					.setDescription('Show age in announcements/list?'),
 			)
 			.addStringOption((option) =>
 				option
 					.setName('message')
 					.setDescription(
-						'✉️ Custom message (Variables: {user}, {age}, {zodiac}).',
+						'Custom message (Variables: {user}, {age}, {zodiac}).',
 					),
 			)
 			.addStringOption((option) =>
 				option
 					.setName('color')
-					.setDescription('🎨 Embed Hex Color (e.g. #FF00FF).'),
+					.setDescription('Embed Hex Color (e.g. #FF00FF).'),
 			)
 			.addStringOption((option) =>
-				option
-					.setName('image')
-					.setDescription('🖼️ Background/Banner Image URL.'),
+				option.setName('image').setDescription('Background/Banner Image URL.'),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { BirthdaySetting } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const [setting] = await BirthdaySetting.getOrCreateCache(
 			{
 				guildId: interaction.guild.id,
@@ -77,7 +69,6 @@ class EditCommand extends BaseCommand {
 				guildId: interaction.guild.id,
 			},
 		);
-
 		const channel = interaction.options.getChannel('channel');
 		const role = interaction.options.getRole('role');
 		const pingRole = interaction.options.getRole('ping_role');
@@ -85,19 +76,21 @@ class EditCommand extends BaseCommand {
 		const message = interaction.options.getString('message');
 		const color = interaction.options.getString('color');
 		const image = interaction.options.getString('image');
-
 		const changes = [];
-
 		if (channel) {
 			setting.channelId = channel.id;
 			changes.push(
-				await t(interaction, 'birthday.setting.edit.channel_set', { channel }),
+				await t(interaction, 'birthday.setting.edit.channel_set', {
+					channel,
+				}),
 			);
 		}
 		if (role) {
 			setting.roleId = role.id;
 			changes.push(
-				await t(interaction, 'birthday.setting.edit.role_set', { role }),
+				await t(interaction, 'birthday.setting.edit.role_set', {
+					role,
+				}),
 			);
 		}
 		if (pingRole) {
@@ -127,14 +120,15 @@ class EditCommand extends BaseCommand {
 		if (color) {
 			setting.embedColor = color;
 			changes.push(
-				await t(interaction, 'birthday.setting.edit.color_set', { color }),
+				await t(interaction, 'birthday.setting.edit.color_set', {
+					color,
+				}),
 			);
 		}
 		if (image) {
 			setting.bgUrl = image;
 			changes.push(await t(interaction, 'birthday.setting.edit.image_updated'));
 		}
-
 		if (changes.length === 0) {
 			return interaction.editReply({
 				components: await simpleContainer(
@@ -144,15 +138,12 @@ class EditCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		await setting.save();
-
 		const title = await t(interaction, 'birthday.setting.edit.title');
 		const components = await simpleContainer(
 			interaction,
 			`${title}\n${changes.join('\n')}`,
 		);
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
@@ -162,5 +153,4 @@ class EditCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = EditCommand;

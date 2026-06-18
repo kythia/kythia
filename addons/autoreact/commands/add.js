@@ -16,7 +16,7 @@ class AddCommand extends BaseCommand {
 	slashCommand = (subcommand) => {
 		return subcommand
 			.setName('add')
-			.setDescription('➕ Add a new auto-reaction.')
+			.setDescription('Add a new auto-reaction.')
 			.addStringOption((option) =>
 				option
 					.setName('emoji')

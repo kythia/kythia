@@ -7,16 +7,12 @@
  */
 
 const { SlashCommandBuilder, InteractionContextType } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class LevelingCommand extends BaseCommand {
 	guildOnly = true;
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('level')
-		.setDescription('🏅 All commands related to the leveling system.')
+		.setDescription('All commands related to the leveling system.')
 		.setContexts(InteractionContextType.Guild);
 }
-
 exports.default = LevelingCommand;

@@ -24,11 +24,11 @@ const statsHelper = require('../../helpers/stats');
 // Helpers extracted to addons/core/helpers/stats.js
 
 class StatsCommand extends BaseCommand {
-	aliases = ['s', '📊'];
+	aliases = ['s'];
 
 	slashCommand = new SlashCommandBuilder()
 		.setName('stats')
-		.setDescription(`📊 Displays kythia statistics.`);
+		.setDescription(`Displays kythia statistics.`);
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, models, sequelize } = container;

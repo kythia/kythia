@@ -7,16 +7,12 @@
  */
 
 const { SlashCommandBuilder, InteractionContextType } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class CommandsCommand extends BaseCommand {
 	guildOnly = true;
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('friend')
-		.setDescription('🤝 Friendship system commands')
+		.setDescription('Friendship system commands')
 		.setContexts(InteractionContextType.Guild);
 }
-
 exports.default = CommandsCommand;

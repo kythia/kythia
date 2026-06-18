@@ -8,7 +8,7 @@
 				},
 				"list": {
 					"empty": "You have no active reminders.",
-					"title": "## ⏱️ Your Active Reminders"
+					"title": "## ⏱Your Active Reminders"
 				},
 				"remove": {
 					"success": "Reminder **#{id}** has been successfully removed.",

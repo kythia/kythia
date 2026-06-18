@@ -14,7 +14,7 @@ class PinCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('pin')
-			.setDescription('📌 Pins a message in the channel.')
+			.setDescription('Pins a message in the channel.')
 			.addStringOption((option) =>
 				option
 					.setName('message_id')

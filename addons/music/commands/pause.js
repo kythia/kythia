@@ -16,7 +16,7 @@ class PauseCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('pause')
-			.setDescription('⏸️ Pause the currently playing song');
+			.setDescription('Pause the currently playing song');
 
 	async execute(interaction) {
 		const container = this.container;

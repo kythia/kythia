@@ -12,7 +12,7 @@ class ListCommand extends BaseCommand {
 	subcommand = true;
 
 	slashCommand = (subcommand) =>
-		subcommand.setName('list').setDescription('🌟 Show your favorite songs.');
+		subcommand.setName('list').setDescription('Show your favorite songs.');
 
 	execute(interaction) {
 		const container = this.container;

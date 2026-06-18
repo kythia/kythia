@@ -78,15 +78,15 @@
 	],
 	"categories": [
 		{
-			"name": "📢 INFORMATION",
+			"name": "INFORMATION",
 			"channels": [
 				{
-					"name": "📢┃announcements",
+					"name": "┃announcements",
 					"type": "text",
 					"topic": "Official announcements, tech news, and community updates",
 					"pin": [
 						{
-							"title": "📢 Welcome to the Tech Community!",
+							"title": "Welcome to the Tech Community!",
 							"description": "Stay tuned for the latest news, updates, and important information about our server and the tech world.",
 							"color": 3447003,
 							"fields": [
@@ -103,12 +103,12 @@
 					]
 				},
 				{
-					"name": "📜┃rules",
+					"name": "┃rules",
 					"type": "text",
 					"topic": "Server rules and guidelines",
 					"pin": [
 						{
-							"title": "📜 Server Rules",
+							"title": "Server Rules",
 							"description": "Please read and follow these rules to keep our community safe and productive.",
 							"color": 15158332,
 							"fields": [
@@ -140,15 +140,15 @@
 			]
 		},
 		{
-			"name": "👋 COMMUNITY",
+			"name": "COMMUNITY",
 			"channels": [
 				{
-					"name": "👋┃introductions",
+					"name": "┃introductions",
 					"type": "text",
 					"topic": "Introduce yourself to the community",
 					"pin": [
 						{
-							"title": "👋 Introduce Yourself!",
+							"title": "Introduce Yourself!",
 							"description": "Tell us about your background, interests, and what brings you here.",
 							"color": 3066993,
 							"fields": [
@@ -162,29 +162,29 @@
 					"rateLimitPerUser": 10
 				},
 				{
-					"name": "💬┃general",
+					"name": "┃general",
 					"type": "text",
 					"topic": "General chat for all tech topics and casual conversation",
 					"rateLimitPerUser": 5
 				},
 				{
-					"name": "🎉┃events",
+					"name": "┃events",
 					"type": "text",
 					"topic": "Community events, hackathons, and meetups"
 				}
 			]
 		},
 		{
-			"name": "📚 RESOURCES",
+			"name": "RESOURCES",
 			"channels": [
 				{
-					"name": "📚┃docs",
+					"name": "┃docs",
 					"type": "text",
 					"topic": "Curated documentation, guides, and useful links",
 					"rateLimitPerUser": 10,
 					"pin": [
 						{
-							"title": "📚 Community Resources",
+							"title": "Community Resources",
 							"description": "Share and discover helpful documentation, guides, and learning materials.",
 							"color": 11342935,
 							"fields": [
@@ -197,12 +197,12 @@
 					]
 				},
 				{
-					"name": "💼┃jobs",
+					"name": "┃jobs",
 					"type": "text",
 					"topic": "Job postings, gigs, and freelance opportunities",
 					"pin": [
 						{
-							"title": "💼 Job Board",
+							"title": "Job Board",
 							"description": "Share and find tech jobs, internships, and freelance gigs.",
 							"color": 15105570,
 							"fields": [
@@ -215,17 +215,17 @@
 					]
 				},
 				{
-					"name": "🔗┃links",
+					"name": "┃links",
 					"type": "text",
 					"topic": "Share useful tech links, blogs, and tools"
 				}
 			]
 		},
 		{
-			"name": "💡 CODE HELP",
+			"name": "CODE HELP",
 			"channels": [
 				{
-					"name": "💡┃help-forum",
+					"name": "┃help-forum",
 					"type": "forum",
 					"topic": "Ask for help with code, debugging, and best practices",
 					"forumTags": [
@@ -243,85 +243,88 @@
 					],
 					"pin": [
 						{
-							"title": "💡 How to Ask for Help",
+							"title": "How to Ask for Help",
 							"description": "Please provide as much detail as possible, including code snippets, error messages, and what you have tried.",
 							"color": 3447003
 						}
 					]
 				},
 				{
-					"name": "❓┃quick-questions",
+					"name": "┃quick-questions",
 					"type": "text",
 					"topic": "One-liners, quick tips, and simple questions",
 					"rateLimitPerUser": 3
 				},
 				{
-					"name": "🧪┃code-review",
+					"name": "┃code-review",
 					"type": "text",
 					"topic": "Request and provide code reviews"
 				}
 			]
 		},
 		{
-			"name": "🚀 SHOWCASE",
+			"name": "SHOWCASE",
 			"channels": [
 				{
-					"name": "🚀┃project-showcase",
+					"name": "┃project-showcase",
 					"type": "text",
 					"topic": "Share your projects, apps, and libraries",
 					"pin": [
 						{
-							"title": "🚀 Project Showcase",
+							"title": "Project Showcase",
 							"description": "Show off your latest work! Include screenshots, links, and a short description.",
 							"color": 16753920
 						}
 					]
 				},
 				{
-					"name": "🌐┃open-source",
+					"name": "┃open-source",
 					"type": "text",
 					"topic": "Open source project discussion and collaboration"
 				},
 				{
-					"name": "🎨┃design-showcase",
+					"name": "┃design-showcase",
 					"type": "text",
 					"topic": "Share UI/UX, web, and graphic design work"
 				}
 			]
 		},
 		{
-			"name": "🎙️ VOICE & COLLAB",
+			"name": "VOICE & COLLAB",
 			"channels": [
 				{
-					"name": "🎙️┃pair-programming",
+					"name": "┃pair-programming",
 					"type": "voice",
 					"userLimit": 5
 				},
 				{
-					"name": "🧑‍💻┃hackathon",
+					"name": "‍┃hackathon",
 					"type": "voice",
 					"userLimit": 10
 				},
 				{
-					"name": "🔊┃general-voice",
+					"name": "┃general-voice",
 					"type": "voice"
 				}
 			]
 		},
 		{
-			"name": "🛡️ MODERATION",
+			"name": "MODERATION",
 			"channels": [
 				{
-					"name": "🛡️┃mod-chat",
+					"name": "┃mod-chat",
 					"type": "text",
 					"topic": "Private staff chat for moderation and coordination"
 				},
 				{
-					"name": "🚨┃error-logs",
+					"name": "┃error-logs",
 					"type": "text",
 					"topic": "Bot errors, logs, and system alerts",
 					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
+						{
+							"roles": ["@everyone"],
+							"deny": ["ViewChannel"]
+						},
 						{
 							"roles": ["Admin", "Owner", "Bot"],
 							"allow": [
@@ -335,11 +338,14 @@
 					]
 				},
 				{
-					"name": "📝┃reports",
+					"name": "┃reports",
 					"type": "text",
 					"topic": "User reports and incident tracking",
 					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
+						{
+							"roles": ["@everyone"],
+							"deny": ["ViewChannel"]
+						},
 						{
 							"roles": ["Admin", "Moderator", "Owner"],
 							"allow": ["ViewChannel", "SendMessages", "ReadMessageHistory"]

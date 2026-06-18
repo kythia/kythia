@@ -29,14 +29,12 @@ const { BaseCommand } = require('kythia-core');
 // and they'd receive < minOut, we reject the trade.
 const { SLIPPAGE_TOLERANCE_PCT } = require('../../helpers/constants');
 const kythtradeHelper = require('../../helpers/kythTrade');
-
 class BuyCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('buy')
-			.setDescription('💸 Buy an asset from the global market.')
+			.setDescription('Buy an asset from the global market.')
 			.addStringOption((option) =>
 				option
 					.setName('asset')
@@ -462,5 +460,4 @@ class BuyCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = BuyCommand;

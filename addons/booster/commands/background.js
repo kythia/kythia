@@ -7,16 +7,13 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class BackgroundCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('background')
-			.setDescription('🚀 Set booster banner background URL')
+			.setDescription('Set booster banner background URL')
 			.addStringOption((option) =>
 				option
 					.setName('url')
@@ -25,47 +22,46 @@ class BackgroundCommand extends BaseCommand {
 					)
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { BoosterSetting } = models;
 		const { simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const url = interaction.options.getString('url');
-
 		if (!url.startsWith('http')) {
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'booster.booster.background.invalid.url'),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const [boosterSetting] = await BoosterSetting.getOrCreateCache({
 			guildId: interaction.guild.id,
 		});
-
 		boosterSetting.boosterBackgroundUrl = url;
 		await boosterSetting.save();
-
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'booster.booster.background.set', { url }),
-			{ color: 'Green' },
+			await t(interaction, 'booster.booster.background.set', {
+				url,
+			}),
+			{
+				color: 'Green',
+			},
 		);
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = BackgroundCommand;

@@ -7,17 +7,14 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class WarnCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ModerateMembers;
 	botPermissions = PermissionFlagsBits.ModerateMembers;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('warn')
-			.setDescription('⚠️ Warns a user.')
+			.setDescription('Warns a user.')
 			.addUserOption((option) =>
 				option
 					.setName('user')
@@ -30,36 +27,36 @@ class WarnCommand extends BaseCommand {
 					.setDescription('Reason for the warning')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, models, kythiaConfig } = container;
 		const { createContainer, simpleContainer, getTextChannelSafe } =
 			helpers.discord;
 		const { User, ServerSetting } = models;
-
 		await interaction.deferReply();
-
 		const targetUser = interaction.options.getUser('user');
 		const reason =
 			interaction.options.getString('reason') ||
 			(await t(interaction, 'automod.moderation.warn.default.reason'));
-
 		if (targetUser.id === interaction.user.id) {
 			const reply = await simpleContainer(
 				interaction,
 				await t(interaction, 'automod.moderation.warn.cannot.self'),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		try {
 			const [userRecord] = await User.findOrCreateCache({
-				where: { userId: targetUser.id, guildId: interaction.guild.id },
+				where: {
+					userId: targetUser.id,
+					guildId: interaction.guild.id,
+				},
 				defaults: {
 					userId: targetUser.id,
 					guildId: interaction.guild.id,
@@ -77,7 +74,6 @@ class WarnCommand extends BaseCommand {
 			if (!Array.isArray(currentWarnings)) {
 				currentWarnings = [];
 			}
-
 			const newWarnings = [
 				...currentWarnings,
 				{
@@ -86,11 +82,9 @@ class WarnCommand extends BaseCommand {
 					date: new Date(),
 				},
 			];
-
 			userRecord.warnings = newWarnings;
 			userRecord.changed('warnings', true);
 			await userRecord.save();
-
 			try {
 				const dmReply = await createContainer(interaction, {
 					color: 'Orange',
@@ -108,7 +102,6 @@ class WarnCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			} catch (_) {}
-
 			const setting = await ServerSetting.getCache({
 				guildId: interaction.guild.id,
 			});
@@ -137,7 +130,6 @@ class WarnCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
 				title: await t(interaction, 'automod.moderation.warn.success.title'),
@@ -161,7 +153,9 @@ class WarnCommand extends BaseCommand {
 				await t(interaction, 'automod.moderation.warn.failed', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -170,5 +164,4 @@ class WarnCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = WarnCommand;

@@ -13,7 +13,7 @@ class CommandIdCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('command-id')
-			.setDescription("🔍 Find a command's ID and generate its mention.")
+			.setDescription("Find a command's ID and generate its mention.")
 			.addStringOption((option) =>
 				option
 					.setName('name')

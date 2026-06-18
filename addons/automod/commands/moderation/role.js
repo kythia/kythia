@@ -14,7 +14,7 @@ class RoleCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('role')
-			.setDescription('🎭 Manage roles for a user.')
+			.setDescription('Manage roles for a user.')
 			.addUserOption((option) =>
 				option
 					.setName('user')

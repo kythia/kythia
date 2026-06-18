@@ -7,17 +7,14 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class KickCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.KickMembers;
 	botPermissions = PermissionFlagsBits.KickMembers;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('kick')
-			.setDescription('👢 Kicks a user from the server.')
+			.setDescription('Kicks a user from the server.')
 			.addUserOption((option) =>
 				option
 					.setName('user')
@@ -30,21 +27,17 @@ class KickCommand extends BaseCommand {
 					.setDescription('Reason for the kick')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, models, kythiaConfig } = container;
 		const { createContainer, simpleContainer, getTextChannelSafe } =
 			helpers.discord;
 		const { ServerSetting } = models;
-
 		await interaction.deferReply();
-
 		const user = interaction.options.getUser('user');
 		const reason =
 			interaction.options.getString('reason') ||
 			(await t(interaction, 'automod.moderation.kick.default.reason'));
-
 		try {
 			await interaction.guild.members.kick(user, reason);
 			const reply = await createContainer(interaction, {
@@ -60,7 +53,6 @@ class KickCommand extends BaseCommand {
 				),
 				thumbnail: user.displayAvatarURL(),
 			});
-
 			const setting = await ServerSetting.getCache({
 				guildId: interaction.guild.id,
 			});
@@ -89,7 +81,6 @@ class KickCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			return interaction.editReply({
 				components: reply,
 				flags: MessageFlags.IsComponentsV2,
@@ -100,7 +91,9 @@ class KickCommand extends BaseCommand {
 				await t(interaction, 'automod.moderation.kick.failed', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -109,5 +102,4 @@ class KickCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = KickCommand;

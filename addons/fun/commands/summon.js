@@ -21,7 +21,7 @@ const { BaseCommand } = require('kythia-core');
 class SummonCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('summon')
-		.setDescription('🔔 Summon a friend to your current channel')
+		.setDescription('Summon a friend to your current channel')
 		.addUserOption((option) =>
 			option
 				.setName('user')

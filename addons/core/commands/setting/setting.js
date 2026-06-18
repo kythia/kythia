@@ -15,7 +15,6 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { BaseCommand } = require('kythia-core');
 const settinguiHelper = require('../../helpers/settingUi');
-
 const langDir = path.join(__dirname, '../../lang');
 let availableLanguages = [];
 try {
@@ -93,10 +92,9 @@ const toggleableFeatures = Object.keys(featureMap);
 class SettingCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ManageGuild;
 	botPermissions = PermissionFlagsBits.ManageGuild;
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('set')
-		.setDescription('⚙️ Settings bot configuration')
+		.setDescription('Settings bot configuration')
 		.setContexts(InteractionContextType.Guild)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 
@@ -104,11 +102,11 @@ class SettingCommand extends BaseCommand {
 		.addSubcommandGroup((group) =>
 			group
 				.setName('language')
-				.setDescription('🌐 Language settings')
+				.setDescription('Language settings')
 				.addSubcommand((sub) =>
 					sub
 						.setName('set')
-						.setDescription('🌐 Set bot language')
+						.setDescription('Set bot language')
 						.addStringOption((option) =>
 							Array.isArray(availableLanguages) && availableLanguages.length > 0
 								? option
@@ -126,14 +124,14 @@ class SettingCommand extends BaseCommand {
 
 		// view
 		.addSubcommand((sub) =>
-			sub.setName('view').setDescription('🔍 View all bot settings'),
+			sub.setName('view').setDescription('View all bot settings'),
 		)
 
 		// features
 		.addSubcommandGroup((group) => {
 			group
 				.setName('features')
-				.setDescription('🔄 Enable or disable a specific feature');
+				.setDescription('Enable or disable a specific feature');
 			for (const [subcommandName, [, featureDisplayName]] of Object.entries(
 				featureMap,
 			)) {
@@ -148,7 +146,6 @@ class SettingCommand extends BaseCommand {
 			}
 			return group;
 		});
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, models, logger } = container;
@@ -281,5 +278,4 @@ class SettingCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = SettingCommand;

@@ -11,7 +11,7 @@ const { BaseCommand } = require('kythia-core');
 class DeleteCommand extends BaseCommand {
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('delete')
-		.setDescription('🗑️ Delete a saved embed')
+		.setDescription('Delete a saved embed')
 		.addStringOption((option) =>
 			option
 				.setName('id')
@@ -50,7 +50,9 @@ class DeleteCommand extends BaseCommand {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'embed-builder.delete.not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2,
 			});

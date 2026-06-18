@@ -14,6 +14,8 @@ const app = new Hono();
 // Helpers
 // ---------------------------------------------------------------------------
 
+// const getBot = (c) => c.get('client');
+const getContainer = (c) => c.get('client').container;
 const getModels = (c) => c.get('client').container.models;
 const getLogger = (c) => c.get('client').container.logger;
 // const getHelpers = (c) => c.get('client').container.helpers;
@@ -40,7 +42,7 @@ async function getGuildLevelingConfig(guildId, models) {
 /**
  * Compute total XP from level + current xp (needed for xp-add operations).
  */
-function getTotalXp(user, curve, multiplier) {
+function getTotalXp(c, user, curve, multiplier) {
 	let totalXp = user.xp;
 	for (let i = 1; i < user.level; i++) {
 		totalXp += getContainer(c).helpers.leveling.index.levelUpXp(
@@ -522,7 +524,7 @@ app.patch('/:guildId/:userId', async (c) => {
 			if (Number.isNaN(xpToAdd)) {
 				return c.json({ success: false, error: 'xp must be an integer' }, 400);
 			}
-			const totalXp = getTotalXp(user, curve, multiplier) + xpToAdd;
+			const totalXp = getTotalXp(c, user, curve, multiplier) + xpToAdd;
 			const { newLevel, newXp } = getContainer(
 				c,
 			).helpers.leveling.index.calculateLevelAndXp(

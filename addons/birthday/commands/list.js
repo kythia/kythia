@@ -15,11 +15,10 @@ const uiHelper = require('../helpers/ui');
 
 class ListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
-			.setDescription('📅 See a list of upcoming birthdays.');
+			.setDescription('See a list of upcoming birthdays.');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
@@ -141,5 +140,4 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ListCommand;

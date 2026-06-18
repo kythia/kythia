@@ -14,11 +14,10 @@ const uiHelper = require('../helpers/ui');
 
 class ListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) => {
 		return subcommand
 			.setName('list')
-			.setDescription('📜 List all auto-replies in this server.');
+			.setDescription('List all auto-replies in this server.');
 	};
 	async execute(interaction) {
 		const container = this.container;
@@ -101,5 +100,4 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ListCommand;

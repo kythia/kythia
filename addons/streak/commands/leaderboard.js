@@ -14,12 +14,10 @@ const leaderboardHelper = require('../helpers/leaderboard');
 
 class LeaderboardCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leaderboard')
-			.setDescription('🥇 Streak leaderboard in this server');
-
+			.setDescription('Streak leaderboard in this server');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models } = container;
@@ -136,5 +134,4 @@ class LeaderboardCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = LeaderboardCommand;

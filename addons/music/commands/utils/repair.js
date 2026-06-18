@@ -16,7 +16,7 @@ class RepairCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('repair')
-			.setDescription('🔧 Repair a stuck or broken music session');
+			.setDescription('Repair a stuck or broken music session');
 
 	async execute(interaction) {
 		const container = this.container;

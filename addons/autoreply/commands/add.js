@@ -7,16 +7,13 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AddCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) => {
 		return subcommand
 			.setName('add')
-			.setDescription('➕ Add a new auto-reply.')
+			.setDescription('Add a new auto-reply.')
 			.addStringOption((option) =>
 				option
 					.setName('trigger')
@@ -42,21 +39,17 @@ class AddCommand extends BaseCommand {
 					.setRequired(false),
 			);
 	};
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { AutoReply } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const trigger = interaction.options.getString('trigger');
 		const response = interaction.options.getString('response');
 		const media = interaction.options.getAttachment('media');
 		const useContainer =
 			interaction.options.getBoolean('use_container') || false;
-
 		if (!response && !media) {
 			const msg = await t(interaction, 'autoreply.add.error.no_content');
 			const components = await simpleContainer(interaction, msg, {
@@ -67,12 +60,10 @@ class AddCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const existing = await AutoReply.getCache({
 			guildId: interaction.guild.id,
 			trigger: trigger,
 		});
-
 		if (existing) {
 			const msg = await t(interaction, 'autoreply.add.error.exists');
 			const components = await simpleContainer(interaction, msg, {
@@ -83,12 +74,10 @@ class AddCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		let mediaUrl = null;
 		if (media) {
 			mediaUrl = media.url;
 		}
-
 		try {
 			await AutoReply.create({
 				guildId: interaction.guild.id,
@@ -111,11 +100,9 @@ class AddCommand extends BaseCommand {
 			}
 			throw err;
 		}
-
 		const msg = await t(interaction, 'autoreply.add.success.plain', {
 			trigger: trigger,
 		});
-
 		const components = await simpleContainer(interaction, msg);
 		await interaction.editReply({
 			components,
@@ -123,5 +110,4 @@ class AddCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = AddCommand;

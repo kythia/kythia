@@ -13,9 +13,7 @@ const {
 	SlashCommandBuilder,
 } = require('discord.js');
 const { updateStats } = require('../helpers/stats');
-
 const { BaseCommand } = require('kythia-core');
-
 const allowedPlaceholders = [
 	'{memberstotal}',
 	'{online}',
@@ -59,11 +57,10 @@ const allowedPlaceholders = [
 	'{guild_age}',
 	'{member_join}',
 ];
-
 class AddCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('add')
-		.setDescription('📈 Add a new stat for a specific channel')
+		.setDescription('Add a new stat for a specific channel')
 		.addStringOption((option) =>
 			option
 				.setName('format')
@@ -74,38 +71,44 @@ class AddCommand extends BaseCommand {
 			option
 				.setName('channel')
 				.setDescription(
-					'📈 Select a channel to use as stat (if not selected, the bot will create a new channel)',
+					'Select a channel to use as stat (if not selected, the bot will create a new channel)',
 				)
 				.setRequired(false),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, models, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const { ServerSetting } = models;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const guildId = interaction.guild.id;
 		const guildName = interaction.guild.name;
-
 		const [serverSetting, created] = await ServerSetting.findOrCreateCache({
-			where: { guildId: guildId },
-			defaults: { guildId: guildId, guildName: guildName },
+			where: {
+				guildId: guildId,
+			},
+			defaults: {
+				guildId: guildId,
+				guildName: guildName,
+			},
 		});
-
 		if (created) {
-			await ServerSetting.clearNegativeCache({ where: { guildId: guildId } });
+			await ServerSetting.clearNegativeCache({
+				where: {
+					guildId: guildId,
+				},
+			});
 			logger.info(
 				`[CACHE] Cleared negative cache for new ServerSetting: ${guildId}`,
-				{ label: 'server-stats' },
+				{
+					label: 'server-stats',
+				},
 			);
 		}
-
 		const format = interaction.options.getString('format');
 		let channel = interaction.options.getChannel('channel');
-
 		const hasAllowedPlaceholder = allowedPlaceholders.some((ph) =>
 			format.includes(ph),
 		);
@@ -115,14 +118,15 @@ class AddCommand extends BaseCommand {
 				await t(interaction, 'core.setting.setting.stats.format.invalid', {
 					placeholders: allowedPlaceholders.join(', '),
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (!channel) {
 			channel = await interaction.guild.channels.create({
 				name: format.replace(/{.*?}/g, '0'),
@@ -137,7 +141,6 @@ class AddCommand extends BaseCommand {
 				],
 			});
 		}
-
 		const already = serverSetting.serverStats?.find(
 			(subcommand) => subcommand.channelId === channel.id,
 		);
@@ -145,39 +148,38 @@ class AddCommand extends BaseCommand {
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.setting.setting.stats.already'),
-				{ color: 'Yellow' },
+				{
+					color: 'Yellow',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		serverSetting.serverStats ??= [];
 		serverSetting.serverStats.push({
 			channelId: channel.id,
 			format,
 			enabled: true,
 		});
-
 		serverSetting.changed('serverStats', true);
 		await serverSetting.save();
 		await updateStats(interaction.client, [serverSetting]);
-
 		const components = await simpleContainer(
 			interaction,
 			await t(interaction, 'core.setting.setting.stats.add', {
 				channel: `<#${channel.id}>`,
 				format,
 			}),
-			{ color: 'Green' },
+			{
+				color: 'Green',
+			},
 		);
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = AddCommand;

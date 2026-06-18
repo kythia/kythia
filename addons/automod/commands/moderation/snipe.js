@@ -15,11 +15,10 @@ const snipeuiHelper = require('../../helpers/snipeUi');
 class SnipeCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ManageMessages;
 	botPermissions = PermissionFlagsBits.SendMessages;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('snipe')
-			.setDescription('👀 Snipe deleted messages in this channel.')
+			.setDescription('Snipe deleted messages in this channel.')
 			.addIntegerOption((option) =>
 				option
 					.setName('index')
@@ -30,7 +29,6 @@ class SnipeCommand extends BaseCommand {
 					.setMinValue(1)
 					.setMaxValue(20),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { helpers, redis } = container;
@@ -139,5 +137,4 @@ class SnipeCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = SnipeCommand;

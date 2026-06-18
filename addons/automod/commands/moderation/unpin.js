@@ -14,7 +14,7 @@ class UnpinCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unpin')
-			.setDescription('📌 Unpins a message from the channel.')
+			.setDescription('Unpins a message from the channel.')
 			.addStringOption((option) =>
 				option
 					.setName('message_id')

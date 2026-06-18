@@ -11,22 +11,18 @@ const {
 	SlashCommandBuilder,
 	InteractionContextType,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class CommandsCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('embed-builder')
-		.setDescription('🎨 Create and manage saved embeds for your server')
+		.setDescription('Create and manage saved embeds for your server')
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
 		.setContexts(InteractionContextType.Guild);
-
 	async autocomplete(interaction) {
 		const container = this.container;
 		const focusedValue = interaction.options.getFocused();
 		const { models } = container;
 		const { EmbedBuilder } = models;
-
 		try {
 			const embeds = await EmbedBuilder.getAllCache({
 				where: {
@@ -35,13 +31,11 @@ class CommandsCommand extends BaseCommand {
 				limit: 25,
 				order: [['name', 'ASC']],
 			});
-
 			const filtered = embeds
 				.filter((e) =>
 					e.name.toLowerCase().includes(focusedValue.toLowerCase()),
 				)
 				.slice(0, 25);
-
 			await interaction.respond(
 				filtered.map((e) => {
 					const name = `${e.mode === 'components_v2' ? '🧩' : '📋'} ${e.name} (#${e.id})`;
@@ -56,5 +50,4 @@ class CommandsCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = CommandsCommand;

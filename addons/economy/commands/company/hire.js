@@ -12,32 +12,28 @@ const {
 	ButtonBuilder,
 	ActionRowBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class HireCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('hire')
-			.setDescription('🏢 (Company Owner) Hire a player to work for you.')
+			.setDescription('(Company Owner) Hire a player to work for you.')
 			.addUserOption((option) =>
 				option
 					.setName('target')
 					.setDescription('The player you want to hire')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser, Inventory } = models;
 		const { simpleContainer, createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
 			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
 			const components = await simpleContainer(interaction, msg, {
@@ -54,7 +50,6 @@ class HireCommand extends BaseCommand {
 			userId: interaction.user.id,
 			itemName: '🏢 Company',
 		});
-
 		if (!companyItem || companyItem.quantity <= 0) {
 			const msg = await t(interaction, 'economy.company.hire.error.no_company');
 			const components = await simpleContainer(interaction, msg, {
@@ -65,7 +60,6 @@ class HireCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const targetUser = interaction.options.getUser('target');
 		if (targetUser.bot || targetUser.id === interaction.user.id) {
 			const msg = await t(
@@ -80,8 +74,9 @@ class HireCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
-		const target = await KythiaUser.getCache({ userId: targetUser.id });
+		const target = await KythiaUser.getCache({
+			userId: targetUser.id,
+		});
 		if (!target) {
 			const msg = await t(
 				interaction,
@@ -95,7 +90,6 @@ class HireCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (target.employerId) {
 			const msg = await t(
 				interaction,
@@ -112,12 +106,10 @@ class HireCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const promptMsg = await t(interaction, 'economy.company.hire.prompt', {
 			employer: interaction.user.username,
 			target: targetUser.username,
 		});
-
 		const row = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('hire-accept')
@@ -128,30 +120,25 @@ class HireCommand extends BaseCommand {
 				.setLabel('Decline')
 				.setStyle(ButtonStyle.Danger),
 		);
-
 		const components = await createContainer(interaction, {
 			description: promptMsg,
 			color: 'Blue',
 			components: [row],
 		});
-
 		const message = await interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-
 		const filter = (i) => i.user.id === targetUser.id;
 		const collector = message.createMessageComponentCollector({
 			filter,
 			time: 60000,
 		});
-
 		collector.on('collect', async (i) => {
 			if (i.customId === 'hire-accept') {
 				target.employerId = interaction.user.id;
 				target.changed('employerId', true);
 				await target.save();
-
 				const successMsg = await t(
 					interaction,
 					'economy.company.hire.success',
@@ -193,7 +180,6 @@ class HireCommand extends BaseCommand {
 			}
 			collector.stop('responded');
 		});
-
 		collector.on('end', async (_collected, reason) => {
 			if (reason !== 'responded') {
 				const timeoutMsg = await t(interaction, 'economy.company.hire.timeout');
@@ -212,5 +198,4 @@ class HireCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = HireCommand;

@@ -16,7 +16,7 @@ class NowplayingCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('nowplaying')
-			.setDescription('ℹ️ Show the currently playing song');
+			.setDescription('Show the currently playing song');
 
 	async execute(interaction) {
 		const container = this.container;

@@ -8,27 +8,22 @@
 
 const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 const fetch = require('node-fetch');
-
 const { BaseCommand } = require('kythia-core');
-
 class InstagramCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('instagram')
-		.setDescription('📸 Get and play an Instagram post/reel by link.')
+		.setDescription('Get and play an Instagram post/reel by link.')
 		.addStringOption((option) =>
 			option
 				.setName('link')
 				.setDescription('The Instagram post/reel link')
 				.setRequired(true),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		const instaUrl = interaction.options.getString('link');
-
 		const invalidUrlTitle = await t(
 			interaction,
 			'core.tools.instagram.error.invalid.url.title',
@@ -37,7 +32,6 @@ class InstagramCommand extends BaseCommand {
 			interaction,
 			'core.tools.instagram.error.invalid.url.desc',
 		);
-
 		if (
 			!/^https?:\/\/(www\.)?instagram\.com\/(p|reel|tv)\/[a-zA-Z0-9_-]+\/?/.test(
 				instaUrl,
@@ -52,15 +46,11 @@ class InstagramCommand extends BaseCommand {
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			return;
 		}
-
 		await interaction.deferReply();
-
 		try {
 			const apiUrl = `https://v3.igdownloader.app/api/ajaxSearch`;
-
 			const response = await fetch(apiUrl, {
 				method: 'POST',
 				headers: {
@@ -70,18 +60,13 @@ class InstagramCommand extends BaseCommand {
 				},
 				body: `recaptchaToken=&q=${encodeURIComponent(instaUrl)}&t=media&lang=en`,
 			});
-
 			const data = await response.json();
-
 			if (data?.status !== 'ok') {
 				throw new Error(data.msg || 'No media found');
 			}
-
 			const htmlContent = data.data;
-
 			let mediaUrl = null;
 			let mediaType = null;
-
 			const videoMatch = htmlContent.match(
 				/href="([^"]+)"[^>]*class="[^"]*download-media[^"]*"[^>]*>\s*Download Video/i,
 			);
@@ -97,11 +82,9 @@ class InstagramCommand extends BaseCommand {
 					mediaType = 'image';
 				}
 			}
-
 			if (!mediaUrl) {
 				throw new Error('Could not extract media URL');
 			}
-
 			const titleMatch = htmlContent.match(
 				/<div[^>]*class="[^"]*desc[^"]*"[^>]*>([^<]+)<\/div>/i,
 			);
@@ -110,7 +93,6 @@ class InstagramCommand extends BaseCommand {
 				(await t(interaction, 'core.tools.instagram.default_title'));
 			const title =
 				rawTitle.length > 256 ? `${rawTitle.substring(0, 253)}...` : rawTitle;
-
 			try {
 				const fileExtension = mediaType === 'video' ? 'mp4' : 'jpg';
 				await interaction.editReply({
@@ -130,7 +112,9 @@ class InstagramCommand extends BaseCommand {
 				const tooLargeDesc = await t(
 					interaction,
 					'core.tools.instagram.error.too.large.desc',
-					{ url: mediaUrl },
+					{
+						url: mediaUrl,
+					},
 				);
 				if (
 					fileError.code === 40005 ||
@@ -139,7 +123,9 @@ class InstagramCommand extends BaseCommand {
 					const components = await simpleContainer(
 						interaction,
 						`${tooLargeTitle}\n${tooLargeDesc}`,
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					await interaction.editReply({
 						components,
@@ -168,11 +154,12 @@ class InstagramCommand extends BaseCommand {
 				);
 				desc = await t(interaction, 'core.tools.instagram.error.unknown.desc');
 			}
-
 			const components = await simpleContainer(
 				interaction,
 				`${title}\n${desc}`,
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			await interaction.editReply({
 				components,
@@ -181,5 +168,4 @@ class InstagramCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = InstagramCommand;

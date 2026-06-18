@@ -26,7 +26,7 @@ class TestallCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('testall')
 		.setDescription(
-			'🛠️ Developer Tool: Test all registered commands (DRY RUN-ish).',
+			'Developer Tool: Test all registered commands (DRY RUN-ish).',
 		)
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 	ownerOnly = true;
@@ -408,5 +408,4 @@ class TestallCommand extends BaseCommand {
 			);
 	}
 }
-
 exports.default = TestallCommand;

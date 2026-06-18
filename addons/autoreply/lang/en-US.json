@@ -6,7 +6,7 @@
 				"exists": "An auto-reply with this trigger already exists."
 			},
 			"success": {
-				"plain": "✅ **Auto-reply Added!**\nTrigger: `{trigger}`\n*Using Advanced Container Style*"
+				"plain": "**Auto-reply Added!**\nTrigger: `{trigger}`\n*Using Advanced Container Style*"
 			}
 		},
 		"remove": {
@@ -14,7 +14,7 @@
 				"not_found": "Auto-reply not found."
 			},
 			"success": {
-				"plain": "✅ **Auto-reply Removed!**\nTrigger: `{trigger}`"
+				"plain": "**Auto-reply Removed!**\nTrigger: `{trigger}`"
 			}
 		},
 		"list": {

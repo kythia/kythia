@@ -18,9 +18,7 @@ const { Op } = require('sequelize');
 const { BaseCommand } = require('kythia-core');
 class ProfileCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
-		subcommand
-			.setName('profile')
-			.setDescription('👰 View your marriage profile');
+		subcommand.setName('profile').setDescription('View your marriage profile');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
@@ -83,7 +81,10 @@ class ProfileCommand extends BaseCommand {
 		const partnerBlock = await t(
 			interaction,
 			'fun.marry.profile.partner.block',
-			{ label: labelPartner, name: partner?.username || 'Unknown' },
+			{
+				label: labelPartner,
+				name: partner?.username || 'Unknown',
+			},
 		);
 		const defaultAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
 		const selfAvatar = self.displayAvatarURL

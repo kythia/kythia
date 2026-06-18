@@ -7,33 +7,26 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class UnbanCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.BanMembers;
 	botPermissions = PermissionFlagsBits.BanMembers;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unban')
-			.setDescription('🔓 Unbans a user from the server.')
+			.setDescription('Unbans a user from the server.')
 			.addStringOption((option) =>
 				option
 					.setName('user_id')
 					.setDescription('The ID of the user to unban')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const userId = interaction.options.getString('user_id');
-
 		try {
 			await interaction.guild.members.unban(userId);
 			const reply = await createContainer(interaction, {
@@ -58,7 +51,9 @@ class UnbanCommand extends BaseCommand {
 				await t(interaction, 'automod.moderation.unban.failed', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -67,5 +62,4 @@ class UnbanCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = UnbanCommand;

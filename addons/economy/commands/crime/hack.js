@@ -20,7 +20,7 @@ class HackCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('hack')
-			.setDescription('💵 Hack another user (Initiates a hacking sequence).')
+			.setDescription('Hack another user (Initiates a hacking sequence).')
 			.addUserOption((option) =>
 				option
 					.setName('target')

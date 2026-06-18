@@ -14,7 +14,7 @@ class UnmuteCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unmute')
-			.setDescription('🔊 Unmutes a user in voice channels.')
+			.setDescription('Unmutes a user in voice channels.')
 			.addUserOption((option) =>
 				option
 					.setName('user')

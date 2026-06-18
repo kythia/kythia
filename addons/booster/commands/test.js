@@ -13,7 +13,7 @@ class TestCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('test')
-			.setDescription('👋 Test the booster message')
+			.setDescription('Test the booster message')
 			.addUserOption((option) =>
 				option
 					.setName('user')

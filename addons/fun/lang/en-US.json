@@ -2,163 +2,163 @@
 	"fun": {
 		"act": {
 			"self": {
-				"hug": "{user} hugs themselves... how lonely! 😢",
-				"kiss": "{user} kisses their own hand... how sad! 😢",
-				"pat": "{user} pats themselves on the head... aww 😢",
-				"slap": "{user} slaps themselves! Ouch! 😢",
-				"cuddle": "{user} cuddles with themselves... 😢",
-				"wave": "{user} waves at themselves... 😢",
-				"highfive": "{user} high fives themselves... how sad! 😢",
-				"handhold": "{user} holds their own hand... 😢",
-				"bite": "{user} bites themselves! Ouch! 😢",
-				"bonk": "{user} bonks themselves! That's gotta hurt! 😢",
-				"yeet": "{user} yeets themselves into the void! 😢",
-				"dance": "{user} dances alone... 😢",
-				"poke": "{user} pokes themselves... 😢",
-				"wink": "{user} winks at themselves in the mirror 😉",
-				"lick": "{user} licks their own arm... weird! 😝",
-				"smile": "{user} smiles at themselves in the mirror 😊",
-				"blush": "{user} blushes at themselves... how cute! 😳",
-				"happy": "{user} is happy by themselves! Yay! 😊",
-				"cry": "{user} cries alone... 😢",
-				"awoo": "{user} howls at the moon alone! 🐺🌕",
-				"nom": "{user} noms on their own hand! 😋",
-				"glomp": "{user} glomps into a wall! Oof! 😵",
-				"kill": "{user} tries to kill themselves! Nooo! 😱",
-				"kick": "{user} kicks the air! Hiyah! 🦵",
-				"smug": "{user} looks smug... by themselves 😏",
-				"cringe": "{user} cringes at themselves... yikes! 😬",
-				"waifu": "{user} is their own waifu... how sad! 😢",
-				"neko": "{user} meows at themselves... nyaa~ 😿",
-				"shinobu": "{user} tries to be Shinobu... and fails! 😅",
-				"megumin": "{user} yells 'Explosion!' alone... 😅",
-				"bully": "{user} bullies themselves... ouch! 😢"
+				"hug": "{user} hugs themselves... how lonely!",
+				"kiss": "{user} kisses their own hand... how sad!",
+				"pat": "{user} pats themselves on the head... aww",
+				"slap": "{user} slaps themselves! Ouch!",
+				"cuddle": "{user} cuddles with themselves...",
+				"wave": "{user} waves at themselves...",
+				"highfive": "{user} high fives themselves... how sad!",
+				"handhold": "{user} holds their own hand...",
+				"bite": "{user} bites themselves! Ouch!",
+				"bonk": "{user} bonks themselves! That's gotta hurt!",
+				"yeet": "{user} yeets themselves into the void!",
+				"dance": "{user} dances alone...",
+				"poke": "{user} pokes themselves...",
+				"wink": "{user} winks at themselves in the mirror",
+				"lick": "{user} licks their own arm... weird!",
+				"smile": "{user} smiles at themselves in the mirror",
+				"blush": "{user} blushes at themselves... how cute!",
+				"happy": "{user} is happy by themselves! Yay!",
+				"cry": "{user} cries alone...",
+				"awoo": "{user} howls at the moon alone!",
+				"nom": "{user} noms on their own hand!",
+				"glomp": "{user} glomps into a wall! Oof!",
+				"kill": "{user} tries to kill themselves! Nooo!",
+				"kick": "{user} kicks the air! Hiyah!",
+				"smug": "{user} looks smug... by themselves",
+				"cringe": "{user} cringes at themselves... yikes!",
+				"waifu": "{user} is their own waifu... how sad!",
+				"neko": "{user} meows at themselves... nyaa~",
+				"shinobu": "{user} tries to be Shinobu... and fails!",
+				"megumin": "{user} yells 'Explosion!' alone...",
+				"bully": "{user} bullies themselves... ouch!"
 			},
 			"bot": {
-				"hug": "{user} hugs {bot}! Aww, thanks! 🤗",
-				"kiss": "{user} kisses {bot}! Eep! 😳💕",
-				"pat": "{user} pats {bot}'s head! Nyaa~ 😊",
-				"slap": "{user} slaps {bot}! Ouch! That's not nice! 😢",
-				"cuddle": "{user} cuddles with {bot}! So warm~ ❤️",
-				"wave": "{user} waves at {bot}! Hi there! 👋",
-				"highfive": "{user} high fives {bot}! Nice one! 🖐️",
-				"handhold": "{user} holds {bot}'s hand! Eep! 😳",
-				"bite": "{user} bites {bot}! Ouch! 😫",
-				"bonk": "{user} bonks {bot}! Hey, that's not nice! 😠",
-				"yeet": "{user} tries to yeet {bot}! But {bot} is too strong! 💪",
-				"dance": "{user} dances with {bot}! Let's boogie! 💃",
-				"poke": "{user} pokes {bot}! Beep boop! 🤖",
-				"wink": "{user} winks at {bot}! 😉",
-				"lick": "{user} licks {bot}! Ew, that's weird! 😝",
-				"smile": "{user} smiles at {bot}! 😊",
-				"blush": "{user} makes {bot} blush! 😳",
-				"happy": "{user} is happy to see {bot}! Yay! 😊",
-				"cry": "{user} makes {bot} cry! Why would you do that? 😢",
-				"awoo": "{user} howls with {bot}! Awooo~ 🐺🌕",
-				"nom": "{user} noms on {bot}! Hey, that tickles! 😋",
-				"glomp": "{user} glomps {bot}! Oof! 😵",
-				"kill": "{user} tries to kill {bot}! But I'm a bot, I can't die! 💀",
-				"kick": "{user} kicks {bot}! Oww! 😫",
-				"smug": "{user} finds {bot}'s smug face annoying! 😏",
-				"cringe": "{user} cringes at {bot}! Ouch, that hurts! 😬",
-				"waifu": "{user} calls {bot} their waifu! Eep! 😳💕",
-				"neko": "{user} pets {bot} like a neko! Nyaa~ 😺",
-				"shinobu": "{user} sees {bot} as Shinobu! Nani?! 😳",
-				"megumin": "{user} watches {bot} yell 'Explosion!' 🔥💥",
-				"bully": "{user} bullies {bot}! Meanie! 😢"
+				"hug": "{user} hugs {bot}! Aww, thanks!",
+				"kiss": "{user} kisses {bot}! Eep!",
+				"pat": "{user} pats {bot}'s head! Nyaa~",
+				"slap": "{user} slaps {bot}! Ouch! That's not nice!",
+				"cuddle": "{user} cuddles with {bot}! So warm~",
+				"wave": "{user} waves at {bot}! Hi there!",
+				"highfive": "{user} high fives {bot}! Nice one!",
+				"handhold": "{user} holds {bot}'s hand! Eep!",
+				"bite": "{user} bites {bot}! Ouch!",
+				"bonk": "{user} bonks {bot}! Hey, that's not nice!",
+				"yeet": "{user} tries to yeet {bot}! But {bot} is too strong!",
+				"dance": "{user} dances with {bot}! Let's boogie!",
+				"poke": "{user} pokes {bot}! Beep boop!",
+				"wink": "{user} winks at {bot}!",
+				"lick": "{user} licks {bot}! Ew, that's weird!",
+				"smile": "{user} smiles at {bot}!",
+				"blush": "{user} makes {bot} blush!",
+				"happy": "{user} is happy to see {bot}! Yay!",
+				"cry": "{user} makes {bot} cry! Why would you do that?",
+				"awoo": "{user} howls with {bot}! Awooo~",
+				"nom": "{user} noms on {bot}! Hey, that tickles!",
+				"glomp": "{user} glomps {bot}! Oof!",
+				"kill": "{user} tries to kill {bot}! But I'm a bot, I can't die!",
+				"kick": "{user} kicks {bot}! Oww!",
+				"smug": "{user} finds {bot}'s smug face annoying!",
+				"cringe": "{user} cringes at {bot}! Ouch, that hurts!",
+				"waifu": "{user} calls {bot} their waifu! Eep!",
+				"neko": "{user} pets {bot} like a neko! Nyaa~",
+				"shinobu": "{user} sees {bot} as Shinobu! Nani?!",
+				"megumin": "{user} watches {bot} yell 'Explosion!'",
+				"bully": "{user} bullies {bot}! Meanie!"
 			},
 			"other": {
-				"hug": "{user} gives {target} a warm hug! 🤗",
-				"kiss": "{user} kisses {target} on the cheek! 😘",
-				"pat": "{user} gently pats {target}'s head! 😊",
-				"slap": "{user} slaps {target} around a bit with a large trout! 🐟",
-				"cuddle": "{user} cuddles up to {target}! How cute! 💕",
-				"wave": "{user} waves at {target}! 👋",
-				"highfive": "{user} gives {target} a high five! 🖐️",
-				"handhold": "{user} holds {target}'s hand! How romantic! 💑",
-				"bite": "{user} bites {target}! Ouch! 😫",
-				"bonk": "{user} bonks {target} on the head! Bonk! 🔨",
-				"yeet": "{user} yeets {target} into the stratosphere! 🚀",
-				"dance": "{user} dances with {target}! Let's boogie! 💃",
-				"poke": "{user} pokes {target}! Boop! 👉",
-				"wink": "{user} winks at {target}! 😉",
-				"lick": "{user} licks {target}! Ew, that's weird! 😝",
-				"smile": "{user} smiles at {target}! 😊",
-				"blush": "{user} makes {target} blush! 😳",
-				"happy": "{user} is happy to see {target}! Yay! 😊",
-				"cry": "{user} makes {target} cry! Why would you do that? 😢",
-				"awoo": "{user} howls with {target}! Awooo~ 🐺🌕",
-				"nom": "{user} noms on {target}! Yum! 😋",
-				"glomp": "{user} glomps {target}! Oof! 😵",
-				"kill": "{user} kills {target}! Brutal! 💀",
-				"kick": "{user} kicks {target}! Hiyah! 🦵",
-				"smug": "{user} looks smugly at {target}! 😏",
-				"cringe": "{user} cringes at {target}! Yikes! 😬",
-				"waifu": "{user} calls {target} their waifu! 😳💕",
-				"neko": "{user} pets {target} like a neko! Nyaa~ 😺",
-				"shinobu": "{user} sees {target} as Shinobu! Nani?! 😳",
-				"megumin": "{user} watches {target} yell 'Explosion!' 🔥💥",
-				"bully": "{user} bullies {target}! Meanie! 😢"
+				"hug": "{user} gives {target} a warm hug!",
+				"kiss": "{user} kisses {target} on the cheek!",
+				"pat": "{user} gently pats {target}'s head!",
+				"slap": "{user} slaps {target} around a bit with a large trout!",
+				"cuddle": "{user} cuddles up to {target}! How cute!",
+				"wave": "{user} waves at {target}!",
+				"highfive": "{user} gives {target} a high five!",
+				"handhold": "{user} holds {target}'s hand! How romantic!",
+				"bite": "{user} bites {target}! Ouch!",
+				"bonk": "{user} bonks {target} on the head! Bonk!",
+				"yeet": "{user} yeets {target} into the stratosphere!",
+				"dance": "{user} dances with {target}! Let's boogie!",
+				"poke": "{user} pokes {target}! Boop!",
+				"wink": "{user} winks at {target}!",
+				"lick": "{user} licks {target}! Ew, that's weird!",
+				"smile": "{user} smiles at {target}!",
+				"blush": "{user} makes {target} blush!",
+				"happy": "{user} is happy to see {target}! Yay!",
+				"cry": "{user} makes {target} cry! Why would you do that?",
+				"awoo": "{user} howls with {target}! Awooo~",
+				"nom": "{user} noms on {target}! Yum!",
+				"glomp": "{user} glomps {target}! Oof!",
+				"kill": "{user} kills {target}! Brutal!",
+				"kick": "{user} kicks {target}! Hiyah!",
+				"smug": "{user} looks smugly at {target}!",
+				"cringe": "{user} cringes at {target}! Yikes!",
+				"waifu": "{user} calls {target} their waifu!",
+				"neko": "{user} pets {target} like a neko! Nyaa~",
+				"shinobu": "{user} sees {target} as Shinobu! Nani?!",
+				"megumin": "{user} watches {target} yell 'Explosion!'",
+				"bully": "{user} bullies {target}! Meanie!"
 			},
 			"none": {
-				"hug": "{user} wants a hug! 🤗",
-				"kiss": "{user} blows a kiss! 😘",
-				"pat": "{user} needs headpats! 😊",
-				"slap": "{user} slaps the air! Hiyah! 👋",
-				"cuddle": "{user} needs cuddles! 🥺",
-				"wave": "{user} waves at everyone! 👋",
-				"highfive": "{user} wants a high five! 🖐️",
-				"handhold": "{user} wants to hold hands! 🥺",
-				"bite": "{user} bites the air! Nom! 😋",
-				"bonk": "{user} bonks the air! Bonk! 🔨",
-				"yeet": "{user} yeets nothing into the void! 🚀",
-				"dance": "{user} starts dancing! 💃",
-				"poke": "{user} pokes the air! 👉",
-				"wink": "{user} winks! 😉",
-				"lick": "{user} licks the air! Weird! 😝",
-				"smile": "{user} smiles! 😊",
-				"blush": "{user} blushes! 😳",
-				"happy": "{user} is happy! 😊",
-				"cry": "{user} starts crying! 😢",
-				"awoo": "{user} howls at the moon! 🐺🌕",
-				"nom": "{user} noms on nothing! 😋",
-				"glomp": "{user} glomps the air! Oof! 😵",
-				"kill": "{user} kills the mood! 💀",
-				"kick": "{user} kicks the air! Hiyah! 🦵",
-				"smug": "{user} looks smug! 😏",
-				"cringe": "{user} cringes at nothing! 😬",
-				"waifu": "{user} is looking for a waifu! 😳💕",
-				"neko": "{user} meows! Nyaa~ 😺",
-				"shinobu": "{user} channels their inner Shinobu! 😳",
-				"megumin": "{user} yells 'Explosion!' 🔥💥",
-				"bully": "{user} wants to bully someone! 😈"
+				"hug": "{user} wants a hug!",
+				"kiss": "{user} blows a kiss!",
+				"pat": "{user} needs headpats!",
+				"slap": "{user} slaps the air! Hiyah!",
+				"cuddle": "{user} needs cuddles!",
+				"wave": "{user} waves at everyone!",
+				"highfive": "{user} wants a high five!",
+				"handhold": "{user} wants to hold hands!",
+				"bite": "{user} bites the air! Nom!",
+				"bonk": "{user} bonks the air! Bonk!",
+				"yeet": "{user} yeets nothing into the void!",
+				"dance": "{user} starts dancing!",
+				"poke": "{user} pokes the air!",
+				"wink": "{user} winks!",
+				"lick": "{user} licks the air! Weird!",
+				"smile": "{user} smiles!",
+				"blush": "{user} blushes!",
+				"happy": "{user} is happy!",
+				"cry": "{user} starts crying!",
+				"awoo": "{user} howls at the moon!",
+				"nom": "{user} noms on nothing!",
+				"glomp": "{user} glomps the air! Oof!",
+				"kill": "{user} kills the mood!",
+				"kick": "{user} kicks the air! Hiyah!",
+				"smug": "{user} looks smug!",
+				"cringe": "{user} cringes at nothing!",
+				"waifu": "{user} is looking for a waifu!",
+				"neko": "{user} meows! Nyaa~",
+				"shinobu": "{user} channels their inner Shinobu!",
+				"megumin": "{user} yells 'Explosion!'",
+				"bully": "{user} wants to bully someone!"
 			},
 			"errors": {
-				"invalid_action": "❌ That's not a valid action! Use one of: {VALID_ACTIONS.join(', ')}"
+				"invalid_action": "That's not a valid action! Use one of: {VALID_ACTIONS.join(', ')}"
 			}
 		},
 		"8ball": {
 			"thinking": {
-				"desc": "## 🔮 Magic 8 Ball is thinking...\nWait a moment, let me divine your answer 😋🔮"
+				"desc": "## Magic 8 Ball is thinking...\nWait a moment, let me divine your answer"
 			},
 			"result": {
-				"desc": "## 🔮 Magic 8 Ball Result\n### **❓ {question}**\n{answer}"
+				"desc": "## Magic 8 Ball Result\n### **{question}**\n{answer}"
 			},
 			"answer": {
-				"yes": "✨ Yes, just believe 😋",
+				"yes": "Yes, just believe",
 				"maybe": {
-					"yes": "🫶 Maybe yes, who knows 🥺",
-					"no": "😙 Maybe not, try again tomorrow!"
+					"yes": "Maybe yes, who knows",
+					"no": "Maybe not, try again tomorrow!"
 				},
-				"no": "😭 No, hang in there...",
-				"idk": "🥺 I don't know either, try asking your heart 😋",
+				"no": "No, hang in there...",
+				"idk": "I don't know either, try asking your heart",
 				"definitely": {
-					"yes": "🥵 Definitely yes, go for it!",
-					"no": "😋 Definitely not, that's just fate 😭"
+					"yes": "Definitely yes, go for it!",
+					"no": "Definitely not, that's just fate"
 				},
-				"secret": "🔮 It's a secret, I can't tell you 😋",
+				"secret": "It's a secret, I can't tell you",
 				"ask": {
-					"later": "🤔 Hmmm, ask again later..."
+					"later": "Hmmm, ask again later..."
 				}
 			}
 		},
@@ -168,23 +168,23 @@
 			}
 		},
 		"tictactoe": {
-			"title": "## 🎮 Tic Tac Toe",
+			"title": "## Tic Tac Toe",
 			"turn": "Turn: {mention} ({symbol})",
 			"error": {
-				"title": "## ❌ Tic Tac Toe Error",
-				"self": "You cannot play against yourself! 😭",
+				"title": "## Tic Tac Toe Error",
+				"self": "You cannot play against yourself!",
 				"rematch": "Only players can start a rematch!",
-				"turn": "It's not your turn, please wait! 😉"
+				"turn": "It's not your turn, please wait!"
 			},
-			"win": "🎉 {user} wins!",
-			"draw": "🤝 The game ended in a draw!",
-			"lose": "❌ I win... Better luck next time!",
+			"win": "{user} wins!",
+			"draw": "The game ended in a draw!",
+			"lose": "I win... Better luck next time!",
 			"timeout": "⏳ Time's up! The game has been cancelled."
 		},
 		"wordle": {
 			"already": {
-				"playing": "❌ You already have an ongoing Wordle game!",
-				"guessed": "❌ You already guessed the word \"{word}\"!"
+				"playing": "You already have an ongoing Wordle game!",
+				"guessed": "You already guessed the word \"{word}\"!"
 			},
 			"button": {
 				"guess": "Guess Word",
@@ -192,7 +192,7 @@
 			},
 			"not": {
 				"your": {
-					"game": "❌ This is not your Wordle game!"
+					"game": "This is not your Wordle game!"
 				}
 			},
 			"modal": {
@@ -200,42 +200,42 @@
 				"label": "5-letter Word"
 			},
 			"invalid": {
-				"word": "❌ The word \"{word}\" is not in the list! Try again."
+				"word": "The word \"{word}\" is not in the list! Try again."
 			},
-			"win": "🎉 **Congratulations! You guessed the word `{answer}`!**",
-			"lose": "❌ **Game Over! The answer was `{answer}`**",
+			"win": "**Congratulations! You guessed the word `{answer}`!**",
+			"lose": "**Game Over! The answer was `{answer}`**",
 			"remaining": "Guesses left: **{remaining}**",
 			"footer": {
 				"play": "Click the 'Guess Word' button to answer.",
 				"end": "Type /wordle to play again!"
 			},
-			"title": "## 🔡 Wordle"
+			"title": "## Wordle"
 		},
 		"marry": {
 			"yourself": {
-				"error": "❌ You can't marry yourself!"
+				"error": "You can't marry yourself!"
 			},
 			"bot": {
-				"error": "❌ You can't marry bot! even the bot is realistic and pretty enough!"
+				"error": "You can't marry bot! even the bot is realistic and pretty enough!"
 			},
 			"already": {
-				"married": "❌ One or both of you are already married or have a pending proposal!"
+				"married": "One or both of you are already married or have a pending proposal!"
 			},
 			"not": {
 				"enough": {},
 				"married": {
-					"default": "❌ You're not currently married!",
-					"both": "❌ Neither of you are married!"
+					"default": "You're not currently married!",
+					"both": "Neither of you are married!"
 				},
 				"your": {
 					"proposal": "This isn't your marriage proposal to accept!"
 				}
 			},
 			"proposal": {
-				"title": "💍 Marriage Proposal",
+				"title": "Marriage Proposal",
 				"description": "{proposer} just popped the question to {target} in front of everyone! Will you say YES and make it official?",
 				"expired": "This marriage proposal has expired or been cancelled.",
-				"rejected": "❌ The marriage proposal of {user1} and {user2} has been rejected."
+				"rejected": "The marriage proposal of {user1} and {user2} has been rejected."
 			},
 			"accept": {
 				"button": "Accept"
@@ -245,21 +245,21 @@
 			},
 			"no": {},
 			"congrats": {
-				"title": "## 💕 Congratulations!",
-				"description": "{user1} and {user2} are now married! May your love last forever! 💖"
+				"title": "## Congratulations!",
+				"description": "{user1} and {user2} are now married! May your love last forever!"
 			},
 			"divorced": {
-				"title": "💔 Divorced",
+				"title": "Divorced",
 				"description": "Your marriage has been ended. Wishing you both the best in your future endeavors."
 			},
 			"kiss": {
-				"1": "💋 {user} gave {partner} a sweet kiss! How romantic!",
-				"2": "😘 {user} planted a big kiss on {partner}'s cheek! So cute!",
-				"3": "💏 {user} and {partner} shared a loving kiss! Aww!",
+				"1": "{user} gave {partner} a sweet kiss! How romantic!",
+				"2": "{user} planted a big kiss on {partner}'s cheek! So cute!",
+				"3": "{user} and {partner} shared a loving kiss! Aww!",
 				"cooldown": "You can only kiss your partner once every hour! Please wait {minutes} more minutes."
 			},
 			"profile": {
-				"title": "## 💘 Marriage Profile",
+				"title": "## Marriage Profile",
 				"partner": {
 					"label": "Partner"
 				},
@@ -279,30 +279,30 @@
 			"help": {},
 			"divorce": {
 				"partner": {
-					"confirm": "💔 Your partner {partnerName} has requested a divorce in {serverName}. You must also confirm the divorce by using the `/marry divorce` command."
+					"confirm": "Your partner {partnerName} has requested a divorce in {serverName}. You must also confirm the divorce by using the `/marry divorce` command."
 				},
 				"confirmation": {
-					"needed": "## Divorce Confirmation Needed\n✅ Divorce requested for this marriage.\n\nBoth you and your partner ({partner}) must use the /divorce command to confirm.\n\n⏳ This divorce request will expire in 2 minutes."
+					"needed": "## Divorce Confirmation Needed\nDivorce requested for this marriage.\n\nBoth you and your partner ({partner}) must use the /divorce command to confirm.\n\n⏳ This divorce request will expire in 2 minutes."
 				},
 				"already": {
-					"confirmed": "❗️ You have already confirmed the divorce. Waiting for your partner."
+					"confirmed": "You have already confirmed the divorce. Waiting for your partner."
 				},
 				"confirmed": {
 					"on": {
 						"your": {
-							"side": "✅ Divorce confirmed on your side. Waiting for your partner to confirm as well.\nBoth must use /divorce within 2 minutes."
+							"side": "Divorce confirmed on your side. Waiting for your partner to confirm as well.\nBoth must use /divorce within 2 minutes."
 						}
 					}
 				}
 			}
 		},
 		"rps": {
-			"title": "## ✂️ Rock Paper Scissors",
+			"title": "## Rock Paper Scissors",
 			"choose": "Pick your weapon!",
 			"waiting": "Waiting for {opponent} to pick their weapon...",
 			"result": {
-				"win": "🎉 **{winner}** wins!\n{winnerChoice} beats {loserChoice}!",
-				"draw": "🤝 It's a draw!\nYou both picked {choice}!",
+				"win": "**{winner}** wins!\n{winnerChoice} beats {loserChoice}!",
+				"draw": "It's a draw!\nYou both picked {choice}!",
 				"timeout": "⏰ Time's up! **{opponent}** didn't respond. Game cancelled."
 			},
 			"rematch": "Rematch",
@@ -311,18 +311,18 @@
 				"end": "Play again with /rps"
 			},
 			"duel": {
-				"already_locked": "✅ You already locked in! Waiting for the other player...",
-				"pick_weapon": "🤫 Pick your weapon — only you can see this!",
-				"locked_in": "✅ Locked in: **{emoji}** — waiting for the other player!"
+				"already_locked": "You already locked in! Waiting for the other player...",
+				"pick_weapon": "Pick your weapon — only you can see this!",
+				"locked_in": "Locked in: **{emoji}** — waiting for the other player!"
 			}
 		},
 		"math": {
-			"title": "## 🔢 Math Quiz",
+			"title": "## Math Quiz",
 			"question": "Solve: **{question}**\nStreak: **{score}**",
-			"correct": "✅ Correct! **+1**",
-			"wrong": "❌ Wrong! The answer was `{answer}`.\nFinal streak: **{score}**",
+			"correct": "Correct! **+1**",
+			"wrong": "Wrong! The answer was `{answer}`.\nFinal streak: **{score}**",
 			"timeout": "⏰ Time's up! The answer was `{answer}`.\nFinal streak: **{score}**",
-			"new_best": "🏆 New personal best: **{score}**!",
+			"new_best": "New personal best: **{score}**!",
 			"modal": {
 				"title": "Your Answer",
 				"label": "Enter the answer (numbers only)"
@@ -332,33 +332,33 @@
 				"end": "Play again with /math"
 			},
 			"leaderboard": {
-				"title": "## 🏆 Math Quiz — Global Leaderboard",
+				"title": "## Math Quiz — Global Leaderboard",
 				"empty": "No scores yet! Be the first to play with `/math`.",
 				"entry": "{rank}. **{user}** — `{score}` pts"
 			},
 			"invalid": {
-				"number": "❌ Please enter a valid number."
+				"number": "Please enter a valid number."
 			}
 		},
 		"friend": {
 			"yourself": {
-				"error": "❌ You can't add yourself as a friend!"
+				"error": "You can't add yourself as a friend!"
 			},
 			"bot": {
-				"error": "❌ Bots cannot be friends!"
+				"error": "Bots cannot be friends!"
 			},
 			"already": {
-				"friends": "❌ You are already friends or have a pending friend request with this user!"
+				"friends": "You are already friends or have a pending friend request with this user!"
 			},
 			"not": {
-				"friends": "❌ You are not friends with this user!",
-				"found": "❌ Friend request not found or already processed."
+				"friends": "You are not friends with this user!",
+				"found": "Friend request not found or already processed."
 			},
 			"request": {
-				"title": "## 🤝 Friend Request",
+				"title": "## Friend Request",
 				"description": "{proposer} wants to be friends with {target}! Will you accept?",
 				"expired": "This friend request has expired or been cancelled.",
-				"rejected": "❌ The friend request from {user1} to {user2} was rejected.",
+				"rejected": "The friend request from {user1} to {user2} was rejected.",
 				"user_block": "## {user}\n-# {id}"
 			},
 			"accept": {
@@ -368,79 +368,79 @@
 				"button": "Reject"
 			},
 			"congrats": {
-				"title": "## 🎉 New Friendship!",
+				"title": "## New Friendship!",
 				"description": "{user1} and {user2} are now friends!"
 			},
 			"removed": {
-				"title": "## 💔 Friend Removed",
+				"title": "## Friend Removed",
 				"description": "You are no longer friends with {user}."
 			},
 			"list": {
-				"title": "## 🤝 Your Friends",
+				"title": "## Your Friends",
 				"empty": "You don't have any friends yet! Use `/friend add` to add someone.",
 				"format": "• {user}"
 			}
 		},
 		"summon": {
 			"not": {
-				"friend": "❌ You can only summon your friends! Use `/friend add @user` to add them first."
+				"friend": "You can only summon your friends! Use `/friend add @user` to add them first."
 			},
 			"dm": {
-				"failed": "❌ I couldn't DM {user}. Their DMs might be closed.",
-				"title": "## 🔔 You have been summoned!",
+				"failed": "I couldn't DM {user}. Their DMs might be closed.",
+				"title": "## You have been summoned!",
 				"description": "You were summoned by **{author}** in the server **{server}**!\nClick the button below to jump to the channel."
 			},
-			"success": "✅ Successfully summoned {user} via DM!",
+			"success": "Successfully summoned {user} via DM!",
 			"button": {
 				"jump": "Jump to Channel"
 			}
 		},
 		"meme": {
-			"title": "## 😂 {title}\n-# r/{subreddit} • ⬆️ {upvotes} • 👤 u/{author}",
+			"title": "## {title}\n-# r/{subreddit} • ⬆{upvotes} • u/{author}",
 			"button": {
 				"view": "View on Reddit"
 			},
 			"error": {
-				"fetch": "❌ Couldn't fetch a meme right now. Try again in a moment!",
-				"nsfw": "❌ The fetched meme was NSFW or unavailable. Try again!"
+				"fetch": "Couldn't fetch a meme right now. Try again in a moment!",
+				"nsfw": "The fetched meme was NSFW or unavailable. Try again!"
 			}
 		},
 		"joke": {
-			"setup": "## 😂 Joke — {category}\n{setup}",
-			"punchline": "🥁 **{punchline}**",
+			"setup": "## Joke — {category}\n{setup}",
+			"punchline": "**{punchline}**",
 			"button": {
 				"reveal": "Reveal Punchline"
 			},
 			"error": {
-				"fetch": "❌ Couldn't fetch a joke right now. Try again!"
+				"fetch": "Couldn't fetch a joke right now. Try again!"
 			}
 		},
 		"roast": {
 			"title": {
-				"self": "## 🔥 Self-Roast\n{author} decided to roast themselves...",
-				"other": "## 🔥 Roasted!\n{author} is roasting {target}:"
+				"self": "## Self-Roast\n{author} decided to roast themselves...",
+				"other": "## Roasted!\n{author} is roasting {target}:"
 			},
 			"insult": "> {insult}",
 			"error": {
-				"fetch": "❌ Couldn't fetch a roast right now. Try again!"
+				"fetch": "Couldn't fetch a roast right now. Try again!"
 			}
 		},
 		"fact": {
-			"title": "## 🧠 Random Fact\n{fact}",
+			"title": "## Random Fact\n{fact}",
 			"button": {
 				"another": "Another Fact"
 			},
 			"error": {
-				"fetch": "❌ Couldn't fetch a fact right now. Try again!"
+				"fetch": "Couldn't fetch a fact right now. Try again!"
 			}
 		},
 		"quote": {
-			"title": "## ✨ Quote\n> {text}\n\n— **{author}**",
+			"title": "## Quote\n> {text}\n\n— **{author}**",
 			"button": {
 				"another": "Another Quote"
 			},
 			"error": {
-				"fetch": "❌ Couldn't fetch a quote right now. Try again!"
+				"fetch": "Couldn't fetch a quote right now. Try again!"
 			}
 		}
 	}

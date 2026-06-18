@@ -17,7 +17,7 @@ class RemoveCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
-			.setDescription('➖ Remove a reaction role from a message.')
+			.setDescription('Remove a reaction role from a message.')
 			.addStringOption((option) =>
 				option
 					.setName('message_id')

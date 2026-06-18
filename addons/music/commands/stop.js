@@ -14,9 +14,7 @@ class StopCommand extends BaseCommand {
 	subcommand = true;
 
 	slashCommand = (subcommand) =>
-		subcommand
-			.setName('stop')
-			.setDescription('⏹️ Stop music and clear the queue');
+		subcommand.setName('stop').setDescription('Stop music and clear the queue');
 
 	async execute(interaction) {
 		const container = this.container;

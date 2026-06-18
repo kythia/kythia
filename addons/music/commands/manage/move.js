@@ -16,7 +16,7 @@ class MoveCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('move')
-			.setDescription('🔀 Move a song to different position')
+			.setDescription('Move a song to different position')
 			.addIntegerOption((option) =>
 				option
 					.setName('from')

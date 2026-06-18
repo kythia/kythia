@@ -11,16 +11,13 @@ const {
 	STATUS_OPTIONS,
 	ACTIVITY_TYPE_OPTIONS,
 } = require('../../../../helpers/presenceConstants');
-
 const { BaseCommand } = require('kythia-core');
-
 class SetCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('set')
-			.setDescription('🔄 Set bot presence (status + activity)')
+			.setDescription('Set bot presence (status + activity)')
 			.addStringOption((option) =>
 				option
 					.setName('status')
@@ -49,25 +46,20 @@ class SetCommand extends BaseCommand {
 					)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		try {
 			const status = interaction.options.getString('status');
 			const type = interaction.options.getString('type');
 			const activityName = interaction.options.getString('activity');
 			const url = interaction.options.getString('url');
-
 			const activityPayload = {
 				name: activityName,
 				type: ActivityType[type],
 			};
-
 			if (activityPayload.type === ActivityType.Streaming) {
 				if (
 					!url ||
@@ -77,7 +69,9 @@ class SetCommand extends BaseCommand {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'core.utils.presence.invalid.url'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -86,12 +80,10 @@ class SetCommand extends BaseCommand {
 				}
 				activityPayload.url = url;
 			}
-
 			await interaction.client.user.setPresence({
 				activities: [activityPayload],
 				status,
 			});
-
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.utils.presence.set.success', {
@@ -99,7 +91,9 @@ class SetCommand extends BaseCommand {
 					activity: activityName,
 					type,
 				}),
-				{ color: 'Green' },
+				{
+					color: 'Green',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -114,7 +108,9 @@ class SetCommand extends BaseCommand {
 				await t(interaction, 'core.utils.presence.error', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -123,5 +119,4 @@ class SetCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = SetCommand;

@@ -11,13 +11,11 @@ const {
 	MessageFlags,
 	SlashCommandSubcommandBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class SendCommand extends BaseCommand {
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('send')
-		.setDescription('📤 Send a saved embed to a channel')
+		.setDescription('Send a saved embed to a channel')
 		.addStringOption((option) =>
 			option
 				.setName('id')
@@ -41,19 +39,27 @@ class SendCommand extends BaseCommand {
 						name: '🌐 Everyone (@everyone, @here, roles & users)',
 						value: 'everyone',
 					},
-					{ name: '👥 Roles only', value: 'roles' },
-					{ name: '👤 Users only', value: 'users' },
-					{ name: '🔕 No mentions', value: 'none' },
+					{
+						name: '👥 Roles only',
+						value: 'roles',
+					},
+					{
+						name: '👤 Users only',
+						value: 'users',
+					},
+					{
+						name: '🔕 No mentions',
+						value: 'none',
+					},
 				),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;
 		const { EmbedBuilder: EmbedModel } = models;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const embedId = parseInt(interaction.options.getString('id'), 10);
 		const targetChannel =
 			interaction.options.getChannel('channel') ?? interaction.channel;
@@ -62,19 +68,28 @@ class SendCommand extends BaseCommand {
 		const mentionChoice =
 			interaction.options.getString('allowed_mentions') ?? 'everyone';
 		const allowedMentionsMap = {
-			everyone: { parse: ['everyone', 'roles', 'users'] },
-			roles: { parse: ['roles'] },
-			users: { parse: ['users'] },
-			none: { parse: [] },
+			everyone: {
+				parse: ['everyone', 'roles', 'users'],
+			},
+			roles: {
+				parse: ['roles'],
+			},
+			users: {
+				parse: ['users'],
+			},
+			none: {
+				parse: [],
+			},
 		};
 		const allowedMentions = allowedMentionsMap[mentionChoice] ?? {
 			parse: ['everyone', 'roles', 'users'],
 		};
-
 		const record = await EmbedModel.getCache({
-			where: { id: embedId, guildId: interaction.guild.id },
+			where: {
+				id: embedId,
+				guildId: interaction.guild.id,
+			},
 		});
-
 		if (!record) {
 			const { simpleContainer } = container.helpers.discord;
 			const { t } = container;
@@ -82,20 +97,19 @@ class SendCommand extends BaseCommand {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'embed-builder.send.not_found'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		try {
 			let message;
-
 			if (record.mode === 'embed') {
 				// Build classic Discord embed from stored data
 				const embedData = record.data || {};
 				const embed = new EmbedBuilder();
-
 				if (embedData.title) embed.setTitle(embedData.title.slice(0, 256));
 				if (embedData.description)
 					embed.setDescription(embedData.description.slice(0, 4000));
@@ -124,7 +138,6 @@ class SendCommand extends BaseCommand {
 				if (Array.isArray(embedData.fields)) {
 					embed.addFields(embedData.fields);
 				}
-
 				message = await targetChannel.send({
 					embeds: [embed],
 					allowedMentions,
@@ -141,12 +154,13 @@ class SendCommand extends BaseCommand {
 						components: await simpleContainer(
 							interaction,
 							await t(interaction, 'embed-builder.send.no_components'),
-							{ color: 'Yellow' },
+							{
+								color: 'Yellow',
+							},
 						),
 						flags: MessageFlags.IsComponentsV2,
 					});
 				}
-
 				message = await targetChannel.send({
 					components: componentsData,
 					flags: MessageFlags.IsComponentsV2,
@@ -160,7 +174,6 @@ class SendCommand extends BaseCommand {
 				channelId: targetChannel.id,
 				allowedMentions,
 			});
-
 			const { createContainer } = container.helpers.discord;
 			const { t } = container;
 			return interaction.editReply({
@@ -178,7 +191,9 @@ class SendCommand extends BaseCommand {
 		} catch (error) {
 			container.logger.error(
 				`[embed-builder:send] Error: ${error.message || String(error)}`,
-				{ label: 'embed-builder:send' },
+				{
+					label: 'embed-builder:send',
+				},
 			);
 			const { simpleContainer } = container.helpers.discord;
 			const { t } = container;
@@ -188,12 +203,13 @@ class SendCommand extends BaseCommand {
 					await t(interaction, 'embed-builder.send.error', {
 						error: error.message,
 					}),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
 	}
 }
-
 exports.default = SendCommand;

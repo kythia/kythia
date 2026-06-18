@@ -16,7 +16,7 @@ class VolumeCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('volume')
-			.setDescription('🔊 Set music volume')
+			.setDescription('Set music volume')
 			.addIntegerOption((option) =>
 				option
 					.setName('level')

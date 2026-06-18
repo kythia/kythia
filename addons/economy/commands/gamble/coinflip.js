@@ -8,16 +8,13 @@
 
 const { MessageFlags } = require('discord.js');
 const { toBigIntSafe } = require('../../helpers/bigint');
-
 const { BaseCommand } = require('kythia-core');
-
 class CoinflipCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('coinflip')
-			.setDescription('🪙 Flip a coin and test your luck.')
+			.setDescription('Flip a coin and test your luck.')
 			.addIntegerOption((option) =>
 				option.setName('bet').setDescription('Amount to bet').setRequired(true),
 			)
@@ -27,19 +24,25 @@ class CoinflipCommand extends BaseCommand {
 					.setDescription('Heads or Tails')
 					.setRequired(true)
 					.addChoices(
-						{ name: 'Heads', value: 'heads' },
-						{ name: 'Tails', value: 'tails' },
+						{
+							name: 'Heads',
+							value: 'heads',
+						},
+						{
+							name: 'Tails',
+							value: 'tails',
+						},
 					),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
 			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
 			const components = await simpleContainer(interaction, msg, {
@@ -52,7 +55,6 @@ class CoinflipCommand extends BaseCommand {
 		}
 		const bet = interaction.options.getInteger('bet');
 		const side = interaction.options.getString('side').toLowerCase();
-
 		if (user.kythiaCoin < bet) {
 			const msg = await t(
 				interaction,
@@ -66,14 +68,10 @@ class CoinflipCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const flip = Math.random() < 0.5 ? 'heads' : 'tails';
-
 		if (side === flip) {
 			user.kythiaCoin = toBigIntSafe(user.kythiaCoin) + toBigIntSafe(bet);
-
 			user.changed('kythiaCoin', true);
-
 			await user.save();
 			const msg = await t(interaction, 'economy.coinflip.coinflip.win', {
 				flip: flip.charAt(0).toUpperCase() + flip.slice(1),
@@ -88,9 +86,7 @@ class CoinflipCommand extends BaseCommand {
 			});
 		} else {
 			user.kythiaCoin = toBigIntSafe(user.kythiaCoin) - toBigIntSafe(bet);
-
 			user.changed('kythiaCoin', true);
-
 			await user.save();
 			const msg = await t(interaction, 'economy.coinflip.coinflip.lose', {
 				flip: flip.charAt(0).toUpperCase() + flip.slice(1),
@@ -106,5 +102,4 @@ class CoinflipCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = CoinflipCommand;

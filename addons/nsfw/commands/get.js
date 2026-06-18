@@ -9,7 +9,6 @@
 const { MessageFlags } = require('discord.js');
 const { buildComponentRows } = require('../helpers/buttons.js');
 const { fetchContent } = require('../helpers/api.js');
-
 const { BaseCommand } = require('kythia-core');
 
 // Constants extracted to addons/nsfw/helpers/constants.js
@@ -17,11 +16,10 @@ const { BaseCommand } = require('kythia-core');
 class GetCommand extends BaseCommand {
 	subcommand = true;
 	voteLocked = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('get')
-			.setDescription('🌶️ Get random mature content (only in 18+ channels)')
+			.setDescription('Get random mature content (only in 18+ channels)')
 			.addStringOption((option) =>
 				option
 					.setName('category')
@@ -29,7 +27,10 @@ class GetCommand extends BaseCommand {
 					.setRequired(true)
 					.addChoices(
 						...require('../helpers/constants').ALLOWED_CATEGORIES.map(
-							(cat) => ({ name: cat, value: cat }),
+							(cat) => ({
+								name: cat,
+								value: cat,
+							}),
 						),
 					),
 			)
@@ -47,20 +48,20 @@ class GetCommand extends BaseCommand {
 					.setMaxValue(3)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, models, logger } = container;
 		const { NsfwUser } = models;
-
 		const ephemeral = interaction.options.getBoolean('private') ?? false;
 		const amount = interaction.options.getInteger('amount') ?? 1;
 		const category = interaction.options.getString('category');
-
-		await interaction.deferReply({ ephemeral });
-
+		await interaction.deferReply({
+			ephemeral,
+		});
 		const [user] = await NsfwUser.getOrCreateCache(
-			{ userId: interaction.user.id },
+			{
+				userId: interaction.user.id,
+			},
 			{
 				userId: interaction.user.id,
 				nsfwFav: [],
@@ -70,14 +71,15 @@ class GetCommand extends BaseCommand {
 
 		// State for current images
 		let currentImages = [];
-
 		const sendContent = async () => {
-			const fetchPromises = Array.from({ length: amount }, () =>
-				fetchContent(category, logger),
+			const fetchPromises = Array.from(
+				{
+					length: amount,
+				},
+				() => fetchContent(category, logger),
 			);
 			const fetched = await Promise.all(fetchPromises);
 			currentImages = fetched.filter((img) => img !== null);
-
 			if (currentImages.length === 0) {
 				return interaction.editReply({
 					content:
@@ -90,7 +92,6 @@ class GetCommand extends BaseCommand {
 				user.nsfwCount = (user.nsfwCount || 0) + currentImages.length;
 				await user.save();
 			}
-
 			const [containerBody] = await helpers.discord.createContainer(
 				interaction,
 				{
@@ -108,12 +109,10 @@ class GetCommand extends BaseCommand {
 					),
 				},
 			);
-
 			await interaction.editReply({
 				components: [containerBody],
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			try {
 				const replyMsg = await interaction.fetchReply();
 				if (replyMsg && container.redis) {
@@ -137,5 +136,4 @@ class GetCommand extends BaseCommand {
 		await sendContent();
 	}
 }
-
 exports.default = GetCommand;

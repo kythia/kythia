@@ -16,7 +16,7 @@ class JumpCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('jump')
-			.setDescription('🐇 Jump to a specific song in the queue')
+			.setDescription('Jump to a specific song in the queue')
 			.addIntegerOption((option) =>
 				option
 					.setName('position')

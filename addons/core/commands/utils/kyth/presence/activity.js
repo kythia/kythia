@@ -10,16 +10,13 @@ const { ActivityType, MessageFlags } = require('discord.js');
 const {
 	ACTIVITY_TYPE_OPTIONS,
 } = require('../../../../helpers/presenceConstants');
-
 const { BaseCommand } = require('kythia-core');
-
 class ActivityCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('activity')
-			.setDescription('🎮 Set bot activity only')
+			.setDescription('Set bot activity only')
 			.addStringOption((option) =>
 				option
 					.setName('type')
@@ -39,37 +36,32 @@ class ActivityCommand extends BaseCommand {
 					.setDescription('Streaming URL (Twitch/YouTube)')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		try {
 			const type = interaction.options.getString('type');
 			const activityName = interaction.options.getString('name');
 			const url = interaction.options.getString('url');
-
 			const activityPayload = {
 				name: activityName,
 				type: ActivityType[type],
 			};
-
 			if (activityPayload.type === ActivityType.Streaming && url) {
 				activityPayload.url = url;
 			}
-
 			await interaction.client.user.setActivity(activityPayload);
-
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'core.utils.presence.activity.success', {
 					activity: activityName,
 					type,
 				}),
-				{ color: 'Green' },
+				{
+					color: 'Green',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -84,7 +76,9 @@ class ActivityCommand extends BaseCommand {
 				await t(interaction, 'core.utils.presence.error', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -93,5 +87,4 @@ class ActivityCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = ActivityCommand;

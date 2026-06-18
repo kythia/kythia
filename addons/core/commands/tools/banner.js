@@ -16,7 +16,7 @@ const { BaseCommand } = require('kythia-core');
 class BannerCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('banner')
-		.setDescription('🖼️ Show user banner.')
+		.setDescription('Show user banner.')
 		.addUserOption((option) =>
 			option
 				.setName('user')

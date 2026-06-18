@@ -7,13 +7,10 @@
  */
 
 const { SlashCommandBuilder } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class UtilsCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('convert')
-		.setDescription('🔄 Convert between units, currencies, etc.');
+		.setDescription('Convert between units, currencies, etc.');
 }
-
 exports.default = UtilsCommand;

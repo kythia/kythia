@@ -81,6 +81,7 @@ app.post('/topgg', async (c) => {
 				votePoints: 0,
 			},
 		);
+
 		user.kythiaCoin = (user.kythiaCoin || 0) + 1000;
 		user.isVoted = true;
 		user.voteExpiresAt = voteExpiresAt;
@@ -94,7 +95,7 @@ app.post('/topgg', async (c) => {
 			);
 			const { createContainer } = helpers.discord;
 			const msg =
-				"## 🌸 Thanks for Voting!\nHiii there! Thank you for voting for **Kythia**! I'm so happy you're here, your support means a lot to me>//<, for your support, I've given you 1000 Kythia Coins and unlocked **vote only** commands, if you need any help, feel free to ask me!";
+				"## Thanks for Voting!\nHiii there! Thank you for voting for **Kythia**!\nI'm so happy you're here, your support means a lot to me >//<\nI've given you 1000 Kythia Coins and unlocked **vote only** commands, if you need any help, feel free to ask me!";
 			const components = await createContainer(
 				{
 					client,
@@ -138,7 +139,8 @@ app.post('/topgg', async (c) => {
 				},
 			},
 		});
-		const voteRank = `#${aboveCount + 1}`;
+		const voteRank = `#${(aboveCount || 0) + 1}`;
+		const votePoints = user.votePoints || 0;
 
 		if (webhookVoteLogs && client) {
 			try {
@@ -191,7 +193,7 @@ app.post('/topgg', async (c) => {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							`**Your Vote Ranks**: ${voteRank}\n**Your Vote Points**: ${user.votePoints}`,
+							`Your Vote Ranks: **${voteRank}**\nYour Vote Points: **${votePoints}**`,
 						),
 					)
 					.addSeparatorComponents(

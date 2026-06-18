@@ -7,16 +7,13 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ViewCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('view')
-			.setDescription("📊 View the live market data for a server's stock.")
+			.setDescription("View the live market data for a server's stock.")
 			.addStringOption((option) =>
 				option
 					.setName('ticker')
@@ -25,56 +22,62 @@ class ViewCommand extends BaseCommand {
 					)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		await interaction.deferReply();
 		const { t, models, helpers } = container;
 		const { GuildLiquidityPool, GuildTokenHolding } = models;
 		const { simpleContainer } = helpers.discord;
-
 		let ticker = interaction.options.getString('ticker');
 		let pool = null;
-
 		if (ticker) {
 			ticker = ticker.toUpperCase().replace(/[^A-Z]/g, '');
-			pool = await GuildLiquidityPool.getCache({ where: { ticker } });
+			pool = await GuildLiquidityPool.getCache({
+				where: {
+					ticker,
+				},
+			});
 		} else {
 			pool = await GuildLiquidityPool.getCache({
-				where: { guildId: interaction.guild.id },
+				where: {
+					guildId: interaction.guild.id,
+				},
 			});
 		}
-
 		if (!pool) {
 			const errorKey = ticker
 				? 'economy.guild_stock.view.error.not_found'
 				: 'economy.guild_stock.view.error.no_guild_stock';
-			const msg = await t(interaction, errorKey, { ticker });
+			const msg = await t(interaction, errorKey, {
+				ticker,
+			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.view.not_found', { msg }),
-				{ color: 'Red' },
+				await t(interaction, 'economy.stock.view.not_found', {
+					msg,
+				}),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const price = pool.kythReserve / pool.tokenReserve;
 		const marketCap = price * pool.tokenReserve;
-
 		const holdersCount = await GuildTokenHolding.countCache({
-			where: { guildId: pool.guildId },
+			where: {
+				guildId: pool.guildId,
+			},
 		});
-
 		const title = await t(interaction, 'economy.guild_stock.view.title', {
 			ticker: pool.ticker,
 		});
 		const status = pool.tradingHalted
 			? await t(interaction, 'economy.guild_stock.view.halted')
 			: await t(interaction, 'economy.guild_stock.view.active');
-
 		const priceStr = await t(interaction, 'economy.guild_stock.view.price', {
 			price: price.toFixed(4),
 		});
@@ -84,7 +87,9 @@ class ViewCommand extends BaseCommand {
 		const holdersStr = await t(
 			interaction,
 			'economy.guild_stock.view.holders',
-			{ holders: holdersCount },
+			{
+				holders: holdersCount,
+			},
 		);
 		const xStr = await t(interaction, 'economy.guild_stock.view.x', {
 			x: pool.kythReserve.toFixed(2),
@@ -98,7 +103,6 @@ class ViewCommand extends BaseCommand {
 		const footer = await t(interaction, 'economy.guild_stock.view.footer', {
 			guildId: pool.guildId,
 		});
-
 		const fullText = await t(interaction, 'economy.guild_stock.view.title_md', {
 			title,
 			status,
@@ -110,7 +114,6 @@ class ViewCommand extends BaseCommand {
 			feeStr,
 			footer,
 		});
-
 		const components = await simpleContainer(interaction, fullText, {
 			color: 'Blue',
 		});
@@ -120,5 +123,4 @@ class ViewCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ViewCommand;

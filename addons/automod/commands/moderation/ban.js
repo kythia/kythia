@@ -7,17 +7,14 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class BanCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.BanMembers;
 	botPermissions = PermissionFlagsBits.BanMembers;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('ban')
-			.setDescription('🔨 Bans a user from the server.')
+			.setDescription('Bans a user from the server.')
 			.addUserOption((option) =>
 				option
 					.setName('user')
@@ -30,21 +27,21 @@ class BanCommand extends BaseCommand {
 					.setDescription('Reason for the ban')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const user = interaction.options.getUser('user');
 		const reason =
 			interaction.options.getString('reason') ||
 			(await t(interaction, 'automod.moderation.ban.default.reason'));
-
 		try {
-			await interaction.guild.members.ban(user, { reason });
+			await interaction.guild.members.ban(user, {
+				reason,
+			});
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
 				title: await t(interaction, 'automod.moderation.ban.success.title'),
@@ -68,7 +65,9 @@ class BanCommand extends BaseCommand {
 				await t(interaction, 'automod.moderation.ban.failed', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -77,5 +76,4 @@ class BanCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = BanCommand;

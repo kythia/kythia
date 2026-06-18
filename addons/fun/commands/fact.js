@@ -18,28 +18,24 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const axios = require('axios');
-
 const { BaseCommand } = require('kythia-core');
-
 class FactCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('fact')
-		.setDescription('🧠 Get a random useless (but interesting) fact');
-
+		.setDescription('Get a random useless (but interesting) fact');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
-
 		await interaction.deferReply();
-
 		const fetchFact = async () => {
 			const response = await axios.get(
 				'https://uselessfacts.jsph.pl/api/v2/facts/random?language=en',
-				{ timeout: 8000 },
+				{
+					timeout: 8000,
+				},
 			);
 			return response.data?.text;
 		};
-
 		let fact;
 		try {
 			fact = await fetchFact();
@@ -48,24 +44,23 @@ class FactCommand extends BaseCommand {
 				content: await t(interaction, 'fun.fact.error.fetch'),
 			});
 		}
-
 		if (!fact) {
 			return interaction.editReply({
 				content: await t(interaction, 'fun.fact.error.fetch'),
 			});
 		}
-
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const buildContainer = async (factText) =>
 			new ContainerBuilder()
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'fun.fact.title', { fact: factText }),
+						await t(interaction, 'fun.fact.title', {
+							fact: factText,
+						}),
 					),
 				)
 				.addSeparatorComponents(
@@ -94,14 +89,13 @@ class FactCommand extends BaseCommand {
 						}),
 					),
 				);
-
 		const msg = await interaction.editReply({
 			components: [await buildContainer(fact)],
 			flags: MessageFlags.IsComponentsV2,
 		});
-
-		const collector = msg.createMessageComponentCollector({ time: 120_000 });
-
+		const collector = msg.createMessageComponentCollector({
+			time: 120_000,
+		});
 		collector.on('collect', async (btn) => {
 			if (btn.customId !== 'fact_another') return;
 			await btn.deferUpdate();
@@ -117,5 +111,4 @@ class FactCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = FactCommand;

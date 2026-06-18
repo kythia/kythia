@@ -24,7 +24,7 @@ const constantsHelper = require('../helpers/constants');
 class ActCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('act')
-		.setDescription('🤗 Perform an anime action with a user')
+		.setDescription('Perform an anime action with a user')
 		.addStringOption((option) =>
 			option
 				.setName('action')
@@ -210,5 +210,4 @@ class ActCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ActCommand;

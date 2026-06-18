@@ -8,7 +8,6 @@
 
 const { MessageFlags } = require('discord.js');
 const { formatPoolStats } = require('../../../../../economy/helpers/kythAmm');
-
 const { BaseCommand } = require('kythia-core');
 const kythEcoHelper = require('../../../../helpers/kythEco');
 
@@ -18,11 +17,10 @@ const kythEcoHelper = require('../../../../helpers/kythEco');
 
 class ConfigCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('config')
-			.setDescription('⚙️ View and change all KYTH AMM runtime settings.')
+			.setDescription('View and change all KYTH AMM runtime settings.')
 			.addStringOption((option) =>
 				option
 					.setName('param')
@@ -45,28 +43,35 @@ class ConfigCommand extends BaseCommand {
 					)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, kythiaConfig, helpers } = container;
 		const { KythLiquidityPool } = models;
 		const { simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
-		const pool = await KythLiquidityPool.getCache({ id: 1 }, { noCache: true });
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
+		const pool = await KythLiquidityPool.getCache(
+			{
+				id: 1,
+			},
+			{
+				noCache: true,
+			},
+		);
 		if (!pool) {
 			const components = await simpleContainer(
 				interaction,
 				'❌ Pool Not Found\nRun the database migration first.',
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const param = interaction.options.getString('param');
 		const rawValue = interaction.options.getString('value');
 		const CONFIG_PARAMS = kythEcoHelper.CONFIG_PARAMS;
@@ -102,7 +107,6 @@ class ConfigCommand extends BaseCommand {
 				`*Use \`/kyth config param:<setting> value:<new value>\` to change any setting.*`,
 				`*Use \`/kyth pool status\` for pool reserve data.*`,
 			];
-
 			const components = await simpleContainer(interaction, lines.join('\n'), {
 				color: kythiaConfig.bot.color,
 			});
@@ -119,17 +123,17 @@ class ConfigCommand extends BaseCommand {
 			const components = await simpleContainer(
 				interaction,
 				`**${def.label}**\n*${def.desc}*\n\nCurrent value: \`${currentRaw}\`\n\nProvide a \`value\` to change it.`,
-				{ color: kythiaConfig.bot.color },
+				{
+					color: kythiaConfig.bot.color,
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const def = CONFIG_PARAMS[param];
 		let parsedValue;
-
 		if (def.type === 'bool') {
 			if (
 				!['true', 'false', '1', '0', 'on', 'off'].includes(
@@ -139,7 +143,9 @@ class ConfigCommand extends BaseCommand {
 				const components = await simpleContainer(
 					interaction,
 					`**${def.label}** expects a boolean: \`true\` or \`false\`.`,
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -153,7 +159,9 @@ class ConfigCommand extends BaseCommand {
 				const components = await simpleContainer(
 					interaction,
 					`**${def.label}** expects a number (got: \`${rawValue}\`).`,
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -164,7 +172,9 @@ class ConfigCommand extends BaseCommand {
 				const components = await simpleContainer(
 					interaction,
 					`**${def.label}**: value \`${parsedValue}\` is out of allowed range.\n*${def.desc}*`,
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -172,7 +182,6 @@ class ConfigCommand extends BaseCommand {
 				});
 			}
 		}
-
 		const oldValue = pool[def.column];
 		pool[def.column] = parsedValue;
 		pool.changed(def.column, true);
@@ -190,7 +199,6 @@ class ConfigCommand extends BaseCommand {
 				? '🚫 HALTED — All KYTH trading is now STOPPED.'
 				: '✅ RESUMED — Trading is now active.';
 		}
-
 		const components = await simpleContainer(
 			interaction,
 			[
@@ -202,7 +210,9 @@ class ConfigCommand extends BaseCommand {
 				``,
 				`*Change is effective immediately — no restart needed.*`,
 			].join('\n'),
-			{ color: 'Green' },
+			{
+				color: 'Green',
+			},
 		);
 		return interaction.editReply({
 			components,
@@ -210,5 +220,4 @@ class ConfigCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ConfigCommand;

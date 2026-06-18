@@ -7,12 +7,9 @@
  */
 
 const { BaseCommand } = require('kythia-core');
-
 class GroupCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (group) =>
-		group.setName('marry').setDescription('💍 Marriage system commands');
+		group.setName('marry').setDescription('Marriage system commands');
 }
-
 exports.default = GroupCommand;

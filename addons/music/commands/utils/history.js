@@ -16,7 +16,7 @@ class HistoryCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('history')
-			.setDescription('📜 Show the history of played songs');
+			.setDescription('Show the history of played songs');
 
 	async execute(interaction) {
 		const { simpleContainer } = interaction.client.container.helpers.discord;

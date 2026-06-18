@@ -7,17 +7,14 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class MuteCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.MuteMembers;
 	botPermissions = PermissionFlagsBits.MuteMembers;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('mute')
-			.setDescription('🔇 Mutes a user in voice channels.')
+			.setDescription('Mutes a user in voice channels.')
 			.addUserOption((option) =>
 				option
 					.setName('user')
@@ -30,16 +27,12 @@ class MuteCommand extends BaseCommand {
 					.setDescription('Reason for the mute')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
 		const { createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const user = interaction.options.getUser('user');
-
 		const reply = await createContainer(interaction, {
 			color: 'Red',
 			description: await t(interaction, 'automod.moderation.mute.embed.desc', {
@@ -48,12 +41,10 @@ class MuteCommand extends BaseCommand {
 			}),
 			thumbnail: interaction.client.user.displayAvatarURL(),
 		});
-
 		return interaction.editReply({
 			components: reply,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = MuteCommand;

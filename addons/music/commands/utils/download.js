@@ -16,7 +16,7 @@ class DownloadCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('download')
-			.setDescription('📥 Download the current song')
+			.setDescription('Download the current song')
 			.addStringOption((option) =>
 				option
 					.setName('query')

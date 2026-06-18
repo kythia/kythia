@@ -17,7 +17,7 @@ class AddCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
-			.setDescription('➕ Add a reaction role to a message.')
+			.setDescription('Add a reaction role to a message.')
 			.addStringOption((option) =>
 				option
 					.setName('message_id')

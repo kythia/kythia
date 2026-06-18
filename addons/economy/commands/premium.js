@@ -7,35 +7,30 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const TIERS = require('@coreHelpers/premiumTiers');
-
 const { BaseCommand } = require('kythia-core');
-
 class PremiumCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('premium')
-			.setDescription('💎 Enter the Premium Shop to buy Kythia Tiers.');
-
+			.setDescription('Enter the Premium Shop to buy Kythia Tiers.');
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;
 		const { KythiaUser } = models;
 		const { premium } = container.helpers.economy;
-
 		await interaction.deferReply();
 
 		// Fetch user
 		const [kythiaUser] = await KythiaUser.findOrCreateCache({
-			where: { userId: interaction.user.id },
+			where: {
+				userId: interaction.user.id,
+			},
 			defaults: {
 				userId: interaction.user.id,
 			},
 		});
-
 		const message = await interaction.editReply({
 			components: await premium.buildPremiumMainMenu(
 				container,
@@ -44,15 +39,12 @@ class PremiumCommand extends BaseCommand {
 			),
 			flags: MessageFlags.IsComponentsV2,
 		});
-
 		const collector = message.createMessageComponentCollector({
 			filter: (i) => i.user.id === interaction.user.id,
 			time: 120_000,
 		});
-
 		let selectedTier = null;
 		let selectedDuration = null;
-
 		collector.on('collect', async (i) => {
 			if (i.customId.startsWith('tier_')) {
 				selectedTier = i.customId.replace('tier_', '');
@@ -65,13 +57,14 @@ class PremiumCommand extends BaseCommand {
 					selectedTier,
 					tierData,
 				);
-
-				await i.update({ components, flags: MessageFlags.IsComponentsV2 });
+				await i.update({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
 			} else if (i.customId === 'premium_duration') {
 				selectedDuration = Number(i.values[0]);
 				const tierData = TIERS[selectedTier];
 				const price = tierData.prices[selectedDuration];
-
 				const components = await premium.buildPremiumConfirmMenu(
 					container,
 					i,
@@ -79,8 +72,10 @@ class PremiumCommand extends BaseCommand {
 					selectedDuration,
 					price,
 				);
-
-				await i.update({ components, flags: MessageFlags.IsComponentsV2 });
+				await i.update({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
 			} else if (i.customId === 'confirm_buy') {
 				const success = await premium.handlePremiumPurchase(
 					container,
@@ -105,13 +100,15 @@ class PremiumCommand extends BaseCommand {
 				});
 			}
 		});
-
 		collector.on('end', (_, reason) => {
 			if (reason !== 'bought' && message.editable) {
-				message.edit({ components: [] }).catch(() => {});
+				message
+					.edit({
+						components: [],
+					})
+					.catch(() => {});
 			}
 		});
 	}
 }
-
 exports.default = PremiumCommand;

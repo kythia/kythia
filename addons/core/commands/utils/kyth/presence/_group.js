@@ -8,14 +8,9 @@
 
 // Constants extracted to addons/core/helpers/presence-constants.js
 const { BaseCommand } = require('kythia-core');
-
 class GroupCommand extends BaseCommand {
 	subcommandGroup = true;
-
 	slashCommand = (group) =>
-		group
-			.setName('presence')
-			.setDescription('🔄 Manage bot client user settings');
+		group.setName('presence').setDescription('Manage bot client user settings');
 }
-
 exports.default = GroupCommand;

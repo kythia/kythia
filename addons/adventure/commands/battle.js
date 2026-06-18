@@ -18,16 +18,12 @@ const {
 	StringSelectMenuBuilder,
 	StringSelectMenuOptionBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 const { getRandomMonster } = require('../helpers/monster');
 const { getItemById } = require('../helpers/items');
 const characters = require('../helpers/characters');
-
 class BattleCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('battle')
@@ -36,28 +32,23 @@ class BattleCommand extends BaseCommand {
 				fr: 'combat',
 				ja: 'たたかう',
 			})
-			.setDescription('⚔️ Fight a monster in the dungeon!')
+			.setDescription('Fight a monster in the dungeon!')
 			.setDescriptionLocalizations({
 				id: '⚔️ Bertarung melawan monster di dimensi lain!',
 				fr: '⚔️ Combats un monstre dans le donjon !',
 				ja: '⚔️ ダンジョンでモンスターと戦おう！',
 			});
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers, logger } = container;
 		const { UserAdventure, InventoryAdventure } = models;
 		const { createContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
-
 		await interaction.deferReply();
-
 		const userId = interaction.user.id;
-
 		const user = await UserAdventure.getCache({
 			userId,
 		});
-
 		if (!user) {
 			const msg = await t(interaction, 'adventure.no.character');
 			const components = await createContainer(interaction, {
@@ -69,13 +60,11 @@ class BattleCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const generateHpBar = (currentHp, maxHp, barLength = 20) => {
 			const hpPercent = Math.max(0, Math.min(1, currentHp / maxHp));
 			const filledLength = Math.round(barLength * hpPercent);
 			return `[${'█'.repeat(filledLength)}${'░'.repeat(barLength - filledLength)}] ${currentHp} HP`;
 		};
-
 		const handleBattleRound = async (
 			interaction,
 			user,
@@ -86,13 +75,11 @@ class BattleCommand extends BaseCommand {
 			const shield = items.find((item) => item?.itemName === 'shield');
 			const armor = items.find((item) => item?.itemName === 'armor');
 			const revival = items.find((item) => item?.itemName === 'revival');
-
 			const userStrength = user.strength + (sword ? 10 : 0);
 			const userDefense = user.defense + (shield ? 10 : 0) + (armor ? 15 : 0);
 			const char = user.characterId
 				? characters.getChar(user.characterId)
 				: null;
-
 			const playerDamage = Math.max(
 				1,
 				userStrength + Math.floor(Math.random() * 4),
@@ -104,11 +91,9 @@ class BattleCommand extends BaseCommand {
 			);
 			const monsterMaxHp =
 				user.monsterHp > 0 ? user.monsterHp + playerDamage : 1;
-
 			user.hp = Math.max(0, user.hp - monsterDamage);
 			user.monsterHp = Math.max(0, user.monsterHp - playerDamage);
 			await user.save();
-
 			const battleButtons = new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
 					.setCustomId('adventure_continue')
@@ -120,21 +105,17 @@ class BattleCommand extends BaseCommand {
 					.setStyle(ButtonStyle.Secondary)
 					.setEmoji('🔮'),
 			);
-
 			const usableItems = items.filter(
 				(item) =>
 					item.itemName === 'health_potion' || item.itemName === 'revival',
 			);
-
 			if (usableItems.length === 0) {
 				battleButtons.components[1].setDisabled(true);
 			}
-
 			if (user.hp <= 0) {
 				if (revival) {
 					user.hp = user.maxHp;
 					await user.save();
-
 					if (revival.quantity > 1) {
 						revival.quantity -= 1;
 						await revival.save();
@@ -147,7 +128,6 @@ class BattleCommand extends BaseCommand {
 						const rIdx = items.findIndex((i) => i.itemName === 'revival');
 						if (rIdx > -1) items.splice(rIdx, 1);
 					}
-
 					const msg = await t(interaction, 'adventure.battle.revive', {
 						hp: user.hp,
 					});
@@ -163,13 +143,11 @@ class BattleCommand extends BaseCommand {
 						description: msg,
 						components: [continueButton],
 					});
-
 					return {
 						components: containerMsg,
 						end: false,
 					};
 				}
-
 				user.hp = user.maxHp;
 				user.monsterName = null;
 				user.monsterHp = 0;
@@ -177,7 +155,6 @@ class BattleCommand extends BaseCommand {
 				user.monsterGoldDrop = 0;
 				user.monsterXpDrop = 0;
 				await user.save();
-
 				const msg = await t(interaction, 'adventure.battle.lose', {
 					hp: user.hp,
 				});
@@ -185,17 +162,14 @@ class BattleCommand extends BaseCommand {
 					description: msg,
 					color: 'Red',
 				});
-
 				return {
 					components: containerMsg,
 					end: true,
 				};
 			}
-
 			if (user.monsterHp <= 0) {
 				let goldEarned = user.monsterGoldDrop;
 				let xpEarned = user.monsterXpDrop;
-
 				if (char) {
 					if (char.goldBonusPercent)
 						goldEarned = Math.floor(
@@ -204,7 +178,6 @@ class BattleCommand extends BaseCommand {
 					if (char.xpBonusPercent)
 						xpEarned = Math.floor(xpEarned * (1 + char.xpBonusPercent / 100));
 				}
-
 				const monsterName = user.monsterName;
 				user.xp += xpEarned;
 				user.gold += goldEarned;
@@ -213,10 +186,8 @@ class BattleCommand extends BaseCommand {
 				user.monsterStrength = 0;
 				user.monsterGoldDrop = 0;
 				user.monsterXpDrop = 0;
-
 				const XP_REQUIRED = 100 * user.level;
 				let levelUp = false;
-
 				while (user.xp >= XP_REQUIRED) {
 					user.xp -= XP_REQUIRED;
 					user.level++;
@@ -226,9 +197,7 @@ class BattleCommand extends BaseCommand {
 					user.hp = user.maxHp;
 					levelUp = true;
 				}
-
 				await user.save();
-
 				if (levelUp) {
 					const msg = await t(interaction, 'adventure.battle.levelup', {
 						level: user.level,
@@ -244,7 +213,6 @@ class BattleCommand extends BaseCommand {
 						end: true,
 					};
 				}
-
 				const msg = await t(interaction, 'adventure.battle.win', {
 					monster: monsterName,
 					gold: goldEarned,
@@ -253,16 +221,17 @@ class BattleCommand extends BaseCommand {
 				const containerMsg = await createContainer(interaction, {
 					description: msg,
 				});
-
 				return {
 					components: containerMsg,
 					end: true,
 				};
 			}
-
 			const battleContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
@@ -296,11 +265,9 @@ class BattleCommand extends BaseCommand {
 						.setSpacing(SeparatorSpacingSize.Small)
 						.setDivider(true),
 				);
-
 			if (showButtons) {
 				battleContainer.addActionRowComponents(battleButtons);
 			}
-
 			battleContainer
 				.addSeparatorComponents(
 					new SeparatorBuilder()
@@ -314,13 +281,11 @@ class BattleCommand extends BaseCommand {
 						}),
 					),
 				);
-
 			return {
 				components: [battleContainer],
 				end: false,
 			};
 		};
-
 		if (!user.monsterName) {
 			const monster = getRandomMonster(user.level);
 			user.monsterName = monster.name;
@@ -330,24 +295,19 @@ class BattleCommand extends BaseCommand {
 			user.monsterXpDrop = monster.xpDrop;
 			await user.save();
 		}
-
 		const items = await InventoryAdventure.getAllCache({
 			where: {
 				userId,
 			},
 			cacheTags: [`InventoryAdventure:inventory:byUser:${userId}`],
 		});
-
 		const result = await handleBattleRound(interaction, user, items, true);
-
 		const reply = await interaction.editReply({
 			components: result.components,
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
-
 		if (result.end) return;
-
 		const collector = reply.createMessageComponentCollector({
 			filter: (i) =>
 				(i.customId === 'adventure_continue' ||
@@ -356,7 +316,6 @@ class BattleCommand extends BaseCommand {
 				i.user.id === interaction.user.id,
 			time: 60_000,
 		});
-
 		collector.on('collect', async (i) => {
 			if (i.customId === 'adventure_use_item') {
 				const consumablesMap = {};
@@ -364,16 +323,18 @@ class BattleCommand extends BaseCommand {
 					const def = getItemById(item.itemName);
 					if (def && def.type === 'consumable') {
 						if (!consumablesMap[def.id]) {
-							consumablesMap[def.id] = { count: 0, def, dbId: item.id };
+							consumablesMap[def.id] = {
+								count: 0,
+								def,
+								dbId: item.id,
+							};
 						}
 						consumablesMap[def.id].count += item.quantity
 							? Number(item.quantity)
 							: 1;
 					}
 				}
-
 				const consumables = Object.values(consumablesMap);
-
 				if (consumables.length === 0) {
 					return i.reply({
 						content: await t(
@@ -383,7 +344,6 @@ class BattleCommand extends BaseCommand {
 						flags: MessageFlags.Ephemeral,
 					});
 				}
-
 				const options = await Promise.all(
 					consumables.map(async (data) =>
 						new StringSelectMenuOptionBuilder()
@@ -397,29 +357,24 @@ class BattleCommand extends BaseCommand {
 							.setEmoji(data.def.emoji),
 					),
 				);
-
 				const selectMenu = new StringSelectMenuBuilder()
 					.setCustomId('adventure_item_select')
 					.setPlaceholder(
 						await t(interaction, 'adventure.inventory.select.item.placeholder'),
 					)
 					.addOptions(options);
-
 				const row = new ActionRowBuilder().addComponents(selectMenu);
-
 				const selectContainer = await createContainer(interaction, {
 					title: await t(interaction, 'adventure.inventory.use.title'),
 					description: await t(interaction, 'adventure.inventory.use.desc'),
 					color: kythiaConfig.bot.color,
 					components: [row],
 				});
-
 				const itemSelectReply = await i.reply({
 					components: selectContainer,
 					flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 					fetchReply: true,
 				});
-
 				try {
 					const selection = await itemSelectReply.awaitMessageComponent({
 						filter: (subI) =>
@@ -427,13 +382,11 @@ class BattleCommand extends BaseCommand {
 							subI.user.id === interaction.user.id,
 						time: 60_000,
 					});
-
 					const selectedItemId = selection.values[0];
 					const targetItem = getItemById(selectedItemId);
 					let used = false;
 					let resultMsg = '';
 					let success = false;
-
 					if (targetItem) {
 						if (targetItem.effect === 'heal') {
 							const healAmount = targetItem.amount || 0;
@@ -483,12 +436,10 @@ class BattleCommand extends BaseCommand {
 					} else {
 						resultMsg = await t(interaction, 'adventure.item.not.found');
 					}
-
 					if (used) {
 						const itemIndex = items.findIndex(
 							(item) => item.itemName === selectedItemId,
 						);
-
 						if (itemIndex > -1) {
 							const dbItem = items[itemIndex];
 							if (dbItem.quantity > 1) {
@@ -503,7 +454,6 @@ class BattleCommand extends BaseCommand {
 								});
 							}
 						}
-
 						const nextResult = await handleBattleRound(
 							interaction,
 							user,
@@ -514,10 +464,8 @@ class BattleCommand extends BaseCommand {
 							components: nextResult.components,
 							flags: MessageFlags.IsComponentsV2,
 						});
-
 						if (nextResult.end) collector.stop('battle_end');
 					}
-
 					const resultContainer = await createContainer(interaction, {
 						title: success
 							? await t(interaction, 'adventure.use.success')
@@ -525,7 +473,6 @@ class BattleCommand extends BaseCommand {
 						description: resultMsg,
 						color: success ? 'Green' : 'Red',
 					});
-
 					await selection.update({
 						components: resultContainer,
 						flags: MessageFlags.IsComponentsV2,
@@ -534,23 +481,21 @@ class BattleCommand extends BaseCommand {
 					if (e.message?.includes('time')) {
 						await itemSelectReply.delete().catch(() => {});
 					} else {
-						logger.error(`Error: ${e.message || e}`, { label: 'adventure' });
+						logger.error(`Error: ${e.message || e}`, {
+							label: 'adventure',
+						});
 					}
 				}
-
 				return;
 			}
-
 			await i.deferUpdate();
 			const nextResult = await handleBattleRound(i, user, items, true);
 			await interaction.editReply({
 				components: nextResult.components,
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			if (nextResult.end) collector.stop('battle_end');
 		});
-
 		collector.on('end', async (_, reason) => {
 			if (reason !== 'battle_end') {
 				const timeoutResult = await handleBattleRound(
@@ -567,5 +512,4 @@ class BattleCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = BattleCommand;

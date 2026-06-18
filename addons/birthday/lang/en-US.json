@@ -4,52 +4,52 @@
 			"error": {
 				"invalid_date": "That date doesn't seem valid. Please check the day and month!"
 			},
-			"success": "📅 Successfully set your birthday to **{date}**!"
+			"success": "Successfully set your birthday to **{date}**!"
 		},
 		"remove": {
 			"error": {
 				"not_found": "You haven't set a birthday yet."
 			},
-			"success": "🗑️ Your birthday has been removed."
+			"success": "Your birthday has been removed."
 		},
 		"check": {
 			"error": {
 				"self_not_set": "You haven't set your birthday yet! Use `/birthday set`.",
 				"other_not_set": "{user} hasn't set their birthday yet."
 			},
-			"success": "🎂 **{user}'s Birthday**\nDate: {date}\nNext: in {days} days\n{ageInfo}",
+			"success": "**{user}'s Birthday**\nDate: {date}\nNext: in {days} days\n{ageInfo}",
 			"turning_age": "(Turning {age})"
 		},
 		"list": {
-			"title": "## 📅 Upcoming Birthdays (Page {page}/{totalPages})",
+			"title": "## Upcoming Birthdays (Page {page}/{totalPages})",
 			"empty": "No birthdays set in this server yet."
 		},
 		"setting": {
 			"view": {
-				"title": "## ⚙️ Birthday Settings",
-				"channel": "**📢 Channel:** {channel}",
-				"role": "**🎁 Birthday Role:** {role}",
-				"ping_role": "**🔔 Ping Role:** {role}",
-				"show_age": "**🎂 Show Age:** {status}",
-				"color": "**🎨 Color:** {color}",
-				"image": "**🖼️ Image:** {url}",
-				"message": "**✉️ Message:**\n> {message}",
-				"not_set": "❌ Not Set",
-				"system_default": "📢 System Channel (Default)",
-				"yes": "✅ Yes",
-				"no": "❌ No"
+				"title": "## Birthday Settings",
+				"channel": "**Channel:** {channel}",
+				"role": "**Birthday Role:** {role}",
+				"ping_role": "**Ping Role:** {role}",
+				"show_age": "**Show Age:** {status}",
+				"color": "**Color:** {color}",
+				"image": "**Image:** {url}",
+				"message": "**Message:**\n> {message}",
+				"not_set": "Not Set",
+				"system_default": "System Channel (Default)",
+				"yes": "Yes",
+				"no": "No"
 			},
 			"edit": {
-				"title": "## ✅ Settings Updated",
-				"channel_set": "📢 Channel set to {channel}",
-				"role_set": "🎁 Birthday Role set to {role}",
-				"ping_role_set": "🔔 Ping Role set to {role}",
-				"show_age_set": "🎂 Show Age set to **{status}**",
-				"message_updated": "✉️ Message updated.",
-				"color_set": "🎨 Color set to `{color}`",
-				"image_updated": "🖼️ Image updated."
+				"title": "## Settings Updated",
+				"channel_set": "Channel set to {channel}",
+				"role_set": "Birthday Role set to {role}",
+				"ping_role_set": "Ping Role set to {role}",
+				"show_age_set": "Show Age set to **{status}**",
+				"message_updated": "Message updated.",
+				"color_set": "Color set to `{color}`",
+				"image_updated": "Image updated."
 			}
 		},
-		"announcement": "🎉 Happy Birthday {user}! 🎂🎈 Hope you have a fantastic day!\n{ageInfo}\n{zodiacInfo}\n{pingInfo}"
+		"announcement": "Happy Birthday {user}! Hope you have a fantastic day!\n{ageInfo}\n{zodiacInfo}\n{pingInfo}"
 	}
 }

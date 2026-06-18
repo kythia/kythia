@@ -7,14 +7,11 @@
  */
 
 const { BaseCommand } = require('kythia-core');
-
 class GroupCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (group) =>
 		group
 			.setName('guild_stock')
-			.setDescription("🏦 Interact with your server's local stock market.");
+			.setDescription("Interact with your server's local stock market.");
 }
-
 exports.default = GroupCommand;

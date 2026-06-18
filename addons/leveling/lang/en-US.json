@@ -11,7 +11,7 @@
 					"role": {
 						"reward": {
 							"title": "### ## Role Awarded",
-							"desc": "{mention} get role **{role}** for reaching level **{level}**.\nKeep up the good work! 🎉"
+							"desc": "{mention} get role **{role}** for reaching level **{level}**.\nKeep up the good work!"
 						}
 					}
 				}

@@ -29,7 +29,7 @@ class MusicCommand extends BaseCommand {
 
 	slashCommand = new SlashCommandBuilder()
 		.setName('music')
-		.setDescription('🎵 Full music command suite using Lavalink')
+		.setDescription('Full music command suite using Lavalink')
 		.setContexts(InteractionContextType.Guild);
 
 	cooldown = 15;

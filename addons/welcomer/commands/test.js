@@ -13,7 +13,7 @@ class TestCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('test')
-			.setDescription('👋 Test the welcome or farewell messages')
+			.setDescription('Test the welcome or farewell messages')
 			.addStringOption((option) =>
 				option
 					.setName('type')

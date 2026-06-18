@@ -6,17 +6,13 @@
  * @version 26.0.0-rc.1
  */
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class SetCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('set')
-			.setDescription('🌐 Create or update a DNS record.')
-
+			.setDescription('Create or update a DNS record.')
 			.addStringOption((option) =>
 				option
 					.setName('subdomain')
@@ -26,17 +22,28 @@ class SetCommand extends BaseCommand {
 					.setRequired(true)
 					.setAutocomplete(true),
 			)
-
 			.addStringOption((option) =>
 				option
 					.setName('type')
 					.setDescription('Record type (A, CNAME, TXT, MX)')
 					.setRequired(true)
 					.setChoices(
-						{ name: 'A (IP Address)', value: 'A' },
-						{ name: 'CNAME (Alias to another domain)', value: 'CNAME' },
-						{ name: 'TXT (Verification, etc)', value: 'TXT' },
-						{ name: 'MX (Mail Server)', value: 'MX' },
+						{
+							name: 'A (IP Address)',
+							value: 'A',
+						},
+						{
+							name: 'CNAME (Alias to another domain)',
+							value: 'CNAME',
+						},
+						{
+							name: 'TXT (Verification, etc)',
+							value: 'TXT',
+						},
+						{
+							name: 'MX (Mail Server)',
+							value: 'MX',
+						},
 					),
 			)
 			.addStringOption((option) =>
@@ -58,24 +65,20 @@ class SetCommand extends BaseCommand {
 					.setName('priority')
 					.setDescription('For MX only. (Default: 10).'),
 			);
-
 	async autocomplete(interaction) {
 		const container = this.container;
 		const { models } = container;
 		const { Subdomain } = models;
 		const focusedValue = interaction.options.getFocused();
-
 		const userSubdomains = await Subdomain.getAllCache({
 			where: {
 				userId: interaction.user.id,
 			},
 			limit: 25,
 		});
-
 		const filtered = userSubdomains.filter((s) =>
 			s.name.startsWith(focusedValue),
 		);
-
 		await interaction.respond(
 			filtered.map((subdomain) => ({
 				name:
@@ -89,72 +92,72 @@ class SetCommand extends BaseCommand {
 			})),
 		);
 	}
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const cloudflareApi = container.services.cloudflare;
 		const { KythiaUser, Subdomain, DnsRecord } = models;
 		const { simpleContainer, isPremium, isVoterActive } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
 			const desc = await t(interaction, 'pro.dns.set.error_need_account');
 			return interaction.editReply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const isPremiumDonatur = await isPremium(container, interaction.user.id);
 		const isVoter = await isVoterActive(container, interaction.user.id);
-
 		if (!isPremiumDonatur && !isVoter) {
 			const desc = await t(
 				interaction,
 				'pro.dns.set.error_need_premium_or_vote',
 			);
 			return interaction.editReply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const subdomainName = interaction.options.getString('subdomain');
 		const targetSubdomain = await Subdomain.getCache({
 			name: subdomainName,
 			userId: interaction.user.id,
 		});
-
 		if (!targetSubdomain) {
 			const desc = await t(
 				interaction,
 				'pro.dns.set.error_subdomain_not_found',
-				{ subdomain: subdomainName },
+				{
+					subdomain: subdomainName,
+				},
 			);
 			return interaction.editReply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const type = interaction.options.getString('type');
 		const name = interaction.options.getString('name');
 		const value = interaction.options.getString('value');
 		const priority = interaction.options.getInteger('priority') ?? 10;
-
 		const existingRecord = await DnsRecord.getCache({
 			subdomainId: targetSubdomain.id,
 			type: type,
 			name: name,
 		});
-
 		let result;
 		let action;
-
 		if (existingRecord) {
 			action = 'updated';
 			result = await cloudflareApi.updateRecord(existingRecord, {
@@ -166,16 +169,19 @@ class SetCommand extends BaseCommand {
 			result = await cloudflareApi.createRecord(
 				targetSubdomain.id,
 				targetSubdomain.name,
-				{ type, name, value, priority },
+				{
+					type,
+					name,
+					value,
+					priority,
+				},
 			);
 		}
-
 		if (result.success) {
 			const fqdn =
 				name === '@'
 					? `${targetSubdomain.name}.${cloudflareApi.domainName}`
 					: `${name}.${targetSubdomain.name}.${cloudflareApi.domainName}`;
-
 			const title = await t(
 				interaction,
 				action === 'created'
@@ -193,7 +199,6 @@ class SetCommand extends BaseCommand {
 				fqdn,
 				value,
 			});
-
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					title: title,
@@ -206,7 +211,6 @@ class SetCommand extends BaseCommand {
 			const desc = await t(interaction, 'pro.dns.set.error_fail_desc', {
 				error: result.error,
 			});
-
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					title: title,
@@ -217,5 +221,4 @@ class SetCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = SetCommand;

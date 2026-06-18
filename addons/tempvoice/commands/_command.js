@@ -16,7 +16,7 @@ const { BaseCommand } = require('kythia-core');
 class TempvoiceCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('tempvoice')
-		.setDescription('🎧 Manage and customize the Kythia TempVoice system')
+		.setDescription('Manage and customize the Kythia TempVoice system')
 		.setContexts(InteractionContextType.Guild)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
 }

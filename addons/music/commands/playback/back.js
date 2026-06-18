@@ -14,7 +14,7 @@ class BackCommand extends BaseCommand {
 	subcommand = true;
 
 	slashCommand = (subcommand) =>
-		subcommand.setName('back').setDescription('⏮️ Play the previous song');
+		subcommand.setName('back').setDescription('Play the previous song');
 
 	async execute(interaction) {
 		const container = this.container;

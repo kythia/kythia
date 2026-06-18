@@ -18,7 +18,7 @@ class ListCommand extends BaseCommand {
 	slashCommand = (subcommand) => {
 		return subcommand
 			.setName('list')
-			.setDescription('📜 List all auto-reactions in this server.');
+			.setDescription('List all auto-reactions in this server.');
 	};
 	async execute(interaction) {
 		const container = this.container;

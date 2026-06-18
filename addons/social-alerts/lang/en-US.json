@@ -1,53 +1,53 @@
 {
 	"social-alert": {
 		"error": {
-			"limit": "❌ This server has reached the maximum of **{limit}** subscriptions. Remove one before adding more.",
-			"failed": "❌ Failed: {error}",
-			"not_found": "❌ Subscription not found. It may have already been removed.",
-			"no_key": "❌ YouTube API key is not configured. Please contact the bot administrator.",
-			"no_changes": "⚠️ No changes were provided. Please pass at least one option."
+			"limit": "This server has reached the maximum of **{limit}** subscriptions. Remove one before adding more.",
+			"failed": "Failed: {error}",
+			"not_found": "Subscription not found. It may have already been removed.",
+			"no_key": "YouTube API key is not configured. Please contact the bot administrator.",
+			"no_changes": "No changes were provided. Please pass at least one option."
 		},
 		"add": {
 			"duplicate": {
-				"youtube": "⚠️ This server is already subscribed to **{name}** on YouTube!",
-				"tiktok": "⚠️ This server is already subscribed to **{name}** on TikTok!",
-				"instagram": "⚠️ This server is already subscribed to **{name}** on Instagram!"
+				"youtube": "This server is already subscribed to **{name}** on YouTube!",
+				"tiktok": "This server is already subscribed to **{name}** on TikTok!",
+				"instagram": "This server is already subscribed to **{name}** on Instagram!"
 			},
 			"tiktok": {
-				"not_found": "❌ TikTok account **{username}** does not exist or is private.\n\nDouble-check the username and make sure the account is public.",
-				"no_username": "❌ Please enter a valid TikTok @username."
+				"not_found": "TikTok account **{username}** does not exist or is private.\n\nDouble-check the username and make sure the account is public.",
+				"no_username": "Please enter a valid TikTok @username."
 			},
 			"instagram": {
-				"not_found": "❌ Instagram account **{username}** could not be found or is private.\n\nMake sure the username is correct and the account is public.",
-				"no_username": "❌ Please enter a valid Instagram @username."
+				"not_found": "Instagram account **{username}** could not be found or is private.\n\nMake sure the username is correct and the account is public.",
+				"no_username": "Please enter a valid Instagram @username."
 			},
 			"success": {
-				"youtube": "## ✅ YouTube Alert Added!\n**{name}** will now post alerts in <#{channel}> when a new video is uploaded.\n\n{message_line}",
-				"tiktok": "## ✅ TikTok Alert Added!\n**{name}** ({username}) will now post alerts in <#{channel}> when they upload a new video.\n\n{message_line}",
-				"instagram": "## ✅ Instagram Alert Added!\n**{name}** ({username}) will now post alerts in <#{channel}> when they share a new post.\n\n{message_line}",
+				"youtube": "## YouTube Alert Added!\n**{name}** will now post alerts in <#{channel}> when a new video is uploaded.\n\n{message_line}",
+				"tiktok": "## TikTok Alert Added!\n**{name}** ({username}) will now post alerts in <#{channel}> when they upload a new video.\n\n{message_line}",
+				"instagram": "## Instagram Alert Added!\n**{name}** ({username}) will now post alerts in <#{channel}> when they share a new post.\n\n{message_line}",
 				"custom_message": "**Custom Message:**\n> {message}",
 				"default_message": "-# Using the default alert template.",
-				"footer": "-# 📡 Use `/social-alert list` to view all subscriptions · `/social-alert remove` to unsubscribe"
+				"footer": "-# Use `/social-alert list` to view all subscriptions · `/social-alert remove` to unsubscribe"
 			}
 		},
 		"remove": {
-			"success": "✅ Successfully removed the YouTube alert for **{name}**. This server will no longer receive notifications from that channel."
+			"success": "Successfully removed the YouTube alert for **{name}**. This server will no longer receive notifications from that channel."
 		},
 		"list": {
-			"empty": "📭 No social media alerts are configured for this server yet.\n\nUse `/social-alert add` to subscribe to a YouTube or TikTok creator!",
-			"header": "## 📡 Social Alert Subscriptions\n-# {count} subscription{plural} active{role_ping}",
+			"empty": "No social media alerts are configured for this server yet.\n\nUse `/social-alert add` to subscribe to a YouTube or TikTok creator!",
+			"header": "## Social Alert Subscriptions\n-# {count} subscription{plural} active{role_ping}",
 			"role_ping": " · Pinging <@&{role}>",
-			"entry": "### {name}\n📢 Posts to <#{channel}>{message_preview}\n-# {platform_badge} · ID: `{id}`",
+			"entry": "### {name}\nPosts to <#{channel}>{message_preview}\n-# {platform_badge} · ID: `{id}`",
 			"message_preview": "\n> {message}",
 			"footer": "-# © {bot} · Polled every 5 minutes · Use `/social-alert remove` to unsubscribe"
 		},
 		"setting": {
 			"edit": {
-				"success": "## ✅ Settings Updated\n{changes}",
-				"mention_role": "🔔 **Alert mention role** set to <@&{role}>"
+				"success": "## Settings Updated\n{changes}",
+				"mention_role": "**Alert mention role** set to <@&{role}>"
 			},
 			"view": {
-				"header": "## ⚙️ Social Alerts Settings\n🔔 **Mention Role:** {role}\n📡 **Active Subscriptions:** {count} / {limit}",
+				"header": "## Social Alerts Settings\n**Mention Role:** {role}\n**Active Subscriptions:** {count} / {limit}",
 				"no_role": "`None`",
 				"footer": "-# Use `/social-alert setting edit` to change settings · `/social-alert list` to view subscriptions"
 			}
@@ -55,24 +55,24 @@
 		"poller": {
 			"youtube": {
 				"default_message": "**{channel}** just uploaded a new video!",
-				"label": "🔴 New Video!",
+				"label": "New Video!",
 				"watch": "Watch on YouTube"
 			},
 			"tiktok": {
 				"default_message": "**{channel}** just posted a new TikTok!",
-				"label": "🎵 New TikTok!",
+				"label": "New TikTok!",
 				"watch": "Watch on TikTok"
 			},
 			"instagram": {
 				"default_message": "**{channel}** just shared a new Instagram post!",
-				"label": "📸 New Post!",
-				"watch": "📸 View on Instagram"
+				"label": "New Post!",
+				"watch": "View on Instagram"
 			}
 		}
 	},
 	"social-alerts": {
 		"poller": {
-			"alert_md": "## {platform}\\n{message}\\n\\n### {title}{mention}{timestamp}"
+			"alert_md": "## {platform}\n{message}\n\n### {title}{mention}{timestamp}"
 		}
 	}
 }

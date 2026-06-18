@@ -8,26 +8,22 @@
 
 const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 const fetch = require('node-fetch');
-
 const { BaseCommand } = require('kythia-core');
-
 class TiktokCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('tiktok')
-		.setDescription('🎬 Get and play a TikTok video by link.')
+		.setDescription('Get and play a TikTok video by link.')
 		.addStringOption((option) =>
 			option
 				.setName('link')
 				.setDescription('The TikTok video link')
 				.setRequired(true),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const tiktokUrl = interaction.options.getString('link');
-
 		const invalidUrlTitle = await t(
 			interaction,
 			'core.tools.tiktok.error.invalid.url.title',
@@ -36,7 +32,6 @@ class TiktokCommand extends BaseCommand {
 			interaction,
 			'core.tools.tiktok.error.invalid.url.desc',
 		);
-
 		if (
 			!/^https?:\/\/(www\.)?tiktok\.com\/.+/.test(tiktokUrl) &&
 			!/^https?:\/\/vt\.tiktok\.com\/.+/.test(tiktokUrl)
@@ -50,25 +45,20 @@ class TiktokCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		await interaction.deferReply();
-
 		try {
 			const apiUrl = `https://tikwm.com/api/?url=${encodeURIComponent(tiktokUrl)}`;
 			const response = await fetch(apiUrl);
 			const data = await response.json();
-
 			if (!data?.data?.play) {
 				throw new Error(data.msg || 'No video found');
 			}
-
 			const videoUrl = data.data.play;
 			const rawTitle =
 				data.data.title ||
 				(await t(interaction, 'core.tools.tiktok.default_title'));
 			const title =
 				rawTitle.length > 256 ? `${rawTitle.substring(0, 253)}...` : rawTitle;
-
 			try {
 				await interaction.editReply({
 					files: [
@@ -87,7 +77,9 @@ class TiktokCommand extends BaseCommand {
 				const tooLargeDesc = await t(
 					interaction,
 					'core.tools.tiktok.error.too.large.desc',
-					{ url: videoUrl },
+					{
+						url: videoUrl,
+					},
 				);
 				if (
 					fileError.code === 40005 ||
@@ -117,7 +109,6 @@ class TiktokCommand extends BaseCommand {
 				title = await t(interaction, 'core.tools.tiktok.error.unknown.title');
 				desc = await t(interaction, 'core.tools.tiktok.error.unknown.desc');
 			}
-
 			const msg = `${title}\n${desc}`;
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -129,5 +120,4 @@ class TiktokCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = TiktokCommand;

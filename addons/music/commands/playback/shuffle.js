@@ -14,7 +14,7 @@ class ShuffleCommand extends BaseCommand {
 	subcommand = true;
 
 	slashCommand = (subcommand) =>
-		subcommand.setName('shuffle').setDescription('🔀 Shuffle the queue order');
+		subcommand.setName('shuffle').setDescription('Shuffle the queue order');
 
 	async execute(interaction) {
 		const container = this.container;

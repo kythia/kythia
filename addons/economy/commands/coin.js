@@ -7,26 +7,22 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class CoinCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('coin')
-			.setDescription('💰 Check your kythia coin balance.');
-
+			.setDescription('Check your kythia coin balance.');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
 			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
 			const components = await simpleContainer(interaction, msg, {
@@ -37,7 +33,6 @@ class CoinCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const msg = await t(interaction, 'economy.cash.cash.balance', {
 			username: interaction.user.username,
 			cash: user.kythiaCoin.toLocaleString(),
@@ -51,5 +46,4 @@ class CoinCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = CoinCommand;

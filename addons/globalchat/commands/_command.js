@@ -7,16 +7,12 @@
  */
 
 const { SlashCommandBuilder, InteractionContextType } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class GlobalchatCommand extends BaseCommand {
 	guildOnly = true;
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('globalchat')
-		.setDescription('🌏 Manage global chat settings for this server')
+		.setDescription('Manage global chat settings for this server')
 		.setContexts(InteractionContextType.Guild);
 }
-
 exports.default = GlobalchatCommand;

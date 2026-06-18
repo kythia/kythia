@@ -13,66 +13,66 @@
 			"autobuild": {
 				"template": {
 					"not": {
-						"found_md": "## ❌ Template Not Found\nNo such template `{key}` found."
+						"found_md": "## Template Not Found\nNo such template `{key}` found."
 					}
 				},
 				"stats": "**Roles:** {rolesCreated} created ({rolesSkipped} skipped)\n**Categories:** {catCreated} created ({catSkipped} skipped)\n**Channels:** {chCreated} created ({chSkipped} skipped)\n**Failed:** {failed}{dryRunMsg}",
-				"start_md": "## 🚀 Starting Autobuild\nApplying `{template}`... {dryRunMsg}",
-				"failed_md": "## ❌ Autobuild Failed\n{error}",
-				"done_md": "## ✅ Autobuild Complete\nTemplate `{template}` has been applied successfully!"
+				"start_md": "## Starting Autobuild\nApplying `{template}`... {dryRunMsg}",
+				"failed_md": "## Autobuild Failed\n{error}",
+				"done_md": "## Autobuild Complete\nTemplate `{template}` has been applied successfully!"
 			},
 			"backup": {
 				"dm": {
-					"failed": "## ❌ Failed!\nFailed to send backup to your DM. Please enable DMs from server members."
+					"failed": "## Failed!\nFailed to send backup to your DM. Please enable DMs from server members."
 				},
-				"success": "## ✅ Complete!\nServer backup for **{name}** completed and sent to your DM!",
-				"failed": "## ❌ Failed!\nServer backup failed.",
+				"success": "## Complete!\nServer backup for **{name}** completed and sent to your DM!",
+				"failed": "## Failed!\nServer backup failed.",
 				"start": "⏳ Creating backup for this server...",
 				"too": {
-					"large": "## ⚠️ Too Large!\nBackup file is too large to send via DM. Please contact support."
+					"large": "## Too Large!\nBackup file is too large to send via DM. Please contact support."
 				},
-				"title_md": "## 📦 Server Backup — **{name}**"
+				"title_md": "## Server Backup — **{name}**"
 			},
 			"restore": {
 				"progress": {
-					"start_md": "## 🚀 Starting Restoration",
+					"start_md": "## Starting Restoration",
 					"generic_md": "## {text}"
 				},
 				"file": {
-					"invalid_md": "## ❌ Invalid File\nThe file provided is not a valid Kythia backup JSON."
+					"invalid_md": "## Invalid File\nThe file provided is not a valid Kythia backup JSON."
 				},
 				"data": {
-					"invalid_md": "## ❌ Invalid Data\nThe backup data is missing or corrupted."
+					"invalid_md": "## Invalid Data\nThe backup data is missing or corrupted."
 				},
-				"clearing": "🧹 Clearing all channels, roles, emojis, and stickers...",
-				"settings": "⚙️ Restoring server settings...",
+				"clearing": "Clearing all channels, roles, emojis, and stickers...",
+				"settings": "Restoring server settings...",
 				"roles": {
-					"text": "👥 Restoring roles...",
-					"progress": "👥 Restoring roles... ({current}/{total})"
+					"text": "Restoring roles...",
+					"progress": "Restoring roles... ({current}/{total})"
 				},
 				"channels": {
-					"text": "📁 Restoring channels...",
-					"progress": "📁 Restoring channels... ({current}/{total})"
+					"text": "Restoring channels...",
+					"progress": "Restoring channels... ({current}/{total})"
 				},
 				"categories": {
-					"progress": "📁 Restoring categories... ({current}/{total})"
+					"progress": "Restoring categories... ({current}/{total})"
 				},
-				"assets": "🎨 Restoring emojis, stickers, and soundboard...",
-				"success_md": "## ✅ Restoration Complete\n**{name}** restored successfully.",
-				"failed_md": "## ❌ Restoration Failed\nAn error occurred during restoration."
+				"assets": "Restoring emojis, stickers, and soundboard...",
+				"success_md": "## Restoration Complete\n**{name}** restored successfully.",
+				"failed_md": "## Restoration Failed\nAn error occurred during restoration."
 			},
 			"reset": {
 				"no": {
-					"guild_md": "## ❌ Unknown Guild\nCould not fetch guild information."
+					"guild_md": "## Unknown Guild\nCould not fetch guild information."
 				},
 				"progress": {
-					"start_md": "## 🚀 Starting Reset",
-					"channels_md": "## 🗑️ Deleting Channels ({current}/{total})",
-					"roles_md": "## 🗑️ Deleting Roles ({current}/{total})",
-					"emojis_md": "## 🗑️ Deleting Emojis ({current}/{total})",
-					"stickers_md": "## 🗑️ Deleting Stickers ({current}/{total})"
+					"start_md": "## Starting Reset",
+					"channels_md": "## Deleting Channels ({current}/{total})",
+					"roles_md": "## Deleting Roles ({current}/{total})",
+					"emojis_md": "## Deleting Emojis ({current}/{total})",
+					"stickers_md": "## Deleting Stickers ({current}/{total})"
 				},
-				"success": "✅ Server reset completed successfully!",
+				"success": "Server reset completed successfully!",
 				"msg_title_md": "## {title}"
 			}
 		}

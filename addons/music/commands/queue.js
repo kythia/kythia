@@ -14,9 +14,7 @@ class QueueCommand extends BaseCommand {
 	subcommand = true;
 
 	slashCommand = (subcommand) =>
-		subcommand
-			.setName('queue')
-			.setDescription('📜 Show the current song queue');
+		subcommand.setName('queue').setDescription('Show the current song queue');
 
 	async execute(interaction) {
 		const container = this.container;

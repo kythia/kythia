@@ -19,6 +19,7 @@ const {
 const app = new Hono();
 const getModels = (c) => c.get('client').container.models;
 const getBot = (c) => c.get('client'); // discord.js Client-like (has .guilds, .container)
+const getContainer = (c) => c.get('client').container;
 const getLogger = (c) => c.get('client').container.logger;
 
 // ---------------------------------------------------------------------------

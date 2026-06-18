@@ -7,17 +7,14 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class RemoveCommand extends BaseCommand {
 	subcommand = true;
 	permissions = [PermissionFlagsBits.ManageGuild];
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
-			.setDescription('➖ Unsubscribe from a social media creator alert.')
+			.setDescription('Unsubscribe from a social media creator alert.')
 			.addStringOption((option) =>
 				option
 					.setName('subscription')
@@ -25,26 +22,20 @@ class RemoveCommand extends BaseCommand {
 					.setAutocomplete(true)
 					.setRequired(true),
 			);
-
 	async autocomplete(interaction) {
 		const container = this.container;
 		const { models } = container;
 		const { SocialAlertSubscription } = models;
 		const focused = interaction.options.getFocused();
-
 		try {
 			const subs = await SocialAlertSubscription.getAllCache({
 				guildId: interaction.guild.id,
 			});
-
 			if (!subs || subs.length === 0) return interaction.respond([]);
-
 			const filtered = subs.filter((s) =>
 				s.youtubeChannelName.toLowerCase().includes(focused.toLowerCase()),
 			);
-
 			const platformEmoji = (platform) => (platform === 'tiktok' ? '🎵' : '📺');
-
 			await interaction.respond(
 				filtered.slice(0, 25).map((s) => {
 					const name = `${platformEmoji(s.platform)} ${s.youtubeChannelName}`;
@@ -58,43 +49,40 @@ class RemoveCommand extends BaseCommand {
 			await interaction.respond([]);
 		}
 	}
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, helpers, t, logger } = container;
 		const { SocialAlertSubscription } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const subscriptionId = interaction.options.getString('subscription', true);
-
 		try {
 			const sub = await SocialAlertSubscription.getCache({
 				id: subscriptionId,
 			});
-
 			if (!sub || sub.guildId !== interaction.guild.id) {
 				return interaction.editReply({
 					components: await simpleContainer(
 						interaction,
 						await t(interaction, 'social-alert.error.not_found'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const channelName = sub.youtubeChannelName;
 			await sub.destroy();
-
 			return interaction.editReply({
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'social-alert.remove.success', {
 						name: channelName,
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2,
 			});
@@ -108,12 +96,13 @@ class RemoveCommand extends BaseCommand {
 					await t(interaction, 'social-alert.error.failed', {
 						error: err.message,
 					}),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
 	}
 }
-
 exports.default = RemoveCommand;

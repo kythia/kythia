@@ -2,7 +2,7 @@
 	"activity": {
 		"achievement": {
 			"list": {
-				"header": "## 📋 Achievements — {username}\n✅ **{unlockedCount}/{totalCount}** unlocked",
+				"header": "## Achievements — {username}\n**{unlockedCount}/{totalCount}** unlocked",
 				"empty": "_No achievements found._"
 			},
 			"messages_250": {
@@ -289,17 +289,17 @@
 					"achievement_item": "{status} {rarityEmoji} **{localizedName}** — {localizedDesc}"
 				},
 				"profile": {
-					"title": "## 🏆 Achievement Profile — {username}",
+					"title": "## Achievement Profile — {username}",
 					"status": "**{unlockedCount}** out of **{totalCount}** achievements unlocked."
 				},
 				"setup": {
-					"enabled": "## ⚙️ Setup Updated\n✅ **Achievement Notifications** will now be sent to <#{channelId}>.",
-					"disabled": "## ⚙️ Setup Updated\n✅ **Achievement Notifications** have been **disabled** (no channel set)."
+					"enabled": "## Setup Updated\n**Achievement Notifications** will now be sent to <#{channelId}>.",
+					"disabled": "## Setup Updated\n**Achievement Notifications** have been **disabled** (no channel set)."
 				}
 			},
 			"stats": {
 				"title": "## Activity Stats — {periodLabel}",
-				"desc": "Here are the raw activity stats for **{username}**:\n\n📨 **Total Messages:** {messages}\n🎙️ **Total Voice Time:** {voiceTime}"
+				"desc": "Here are the raw activity stats for **{username}**:\n\n**Total Messages:** {messages}\n**Total Voice Time:** {voiceTime}"
 			},
 			"leaderboard": {
 				"period": {
@@ -311,8 +311,8 @@
 				"not_your_interaction": "This is not your leaderboard to navigate."
 			},
 			"setup": {
-				"enabled": "## ⚙️ Activity Setup\n✅ **Activity Tracking** has been **enabled** for this server.",
-				"disabled": "## ⚙️ Activity Setup\n✅ **Activity Tracking** has been **disabled** for this server."
+				"enabled": "## Activity Setup\n**Activity Tracking** has been **enabled** for this server.",
+				"disabled": "## Activity Setup\n**Activity Tracking** has been **disabled** for this server."
 			}
 		},
 		"helpers": {
@@ -326,7 +326,7 @@
 				"footer": "-# Activity leaderboard for **{server}**"
 			},
 			"achievementChecker": {
-				"unlocked": "## 🏆 Achievement Unlocked\n<@{userId}> unlocked **{nameText}**!"
+				"unlocked": "## Achievement Unlocked\n<@{userId}> unlocked **{nameText}**!"
 			}
 		}
 	}

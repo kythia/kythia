@@ -7,17 +7,14 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class SlowmodeCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ManageChannels;
 	botPermissions = PermissionFlagsBits.ManageChannels;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('slowmode')
-			.setDescription('🐢 Sets the slowmode for the current channel.')
+			.setDescription('Sets the slowmode for the current channel.')
 			.addIntegerOption((option) =>
 				option
 					.setName('seconds')
@@ -30,22 +27,17 @@ class SlowmodeCommand extends BaseCommand {
 					.setDescription('Reason for changing slowmode')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, kythiaConfig } = container;
 		const { createContainer, simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const seconds = interaction.options.getInteger('seconds');
 		const reason =
 			interaction.options.getString('reason') ||
 			(await t(interaction, 'automod.moderation.slowmode.default.reason'));
-
 		try {
 			await interaction.channel.setRateLimitPerUser(seconds, reason);
-
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
 				title: await t(
@@ -67,11 +59,12 @@ class SlowmodeCommand extends BaseCommand {
 				components: reply,
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			const confirmReply = await simpleContainer(
 				interaction,
 				await t(interaction, 'automod.moderation.slowmode.confirm'),
-				{ color: 'Green' },
+				{
+					color: 'Green',
+				},
 			);
 			return interaction.editReply({
 				components: confirmReply,
@@ -83,7 +76,9 @@ class SlowmodeCommand extends BaseCommand {
 				await t(interaction, 'automod.moderation.slowmode.failed', {
 					error: error.message,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: reply,
@@ -92,5 +87,4 @@ class SlowmodeCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = SlowmodeCommand;

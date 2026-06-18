@@ -22,7 +22,9 @@ const rpsHelper = require('../helpers/rps');
 class RpsCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('rps')
-		.setDescription('✂️ Play Rock Paper Scissors — against the bot or a friend!')
+		.setDescription(
+			'Play Rock Paper Scissors \u2014 against the bot or a friend!',
+		)
 		.addUserOption((option) =>
 			option
 				.setName('opponent')
@@ -301,5 +303,4 @@ class RpsCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = RpsCommand;

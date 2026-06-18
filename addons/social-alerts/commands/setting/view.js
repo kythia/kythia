@@ -20,11 +20,10 @@ const constantsHelper = require('../../helpers/constants');
 
 class ViewCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('view')
-			.setDescription('👁️ View current Social Alerts settings for this server.');
+			.setDescription('View current Social Alerts settings for this server.');
 	async execute(interaction) {
 		const container = this.container;
 		const { models, helpers, kythiaConfig, t } = container;
@@ -69,5 +68,4 @@ class ViewCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ViewCommand;

@@ -13,14 +13,12 @@ const {
 } = require('discord.js');
 const JavaScriptObfuscator = require('javascript-obfuscator');
 const axios = require('axios');
-
 const { BaseCommand } = require('kythia-core');
-
 class ObfuscateCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('obfuscate')
 		.setDescription(
-			'🔒 Obfuscate a Lua or JavaScript file and return it as an attachment.',
+			'Obfuscate a Lua or JavaScript file and return it as an attachment.',
 		)
 		.addStringOption((option) =>
 			option
@@ -28,8 +26,14 @@ class ObfuscateCommand extends BaseCommand {
 				.setDescription('The type of script to obfuscate (lua/javascript)')
 				.setRequired(true)
 				.addChoices(
-					{ name: 'javascript', value: 'javascript' },
-					{ name: 'lua', value: 'lua' },
+					{
+						name: 'javascript',
+						value: 'javascript',
+					},
+					{
+						name: 'lua',
+						value: 'lua',
+					},
 				),
 		)
 		.addAttachmentOption((option) =>
@@ -38,23 +42,20 @@ class ObfuscateCommand extends BaseCommand {
 				.setDescription('The script file to obfuscate')
 				.setRequired(true),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, logger } = container;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const type = interaction.options.getString('type');
 		const file = interaction.options.getAttachment('file');
-
 		if (!file?.url) {
 			return interaction.editReply({
 				content: await t(interaction, 'core.tools.obfuscate.no.file'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		let scriptText;
 		try {
 			const res = await axios.get(file.url);
@@ -65,7 +66,6 @@ class ObfuscateCommand extends BaseCommand {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		let obfuscated, filename;
 		if (type === 'javascript') {
 			try {
@@ -87,10 +87,15 @@ class ObfuscateCommand extends BaseCommand {
 			try {
 				const response = await axios.post(
 					'https://wearedevs.net/api/obfuscate',
-					{ script: scriptText },
-					{ headers: { 'Content-Type': 'application/json' } },
+					{
+						script: scriptText,
+					},
+					{
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					},
 				);
-
 				if (
 					!response.data ||
 					typeof response.data !== 'object' ||
@@ -101,14 +106,15 @@ class ObfuscateCommand extends BaseCommand {
 					logger.error(
 						'Unexpected response from Lua obfuscator:',
 						response.data,
-						{ label: 'obfuscate' },
+						{
+							label: 'obfuscate',
+						},
 					);
 					return interaction.editReply({
 						content: await t(interaction, 'core.tools.obfuscate.failed.lua'),
 						flags: MessageFlags.Ephemeral,
 					});
 				}
-
 				obfuscated = response.data.obfuscated.replace(
 					/--\[\[\s*v\d+\.\d+\.\d+\s+https:\/\/wearedevs\.net\/obfuscator\s*\]\]/g,
 					'--[[ obfuscated with kythia bot by kenndeclouv ]]',
@@ -129,16 +135,17 @@ class ObfuscateCommand extends BaseCommand {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		const buffer = Buffer.from(obfuscated, 'utf8');
-		const attachment = new AttachmentBuilder(buffer, { name: filename });
-
+		const attachment = new AttachmentBuilder(buffer, {
+			name: filename,
+		});
 		await interaction.editReply({
-			content: await t(interaction, 'core.tools.obfuscate.success', { type }),
+			content: await t(interaction, 'core.tools.obfuscate.success', {
+				type,
+			}),
 			flags: MessageFlags.Ephemeral,
 			files: [attachment],
 		});
 	}
 }
-
 exports.default = ObfuscateCommand;

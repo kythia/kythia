@@ -23,7 +23,7 @@ const { BaseCommand } = require('kythia-core');
 class UserInfoCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('userinfo')
-		.setDescription('📄 Displays information about a user.')
+		.setDescription('Displays information about a user.')
 		.addUserOption((option) =>
 			option
 				.setName('user')

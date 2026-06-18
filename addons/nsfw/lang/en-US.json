@@ -1,8 +1,8 @@
 {
 	"nsfw": {
 		"ui": {
-			"delete": "🗑️ Delete",
-			"refresh": "🔄 Refresh"
+			"delete": "Delete",
+			"refresh": "Refresh"
 		},
 		"favorites": {
 			"empty": "You don't have any favorited NSFW images yet.",

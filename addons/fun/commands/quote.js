@@ -18,20 +18,15 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const axios = require('axios');
-
 const { BaseCommand } = require('kythia-core');
-
 class QuoteCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('quote')
-		.setDescription('✨ Get a random inspirational quote');
-
+		.setDescription('Get a random inspirational quote');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
-
 		await interaction.deferReply();
-
 		const fetchQuote = async () => {
 			const response = await axios.get('https://zenquotes.io/api/random', {
 				timeout: 8000,
@@ -39,9 +34,11 @@ class QuoteCommand extends BaseCommand {
 			const data = Array.isArray(response.data)
 				? response.data[0]
 				: response.data;
-			return { text: data.q, author: data.a };
+			return {
+				text: data.q,
+				author: data.a,
+			};
 		};
-
 		let quote;
 		try {
 			quote = await fetchQuote();
@@ -50,18 +47,15 @@ class QuoteCommand extends BaseCommand {
 				content: await t(interaction, 'fun.quote.error.fetch'),
 			});
 		}
-
 		if (!quote?.text) {
 			return interaction.editReply({
 				content: await t(interaction, 'fun.quote.error.fetch'),
 			});
 		}
-
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const buildContainer = async (q) =>
 			new ContainerBuilder()
 				.setAccentColor(accentColor)
@@ -99,14 +93,13 @@ class QuoteCommand extends BaseCommand {
 						}),
 					),
 				);
-
 		const msg = await interaction.editReply({
 			components: [await buildContainer(quote)],
 			flags: MessageFlags.IsComponentsV2,
 		});
-
-		const collector = msg.createMessageComponentCollector({ time: 120_000 });
-
+		const collector = msg.createMessageComponentCollector({
+			time: 120_000,
+		});
 		collector.on('collect', async (btn) => {
 			if (btn.customId !== 'quote_another') return;
 			await btn.deferUpdate();
@@ -122,5 +115,4 @@ class QuoteCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = QuoteCommand;

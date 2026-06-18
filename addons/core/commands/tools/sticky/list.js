@@ -14,11 +14,10 @@ const stickyuiHelper = require('../../../helpers/stickyUi');
 
 class ListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
-			.setDescription('📋 List all sticky messages in this server.');
+			.setDescription('List all sticky messages in this server.');
 	async execute(interaction) {
 		const container = this.container;
 		const { models, helpers, kythiaConfig, t } = container;
@@ -105,5 +104,4 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ListCommand;

@@ -13,6 +13,7 @@ const { ChannelType } = require('discord.js');
 // Helper to get client and models
 const getClient = (c) => c.get('client');
 const getModels = (c) => getClient(c).container.models;
+const getContainer = (c) => getClient(c).container;
 const { requireVote } = require('../helpers/locks');
 app.use('*', (c, next) => {
 	if (c.req.method !== 'GET') {

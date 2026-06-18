@@ -7,16 +7,12 @@
  */
 
 const { SlashCommandBuilder, InteractionContextType } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class GlobalvoiceCommand extends BaseCommand {
 	guildOnly = true;
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('globalvoice')
-		.setDescription('🔊 Manage global voice settings for this server')
+		.setDescription('Manage global voice settings for this server')
 		.setContexts(InteractionContextType.Guild);
 }
-
 exports.default = GlobalvoiceCommand;

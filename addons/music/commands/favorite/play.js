@@ -16,7 +16,7 @@ class PlayCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('play')
-			.setDescription('🎶 Play all songs from your favorites.')
+			.setDescription('Play all songs from your favorites.')
 			.addBooleanOption((option) =>
 				option
 					.setName('append')

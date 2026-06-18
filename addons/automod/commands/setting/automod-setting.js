@@ -16,7 +16,6 @@ const {
 	serializeConfig,
 	getAntiNukeConfig,
 } = require('../../helpers/antinuke');
-
 const { BaseCommand } = require('kythia-core');
 
 // ---------------------------------------------------------------------------
@@ -34,15 +33,20 @@ function ensureArray(dbField) {
 	}
 	return [];
 }
-
 const createToggleOption = () => (option) =>
 	option
 		.setName('status')
 		.setDescription('Select status')
 		.setRequired(true)
 		.addChoices(
-			{ name: 'Enable', value: 'enable' },
-			{ name: 'Disable', value: 'disable' },
+			{
+				name: 'Enable',
+				value: 'enable',
+			},
+			{
+				name: 'Disable',
+				value: 'disable',
+			},
 		);
 
 // ---------------------------------------------------------------------------
@@ -58,15 +62,13 @@ const automodFeatureMap = {
 	'anti-emoji-spam': ['antiEmojiSpamOn', 'Anti-Emoji Spam'],
 	'anti-zalgo': ['antiZalgoOn', 'Anti-Zalgo'],
 };
-
 class AutomodSettingCommand extends BaseCommand {
 	permissions = PermissionFlagsBits.ManageGuild;
 	botPermissions = PermissionFlagsBits.ManageGuild;
 	voteLocked = true;
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('automod')
-		.setDescription('🛡️ Automod settings')
+		.setDescription('Automod settings')
 		.setContexts(InteractionContextType.Guild)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 
@@ -75,7 +77,7 @@ class AutomodSettingCommand extends BaseCommand {
 			group
 				.setName('whitelist')
 				.setDescription(
-					'👤 Manage automod whitelist (users/roles immune to automod)',
+					'Manage automod whitelist (users/roles immune to automod)',
 				)
 				.addSubcommand((sub) =>
 					sub
@@ -108,7 +110,7 @@ class AutomodSettingCommand extends BaseCommand {
 		.addSubcommandGroup((group) =>
 			group
 				.setName('badwords')
-				.setDescription('🤬 Manage blocked words')
+				.setDescription('Manage blocked words')
 				.addSubcommand((sub) =>
 					sub
 						.setName('add')
@@ -140,7 +142,7 @@ class AutomodSettingCommand extends BaseCommand {
 		.addSubcommandGroup((group) =>
 			group
 				.setName('badword-whitelist')
-				.setDescription('✅ Manage badword exceptions (whitelisted words)')
+				.setDescription('Manage badword exceptions (whitelisted words)')
 				.addSubcommand((sub) =>
 					sub
 						.setName('add')
@@ -174,7 +176,7 @@ class AutomodSettingCommand extends BaseCommand {
 		.addSubcommandGroup((group) =>
 			group
 				.setName('ignored-channels')
-				.setDescription('🔕 Manage channels ignored by automod')
+				.setDescription('Manage channels ignored by automod')
 				.addSubcommand((sub) =>
 					sub
 						.setName('add')
@@ -208,7 +210,7 @@ class AutomodSettingCommand extends BaseCommand {
 		.addSubcommandGroup((group) =>
 			group
 				.setName('logs')
-				.setDescription('📋 Configure automod log channels')
+				.setDescription('Configure automod log channels')
 				.addSubcommand((sub) =>
 					sub
 						.setName('mod-log')
@@ -237,7 +239,7 @@ class AutomodSettingCommand extends BaseCommand {
 		.addSubcommandGroup((group) => {
 			group
 				.setName('toggle')
-				.setDescription('🔄 Enable or disable specific automod protections');
+				.setDescription('Enable or disable specific automod protections');
 			for (const [subName, [, displayName]] of Object.entries(
 				automodFeatureMap,
 			)) {
@@ -255,7 +257,7 @@ class AutomodSettingCommand extends BaseCommand {
 		.addSubcommandGroup((group) =>
 			group
 				.setName('antinuke')
-				.setDescription('🛡️ Configure the AntiNuke protection system')
+				.setDescription('Configure the AntiNuke protection system')
 				.addSubcommand((sub) =>
 					sub
 						.setName('toggle')
@@ -266,8 +268,14 @@ class AutomodSettingCommand extends BaseCommand {
 								.setDescription('Enable or disable')
 								.setRequired(true)
 								.addChoices(
-									{ name: 'Enable', value: 'enable' },
-									{ name: 'Disable', value: 'disable' },
+									{
+										name: 'Enable',
+										value: 'enable',
+									},
+									{
+										name: 'Disable',
+										value: 'disable',
+									},
 								),
 						),
 				)
@@ -281,13 +289,34 @@ class AutomodSettingCommand extends BaseCommand {
 								.setDescription('Which module')
 								.setRequired(true)
 								.addChoices(
-									{ name: 'Mass Ban', value: 'massBan' },
-									{ name: 'Mass Kick', value: 'massKick' },
-									{ name: 'Channel Create', value: 'channelCreate' },
-									{ name: 'Channel Delete', value: 'channelDelete' },
-									{ name: 'Role Delete', value: 'roleDelete' },
-									{ name: 'Webhook Create', value: 'webhookCreate' },
-									{ name: 'Admin Grant', value: 'adminGrant' },
+									{
+										name: 'Mass Ban',
+										value: 'massBan',
+									},
+									{
+										name: 'Mass Kick',
+										value: 'massKick',
+									},
+									{
+										name: 'Channel Create',
+										value: 'channelCreate',
+									},
+									{
+										name: 'Channel Delete',
+										value: 'channelDelete',
+									},
+									{
+										name: 'Role Delete',
+										value: 'roleDelete',
+									},
+									{
+										name: 'Webhook Create',
+										value: 'webhookCreate',
+									},
+									{
+										name: 'Admin Grant',
+										value: 'adminGrant',
+									},
 								),
 						)
 						.addStringOption((option) =>
@@ -296,8 +325,14 @@ class AutomodSettingCommand extends BaseCommand {
 								.setDescription('Enable or disable this module')
 								.setRequired(true)
 								.addChoices(
-									{ name: 'Enable', value: 'enable' },
-									{ name: 'Disable', value: 'disable' },
+									{
+										name: 'Enable',
+										value: 'enable',
+									},
+									{
+										name: 'Disable',
+										value: 'disable',
+									},
 								),
 						),
 				)
@@ -311,12 +346,30 @@ class AutomodSettingCommand extends BaseCommand {
 								.setDescription('Which module')
 								.setRequired(true)
 								.addChoices(
-									{ name: 'Mass Ban', value: 'massBan' },
-									{ name: 'Mass Kick', value: 'massKick' },
-									{ name: 'Channel Create', value: 'channelCreate' },
-									{ name: 'Channel Delete', value: 'channelDelete' },
-									{ name: 'Role Delete', value: 'roleDelete' },
-									{ name: 'Webhook Create', value: 'webhookCreate' },
+									{
+										name: 'Mass Ban',
+										value: 'massBan',
+									},
+									{
+										name: 'Mass Kick',
+										value: 'massKick',
+									},
+									{
+										name: 'Channel Create',
+										value: 'channelCreate',
+									},
+									{
+										name: 'Channel Delete',
+										value: 'channelDelete',
+									},
+									{
+										name: 'Role Delete',
+										value: 'roleDelete',
+									},
+									{
+										name: 'Webhook Create',
+										value: 'webhookCreate',
+									},
 								),
 						)
 						.addIntegerOption((option) =>
@@ -346,13 +399,34 @@ class AutomodSettingCommand extends BaseCommand {
 								.setDescription('Which module')
 								.setRequired(true)
 								.addChoices(
-									{ name: 'Mass Ban', value: 'massBan' },
-									{ name: 'Mass Kick', value: 'massKick' },
-									{ name: 'Channel Create', value: 'channelCreate' },
-									{ name: 'Channel Delete', value: 'channelDelete' },
-									{ name: 'Role Delete', value: 'roleDelete' },
-									{ name: 'Webhook Create', value: 'webhookCreate' },
-									{ name: 'Admin Grant', value: 'adminGrant' },
+									{
+										name: 'Mass Ban',
+										value: 'massBan',
+									},
+									{
+										name: 'Mass Kick',
+										value: 'massKick',
+									},
+									{
+										name: 'Channel Create',
+										value: 'channelCreate',
+									},
+									{
+										name: 'Channel Delete',
+										value: 'channelDelete',
+									},
+									{
+										name: 'Role Delete',
+										value: 'roleDelete',
+									},
+									{
+										name: 'Webhook Create',
+										value: 'webhookCreate',
+									},
+									{
+										name: 'Admin Grant',
+										value: 'adminGrant',
+									},
 								),
 						)
 						.addStringOption((option) =>
@@ -361,10 +435,22 @@ class AutomodSettingCommand extends BaseCommand {
 								.setDescription('Action to take')
 								.setRequired(true)
 								.addChoices(
-									{ name: 'Kick', value: 'kick' },
-									{ name: 'Ban', value: 'ban' },
-									{ name: 'Strip All Roles', value: 'dehoistRole' },
-									{ name: 'Log Only (no action)', value: 'none' },
+									{
+										name: 'Kick',
+										value: 'kick',
+									},
+									{
+										name: 'Ban',
+										value: 'ban',
+									},
+									{
+										name: 'Strip All Roles',
+										value: 'dehoistRole',
+									},
+									{
+										name: 'Log Only (no action)',
+										value: 'none',
+									},
 								),
 						),
 				)
@@ -378,8 +464,14 @@ class AutomodSettingCommand extends BaseCommand {
 								.setDescription('Add or remove')
 								.setRequired(true)
 								.addChoices(
-									{ name: 'Add', value: 'add' },
-									{ name: 'Remove', value: 'remove' },
+									{
+										name: 'Add',
+										value: 'add',
+									},
+									{
+										name: 'Remove',
+										value: 'remove',
+									},
 								),
 						)
 						.addMentionableOption((option) =>
@@ -406,25 +498,28 @@ class AutomodSettingCommand extends BaseCommand {
 						.setDescription('View current AntiNuke configuration'),
 				),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, models } = container;
 		const { getChannelSafe, simpleContainer } = helpers.discord;
 		const { ServerSetting } = models;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const group = interaction.options.getSubcommandGroup(false);
 		const sub = interaction.options.getSubcommand();
 		const guildId = interaction.guild.id;
 		const guildName = interaction.guild.name;
 		const target = interaction.options.getMentionable?.('target') ?? null;
 		const channel = interaction.options.getChannel?.('channel') ?? null;
-
 		const [serverSetting] = await ServerSetting.findOrCreateCache({
-			where: { guildId },
-			defaults: { guildId, guildName },
+			where: {
+				guildId,
+			},
+			defaults: {
+				guildId,
+				guildName,
+			},
 		});
 
 		// -----------------------------------------------------------------------
@@ -437,7 +532,6 @@ class AutomodSettingCommand extends BaseCommand {
 				const status = interaction.options.getString('status');
 				serverSetting[settingKey] = status === 'enable';
 				await serverSetting.save();
-
 				const components = await simpleContainer(
 					interaction,
 					await t(
@@ -445,9 +539,13 @@ class AutomodSettingCommand extends BaseCommand {
 						status === 'enable'
 							? 'automod.setting.feature.enabled'
 							: 'automod.setting.feature.disabled',
-						{ feature: featureName },
+						{
+							feature: featureName,
+						},
 					),
-					{ color: status === 'enable' ? 'Green' : 'Red' },
+					{
+						color: status === 'enable' ? 'Green' : 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -462,13 +560,14 @@ class AutomodSettingCommand extends BaseCommand {
 		if (group === 'whitelist') {
 			let whitelist = ensureArray(serverSetting.whitelist);
 			const targetId = target?.id;
-
 			if (sub === 'add') {
 				if (whitelist.includes(targetId)) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'automod.setting.whitelist.already'),
-						{ color: 'Yellow' },
+						{
+							color: 'Yellow',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -479,7 +578,6 @@ class AutomodSettingCommand extends BaseCommand {
 				serverSetting.whitelist = whitelist;
 				serverSetting.changed('whitelist', true);
 				await serverSetting.save();
-
 				const isRole = interaction.guild.roles.cache.has(targetId);
 				const components = await simpleContainer(
 					interaction,
@@ -490,20 +588,23 @@ class AutomodSettingCommand extends BaseCommand {
 						: await t(interaction, 'automod.setting.whitelist.add.user', {
 								user: `<@${targetId}>`,
 							}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'remove') {
 				if (!whitelist.includes(targetId)) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'automod.setting.whitelist.notfound'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -514,7 +615,6 @@ class AutomodSettingCommand extends BaseCommand {
 				serverSetting.whitelist = whitelist;
 				serverSetting.changed('whitelist', true);
 				await serverSetting.save();
-
 				const isRole = interaction.guild.roles.cache.has(targetId);
 				const components = await simpleContainer(
 					interaction,
@@ -525,20 +625,23 @@ class AutomodSettingCommand extends BaseCommand {
 						: await t(interaction, 'automod.setting.whitelist.remove.user', {
 								user: `<@${targetId}>`,
 							}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'list') {
 				if (whitelist.length === 0) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'automod.setting.whitelist.empty'),
-						{ color: 'Yellow' },
+						{
+							color: 'Yellow',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -557,7 +660,9 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(interaction, 'automod.setting.whitelist.list', {
 						list: whitelistString,
 					}),
-					{ color: kythiaConfig.bot.color },
+					{
+						color: kythiaConfig.bot.color,
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -572,13 +677,14 @@ class AutomodSettingCommand extends BaseCommand {
 		if (group === 'badwords') {
 			let badwords = ensureArray(serverSetting.badwords);
 			const word = interaction.options.getString('word');
-
 			if (sub === 'add') {
 				if (badwords.includes(word.toLowerCase())) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'automod.setting.badword.already'),
-						{ color: 'Yellow' },
+						{
+							color: 'Yellow',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -591,21 +697,26 @@ class AutomodSettingCommand extends BaseCommand {
 				await serverSetting.save();
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'automod.setting.badword.add', { word }),
-					{ color: 'Green' },
+					await t(interaction, 'automod.setting.badword.add', {
+						word,
+					}),
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'remove') {
 				if (!badwords.includes(word.toLowerCase())) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'automod.setting.badword.notfound'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -618,21 +729,26 @@ class AutomodSettingCommand extends BaseCommand {
 				await serverSetting.save();
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'automod.setting.badword.remove', { word }),
-					{ color: 'Green' },
+					await t(interaction, 'automod.setting.badword.remove', {
+						word,
+					}),
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'list') {
 				if (badwords.length === 0) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'automod.setting.badword.empty'),
-						{ color: 'Yellow' },
+						{
+							color: 'Yellow',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -645,7 +761,9 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(interaction, 'automod.setting.badword.list', {
 						list: badwordsString,
 					}),
-					{ color: kythiaConfig.bot.color },
+					{
+						color: kythiaConfig.bot.color,
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -660,13 +778,14 @@ class AutomodSettingCommand extends BaseCommand {
 		if (group === 'badword-whitelist') {
 			let badwordWhitelist = ensureArray(serverSetting.badwordWhitelist);
 			const word = interaction.options.getString('word');
-
 			if (sub === 'add') {
 				if (badwordWhitelist.includes(word.toLowerCase())) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'automod.setting.badword.whitelist.already'),
-						{ color: 'Yellow' },
+						{
+							color: 'Yellow',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -682,20 +801,23 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(interaction, 'automod.setting.badword.whitelist.add', {
 						word,
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'remove') {
 				if (!badwordWhitelist.includes(word.toLowerCase())) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'automod.setting.badword.whitelist.notfound'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -713,20 +835,23 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(interaction, 'automod.setting.badword.whitelist.remove', {
 						word,
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'list') {
 				if (badwordWhitelist.length === 0) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'automod.setting.badword.whitelist.empty'),
-						{ color: 'Yellow' },
+						{
+							color: 'Yellow',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -739,7 +864,9 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(interaction, 'automod.setting.badword.whitelist.list', {
 						list,
 					}),
-					{ color: kythiaConfig.bot.color },
+					{
+						color: kythiaConfig.bot.color,
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -754,13 +881,14 @@ class AutomodSettingCommand extends BaseCommand {
 		if (group === 'ignored-channels') {
 			let ignoredChannels = ensureArray(serverSetting.ignoredChannels);
 			const targetId = channel?.id;
-
 			if (sub === 'add') {
 				if (ignoredChannels.includes(targetId)) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'automod.setting.exception.channel.already'),
-						{ color: 'Yellow' },
+						{
+							color: 'Yellow',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -776,20 +904,23 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(interaction, 'automod.setting.exception.channel.add', {
 						channel: `<#${targetId}>`,
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'remove') {
 				if (!ignoredChannels.includes(targetId)) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'automod.setting.exception.channel.notfound'),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -805,20 +936,23 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(interaction, 'automod.setting.exception.channel.remove', {
 						channel: `<#${targetId}>`,
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'list') {
 				if (ignoredChannels.length === 0) {
 					const components = await simpleContainer(
 						interaction,
 						await t(interaction, 'automod.setting.exception.channel.empty'),
-						{ color: 'Yellow' },
+						{
+							color: 'Yellow',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -830,7 +964,9 @@ class AutomodSettingCommand extends BaseCommand {
 						const ch = await getChannelSafe(interaction.guild, id);
 						return ch
 							? `<#${id}>`
-							: await t(interaction, 'automod.setting.invalid.id', { id });
+							: await t(interaction, 'automod.setting.invalid.id', {
+									id,
+								});
 					}),
 				);
 				const components = await simpleContainer(
@@ -838,7 +974,9 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(interaction, 'automod.setting.exception.channel.list', {
 						list: listItems.join('\n'),
 					}),
-					{ color: kythiaConfig.bot.color },
+					{
+						color: kythiaConfig.bot.color,
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -855,14 +993,15 @@ class AutomodSettingCommand extends BaseCommand {
 				const components = await simpleContainer(
 					interaction,
 					await t(interaction, 'automod.setting.log.channel.invalid'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'mod-log') {
 				serverSetting.modLogChannelId = channel.id;
 				await serverSetting.save();
@@ -871,14 +1010,15 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(interaction, 'automod.setting.mod.log.channel.set', {
 						channel: `<#${channel.id}>`,
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'audit-log') {
 				serverSetting.auditLogChannelId = channel.id;
 				await serverSetting.save();
@@ -887,7 +1027,9 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(interaction, 'automod.setting.audit.log.channel.set', {
 						channel: `<#${channel.id}>`,
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -901,13 +1043,11 @@ class AutomodSettingCommand extends BaseCommand {
 		// -----------------------------------------------------------------------
 		if (group === 'antinuke') {
 			const config = getAntiNukeConfig(serverSetting);
-
 			const saveConfig = async (newConfig) => {
 				serverSetting.antiNukeConfig = serializeConfig(newConfig);
 				serverSetting.changed('antiNukeConfig', true);
 				await serverSetting.save();
 			};
-
 			if (sub === 'toggle') {
 				const status = interaction.options.getString('status');
 				config.enabled = status === 'enable';
@@ -917,14 +1057,15 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(interaction, 'automod.setting.antinuke.toggle.success', {
 						status: status === 'enable' ? 'enabled' : 'disabled',
 					}),
-					{ color: status === 'enable' ? 'Green' : 'Red' },
+					{
+						color: status === 'enable' ? 'Green' : 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'module') {
 				const moduleName = interaction.options.getString('module');
 				const status = interaction.options.getString('status');
@@ -942,14 +1083,15 @@ class AutomodSettingCommand extends BaseCommand {
 						module: moduleName,
 						status: status === 'enable' ? 'enabled' : 'disabled',
 					}),
-					{ color: status === 'enable' ? 'Green' : 'Red' },
+					{
+						color: status === 'enable' ? 'Green' : 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'threshold') {
 				const moduleName = interaction.options.getString('module');
 				const count = interaction.options.getInteger('count');
@@ -970,14 +1112,15 @@ class AutomodSettingCommand extends BaseCommand {
 						count: count,
 						seconds: seconds,
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'action') {
 				const moduleName = interaction.options.getString('module');
 				const action = interaction.options.getString('action');
@@ -994,14 +1137,15 @@ class AutomodSettingCommand extends BaseCommand {
 						module: moduleName,
 						action: action,
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'whitelist') {
 				const action = interaction.options.getString('action');
 				const targetMention = interaction.options.getMentionable('target');
@@ -1022,14 +1166,15 @@ class AutomodSettingCommand extends BaseCommand {
 						target: isRole ? `<@&${targetId}>` : `<@${targetId}>`,
 						action: action === 'add' ? 'added to' : 'removed from',
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'log-channel') {
 				const logCh = interaction.options.getChannel('channel');
 				if (!logCh?.isTextBased()) {
@@ -1039,7 +1184,9 @@ class AutomodSettingCommand extends BaseCommand {
 							interaction,
 							'automod.setting.antinuke.log_channel.invalid',
 						),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					);
 					return interaction.editReply({
 						components,
@@ -1053,14 +1200,15 @@ class AutomodSettingCommand extends BaseCommand {
 					await t(interaction, 'automod.setting.antinuke.log_channel.success', {
 						channel: `<#${logCh.id}>`,
 					}),
-					{ color: 'Green' },
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (sub === 'status') {
 				const moduleLines = Object.entries(config.modules)
 					.map(([name, mod]) => {
@@ -1071,7 +1219,6 @@ class AutomodSettingCommand extends BaseCommand {
 						return `${icon} \`${name}\` — ${mod.action}${threshold}`;
 					})
 					.join('\n');
-
 				const wlUsers =
 					(config.whitelistedUsers || []).map((id) => `<@${id}>`).join(', ') ||
 					'None';
@@ -1081,7 +1228,6 @@ class AutomodSettingCommand extends BaseCommand {
 				const logCh = config.logChannelId
 					? `<#${config.logChannelId}>`
 					: 'Defaults to audit log channel';
-
 				const title = await t(
 					interaction,
 					'automod.setting.antinuke.status.title',
@@ -1115,11 +1261,12 @@ class AutomodSettingCommand extends BaseCommand {
 						roles: wlRoles,
 					},
 				);
-
 				const components = await simpleContainer(
 					interaction,
 					`${title}\n\n${systemStr}\n${logChannelStr}\n\n${modulesStr}\n\n${immunityStr}`,
-					{ color: kythiaConfig.bot.color },
+					{
+						color: kythiaConfig.bot.color,
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -1132,5 +1279,4 @@ class AutomodSettingCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = AutomodSettingCommand;

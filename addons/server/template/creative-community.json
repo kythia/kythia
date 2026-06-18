@@ -219,15 +219,15 @@
 	],
 	"categories": [
 		{
-			"name": "📢 WELCOME & INFO",
+			"name": "WELCOME & INFO",
 			"channels": [
 				{
-					"name": "👋┃welcome",
+					"name": "┃welcome",
 					"type": "text",
 					"topic": "Welcome new members and community guidelines",
 					"pin": [
 						{
-							"title": "👋 Welcome to Our Creative Community!",
+							"title": "Welcome to Our Creative Community!",
 							"description": "Welcome to our vibrant creative community! We're excited to have you join our talented artists, designers, writers, musicians, and creators.",
 							"color": 3447003,
 							"thumbnail": {
@@ -235,46 +235,48 @@
 							},
 							"fields": [
 								{
-									"name": "🎨 What We Do",
+									"name": "What We Do",
 									"value": "• Share and showcase creative work\n• Collaborate on projects\n• Learn from each other\n• Support fellow creators\n• Participate in challenges and events"
 								},
 								{
-									"name": "📜 Community Guidelines",
+									"name": "Community Guidelines",
 									"value": "• Be respectful and supportive\n• Give constructive feedback\n• Credit original work\n• Keep content appropriate\n• Follow Discord's Terms of Service"
 								},
 								{
-									"name": "🎯 Getting Started",
+									"name": "Getting Started",
 									"value": "• Read #community-guidelines\n• Get your roles in #role-selection\n• Introduce yourself in #introductions\n• Share your work in appropriate channels"
 								}
 							],
-							"footer": { "text": "Let's create amazing things together! ✨" }
+							"footer": {
+								"text": "Let's create amazing things together!"
+							}
 						}
 					]
 				},
 				{
-					"name": "📜┃community-guidelines",
+					"name": "┃community-guidelines",
 					"type": "text",
 					"topic": "Detailed community guidelines and rules",
 					"pin": [
 						{
-							"title": "📜 Community Guidelines",
+							"title": "Community Guidelines",
 							"description": "Please read and follow these guidelines to maintain a positive and supportive creative environment.",
 							"color": 15158332,
 							"fields": [
 								{
-									"name": "🤝 Respect & Support",
+									"name": "Respect & Support",
 									"value": "• **Be Kind:** Treat all members with respect and kindness\n• **Constructive Feedback:** Provide helpful, constructive criticism\n• **Encourage Growth:** Support fellow creators in their journey\n• **No Harassment:** Bullying, trolling, or harassment will not be tolerated"
 								},
 								{
-									"name": "🎨 Art & Content",
+									"name": "Art & Content",
 									"value": "• **Original Work:** Only share your own work or with proper credit\n• **Appropriate Content:** Keep content suitable for all ages\n• **No Spam:** Avoid excessive posting or self-promotion\n• **Quality Content:** Share meaningful and relevant creative work"
 								},
 								{
-									"name": "💬 Communication",
+									"name": "Communication",
 									"value": "• **Stay On Topic:** Use channels for their intended purpose\n• **No Spam:** Avoid excessive messages or emojis\n• **Respect Privacy:** Don't share personal information\n• **Language:** Keep language appropriate and friendly"
 								},
 								{
-									"name": "⚖️ Enforcement",
+									"name": "Enforcement",
 									"value": "• **Warnings:** First offense usually results in a warning\n• **Timeouts:** Temporary restrictions for repeated offenses\n• **Bans:** Permanent removal for severe violations\n• **Appeals:** Contact staff if you believe you were treated unfairly"
 								}
 							],
@@ -289,37 +291,40 @@
 							"allow": ["ViewChannel", "ReadMessageHistory"],
 							"deny": ["SendMessages"]
 						},
-						{ "roles": ["Admin", "Moderator"], "allow": ["SendMessages"] }
+						{
+							"roles": ["Admin", "Moderator"],
+							"allow": ["SendMessages"]
+						}
 					]
 				},
 				{
-					"name": "🎯┃role-selection",
+					"name": "┃role-selection",
 					"type": "text",
 					"topic": "Choose your creative roles and interests",
 					"pin": [
 						{
-							"title": "🎯 Role Selection",
+							"title": "Role Selection",
 							"description": "Choose your creative roles to customize your experience and connect with like-minded creators!",
 							"color": 15105570,
 							"fields": [
 								{
-									"name": "🎨 Art Roles",
+									"name": "Art Roles",
 									"value": "• Digital Artist\n• Traditional Artist\n• Photographer\n• Graphic Designer\n• UI/UX Designer\n• 3D Artist\n• Craft Artist"
 								},
 								{
-									"name": "✍️ Writing Roles",
+									"name": "Writing Roles",
 									"value": "• Writer\n• Poet\n• Content Creator"
 								},
 								{
-									"name": "🎵 Music Roles",
+									"name": "Music Roles",
 									"value": "• Musician\n• Composer\n• Singer\n• Instrumentalist"
 								},
 								{
-									"name": "🎬 Content Creation",
+									"name": "Content Creation",
 									"value": "• YouTuber\n• Streamer\n• Animator\n• Video Editor"
 								},
 								{
-									"name": "👥 Community Roles",
+									"name": "Community Roles",
 									"value": "• Art Enthusiast\n• Art Collector\n• Beginner\n• Mentor"
 								}
 							],
@@ -328,28 +333,33 @@
 							}
 						}
 					],
-					"perms": [{ "roles": ["@everyone"], "deny": ["SendMessages"] }]
+					"perms": [
+						{
+							"roles": ["@everyone"],
+							"deny": ["SendMessages"]
+						}
+					]
 				},
 				{
-					"name": "👋┃introductions",
+					"name": "┃introductions",
 					"type": "text",
 					"topic": "Introduce yourself and your creative work",
 					"pin": [
 						{
-							"title": "👋 Introduce Yourself!",
+							"title": "Introduce Yourself!",
 							"description": "Welcome to our creative community! Tell us about yourself and your creative journey.",
 							"color": 3447003,
 							"fields": [
 								{
-									"name": "📝 Introduction Format",
+									"name": "Introduction Format",
 									"value": "• **Name/Alias:** What should we call you?\n• **Creative Medium:** What do you create?\n• **Experience Level:** Beginner, intermediate, or professional?\n• **Inspiration:** What inspires your creativity?\n• **Goals:** What do you hope to achieve here?"
 								},
 								{
-									"name": "🎨 Share Your Work",
+									"name": "Share Your Work",
 									"value": "Feel free to share a piece of your work that represents your style!"
 								},
 								{
-									"name": "🤝 Connect",
+									"name": "Connect",
 									"value": "Let us know how we can help you grow as a creator!"
 								}
 							]
@@ -360,24 +370,24 @@
 			]
 		},
 		{
-			"name": "🎨 VISUAL ARTS",
+			"name": "VISUAL ARTS",
 			"channels": [
 				{
-					"name": "🎨┃digital-art",
+					"name": "┃digital-art",
 					"type": "text",
 					"topic": "Digital artwork, illustrations, and digital paintings",
 					"pin": [
 						{
-							"title": "🎨 Digital Art Gallery",
+							"title": "Digital Art Gallery",
 							"description": "Share your digital artwork, illustrations, and digital paintings with the community!",
 							"color": 3066993,
 							"fields": [
 								{
-									"name": "💻 What to Share",
+									"name": "What to Share",
 									"value": "• Digital paintings\n• Illustrations\n• Concept art\n• Digital sketches\n• Character designs"
 								},
 								{
-									"name": "📝 Guidelines",
+									"name": "Guidelines",
 									"value": "• Include process shots when possible\n• Mention tools and software used\n• Add context about your piece\n• Be open to constructive feedback"
 								}
 							]
@@ -386,21 +396,21 @@
 					"rateLimitPerUser": 5
 				},
 				{
-					"name": "🖼️┃traditional-art",
+					"name": "┃traditional-art",
 					"type": "text",
 					"topic": "Traditional artwork, paintings, drawings, and sketches",
 					"pin": [
 						{
-							"title": "🖼️ Traditional Art Gallery",
+							"title": "Traditional Art Gallery",
 							"description": "Showcase your traditional artwork, paintings, drawings, and sketches!",
 							"color": 12745742,
 							"fields": [
 								{
-									"name": "🎨 What to Share",
+									"name": "What to Share",
 									"value": "• Paintings (oil, watercolor, acrylic)\n• Drawings (pencil, charcoal, ink)\n• Sketches and studies\n• Mixed media pieces\n• Sculptures and 3D work"
 								},
 								{
-									"name": "📸 Photography Tips",
+									"name": "Photography Tips",
 									"value": "• Use good lighting\n• Avoid shadows and glare\n• Keep the camera steady\n• Show details and texture"
 								}
 							]
@@ -409,21 +419,21 @@
 					"rateLimitPerUser": 5
 				},
 				{
-					"name": "📸┃photography",
+					"name": "┃photography",
 					"type": "text",
 					"topic": "Photography, photo editing, and visual storytelling",
 					"pin": [
 						{
-							"title": "📸 Photography Gallery",
+							"title": "Photography Gallery",
 							"description": "Share your photography, photo editing work, and visual stories!",
 							"color": 10181046,
 							"fields": [
 								{
-									"name": "📷 What to Share",
+									"name": "What to Share",
 									"value": "• Landscape photography\n• Portrait photography\n• Street photography\n• Macro photography\n• Photo editing work"
 								},
 								{
-									"name": "📝 Guidelines",
+									"name": "Guidelines",
 									"value": "• Include camera settings when helpful\n• Mention location or subject\n• Share editing techniques\n• Respect privacy and consent"
 								}
 							]
@@ -432,21 +442,21 @@
 					"rateLimitPerUser": 5
 				},
 				{
-					"name": "🎨┃graphic-design",
+					"name": "┃graphic-design",
 					"type": "text",
 					"topic": "Graphic design, logos, posters, and visual identity",
 					"pin": [
 						{
-							"title": "🎨 Graphic Design Showcase",
+							"title": "Graphic Design Showcase",
 							"description": "Share your graphic design work, logos, posters, and visual identity projects!",
 							"color": 3447003,
 							"fields": [
 								{
-									"name": "🎯 What to Share",
+									"name": "What to Share",
 									"value": "• Logo designs\n• Poster designs\n• Brand identity\n• Web design mockups\n• Print design"
 								},
 								{
-									"name": "💡 Design Process",
+									"name": "Design Process",
 									"value": "• Share your design process\n• Explain your creative decisions\n• Include client briefs when possible\n• Show before/after comparisons"
 								}
 							]
@@ -455,21 +465,21 @@
 					"rateLimitPerUser": 5
 				},
 				{
-					"name": "🎮┃ui-ux-design",
+					"name": "┃ui-ux-design",
 					"type": "text",
 					"topic": "UI/UX design, wireframes, prototypes, and user experience",
 					"pin": [
 						{
-							"title": "🎮 UI/UX Design Hub",
+							"title": "UI/UX Design Hub",
 							"description": "Share your UI/UX design work, wireframes, prototypes, and user experience projects!",
 							"color": 6323595,
 							"fields": [
 								{
-									"name": "💻 What to Share",
+									"name": "What to Share",
 									"value": "• App designs\n• Website designs\n• Wireframes\n• Prototypes\n• User research"
 								},
 								{
-									"name": "📊 Design Thinking",
+									"name": "Design Thinking",
 									"value": "• Explain your design decisions\n• Share user research insights\n• Include usability testing results\n• Show design iterations"
 								}
 							]
@@ -478,21 +488,21 @@
 					"rateLimitPerUser": 5
 				},
 				{
-					"name": "🎬┃3d-art",
+					"name": "┃3d-art",
 					"type": "text",
 					"topic": "3D art, modeling, animation, and digital sculpting",
 					"pin": [
 						{
-							"title": "🎬 3D Art Gallery",
+							"title": "3D Art Gallery",
 							"description": "Showcase your 3D art, modeling, animation, and digital sculpting work!",
 							"color": 3066993,
 							"fields": [
 								{
-									"name": "🎯 What to Share",
+									"name": "What to Share",
 									"value": "• 3D models\n• Renders and visualizations\n• Animations\n• Digital sculptures\n• Game assets"
 								},
 								{
-									"name": "🛠️ Technical Details",
+									"name": "Technical Details",
 									"value": "• Mention software used\n• Include render settings\n• Share modeling techniques\n• Show wireframes when helpful"
 								}
 							]
@@ -503,24 +513,24 @@
 			]
 		},
 		{
-			"name": "✍️ WRITING & LITERATURE",
+			"name": "WRITING & LITERATURE",
 			"channels": [
 				{
-					"name": "📝┃creative-writing",
+					"name": "┃creative-writing",
 					"type": "text",
 					"topic": "Creative writing, stories, and fiction",
 					"pin": [
 						{
-							"title": "📝 Creative Writing Corner",
+							"title": "Creative Writing Corner",
 							"description": "Share your creative writing, stories, and fiction with the community!",
 							"color": 11342935,
 							"fields": [
 								{
-									"name": "📚 What to Share",
+									"name": "What to Share",
 									"value": "• Short stories\n• Novel excerpts\n• Character development\n• World-building\n• Writing prompts"
 								},
 								{
-									"name": "📝 Guidelines",
+									"name": "Guidelines",
 									"value": "• Use spoiler tags for long content\n• Include content warnings when needed\n• Be open to constructive feedback\n• Respect different writing styles"
 								}
 							]
@@ -529,21 +539,21 @@
 					"rateLimitPerUser": 10
 				},
 				{
-					"name": "🎭┃poetry",
+					"name": "┃poetry",
 					"type": "text",
 					"topic": "Poetry, spoken word, and lyrical writing",
 					"pin": [
 						{
-							"title": "🎭 Poetry Corner",
+							"title": "Poetry Corner",
 							"description": "Share your poetry, spoken word, and lyrical writing!",
 							"color": 10181046,
 							"fields": [
 								{
-									"name": "📖 What to Share",
+									"name": "What to Share",
 									"value": "• Original poems\n• Spoken word pieces\n• Song lyrics\n• Haiku and short forms\n• Poetry prompts"
 								},
 								{
-									"name": "🎵 Performance",
+									"name": "Performance",
 									"value": "• Share audio recordings\n• Include performance notes\n• Explain your inspiration\n• Encourage others to share"
 								}
 							]
@@ -552,21 +562,21 @@
 					"rateLimitPerUser": 10
 				},
 				{
-					"name": "📰┃journalism",
+					"name": "┃journalism",
 					"type": "text",
 					"topic": "Journalism, articles, and non-fiction writing",
 					"pin": [
 						{
-							"title": "📰 Journalism & Articles",
+							"title": "Journalism & Articles",
 							"description": "Share your journalism, articles, and non-fiction writing!",
 							"color": 3447003,
 							"fields": [
 								{
-									"name": "📄 What to Share",
+									"name": "What to Share",
 									"value": "• News articles\n• Opinion pieces\n• Feature stories\n• Interviews\n• Investigative pieces"
 								},
 								{
-									"name": "📊 Standards",
+									"name": "Standards",
 									"value": "• Fact-check your work\n• Cite sources properly\n• Maintain journalistic integrity\n• Respect privacy and consent"
 								}
 							]
@@ -575,21 +585,21 @@
 					"rateLimitPerUser": 10
 				},
 				{
-					"name": "📚┃writing-feedback",
+					"name": "┃writing-feedback",
 					"type": "text",
 					"topic": "Writing feedback, critiques, and peer review",
 					"pin": [
 						{
-							"title": "📚 Writing Feedback & Critique",
+							"title": "Writing Feedback & Critique",
 							"description": "Get feedback on your writing and help others improve their work!",
 							"color": 3447003,
 							"fields": [
 								{
-									"name": "💬 How to Give Feedback",
+									"name": "How to Give Feedback",
 									"value": "• Be constructive and specific\n• Focus on both strengths and areas for improvement\n• Respect the writer's voice and style\n• Ask questions to understand their intent"
 								},
 								{
-									"name": "📝 How to Request Feedback",
+									"name": "How to Request Feedback",
 									"value": "• Be specific about what kind of feedback you want\n• Include context about your piece\n• Be open to different perspectives\n• Thank those who provide feedback"
 								}
 							]
@@ -599,24 +609,24 @@
 			]
 		},
 		{
-			"name": "🎵 MUSIC & AUDIO",
+			"name": "MUSIC & AUDIO",
 			"channels": [
 				{
-					"name": "🎵┃original-music",
+					"name": "┃original-music",
 					"type": "text",
 					"topic": "Original music compositions and performances",
 					"pin": [
 						{
-							"title": "🎵 Original Music Showcase",
+							"title": "Original Music Showcase",
 							"description": "Share your original music compositions and performances!",
 							"color": 15105570,
 							"fields": [
 								{
-									"name": "🎶 What to Share",
+									"name": "What to Share",
 									"value": "• Original compositions\n• Live performances\n• Studio recordings\n• Instrumental pieces\n• Vocal performances"
 								},
 								{
-									"name": "📝 Guidelines",
+									"name": "Guidelines",
 									"value": "• Include song information (title, genre, etc.)\n• Share your creative process\n• Be open to feedback\n• Respect copyright and licensing"
 								}
 							]
@@ -625,21 +635,21 @@
 					"rateLimitPerUser": 5
 				},
 				{
-					"name": "🎤┃covers",
+					"name": "┃covers",
 					"type": "text",
 					"topic": "Music covers, remixes, and reinterpretations",
 					"pin": [
 						{
-							"title": "🎤 Cover Songs & Remixes",
+							"title": "Cover Songs & Remixes",
 							"description": "Share your cover songs, remixes, and musical reinterpretations!",
 							"color": 10181046,
 							"fields": [
 								{
-									"name": "🎵 What to Share",
+									"name": "What to Share",
 									"value": "• Cover songs\n• Remixes and mashups\n• Acoustic versions\n• Instrumental covers\n• Creative reinterpretations"
 								},
 								{
-									"name": "📋 Guidelines",
+									"name": "Guidelines",
 									"value": "• Credit the original artist\n• Respect copyright and fair use\n• Add your own creative touch\n• Share your arrangement process"
 								}
 							]
@@ -648,21 +658,21 @@
 					"rateLimitPerUser": 5
 				},
 				{
-					"name": "🎼┃music-production",
+					"name": "┃music-production",
 					"type": "text",
 					"topic": "Music production, mixing, mastering, and technical discussions",
 					"pin": [
 						{
-							"title": "🎼 Music Production Hub",
+							"title": "Music Production Hub",
 							"description": "Discuss music production, mixing, mastering, and technical aspects of music creation!",
 							"color": 15105570,
 							"fields": [
 								{
-									"name": "🎛️ Topics",
+									"name": "Topics",
 									"value": "• Mixing and mastering techniques\n• Software and hardware recommendations\n• Recording tips and tricks\n• Sound design and synthesis"
 								},
 								{
-									"name": "🛠️ Technical Support",
+									"name": "Technical Support",
 									"value": "• Troubleshooting audio issues\n• Equipment recommendations\n• Software tutorials\n• Workflow optimization"
 								}
 							]
@@ -670,21 +680,21 @@
 					]
 				},
 				{
-					"name": "🎸┃collaboration",
+					"name": "┃collaboration",
 					"type": "text",
 					"topic": "Music collaboration, band formation, and joint projects",
 					"pin": [
 						{
-							"title": "🎸 Music Collaboration",
+							"title": "Music Collaboration",
 							"description": "Find music collaborators, form bands, and work on joint projects!",
 							"color": 3066993,
 							"fields": [
 								{
-									"name": "🤝 Finding Collaborators",
+									"name": "Finding Collaborators",
 									"value": "• Specify your instrument or role\n• Describe your musical style\n• Mention your availability\n• Share examples of your work"
 								},
 								{
-									"name": "🎯 Project Types",
+									"name": "Project Types",
 									"value": "• Original song collaborations\n• Cover song projects\n• Live performance groups\n• Studio recording sessions"
 								}
 							]
@@ -694,24 +704,24 @@
 			]
 		},
 		{
-			"name": "🎬 CONTENT CREATION",
+			"name": "CONTENT CREATION",
 			"channels": [
 				{
-					"name": "🎥┃video-content",
+					"name": "┃video-content",
 					"type": "text",
 					"topic": "Video content, YouTube videos, and visual storytelling",
 					"pin": [
 						{
-							"title": "🎥 Video Content Showcase",
+							"title": "Video Content Showcase",
 							"description": "Share your video content, YouTube videos, and visual storytelling!",
 							"color": 15105570,
 							"fields": [
 								{
-									"name": "📹 What to Share",
+									"name": "What to Share",
 									"value": "• YouTube videos\n• Short films\n• Documentaries\n• Tutorial videos\n• Vlogs and personal content"
 								},
 								{
-									"name": "📝 Guidelines",
+									"name": "Guidelines",
 									"value": "• Include video descriptions\n• Mention your creative process\n• Share behind-the-scenes content\n• Be open to feedback and suggestions"
 								}
 							]
@@ -720,21 +730,21 @@
 					"rateLimitPerUser": 5
 				},
 				{
-					"name": "🎮┃streaming",
+					"name": "┃streaming",
 					"type": "text",
 					"topic": "Streaming content, live performances, and interactive shows",
 					"pin": [
 						{
-							"title": "🎮 Streaming & Live Content",
+							"title": "Streaming & Live Content",
 							"description": "Share your streaming content, live performances, and interactive shows!",
 							"color": 15105570,
 							"fields": [
 								{
-									"name": "📺 What to Share",
+									"name": "What to Share",
 									"value": "• Live streams\n• Gaming content\n• Art streams\n• Music performances\n• Educational content"
 								},
 								{
-									"name": "🔴 Streaming Tips",
+									"name": "Streaming Tips",
 									"value": "• Equipment recommendations\n• Software setup guides\n• Engagement strategies\n• Community building"
 								}
 							]
@@ -743,21 +753,21 @@
 					"rateLimitPerUser": 5
 				},
 				{
-					"name": "🎨┃animation",
+					"name": "┃animation",
 					"type": "text",
 					"topic": "Animation, motion graphics, and animated content",
 					"pin": [
 						{
-							"title": "🎨 Animation Showcase",
+							"title": "Animation Showcase",
 							"description": "Share your animation work, motion graphics, and animated content!",
 							"color": 10181046,
 							"fields": [
 								{
-									"name": "🎬 What to Share",
+									"name": "What to Share",
 									"value": "• 2D animations\n• 3D animations\n• Motion graphics\n• GIFs and short loops\n• Character animations"
 								},
 								{
-									"name": "🛠️ Technical Details",
+									"name": "Technical Details",
 									"value": "• Mention software used\n• Share animation techniques\n• Include process videos\n• Explain your creative choices"
 								}
 							]
@@ -766,21 +776,21 @@
 					"rateLimitPerUser": 5
 				},
 				{
-					"name": "✂️┃video-editing",
+					"name": "┃video-editing",
 					"type": "text",
 					"topic": "Video editing, post-production, and editing techniques",
 					"pin": [
 						{
-							"title": "✂️ Video Editing Hub",
+							"title": "Video Editing Hub",
 							"description": "Discuss video editing, post-production, and share editing techniques!",
 							"color": 3447003,
 							"fields": [
 								{
-									"name": "🎬 Topics",
+									"name": "Topics",
 									"value": "• Editing techniques and tips\n• Software recommendations\n• Color grading and effects\n• Audio editing and mixing"
 								},
 								{
-									"name": "🛠️ Technical Support",
+									"name": "Technical Support",
 									"value": "• Troubleshooting editing issues\n• Hardware recommendations\n• Workflow optimization\n• Export settings and formats"
 								}
 							]
@@ -790,24 +800,24 @@
 			]
 		},
 		{
-			"name": "💼 BUSINESS & COMMISSIONS",
+			"name": "BUSINESS & COMMISSIONS",
 			"channels": [
 				{
-					"name": "💰┃commissions",
+					"name": "┃commissions",
 					"type": "text",
 					"topic": "Commission work, pricing, and business discussions",
 					"pin": [
 						{
-							"title": "💰 Commissions & Business",
+							"title": "Commissions & Business",
 							"description": "Discuss commission work, pricing, and business aspects of creative work!",
 							"color": 16763904,
 							"fields": [
 								{
-									"name": "💼 Business Topics",
+									"name": "Business Topics",
 									"value": "• Pricing strategies\n• Contract templates\n• Client communication\n• Portfolio building"
 								},
 								{
-									"name": "🎯 Commission Guidelines",
+									"name": "Commission Guidelines",
 									"value": "• Set clear expectations\n• Use contracts and agreements\n• Communicate regularly with clients\n• Protect your intellectual property"
 								}
 							]
@@ -815,21 +825,21 @@
 					]
 				},
 				{
-					"name": "📈┃portfolio-showcase",
+					"name": "┃portfolio-showcase",
 					"type": "text",
 					"topic": "Professional portfolio sharing and career development",
 					"pin": [
 						{
-							"title": "📈 Portfolio Showcase",
+							"title": "Portfolio Showcase",
 							"description": "Share your professional portfolio and get feedback on career development!",
 							"color": 11342935,
 							"fields": [
 								{
-									"name": "💼 What to Share",
+									"name": "What to Share",
 									"value": "• Portfolio websites\n• Resume and CV\n• Case studies\n• Client testimonials"
 								},
 								{
-									"name": "🎯 Career Development",
+									"name": "Career Development",
 									"value": "• Job search strategies\n• Networking tips\n• Interview preparation\n• Industry insights"
 								}
 							]
@@ -837,21 +847,21 @@
 					]
 				},
 				{
-					"name": "🤝┃collaboration",
+					"name": "┃collaboration",
 					"type": "text",
 					"topic": "Creative collaborations, partnerships, and joint projects",
 					"pin": [
 						{
-							"title": "🤝 Creative Collaboration",
+							"title": "Creative Collaboration",
 							"description": "Find creative collaborators and work on joint projects!",
 							"color": 3066993,
 							"fields": [
 								{
-									"name": "🎯 Collaboration Types",
+									"name": "Collaboration Types",
 									"value": "• Art collaborations\n• Writing partnerships\n• Music collaborations\n• Video projects"
 								},
 								{
-									"name": "📋 Guidelines",
+									"name": "Guidelines",
 									"value": "• Define roles and responsibilities\n• Set clear deadlines\n• Communicate regularly\n• Credit all contributors"
 								}
 							]
@@ -861,24 +871,24 @@
 			]
 		},
 		{
-			"name": "🎓 LEARNING & DEVELOPMENT",
+			"name": "LEARNING & DEVELOPMENT",
 			"channels": [
 				{
-					"name": "📚┃tutorials",
+					"name": "┃tutorials",
 					"type": "text",
 					"topic": "Tutorials, guides, and educational content",
 					"pin": [
 						{
-							"title": "📚 Tutorials & Learning",
+							"title": "Tutorials & Learning",
 							"description": "Share tutorials, guides, and educational content to help others learn!",
 							"color": 3447003,
 							"fields": [
 								{
-									"name": "📖 What to Share",
+									"name": "What to Share",
 									"value": "• Step-by-step tutorials\n• Video guides\n• Written instructions\n• Resource recommendations"
 								},
 								{
-									"name": "🎯 Learning Goals",
+									"name": "Learning Goals",
 									"value": "• Help beginners get started\n• Share advanced techniques\n• Provide troubleshooting help\n• Encourage continuous learning"
 								}
 							]
@@ -886,21 +896,21 @@
 					]
 				},
 				{
-					"name": "💡┃feedback-critique",
+					"name": "┃feedback-critique",
 					"type": "text",
 					"topic": "Art feedback, critiques, and constructive criticism",
 					"pin": [
 						{
-							"title": "💡 Feedback & Critique",
+							"title": "Feedback & Critique",
 							"description": "Get feedback on your work and help others improve through constructive criticism!",
 							"color": 10181046,
 							"fields": [
 								{
-									"name": "💬 Giving Feedback",
+									"name": "Giving Feedback",
 									"value": "• Be specific and constructive\n• Focus on both strengths and areas for improvement\n• Ask questions to understand the artist's intent\n• Respect different styles and approaches"
 								},
 								{
-									"name": "📝 Requesting Feedback",
+									"name": "Requesting Feedback",
 									"value": "• Be specific about what kind of feedback you want\n• Include context about your work\n• Be open to different perspectives\n• Thank those who provide feedback"
 								}
 							]
@@ -908,21 +918,21 @@
 					]
 				},
 				{
-					"name": "🎨┃challenges",
+					"name": "┃challenges",
 					"type": "text",
 					"topic": "Creative challenges, prompts, and community activities",
 					"pin": [
 						{
-							"title": "🎨 Creative Challenges",
+							"title": "Creative Challenges",
 							"description": "Participate in creative challenges, prompts, and community activities!",
 							"color": 15105570,
 							"fields": [
 								{
-									"name": "🎯 Challenge Types",
+									"name": "Challenge Types",
 									"value": "• Daily/weekly art prompts\n• Writing challenges\n• Music composition challenges\n• Photography themes"
 								},
 								{
-									"name": "🏆 Participation",
+									"name": "Participation",
 									"value": "• Follow challenge guidelines\n• Share your work with the community\n• Support other participants\n• Have fun and be creative!"
 								}
 							]
@@ -932,49 +942,52 @@
 			]
 		},
 		{
-			"name": "🎤 VOICE CHANNELS",
+			"name": "VOICE CHANNELS",
 			"channels": [
 				{
-					"name": "💬┃general-chat",
+					"name": "┃general-chat",
 					"type": "voice",
 					"topic": "General voice chat for casual conversations"
 				},
 				{
-					"name": "🎨┃art-sessions",
+					"name": "┃art-sessions",
 					"type": "voice",
 					"topic": "Voice channel for art sessions and creative work"
 				},
 				{
-					"name": "🎵┃music-jam",
+					"name": "┃music-jam",
 					"type": "voice",
 					"topic": "Music jamming and collaborative music creation"
 				},
 				{
-					"name": "📝┃writing-sessions",
+					"name": "┃writing-sessions",
 					"type": "voice",
 					"topic": "Writing sessions and literary discussions"
 				},
 				{
-					"name": "🎬┃content-creation",
+					"name": "┃content-creation",
 					"type": "voice",
 					"topic": "Content creation discussions and collaboration"
 				},
 				{
-					"name": "🎓┃learning",
+					"name": "┃learning",
 					"type": "voice",
 					"topic": "Learning sessions, tutorials, and educational discussions"
 				}
 			]
 		},
 		{
-			"name": "🛡️ MODERATION",
+			"name": "MODERATION",
 			"channels": [
 				{
-					"name": "🛡️┃mod-chat",
+					"name": "┃mod-chat",
 					"type": "text",
 					"topic": "Moderation discussions and staff coordination",
 					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
+						{
+							"roles": ["@everyone"],
+							"deny": ["ViewChannel"]
+						},
 						{
 							"roles": ["Moderator", "Admin", "Community Owner"],
 							"allow": ["ViewChannel", "SendMessages", "ReadMessageHistory"]
@@ -982,28 +995,31 @@
 					]
 				},
 				{
-					"name": "📋┃reports",
+					"name": "┃reports",
 					"type": "text",
 					"topic": "Report inappropriate content, harassment, or rule violations",
 					"pin": [
 						{
-							"title": "📋 How to Report",
+							"title": "How to Report",
 							"description": "Report inappropriate content, harassment, or rule violations to our moderation team.",
 							"color": 15158332,
 							"fields": [
 								{
-									"name": "📝 Report Format",
+									"name": "Report Format",
 									"value": "**User:** @username or User ID\n**Rule Violation:** Which rule was broken\n**Evidence:** Screenshots or message links\n**Description:** What happened\n**Additional Info:** Any other relevant details"
 								},
 								{
-									"name": "⚠️ What to Report",
+									"name": "What to Report",
 									"value": "• Harassment or bullying\n• Inappropriate content\n• Spam or excessive messages\n• Copyright violations\n• Other rule violations"
 								}
 							]
 						}
 					],
 					"perms": [
-						{ "roles": ["@everyone"], "deny": ["SendMessages"] },
+						{
+							"roles": ["@everyone"],
+							"deny": ["SendMessages"]
+						},
 						{
 							"roles": ["Moderator", "Admin", "Community Owner"],
 							"allow": ["SendMessages"]
@@ -1011,11 +1027,14 @@
 					]
 				},
 				{
-					"name": "📊┃logs",
+					"name": "┃logs",
 					"type": "text",
 					"topic": "Bot logs, moderation actions, and system monitoring",
 					"perms": [
-						{ "roles": ["@everyone"], "deny": ["ViewChannel"] },
+						{
+							"roles": ["@everyone"],
+							"deny": ["ViewChannel"]
+						},
 						{
 							"roles": ["Moderator", "Admin", "Community Owner", "Bot"],
 							"allow": [

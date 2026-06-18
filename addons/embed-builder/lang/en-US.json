@@ -2,10 +2,10 @@
 	"embed-builder": {
 		"create": {
 			"success": {
-				"title": "🎨 Embed Created!",
+				"title": "Embed Created!",
 				"desc": "**Name:** {name}\n**Mode:** {mode}\n**ID:** {id}\n\nUse `/embed-builder edit` or the dashboard to customise it, then `/embed-builder send` to post it."
 			},
-			"duplicate": "❌ An embed named **\"{name}\"** already exists in this server.\nUse  to modify it.",
+			"duplicate": "An embed named **\"{name}\"** already exists in this server.\nUse  to modify it.",
 			"default": {
 				"embed_title": "My Embed",
 				"embed_desc": "Edit this embed using the dashboard or /embed-builder edit.",
@@ -13,29 +13,29 @@
 			}
 		},
 		"edit": {
-			"not_found": "❌ Embed not found in this server."
+			"not_found": "Embed not found in this server."
 		},
 		"send": {
-			"not_found": "❌ Embed not found in this server.",
-			"no_components": "⚠️ This Components V2 embed has no components yet. Edit it via the dashboard first.",
-			"error": "❌ Failed to send: `{error}`"
+			"not_found": "Embed not found in this server.",
+			"no_components": "This Components V2 embed has no components yet. Edit it via the dashboard first.",
+			"error": "Failed to send: `{error}`"
 		},
 		"delete": {
-			"not_found": "❌ Embed not found in this server.",
-			"success": "🗑️ **\"{name}\"** has been deleted."
+			"not_found": "Embed not found in this server.",
+			"success": "**\"{name}\"** has been deleted."
 		},
 		"list": {
-			"empty": "📭 No saved embeds yet. Use `/embed-builder create` to get started!",
-			"title": "🎨 Saved Embeds"
+			"empty": "No saved embeds yet. Use `/embed-builder create` to get started!",
+			"title": "Saved Embeds"
 		},
 		"ui": {
-			"components_v2": "🧩 Components V2 — Dashboard Required",
-			"updated": "✅ Embed Updated!",
-			"sent": "✅ Embed Sent!",
-			"components_v2_desc": "**\"{name}\"** uses Components V2 mode. The full visual editor is available on the dashboard.\\n\\nYou can also update this embed via the API:\\n`PATCH /api/embed-builder/{id}`",
-			"updated_desc_msg": "The embed was successfully updated!\\n[Jump to message]({url})",
+			"components_v2": "Components V2 — Dashboard Required",
+			"updated": "Embed Updated!",
+			"sent": "Embed Sent!",
+			"components_v2_desc": "**\"{name}\"** uses Components V2 mode. The full visual editor is available on the dashboard.\n\nYou can also update this embed via the API:\n`PATCH /api/embed-builder/{id}`",
+			"updated_desc_msg": "The embed was successfully updated!\n[Jump to message]({url})",
 			"updated_desc_nomsg": "The template was successfully updated. No active messages were modified because none are currently tracked.",
-			"sent_desc": "**\"{name}\"** was posted to <#{channelId}>!\\n[Jump to message]({url})"
+			"sent_desc": "**\"{name}\"** was posted to <#{channelId}>!\n[Jump to message]({url})"
 		}
 	}
 }

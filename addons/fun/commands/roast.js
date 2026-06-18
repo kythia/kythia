@@ -15,34 +15,30 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const axios = require('axios');
-
 const { BaseCommand } = require('kythia-core');
-
 class RoastCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('roast')
-		.setDescription('🔥 Roast someone with a savage insult')
+		.setDescription('Roast someone with a savage insult')
 		.addUserOption((option) =>
 			option
 				.setName('user')
 				.setDescription('The user to roast')
 				.setRequired(false),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
-
 		await interaction.deferReply();
-
 		const target = interaction.options.getUser('user') ?? interaction.user;
 		const isSelf = target.id === interaction.user.id;
-
 		let insult;
 		try {
 			const response = await axios.get(
 				'https://evilinsult.com/generate_insult.php?lang=en&type=json',
-				{ timeout: 8000 },
+				{
+					timeout: 8000,
+				},
 			);
 			insult = response.data?.insult;
 		} catch {
@@ -50,20 +46,16 @@ class RoastCommand extends BaseCommand {
 				content: await t(interaction, 'fun.roast.error.fetch'),
 			});
 		}
-
 		if (!insult) {
 			return interaction.editReply({
 				content: await t(interaction, 'fun.roast.error.fetch'),
 			});
 		}
-
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const headerKey = isSelf ? 'fun.roast.title.self' : 'fun.roast.title.other';
-
 		const roastContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
@@ -81,7 +73,9 @@ class RoastCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'fun.roast.insult', { insult }),
+					await t(interaction, 'fun.roast.insult', {
+						insult,
+					}),
 				),
 			)
 			.addSeparatorComponents(
@@ -96,12 +90,10 @@ class RoastCommand extends BaseCommand {
 					}),
 				),
 			);
-
 		await interaction.editReply({
 			components: [roastContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = RoastCommand;

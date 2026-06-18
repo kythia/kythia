@@ -14,7 +14,7 @@ class ReplayCommand extends BaseCommand {
 	subcommand = true;
 
 	slashCommand = (subcommand) =>
-		subcommand.setName('replay').setDescription('🔄 Replay the current song');
+		subcommand.setName('replay').setDescription('Replay the current song');
 
 	async execute(interaction) {
 		const container = this.container;

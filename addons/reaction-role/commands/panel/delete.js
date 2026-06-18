@@ -16,7 +16,7 @@ class DeleteCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('delete')
-			.setDescription('🗑️ Delete a reaction role panel and all its bindings.')
+			.setDescription('Delete a reaction role panel and all its bindings.')
 			.addIntegerOption((option) =>
 				option
 					.setName('panel_id')

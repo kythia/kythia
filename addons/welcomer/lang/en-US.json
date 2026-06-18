@@ -3,53 +3,53 @@
 		"welcomer": {
 			"in": {
 				"channel": {
-					"set": "✅ Welcome channel set to <#{channelId}>"
+					"set": "Welcome channel set to <#{channelId}>"
 				},
 				"text": {
-					"set": "✅ Welcome message text set to:\n> {text}"
+					"set": "Welcome message text set to:\n> {text}"
 				},
 				"background": {
-					"set": "✅ Welcome background set to:\n{url}",
+					"set": "Welcome background set to:\n{url}",
 					"invalid": {
-						"url": "❌ Background URL must start with `http`."
+						"url": "Background URL must start with `http`."
 					}
 				},
 				"style": {
-					"set": "✅ Welcome message style set to **{styleLabel}**."
+					"set": "Welcome message style set to **{styleLabel}**."
 				}
 			},
 			"out": {
 				"channel": {
-					"set": "✅ Farewell channel set to <#{channelId}>"
+					"set": "Farewell channel set to <#{channelId}>"
 				},
 				"text": {
-					"set": "✅ Farewell message text set to:\n> {text}"
+					"set": "Farewell message text set to:\n> {text}"
 				},
 				"background": {
-					"set": "✅ Farewell background set to:\n{url}",
+					"set": "Farewell background set to:\n{url}",
 					"invalid": {
-						"url": "❌ Background URL must start with `http`."
+						"url": "Background URL must start with `http`."
 					}
 				},
 				"style": {
-					"set": "✅ Farewell message style set to **{styleLabel}**."
+					"set": "Farewell message style set to **{styleLabel}**."
 				}
 			},
 			"role": {
-				"set": "✅ Auto-role on join set to <@&{roleId}>"
+				"set": "Auto-role on join set to <@&{roleId}>"
 			},
 			"dm": {
 				"text": {
-					"set": "✉️ Welcome DM text set to:\n> {text}"
+					"set": "Welcome DM text set to:\n> {text}"
 				}
 			},
 			"style": {
 				"label": {
 					"components": {
-						"v2": "🖼️ Components V2 card"
+						"v2": "Components V2 card"
 					},
 					"plain": {
-						"text": "💬 Plain text only"
+						"text": "Plain text only"
 					}
 				}
 			},

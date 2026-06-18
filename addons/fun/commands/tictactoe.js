@@ -19,7 +19,7 @@ const tictactoeHelper = require('../helpers/tictactoe');
 class TictactoeCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('tictactoe')
-		.setDescription('⭕ Play Tic Tac Toe with a friend or bot.')
+		.setDescription('Play Tic Tac Toe with a friend or bot.')
 		.addUserOption((option) =>
 			option
 				.setName('opponent')

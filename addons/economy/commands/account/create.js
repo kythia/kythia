@@ -7,16 +7,13 @@
  */
 const { MessageFlags } = require('discord.js');
 const banks = require('../../helpers/banks');
-
 const { BaseCommand } = require('kythia-core');
-
 class CreateCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('create')
-			.setDescription('👤 Create an account and choose a bank type.')
+			.setDescription('Create an account and choose a bank type.')
 			.addStringOption((option) =>
 				option
 					.setName('bank')
@@ -31,19 +28,19 @@ class CreateCommand extends BaseCommand {
 						})),
 					),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
 		const bankType = interaction.options.getString('bank');
 		const userId = interaction.user.id;
 		const userBank = banks.getBank(bankType);
 		const bankDisplay = `${userBank.emoji} ${userBank.name}`;
-		const existingUser = await KythiaUser.getCache({ userId: userId });
+		const existingUser = await KythiaUser.getCache({
+			userId: userId,
+		});
 		if (existingUser) {
 			const msg = await t(
 				interaction,
@@ -59,12 +56,16 @@ class CreateCommand extends BaseCommand {
 		}
 
 		// Create new user account
-		await KythiaUser.create({ userId, bankType });
-
+		await KythiaUser.create({
+			userId,
+			bankType,
+		});
 		const msg = await t(
 			interaction,
 			'economy.account.create.account.create.success.desc',
-			{ bankType: bankDisplay },
+			{
+				bankType: bankDisplay,
+			},
 		);
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,
@@ -75,5 +76,4 @@ class CreateCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = CreateCommand;

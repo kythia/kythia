@@ -16,7 +16,7 @@ class RadioCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('radio')
-			.setDescription('📻 Search and play live radio stations worldwide')
+			.setDescription('Search and play live radio stations worldwide')
 			.addStringOption((option) =>
 				option
 					.setName('search')

@@ -17,7 +17,6 @@ const {
 	PermissionFlagsBits,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const {
 	fetchLatestVideo,
 	searchYouTubeChannels,
@@ -35,43 +34,47 @@ const {
 	TIKTOK_LOGO_URL,
 	MAX_SUBSCRIPTIONS_PER_GUILD,
 } = require('../helpers/constants');
-
 const { BaseCommand } = require('kythia-core');
-
 class AddCommand extends BaseCommand {
 	subcommand = true;
 	permissions = [PermissionFlagsBits.ManageGuild];
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
 			.setDescription(
-				'➕ Subscribe to a social media creator and get notified on new posts.',
+				'Subscribe to a social media creator and get notified on new posts.',
 			)
 			.addStringOption((option) =>
 				option
 					.setName('platform')
-					.setDescription('📱 The platform to track.')
+					.setDescription('The platform to track.')
 					.setRequired(true)
 					.addChoices(
-						{ name: '📺 YouTube', value: 'youtube' },
-						{ name: '🎵 TikTok', value: 'tiktok' },
-						{ name: '📸 Instagram', value: 'instagram' },
+						{
+							name: '📺 YouTube',
+							value: 'youtube',
+						},
+						{
+							name: '🎵 TikTok',
+							value: 'tiktok',
+						},
+						{
+							name: '📸 Instagram',
+							value: 'instagram',
+						},
 					),
 			)
 			.addStringOption((option) =>
 				option
 					.setName('channel')
-					.setDescription(
-						'🔍 YouTube: search by name. TikTok: enter @username.',
-					)
+					.setDescription('YouTube: search by name. TikTok: enter @username.')
 					.setAutocomplete(true)
 					.setRequired(true),
 			)
 			.addChannelOption((option) =>
 				option
 					.setName('discord_channel')
-					.setDescription('📢 Discord channel where alerts will be posted.')
+					.setDescription('Discord channel where alerts will be posted.')
 					.addChannelTypes(ChannelType.GuildText)
 					.setRequired(true),
 			)
@@ -79,14 +82,12 @@ class AddCommand extends BaseCommand {
 				option
 					.setName('message')
 					.setDescription(
-						'✉️ Custom alert message. Variables: {title}, {url}, {channel}',
+						'Custom alert message. Variables: {title}, {url}, {channel}',
 					),
 			);
-
 	async autocomplete(interaction) {
 		const container = this.container;
 		const { kythiaConfig, logger } = container;
-
 		const platform = interaction.options.getString('platform');
 		const focused = interaction.options.getFocused();
 
@@ -108,10 +109,8 @@ class AddCommand extends BaseCommand {
 					},
 				]);
 			}
-
 			const cleanInput = focused.replace(/^@/, '').trim();
 			const hintUsername = `@${cleanInput}`;
-
 			try {
 				// ── Tier 1: Research API (if credentials available + approved) ──
 				if (clientKey && clientSecret) {
@@ -147,10 +146,11 @@ class AddCommand extends BaseCommand {
 				// ── Tier 2: oEmbed (public, no auth needed) ─────────────────────
 				const oEmbedUrl = `https://www.tiktok.com/oembed?url=${encodeURIComponent(`https://www.tiktok.com/@${cleanInput}`)}`;
 				const oEmbedRes = await fetch(oEmbedUrl, {
-					headers: { 'User-Agent': 'KythiaBot/1.0' },
+					headers: {
+						'User-Agent': 'KythiaBot/1.0',
+					},
 					signal: AbortSignal.timeout(5_000),
 				});
-
 				if (oEmbedRes.ok) {
 					const oembed = await oEmbedRes.json();
 					const displayName = oembed.author_name || hintUsername;
@@ -176,7 +176,10 @@ class AddCommand extends BaseCommand {
 
 				// ── Tier 3: Echo input (oEmbed unavailable, let user proceed) ───
 				return interaction.respond([
-					{ name: `🎵 ${hintUsername}`, value: hintUsername },
+					{
+						name: `🎵 ${hintUsername}`,
+						value: hintUsername,
+					},
 				]);
 			} catch (err) {
 				logger.warn(`TikTok autocomplete error: ${err.message || err}`, {
@@ -184,7 +187,10 @@ class AddCommand extends BaseCommand {
 				});
 				// Don't block the user — echo their input
 				return interaction.respond([
-					{ name: `🎵 ${hintUsername}`, value: hintUsername },
+					{
+						name: `🎵 ${hintUsername}`,
+						value: hintUsername,
+					},
 				]);
 			}
 		}
@@ -199,12 +205,10 @@ class AddCommand extends BaseCommand {
 					},
 				]);
 			}
-
 			const rsshubUrl =
 				kythiaConfig?.addons?.socialAlerts?.rsshubUrl || 'https://rsshub.app';
 			const cleanInput = focused.replace(/^@/, '').trim();
 			const hintUsername = `@${cleanInput}`;
-
 			try {
 				const userInfo = await validateInstagramUser(cleanInput, rsshubUrl);
 				if (userInfo) {
@@ -229,7 +233,10 @@ class AddCommand extends BaseCommand {
 					label: 'social-alerts',
 				});
 				return interaction.respond([
-					{ name: `📸 ${hintUsername}`, value: hintUsername },
+					{
+						name: `📸 ${hintUsername}`,
+						value: hintUsername,
+					},
 				]);
 			}
 		}
@@ -239,17 +246,17 @@ class AddCommand extends BaseCommand {
 		const apiKey =
 			kythiaConfig?.addons?.socialAlerts?.youtubeApiKey ||
 			process.env.YOUTUBE_API_KEY;
-
 		if (!apiKey) {
 			return interaction.respond([
-				{ name: '⚠️ YouTube API key not configured', value: 'no_key' },
+				{
+					name: '⚠️ YouTube API key not configured',
+					value: 'no_key',
+				},
 			]);
 		}
-
 		if (!focused || focused.trim().length < 2) {
 			return interaction.respond([]);
 		}
-
 		try {
 			const results = await searchYouTubeChannels(focused, apiKey);
 			await interaction.respond(
@@ -265,16 +272,13 @@ class AddCommand extends BaseCommand {
 			await interaction.respond([]);
 		}
 	}
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, helpers, logger, kythiaConfig, t } = container;
 		const { SocialAlertSubscription } = models;
 		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
-
 		await interaction.deferReply();
-
 		const platform = interaction.options.getString('platform', true);
 		const channelInput = interaction.options.getString('channel', true);
 		const discordChannel = interaction.options.getChannel(
@@ -296,7 +300,9 @@ class AddCommand extends BaseCommand {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, key),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2,
 			});
@@ -308,17 +314,17 @@ class AddCommand extends BaseCommand {
 				components: await simpleContainer(
 					interaction,
 					await t(interaction, 'social-alert.error.no_key'),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		try {
 			const existing = await SocialAlertSubscription.getAllCache({
 				guildId: interaction.guild.id,
 			});
-
 			if (existing.length >= MAX_SUBSCRIPTIONS_PER_GUILD) {
 				return interaction.editReply({
 					components: await simpleContainer(
@@ -326,7 +332,9 @@ class AddCommand extends BaseCommand {
 						await t(interaction, 'social-alert.error.limit', {
 							limit: MAX_SUBSCRIPTIONS_PER_GUILD,
 						}),
-						{ color: 'Red' },
+						{
+							color: 'Red',
+						},
 					),
 					flags: MessageFlags.IsComponentsV2,
 				});
@@ -347,7 +355,6 @@ class AddCommand extends BaseCommand {
 					t,
 				});
 			}
-
 			if (platform === 'tiktok') {
 				return await handleTikTokAdd({
 					interaction,
@@ -362,7 +369,6 @@ class AddCommand extends BaseCommand {
 					t,
 				});
 			}
-
 			if (platform === 'instagram') {
 				return await handleInstagramAdd({
 					interaction,
@@ -387,14 +393,15 @@ class AddCommand extends BaseCommand {
 					await t(interaction, 'social-alert.error.failed', {
 						error: err.message,
 					}),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
 	}
 }
-
 exports.default = AddCommand;
 
 // ── YouTube handler ─────────────────────────────────────────────────────────────
@@ -421,7 +428,9 @@ async function handleYouTubeAdd({
 				await t(interaction, 'social-alert.add.duplicate.youtube', {
 					name: duplicate.youtubeChannelName,
 				}),
-				{ color: 'Yellow' },
+				{
+					color: 'Yellow',
+				},
 			),
 			flags: MessageFlags.IsComponentsV2,
 		});
@@ -431,10 +440,8 @@ async function handleYouTubeAdd({
 	const apiKey =
 		kythiaConfig?.addons?.socialAlerts?.youtubeApiKey ||
 		process.env.YOUTUBE_API_KEY;
-
 	let channelName = youtubeChannelId;
 	let thumbnailUrl = null;
-
 	if (apiKey) {
 		try {
 			const url = new URL('https://www.googleapis.com/youtube/v3/channels');
@@ -466,7 +473,6 @@ async function handleYouTubeAdd({
 	} catch {
 		// Non-critical
 	}
-
 	await SocialAlertSubscription.create({
 		guildId: interaction.guild.id,
 		discordChannelId: discordChannel.id,
@@ -477,7 +483,6 @@ async function handleYouTubeAdd({
 		lastVideoId,
 		platform: 'youtube',
 	});
-
 	const messageLine = customMessage
 		? await t(interaction, 'social-alert.add.success.custom_message', {
 				message: customMessage,
@@ -489,7 +494,6 @@ async function handleYouTubeAdd({
 		message_line: messageLine,
 	});
 	const footer = await t(interaction, 'social-alert.add.success.footer');
-
 	return interaction.editReply({
 		components: [
 			buildSuccessContainer({
@@ -539,7 +543,9 @@ async function handleTikTokAdd({
 				await t(interaction, 'social-alert.add.duplicate.tiktok', {
 					name: duplicate.youtubeChannelName,
 				}),
-				{ color: 'Yellow' },
+				{
+					color: 'Yellow',
+				},
 			),
 			flags: MessageFlags.IsComponentsV2,
 		});
@@ -549,14 +555,14 @@ async function handleTikTokAdd({
 	// Tier 1: oEmbed (public, no auth, fast)
 	const cleanUsername = rawUsername.replace(/^@/, '').trim();
 	let displayName = username;
-
 	try {
 		const oEmbedUrl = `https://www.tiktok.com/oembed?url=${encodeURIComponent(`https://www.tiktok.com/@${cleanUsername}`)}`;
 		const oEmbedRes = await fetch(oEmbedUrl, {
-			headers: { 'User-Agent': 'KythiaBot/1.0' },
+			headers: {
+				'User-Agent': 'KythiaBot/1.0',
+			},
 			signal: AbortSignal.timeout(6_000),
 		});
-
 		if (oEmbedRes.status === 404) {
 			// oEmbed explicitly says the user doesn't exist
 			return interaction.editReply({
@@ -565,12 +571,13 @@ async function handleTikTokAdd({
 					await t(interaction, 'social-alert.add.tiktok.not_found', {
 						username,
 					}),
-					{ color: 'Red' },
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (oEmbedRes.ok) {
 			const oembed = await oEmbedRes.json();
 			displayName = oembed.author_name || username;
@@ -588,7 +595,6 @@ async function handleTikTokAdd({
 	} catch {
 		// Non-critical
 	}
-
 	await SocialAlertSubscription.create({
 		guildId: interaction.guild.id,
 		discordChannelId: discordChannel.id,
@@ -599,7 +605,6 @@ async function handleTikTokAdd({
 		lastVideoId,
 		platform: 'tiktok',
 	});
-
 	const messageLine = customMessage
 		? await t(interaction, 'social-alert.add.success.custom_message', {
 				message: customMessage,
@@ -612,7 +617,6 @@ async function handleTikTokAdd({
 		message_line: messageLine,
 	});
 	const footer = await t(interaction, 'social-alert.add.success.footer');
-
 	return interaction.editReply({
 		components: [
 			buildSuccessContainer({
@@ -692,7 +696,9 @@ async function handleInstagramAdd({
 				await t(interaction, 'social-alert.add.duplicate.instagram', {
 					name: duplicate.youtubeChannelName,
 				}),
-				{ color: 'Yellow' },
+				{
+					color: 'Yellow',
+				},
 			),
 			flags: MessageFlags.IsComponentsV2,
 		});
@@ -707,7 +713,9 @@ async function handleInstagramAdd({
 				await t(interaction, 'social-alert.add.instagram.not_found', {
 					username,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			),
 			flags: MessageFlags.IsComponentsV2,
 		});
@@ -721,7 +729,6 @@ async function handleInstagramAdd({
 	} catch {
 		// Non-critical
 	}
-
 	await SocialAlertSubscription.create({
 		guildId: interaction.guild.id,
 		discordChannelId: discordChannel.id,
@@ -732,7 +739,6 @@ async function handleInstagramAdd({
 		lastVideoId,
 		platform: 'instagram',
 	});
-
 	const messageLine = customMessage
 		? await t(interaction, 'social-alert.add.success.custom_message', {
 				message: customMessage,
@@ -749,7 +755,6 @@ async function handleInstagramAdd({
 		},
 	);
 	const footer = await t(interaction, 'social-alert.add.success.footer');
-
 	return interaction.editReply({
 		components: [
 			buildSuccessContainer({

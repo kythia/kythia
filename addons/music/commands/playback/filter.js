@@ -16,7 +16,7 @@ class FilterCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('filter')
-			.setDescription('🎧 Apply audio filter (equalizer)');
+			.setDescription('Apply audio filter (equalizer)');
 
 	async execute(interaction) {
 		const container = this.container;

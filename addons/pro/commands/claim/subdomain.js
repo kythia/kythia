@@ -7,75 +7,79 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class SubdomainCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('subdomain')
-			.setDescription('🌐 Claim a new .kyth.me subdomain (Max 5).')
+			.setDescription('Claim a new .kyth.me subdomain (Max 5).')
 			.addStringOption((option) =>
 				option
 					.setName('name')
 					.setDescription('Unique subdomain name (e.g.: kythia-cool)')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { logger, kythiaConfig, models, helpers, t } = container;
 		const { KythiaUser, Subdomain } = models;
 		const { simpleContainer } = helpers.discord;
 		const MAX_SUBDOMAINS = kythiaConfig.addons.pro.maxSubdomains || 5;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
 			const desc = await t(
 				interaction,
 				'pro.claim.subdomain.error_mustHaveAccount',
 			);
 			return interaction.editReply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const isPremiumActive =
 			user.isPremium && new Date(user.premiumExpiresAt) > new Date();
 		const isVoterActive =
 			user.isVoted && new Date(user.voteExpiresAt) > new Date();
-
 		if (!isPremiumActive && !isVoterActive) {
 			const desc = await t(
 				interaction,
 				'pro.claim.subdomain.error_proOrVoterRequired',
 			);
 			return interaction.editReply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const userSubdomains = await Subdomain.countCache({
-			where: { userId: interaction.user.id },
+			where: {
+				userId: interaction.user.id,
+			},
 		});
 		if (userSubdomains >= MAX_SUBDOMAINS) {
 			const desc = await t(
 				interaction,
 				'pro.claim.subdomain.error_maxReached',
-				{ max: MAX_SUBDOMAINS },
+				{
+					max: MAX_SUBDOMAINS,
+				},
 			);
 			return interaction.editReply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const namaSubdomain = interaction.options.getString('name').toLowerCase();
 		if (
 			!/^[a-z0-9-]+$/.test(namaSubdomain) ||
@@ -87,11 +91,12 @@ class SubdomainCommand extends BaseCommand {
 				'pro.claim.subdomain.error_invalidName',
 			);
 			return interaction.editReply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const forbiddenNames = [
 			'www',
 			'mail',
@@ -109,17 +114,17 @@ class SubdomainCommand extends BaseCommand {
 				name: namaSubdomain,
 			});
 			return interaction.editReply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		try {
 			await Subdomain.create({
 				userId: interaction.user.id,
 				name: namaSubdomain,
 			});
-
 			const title = await t(interaction, 'pro.claim.subdomain.success_title');
 			const desc = await t(interaction, 'pro.claim.subdomain.success_desc', {
 				subdomain: namaSubdomain,
@@ -127,7 +132,6 @@ class SubdomainCommand extends BaseCommand {
 				used: userSubdomains + 1,
 				max: MAX_SUBDOMAINS,
 			});
-
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Green',
@@ -149,16 +153,18 @@ class SubdomainCommand extends BaseCommand {
 			}
 			logger.error(
 				`Gagal klaim subdomain untuk user ${interaction.user.id}: ${error.message || error}`,
-				{ label: 'pro' },
+				{
+					label: 'pro',
+				},
 			);
-
 			const desc = await t(interaction, 'pro.claim.subdomain.error_technical');
 			return interaction.editReply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 	}
 }
-
 exports.default = SubdomainCommand;

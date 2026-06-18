@@ -11,11 +11,8 @@ const {
 	SlashCommandBuilder,
 	InteractionContextType,
 } = require('discord.js');
-
 const { EMBEDDED } = require('../../helpers/server');
-
 const { BaseCommand } = require('kythia-core');
-
 class CommandsCommand extends BaseCommand {
 	aliases = ['srv'];
 	voteLocked = true;
@@ -25,19 +22,15 @@ class CommandsCommand extends BaseCommand {
 		PermissionFlagsBits.ManageChannels,
 		PermissionFlagsBits.ManageRoles,
 	];
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('server')
-		.setDescription('⚙️ Discord server management tools')
+		.setDescription('Discord server management tools')
 		.setContexts(InteractionContextType.Guild)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
-
 	guildOnly = true;
-
 	autocomplete(interaction) {
 		const sub = interaction.options.getSubcommand();
 		const focused = interaction.options.getFocused();
-
 		if (
 			sub === 'autobuild' &&
 			interaction.options.getFocused(true)?.name === 'template'
@@ -60,9 +53,7 @@ class CommandsCommand extends BaseCommand {
 				.slice(0, 25);
 			return interaction.respond(embeddedTemplates);
 		}
-
 		return interaction.respond([]);
 	}
 }
-
 exports.default = CommandsCommand;

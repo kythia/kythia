@@ -14,21 +14,17 @@ const {
 	SlashCommandBuilder,
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
-
 class WidgetCommand extends BaseCommand {
 	aliases = ['wdg'];
 	slashCommand = new SlashCommandBuilder()
 		.setName('widget')
-		.setDescription('🛠️ Manage your Kythia Profile Widget on Discord.');
-
+		.setDescription('Manage your Kythia Profile Widget on Discord.');
 	async execute(interaction) {
 		const container = this.container;
 		const { kythiaConfig, models, helpers, logger } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer, createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const authorizeButton = new ButtonBuilder()
 			.setStyle(ButtonStyle.Link)
 			.setLabel('Authorize Kythia Widget')
@@ -36,7 +32,6 @@ class WidgetCommand extends BaseCommand {
 				`https://discord.com/oauth2/authorize?client_id=${kythiaConfig.bot.clientId}&response_type=token&scope=openid+sdk.social_layer`,
 			);
 		const row = new ActionRowBuilder().addComponents(authorizeButton);
-
 		const user = await KythiaUser.getCache({
 			userId: interaction.user.id,
 		});
@@ -173,5 +168,4 @@ class WidgetCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = WidgetCommand;

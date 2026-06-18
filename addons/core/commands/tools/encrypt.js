@@ -16,7 +16,7 @@ const cryptoHelper = require('../../helpers/crypto');
 class EncryptCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('encrypt')
-		.setDescription('🔒 Encrypt a text with a secret key (two-way encryption).')
+		.setDescription('Encrypt a text with a secret key (two-way encryption).')
 		.addStringOption((option) =>
 			option
 				.setName('text')
@@ -72,5 +72,4 @@ class EncryptCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = EncryptCommand;

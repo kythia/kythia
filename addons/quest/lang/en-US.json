@@ -1,25 +1,33 @@
 {
 	"questnotifier": {
 		"setup": {
-			"success": "✅ **Quest Notifier Enabled!**\nNew Discord Quests will be posted in <#{channel}>.\nRole to mention: {role}",
+			"success": "## Quest Notifier Enabled!\nNew Discord Quests will be posted in <#{channel}>.\nRole to mention: {role}",
 			"no_role": "None"
 		},
 		"unset": {
-			"not_setup": "ℹ️ Quest Notifier system has not been set up yet.",
-			"success": "🗑️ **Quest Notifier Disabled.** You will no longer receive notifications.",
-			"disabled_no_perms": "⚠️ **Quest Notifier Disabled**\nI don't have permission to send Quest Notifications to the configured channel. I have automatically disabled the Quest Notifier for this server. Please re-enable it by setting a new channel with `/quest setup`."
+			"not_setup": "Quest Notifier system has not been set up yet.",
+			"success": "## Quest Notifier Disabled\nYou will no longer receive notifications.",
+			"disabled_no_perms": "## Quest Notifier Disabled\nI don't have permission to send Quest Notifications to the configured channel. I have automatically disabled the Quest Notifier for this server. Please re-enable it by setting a new channel with `/quest setup`."
 		},
 		"trigger": {}
 	},
 	"quest": {
 		"helper": {
-			"title_md": "## `🎁` {questName}",
-			"reward_md": "### Reward: \\n{rewardName}\\n",
-			"tasks_md": "### Tasks: \\n{taskList}\\n",
-			"game_md": "### Game: \\n{gameTitle}\\n",
-			"publisher_md": "### Publisher: \\n{gamePublisher}\\n",
-			"expires_md": "### Expires: \\n<t:{expiresTimestamp}:f> (<t:{expiresTimestamp}:R>)\\n",
-			"notify_md": "### Notify: \n{role}\n"
+			"title_md": "## {questName}",
+			"info_header": "## Quest Info\n",
+			"info_duration": "**Duration:** {startDate} - {endDate}",
+			"info_platforms": "**Reedemable Platforms:** Cross Platform",
+			"info_game": "**Game:** {gameTitle} {gamePublisher}",
+			"info_application": "**Application:** {appName} ( `{applicationId}` )",
+			"info_features": "**Features:** {features}",
+			"tasks_header": "## Tasks\nUser must complete any of the following tasks",
+			"tasks_item": "{taskList}",
+			"rewards_header": "## Rewards\n",
+			"rewards_type": "**Reward Type:** {rewardName}",
+			"rewards_sku": "**SKU ID:** `{skuId}`",
+			"rewards_name": "**Name:** {rewardName}",
+			"rewards_quest_id": "Quest ID: `{questId}`",
+			"notify_md": "**Notification:** {role}"
 		},
 		"ui": {
 			"view": "View Quest"

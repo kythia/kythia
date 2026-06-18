@@ -7,14 +7,11 @@
  */
 
 const { BaseCommand } = require('kythia-core');
-
 class GroupCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (group) =>
 		group
 			.setName('company')
-			.setDescription('🏢 Corporate management system (Hire, Fire, Resign).');
+			.setDescription('Corporate management system (Hire, Fire, Resign).');
 }
-
 exports.default = GroupCommand;

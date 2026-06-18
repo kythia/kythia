@@ -14,7 +14,7 @@ class ReactionRoleCommand extends BaseCommand {
 
 	slashCommand = new SlashCommandBuilder()
 		.setName('reaction-role')
-		.setDescription('🎭 Manage reaction roles for your server.')
+		.setDescription('Manage reaction roles for your server.')
 		.setDMPermission(false);
 }
 

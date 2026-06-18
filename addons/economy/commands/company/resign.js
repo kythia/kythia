@@ -13,7 +13,7 @@ class ResignCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('resign')
-			.setDescription('🏃‍♂️ Resign from your current employer.');
+			.setDescription('\u200DResign from your current employer.');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;

@@ -16,7 +16,7 @@ const cryptoHelper = require('../../helpers/crypto');
 class DecryptCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('decrypt')
-		.setDescription('🔓 Decrypt data using the correct secret key.')
+		.setDescription('Decrypt data using the correct secret key.')
 		.addStringOption((option) =>
 			option
 				.setName('encrypted-data')
@@ -99,5 +99,4 @@ class DecryptCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = DecryptCommand;

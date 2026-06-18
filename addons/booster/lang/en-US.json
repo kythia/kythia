@@ -2,25 +2,25 @@
 	"booster": {
 		"booster": {
 			"channel": {
-				"set": "✅ Booster channel set to <#{channelId}>"
+				"set": "Booster channel set to <#{channelId}>"
 			},
 			"text": {
-				"set": "✅ Booster message text set to:\n> {text}"
+				"set": "Booster message text set to:\n> {text}"
 			},
 			"background": {
-				"set": "✅ Booster background set to:\n{url}",
+				"set": "Booster background set to:\n{url}",
 				"invalid": {
-					"url": "❌ Background URL must start with `http`."
+					"url": "Background URL must start with `http`."
 				}
 			},
 			"style": {
-				"set": "✅ Booster message style set to **{styleLabel}**.",
+				"set": "Booster message style set to **{styleLabel}**.",
 				"label": {
 					"components": {
-						"v2": "🖼️ Components V2 card"
+						"v2": "Components V2 card"
 					},
 					"plain": {
-						"text": "💬 Plain text only"
+						"text": "Plain text only"
 					}
 				}
 			},

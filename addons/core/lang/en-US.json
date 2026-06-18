@@ -7,7 +7,7 @@
 			"prev": "Previous Page",
 			"not": {
 				"your": {
-					"interaction": "❌ This interaction is not for you."
+					"interaction": "This interaction is not for you."
 				}
 			}
 		},
@@ -32,7 +32,7 @@
 					"website": "Website"
 				},
 				"error": {
-					"fetch": "❌ Failed to fetch the Terms of Service. Please try again later."
+					"fetch": "Failed to fetch the Terms of Service. Please try again later."
 				}
 			},
 			"about": {
@@ -51,13 +51,13 @@
 			},
 			"commandid": {
 				"not": {
-					"found": "❌ Command `{commandName}` not found 😭"
+					"found": "Command `{commandName}` not found"
 				},
-				"success": "✅ Found!\n\n📎 ID: `{commandId}`\n💬 Mention: {mention}"
+				"success": "Found!\n\nID: `{commandId}`\nMention: {mention}"
 			},
 			"help": {
 				"docs": {
-					"unavailable": "📂 Documentation is not yet available for this category."
+					"unavailable": "Documentation is not yet available for this category."
 				},
 				"content": {
 					"not": {
@@ -94,67 +94,67 @@
 			},
 			"ping": {
 				"embed": {
-					"title": "## 🏓 Pong!"
+					"title": "## Pong!"
 				},
 				"field": {
 					"bot": {
-						"latency": "`⚙️` Bot Latency"
+						"latency": "Bot Latency"
 					},
 					"api": {
-						"latency": "`🌐` API Latency"
+						"latency": "API Latency"
 					},
 					"db": {
-						"latency": "`🗄️` Database Latency"
+						"latency": "Database Latency"
 					},
 					"redis": {
-						"nodes": "`🗄️` Redis Cache Servers"
+						"nodes": "Redis Cache Servers"
 					},
 					"lavalink": {
-						"nodes": "`🎵` Lavalink Nodes"
+						"nodes": "Lavalink Nodes"
 					}
 				}
 			},
 			"presence": {
-				"error": "❌ An error occurred: {error}",
+				"error": "An error occurred: {error}",
 				"invalid": {
-					"url": "❌ Invalid URL. Please provide a valid URL. https://www.twitch.tv or https://www.youtube.com"
+					"url": "Invalid URL. Please provide a valid URL. https://www.twitch.tv or https://www.youtube.com"
 				},
 				"set": {
-					"success": "✅ Presence updated!\n**Status:** {status}\n**Activity:** {activity} ({type})"
+					"success": "Presence updated!\n**Status:** {status}\n**Activity:** {activity} ({type})"
 				},
 				"status": {
-					"success": "✅ Status set to **{status}**"
+					"success": "Status set to **{status}**"
 				},
 				"activity": {
-					"success": "✅ Activity set to **{activity}** ({type})"
+					"success": "Activity set to **{activity}** ({type})"
 				},
 				"afk": {
-					"success": "✅ AFK status set to **{state}**"
+					"success": "AFK status set to **{state}**"
 				},
 				"username": {
-					"success": "✅ Username changed!\n**Old:** {old}\n**New:** {new}"
+					"success": "Username changed!\n**Old:** {old}\n**New:** {new}"
 				},
 				"avatar": {
-					"success": "✅ Avatar updated successfully!",
-					"invalid": "❌ Please provide a valid image file!"
+					"success": "Avatar updated successfully!",
+					"invalid": "Please provide a valid image file!"
 				},
 				"banner": {
-					"success": "✅ Banner updated successfully!",
-					"invalid": "❌ Please provide a valid image file!"
+					"success": "Banner updated successfully!",
+					"invalid": "Please provide a valid image file!"
 				},
 				"bio": {
-					"success": "✅ Bio updated!\n**New bio:** {bio}"
+					"success": "Bio updated!\n**New bio:** {bio}"
 				}
 			},
 			"report": {
 				"no": {
-					"channel": "❌ Report channel has not been set up."
+					"channel": "Report channel has not been set up."
 				},
 				"reason": "No reason provided",
 				"embed": {
-					"desc": "## 📢 Report\n**{reported}** has been reported by **{reporter}** for: {reason}"
+					"desc": "## Report\n**{reported}** has been reported by **{reporter}** for: {reason}"
 				},
-				"success": "✅ | Successfully reported **{user}**. Thank you for your report."
+				"success": "| Successfully reported **{user}**. Thank you for your report."
 			},
 			"restart": {
 				"embed": {
@@ -162,10 +162,10 @@
 						"desc": "## Restart Bot\n Are you sure you want to restart the bot?"
 					},
 					"cancelled": {
-						"desc": "## ❌ Restart Cancelled\nThe restart was cancelled."
+						"desc": "## Restart Cancelled\nThe restart was cancelled."
 					},
 					"restarting": {
-						"desc": "## ♾️ Bot Restarting\nThe bot is restarting... please wait a moment"
+						"desc": "## Bot Restarting\nThe bot is restarting... please wait a moment"
 					},
 					"timeout": {
 						"desc": "## ⌛ Timed Out\nTime ran out! No action was taken "
@@ -173,28 +173,28 @@
 				},
 				"button": {
 					"confirm": "Yes, restart!",
-					"cancel": "❌ No"
+					"cancel": "No"
 				}
 			},
 			"serverinfo": {
 				"verification": {
-					"none": "🟢 None",
-					"low": "🟡 Low",
-					"medium": "🟠 Medium",
-					"high": "🔴 High",
+					"none": "None",
+					"low": "Low",
+					"medium": "Medium",
+					"high": "High",
 					"very": {
-						"high": "🛡️ Very High"
+						"high": "Very High"
 					}
 				},
 				"filter": {
-					"disabled": "❌ Disabled",
+					"disabled": "Disabled",
 					"members": {
 						"without": {
-							"roles": "👤 Members without roles"
+							"roles": "Members without roles"
 						}
 					},
 					"all": {
-						"members": "✅ All members"
+						"members": "All members"
 					}
 				},
 				"nsfw": {
@@ -334,17 +334,17 @@
 			},
 			"stats": {
 				"embed": {
-					"desc": "## 📊 **{username} Statistics**\n\n> **Uptime:** `{uptime}`\n> **Memory Usage:** `{memory} MB`\n> **Servers:** `{guilds}`   |   **Users:** `{users}`\n> **Kythia Version:** `{kythiaVersion}`\n> **Kythia Core:** `{kythiaCoreVersion}`\n> **Commit hash:** `{githubCommit}`\n\n### `⚙️` **Technology**\n> {runtime}  |   **discord.js:** `v{djs}`\n> **CPU:** `{cpu}`\n\n### `🗄️` **Cache**\n{cacheStatus}\n> **Hits:** `{cacheHits}`   |   **Misses:** `{cacheMisses}`\n\n### `👑` **Owner**\n> `{owner}`"
+					"desc": "## **{username} Statistics**\n\n> **Uptime:** `{uptime}`\n> **Memory Usage:** `{memory} MB`\n> **Servers:** `{guilds}`   |   **Users:** `{users}`\n> **Kythia Version:** `{kythiaVersion}`\n> **Kythia Core:** `{kythiaCoreVersion}`\n> **Commit hash:** `{githubCommit}`\n\n### `` **Technology**\n> {runtime}  |   **discord.js:** `v{djs}`\n> **CPU:** `{cpu}`\n\n### `` **Cache**\n{cacheStatus}\n> **Hits:** `{cacheHits}`   |   **Misses:** `{cacheMisses}`\n\n### `` **Owner**\n> `{owner}`"
 				}
 			},
 			"userinfo": {
 				"user": {
 					"not": {
-						"found": "❌ That user is not in this server!"
+						"found": "That user is not in this server!"
 					}
 				},
 				"embed": {
-					"title": "## 📊 User Info",
+					"title": "## User Info",
 					"desc": "Information for user **{tag}**"
 				},
 				"field": {
@@ -372,154 +372,154 @@
 					"afk": "You are already AFK."
 				},
 				"set": {
-					"success": "✅ You are now AFK. Reason: **{reason}**"
+					"success": "You are now AFK. Reason: **{reason}**"
 				}
 			},
 			"grab": {
 				"sticker": {
 					"not": {
-						"found": "😕 Oops! I couldn't find any sticker with that ID or in that message."
+						"found": "Oops! I couldn't find any sticker with that ID or in that message."
 					},
 					"no": {
-						"url": "😭 I couldn't find a valid URL for this sticker to download it."
+						"url": "I couldn't find a valid URL for this sticker to download it."
 					},
-					"success": "✅ Success! The sticker `{name}` has been added to this server.",
-					"manual": "⚠️ I couldn't add the sticker automatically (maybe the server isn't boosted enough or sticker slots are full). Here's the file for you to upload manually:",
-					"error": "❌ An unexpected error occurred while trying to steal the sticker. Please try again.",
+					"success": "Success! The sticker `{name}` has been added to this server.",
+					"manual": "I couldn't add the sticker automatically (maybe the server isn't boosted enough or sticker slots are full). Here's the file for you to upload manually:",
+					"error": "An unexpected error occurred while trying to steal the sticker. Please try again.",
 					"or": {
 						"emoji": {
 							"not": {
-								"found": "❌ There is no sticker, emoji, or image found in this message!"
+								"found": "There is no sticker, emoji, or image found in this message!"
 							}
 						}
 					}
 				},
 				"no": {
 					"perm": {
-						"sticker": "🚫 I don't have the `Manage Emojis and Stickers` permission to add this sticker.",
-						"emoji": "🚫 I don't have the `Manage Emojis and Stickers` permission to add this emoji."
+						"sticker": "I don't have the `Manage Emojis and Stickers` permission to add this sticker.",
+						"emoji": "I don't have the `Manage Emojis and Stickers` permission to add this emoji."
 					}
 				},
 				"emoji": {
-					"invalid": "🤔 That doesn't look like a valid custom emoji. Please provide a custom emoji from a server.",
-					"success": "✅ Got it! The emoji `{name}` has been successfully added to this server.",
-					"manual": "⚠️ I couldn't add the emoji automatically (maybe the emoji slots are full). Here is the file for you to upload manually:"
+					"invalid": "That doesn't look like a valid custom emoji. Please provide a custom emoji from a server.",
+					"success": "Got it! The emoji `{name}` has been successfully added to this server.",
+					"manual": "I couldn't add the emoji automatically (maybe the emoji slots are full). Here is the file for you to upload manually:"
 				},
 				"image": {
 					"message": {
-						"not_found": "❌ I couldn't find that message in this channel. Make sure the message ID is correct!"
+						"not_found": "I couldn't find that message in this channel. Make sure the message ID is correct!"
 					},
-					"not_found": "❌ That message doesn't have any image attachment to grab."
+					"not_found": "That message doesn't have any image attachment to grab."
 				}
 			},
 			"convert": {
 				"currency": {
-					"title": "💰 Currency Conversion",
+					"title": "Currency Conversion",
 					"result": "{amount} {from} = **{result} {to}**",
-					"failed": "❌ Failed to convert currency. Please try again later.",
-					"error": "❌ Error fetching currency conversion."
+					"failed": "Failed to convert currency. Please try again later.",
+					"error": "Error fetching currency conversion."
 				},
 				"length": {
-					"title": "📏 Length Conversion",
+					"title": "Length Conversion",
 					"result": "{value} {from} = **{result} {to}**",
-					"failed": "❌ Invalid length unit."
+					"failed": "Invalid length unit."
 				},
 				"mass": {
-					"title": "⚖️ Mass Conversion",
+					"title": "Mass Conversion",
 					"result": "{value} {from} = **{result} {to}**",
-					"failed": "❌ Invalid mass unit."
+					"failed": "Invalid mass unit."
 				},
 				"temperature": {
-					"title": "🌡️ Temperature Conversion",
+					"title": "Temperature Conversion",
 					"result": "{value}°{from} = **{result}°{to}**",
-					"failed": "❌ Invalid temperature unit."
+					"failed": "Invalid temperature unit."
 				},
 				"data": {
-					"title": "💾 Data Storage Conversion",
+					"title": "Data Storage Conversion",
 					"result": "{value} {from} = **{result} {to}**",
-					"failed": "❌ Invalid data unit."
+					"failed": "Invalid data unit."
 				},
 				"area": {
-					"title": "🟦 Area Conversion",
+					"title": "Area Conversion",
 					"result": "{value} {from} = **{result} {to}**",
-					"failed": "❌ Invalid area unit. Please check your units."
+					"failed": "Invalid area unit. Please check your units."
 				},
 				"volume": {
-					"title": "🧪 Volume Conversion",
+					"title": "Volume Conversion",
 					"result": "{value} {from} = **{result} {to}**",
-					"failed": "❌ Invalid volume unit. Please check your units."
+					"failed": "Invalid volume unit. Please check your units."
 				}
 			},
 			"vote": {
 				"leaderboard": {
-					"title": "## 🏆 Vote Leaderboard",
-					"empty": "❌ There are no voters on the leaderboard.",
+					"title": "## Vote Leaderboard",
+					"empty": "There are no voters on the leaderboard.",
 					"entry": "**{index}.** {user} - **{votes}** votes"
 				},
 				"container": {
-					"title": "## 🌸 Vote for {username}!",
+					"title": "## Vote for {username}!",
 					"desc": "Your vote means the world to {username} and helps unlock extra goodies!\n\nVote for {username} on top.gg and let's spread even more cuteness together! (づ｡◕‿‿◕｡)づ"
 				},
 				"button": {
-					"topgg": "🩷 Vote {username}"
+					"topgg": "Vote {username}"
 				}
 			},
 			"kyth": {
 				"vote": {
 					"add": {
-						"success": "✅ Successfully added **{amount}** vote points to {user}.\nNew balance: **{total}** points."
+						"success": "Successfully added **{amount}** vote points to {user}.\nNew balance: **{total}** points."
 					},
 					"remove": {
-						"insufficient": "❌ {user} does not have enough vote points.",
-						"success": "✅ Successfully removed **{amount}** vote points from {user}.\nNew balance: **{total}** points."
+						"insufficient": "{user} does not have enough vote points.",
+						"success": "Successfully removed **{amount}** vote points from {user}.\nNew balance: **{total}** points."
 					},
 					"reset": {
 						"user": {
-							"success": "✅ Successfully reset vote points for {user}."
+							"success": "Successfully reset vote points for {user}."
 						},
 						"all": {
-							"success": "✅ Successfully reset all user vote points to 0."
+							"success": "Successfully reset all user vote points to 0."
 						}
 					},
 					"info": {
-						"display": "📊 **Vote Info for {user}**\n\n**Total Points:** {points}\n**Last Voted:** {lastVoted}\n**Expiration:** {expiresAt}\n**Has Active Vote:** {hasVotedStatus}"
+						"display": "**Vote Info for {user}**\n\n**Total Points:** {points}\n**Last Voted:** {lastVoted}\n**Expiration:** {expiresAt}\n**Has Active Vote:** {hasVotedStatus}"
 					}
 				},
 				"team": {
 					"list": {
-						"empty": "📋 The Kythia Team is currently empty.",
+						"empty": "The Kythia Team is currently empty.",
 						"no": {
 							"role": "No role specified"
 						},
 						"unknown": "Unknown User",
 						"row": "**{name}**\n**ID:** {id}\n**Role:** {role}",
 						"total": "Total members: **{count}**",
-						"title": "👥 Kythia Team Members",
-						"error": "❌ Failed to list team members: {error}"
+						"title": "Kythia Team Members",
+						"error": "Failed to list team members: {error}"
 					},
 					"delete": {
 						"not": {
-							"found": "❌ **{tag}** is not in the Kythia Team!"
+							"found": "**{tag}** is not in the Kythia Team!"
 						},
-						"title": "✅ Team Member Removed",
+						"title": "Team Member Removed",
 						"success": "Successfully removed **{tag}** from Kythia Team!\n\n**User ID:** {id}",
-						"error": "❌ Failed to remove team member: {error}"
+						"error": "Failed to remove team member: {error}"
 					},
 					"add": {
-						"already": "❌ **{tag}** is already in the Kythia Team!",
-						"title": "✅ Team Member Added",
+						"already": "**{tag}** is already in the Kythia Team!",
+						"title": "Team Member Added",
 						"success": "Successfully added **{tag}** to Kythia Team!\n\n**User ID:** {id}\n**Name/Role:** {name}",
-						"error": "❌ Failed to add team member: {error}"
+						"error": "Failed to add team member: {error}"
 					}
 				},
 				"servers": {
-					"title": "## 🌐 Bot Servers",
+					"title": "## Bot Servers",
 					"empty": "The bot is not in any servers.",
 					"entry": "**{rank}.** {name} ({id}) - **{members} members**",
 					"footer": "-# Page {page} of {totalPages} | Total Servers: {totalServers}"
 				},
 				"shards": {
-					"title": "## 🧩 Bot Shards",
+					"title": "## Bot Shards",
 					"empty": "No shards found.",
 					"entry": "## Shard #{id}\n- Uptime: {uptime}\n- Users: **{users}** | Guilds: **{guilds}**\n- Memory: **{shardRss}**",
 					"footer": "-# Page {page} of {totalPages} | Total Shards: {totalShards}",
@@ -529,10 +529,10 @@
 				},
 				"chat": {
 					"success": {
-						"title": "✅ Message Sent",
+						"title": "Message Sent",
 						"desc": "Successfully sent the message to **{tag}**."
 					},
-					"error": "❌ Failed to send message (user may have DMs disabled): {error}"
+					"error": "Failed to send message (user may have DMs disabled): {error}"
 				},
 				"blacklist": {
 					"no": {
@@ -540,106 +540,106 @@
 					},
 					"guild": {
 						"add": {
-							"already": "❌ Guild {id}",
-							"title": "🚫 Guild Blacklisted",
+							"already": "Guild {id}",
+							"title": "Guild Blacklisted",
 							"success": "Successfully blacklisted guild {id}\n**Reason:** {reason}{left}",
-							"left": "\n\n⚡ Bot was in this guild and has **left** immediately.",
-							"error": "❌ Failed to blacklist guild: {error}"
+							"left": "Bot was in this guild and has **left** immediately.",
+							"error": "Failed to blacklist guild: {error}"
 						},
 						"remove": {
 							"not": {
-								"found": "❌ Guild {id}"
+								"found": "Guild {id}"
 							},
-							"title": "✅ Guild Removed from Blacklist",
+							"title": "Guild Removed from Blacklist",
 							"success": "Successfully removed guild {id}",
-							"error": "❌ Failed to remove guild from blacklist: {error}"
+							"error": "Failed to remove guild from blacklist: {error}"
 						},
 						"list": {
-							"empty": "📋 No guilds are currently blacklisted.",
-							"title": "🚫 Blacklisted Guilds",
+							"empty": "No guilds are currently blacklisted.",
+							"title": "Blacklisted Guilds",
 							"total": "Total blacklisted: **{count}**",
 							"row": "**ID:** {id}\n**Reason:** {reason}",
-							"error": "❌ Failed to list blacklisted guilds: {error}"
+							"error": "Failed to list blacklisted guilds: {error}"
 						}
 					},
 					"user": {
 						"add": {
-							"already": "❌ **{tag}** is already blacklisted!",
-							"title": "🚫 User Blacklisted",
+							"already": "**{tag}** is already blacklisted!",
+							"title": "User Blacklisted",
 							"success": "Successfully blacklisted **{tag}**!\n\n**User ID:** {id}\n**Reason:** {reason}",
-							"error": "❌ Failed to blacklist user: {error}"
+							"error": "Failed to blacklist user: {error}"
 						},
 						"remove": {
 							"not": {
-								"found": "❌ **{tag}** is not in the blacklist!"
+								"found": "**{tag}** is not in the blacklist!"
 							},
-							"title": "✅ User Removed from Blacklist",
+							"title": "User Removed from Blacklist",
 							"success": "Successfully removed **{tag}** from the blacklist!\n\n**User ID:** {id}",
-							"error": "❌ Failed to remove user from blacklist: {error}"
+							"error": "Failed to remove user from blacklist: {error}"
 						},
 						"list": {
-							"empty": "📋 No users are currently blacklisted.",
-							"title": "🚫 Blacklisted Users",
+							"empty": "No users are currently blacklisted.",
+							"title": "Blacklisted Users",
 							"total": "Total blacklisted: **{count}**",
 							"unknown": "Unknown User",
 							"row": "**{tag}**\n**ID:** {id}\n**Reason:** {reason}",
-							"error": "❌ Failed to list blacklisted users: {error}"
+							"error": "Failed to list blacklisted users: {error}"
 						}
 					}
 				},
 				"leave": {
-					"protected": "🛡️ **Protected Guild**\nID: `{guildId}` is exempted and cannot be left.",
+					"protected": "**Protected Guild**\nID: `{guildId}` is exempted and cannot be left.",
 					"not": {
-						"found": "❌ **Guild Not Found**\nID: `{guildId}`"
+						"found": "**Guild Not Found**\nID: `{guildId}`"
 					},
-					"success": "✅ **Successfully Left Guild**\n\n**Name:** {guildName}\n**ID:** `{guildId}`\n**Members:** {memberCount}\n\n📉 Server Count is now: **{serverCount}**"
+					"success": "**Successfully Left Guild**\n\n**Name:** {guildName}\n**ID:** `{guildId}`\n**Members:** {memberCount}\n\nServer Count is now: **{serverCount}**"
 				},
 				"mass-leave": {
-					"goodbye": "👋 **Good Bye!**\n\nI am leaving this server because it has fewer than {threshold} members (Cleanup Policy).\nIf you want to use me, please invite me to a more active server!",
-					"empty": "✅ **No Cleanup Needed**\nNo guilds found with less than {threshold} members.",
-					"success": "🧹 **Cleanup Complete**\n\n**Threshold:** < {threshold} members\n**Success:** {leftCount} guilds\n**Failed:** {errorCount} guilds",
+					"goodbye": "**Good Bye!**\n\nI am leaving this server because it has fewer than {threshold} members (Cleanup Policy).\nIf you want to use me, please invite me to a more active server!",
+					"empty": "**No Cleanup Needed**\nNo guilds found with less than {threshold} members.",
+					"success": "**Cleanup Complete**\n\n**Threshold:** < {threshold} members\n**Success:** {leftCount} guilds\n**Failed:** {errorCount} guilds",
 					"more": "...and {count} more",
 					"list": "\n\n**Left Guilds:**\n```\n{names}```"
 				},
 				"eco": {
 					"event": {
-						"whale": "✅ Whale Dump Executed\n**{kyth} KYTH** dumped by NPC.\nPrice: {old} → {new} ({drop}%)",
-						"burn": "✅ Token Burn Executed\nBurned: {amount} KYTH\nPrice: {old} → {new} (+{inc}%)",
-						"bull": "✅ Bull Run Triggered\nInjected: 🪙 {coin} Coin\nPrice: {old} → {new} (+{inc}%)"
+						"whale": "Whale Dump Executed\n**{kyth} KYTH** dumped by NPC.\nPrice: {old} → {new} ({drop}%)",
+						"burn": "Token Burn Executed\nBurned: {amount} KYTH\nPrice: {old} → {new} (+{inc}%)",
+						"bull": "Bull Run Triggered\nInjected: {coin} Coin\nPrice: {old} → {new} (+{inc}%)"
 					},
 					"pool": {
-						"update": "✅ Pool Updated\n**Coin Reserve:** {coin}\n**KYTH Reserve:** {kyth}\n**New K:** {k}\n**New Price:** {price} Coin/KYTH",
-						"recalc": "✅ K Recalculated\nOld K: {old}\nNew K: {new}"
+						"update": "Pool Updated\n**Coin Reserve:** {coin}\n**KYTH Reserve:** {kyth}\n**New K:** {k}\n**New Price:** {price} Coin/KYTH",
+						"recalc": "K Recalculated\nOld K: {old}\nNew K: {new}"
 					}
 				},
-				"debug": "🛠️ Kythia Cache Debugger (Complete)\n\n{logs}",
-				"reload_config": "✅ Kythia Configuration has been hot-reloaded successfully!",
-				"reload_node": "✅ Config and Lavalink nodes have been reloaded!",
+				"debug": "Kythia Cache Debugger (Complete)\n\n{logs}",
+				"reload_config": "Kythia Configuration has been hot-reloaded successfully!",
+				"reload_node": "Config and Lavalink nodes have been reloaded!",
 				"restart": {
-					"invalid_time": "❌ Invalid time format! Use HH:mm (e.g. 23:59)",
-					"cancelled": "✅ **Scheduled restart cancelled.**"
+					"invalid_time": "Invalid time format! Use HH:mm (e.g. 23:59)",
+					"cancelled": "**Scheduled restart cancelled.**"
 				}
 			},
 			"global-announcement": {
 				"simple": {
 					"modal": {
-						"title": "📝 Create Embed Announcement",
+						"title": "Create Embed Announcement",
 						"label": {
 							"title": "Title",
 							"content": "Content (Markdown)"
 						}
 					},
-					"prefix": "## 📢 {title}\n\n{content}",
+					"prefix": "## {title}\n\n{content}",
 					"footer": "Announcement from Developer {username} • <t:{timestamp}:R>"
 				},
 				"complex": {
 					"modal": {
-						"title": "📝 Create Container Announcement",
+						"title": "Create Container Announcement",
 						"label": "Paste JSON Payload Here",
 						"placeholder": "Copy the JSON from Discohook and paste it here..."
 					},
 					"invalid": {
-						"json": "❌ Invalid JSON! Please make sure you copied everything correctly.\n\nError: `{error}`"
+						"json": "Invalid JSON! Please make sure you copied everything correctly.\n\nError: `{error}`"
 					}
 				},
 				"delivery": {
@@ -648,23 +648,23 @@
 						"list": "\n\n**Failed Server List:**\n```{names}```",
 						"success": "**Successfully Sent:** {count} server(s)",
 						"failed": "**Failed to Send:** {count} server(s)",
-						"title": "## ✅ Announcement Delivery Report"
+						"title": "## Announcement Delivery Report"
 					}
 				}
 			}
 		},
 		"premium_server": {
 			"no_server_id": "You must specify a `server_id` if you are not running this command inside a server.",
-			"access_denied": "❌ **Access Denied**\nYou do not have an eligible Premium Tier (`Yours` or `Ecosystem`) to bind servers.",
+			"access_denied": "**Access Denied**\nYou do not have an eligible Premium Tier (`Yours` or `Ecosystem`) to bind servers.",
 			"bind": {
-				"limit_reached": "❌ **Slot Limit Reached**\nYou have used all your available slots (**{used}/{max}**). Unbind a server first.",
-				"already_bound_self": "⚠️ This server is **already bound** by you.",
-				"already_bound_other": "❌ This server is already bound by another Premium user.",
-				"success": "✅ **Success!**\nYou have bound your **{tier}** tier to server `{guildId}`."
+				"limit_reached": "**Slot Limit Reached**\nYou have used all your available slots (**{used}/{max}**). Unbind a server first.",
+				"already_bound_self": "This server is **already bound** by you.",
+				"already_bound_other": "This server is already bound by another Premium user.",
+				"success": "**Success!**\nYou have bound your **{tier}** tier to server `{guildId}`."
 			},
 			"unbind": {
-				"not_bound_self": "❌ This server is **not bound** by you.",
-				"success": "✅ **Success!**\nYou have unbound your Premium tier from server `{guildId}`. The slot is now free."
+				"not_bound_self": "This server is **not bound** by you.",
+				"success": "**Success!**\nYou have unbound your Premium tier from server `{guildId}`. The slot is now free."
 			},
 			"list": {
 				"header": "**Your Premium Server Slots ({tier})**\nUsage: **{used} / {max}** slots used.\n\n",
@@ -682,37 +682,37 @@
 				"embed": {
 					"desc": "[Download Banner]({url})"
 				},
-				"no_banner": "❌ **{user}** doesn't have a banner set."
+				"no_banner": "**{user}** doesn't have a banner set."
 			},
 			"prefix": {
 				"add": {
-					"started": "📛 Starting to add prefixes to nicknames. This might take a while...",
-					"success": "✅ Finished updating prefixes for {count} members!",
-					"error": "❌ An error occurred while adding prefixes."
+					"started": "Starting to add prefixes to nicknames. This might take a while...",
+					"success": "Finished updating prefixes for {count} members!",
+					"error": "An error occurred while adding prefixes."
 				},
 				"remove": {
-					"started": "📛 Starting to remove prefixes from nicknames. This might take a while...",
-					"success": "✅ Finished removing prefixes from {count} members!",
-					"error": "❌ An error occurred while removing prefixes."
+					"started": "Starting to remove prefixes from nicknames. This might take a while...",
+					"success": "Finished removing prefixes from {count} members!",
+					"error": "An error occurred while removing prefixes."
 				}
 			},
 			"sticky": {
 				"set": {
 					"error": {
-						"exists": "❌ A sticky message already exists in this channel! Please remove it before setting a new one."
+						"exists": "A sticky message already exists in this channel! Please remove it before setting a new one."
 					},
-					"success": "✅ Sticky message has been set! 😋"
+					"success": "Sticky message has been set!"
 				},
 				"remove": {
 					"error": {
 						"not": {
-							"found": "❌ There is no sticky message to remove in this channel."
+							"found": "There is no sticky message to remove in this channel."
 						}
 					},
-					"success": "✅ Sticky message has been removed! 😋"
+					"success": "Sticky message has been removed!"
 				},
 				"list": {
-					"title": "## 📌 Sticky Messages",
+					"title": "## Sticky Messages",
 					"empty": "There are no sticky messages set in this server.",
 					"entry": "- <#{channelId}>\n",
 					"footer": "Page {page} of {totalPages}"
@@ -720,42 +720,42 @@
 			},
 			"obfuscate": {
 				"no": {
-					"file": "❌ No file provided."
+					"file": "No file provided."
 				},
 				"failed": {
-					"download": "❌ Failed to download the file.",
-					"javascript": "❌ Failed to obfuscate JavaScript file.",
-					"lua": "❌ Failed to obfuscate Lua file."
+					"download": "Failed to download the file.",
+					"javascript": "Failed to obfuscate JavaScript file.",
+					"lua": "Failed to obfuscate Lua file."
 				},
 				"invalid": {
-					"type": "❌ Invalid type. Only 'lua' and 'javascript' are supported."
+					"type": "Invalid type. Only 'lua' and 'javascript' are supported."
 				},
-				"success": "✅ Here's your obfuscated {type} file!"
+				"success": "Here's your obfuscated {type} file!"
 			},
 			"ascii": {
-				"failed": "❌ Failed to generate ASCII art.",
+				"failed": "Failed to generate ASCII art.",
 				"too": {
-					"long": "❌ ASCII art is too long. Maximum allowed is 2000 characters."
+					"long": "ASCII art is too long. Maximum allowed is 2000 characters."
 				},
 				"embed": {
-					"desc": "## 🎨 ASCII Art\n\n{asciiArt}\n\n**Font:** {font}"
+					"desc": "## ASCII Art\n\n{asciiArt}\n\n**Font:** {font}"
 				},
 				"invalid": {
 					"text": {
-						"allfonts": "❌ Invalid text. Please provide a valid text."
+						"allfonts": "Invalid text. Please provide a valid text."
 					}
 				},
-				"generating": "🎨 Generating ASCII art for \"{text}\" with {count} fonts... this might take a moment!"
+				"generating": "Generating ASCII art for \"{text}\" with {count} fonts... this might take a moment!"
 			},
 			"hash": {
 				"invalid": {
-					"text": "❌ Invalid text. Maximum allowed is 1024 characters.",
-					"algorithm": "❌ Invalid algorithm. Please select a valid algorithm."
+					"text": "Invalid text. Maximum allowed is 1024 characters.",
+					"algorithm": "Invalid algorithm. Please select a valid algorithm."
 				},
 				"failed": {
-					"hash": "❌ Failed to hash with the selected algorithm."
+					"hash": "Failed to hash with the selected algorithm."
 				},
-				"result": "## 🔒 Hash Result",
+				"result": "## Hash Result",
 				"algorithm": "Algorithm",
 				"input": "Input",
 				"hash": "Hash"
@@ -763,17 +763,17 @@
 			"crackhash": {
 				"invalid": {
 					"hash": {
-						"length": "❌ Invalid hash length. {algorithm} hash must be {hashLength} characters long."
+						"length": "Invalid hash length. {algorithm} hash must be {hashLength} characters long."
 					}
 				},
 				"not": {
-					"found": "❌ Not found in public databases."
+					"found": "Not found in public databases."
 				},
 				"api": {
-					"error": "❌ An error occurred while looking up the hash."
+					"error": "An error occurred while looking up the hash."
 				},
 				"result": {
-					"desc": "## 🔓 Crack Hash Result",
+					"desc": "## Crack Hash Result",
 					"text": "Result"
 				},
 				"algorithm": "Algorithm",
@@ -782,10 +782,10 @@
 			"encrypt": {
 				"invalid": {
 					"key": {
-						"length": "❌ Invalid key length. The key must be 32 characters long."
+						"length": "Invalid key length. The key must be 32 characters long."
 					}
 				},
-				"success": "✅ Text Encrypted Successfully",
+				"success": "Text Encrypted Successfully",
 				"embed": {
 					"desc": "Here is your encrypted data. You need the **entire string** and your **secret key** to decrypt it."
 				},
@@ -801,18 +801,18 @@
 			"decrypt": {
 				"invalid": {
 					"key": {
-						"length": "❌ Invalid key length. The key must be 32 characters long."
+						"length": "Invalid key length. The key must be 32 characters long."
 					},
 					"data": {
-						"format": "❌ Invalid data format. The data must be in the format of iv(hex):authTag(hex):encryptedText(hex)."
+						"format": "Invalid data format. The data must be in the format of iv(hex):authTag(hex):encryptedText(hex)."
 					}
 				},
-				"success": "✅ Text Decrypted Successfully",
+				"success": "Text Decrypted Successfully",
 				"decrypted": {
 					"plaintext": "Decrypted Plaintext"
 				},
 				"failed": {
-					"title": "❌ Decryption Failed",
+					"title": "Decryption Failed",
 					"desc": "An error occurred while decrypting the text."
 				}
 			},
@@ -823,24 +823,24 @@
 					"invalid": {
 						"url": {
 							"title": "## Invalid TikTok Link",
-							"desc": "❌ Please provide a valid TikTok link. Example: https://www.tiktok.com/@user/video/1234567890 or https://vt.tiktok.com/ZSyfhrXxX/"
+							"desc": "Please provide a valid TikTok link. Example: https://www.tiktok.com/@user/video/1234567890 or https://vt.tiktok.com/ZSyfhrXxX/"
 						}
 					},
 					"too": {
 						"large": {
 							"title": "## Video Too Large",
-							"desc": "The video is too large to be sent via Discord! 😭\n\n[Click here to watch the video]({url})"
+							"desc": "The video is too large to be sent via Discord! [Click here to watch the video]({url})"
 						}
 					},
 					"no": {
 						"video": {
 							"title": "## Failed to Get Video",
-							"desc": "❌ Failed to fetch the video. The video may be private, deleted, or the API is down."
+							"desc": "Failed to fetch the video. The video may be private, deleted, or the API is down."
 						}
 					},
 					"unknown": {
 						"title": "## Error Processing TikTok Link",
-						"desc": "❌ An error occurred while processing the TikTok link."
+						"desc": "An error occurred while processing the TikTok link."
 					}
 				}
 			},
@@ -850,61 +850,61 @@
 					"invalid": {
 						"url": {
 							"title": "## Invalid Instagram Link",
-							"desc": "❌ Please provide a valid Instagram post/reel link. Example: https://www.instagram.com/p/ABC123/ or https://www.instagram.com/reel/XYZ456/"
+							"desc": "Please provide a valid Instagram post/reel link. Example: https://www.instagram.com/p/ABC123/ or https://www.instagram.com/reel/XYZ456/"
 						}
 					},
 					"too": {
 						"large": {
 							"title": "## Media Too Large",
-							"desc": "The media file is too large to be sent via Discord! 😭\n\n[Click here to view the media]({url})"
+							"desc": "The media file is too large to be sent via Discord! [Click here to view the media]({url})"
 						}
 					},
 					"no": {
 						"media": {
 							"title": "## Failed to Get Media",
-							"desc": "❌ Failed to fetch the media. The post may be private, deleted, or the API is down."
+							"desc": "Failed to fetch the media. The post may be private, deleted, or the API is down."
 						}
 					},
 					"unknown": {
 						"title": "## Error Processing Instagram Link",
-						"desc": "❌ An error occurred while processing the Instagram link."
+						"desc": "An error occurred while processing the Instagram link."
 					}
 				}
 			},
 			"testall": {
-				"done": "✅ Done! Results posted above."
+				"done": "Done! Results posted above."
 			}
 		},
 		"setting": {
 			"setting": {
 				"stats": {
 					"enabled": {
-						"text": "✅ Stats enabled.",
-						"msg": "✅ Stat in {channel} has been enabled."
+						"text": "Stats enabled.",
+						"msg": "Stat in {channel} has been enabled."
 					},
 					"disabled": {
-						"text": "✅ Stats disabled. ",
-						"msg": "⛔ Stat in {channel} has been disabled."
+						"text": "Stats disabled.",
+						"msg": "Stat in {channel} has been disabled."
 					},
 					"format": {
-						"invalid": "❌ The format must contain one of the following placeholders:\n{placeholders}"
+						"invalid": "The format must contain one of the following placeholders:\n{placeholders}"
 					},
-					"already": "⚠️ This channel is already registered! Use `/set stats edit` to change the format.",
-					"add": "✅ Stat for {channel} has been added!\nFormat: `{format}`",
-					"notfound": "❌ This stat is not registered!",
-					"edit": "✏️ Stat format in {channel} has been changed{format, select, undefined {} other { to: `{format}`}",
+					"already": "This channel is already registered! Use `/set stats edit` to change the format.",
+					"add": "Stat for {channel} has been added!\nFormat: `{format}`",
+					"notfound": "This stat is not registered!",
+					"edit": "Stat format in {channel} has been changed{format, select, undefined {} other { to: `{format}`}",
 					"remove": {
-						"notfound": "⚠️ This stat was not found in the stats data!",
-						"success": "🗑️ Stat and channel have been removed."
+						"notfound": "This stat was not found in the stats data!",
+						"success": "Stat and channel have been removed."
 					},
 					"category": {
-						"invalid": "❌ The selected channel must be a category.",
-						"set": "✅ Server stats category set to {category}."
+						"invalid": "The selected channel must be a category.",
+						"set": "Server stats category set to {category}."
 					}
 				},
 				"embed": {
 					"title": {
-						"view": "## 🛠️ Bot Settings in This Server"
+						"view": "## Bot Settings in This Server"
 					}
 				},
 				"feature": {
@@ -912,13 +912,13 @@
 					"server": {},
 					"welcome": {},
 					"minecraft": {},
-					"enabled": "✅ The **{feature}** feature has been **enabled**.",
-					"disabled": "✅ The **{feature}** feature has been **disabled**."
+					"enabled": "The **{feature}** feature has been **enabled**.",
+					"disabled": "The **{feature}** feature has been **disabled**."
 				},
 				"cooldown": {},
 				"command": {
 					"not": {
-						"found": "❌ Command not found."
+						"found": "Command not found."
 					}
 				},
 				"leveling": {
@@ -957,11 +957,11 @@
 					}
 				},
 				"language": {
-					"set": "✅ Bot language has been set to `{lang}`!"
+					"set": "Bot language has been set to `{lang}`!"
 				},
 				"no": {
-					"config": "❌ No settings have been saved for this server.",
-					"configured": "ℹ️ No settings have been configured."
+					"config": "No settings have been saved for this server.",
+					"configured": "ℹNo settings have been configured."
 				},
 				"empty": "Empty",
 				"not": {
@@ -969,13 +969,13 @@
 				},
 				"section": {
 					"boolean": "### ⭕ Active / Inactive Features",
-					"umum": "### ⚙️ General Settings",
-					"array": "### 🗃️ Structured Data",
-					"lainnya": "### ❓ Others"
+					"umum": "### General Settings",
+					"array": "### Structured Data",
+					"lainnya": "### Others"
 				},
 				"invite": {
 					"channel": {
-						"set": "✅ Invite log channel set to {channel}."
+						"set": "Invite log channel set to {channel}."
 					}
 				},
 				"clan": {
@@ -1005,7 +1005,7 @@
 					"footer": "Page {page} of {totalPages} • Total Premium Users: {totalUsers}",
 					"not": {
 						"your": {
-							"interaction": "❌ This is not your interaction! Use the command yourself to view the premium list."
+							"interaction": "This is not your interaction! Use the command yourself to view the premium list."
 						}
 					}
 				},
@@ -1063,12 +1063,12 @@
 		},
 		"events": {
 			"messageCreate": {
-				"error": "❌ An error occurred while executing this command",
+				"error": "An error occurred while executing this command",
 				"subcommand": {
-					"required": "❌ | The command `{command}` requires a subcommand. Please use `/help {command}` for more information."
+					"required": "| The command `{command}` requires a subcommand. Please use `/help {command}` for more information."
 				},
-				"back": "## 👋 Welcome back, {user}!\nYou were AFK for **{duration}**.",
-				"line": "## 💤 **{user}** is AFK \n for {time}.\nReason: **{reason}**"
+				"back": "## Welcome back, {user}!\nYou were AFK for **{duration}**.",
+				"line": "## **{user}** is AFK \n for {time}.\nReason: **{reason}**"
 			},
 			"guildDelete": {
 				"events": {
@@ -1093,13 +1093,13 @@
 								"invite": "No Invite Link"
 							},
 							"welcome": {
-								"desc": "## 🎉 Thank you for inviting me!\nHello everyone! I'm **{bot}** and I'm ready to help your server!\n\nHere are some steps to get started:\n• Use `/help` to see all my features and commands.\n• Configure your server settings with `/set view` (admin only).\n• Visit my website at [kythia.my.id](https://kythia.my.id/commands) for documentation and more info.\n\nIf you need help, just mention me or contact my owner `kenndeclouv`!\n",
-								"fallback": "## 🎉 Thank you for inviting me!\nHello everyone! I'm **{bot}** and I'm ready to help your server!\n\nHere are some steps to get started:\n• Use `/help` to see all my features and commands.\n• Configure your server settings with `/set view` (admin only).\n• Visit my website at [kythia.my.id](https://kythia.my.id/commands) for documentation and more info.\n\nIf you need help, just mention me or contact my owner `kenndeclouv`!\n"
+								"desc": "## Thank you for inviting me!\nHello everyone! I'm **{bot}** and I'm ready to help your server!\n\nHere are some steps to get started:\n• Use `/help` to see all my features and commands.\n• Configure your server settings with `/set view` (admin only).\n• Visit my website at [kythia.my.id](https://kythia.my.id/commands) for documentation and more info.\n\nIf you need help, just mention me or contact my owner `kenndeclouv`!",
+								"fallback": "## Thank you for inviting me!\nHello everyone! I'm **{bot}** and I'm ready to help your server!\n\nHere are some steps to get started:\n• Use `/help` to see all my features and commands.\n• Configure your server settings with `/set view` (admin only).\n• Visit my website at [kythia.my.id](https://kythia.my.id/commands) for documentation and more info.\n\nIf you need help, just mention me or contact my owner `kenndeclouv`!"
 							},
 							"dm": {
-								"title": "## 🎉 Thank you for inviting me!",
-								"desc": "Hello {user}! Thank you so much for adding **{bot}** to your server **{guild}**!\n\nI'm so excited to be part of your community! Here are some quick links to help you get started:\n• Head to our **[Dashboard]({dashboard})** to easily configure everything.\n• Use `/help` in the server to see all my features and commands.\n\nIf you have any questions or need help setting me up, feel free to join my support server or contact my owner!\n\nWith lots of love, {bot} 💖",
-								"fallback": "## 🎉 Thank you for inviting me!\nHello {user}! Thank you so much for adding **{bot}** to your server **{guild}**!\n\nI'm so excited to be part of your community! Here are some quick links to help you get started:\n• Head to our **Dashboard** ({dashboard}) to easily configure everything.\n• Use `/help` in the server to see all my features and commands.\n\nIf you have any questions or need help setting me up, feel free to join my support server or contact my owner!\n\nWith lots of love, {bot} 💖"
+								"title": "## Thank you for inviting me!",
+								"desc": "Hello {user}! Thank you so much for adding **{bot}** to your server **{guild}**!\n\nI'm so excited to be part of your community! Here are some quick links to help you get started:\n• Head to our **[Dashboard]({dashboard})** to easily configure everything.\n• Use `/help` in the server to see all my features and commands.\n\nIf you have any questions or need help setting me up, feel free to join my support server or contact my owner!\n\nWith lots of love, {bot}",
+								"fallback": "## Thank you for inviting me!\nHello {user}! Thank you so much for adding **{bot}** to your server **{guild}**!\n\nI'm so excited to be part of your community! Here are some quick links to help you get started:\n• Head to our **Dashboard** ({dashboard}) to easily configure everything.\n• Use `/help` in the server to see all my features and commands.\n\nIf you have any questions or need help setting me up, feel free to join my support server or contact my owner!\n\nWith lots of love, {bot}"
 							},
 							"min": {
 								"members": "## {bot} Leave!\nSorry, I only join servers with at least **{threshold} members**.\nFeel free to invite me back once your server has grown — I'd love to be part of your community!"
@@ -1166,12 +1166,12 @@
 			},
 			"system": {
 				"warning": {
-					"public": "🚫 **Warning!** Your message (<@{userId}>) was removed for **{reason}**.",
+					"public": "**Warning!** Your message (<@{userId}>) was removed for **{reason}**.",
 					"dm": {
-						"description": "## 🚫 Automatic Warning\nYour message in **{guildName}** was removed because **{reason}**."
+						"description": "## Automatic Warning\nYour message in **{guildName}** was removed because **{reason}**."
 					},
 					"log": {
-						"description": "## 🚨 Automod Log\n**User:** <@{userId}> (`{userTag}` | `{userId}`)\n**Channel:** <#{channelId}> (`{channelName}`)\n**Reason:** {reason}\n\n**Message:**```{originalContent}```",
+						"description": "## Automod Log\n**User:** <@{userId}> (`{userTag}` | `{userId}`)\n**Channel:** <#{channelId}> (`{channelName}`)\n**Reason:** {reason}\n\n**Message:**```{originalContent}```",
 						"field": {
 							"sentat": "Message Sent At"
 						}
@@ -1190,28 +1190,28 @@
 				"system": {
 					"automod": {
 						"badword": {
-							"detected": "🚨 Bad word detected `{word}`. Please keep the chat clean."
+							"detected": "Bad word detected `{word}`. Please keep the chat clean."
 						},
 						"mention": {
-							"spam": "🚨 Mention spam detected! Please avoid excessive mentions."
+							"spam": "Mention spam detected! Please avoid excessive mentions."
 						},
 						"badname": {
-							"detected": "🚨 Bad name detected `{word}`. Please keep your username clean."
+							"detected": "Bad name detected `{word}`. Please keep your username clean."
 						},
 						"invite": {
-							"detected": "🚨 Discord invite detected! Sharing invites is not allowed."
+							"detected": "Discord invite detected! Sharing invites is not allowed."
 						},
 						"link": {
-							"detected": "🚨 Link detected! Sharing links is not allowed."
+							"detected": "Link detected! Sharing links is not allowed."
 						},
 						"capslock": {
-							"detected": "🚨 Too many capital letters detected! Please avoid using excessive uppercase."
+							"detected": "Too many capital letters detected! Please avoid using excessive uppercase."
 						},
 						"emojispam": {
-							"detected": "🚨 Emoji spam detected! Please avoid overusing emojis."
+							"detected": "Emoji spam detected! Please avoid overusing emojis."
 						},
 						"zalgo": {
-							"detected": "🚨 Zalgo text detected! Please use normal characters."
+							"detected": "Zalgo text detected! Please use normal characters."
 						}
 					}
 				}
@@ -1219,7 +1219,7 @@
 			"handlers": {
 				"errorhandler": {
 					"webhook": {
-						"title": "## ❌ Error at {user}",
+						"title": "## Error at {user}",
 						"footer": "-# {context}"
 					}
 				}
@@ -1228,15 +1228,15 @@
 		"system": {
 			"automod": {
 				"spam": {
-					"short": "🚨 Spam detected! Please avoid excessive spam.",
-					"duplicate": "🚨 Duplicate message detected! Please avoid excessive duplicate messages.",
-					"fast": "🚨 Fast message detected! Please avoid excessive fast messages.",
-					"generic": "🚨 Spam detected! Please avoid excessive spam."
+					"short": "Spam detected! Please avoid excessive spam.",
+					"duplicate": "Duplicate message detected! Please avoid excessive duplicate messages.",
+					"fast": "Fast message detected! Please avoid excessive fast messages.",
+					"generic": "Spam detected! Please avoid excessive spam."
 				}
 			}
 		},
 		"testall": {
-			"no_schema": "❌ No command schema found to test."
+			"no_schema": "No command schema found to test."
 		}
 	},
 	"system": {

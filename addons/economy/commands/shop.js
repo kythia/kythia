@@ -14,18 +14,16 @@ const shopData = require('../helpers/items');
 const { toBigIntSafe } = require('../helpers/bigint');
 const { BaseCommand } = require('kythia-core');
 const shopHelper = require('../helpers/shop');
-
 const allItems = Object.values(shopData).flat();
 
 // Helpers extracted to addons/economy/helpers/shop.js
 
 class ShopCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('shop')
-			.setDescription('🛒 Look and buy items from the shop.');
+			.setDescription('Look and buy items from the shop.');
 	async execute(interaction) {
 		const { t, kythiaConfig, models } = interaction.client.container;
 		const { KythiaUser, Inventory } = models;
@@ -267,5 +265,4 @@ class ShopCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ShopCommand;

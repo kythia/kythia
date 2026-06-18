@@ -13,9 +13,7 @@ const divorceConfirmations = new Map();
 const { DIVORCE_CONFIRM_EXPIRE } = require('../../helpers/constants');
 class DivorceCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
-		subcommand
-			.setName('divorce')
-			.setDescription('💔 End your current marriage');
+		subcommand.setName('divorce').setDescription('End your current marriage');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;

@@ -8,16 +8,13 @@
 
 const { MessageFlags } = require('discord.js');
 const { DateTime } = require('luxon');
-
 const { BaseCommand } = require('kythia-core');
-
 class SetCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('set')
-			.setDescription('📅 Set your birthday.')
+			.setDescription('Set your birthday.')
 			.addIntegerOption((option) =>
 				option
 					.setName('day')
@@ -44,22 +41,25 @@ class SetCommand extends BaseCommand {
 					.setMinValue(1900)
 					.setMaxValue(new Date().getFullYear()),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { UserBirthday } = models;
 		const { simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const day = interaction.options.getInteger('day');
 		const month = interaction.options.getInteger('month');
 		const year = interaction.options.getInteger('year');
 
 		// Validate Date
 		// Luxon handles validation better than native Date
-		const dateObj = DateTime.fromObject({ day, month, year: year || 2000 });
+		const dateObj = DateTime.fromObject({
+			day,
+			month,
+			year: year || 2000,
+		});
 		if (!dateObj.isValid) {
 			const msg = await t(interaction, 'birthday.set.error.invalid_date');
 			const components = await simpleContainer(interaction, msg, {
@@ -70,19 +70,20 @@ class SetCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		await UserBirthday.updateOrCreateCache(
 			{
 				guildId: interaction.guild.id,
 				userId: interaction.user.id,
 			},
-			{ day, month, year },
+			{
+				day,
+				month,
+				year,
+			},
 		);
-
 		const successMsg = await t(interaction, 'birthday.set.success', {
 			date: dateObj.toFormat(year ? 'DDDD' : 'MMMM d'),
 		});
-
 		const components = await simpleContainer(interaction, successMsg);
 		await interaction.editReply({
 			components,
@@ -90,5 +91,4 @@ class SetCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = SetCommand;

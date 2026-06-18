@@ -26,14 +26,12 @@ const { toBigIntSafe } = require('../../helpers/bigint');
 const { BaseCommand } = require('kythia-core');
 const { SLIPPAGE_TOLERANCE_PCT } = require('../../helpers/constants');
 const kythtradeHelper = require('../../helpers/kythTrade');
-
 class SellCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('sell')
-			.setDescription('💰 Sell an asset to the global market.')
+			.setDescription('Sell an asset to the global market.')
 			.addStringOption((option) =>
 				option
 					.setName('asset')
@@ -440,5 +438,4 @@ class SellCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = SellCommand;

@@ -15,26 +15,21 @@ const {
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 const {
 	WALLPAPERS,
 	USERNAME_REGEX,
 	MULTI_PLAYER_WALLPAPERS,
 } = require('../../helpers/constants');
-
 const SKIN_API_BASE =
 	'https://starlightskins.lunareclipse.studio/render/wallpaper';
-
 class WallpaperCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('wallpaper')
 			.setDescription(
-				'🖼️ Generate a Minecraft wallpaper featuring one or more players',
+				'Generate a Minecraft wallpaper featuring one or more players',
 			)
 			.addStringOption((option) =>
 				option
@@ -53,14 +48,11 @@ class WallpaperCommand extends BaseCommand {
 					.setMinLength(3)
 					.setMaxLength(128),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const wallpaperId = interaction.options.getString('wallpaper');
 		const rawPlayers = interaction.options.getString('players');
 
@@ -69,7 +61,6 @@ class WallpaperCommand extends BaseCommand {
 			.split(',')
 			.map((p) => p.trim())
 			.filter(Boolean);
-
 		if (allPlayers.length === 0) {
 			const msg = await t(
 				interaction,
@@ -83,7 +74,6 @@ class WallpaperCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		for (const name of allPlayers) {
 			if (!USERNAME_REGEX.test(name)) {
 				const msg = await t(
@@ -104,13 +94,14 @@ class WallpaperCommand extends BaseCommand {
 		const playerList = MULTI_PLAYER_WALLPAPERS.has(wallpaperId)
 			? allPlayers
 			: [allPlayers[0]];
-
 		const playersParam = playerList.map(encodeURIComponent).join(',');
 		const imageUrl = `${SKIN_API_BASE}/${wallpaperId}/${playersParam}`;
 
 		// Validate the URL actually returns an image (not a JSON error from the API)
 		try {
-			const check = await fetch(imageUrl, { method: 'HEAD' });
+			const check = await fetch(imageUrl, {
+				method: 'HEAD',
+			});
 			const contentType = check.headers.get('content-type') ?? '';
 			if (!contentType.startsWith('image/')) {
 				const msg = await t(
@@ -141,20 +132,16 @@ class WallpaperCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const wallpaperLabel =
 			WALLPAPERS.find((w) => w.value === wallpaperId)?.name ?? wallpaperId;
-
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const playerDisplay =
 			playerList.length === 1
 				? playerList[0]
 				: `${playerList.slice(0, -1).join(', ')} & ${playerList.at(-1)}`;
-
 		const container_ = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
@@ -187,12 +174,10 @@ class WallpaperCommand extends BaseCommand {
 					}),
 				),
 			);
-
 		return interaction.editReply({
 			components: [container_],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = WallpaperCommand;

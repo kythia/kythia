@@ -12,7 +12,7 @@ const { BaseCommand } = require('kythia-core');
 const { KISS_COOLDOWN } = require('../../helpers/constants');
 class KissCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
-		subcommand.setName('kiss').setDescription('😘 Kiss your partner');
+		subcommand.setName('kiss').setDescription('Kiss your partner');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;

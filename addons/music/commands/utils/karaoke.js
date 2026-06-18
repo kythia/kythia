@@ -16,7 +16,7 @@ class KaraokeCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('karaoke')
-			.setDescription('🎤 Toggle live synced karaoke lyrics');
+			.setDescription('Toggle live synced karaoke lyrics');
 
 	async execute(interaction) {
 		const container = this.container;

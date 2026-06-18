@@ -1,43 +1,43 @@
 {
 	"globalchat": {
 		"remove": {
-			"success": "✅ This server has been **removed** from the global chat network.\n\nGlobal chat will no longer function here until `/globalchat setup` is re-run.",
+			"success": "This server has been **removed** from the global chat network.\n\nGlobal chat will no longer function here until `/globalchat setup` is re-run.",
 			"not": {
-				"found": "⚠️ This server is **not registered** in the global chat system."
+				"found": "This server is **not registered** in the global chat system."
 			},
-			"failed": "❌ Failed to remove this guild from global chat. Please try again later.",
-			"error": "❌ Unable to remove this server from the global chat network. Please try again later."
+			"failed": "Failed to remove this guild from global chat. Please try again later.",
+			"error": "Unable to remove this server from the global chat network. Please try again later."
 		},
 		"setup": {
 			"check": {
-				"failed": "❌ Unable to verify existing setup. Please try again later."
+				"failed": "Unable to verify existing setup. Please try again later."
 			},
 			"already": {
-				"set": "❌ Global chat channel is already set: {channel}"
+				"set": "Global chat channel is already set: {channel}"
 			},
 			"webhook": {
-				"failed": "❌ Couldn't create webhook in the selected channel. Please check my permissions."
+				"failed": "Couldn't create webhook in the selected channel. Please check my permissions."
 			},
 			"create": {
 				"channel": {
-					"failed": "❌ Failed to create global chat channel or webhook. Please check my permissions."
+					"failed": "Failed to create global chat channel or webhook. Please check my permissions."
 				}
 			},
 			"register": {
 				"api": {
-					"failed": "❌ Failed to register global chat setup with API. Please try again later."
+					"failed": "Failed to register global chat setup with API. Please try again later."
 				}
 			},
-			"success": "✅ Global chat channel successfully set: {channel}",
-			"title": "## 🌐 Global Chat Setup",
+			"success": "Global chat channel successfully set: {channel}",
+			"title": "## Global Chat Setup",
 			"intro": {
 				"desc": "This is your new global chat channel! Interact with users from other servers."
 			}
 		},
 		"info": {
-			"title": "## 🌏 **Kythia Global Chat Information**",
+			"title": "## **Kythia Global Chat Information**",
 			"error": {
-				"fetch": "❌ Failed to fetch Global Chat statistics data from the API."
+				"fetch": "Failed to fetch Global Chat statistics data from the API."
 			}
 		}
 	}

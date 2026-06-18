@@ -23,7 +23,7 @@ class GrabCommand extends BaseCommand {
 	botPermissions = PermissionFlagsBits.ManageGuildExpressions;
 	slashCommand = new SlashCommandBuilder()
 		.setName('grab')
-		.setDescription('🛍️ grab stickers or emojis from messages.')
+		.setDescription('grab stickers or emojis from messages.')
 		.addSubcommand((sub) =>
 			sub
 				.setName('sticker')

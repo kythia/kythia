@@ -17,7 +17,7 @@ class PlayCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('play')
-			.setDescription('🎶 Play a song or add it to the queue')
+			.setDescription('Play a song or add it to the queue')
 			.addStringOption((option) =>
 				option
 					.setName('search')

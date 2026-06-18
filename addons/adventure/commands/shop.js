@@ -7,18 +7,13 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 const itemsDataFile = require('../helpers/items');
 const shopuiHelper = require('../helpers/shopUi');
-
 const shopData = itemsDataFile.items;
 const allItems = Object.values(shopData).flat();
-
 class ShopCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('shop')
@@ -27,7 +22,7 @@ class ShopCommand extends BaseCommand {
 				fr: 'boutique',
 				ja: 'ショップ',
 			})
-			.setDescription('🛒 Buy items from the adventure shop!')
+			.setDescription('Buy items from the adventure shop!')
 			.setDescriptionLocalizations({
 				id: '🛒 Beli item petualangan di toko',
 				fr: "🛒 Achète des objets d'aventure à la boutique !",
@@ -49,7 +44,6 @@ class ShopCommand extends BaseCommand {
 						})),
 					),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, logger } = container;
@@ -60,15 +54,11 @@ class ShopCommand extends BaseCommand {
 			getItemsInCategory,
 		} = shopuiHelper;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const userId = interaction.user.id;
-
 		const user = await UserAdventure.getCache({
 			userId,
 		});
-
 		if (!user) {
 			const msg = await t(interaction, 'adventure.no.character');
 			const components = await simpleContainer(interaction, msg, {
@@ -79,10 +69,8 @@ class ShopCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const category = interaction.options.getString('category') || 'equipment';
 		let currentPage = 1;
-
 		const { items: pageItems, totalPages } = getItemsInCategory(
 			category,
 			currentPage,
@@ -103,18 +91,15 @@ class ShopCommand extends BaseCommand {
 			pageItems,
 			components,
 		);
-
 		const replyMessage = await interaction.editReply({
 			components: [shopContainer],
 			flags: MessageFlags.IsComponentsV2,
 			fetchReply: true,
 		});
-
 		const collector = replyMessage.createMessageComponentCollector({
 			filter: (i) => i.user.id === interaction.user.id,
 			time: 300_000,
 		});
-
 		collector.on('collect', async (i) => {
 			try {
 				await i.deferUpdate();
@@ -122,7 +107,6 @@ class ShopCommand extends BaseCommand {
 				let userForUpdate = await UserAdventure.getCache({
 					userId,
 				});
-
 				if (i.isStringSelectMenu()) {
 					if (i.customId === 'adventure_shop_category') {
 						currentCategory = i.values[0].replace('shop_category_', '');
@@ -130,18 +114,18 @@ class ShopCommand extends BaseCommand {
 					} else if (i.customId === 'adventure_shop_select_item') {
 						const itemId = i.values[0];
 						const item = allItems.find((it) => it.id === itemId);
-
 						if (!item) {
 							return i.followUp({
 								components: await simpleContainer(
 									interaction,
 									await t(interaction, 'adventure.shop.item.not.found'),
-									{ color: 'Red' },
+									{
+										color: 'Red',
+									},
 								),
 								flags: MessageFlags.IsComponentsV2,
 							});
 						}
-
 						if (userForUpdate.gold < item.price) {
 							return i.followUp({
 								components: await simpleContainer(
@@ -155,24 +139,22 @@ class ShopCommand extends BaseCommand {
 								flags: MessageFlags.IsComponentsV2,
 							});
 						}
-
 						userForUpdate.gold -= item.price;
 						await userForUpdate.save();
-
 						const [existingItem, created] =
 							await InventoryAdventure.getOrCreateCache(
 								{
 									userId: userForUpdate.userId,
 									itemName: item.id,
 								},
-								{ quantity: 1 },
+								{
+									quantity: 1,
+								},
 							);
-
 						if (!created) {
 							existingItem.quantity += 1;
 							await existingItem.save();
 						}
-
 						await i.followUp({
 							components: await simpleContainer(
 								interaction,
@@ -183,7 +165,6 @@ class ShopCommand extends BaseCommand {
 							),
 							flags: MessageFlags.IsComponentsV2,
 						});
-
 						userForUpdate = await UserAdventure.getCache({
 							userId,
 						});
@@ -196,11 +177,9 @@ class ShopCommand extends BaseCommand {
 						currentPage = currentPage + 1;
 					}
 				}
-
 				const { items: newPageItems, totalPages: newTotalPages } =
 					getItemsInCategory(currentCategory, currentPage, 5);
 				currentPage = Math.max(1, Math.min(currentPage, newTotalPages));
-
 				const newComponents = await generateShopComponentRows(
 					interaction,
 					currentPage,
@@ -216,7 +195,6 @@ class ShopCommand extends BaseCommand {
 					newPageItems,
 					newComponents,
 				);
-
 				await i.editReply({
 					components: [newContainer],
 					flags: MessageFlags.IsComponentsV2,
@@ -237,11 +215,9 @@ class ShopCommand extends BaseCommand {
 				}
 			}
 		});
-
 		collector.on('end', () => {
 			// Session ended, buttons will just stop responding
 		});
 	}
 }
-
 exports.default = ShopCommand;

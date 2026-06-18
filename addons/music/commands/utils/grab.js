@@ -16,7 +16,7 @@ class GrabCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('grab')
-			.setDescription('📥 Grab the current song to your DMs');
+			.setDescription('Grab the current song to your DMs');
 
 	async execute(interaction) {
 		const container = this.container;

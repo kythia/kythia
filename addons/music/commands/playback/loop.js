@@ -16,7 +16,7 @@ class LoopCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('loop')
-			.setDescription('🔁 Set repeat mode')
+			.setDescription('Set repeat mode')
 			.addStringOption((option) =>
 				option
 					.setName('mode')

@@ -8,37 +8,30 @@
 
 const { MessageFlags } = require('discord.js');
 const { restoreLastStreak } = require('../helpers');
-
 const { BaseCommand } = require('kythia-core');
-
 class RestoreCommand extends BaseCommand {
 	subcommand = true;
 	voteLocked = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('restore')
 			.setDescription(
-				'🔄 Restore your lost streak back to what it was before the reset.',
+				'Restore your lost streak back to what it was before the reset.',
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
-
 		const guildId = interaction.guild.id;
-		const serverSetting = await ServerSetting.getCache({ guildId });
+		const serverSetting = await ServerSetting.getCache({
+			guildId,
+		});
 		const streakEmoji = serverSetting?.streakEmoji || '🔥';
-
 		await interaction.deferReply();
-
 		const targetMember = interaction.member;
-
 		const { status, streak, rewardRolesGiven, restoreCount, restoreQuota } =
 			await restoreLastStreak(container, targetMember, serverSetting);
-
 		if (status === 'NO_STREAK_TO_RESTORE') {
 			const msg =
 				(await t(interaction, 'streak.streak.restore.last.title_md')) +
@@ -54,7 +47,6 @@ class RestoreCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (status === 'ALREADY_RESTORED') {
 			const msg =
 				(await t(interaction, 'streak.streak.restore.last.title_md')) +
@@ -70,7 +62,6 @@ class RestoreCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (status === 'QUOTA_EXCEEDED') {
 			const msg =
 				(await t(interaction, 'streak.streak.restore.last.title_md')) +
@@ -104,9 +95,7 @@ class RestoreCommand extends BaseCommand {
 				roles: roleMentions.join(', '),
 			})}`;
 		}
-
 		const targetMention = interaction.user.toString();
-
 		const msg =
 			(await t(interaction, 'streak.streak.restore.last.title_md')) +
 			'\n' +
@@ -128,7 +117,6 @@ class RestoreCommand extends BaseCommand {
 				remaining: restoreQuota - restoreCount,
 				quota: restoreQuota,
 			}));
-
 		const components = await simpleContainer(interaction, msg);
 		return interaction.editReply({
 			components,
@@ -136,5 +124,4 @@ class RestoreCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = RestoreCommand;

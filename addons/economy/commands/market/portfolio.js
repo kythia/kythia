@@ -23,11 +23,10 @@ const marketuiHelper = require('../../helpers/marketUi');
 
 class PortfolioCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('portfolio')
-			.setDescription('💼 View your personal asset portfolio.');
+			.setDescription('View your personal asset portfolio.');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;
@@ -113,7 +112,9 @@ class PortfolioCommand extends BaseCommand {
 						desc: await t(
 							interaction,
 							'economy.market.portfolio.holding_desc',
-							{ ...holding },
+							{
+								...holding,
+							},
 						),
 					}),
 				);
@@ -266,5 +267,4 @@ class PortfolioCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = PortfolioCommand;

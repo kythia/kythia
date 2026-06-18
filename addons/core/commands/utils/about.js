@@ -27,7 +27,7 @@ class AboutCommand extends BaseCommand {
 
 	slashCommand = new SlashCommandBuilder()
 		.setName('about')
-		.setDescription(`😋 A brief introduction about kythia`);
+		.setDescription(`A brief introduction about kythia`);
 
 	async execute(interaction) {
 		const container = this.container;

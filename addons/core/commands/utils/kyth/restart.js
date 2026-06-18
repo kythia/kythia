@@ -16,22 +16,18 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 let restartTimer = null;
-
 class RestartCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('restart')
-			.setDescription('🔁 Restarts the bot with optional scheduler.')
+			.setDescription('Restarts the bot with optional scheduler.')
 			.addIntegerOption((option) =>
 				option
 					.setName('minutes')
-					.setDescription('⏱️ Restart in X minutes (e.g. 30)')
+					.setDescription('\u23F1Restart in X minutes (e.g. 30)')
 					.setMinValue(1),
 			)
 			.addStringOption((option) =>
@@ -42,33 +38,36 @@ class RestartCommand extends BaseCommand {
 					),
 			)
 			.addStringOption((option) =>
-				option
-					.setName('target')
-					.setDescription('🎯 What to restart')
-					.addChoices(
-						{ name: 'Current Shard', value: 'current' },
-						{ name: 'All Shards', value: 'all' },
-						{ name: 'Master Process', value: 'master' },
-					),
+				option.setName('target').setDescription('What to restart').addChoices(
+					{
+						name: 'Current Shard',
+						value: 'current',
+					},
+					{
+						name: 'All Shards',
+						value: 'all',
+					},
+					{
+						name: 'Master Process',
+						value: 'master',
+					},
+				),
 			)
 			.addIntegerOption((option) =>
 				option
 					.setName('shard_id')
-					.setDescription('🔢 Specific shard ID to restart (Overrides target)')
+					.setDescription('Specific shard ID to restart (Overrides target)')
 					.setMinValue(0),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
 		const { simpleContainer } = helpers.discord;
-
 		const minutes = interaction.options.getInteger('minutes');
 		const timeStr = interaction.options.getString('time');
 		const target = interaction.options.getString('target') || 'current';
 		const shardId = interaction.options.getInteger('shard_id');
-
 		const doRestart = async () => {
 			if (shardId !== null) {
 				if (!interaction.client.shard) {
@@ -80,12 +79,15 @@ class RestartCommand extends BaseCommand {
 								process.exit(0);
 							}
 						},
-						{ context: { shardId } },
+						{
+							context: {
+								shardId,
+							},
+						},
 					);
 				}
 				return;
 			}
-
 			if (target === 'all') {
 				if (!interaction.client.shard) {
 					process.exit(0);
@@ -94,7 +96,6 @@ class RestartCommand extends BaseCommand {
 				}
 				return;
 			}
-
 			if (target === 'master') {
 				if (interaction.client.shard) {
 					process.kill(process.ppid);
@@ -103,15 +104,12 @@ class RestartCommand extends BaseCommand {
 				}
 				return;
 			}
-
 			process.exit(0);
 		};
-
 		if (minutes || timeStr) {
 			let delayMs = 0;
 			let targetTime = new Date();
 			let mode = '';
-
 			if (timeStr) {
 				const [hours, mins] = timeStr.split(':').map(Number);
 				if (
@@ -132,13 +130,10 @@ class RestartCommand extends BaseCommand {
 						flags: MessageFlags.IsComponentsV2,
 					});
 				}
-
 				targetTime.setHours(hours, mins, 0, 0);
-
 				if (targetTime < new Date()) {
 					targetTime.setDate(targetTime.getDate() + 1);
 				}
-
 				delayMs = targetTime.getTime() - Date.now();
 				mode = `at **${timeStr}**`;
 			} else {
@@ -146,31 +141,27 @@ class RestartCommand extends BaseCommand {
 				targetTime = new Date(Date.now() + delayMs);
 				mode = `in **${minutes} minutes**`;
 			}
-
 			if (restartTimer) clearTimeout(restartTimer);
-
 			restartTimer = setTimeout(() => {
 				doRestart();
 			}, delayMs);
-
 			interaction.client.kythiaRestartTimestamp = targetTime.getTime();
-
 			const scheduleContainer = new ContainerBuilder().setAccentColor(
-				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+				convertColor(kythiaConfig.bot.color, {
+					from: 'hex',
+					to: 'decimal',
+				}),
 			);
-
 			scheduleContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
 					`\`⏱️\` **Restart Scheduled**\n\nSystem will restart ${mode}.\nTarget: <t:${Math.floor(targetTime.getTime() / 1000)}:R>`,
 				),
 			);
-
 			scheduleContainer.addSeparatorComponents(
 				new SeparatorBuilder()
 					.setSpacing(SeparatorSpacingSize.Small)
 					.setDivider(true),
 			);
-
 			scheduleContainer.addActionRowComponents(
 				new ActionRowBuilder().addComponents(
 					new ButtonBuilder()
@@ -179,26 +170,21 @@ class RestartCommand extends BaseCommand {
 						.setStyle(ButtonStyle.Secondary),
 				),
 			);
-
 			const msg = await interaction.reply({
 				components: [scheduleContainer],
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			const collector = msg.createMessageComponentCollector({
 				filter: (i) =>
 					i.user.id === interaction.user.id && i.customId === 'cancel_schedule',
 				time: delayMs < 2147483647 ? delayMs : 2147483647,
 			});
-
 			collector.on('collect', async (i) => {
 				if (restartTimer) {
 					clearTimeout(restartTimer);
 					restartTimer = null;
 				}
-
 				interaction.client.kythiaRestartTimestamp = null;
-
 				const msg = await t(interaction, 'core.utils.kyth.restart.cancelled');
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Green',
@@ -209,12 +195,13 @@ class RestartCommand extends BaseCommand {
 				});
 				collector.stop();
 			});
-
 			return;
 		}
-
 		const restartContainer = new ContainerBuilder().setAccentColor(
-			convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+			convertColor(kythiaConfig.bot.color, {
+				from: 'hex',
+				to: 'decimal',
+			}),
 		);
 		restartContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
@@ -238,23 +225,22 @@ class RestartCommand extends BaseCommand {
 					.setStyle(ButtonStyle.Secondary),
 			),
 		);
-
 		await interaction.reply({
 			components: [restartContainer],
 			flags: MessageFlags.IsComponentsV2,
 		});
-
 		const collector = interaction.channel.createMessageComponentCollector({
 			filter: (i) => i.user.id === interaction.user.id,
 			time: 15000,
 		});
-
 		collector.on('collect', async (i) => {
 			collector.stop('handled');
-
 			if (i.customId === 'cancel_restart') {
 				const cancelContainer = new ContainerBuilder().setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				);
 				cancelContainer.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
@@ -269,7 +255,10 @@ class RestartCommand extends BaseCommand {
 				} catch {}
 			} else if (i.customId === 'confirm_restart') {
 				const loadingContainer = new ContainerBuilder().setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				);
 				loadingContainer.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
@@ -285,11 +274,13 @@ class RestartCommand extends BaseCommand {
 				setTimeout(() => doRestart(), 1000);
 			}
 		});
-
 		collector.on('end', async (_collected, reason) => {
 			if (reason === 'time') {
 				const timeoutContainer = new ContainerBuilder().setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				);
 				timeoutContainer.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
@@ -304,5 +295,4 @@ class RestartCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = RestartCommand;

@@ -7,14 +7,11 @@
  */
 
 const { SlashCommandBuilder, InteractionContextType } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class InviteCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('invites')
-		.setDescription('🔗 Manage invites and rewards')
+		.setDescription('Manage invites and rewards')
 		.setContexts(InteractionContextType.Guild);
 }
-
 exports.default = InviteCommand;

@@ -14,7 +14,7 @@ class GroupCommand extends BaseCommand {
 	slashCommand = (subcommandGroup) =>
 		subcommandGroup
 			.setName('panel')
-			.setDescription('📋 Manage reaction role panels.');
+			.setDescription('Manage reaction role panels.');
 }
 
 exports.default = GroupCommand;

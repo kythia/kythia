@@ -7,15 +7,11 @@
  */
 
 const { SlashCommandBuilder } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class SocialAlertsCommand extends BaseCommand {
 	guildOnly = true;
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('social-alert')
-		.setDescription('📡 Manage YouTube social alerts for this server.');
+		.setDescription('Manage YouTube social alerts for this server.');
 }
-
 exports.default = SocialAlertsCommand;

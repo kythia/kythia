@@ -21,7 +21,7 @@ class ListCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
-			.setDescription('📜 List all reaction role panels in this server.');
+			.setDescription('List all reaction role panels in this server.');
 
 	async execute(interaction) {
 		const container = this.container;

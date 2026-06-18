@@ -14,15 +14,13 @@ const {
 	LISTING_FEE_KYTH,
 	REQUIRED_MEMBERS,
 } = require('../../helpers/constants');
-
 class CreateCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('create')
 			.setDescription(
-				"🚀 (Owner) Launch your server's local stock market via ICO.",
+				"(Owner) Launch your server's local stock market via ICO.",
 			)
 			.addStringOption((option) =>
 				option
@@ -44,9 +42,7 @@ class CreateCommand extends BaseCommand {
 					.setRequired(true)
 					.setMinValue(100),
 			);
-
 	userPermissions = ['Administrator'];
-
 	async execute(interaction) {
 		const container = this.container;
 		await interaction.deferReply();
@@ -61,19 +57,25 @@ class CreateCommand extends BaseCommand {
 			const msg = await t(
 				interaction,
 				'economy.guild_stock.create.error.members',
-				{ required: REQUIRED_MEMBERS, current: interaction.guild.memberCount },
+				{
+					required: REQUIRED_MEMBERS,
+					current: interaction.guild.memberCount,
+				},
 			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.create.failed', { msg }),
-				{ color: kythiaConfig.bot.color },
+				await t(interaction, 'economy.stock.create.failed', {
+					msg,
+				}),
+				{
+					color: kythiaConfig.bot.color,
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const ticker = interaction.options
 			.getString('ticker')
 			.toUpperCase()
@@ -85,8 +87,12 @@ class CreateCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.create.invalid_ticker', { msg }),
-				{ color: 'Red' },
+				await t(interaction, 'economy.stock.create.invalid_ticker', {
+					msg,
+				}),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -96,18 +102,26 @@ class CreateCommand extends BaseCommand {
 
 		// 2. Check if a pool already exists for this guild
 		const existingPool = await GuildLiquidityPool.getCache({
-			where: { guildId },
+			where: {
+				guildId,
+			},
 		});
 		if (existingPool) {
 			const msg = await t(
 				interaction,
 				'economy.guild_stock.create.error.exists',
-				{ ticker: existingPool.ticker },
+				{
+					ticker: existingPool.ticker,
+				},
 			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.create.already_listed', { msg }),
-				{ color: 'Red' },
+				await t(interaction, 'economy.stock.create.already_listed', {
+					msg,
+				}),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -117,35 +131,45 @@ class CreateCommand extends BaseCommand {
 
 		// 3. Check if ticker is already taken globally
 		const takenTicker = await GuildLiquidityPool.getCache({
-			where: { ticker },
+			where: {
+				ticker,
+			},
 		});
 		if (takenTicker) {
 			const msg = await t(
 				interaction,
 				'economy.guild_stock.create.error.taken',
-				{ ticker },
+				{
+					ticker,
+				},
 			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.create.ticker_taken', { msg }),
-				{ color: 'Red' },
+				await t(interaction, 'economy.stock.create.ticker_taken', {
+					msg,
+				}),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const initialKyth = interaction.options.getNumber('initial_kyth');
 		const initialSupply = interaction.options.getNumber('initial_supply');
 		const totalCost = LISTING_FEE_KYTH + initialKyth;
 
 		// 4. Check owner's KYTH balance
 		const [userEco] = await KythiaUser.findOrCreateCache({
-			where: { userId },
-			defaults: { userId },
+			where: {
+				userId,
+			},
+			defaults: {
+				userId,
+			},
 		});
-
 		if ((userEco.kythHolding || 0) < totalCost) {
 			const msg = await t(
 				interaction,
@@ -162,7 +186,9 @@ class CreateCommand extends BaseCommand {
 				await t(interaction, 'economy.stock.create.insufficient_funds', {
 					msg,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -194,44 +220,64 @@ class CreateCommand extends BaseCommand {
 				guildId,
 				balance: founderReward,
 			});
-
 			const initialPrice = (initialKyth / initialSupply).toFixed(4);
-
 			const title = await t(
 				interaction,
 				'economy.guild_stock.create.success.title',
-				{ ticker },
+				{
+					ticker,
+				},
 			);
 			const desc = await t(
 				interaction,
 				'economy.guild_stock.create.success.desc',
-				{ guildName: interaction.guild.name },
+				{
+					guildName: interaction.guild.name,
+				},
 			);
 			const priceText = await t(
 				interaction,
 				'economy.guild_stock.create.success.price',
-				{ ticker, price: initialPrice },
+				{
+					ticker,
+					price: initialPrice,
+				},
 			);
 			const liquidityText = await t(
 				interaction,
 				'economy.guild_stock.create.success.liquidity',
-				{ liquidity: initialKyth },
+				{
+					liquidity: initialKyth,
+				},
 			);
 			const supplyText = await t(
 				interaction,
 				'economy.guild_stock.create.success.supply',
-				{ supply: initialSupply, ticker },
+				{
+					supply: initialSupply,
+					ticker,
+				},
 			);
 			const footer = await t(
 				interaction,
 				'economy.guild_stock.create.success.footer',
-				{ fee: LISTING_FEE_KYTH, reward: founderReward, ticker },
+				{
+					fee: LISTING_FEE_KYTH,
+					reward: founderReward,
+					ticker,
+				},
 			);
-
 			const fullText = await t(
 				interaction,
 				'economy.guild_stock.create.title_md',
-				{ title, desc, priceText, liquidityText, supplyText, footer },
+				{
+					title,
+					desc,
+					priceText,
+					liquidityText,
+					supplyText,
+					footer,
+				},
 			);
 			const components = await simpleContainer(interaction, fullText, {
 				color: 'Green',
@@ -247,8 +293,12 @@ class CreateCommand extends BaseCommand {
 			const msg = await t(interaction, 'economy.guild_stock.create.error.db');
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.create.db_error', { msg }),
-				{ color: 'Red' },
+				await t(interaction, 'economy.stock.create.db_error', {
+					msg,
+				}),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -257,5 +307,4 @@ class CreateCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = CreateCommand;

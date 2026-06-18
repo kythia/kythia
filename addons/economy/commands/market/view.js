@@ -38,11 +38,10 @@ const marketuiHelper = require('../../helpers/marketUi');
 
 class ViewCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('view')
-			.setDescription('📈 View real-time crypto prices from the global market.')
+			.setDescription('View real-time crypto prices from the global market.')
 			.addStringOption((option) =>
 				option
 					.setName('asset')
@@ -474,5 +473,4 @@ class ViewCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = ViewCommand;
