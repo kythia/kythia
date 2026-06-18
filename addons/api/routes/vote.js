@@ -27,8 +27,8 @@ app.get('/leaderboard', async (c) => {
 				},
 			},
 			order: [['votePoints', 'DESC']],
-			limit: 100,
-			// Fetch up to 100 top voters
+			// Fetch 20 top voters
+			limit: 20,
 			ttl: 5 * 60 * 1000,
 		});
 
