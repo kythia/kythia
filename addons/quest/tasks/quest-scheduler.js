@@ -64,7 +64,7 @@ async function fetchQuestsFromAny(urls, logger) {
 class QuestSchedulerTask extends BaseTask {
 	task = {
 		taskName: 'quest-notifier',
-		schedule: '* * * * *', // Every 30 minutes
+		schedule: '*/10 * * * *', // Every 10 minutes
 	};
 	async execute(container) {
 		const { models, logger, client, kythiaConfig } =
