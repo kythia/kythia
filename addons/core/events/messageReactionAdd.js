@@ -5,25 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class MessageReactionAddEvent extends BaseEvent {
 	async execute(reaction, user) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
-		const { helpers, models, logger, t } = container;
+		const { kythiaConfig, helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const guildId = reaction.message.guild?.id;
 		try {
 			if (!user) return; // Prevent null user errors
@@ -72,52 +67,26 @@ class MessageReactionAddEvent extends BaseEvent {
 			const emojiDisplay = reaction.emoji.id
 				? `<:${reaction.emoji.name}:${reaction.emoji.id}>`
 				: reaction.emoji.name;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Green', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`😀 **Reaction Added** in <#${message.channelId}>\n\n` +
-								`**User:** ${user.tag} (<@${user.id}>)\n` +
-								`**Emoji:** ${emojiDisplay}\n` +
-								`**Message:** [Jump to Message](${message.url})`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **User:** ${user.tag} (${user.id})\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Reaction Added** in <#${message.channelId}>\n\n` +
+					`**User:** ${user.tag} (<@${user.id}>)\n` +
+					`**Emoji:** ${emojiDisplay}\n` +
+					`**Message:** [Jump to Message](${message.url})` +
+					'\n\n' +
+					(`**User:** ${user.tag} (${user.id})\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Green', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -129,7 +98,7 @@ class MessageReactionAddEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'messageReactionAdd',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

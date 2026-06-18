@@ -9,10 +9,6 @@ const {
 	AuditLogEvent,
 	AttachmentBuilder,
 	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
 
@@ -24,7 +20,7 @@ const { BaseEvent } = require('kythia-core');
 class MessageDeleteEvent extends BaseEvent {
 	async execute(message) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
@@ -32,8 +28,9 @@ class MessageDeleteEvent extends BaseEvent {
 		// 1. Basic Checks
 		if (!message.guild || !message.channelId) return;
 		if (message.author?.bot) return;
-		const { models, helpers, logger, t, redis } = container;
+		const { kythiaConfig, models, helpers, logger, t, redis } = container;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 		const guildId = message.guild.id;
 
@@ -142,55 +139,29 @@ class MessageDeleteEvent extends BaseEvent {
 					.join(', ');
 				attachmentText = `\n**Attachments (${message.attachments.size}):** ${fileNames.length > 200 ? `${fileNames.substring(0, 197)}...` : fileNames}`;
 			}
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor(isSelfDelete ? 'Orange' : 'Red', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`🗑️ **Message Deleted** in <#${message.channelId}>\n\n` +
-								`**Author:** ${message.author ? `<@${message.author.id}>` : 'Unknown (Partial)'}\n` +
-								`**Executor:** <@${executorId}> ${isSelfDelete ? '(Self)' : '🔨'}` +
-								contentText +
-								attachmentText +
-								(logReason ? `\n\n**Reason:** ${logReason}` : ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Executor:** ${executorTag}${isSelfDelete ? ' (Self Delete)' : ''}\n` +
-								`� **Message ID:** ${message.id}\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Message Deleted** in <#${message.channelId}>\n\n` +
+					`**Author:** ${message.author ? `<@${message.author.id}>` : 'Unknown (Partial)'}\n` +
+					`**Executor:** <@${executorId}> ${isSelfDelete ? '(Self)' : ''}` +
+					contentText +
+					attachmentText +
+					(logReason ? `\n\n**Reason:** ${logReason}` : '') +
+					'\n\n' +
+					(`**Executor:** ${executorTag}${isSelfDelete ? ' (Self Delete)' : ''}\n` +
+						`� **Message ID:** ${message.id}\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor(isSelfDelete ? 'Orange' : 'Red', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 
 			// 7. Send Log (Include Files!)
 			await logChannel.send({
@@ -208,7 +179,7 @@ class MessageDeleteEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'messageDelete',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

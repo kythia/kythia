@@ -5,25 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class GuildScheduledEventUserRemoveEvent extends BaseEvent {
 	async execute(guildScheduledEvent, user) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
-		const { helpers, models, logger, t } = container;
+		const { kythiaConfig, helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const guild = guildScheduledEvent.guild;
 		const guildId = guild.id;
 		if (!guild) return;
@@ -43,54 +38,28 @@ class GuildScheduledEventUserRemoveEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Red', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`📅 **Event Unsubscription**\n\n` +
-								`**User:** ${user.tag} (<@${user.id}>)\n` +
-								`**Event:** ${guildScheduledEvent.name}\n` +
-								`**Description:** ${guildScheduledEvent.description || 'No description'}\n` +
-								`**Start Time:** <t:${Math.floor(guildScheduledEvent.scheduledStartTimestamp / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **User:** ${user.tag} (${user.id})\n` +
-								`🔗 **Event ID:** ${guildScheduledEvent.id}\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Event Unsubscription**\n\n` +
+					`**User:** ${user.tag} (<@${user.id}>)\n` +
+					`**Event:** ${guildScheduledEvent.name}\n` +
+					`**Description:** ${guildScheduledEvent.description || 'No description'}\n` +
+					`**Start Time:** <t:${Math.floor(guildScheduledEvent.scheduledStartTimestamp / 1000)}:F>` +
+					'\n\n' +
+					(`**User:** ${user.tag} (${user.id})\n` +
+						`**Event ID:** ${guildScheduledEvent.id}\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Red', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -102,7 +71,7 @@ class GuildScheduledEventUserRemoveEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'guildScheduledEventUserRemove',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

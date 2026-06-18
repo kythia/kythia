@@ -5,26 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	AuditLogEvent,
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { AuditLogEvent, MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class InviteDeleteEvent extends BaseEvent {
 	async execute(invite) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
 		if (!invite.guild) return;
-		const { models, helpers, logger, t } = container;
+		const { kythiaConfig, models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 		const guildId = invite.guild.id;
 		try {
@@ -58,56 +52,30 @@ class InviteDeleteEvent extends BaseEvent {
 			);
 			if (!entry) return;
 			const executor = entry.executor;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Red', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`🔗 **Invite Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
-								`**Invite Code:** ${invite.code}\n` +
-								`**Channel:** ${invite.channel ? `<#${invite.channel.id}>` : 'Unknown'}\n` +
-								`**Uses:** ${invite.uses || 0}\n` +
-								`**Max Uses:** ${invite.maxUses ? invite.maxUses.toString() : 'Unlimited'}\n` +
-								`**Max Age:** ${invite.maxAge ? `${invite.maxAge} seconds` : 'Never expires'}\n` +
-								`**Temporary:** ${invite.temporary ? 'Yes' : 'No'}` +
-								(entry.reason ? `\n\n**Reason:** ${entry.reason}` : ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Invite Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
+					`**Invite Code:** ${invite.code}\n` +
+					`**Channel:** ${invite.channel ? `<#${invite.channel.id}>` : 'Unknown'}\n` +
+					`**Uses:** ${invite.uses || 0}\n` +
+					`**Max Uses:** ${invite.maxUses ? invite.maxUses.toString() : 'Unlimited'}\n` +
+					`**Max Age:** ${invite.maxAge ? `${invite.maxAge} seconds` : 'Never expires'}\n` +
+					`**Temporary:** ${invite.temporary ? 'Yes' : 'No'}` +
+					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
+					'\n\n' +
+					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Red', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -119,7 +87,7 @@ class InviteDeleteEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'inviteDelete',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

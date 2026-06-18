@@ -5,14 +5,7 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	AuditLogEvent,
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { AuditLogEvent, MessageFlags } = require('discord.js');
 const { BaseEvent } = require('kythia-core');
 class EmojiDeleteEvent extends BaseEvent {
 	async execute(emoji) {
@@ -20,6 +13,7 @@ class EmojiDeleteEvent extends BaseEvent {
 		if (!emoji.guild) return;
 		const { models, helpers, t, logger } = container;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 		const guildId = emoji.guild.id;
 		try {
@@ -52,54 +46,28 @@ class EmojiDeleteEvent extends BaseEvent {
 			);
 			if (!entry) return;
 			const executor = entry.executor;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Red', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`😃 **Emoji Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
-								`**Emoji Name:** ${emoji.name}\n` +
-								`**Animated:** ${emoji.animated ? 'Yes' : 'No'}\n` +
-								`**Available:** ${emoji.available ? 'Yes' : 'No'}\n` +
-								`**Managed:** ${emoji.managed ? 'Yes' : 'No'}` +
-								(entry.reason ? `\n\n**Reason:** ${entry.reason}` : ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Emoji Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
+					`**Emoji Name:** ${emoji.name}\n` +
+					`**Animated:** ${emoji.animated ? 'Yes' : 'No'}\n` +
+					`**Available:** ${emoji.available ? 'Yes' : 'No'}\n` +
+					`**Managed:** ${emoji.managed ? 'Yes' : 'No'}` +
+					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
+					'\n\n' +
+					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Red', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,

@@ -5,25 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class MessageUpdateEvent extends BaseEvent {
 	async execute(oldMessage, newMessage) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
-		const { helpers, models, logger, t } = container;
+		const { kythiaConfig, helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const guildId = newMessage.guild?.id;
 		try {
 			if (!newMessage?.author || !newMessage.guild) return;
@@ -60,54 +55,28 @@ class MessageUpdateEvent extends BaseEvent {
 					? `${newMessage.content.substring(0, 1021)}...`
 					: newMessage.content
 				: '*(Empty)*';
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Blurple', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`✏️ **Message Edited** in <#${newMessage.channelId}>\n\n` +
-								`**Author:** ${newMessage.author.tag} (<@${newMessage.author.id}>)\n` +
-								`**Message:** [Jump to Message](${newMessage.url})\n\n` +
-								`**Before:**\n${oldContent}\n\n` +
-								`**After:**\n${newContent}`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Author:** ${newMessage.author.tag} (${newMessage.author.id})\n` +
-								`📝 **Message ID:** ${newMessage.id}\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Message Edited** in <#${newMessage.channelId}>\n\n` +
+					`**Author:** ${newMessage.author.tag} (<@${newMessage.author.id}>)\n` +
+					`**Message:** [Jump to Message](${newMessage.url})\n\n` +
+					`**Before:**\n${oldContent}\n\n` +
+					`**After:**\n${newContent}` +
+					'\n\n' +
+					(`**Author:** ${newMessage.author.tag} (${newMessage.author.id})\n` +
+						`**Message ID:** ${newMessage.id}\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Blurple', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -119,7 +88,7 @@ class MessageUpdateEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'messageUpdate',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

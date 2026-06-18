@@ -5,25 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class MessageReactionRemoveEmojiEvent extends BaseEvent {
 	async execute(reaction) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
-		const { helpers, models, logger, t } = container;
+		const { kythiaConfig, helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const guildId = reaction.message.guild?.id;
 		const message = reaction.message;
 		if (!message.guild) return;
@@ -51,51 +46,25 @@ class MessageReactionRemoveEmojiEvent extends BaseEvent {
 			const emojiDisplay = reaction.emoji.id
 				? `<:${reaction.emoji.name}:${reaction.emoji.id}>`
 				: reaction.emoji.name;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Red', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`🗑️ **Reaction Emoji Removed** in <#${message.channelId}>\n\n` +
-								`**Emoji:** ${emojiDisplay}\n` +
-								`**Message:** [Jump to Message](${message.url})`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`📝 **Message ID:** ${message.id}\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Reaction Emoji Removed** in <#${message.channelId}>\n\n` +
+					`**Emoji:** ${emojiDisplay}\n` +
+					`**Message:** [Jump to Message](${message.url})` +
+					'\n\n' +
+					(`**Message ID:** ${message.id}\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Red', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -107,7 +76,7 @@ class MessageReactionRemoveEmojiEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'messageReactionRemoveEmoji',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

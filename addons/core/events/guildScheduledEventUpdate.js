@@ -5,26 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	AuditLogEvent,
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { AuditLogEvent, MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class GuildScheduledEventUpdateEvent extends BaseEvent {
 	async execute(oldEvent, newEvent) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
 		if (!newEvent.guild) return;
-		const { models, helpers, logger, t } = container;
+		const { kythiaConfig, models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 		const guildId = newEvent.guild.id;
 		try {
@@ -60,65 +54,39 @@ class GuildScheduledEventUpdateEvent extends BaseEvent {
 			const executor = entry.executor;
 			const changes = [];
 			if (oldEvent.name !== newEvent.name) {
-				changes.push(`**Name**: \`${oldEvent.name}\` ➔ \`${newEvent.name}\``);
+				changes.push(`**Name**: \`${oldEvent.name}\` \`${newEvent.name}\``);
 			}
 			if (oldEvent.description !== newEvent.description) {
 				changes.push(
-					`**Description**: \`${oldEvent.description || 'None'}\` ➔ \`${newEvent.description || 'None'}\``,
+					`**Description**: \`${oldEvent.description || 'None'}\` \`${newEvent.description || 'None'}\``,
 				);
 			}
 			if (oldEvent.status !== newEvent.status) {
 				changes.push(
-					`**Status**: \`${oldEvent.status}\` ➔ \`${newEvent.status}\``,
+					`**Status**: \`${oldEvent.status}\` \`${newEvent.status}\``,
 				);
 			}
 			if (changes.length === 0) return;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Blurple', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`📅 **Scheduled Event Updated** by <@${executor?.id || 'Unknown'}>\n\n` +
-								`**Event:** ${newEvent.name}\n\n` +
-								`**Changes:**\n${changes.join('\n')}` +
-								(entry.reason ? `\n\n**Reason:** ${entry.reason}` : ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Scheduled Event Updated** by <@${executor?.id || 'Unknown'}>\n\n` +
+					`**Event:** ${newEvent.name}\n\n` +
+					`**Changes:**\n${changes.join('\n')}` +
+					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
+					'\n\n' +
+					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Blurple', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -130,7 +98,7 @@ class GuildScheduledEventUpdateEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'guildScheduledEventUpdate',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

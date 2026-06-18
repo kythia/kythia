@@ -5,26 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-	AuditLogEvent,
-} = require('discord.js');
+const { MessageFlags, AuditLogEvent } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class GuildIntegrationsUpdateEvent extends BaseEvent {
 	async execute(guild) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
-		const { helpers, models, logger, t } = container;
+		const { kythiaConfig, helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const guildId = guild.id;
 		try {
 			const settings = await ServerSetting.getCache({
@@ -62,52 +56,26 @@ class GuildIntegrationsUpdateEvent extends BaseEvent {
 			// Ideally we'd filter by time, but this event fires right after.
 			const isRecent = entry && Date.now() - entry.createdTimestamp < 5000;
 			const executor = isRecent ? entry.executor : null;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Blurple', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`🧩 **Integrations Updated**\n\n` +
-								`The integrations for **${guild.name}** were updated.` +
-								(executor
-									? `\n\n**Potential Executor:** ${executor.tag} (<@${executor.id}>)`
-									: ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Integrations Updated**\n\n` +
+					`The integrations for **${guild.name}** were updated.` +
+					(executor
+						? `\n\n**Potential Executor:** ${executor.tag} (<@${executor.id}>)`
+						: '') +
+					'\n\n' +
+					`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
+				{
+					color: convertColor('Blurple', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -119,7 +87,7 @@ class GuildIntegrationsUpdateEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'guildIntegrationsUpdate',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

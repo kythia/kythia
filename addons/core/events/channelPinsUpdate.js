@@ -5,14 +5,7 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	AuditLogEvent,
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { AuditLogEvent, MessageFlags } = require('discord.js');
 const { BaseEvent } = require('kythia-core');
 class ChannelPinsUpdateEvent extends BaseEvent {
 	async execute(channel, _time) {
@@ -20,6 +13,7 @@ class ChannelPinsUpdateEvent extends BaseEvent {
 		if (!channel.guild) return;
 		const { models, helpers, t, logger } = container;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 		const guildId = channel.guild.id;
 		try {
@@ -70,52 +64,26 @@ class ChannelPinsUpdateEvent extends BaseEvent {
 			if (!entry) return;
 			const isPinned = !!pinEntry;
 			const executor = entry.executor;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor(isPinned ? 'Green' : 'Orange', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`📌 **Message ${isPinned ? 'Pinned' : 'Unpinned'}** by <@${executor?.id || 'Unknown'}>\n\n` +
-								`**Channel:** <#${channel.id}>\n` +
-								`**Message ID:** ${entry.extra?.messageId || 'Unknown'}` +
-								(entry.reason ? `\n\n**Reason:** ${entry.reason}` : ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Message ${isPinned ? 'Pinned' : 'Unpinned'}** by <@${executor?.id || 'Unknown'}>\n\n` +
+					`**Channel:** <#${channel.id}>\n` +
+					`**Message ID:** ${entry.extra?.messageId || 'Unknown'}` +
+					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
+					'\n\n' +
+					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor(isPinned ? 'Green' : 'Orange', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,

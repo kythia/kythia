@@ -5,27 +5,22 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	AuditLogEvent,
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { AuditLogEvent, MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class GuildMemberRemoveEvent extends BaseEvent {
 	async execute(member) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
 		if (!member.guild) return;
-		const { models, helpers, logger, t } = container;
+		const { kythiaConfig, models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
+		const guildId = member.guild.id;
 
 		// ── Audit log ────────────────────────────────────────────────
 		const setting = await ServerSetting.getCache({
@@ -54,56 +49,28 @@ class GuildMemberRemoveEvent extends BaseEvent {
 				);
 				if (kickEntry) {
 					const executor = kickEntry.executor;
-					const components = [
-						new ContainerBuilder()
-							.setAccentColor(
-								convertColor('Red', {
-									from: 'discord',
-									to: 'decimal',
-								}),
-							)
-							.addTextDisplayComponents(
-								new TextDisplayBuilder().setContent(
-									`👢 **Member Kicked** by <@${executor?.id || 'Unknown'}>\n\n` +
-										`**User:** ${member.user.tag} (<@${member.user.id}>)\n` +
-										`**User ID:** ${member.user.id}\n` +
-										`**Account Created:** <t:${Math.floor(member.user.createdTimestamp / 1000)}:F>\n` +
-										`**Joined Server:** ${member.joinedAt ? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>` : 'Unknown'}` +
-										(kickEntry.reason
-											? `\n\n**Reason:** ${kickEntry.reason}`
-											: ''),
-								),
-							)
-							.addSeparatorComponents(
-								new SeparatorBuilder()
-									.setSpacing(SeparatorSpacingSize.Small)
-									.setDivider(true),
-							)
-							.addTextDisplayComponents(
-								new TextDisplayBuilder().setContent(
-									`👤 **Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-										`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-								),
-							)
-							.addSeparatorComponents(
-								new SeparatorBuilder()
-									.setSpacing(SeparatorSpacingSize.Small)
-									.setDivider(true),
-							)
-							.addTextDisplayComponents(
-								new TextDisplayBuilder().setContent(
-									await t(
-										{
-											guildId: member.guild.id,
-										},
-										'common.container.footer',
-										{
-											username: this.client.user.username,
-										},
-									),
-								),
-							),
-					];
+					const components = await simpleContainer(
+						{
+							client: this.client,
+							guildId: guildId,
+						},
+						`**Member Kicked** by <@${executor?.id || 'Unknown'}>\n\n` +
+							`**User:** ${member.user.tag} (<@${member.user.id}>)\n` +
+							`**User ID:** ${member.user.id}\n` +
+							`**Account Created:** <t:${Math.floor(member.user.createdTimestamp / 1000)}:F>\n` +
+							`**Joined Server:** ${member.joinedAt ? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>` : 'Unknown'}` +
+							(kickEntry.reason ? `\n\n**Reason:** ${kickEntry.reason}` : '') +
+							'\n\n' +
+							(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
+								`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+						{
+							color: convertColor('Red', {
+								from: 'discord',
+								to: 'decimal',
+							}),
+							withFooter: true,
+						},
+					);
 					await logChannel.send({
 						components,
 						flags: MessageFlags.IsComponentsV2,
@@ -115,54 +82,28 @@ class GuildMemberRemoveEvent extends BaseEvent {
 				}
 
 				// Regular leave log
-				const components = [
-					new ContainerBuilder()
-						.setAccentColor(
-							convertColor('Orange', {
-								from: 'discord',
-								to: 'decimal',
-							}),
-						)
-						.addTextDisplayComponents(
-							new TextDisplayBuilder().setContent(
-								`👋 Member Left\n\n` +
-									`**User:** ${member.user.tag} (<@${member.user.id}>)\n` +
-									`**User ID:** ${member.user.id}\n` +
-									`**Account Created:** <t:${Math.floor(member.user.createdTimestamp / 1000)}:F>\n` +
-									`**Joined Server:** ${member.joinedAt ? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>` : 'Unknown'}\n` +
-									`**Member Count:** ${member.guild.memberCount}`,
-							),
-						)
-						.addSeparatorComponents(
-							new SeparatorBuilder()
-								.setSpacing(SeparatorSpacingSize.Small)
-								.setDivider(true),
-						)
-						.addTextDisplayComponents(
-							new TextDisplayBuilder().setContent(
-								`👤 **User:** ${member.user.tag}\n` +
-									`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-							),
-						)
-						.addSeparatorComponents(
-							new SeparatorBuilder()
-								.setSpacing(SeparatorSpacingSize.Small)
-								.setDivider(true),
-						)
-						.addTextDisplayComponents(
-							new TextDisplayBuilder().setContent(
-								await t(
-									{
-										guildId: member.guild.id,
-									},
-									'common.container.footer',
-									{
-										username: this.client.user.username,
-									},
-								),
-							),
-						),
-				];
+				const components = await simpleContainer(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					`Member Left\n\n` +
+						`**User:** ${member.user.tag} (<@${member.user.id}>)\n` +
+						`**User ID:** ${member.user.id}\n` +
+						`**Account Created:** <t:${Math.floor(member.user.createdTimestamp / 1000)}:F>\n` +
+						`**Joined Server:** ${member.joinedAt ? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>` : 'Unknown'}\n` +
+						`**Member Count:** ${member.guild.memberCount}` +
+						'\n\n' +
+						(`**User:** ${member.user.tag}\n` +
+							`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+					{
+						color: convertColor('Orange', {
+							from: 'discord',
+							to: 'decimal',
+						}),
+						withFooter: true,
+					},
+				);
 				await logChannel.send({
 					components,
 					flags: MessageFlags.IsComponentsV2,
@@ -175,7 +116,7 @@ class GuildMemberRemoveEvent extends BaseEvent {
 				logger.error(`Error: ${err.message || err}`, {
 					label: 'guildMemberRemove',
 				});
-				if (bot.config?.sentry?.dsn) {
+				if (kythiaConfig?.sentry?.dsn) {
 					Sentry.captureException(err);
 				}
 			}

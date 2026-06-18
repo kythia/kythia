@@ -5,27 +5,22 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class UserUpdateEvent extends BaseEvent {
 	async execute(oldUser, newUser) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
-		const { helpers, models, logger, t } = container;
+		const { kythiaConfig, helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
 
 		// Check if relevant changes occurred
+		const { simpleContainer } = helpers.discord;
 		const usernameChanged = oldUser.username !== newUser.username;
 		const discriminatorChanged =
 			oldUser.discriminator !== newUser.discriminator;
@@ -36,23 +31,23 @@ class UserUpdateEvent extends BaseEvent {
 			const changes = [];
 			if (usernameChanged) {
 				changes.push(
-					`**Username:** \`${oldUser.username}\` ➔ \`${newUser.username}\``,
+					`**Username:** \`${oldUser.username}\` \`${newUser.username}\``,
 				);
 			}
 			if (discriminatorChanged && newUser.discriminator !== '0') {
 				// Ignore '0' for new system
 				changes.push(
-					`**Discriminator:** \`#${oldUser.discriminator}\` ➔ \`#${newUser.discriminator}\``,
+					`**Discriminator:** \`#${oldUser.discriminator}\` \`#${newUser.discriminator}\``,
 				);
 			}
 			if (avatarChanged) {
 				changes.push(
-					`**Avatar:** [Old](${oldUser.displayAvatarURL()}) ➔ [New](${newUser.displayAvatarURL()})`,
+					`**Avatar:** [Old](${oldUser.displayAvatarURL()}) [New](${newUser.displayAvatarURL()})`,
 				);
 			}
 			if (changes.length === 0) return;
 			const description =
-				`👤 **User Updated Profile**\n\n` +
+				`**User Updated Profile**\n\n` +
 				`**User:** ${newUser.tag} (<@${newUser.id}>)\n\n` +
 				`**Changes:**\n${changes.join('\n')}`;
 
@@ -78,47 +73,23 @@ class UserUpdateEvent extends BaseEvent {
 							settings.auditLogChannelId,
 						);
 						if (!logChannel?.isTextBased()) continue;
-						const components = [
-							new ContainerBuilder()
-								.setAccentColor(
-									convertColor('Blurple', {
-										from: 'discord',
-										to: 'decimal',
-									}),
-								)
-								.addTextDisplayComponents(
-									new TextDisplayBuilder().setContent(description),
-								)
-								.addSeparatorComponents(
-									new SeparatorBuilder()
-										.setSpacing(SeparatorSpacingSize.Small)
-										.setDivider(true),
-								)
-								.addTextDisplayComponents(
-									new TextDisplayBuilder().setContent(
-										`👤 **User:** ${newUser.tag} (${newUser.id})\n` +
-											`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-									),
-								)
-								.addSeparatorComponents(
-									new SeparatorBuilder()
-										.setSpacing(SeparatorSpacingSize.Small)
-										.setDivider(true),
-								)
-								.addTextDisplayComponents(
-									new TextDisplayBuilder().setContent(
-										await t(
-											{
-												guildId,
-											},
-											'common.container.footer',
-											{
-												username: this.client.user.username,
-											},
-										),
-									),
-								),
-						];
+						const components = await simpleContainer(
+							{
+								client: this.client,
+								guildId: guildId,
+							},
+							description +
+								'\n\n' +
+								(`**User:** ${newUser.tag} (${newUser.id})\n` +
+									`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+							{
+								color: convertColor('Blurple', {
+									from: 'discord',
+									to: 'decimal',
+								}),
+								withFooter: true,
+							},
+						);
 						await logChannel.send({
 							components,
 							flags: MessageFlags.IsComponentsV2,
@@ -136,7 +107,7 @@ class UserUpdateEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'userUpdate',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

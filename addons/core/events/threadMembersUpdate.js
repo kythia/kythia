@@ -5,25 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class ThreadMembersUpdateEvent extends BaseEvent {
 	async execute(oldMembers, newMembers, thread) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
-		const { helpers, models, logger, t } = container;
+		const { kythiaConfig, helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		if (!thread.guild) return;
 		const guildId = thread.guild.id;
 		try {
@@ -46,7 +41,7 @@ class ThreadMembersUpdateEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-			let description = `🧵 **Thread Members Updated** in <#${thread.id}>\n\n`;
+			let description = `**Thread Members Updated** in <#${thread.id}>\n\n`;
 			if (addedMembers.size > 0) {
 				const addedList = addedMembers.map((m) => `<@${m.id}>`).join(', ');
 				description += `**Added (${addedMembers.size}):** ${addedList.length > 500 ? `${addedList.substring(0, 500)}...` : addedList}\n`;
@@ -55,47 +50,23 @@ class ThreadMembersUpdateEvent extends BaseEvent {
 				const removedList = removedMembers.map((m) => `<@${m.id}>`).join(', ');
 				description += `**Removed (${removedMembers.size}):** ${removedList.length > 500 ? `${removedList.substring(0, 500)}...` : removedList}\n`;
 			}
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Blurple', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(description),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`📝 **Thread ID:** ${thread.id}\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				description +
+					'\n\n' +
+					(`**Thread ID:** ${thread.id}\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Blurple', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -107,7 +78,7 @@ class ThreadMembersUpdateEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'threadMembersUpdate',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

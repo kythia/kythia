@@ -5,26 +5,16 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	AuditLogEvent,
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { AuditLogEvent, MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class GuildMemberUpdateEvent extends BaseEvent {
 	async execute(oldMember, newMember) {
 		const container = this.container;
-		const bot = {
-			client: this.client,
-			container: this.container,
-		};
 		if (!newMember.guild) return;
-		const { models, helpers, logger, t } = container;
+		const { kythiaConfig, models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 		const guildId = newMember.guild.id;
 		try {
@@ -44,73 +34,75 @@ class GuildMemberUpdateEvent extends BaseEvent {
 			)
 				return;
 			if (!newMember.guild.members.me?.permissions?.has('ViewAuditLog')) return;
+			const addedRoles = newMember.roles.cache.filter(
+				(role) => !oldMember.roles.cache.has(role.id),
+			);
+			const removedRoles = oldMember.roles.cache.filter(
+				(role) => !newMember.roles.cache.has(role.id),
+			);
+			const nicknameChanged = oldMember.nickname !== newMember.nickname;
+			if (!nicknameChanged && addedRoles.size === 0 && removedRoles.size === 0)
+				return;
+			let auditType = AuditLogEvent.MemberUpdate;
+			if (addedRoles.size > 0 || removedRoles.size > 0) {
+				auditType = AuditLogEvent.MemberRoleUpdate;
+			}
 			const audit = await newMember.guild
 				.fetchAuditLogs({
-					type: AuditLogEvent.MemberUpdate,
+					type: auditType,
 					limit: 1,
 				})
 				.catch(() => null);
-			if (!audit) return;
-			const entry = audit.entries.find(
-				(e) =>
-					e.target?.id === newMember.id &&
-					e.createdTimestamp > Date.now() - 5000,
-			);
-			if (!entry) return;
-			const executor = entry.executor;
+			let executor = null;
+			let reason = null;
+			if (audit) {
+				const entry = audit.entries.find(
+					(e) =>
+						e.target?.id === newMember.id &&
+						e.createdTimestamp > Date.now() - 5000,
+				);
+				if (entry) {
+					executor = entry.executor;
+					reason = entry.reason;
+				}
+			}
 			const changes = [];
-			if (oldMember.nickname !== newMember.nickname) {
+			if (nicknameChanged) {
 				changes.push(
-					`**Nickname**: \`${oldMember.nickname || 'None'}\` ➔ \`${newMember.nickname || 'None'}\``,
+					`**Nickname**: \`${oldMember.nickname || 'None'}\` \`${newMember.nickname || 'None'}\``,
+				);
+			}
+			if (addedRoles.size > 0) {
+				changes.push(
+					`**Roles Added**: ${addedRoles.map((r) => `<@&${r.id}>`).join(', ')}`,
+				);
+			}
+			if (removedRoles.size > 0) {
+				changes.push(
+					`**Roles Removed**: ${removedRoles.map((r) => `<@&${r.id}>`).join(', ')}`,
 				);
 			}
 			if (changes.length === 0) return;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Blurple', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Member Updated** by <@${executor?.id || 'Unknown'}>\n\n` +
-								`**User:** ${newMember.user.tag} (<@${newMember.id}>)\n\n` +
-								`**Changes:**\n${changes.join('\n')}` +
-								(entry.reason ? `\n\n**Reason:** ${entry.reason}` : ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Member Updated** by <@${executor?.id || 'Unknown'}>\n\n` +
+					`**User:** ${newMember.user.tag} (<@${newMember.id}>)\n\n` +
+					`**Changes:**\n${changes.join('\n')}` +
+					(reason ? `\n\n**Reason:** ${reason}` : '') +
+					'\n\n' +
+					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Blurple', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -122,7 +114,7 @@ class GuildMemberUpdateEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'guildMemberUpdate',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

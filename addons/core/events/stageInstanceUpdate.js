@@ -5,26 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	AuditLogEvent,
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { AuditLogEvent, MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class StageInstanceUpdateEvent extends BaseEvent {
 	async execute(oldStage, newStage) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
 		if (!newStage.guild) return;
-		const { models, helpers, logger, t } = container;
+		const { kythiaConfig, models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 		const guildId = newStage.guild.id;
 		try {
@@ -59,65 +53,37 @@ class StageInstanceUpdateEvent extends BaseEvent {
 			if (!entry) return;
 			const changes = [];
 			if (oldStage.topic !== newStage.topic) {
-				changes.push(
-					`**Topic**: \`${oldStage.topic}\` ➔ \`${newStage.topic}\``,
-				);
+				changes.push(`**Topic**: \`${oldStage.topic}\` \`${newStage.topic}\``);
 			}
 			if (oldStage.privacyLevel !== newStage.privacyLevel) {
 				const oldPrivacy =
 					oldStage.privacyLevel === 1 ? 'Public' : 'Guild Only';
 				const newPrivacy =
 					newStage.privacyLevel === 1 ? 'Public' : 'Guild Only';
-				changes.push(`**Privacy**: \`${oldPrivacy}\` ➔ \`${newPrivacy}\``);
+				changes.push(`**Privacy**: \`${oldPrivacy}\` \`${newPrivacy}\``);
 			}
 			if (changes.length === 0) return;
 			const executor = entry.executor;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Blurple', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`🎤 **Stage Updated** by <@${executor?.id || 'Unknown'}>\n\n` +
-								`**Channel:** <#${newStage.channelId}>\n\n` +
-								`**Changes:**\n${changes.join('\n')}` +
-								(entry.reason ? `\n\n**Reason:** ${entry.reason}` : ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Stage Updated** by <@${executor?.id || 'Unknown'}>\n\n` +
+					`**Channel:** <#${newStage.channelId}>\n\n` +
+					`**Changes:**\n${changes.join('\n')}` +
+					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
+					'\n\n' +
+					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Blurple', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -129,7 +95,7 @@ class StageInstanceUpdateEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'stageInstanceUpdate',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

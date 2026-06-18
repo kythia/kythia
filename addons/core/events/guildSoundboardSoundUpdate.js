@@ -5,26 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	AuditLogEvent,
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { AuditLogEvent, MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class GuildSoundboardSoundUpdateEvent extends BaseEvent {
 	async execute(oldSound, newSound) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
 		if (!newSound.guild) return;
-		const { models, helpers, logger, t } = container;
+		const { kythiaConfig, models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 		const guildId = newSound.guild.id;
 		try {
@@ -59,66 +53,40 @@ class GuildSoundboardSoundUpdateEvent extends BaseEvent {
 			if (!entry) return;
 			const changes = [];
 			if (oldSound.name !== newSound.name) {
-				changes.push(`**Name**: \`${oldSound.name}\` ➔ \`${newSound.name}\``);
+				changes.push(`**Name**: \`${oldSound.name}\` \`${newSound.name}\``);
 			}
 			if (oldSound.emoji !== newSound.emoji) {
 				changes.push(
-					`**Emoji**: \`${oldSound.emoji || 'None'}\` ➔ \`${newSound.emoji || 'None'}\``,
+					`**Emoji**: \`${oldSound.emoji || 'None'}\` \`${newSound.emoji || 'None'}\``,
 				);
 			}
 			if (oldSound.volume !== newSound.volume) {
 				changes.push(
-					`**Volume**: \`${oldSound.volume}\` ➔ \`${newSound.volume}\``,
+					`**Volume**: \`${oldSound.volume}\` \`${newSound.volume}\``,
 				);
 			}
 			if (changes.length === 0) return;
 			const executor = entry.executor;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Blurple', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`🔊 **Soundboard Sound Updated** by <@${executor?.id || 'Unknown'}>\n\n` +
-								`**Sound:** ${newSound.name}\n\n` +
-								`**Changes:**\n${changes.join('\n')}` +
-								(entry.reason ? `\n\n**Reason:** ${entry.reason}` : ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Soundboard Sound Updated** by <@${executor?.id || 'Unknown'}>\n\n` +
+					`**Sound:** ${newSound.name}\n\n` +
+					`**Changes:**\n${changes.join('\n')}` +
+					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
+					'\n\n' +
+					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Blurple', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -130,7 +98,7 @@ class GuildSoundboardSoundUpdateEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'guildSoundboardSoundUpdate',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

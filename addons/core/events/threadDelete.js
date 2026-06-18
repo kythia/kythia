@@ -5,15 +5,7 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	AuditLogEvent,
-	ChannelType,
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { AuditLogEvent, ChannelType, MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const channelTypeNames = {
 	[ChannelType.GuildText]: 'Text Channel',
@@ -44,13 +36,14 @@ const { BaseEvent } = require('kythia-core');
 class ThreadDeleteEvent extends BaseEvent {
 	async execute(thread) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
 		if (!thread.guild) return;
-		const { models, helpers, logger, t } = container;
+		const { kythiaConfig, models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 		const guildId = thread.guild.id;
 		try {
@@ -83,56 +76,30 @@ class ThreadDeleteEvent extends BaseEvent {
 			);
 			if (!entry) return;
 			const executor = entry.executor;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Red', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`🧵 **Thread Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
-								`**Thread Name:** ${thread.name}\n` +
-								`**Type:** ${humanChannelType(thread.type)}\n` +
-								`**Parent Channel:** ${thread.parent ? `<#${thread.parent.id}>` : 'None'}\n` +
-								`**Archived:** ${thread.archived ? 'Yes' : 'No'}\n` +
-								`**Locked:** ${thread.locked ? 'Yes' : 'No'}\n` +
-								`**Auto Archive Duration:** ${thread.autoArchiveDuration} minutes` +
-								(entry.reason ? `\n\n**Reason:** ${entry.reason}` : ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Thread Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
+					`**Thread Name:** ${thread.name}\n` +
+					`**Type:** ${humanChannelType(thread.type)}\n` +
+					`**Parent Channel:** ${thread.parent ? `<#${thread.parent.id}>` : 'None'}\n` +
+					`**Archived:** ${thread.archived ? 'Yes' : 'No'}\n` +
+					`**Locked:** ${thread.locked ? 'Yes' : 'No'}\n` +
+					`**Auto Archive Duration:** ${thread.autoArchiveDuration} minutes` +
+					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
+					'\n\n' +
+					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Red', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -144,7 +111,7 @@ class ThreadDeleteEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'threadDelete',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

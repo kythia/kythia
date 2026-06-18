@@ -5,26 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	AuditLogEvent,
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { AuditLogEvent, MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class RoleDeleteEvent extends BaseEvent {
 	async execute(role) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
 		if (!role.guild) return;
-		const { models, helpers, logger, t } = container;
+		const { kythiaConfig, models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 		const guildId = role.guild.id;
 		try {
@@ -57,56 +51,30 @@ class RoleDeleteEvent extends BaseEvent {
 			);
 			if (!entry) return;
 			const executor = entry.executor;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Red', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`➖ **Role Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
-								`**Role Name:** ${role.name}\n` +
-								`**Color:** ${role.hexColor || 'Default'}\n` +
-								`**Position:** ${role.position}\n` +
-								`**Mentionable:** ${role.mentionable ? 'Yes' : 'No'}\n` +
-								`**Hoisted:** ${role.hoist ? 'Yes' : 'No'}\n` +
-								`**Managed:** ${role.managed ? 'Yes' : 'No'}` +
-								(entry.reason ? `\n\n**Reason:** ${entry.reason}` : ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Role Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
+					`**Role Name:** ${role.name}\n` +
+					`**Color:** ${role.hexColor || 'Default'}\n` +
+					`**Position:** ${role.position}\n` +
+					`**Mentionable:** ${role.mentionable ? 'Yes' : 'No'}\n` +
+					`**Hoisted:** ${role.hoist ? 'Yes' : 'No'}\n` +
+					`**Managed:** ${role.managed ? 'Yes' : 'No'}` +
+					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
+					'\n\n' +
+					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Red', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -118,7 +86,7 @@ class RoleDeleteEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'roleDelete',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

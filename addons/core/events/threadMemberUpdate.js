@@ -5,23 +5,17 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class ThreadMemberUpdateEvent extends BaseEvent {
 	async execute(oldMember, newMember) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
-		const { helpers, models, logger, t } = container;
+		const { kythiaConfig, helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
 
@@ -31,6 +25,7 @@ class ThreadMemberUpdateEvent extends BaseEvent {
 		// But sometimes it's used for tracking.
 
 		// We need the guild. ThreadMember has .thread which has .guild
+		const { simpleContainer } = helpers.discord;
 		const thread = newMember.thread || oldMember.thread;
 		if (!thread?.guild) return;
 		const guild = thread.guild;
@@ -56,57 +51,31 @@ class ThreadMemberUpdateEvent extends BaseEvent {
 			const changes = [];
 			if (oldMember.flags.bitfield !== newMember.flags.bitfield) {
 				changes.push(
-					`**Flags:** ${oldMember.flags.bitfield} ➔ ${newMember.flags.bitfield}`,
+					`**Flags:** ${oldMember.flags.bitfield} ${newMember.flags.bitfield}`,
 				);
 			}
 			if (changes.length === 0) return; // Ignore if no visible changes
 
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Blurple', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`🧵 **Thread Member Updated**\n\n` +
-								`**Member:** <@${newMember.id}>\n` +
-								`**Thread:** <#${thread.id}>\n` +
-								`**Changes:**\n${changes.join('\n')}`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **User:** ${newMember.id}\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**Thread Member Updated**\n\n` +
+					`**Member:** <@${newMember.id}>\n` +
+					`**Thread:** <#${thread.id}>\n` +
+					`**Changes:**\n${changes.join('\n')}` +
+					'\n\n' +
+					(`**User:** ${newMember.id}\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Blurple', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -118,7 +87,7 @@ class ThreadMemberUpdateEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'threadMemberUpdate',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

@@ -5,26 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-	AuditLogEvent,
-} = require('discord.js');
+const { MessageFlags, AuditLogEvent } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class MessageReactionRemoveAllEvent extends BaseEvent {
 	async execute(message, _reactions) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
-		const { helpers, models, logger, t } = container;
+		const { kythiaConfig, helpers, models, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const guildId = message.guild?.id;
 		if (!message.guild) return;
 		try {
@@ -58,53 +52,27 @@ class MessageReactionRemoveAllEvent extends BaseEvent {
 					e.target.id === message.id && Date.now() - e.createdTimestamp < 5000,
 			);
 			const executor = entry ? entry.executor : null;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Red', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`🗑️ **All Reactions Removed** in <#${message.channelId}>\n\n` +
-								`**Message:** [Jump to Message](${message.url})` +
-								(executor
-									? `\n**Executor:** ${executor.tag} (<@${executor.id}>)`
-									: ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`📝 **Message ID:** ${message.id}\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**All Reactions Removed** in <#${message.channelId}>\n\n` +
+					`**Message:** [Jump to Message](${message.url})` +
+					(executor
+						? `\n**Executor:** ${executor.tag} (<@${executor.id}>)`
+						: '') +
+					'\n\n' +
+					(`**Message ID:** ${message.id}\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor('Red', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -116,7 +84,7 @@ class MessageReactionRemoveAllEvent extends BaseEvent {
 			logger.error(`Error: ${err.message || err}`, {
 				label: 'messageReactionRemoveAll',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

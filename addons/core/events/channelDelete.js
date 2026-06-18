@@ -5,27 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	AuditLogEvent,
-	ChannelType,
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { AuditLogEvent, ChannelType, MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class ChannelDeleteEvent extends BaseEvent {
 	async execute(channel) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
 		if (!channel.guild) return;
-		const { models, helpers, logger } = container;
+		const { kythiaConfig, models, helpers, logger } = container;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
 		try {
 			if (!channel.guild.members.me?.permissions?.has('ViewAuditLog')) return;
@@ -78,34 +71,23 @@ class ChannelDeleteEvent extends BaseEvent {
 			};
 			const channelTypeName =
 				channelTypeNames[channel.type] || `Unknown (${channel.type})`;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor('Red', {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`🗑️ **Channel Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
-								`**Channel Name:** ${channel.name || 'Unknown'}\n` +
-								`**Type:** ${channelTypeName}` +
-								(entry.reason ? `\n\n**Reason:** ${entry.reason}` : ''),
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: channel.guild.id,
+				},
+				`**Channel Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
+					`**Channel Name:** ${channel.name || 'Unknown'}\n` +
+					`**Type:** ${channelTypeName}` +
+					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : ''),
+				{
+					color: convertColor('Red', {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -117,7 +99,7 @@ class ChannelDeleteEvent extends BaseEvent {
 			logger.error(`Error in channelDelete: ${err.message || err}`, {
 				label: 'core:events:channelDelete',
 			});
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}

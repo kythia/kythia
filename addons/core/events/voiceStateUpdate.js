@@ -5,25 +5,20 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const {
-	MessageFlags,
-	ContainerBuilder,
-	SeparatorBuilder,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-} = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class VoiceStateUpdateEvent extends BaseEvent {
 	async execute(oldState, newState) {
 		const container = this.container;
-		const bot = {
+		const _bot = {
 			client: this.client,
 			container: this.container,
 		};
-		const { helpers, models, t, logger } = container;
+		const { kythiaConfig, helpers, models, t, logger } = container;
 		const { convertColor } = helpers.color;
 		const { ServerSetting } = models;
+		const { simpleContainer } = helpers.discord;
 		const guild = newState.guild || oldState.guild;
 		const guildId = guild.id;
 		try {
@@ -57,15 +52,15 @@ class VoiceStateUpdateEvent extends BaseEvent {
 
 			if (isJoin) {
 				action = 'Voice Channel Joined';
-				description = `📥 **Joined:** <#${newState.channelId}>`;
+				description = `**Joined:** <#${newState.channelId}>`;
 				color = 'Green';
 			} else if (isLeave) {
 				action = 'Voice Channel Left';
-				description = `📤 **Left:** <#${oldState.channelId}>`;
+				description = `**Left:** <#${oldState.channelId}>`;
 				color = 'Red';
 			} else if (isSwitch) {
 				action = 'Voice Channel Switched';
-				description = `🔄 **Moved:** <#${oldState.channelId}> ➔ <#${newState.channelId}>`;
+				description = `**Moved:** <#${oldState.channelId}> <#${newState.channelId}>`;
 				color = 'Yellow'; // Or Orange
 			}
 
@@ -85,49 +80,23 @@ class VoiceStateUpdateEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-			const components = [
-				new ContainerBuilder()
-					.setAccentColor(
-						convertColor(color, {
-							from: 'discord',
-							to: 'decimal',
-						}),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`🎙️ **${action}** by <@${member.id}>\n\n${description}`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							`👤 **User:** ${member.user.tag} (${member.id})\n` +
-								`🕒 **Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-						),
-					)
-					.addSeparatorComponents(
-						new SeparatorBuilder()
-							.setSpacing(SeparatorSpacingSize.Small)
-							.setDivider(true),
-					)
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							await t(
-								{
-									guildId,
-								},
-								'common.container.footer',
-								{
-									username: this.client.user.username,
-								},
-							),
-						),
-					),
-			];
+			const components = await simpleContainer(
+				{
+					client: this.client,
+					guildId: guildId,
+				},
+				`**${action}** by <@${member.id}>\n\n${description}` +
+					'\n\n' +
+					(`**User:** ${member.user.tag} (${member.id})\n` +
+						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				{
+					color: convertColor(color, {
+						from: 'discord',
+						to: 'decimal',
+					}),
+					withFooter: true,
+				},
+			);
 			await logChannel.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -142,7 +111,7 @@ class VoiceStateUpdateEvent extends BaseEvent {
 					label: 'core:events:voiceStateUpdate',
 				},
 			);
-			if (bot.config?.sentry?.dsn) {
+			if (kythiaConfig?.sentry?.dsn) {
 				Sentry.captureException(err);
 			}
 		}
