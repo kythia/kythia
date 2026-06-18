@@ -78,7 +78,7 @@ class SimpleCommand extends BaseCommand {
 				label: 'core',
 			});
 		await modalSubmit.deferReply({
-			flags: Number(MessageFlags.Ephemeral),
+			flags: MessageFlags.Ephemeral,
 		});
 		const title = modalSubmit.fields.getTextInputValue('announcement-title');
 		const content = modalSubmit.fields.getTextInputValue(

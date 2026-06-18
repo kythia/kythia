@@ -26,7 +26,7 @@ class DebugCommand extends BaseCommand {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					'❌ Model `Playlist` atau `PlaylistTrack` tidak ditemukan di container.',
+					await container.t(interaction, 'core.utils.kyth.debug.no_model'),
 				),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
@@ -378,7 +378,7 @@ class DebugCommand extends BaseCommand {
 			}
 			playlistId = null; // Prevent finally from running again
 
-			const msg = await container.t(interaction, 'core.utils.kyth.debug', {
+			const msg = await container.t(interaction, 'core.utils.kyth.debug.msg', {
 				logs: logs.join('\n'),
 			});
 			if (msg.length > 3500) {
@@ -387,7 +387,7 @@ class DebugCommand extends BaseCommand {
 				});
 				const components = await simpleContainer(
 					interaction,
-					`🛠️ Kythia Cache Debugger\nLogs are too long, see the attached file for full results.`,
+					await container.t(interaction, 'core.utils.kyth.debug.too_long'),
 				);
 				return interaction.editReply({
 					components,
@@ -404,7 +404,15 @@ class DebugCommand extends BaseCommand {
 			logger.error(`Error: ${error.message || error}`, {
 				label: 'core',
 			});
-			const errorMsg = `💥 CRITICAL FAILURE\n\n${logs.join('\n')}\n\n**ERROR at Step ${step}:**\n\`\`\`js\n${error.message}\n\`\`\``;
+			const errorMsg = await container.t(
+				interaction,
+				'core.utils.kyth.debug.critical_failure',
+				{
+					logs: logs.join('\n'),
+					step: step,
+					error: error.message,
+				},
+			);
 			if (errorMsg.length > 3500) {
 				const attachment = new AttachmentBuilder(
 					Buffer.from(`${logs.join('\n')}\n\nERROR: ${error.message}`),
@@ -414,7 +422,10 @@ class DebugCommand extends BaseCommand {
 				);
 				const components = await simpleContainer(
 					interaction,
-					`💥 CRITICAL FAILURE\nLogs attached.`,
+					await container.t(
+						interaction,
+						'core.utils.kyth.debug.critical_attached',
+					),
 				);
 				return interaction.editReply({
 					components,

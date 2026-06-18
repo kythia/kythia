@@ -25,7 +25,7 @@ class CloseCommand extends BaseCommand {
 		const { Ticket, TicketConfig } = models;
 		const { simpleContainer } = helpers.discord;
 		const ticket = await Ticket.getCache({
-			channelId: interaction.channel.id,
+			channelId: interaction.channelId,
 			status: 'open',
 		});
 

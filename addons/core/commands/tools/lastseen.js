@@ -20,7 +20,7 @@ class LastseenCommand extends BaseCommand {
 		);
 	async execute(interaction) {
 		const container = this.container;
-		const { models, helpers } = container;
+		const { models, helpers, t } = container;
 		const { User } = models;
 		const { simpleContainer } = helpers.discord;
 		await interaction.deferReply();
@@ -36,7 +36,9 @@ class LastseenCommand extends BaseCommand {
 			if (!userData?.lastMessage) {
 				const reply = await simpleContainer(
 					interaction,
-					`🤷‍♀️ Gak tau deh, <@${targetUser.id}> belum pernah kirim pesan atau datanya belum tercatat.`,
+					await t(interaction, 'core.tools.lastseen.not_found', {
+						user: `<@${targetUser.id}>`,
+					}),
 					{
 						color: 'Orange',
 					},
@@ -54,7 +56,10 @@ class LastseenCommand extends BaseCommand {
 			);
 			const reply = await simpleContainer(
 				interaction,
-				`👀 <@${targetUser.id}> terakhir terlihat mengirim pesan pada <t:${timestamp}:F> (<t:${timestamp}:R>).`,
+				await t(interaction, 'core.tools.lastseen.found', {
+					user: `<@${targetUser.id}>`,
+					timestamp,
+				}),
 				{
 					color: 'Green',
 				},
@@ -69,7 +74,9 @@ class LastseenCommand extends BaseCommand {
 		} catch (err) {
 			const reply = await simpleContainer(
 				interaction,
-				`❌ Terjadi kesalahan saat mengambil data: ${err.message}`,
+				await t(interaction, 'core.tools.lastseen.error', {
+					message: err.message,
+				}),
 				{
 					color: 'Red',
 				},

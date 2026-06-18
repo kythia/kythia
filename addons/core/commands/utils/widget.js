@@ -21,7 +21,7 @@ class WidgetCommand extends BaseCommand {
 		.setDescription('Manage your Kythia Profile Widget on Discord.');
 	async execute(interaction) {
 		const container = this.container;
-		const { kythiaConfig, models, helpers, logger } = container;
+		const { kythiaConfig, models, helpers, logger, t } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer, createContainer } = helpers.discord;
 		await interaction.deferReply();
@@ -131,7 +131,7 @@ class WidgetCommand extends BaseCommand {
 			});
 			if (response.ok) {
 				const components = await createContainer(interaction, {
-					description: `✅ Widget Updated!\nYour widget has been successfully refreshed! Check your Discord profile! 😉\n\n*-# Belum pernah setup? Klik tombol di bawah buat authorize Kythia Widget ya!*`,
+					description: await t(interaction, 'core.utils.widget.success'),
 					color: kythiaConfig.bot.color,
 					components: [row],
 				});
@@ -143,7 +143,7 @@ class WidgetCommand extends BaseCommand {
 				const errText = await response.text();
 				logger.error('[WIDGET ERROR]', errText);
 				const components = await createContainer(interaction, {
-					description: `❌ Update Failed\nOh no, failed to update your widget right now 😭\n\n*-# Kalau kamu belum pernah setup widget, wajib authorize dulu lewat tombol di bawah ya!*`,
+					description: await t(interaction, 'core.utils.widget.failed'),
 					color: 'Red',
 					components: [row],
 				});
@@ -156,7 +156,7 @@ class WidgetCommand extends BaseCommand {
 			logger.error('[WIDGET FETCH ERROR]', error);
 			const components = await simpleContainer(
 				interaction,
-				`❌ Error\nAn error occurred while contacting Discord.`,
+				await t(interaction, 'core.utils.widget.error'),
 				{
 					color: 'Red',
 				},

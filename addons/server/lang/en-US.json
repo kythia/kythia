@@ -66,13 +66,13 @@
 					"guild_md": "## Unknown Guild\nCould not fetch guild information."
 				},
 				"progress": {
-					"start_md": "## Starting Reset",
-					"channels_md": "## Deleting Channels ({current}/{total})",
-					"roles_md": "## Deleting Roles ({current}/{total})",
-					"emojis_md": "## Deleting Emojis ({current}/{total})",
-					"stickers_md": "## Deleting Stickers ({current}/{total})"
+					"start_md": "## Starting Reset\nClearing all channels, roles, emojis, and stickers...",
+					"channels_md": "## In Progress...\nDeleting Channels ({current}/{total})",
+					"roles_md": "## In Progress...\nDeleting Roles ({current}/{total})",
+					"emojis_md": "## In Progress...\nDeleting Emojis ({current}/{total})",
+					"stickers_md": "## In Progress...\nDeleting Stickers ({current}/{total})"
 				},
-				"success": "Server reset completed successfully!",
+				"success": "## Complete!\nServer reset completed successfully!",
 				"msg_title_md": "## {title}"
 			}
 		}

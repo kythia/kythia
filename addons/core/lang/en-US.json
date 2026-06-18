@@ -22,6 +22,11 @@
 	},
 	"core": {
 		"utils": {
+			"widget": {
+				"success": "✅ Widget Updated!\nYour widget has been successfully refreshed! Check your Discord profile! 😉\n\n*-# Haven't set it up yet? Click the button below to authorize Kythia Widget!*",
+				"failed": "❌ Update Failed\nOh no, failed to update your widget right now 😭\n\n*-# If you haven't set up your widget, you must authorize first via the button below!*",
+				"error": "❌ Error\nAn error occurred while contacting Discord."
+			},
 			"legal": {
 				"embed": {
 					"title": "# Legal Information"
@@ -612,7 +617,13 @@
 						"recalc": "K Recalculated\nOld K: {old}\nNew K: {new}"
 					}
 				},
-				"debug": "Kythia Cache Debugger (Complete)\n\n{logs}",
+				"debug": {
+					"msg": "Kythia Cache Debugger (Complete)\n\n{logs}",
+					"no_model": "❌ Model `Playlist` or `PlaylistTrack` not found in the container.",
+					"too_long": "🛠️ Kythia Cache Debugger\nLogs are too long, see the attached file for full results.",
+					"critical_failure": "💥 CRITICAL FAILURE\n\n{logs}\n\n**ERROR at Step {step}:**\n```js\n{error}\n```",
+					"critical_attached": "💥 CRITICAL FAILURE\nLogs attached."
+				},
 				"reload_config": "Kythia Configuration has been hot-reloaded successfully!",
 				"reload_node": "Config and Lavalink nodes have been reloaded!",
 				"restart": {
@@ -673,6 +684,11 @@
 			}
 		},
 		"tools": {
+			"lastseen": {
+				"not_found": "🤷‍♀️ I don't know, {user} has never sent a message or their data is not recorded yet.",
+				"found": "👀 {user} was last seen sending a message on <t:{timestamp}:F> (<t:{timestamp}:R>).",
+				"error": "❌ An error occurred while fetching data: {message}"
+			},
 			"avatar": {
 				"embed": {
 					"desc": "[Download Avatar]({url})"

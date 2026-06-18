@@ -36,7 +36,7 @@ class TranscriptCommand extends BaseCommand {
 			helpers.discord;
 
 		const ticket = await Ticket.getCache({
-			channelId: interaction.channel.id,
+			channelId: interaction.channelId,
 			status: 'open',
 		});
 

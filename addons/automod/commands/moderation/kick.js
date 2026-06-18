@@ -53,9 +53,16 @@ class KickCommand extends BaseCommand {
 				),
 				thumbnail: user.displayAvatarURL(),
 			});
-			const setting = await ServerSetting.getCache({
-				guildId: interaction.guild.id,
+			const [setting] = await ServerSetting.findOrCreateCache({
+				where: {
+					guildId: interaction.guild.id,
+				},
+				defaults: {
+					guildId: interaction.guild.id,
+					guildName: interaction.guild?.name || 'Unknown',
+				},
 			});
+
 			const modLogChannelId = setting.modLogChannelId;
 			const modLogChannel = await getTextChannelSafe(
 				interaction.guild,

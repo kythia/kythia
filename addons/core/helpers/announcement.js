@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const { PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord.js');
 async function sendToAllGuilds(container, interaction, payload) {
 	const { t } = container;
 	await interaction.editReply({
@@ -20,7 +20,7 @@ async function sendToAllGuilds(container, interaction, payload) {
 	let failCount = 0;
 	const failedServers = [];
 	const executeOnShard = async (clientContext, data) => {
-		// const { PermissionFlagsBits: PFB } = require('discord.js');
+		const { PermissionFlagsBits } = require('discord.js');
 		const { payload } = data;
 		const SendMessages = PermissionFlagsBits.SendMessages;
 		const ViewChannel = PermissionFlagsBits.ViewChannel;

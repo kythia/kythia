@@ -51,9 +51,7 @@ class UseCommand extends BaseCommand {
 
 		if (justDied) {
 			try {
-				await interaction.user.send(
-					'Pesan duka: Pet-mu telah mati karena tidak terurus! 💀',
-				);
+				await interaction.user.send(await t(interaction, 'pet.use.dead.dm'));
 			} catch (_e) {
 				/* abaikan jika DM gagal */
 			}

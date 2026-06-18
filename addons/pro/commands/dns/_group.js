@@ -14,7 +14,10 @@ class GroupCommand extends BaseCommand {
 	slashCommand = (subcommandGroup) =>
 		subcommandGroup
 			.setName('dns')
-			.setDescription('Kelola DNS record untuk subdomain Pro-mu.');
+			.setDescription('Manage DNS records for your Pro subdomain.')
+			.setDescriptionLocalizations({
+				id: 'Kelola DNS record untuk subdomain Pro-mu.',
+			});
 }
 
 exports.default = GroupCommand;

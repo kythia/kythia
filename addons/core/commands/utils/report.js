@@ -48,8 +48,14 @@ class ReportCommand extends BaseCommand {
 			interaction.options.getString('reason') ||
 			(await t(interaction, 'core.utils.report.reason'));
 		const guildId = interaction.guild?.id;
-		const setting = await ServerSetting.getCache({
-			guildId,
+		const setting = await ServerSetting.findOrCreateCache({
+			where: {
+				guildId,
+			},
+			defaults: {
+				guildId,
+				guildName: interaction.guild?.name || 'Unknown',
+			},
 		});
 		if (!setting.modLogChannelId && !interaction.guild) {
 			const components = await createContainer(interaction, {
