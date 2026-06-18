@@ -2,7 +2,7 @@
 
 ### `/checklist`
 
-**Description:** 📝 Create checklists for you or your server to make life easier
+**Description:** Create checklists for you or your server to make life easier
 
 ### Usage
 

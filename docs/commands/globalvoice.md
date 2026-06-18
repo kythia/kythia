@@ -2,7 +2,7 @@
 
 ### `/globalvoice`
 
-**Description:** 🔊 Manage global voice settings for this server
+**Description:** Manage global voice settings for this server
 
 ### Usage
 

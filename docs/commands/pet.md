@@ -2,7 +2,7 @@
 
 ### `/pet`
 
-**Description:** 🐾 All commands related to the pet system.
+**Description:** All commands related to the pet system.
 
 ### Usage
 

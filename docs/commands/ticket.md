@@ -2,7 +2,7 @@
 
 ### `/ticket`
 
-**Description:** 🎟️ All commands related to kythia ticket system.
+**Description:** All commands related to kythia ticket system.
 
 ### Details
 

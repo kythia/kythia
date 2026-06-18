@@ -2,7 +2,7 @@
 
 ### `/autoreply`
 
-**Description:** 🤖 Manage custom auto-replies for your server.
+**Description:** Manage custom auto-replies for your server.
 
 ### Usage
 
@@ -13,7 +13,7 @@
 ### Subcommands
 
 **`/autoreply add <trigger> [<response>] [<media>] [<use_container>]`**
-> ➕ Add a new auto-reply.
+> Add a new auto-reply.
 
 **Options for this subcommand:**
 - **`trigger*`**
@@ -29,11 +29,11 @@
   - **Description:** Use Advanced Components V2 Container style?
   - **Type:** Boolean
 **`/autoreply list`**
-> 📜 List all auto-replies in this server.
+> List all auto-replies in this server.
 
 
 **`/autoreply remove <trigger>`**
-> ➖ Remove an auto-reply.
+> Remove an auto-reply.
 
 **Options for this subcommand:**
 - **`trigger*`**

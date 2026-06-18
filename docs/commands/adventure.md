@@ -2,7 +2,7 @@
 
 ### `/adventure`
 
-**Description:** ⚔️ Start your adventure in RPG dimension!
+**Description:** Start your adventure in RPG dimension!
 
 ### Usage
 
@@ -17,23 +17,23 @@
 ### Subcommands
 
 **`/adventure battle`**
-> ⚔️ Fight a monster in the dungeon!
+> Fight a monster in the dungeon!
 
 
 **`/adventure inventory`**
-> 🎒 Look at your inventory
+> Look at your inventory
 
 
 **`/adventure profile`**
-> 📑 Look at your Adventure stats
+> Look at your Adventure stats
 
 
 **`/adventure recall`**
-> 🏙️ Get back to the city!
+> Get back to the city!
 
 
 **`/adventure shop [<category>]`**
-> 🛒 Buy items from the adventure shop!
+> Buy items from the adventure shop!
 
 **Options for this subcommand:**
 - **`category`**
@@ -41,7 +41,7 @@
   - **Type:** Text
   - **Choices:** `All` (`all`), `Equipment` (`equipment`), `Consumables` (`consumables`)
 **`/adventure start <character>`**
-> 🛩️ Start your journey now!
+> Start your journey now!
 
 **Options for this subcommand:**
 - **`character*`**

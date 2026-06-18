@@ -2,7 +2,7 @@
 
 ### `/counting`
 
-**Description:** 🔢 Manage the counting channel.
+**Description:** Manage the counting channel.
 
 ### Usage
 

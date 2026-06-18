@@ -25,7 +25,7 @@ class PingCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('ping')
 		.setDescription(
-			"🔍 Checks the bot's, Discord API's, database and cache/redis connection speed.",
+			"Checks the bot's, Discord API's, database and cache/redis connection speed.",
 		);
 
 	async execute(interaction) {

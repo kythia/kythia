@@ -2,7 +2,7 @@
 
 ### `/activity`
 
-**Description:** 📊 All commands related to activity statistics.
+**Description:** All commands related to activity statistics.
 
 ### Usage
 
@@ -16,32 +16,33 @@
 ### Subcommands
 
 **`/activity achievement list [<category>] [<user>]`**
-> 📋 Browse achievements by category.
+> Browse achievements by category.
 
 **Options for this subcommand:**
 - **`category`**
   - **Description:** Filter by category.
   - **Type:** Text
-  - **Choices:** `💬 Messages (All-Time)` (`messages`), `📅 Messages (Daily)` (`messages_daily`), `📆 Messages (Weekly)` (`messages_weekly`), `🎙️ Voice Hours` (`voice`), `🔔 Voice Joins` (`voice_joins`), `😄 Reactions` (`reactions`), `📅 Server Age` (`server_age`), `🏅 Collectors` (`collector`), `⭐ Special` (`special`)
+  - **Choices:** `💬 Messages (All-Time)` (`messages`), `📅 Messages (Daily Record)` (`messages_daily`), `📆 Messages (Weekly Record)` (`messages_weekly`), `🎙️ Voice Chat (Hours)` (`voice`), `🔔 Voice Chat (Joins)` (`voice_joins`), `😄 Reactions` (`reactions`), `📅 Server Membership` (`server_age`), `🏅 Achievement Collector` (`collector`), `⭐ Special` (`special`)
 - **`user`**
   - **Description:** The user to check. Defaults to yourself.
   - **Type:** User
 **`/activity achievement profile [<user>]`**
-> 🏆 View your achievement profile banner.
+> View your achievement profile banner.
 
 **Options for this subcommand:**
 - **`user`**
   - **Description:** The user to view. Defaults to yourself.
   - **Type:** User
 **`/activity achievement setup [<channel>]`**
-> ⚙️ Setup the achievement notification channel.
+> Setup the achievement notification channel.
+> _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
 - **`channel`**
   - **Description:** The channel to send notifications to (leave empty to disable).
   - **Type:** Channel
 **`/activity leaderboard [<type>] [<period>]`**
-> 📊 Activity leaderboard for this server.
+> Activity leaderboard for this server.
 
 **Options for this subcommand:**
 - **`type`**
@@ -53,7 +54,8 @@
   - **Type:** Text
   - **Choices:** `🕰️ All Time` (`all`), `📅 Today` (`daily`), `📆 This Week` (`weekly`), `🗓️ This Month` (`monthly`)
 **`/activity setup <enabled>`**
-> ⚙️ Enable or disable activity tracking for this server.
+> Enable or disable activity tracking for this server.
+> _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
 - **`enabled*`**

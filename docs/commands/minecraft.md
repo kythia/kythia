@@ -2,7 +2,7 @@
 
 ### `/minecraft`
 
-**Description:** ⛏️ Minecraft: Java Edition player lookup commands
+**Description:** Minecraft: Java Edition player lookup commands
 
 ### Usage
 
@@ -45,11 +45,11 @@
   - **Description:** The Minecraft Java Edition player name
   - **Type:** Text
 **`/minecraft player help`**
-> 📖 View all Minecraft addon commands and features
+> View all Minecraft addon commands and features
 
 
 **`/minecraft player pose <player> <pose> [<crop>]`**
-> 🎭 Render a player in any Starlight Skins pose
+> Render a player in any Starlight Skins pose
 
 **Options for this subcommand:**
 - **`player*`**
@@ -71,7 +71,7 @@
   - **Description:** The Minecraft Java Edition player name
   - **Type:** Text
 **`/minecraft player wallpaper <wallpaper> <players>`**
-> 🖼️ Generate a Minecraft wallpaper featuring one or more players
+> Generate a Minecraft wallpaper featuring one or more players
 
 **Options for this subcommand:**
 - **`wallpaper*`**
@@ -93,7 +93,7 @@
   - **Type:** Text
   - **Choices:** `☕ Java Edition` (`java`), `🪨 Bedrock Edition` (`bedrock`)
 **`/minecraft set autosetup <host> [<port>] [<category_name>]`**
-> ⚙️ Auto-create all Minecraft stat channels in one go
+> Auto-create all Minecraft stat channels in one go
 > _User Permissions: `ManageChannels`, `ManageGuild`_
 
 **Options for this subcommand:**
@@ -104,10 +104,10 @@
   - **Description:** Server port (default: 25565)
   - **Type:** Integer
 - **`category_name`**
-  - **Description:** Name for the new category (default: ⛏️ Minecraft Server)
+  - **Description:** Name for the new category (default: Minecraft Server)
   - **Type:** Text
 **`/minecraft set ip-channel <channel>`**
-> 📢 Set a channel to display the Minecraft server IP
+> Set a channel to display the Minecraft server IP
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
@@ -115,7 +115,7 @@
   - **Description:** Channel to display the server IP
   - **Type:** Channel
 **`/minecraft set ip <ip>`**
-> 🖥️ Set the Minecraft server IP for this guild
+> Set the Minecraft server IP for this guild
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
@@ -123,7 +123,7 @@
   - **Description:** Minecraft server IP address
   - **Type:** Text
 **`/minecraft set port-channel <channel>`**
-> 📢 Set a channel to display the Minecraft server port
+> Set a channel to display the Minecraft server port
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
@@ -131,7 +131,7 @@
   - **Description:** Channel to display the server port
   - **Type:** Channel
 **`/minecraft set port <port>`**
-> 🔌 Set the Minecraft server port for this guild
+> Set the Minecraft server port for this guild
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
@@ -139,7 +139,7 @@
   - **Description:** Minecraft server port (default: 25565)
   - **Type:** Integer
 **`/minecraft set status-channel <channel>`**
-> 📢 Set a channel to display the Minecraft server status
+> Set a channel to display the Minecraft server status
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**

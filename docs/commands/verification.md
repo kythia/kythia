@@ -2,7 +2,7 @@
 
 ### `/verification`
 
-**Description:** 🛡️ Verification system management
+**Description:** Verification system management
 
 ### Usage
 

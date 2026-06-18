@@ -2,7 +2,7 @@
 
 ### `/eco`
 
-**Description:** 💰 Get your money and become rich
+**Description:** Get your money and become rich
 
 ### Usage
 
@@ -62,7 +62,7 @@
 ### Subcommands
 
 **`/eco account create <bank>`**
-> 👤 Create an account and choose a bank type.
+> Create an account and choose a bank type.
 
 **Options for this subcommand:**
 - **`bank*`**
@@ -70,7 +70,7 @@
   - **Type:** Text
   - **Choices:** `🏦 Apex Financial` (`apex_financial`), `🏛️ Titan Holdings` (`titan_holdings`), `🌐 Zenith Commerce` (`zenith_commerce`), `🗡️ Crimson Syndicate` (`crimson_syndicate`), `☀️ Solara Mutual` (`solara_mutual`)
 **`/eco account edit <bank>`**
-> 👤 Edit your account and choose a bank type.
+> Edit your account and choose a bank type.
 
 **Options for this subcommand:**
 - **`bank*`**
@@ -78,7 +78,7 @@
   - **Type:** Text
   - **Choices:** `🏦 Apex Financial` (`apex_financial`), `🏛️ Titan Holdings` (`titan_holdings`), `🌐 Zenith Commerce` (`zenith_commerce`), `🗡️ Crimson Syndicate` (`crimson_syndicate`), `☀️ Solara Mutual` (`solara_mutual`)
 **`/eco bank deposit <type> [<amount>]`**
-> 💰 Deposit your kythia coin into kythia bank.
+> Deposit your kythia coin into kythia bank.
 
 **Options for this subcommand:**
 - **`type*`**
@@ -89,11 +89,11 @@
   - **Description:** Amount to deposit
   - **Type:** Integer
 **`/eco bank info`**
-> 💰 Check your kythia bank balance and full bank info.
+> Check your kythia bank balance and full bank info.
 
 
 **`/eco bank loan <action> <amount>`**
-> 🏦 Borrow money from your bank or repay your loan.
+> Borrow money from your bank or repay your loan.
 
 **Options for this subcommand:**
 - **`action*`**
@@ -104,7 +104,7 @@
   - **Description:** Amount to borrow or repay
   - **Type:** Integer
 **`/eco bank switch`**
-> 🏦 Switch to a different bank type (Costs money!).
+> Switch to a different bank type (Costs money!).
 
 
 **`/eco bank transfer <target> <amount>`**
@@ -118,7 +118,7 @@
   - **Description:** Amount of money to transfer
   - **Type:** Integer
 **`/eco bank upgrade`**
-> 🏦 Upgrade your maximum bank capacity.
+> Upgrade your maximum bank capacity.
 
 
 **`/eco bank withdraw <amount>`**
@@ -129,74 +129,74 @@
   - **Description:** Amount to withdraw
   - **Type:** Integer
 **`/eco beg`**
-> 💰 Ask for money from server.
+> Ask for money from server.
 
 
 **`/eco coin`**
-> 💰 Check your kythia coin balance.
+> Check your kythia coin balance.
 
 
 **`/eco collect`**
-> 🏦 Collect daily passive income from your assets
+> Collect daily passive income from your assets
 
 
 **`/eco company fire <target>`**
-> 🏢 (Company Owner) Fire an employee from your company.
+> (Company Owner) Fire an employee from your company.
 
 **Options for this subcommand:**
 - **`target*`**
   - **Description:** The employee you want to fire
   - **Type:** User
 **`/eco company hire <target>`**
-> 🏢 (Company Owner) Hire a player to work for you.
+> (Company Owner) Hire a player to work for you.
 
 **Options for this subcommand:**
 - **`target*`**
   - **Description:** The player you want to hire
   - **Type:** User
 **`/eco company resign`**
-> 🏃‍♂️ Resign from your current employer.
+> ‍Resign from your current employer.
 
 
 **`/eco crime arrest <target>`**
-> 🚓 (Police Only) Arrest a wanted criminal!
+> (Police Only) Arrest a wanted criminal!
 
 **Options for this subcommand:**
 - **`target*`**
   - **Description:** The wanted criminal you want to arrest
   - **Type:** User
 **`/eco crime blackmarket`**
-> 🕶️ The underground Black Market. Accepts KYTH only.
+> The underground Black Market. Accepts KYTH only.
 
 
 **`/eco crime hack <target>`**
-> 💵 Hack another user (Initiates a hacking sequence).
+> Hack another user (Initiates a hacking sequence).
 
 **Options for this subcommand:**
 - **`target*`**
   - **Description:** User you want to hack
   - **Type:** User
 **`/eco crime rob <target>`**
-> 💵 Try to rob money from another user.
+> Try to rob money from another user.
 
 **Options for this subcommand:**
 - **`target*`**
   - **Description:** The user you want to rob
   - **Type:** User
 **`/eco crime wanted [<target>]`**
-> 🤠 View the most wanted criminals or claim a bounty.
+> View the most wanted criminals or claim a bounty.
 
 **Options for this subcommand:**
 - **`target`**
   - **Description:** The user you want to capture
   - **Type:** User
 **`/eco daily`**
-> 💰 Collect your daily kythia coin.
+> Collect your daily kythia coin.
 > _Aliases: `daily`_
 
 
 **`/eco flea <action> [<item>] [<price>] [<type>]`**
-> 📦 Advanced Player-to-player Grand Auction House.
+> Advanced Player-to-player Grand Auction House.
 
 **Options for this subcommand:**
 - **`action*`**
@@ -214,7 +214,7 @@
   - **Type:** Text
   - **Choices:** `Buy It Now (BIN)` (`bin`), `Auction (24h)` (`auction`)
 **`/eco gamble coinflip <bet> <side>`**
-> 🪙 Flip a coin and test your luck.
+> Flip a coin and test your luck.
 
 **Options for this subcommand:**
 - **`bet*`**
@@ -232,7 +232,7 @@
   - **Description:** The amount of money to bet
   - **Type:** Integer
 **`/eco give <target> <amount>`**
-> 💰 Give kythia coin to another user.
+> Give kythia coin to another user.
 
 **Options for this subcommand:**
 - **`target*`**
@@ -242,7 +242,7 @@
   - **Description:** Amount of kythia coin to give
   - **Type:** Integer
 **`/eco guild_stock create <ticker> <initial_kyth> <initial_supply>`**
-> 🚀 (Owner) Launch your server's local stock market via ICO.
+> (Owner) Launch your server's local stock market via ICO.
 
 **Options for this subcommand:**
 - **`ticker*`**
@@ -255,11 +255,11 @@
   - **Description:** Initial supply of your Guild Token to deposit
   - **Type:** Number
 **`/eco guild_stock portfolio`**
-> 📈 View all the Guild Stocks you currently own.
+> View all the Guild Stocks you currently own.
 
 
 **`/eco guild_stock swap <ticker> <action> <amount>`**
-> 🔄 Swap KYTH for Guild Tokens, or vice versa via AMM.
+> Swap KYTH for Guild Tokens, or vice versa via AMM.
 
 **Options for this subcommand:**
 - **`ticker*`**
@@ -273,40 +273,40 @@
   - **Description:** Amount of stock to buy/sell
   - **Type:** Number
 **`/eco guild_stock top`**
-> 🌐 View the top Guild Stocks by Market Cap (The Kythia S&P 500).
+> View the top Guild Stocks by Market Cap (The Kythia S&P 500).
 
 
 **`/eco guild_stock view [<ticker>]`**
-> 📊 View the live market data for a server's stock.
+> View the live market data for a server's stock.
 
 **Options for this subcommand:**
 - **`ticker`**
   - **Description:** The 2-4 letter stock ticker (leave blank for this server's stock)
   - **Type:** Text
 **`/eco inventory`**
-> 🛄 View all items in your inventory.
+> View all items in your inventory.
 
 
 **`/eco job apply`**
-> 👨‍💼 Apply for a specific profession to focus your work.
+> ‍Apply for a specific profession to focus your work.
 
 
 **`/eco job work`**
-> ⚒️ Work to earn money with various scenarios!
+> Work to earn money with various scenarios!
 > _Aliases: `work`_
 
 
 **`/eco leaderboard`**
-> 🏆 View the global economy leaderboard.
+> View the global economy leaderboard.
 
 
 **`/eco lootbox`**
-> 🎁 Open a lootbox to get a random reward.
+> Open a lootbox to get a random reward.
 > _Aliases: `lootbox`_
 
 
 **`/eco market buy <asset> <amount>`**
-> 💸 Buy an asset from the global market.
+> Buy an asset from the global market.
 
 **Options for this subcommand:**
 - **`asset*`**
@@ -344,11 +344,11 @@
   - **Description:** The price at which to place the order
   - **Type:** Number
 **`/eco market portfolio`**
-> 💼 View your personal asset portfolio.
+> View your personal asset portfolio.
 
 
 **`/eco market sell <asset> <quantity>`**
-> 💰 Sell an asset to the global market.
+> Sell an asset to the global market.
 
 **Options for this subcommand:**
 - **`asset*`**
@@ -358,7 +358,7 @@
   - **Description:** The amount of the asset you want to sell (e.g., 0.5 KYTH)
   - **Type:** Number
 **`/eco market stake <action> [<amount>]`**
-> 🏦 Stake or unstake KYTH tokens with Solara Mutual for daily dividends.
+> Stake or unstake KYTH tokens with Solara Mutual for daily dividends.
 
 **Options for this subcommand:**
 - **`action*`**
@@ -382,7 +382,7 @@
   - **Description:** The price at which to trigger the sell order
   - **Type:** Number
 **`/eco market view [<asset>] [<timeframe>]`**
-> 📈 View real-time crypto prices from the global market.
+> View real-time crypto prices from the global market.
 
 **Options for this subcommand:**
 - **`asset`**
@@ -393,41 +393,41 @@
   - **Type:** Text
   - **Choices:** `1 Day` (`1`), `7 Days` (`7`), `14 Days` (`14`), `30 Days` (`30`), `90 Days` (`90`), `365 Days` (`365`)
 **`/eco marry divorce`**
-> 💔 End your current marriage
+> End your current marriage
 
 
 **`/eco marry kiss`**
-> 😘 Kiss your partner
+> Kiss your partner
 
 
 **`/eco marry profile`**
-> 👰 View your marriage profile
+> View your marriage profile
 
 
 **`/eco marry propose <user>`**
-> 💍 Propose to another user
+> Propose to another user
 
 **Options for this subcommand:**
 - **`user*`**
   - **Description:** The user you want to propose to
   - **Type:** User
 **`/eco premium`**
-> 💎 Enter the Premium Shop to buy Kythia Tiers.
+> Enter the Premium Shop to buy Kythia Tiers.
 
 
 **`/eco profile [<user>]`**
-> 🗃️ View a user's full profile, including level, bank, cash, and more.
+> View a user's full profile, including level, bank, cash, and more.
 
 **Options for this subcommand:**
 - **`user`**
   - **Description:** The user whose profile you want to view
   - **Type:** User
 **`/eco shop`**
-> 🛒 Look and buy items from the shop.
+> Look and buy items from the shop.
 
 
 **`/eco use <item>`**
-> 🎒 Use a consumable item from your inventory.
+> Use a consumable item from your inventory.
 
 **Options for this subcommand:**
 - **`item*`**

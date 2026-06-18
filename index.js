@@ -188,7 +188,7 @@ try {
 	const kythiaInstance = new Kythia(dependencies);
 
 	kythiaInstance.container.translator.setLanguageResolver(async (guildId) => {
-		const ServerSetting = kythiaInstance.container.models.ServerSetting;
+		const { ServerSetting } = kythiaInstance.container.models;
 
 		if (!ServerSetting) return null;
 

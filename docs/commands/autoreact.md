@@ -2,7 +2,7 @@
 
 ### `/autoreact`
 
-**Description:** 🤖 Manage automatic reactions for the server.
+**Description:** Manage automatic reactions for the server.
 
 ### Usage
 
@@ -13,7 +13,7 @@
 ### Subcommands
 
 **`/autoreact add <emoji> [<trigger>] [<channel>]`**
-> ➕ Add a new auto-reaction.
+> Add a new auto-reaction.
 
 **Options for this subcommand:**
 - **`emoji*`**
@@ -26,11 +26,11 @@
   - **Description:** The channel to watch (Channel Mode).
   - **Type:** Channel
 **`/autoreact list`**
-> 📜 List all auto-reactions in this server.
+> List all auto-reactions in this server.
 
 
 **`/autoreact remove <trigger>`**
-> ➖ Remove an auto-reaction.
+> Remove an auto-reaction.
 
 **Options for this subcommand:**
 - **`trigger*`**

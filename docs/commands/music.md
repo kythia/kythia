@@ -2,7 +2,7 @@
 
 ### `/music`
 
-**Description:** 🎵 Full music command suite using Lavalink
+**Description:** Full music command suite using Lavalink
 
 ### Details
 
@@ -60,43 +60,43 @@
 ### Subcommands
 
 **`/music favorite add <search>`**
-> 💖 Add a song to your favorites.
+> Add a song to your favorites.
 
 **Options for this subcommand:**
 - **`search*`**
   - **Description:** The song title or URL to add.
   - **Type:** Text
 **`/music favorite list`**
-> 🌟 Show your favorite songs.
+> Show your favorite songs.
 
 
 **`/music favorite play [<append>]`**
-> 🎶 Play all songs from your favorites.
+> Play all songs from your favorites.
 
 **Options for this subcommand:**
 - **`append`**
   - **Description:** Append the songs to the current queue.
   - **Type:** Boolean
 **`/music favorite remove <name>`**
-> 💖 Remove a song from your favorites.
+> Remove a song from your favorites.
 
 **Options for this subcommand:**
 - **`name*`**
   - **Description:** The name of the song to remove.
   - **Type:** Text
 **`/music manage clear`**
-> 🗑️ Clears the current queue.
+> Clears the current queue.
 
 
 **`/music manage jump <position>`**
-> 🐇 Jump to a specific song in the queue
+> Jump to a specific song in the queue
 
 **Options for this subcommand:**
 - **`position*`**
   - **Description:** The position in the queue to jump to
   - **Type:** Integer
 **`/music manage move <from> <to>`**
-> 🔀 Move a song to different position
+> Move a song to different position
 
 **Options for this subcommand:**
 - **`from*`**
@@ -106,29 +106,29 @@
   - **Description:** New position
   - **Type:** Integer
 **`/music manage remove <position>`**
-> 🗑️ Remove a song from queue
+> Remove a song from queue
 
 **Options for this subcommand:**
 - **`position*`**
   - **Description:** Position in queue to remove
   - **Type:** Integer
 **`/music nowplaying`**
-> ℹ️ Show the currently playing song
+> Show the currently playing song
 
 
 **`/music pause`**
-> ⏸️ Pause the currently playing song
+> Pause the currently playing song
 
 
 **`/music play <search>`**
-> 🎶 Play a song or add it to the queue
+> Play a song or add it to the queue
 
 **Options for this subcommand:**
 - **`search*`**
   - **Description:** Song title or URL (YouTube, Spotify (can be playlist link))
   - **Type:** Text
 **`/music playback autoplay [<status>]`**
-> 🔄 Enable or disable autoplay
+> Enable or disable autoplay
 
 **Options for this subcommand:**
 - **`status`**
@@ -136,15 +136,15 @@
   - **Type:** Text
   - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
 **`/music playback back`**
-> ⏮️ Play the previous song
+> Play the previous song
 
 
 **`/music playback filter`**
-> 🎧 Apply audio filter (equalizer)
+> Apply audio filter (equalizer)
 
 
 **`/music playback loop <mode>`**
-> 🔁 Set repeat mode
+> Set repeat mode
 
 **Options for this subcommand:**
 - **`mode*`**
@@ -152,22 +152,22 @@
   - **Type:** Text
   - **Choices:** `❌ Off` (`none`), `🔂 Track` (`track`), `🔁 Queue` (`queue`)
 **`/music playback replay`**
-> 🔄 Replay the current song
+> Replay the current song
 
 
 **`/music playback seek <time>`**
-> ⏩ Seeks to a specific time in the current song.
+> Seeks to a specific time in the current song.
 
 **Options for this subcommand:**
 - **`time*`**
   - **Description:** The time to seek to. eg. 10, 2:30, 1:20:30
   - **Type:** Text
 **`/music playback shuffle`**
-> 🔀 Shuffle the queue order
+> Shuffle the queue order
 
 
 **`/music playback volume <level>`**
-> 🔊 Set music volume
+> Set music volume
 
 **Options for this subcommand:**
 - **`level*`**
@@ -257,11 +257,11 @@
   - **Description:** The position of the track to remove.
   - **Type:** Integer
 **`/music queue`**
-> 📜 Show the current song queue
+> Show the current song queue
 
 
 **`/music radio <search>`**
-> 📻 Search and play live radio stations worldwide
+> Search and play live radio stations worldwide
 
 **Options for this subcommand:**
 - **`search*`**
@@ -276,7 +276,7 @@
 
 
 **`/music stop`**
-> ⏹️ Stop music and clear the queue
+> Stop music and clear the queue
 
 
 **`/music utils 247`**
@@ -284,40 +284,40 @@
 
 
 **`/music utils download [<query>]`**
-> 📥 Download the current song
+> Download the current song
 
 **Options for this subcommand:**
 - **`query`**
   - **Description:** The song to download (optional, if not specified, the current song will be downloaded)
   - **Type:** Text
 **`/music utils grab`**
-> 📥 Grab the current song to your DMs
+> Grab the current song to your DMs
 
 
 **`/music utils history`**
-> 📜 Show the history of played songs
+> Show the history of played songs
 
 
 **`/music utils join`**
-> 🌸 Make Kythia Join the voice channel
+> Make Kythia Join the voice channel
 > _Aliases: `join`_
 
 
 **`/music utils karaoke`**
-> 🎤 Toggle live synced karaoke lyrics
+> Toggle live synced karaoke lyrics
 
 
 **`/music utils leave`**
-> 🌸 Make Kythia Leave the voice channel
+> Make Kythia Leave the voice channel
 > _Aliases: `leave`_
 
 
 **`/music utils lyrics`**
-> 🎤 Show the lyrics of the currently playing song
+> Show the lyrics of the currently playing song
 
 
 **`/music utils repair`**
-> 🔧 Repair a stuck or broken music session
+> Repair a stuck or broken music session
 
 
 

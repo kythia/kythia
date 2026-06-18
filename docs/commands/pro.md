@@ -2,7 +2,7 @@
 
 ### `/pro`
 
-**Description:** 🌸 All commands related to the Kythia Pro users.
+**Description:** All commands related to the Kythia Pro users.
 
 ### Usage
 
@@ -15,32 +15,32 @@
 ### Subcommands
 
 **`/pro claim subdomain <name>`**
-> 🌐 Claim a new .kyth.me subdomain (Max 5).
+> Claim a new .kyth.me subdomain (Max 5).
 
 **Options for this subcommand:**
 - **`name*`**
   - **Description:** Unique subdomain name (e.g.: kythia-cool)
   - **Type:** Text
 **`/pro dns delete <record>`**
-> 🌐 Delete a DNS record from your subdomain.
+> Delete a DNS record from your subdomain.
 
 **Options for this subcommand:**
 - **`record*`**
   - **Description:** Select the record you want to delete
   - **Type:** Text
 **`/pro dns help`**
-> 📖 Information and examples about each DNS record type.
+> Information and examples about each DNS record type.
 
 
 **`/pro dns list <subdomain>`**
-> 🌐 Show all DNS records for one of your subdomains.
+> Show all DNS records for one of your subdomains.
 
 **Options for this subcommand:**
 - **`subdomain*`**
   - **Description:** The subdomain name you want to view (e.g. my-project)
   - **Type:** Text
 **`/pro dns set <subdomain> <type> <name> <value> [<priority>]`**
-> 🌐 Create or update a DNS record.
+> Create or update a DNS record.
 
 **Options for this subcommand:**
 - **`subdomain*`**

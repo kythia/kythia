@@ -2,7 +2,7 @@
 
 ### `/level`
 
-**Description:** 🏅 All commands related to the leveling system.
+**Description:** All commands related to the leveling system.
 
 ### Usage
 
@@ -53,7 +53,7 @@
   - **Description:** The level to set.
   - **Type:** Integer
 **`/level setting channel <channel>`**
-> 🎮 Set channel for level up messages
+> Set channel for level up messages
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
@@ -61,7 +61,7 @@
   - **Description:** Channel for level up messages
   - **Type:** Channel
 **`/level setting cooldown <cooldown>`**
-> 🎮 Set XP gain cooldown
+> Set XP gain cooldown
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
@@ -69,7 +69,7 @@
   - **Description:** Cooldown in seconds
   - **Type:** Integer
 **`/level setting rolereward <action> <level> <role>`**
-> 🎮 Set role reward for a specific level
+> Set role reward for a specific level
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
@@ -84,7 +84,7 @@
   - **Description:** Role to be given
   - **Type:** Role
 **`/level setting xp <xp>`**
-> 🎮 Set XP amount per message
+> Set XP amount per message
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**

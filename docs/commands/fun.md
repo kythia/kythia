@@ -2,7 +2,7 @@
 
 ### `/8ball`
 
-**Description:** 🔮 Ask the magic 8 ball anything
+**Description:** Ask the magic 8 ball anything
 
 ### Usage
 
@@ -17,7 +17,7 @@
 
 ### `/act`
 
-**Description:** 🤗 Perform an anime action with a user
+**Description:** Perform an anime action with a user
 
 ### Usage
 
@@ -36,7 +36,7 @@
 
 ### `/fact`
 
-**Description:** 🧠 Get a random useless (but interesting) fact
+**Description:** Get a random useless (but interesting) fact
 
 ### Usage
 
@@ -46,7 +46,7 @@
 
 ### `/joke`
 
-**Description:** 😂 Get a random joke with a hidden punchline
+**Description:** Get a random joke with a hidden punchline
 
 ### Usage
 
@@ -62,7 +62,7 @@
 
 ### `/math`
 
-**Description:** 🔢 Speed math quiz — answer streaks build your leaderboard score!
+**Description:** Speed math quiz — answer streaks build your leaderboard score!
 
 ### Usage
 
@@ -72,18 +72,18 @@
 ### Subcommands
 
 **`/math play`**
-> ▶️ Start a math quiz
+> ▶Start a math quiz
 
 
 **`/math leaderboard`**
-> 🏆 View the global math leaderboard
+> View the global math leaderboard
 
 
 
 
 ### `/meme`
 
-**Description:** 😂 Get a random meme from Reddit
+**Description:** Get a random meme from Reddit
 
 ### Usage
 
@@ -99,7 +99,7 @@
 
 ### `/quote`
 
-**Description:** ✨ Get a random inspirational quote
+**Description:** Get a random inspirational quote
 
 ### Usage
 
@@ -109,7 +109,7 @@
 
 ### `/roast`
 
-**Description:** 🔥 Roast someone with a savage insult
+**Description:** Roast someone with a savage insult
 
 ### Usage
 
@@ -124,7 +124,7 @@
 
 ### `/rps`
 
-**Description:** ✂️ Play Rock Paper Scissors — against the bot or a friend!
+**Description:** Play Rock Paper Scissors — against the bot or a friend!
 
 ### Usage
 
@@ -139,7 +139,7 @@
 
 ### `/summon`
 
-**Description:** 🔔 Summon a friend to your current channel
+**Description:** Summon a friend to your current channel
 
 ### Usage
 
@@ -154,7 +154,7 @@
 
 ### `/tictactoe`
 
-**Description:** ⭕ Play Tic Tac Toe with a friend or bot.
+**Description:** Play Tic Tac Toe with a friend or bot.
 
 ### Usage
 
@@ -173,7 +173,7 @@
 
 ### `/wordle`
 
-**Description:** 🔡 Play Wordle! Guess the 5-letter word in 6 tries.
+**Description:** Play Wordle! Guess the 5-letter word in 6 tries.
 
 ### Usage
 
@@ -183,7 +183,7 @@
 
 ### `/friend`
 
-**Description:** 🤝 Friendship system commands
+**Description:** Friendship system commands
 
 ### Usage
 
@@ -194,18 +194,18 @@
 ### Subcommands
 
 **`/friend add <user>`**
-> 🤝 Add someone as a friend
+> Add someone as a friend
 
 **Options for this subcommand:**
 - **`user*`**
   - **Description:** The user you want to add as a friend
   - **Type:** User
 **`/friend list`**
-> 🤝 List your friends
+> List your friends
 
 
 **`/friend remove <user>`**
-> 💔 Remove someone from your friends list
+> Remove someone from your friends list
 
 **Options for this subcommand:**
 - **`user*`**

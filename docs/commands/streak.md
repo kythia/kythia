@@ -21,11 +21,11 @@
 ### Subcommands
 
 **`/streak claim`**
-> 🔥 Claim your streak for today, keep your streak continue!
+> Claim your streak for today, keep your streak continue!
 
 
 **`/streak leaderboard`**
-> 🥇 Streak leaderboard in this server
+> Streak leaderboard in this server
 
 
 **`/streak reset`**
@@ -33,11 +33,11 @@
 
 
 **`/streak restore`**
-> 🔄 Restore your lost streak back to what it was before the reset.
+> Restore your lost streak back to what it was before the reset.
 
 
 **`/streak setting emoji <emoji>`**
-> 🔥 Set streak emoji
+> Set streak emoji
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
@@ -45,7 +45,7 @@
   - **Description:** Emoji
   - **Type:** Text
 **`/streak setting minimum <minimum>`**
-> 🔥 Set minimum streak
+> Set minimum streak
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
@@ -53,7 +53,7 @@
   - **Description:** Minimum streak
   - **Type:** Integer
 **`/streak setting nickname <status>`**
-> 🔥 Toggle auto-nickname for streak
+> Toggle auto-nickname for streak
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
@@ -62,7 +62,7 @@
   - **Type:** Text
   - **Choices:** `Enable` (`enable`), `Disable` (`disable`)
 **`/streak setting quota <quota>`**
-> 🔄 Set monthly restore quota (how many times members can restore their streak per month)
+> Set monthly restore quota (how many times members can restore their streak per month)
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
@@ -70,7 +70,7 @@
   - **Description:** Restores allowed per month (0–30, 0 = disabled)
   - **Type:** Integer
 **`/streak setting rolereward <action> <streak> <role>`**
-> 🔥 Set role reward for a specific streak
+> Set role reward for a specific streak
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
@@ -85,7 +85,7 @@
   - **Description:** Role to be given
   - **Type:** Role
 **`/streak setting timezone <timezone>`**
-> 🌐 Set the timezone used for streak day resets
+> Set the timezone used for streak day resets
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**

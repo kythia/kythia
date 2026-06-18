@@ -2,7 +2,7 @@
 
 ### `/modmail`
 
-**Description:** 📬 All commands related to the Modmail system.
+**Description:** All commands related to the Modmail system.
 
 ### Details
 

@@ -2,7 +2,7 @@
 
 ### `/birthday`
 
-**Description:** 🎂 Manage your birthday settings.
+**Description:** Manage your birthday settings.
 
 ### Usage
 
@@ -16,22 +16,22 @@
 ### Subcommands
 
 **`/birthday check [<user>]`**
-> 👀 Check your or another user's birthday.
+> Check your or another user's birthday.
 
 **Options for this subcommand:**
 - **`user`**
   - **Description:** The user to check (defaults to yourself).
   - **Type:** User
 **`/birthday list`**
-> 📅 See a list of upcoming birthdays.
+> See a list of upcoming birthdays.
 
 
 **`/birthday remove`**
-> 🗑️ Remove your birthday information.
+> Remove your birthday information.
 
 
 **`/birthday set <day> <month> [<year>]`**
-> 📅 Set your birthday.
+> Set your birthday.
 
 **Options for this subcommand:**
 - **`day*`**
@@ -44,33 +44,34 @@
   - **Description:** The year of your birth (Optional - for age display).
   - **Type:** Integer
 **`/birthday setting edit [<channel>] [<role>] [<ping_role>] [<show_age>] [<message>] [<color>] [<image>]`**
-> ✍️ Edit birthday settings.
+> Edit birthday settings.
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**
 - **`channel`**
-  - **Description:** 📢 Channel for announcements.
+  - **Description:** Channel for announcements.
   - **Type:** Channel
 - **`role`**
-  - **Description:** 🎁 Role to give to the birthday user.
+  - **Description:** Role to give to the birthday user.
   - **Type:** Role
 - **`ping_role`**
-  - **Description:** 🔔 Role to ping in the announcement.
+  - **Description:** Role to ping in the announcement.
   - **Type:** Role
 - **`show_age`**
-  - **Description:** 🎂 Show age in announcements/list?
+  - **Description:** Show age in announcements/list?
   - **Type:** Boolean
 - **`message`**
-  - **Description:** ✉️ Custom message (Variables: {user}, {age}, {zodiac}).
+  - **Description:** Custom message (Variables: {user}, {age}, {zodiac}).
   - **Type:** Text
 - **`color`**
-  - **Description:** 🎨 Embed Hex Color (e.g. #FF00FF).
+  - **Description:** Embed Hex Color (e.g. #FF00FF).
   - **Type:** Text
 - **`image`**
-  - **Description:** 🖼️ Background/Banner Image URL.
+  - **Description:** Background/Banner Image URL.
   - **Type:** Text
 **`/birthday setting view`**
-> 👀 View current birthday settings.
+> View current birthday settings.
+> _User Permissions: `ManageGuild`_
 
 
 

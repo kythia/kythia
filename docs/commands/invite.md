@@ -2,7 +2,7 @@
 
 ### `/invites`
 
-**Description:** 🔗 Manage invites and rewards
+**Description:** Manage invites and rewards
 
 ### Usage
 
@@ -47,7 +47,7 @@
 
 
 **`/invites setting invite <channel>`**
-> 📢 Set invite log channel
+> Set invite log channel
 > _User Permissions: `ManageGuild`_
 
 **Options for this subcommand:**

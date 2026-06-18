@@ -2,7 +2,7 @@
 
 ### `/server`
 
-**Description:** ⚙️ Discord server management tools
+**Description:** Discord server management tools
 
 ### Details
 

@@ -2,7 +2,7 @@
 
 ### `/imagen`
 
-**Description:** 🎨 Generate an image from a prompt or transform an existing image using Gemini AI.
+**Description:** Generate an image from a prompt or transform an existing image using Gemini AI.
 
 ### Usage
 
@@ -20,7 +20,7 @@
 
 ### `/translate`
 
-**Description:** 🌐 Translate text to another language using Gemini AI.
+**Description:** Translate text to another language using Gemini AI.
 
 ### Usage
 
@@ -38,7 +38,7 @@
 
 ### `/ai`
 
-**Description:** 🧠 All commands related to kythia ai system.
+**Description:** All commands related to kythia ai system.
 
 ### Usage
 

@@ -2,7 +2,7 @@
 
 ### `/globalchat`
 
-**Description:** 🌏 Manage global chat settings for this server
+**Description:** Manage global chat settings for this server
 
 ### Usage
 

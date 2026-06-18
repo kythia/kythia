@@ -2,7 +2,7 @@
 
 ### `/giveaway`
 
-**Description:** 🎉 Create a giveaway event
+**Description:** Create a giveaway event
 
 ### Usage
 

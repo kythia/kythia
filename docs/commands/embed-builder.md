@@ -2,7 +2,7 @@
 
 ### `/embed-builder`
 
-**Description:** 🎨 Create and manage saved embeds for your server
+**Description:** Create and manage saved embeds for your server
 
 ### Usage
 
@@ -15,7 +15,7 @@
 ### Subcommands
 
 **`/embed-builder create <name> [<mode>]`**
-> ✨ Create a new saved embed
+> Create a new saved embed
 
 **Options for this subcommand:**
 - **`name*`**
@@ -26,7 +26,7 @@
   - **Type:** Text
   - **Choices:** `📋 Classic Embed` (`embed`), `🧩 Components V2` (`components_v2`)
 **`/embed-builder delete <id> [<delete_message>]`**
-> 🗑️ Delete a saved embed
+> Delete a saved embed
 
 **Options for this subcommand:**
 - **`id*`**
@@ -36,18 +36,18 @@
   - **Description:** Also delete the Discord message if the embed was sent (default: false)
   - **Type:** Boolean
 **`/embed-builder edit <id>`**
-> ✏️ Edit a saved embed
+> Edit a saved embed
 
 **Options for this subcommand:**
 - **`id*`**
   - **Description:** The embed to edit
   - **Type:** Text
 **`/embed-builder list`**
-> 📋 List all saved embeds for this server
+> List all saved embeds for this server
 
 
 **`/embed-builder send <id> [<channel>] [<allowed_mentions>]`**
-> 📤 Send a saved embed to a channel
+> Send a saved embed to a channel
 
 **Options for this subcommand:**
 - **`id*`**

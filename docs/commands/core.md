@@ -2,7 +2,7 @@
 
 ### `/premium-server`
 
-**Description:** 💎 Manage your Server Premium bindings
+**Description:** Manage your Server Premium bindings
 
 ### Usage
 
@@ -34,7 +34,7 @@
 
 ### `/set`
 
-**Description:** ⚙️ Settings bot configuration
+**Description:** Settings bot configuration
 
 ### Usage
 
@@ -52,7 +52,7 @@
 ### Subcommands
 
 **`/set language set <lang>`**
-> 🌐 Set bot language
+> Set bot language
 
 **Options for this subcommand:**
 - **`lang*`**
@@ -60,7 +60,7 @@
   - **Type:** Text
   - **Choices:** `en-US` (`en-US`)
 **`/set view`**
-> 🔍 View all bot settings
+> View all bot settings
 
 
 **`/set features activity <status>`**
@@ -131,7 +131,7 @@
 
 ### `/ascii`
 
-**Description:** 🎨 Generate ASCII art from your text using figlet.
+**Description:** Generate ASCII art from your text using figlet.
 
 ### Details
 
@@ -155,7 +155,7 @@
 
 ### `/avatar`
 
-**Description:** 🖼️ Show user avatar.
+**Description:** Show user avatar.
 
 ### Usage
 
@@ -170,7 +170,7 @@
 
 ### `/banner`
 
-**Description:** 🖼️ Show user banner.
+**Description:** Show user banner.
 
 ### Usage
 
@@ -185,7 +185,7 @@
 
 ### `/crack-hash`
 
-**Description:** 🔍 Try to lookup a hash from public databases (MD5, SHA1, SHA256, SHA512).
+**Description:** Try to lookup a hash from public databases (MD5, SHA1, SHA256, SHA512).
 
 ### Usage
 
@@ -204,7 +204,7 @@
 
 ### `/decrypt`
 
-**Description:** 🔓 Decrypt data using the correct secret key.
+**Description:** Decrypt data using the correct secret key.
 
 ### Usage
 
@@ -222,7 +222,7 @@
 
 ### `/encrypt`
 
-**Description:** 🔒 Encrypt a text with a secret key (two-way encryption).
+**Description:** Encrypt a text with a secret key (two-way encryption).
 
 ### Usage
 
@@ -240,7 +240,7 @@
 
 ### `/hash`
 
-**Description:** 🔒 Hash a text string using MD5, SHA, or other algorithms.
+**Description:** Hash a text string using MD5, SHA, or other algorithms.
 
 ### Usage
 
@@ -259,7 +259,7 @@
 
 ### `/instagram`
 
-**Description:** 📸 Get and play an Instagram post/reel by link.
+**Description:** Get and play an Instagram post/reel by link.
 
 ### Usage
 
@@ -274,7 +274,7 @@
 
 ### `/lastseen`
 
-**Description:** 👀 Check when a user last sent a message in this server.
+**Description:** Check when a user last sent a message in this server.
 
 ### Usage
 
@@ -289,7 +289,7 @@
 
 ### `/obfuscate`
 
-**Description:** 🔒 Obfuscate a Lua or JavaScript file and return it as an attachment.
+**Description:** Obfuscate a Lua or JavaScript file and return it as an attachment.
 
 ### Usage
 
@@ -308,7 +308,7 @@
 
 ### `/tiktok`
 
-**Description:** 🎬 Get and play a TikTok video by link.
+**Description:** Get and play a TikTok video by link.
 
 ### Usage
 
@@ -323,7 +323,7 @@
 
 ### `/nickprefix`
 
-**Description:** 📛 Adds or removes a prefix from member nicknames.
+**Description:** Adds or removes a prefix from member nicknames.
 
 ### Usage
 
@@ -333,18 +333,18 @@
 ### Subcommands
 
 **`/nickprefix add`**
-> 📛 Adds the highest role prefix to member nicknames.
+> Adds the highest role prefix to member nicknames.
 
 
 **`/nickprefix remove`**
-> 📛 Removes the prefix from member nicknames.
+> Removes the prefix from member nicknames.
 
 
 
 
 ### `/sticky`
 
-**Description:** 📌 Manage sticky messages in a channel.
+**Description:** Manage sticky messages in a channel.
 
 ### Usage
 
@@ -355,7 +355,7 @@
 ### Subcommands
 
 **`/sticky list`**
-> 📋 List all sticky messages in this server.
+> List all sticky messages in this server.
 
 
 **`/sticky remove`**
@@ -373,7 +373,7 @@
 
 ### `/about`
 
-**Description:** 😋 A brief introduction about kythia
+**Description:** A brief introduction about kythia
 
 ### Details
 
@@ -386,7 +386,7 @@
 
 ### `/afk`
 
-**Description:** 💤 Set your Away From Keyboard (AFK) status.
+**Description:** Set your Away From Keyboard (AFK) status.
 
 ### Usage
 
@@ -411,7 +411,7 @@
 
 ### `/grab`
 
-**Description:** 🛍️ grab stickers or emojis from messages.
+**Description:** grab stickers or emojis from messages.
 
 ### Usage
 
@@ -462,7 +462,7 @@
 
 ### `/legal`
 
-**Description:** ⚖️ View the Terms of Service and Privacy Policy
+**Description:** View the Terms of Service and Privacy Policy
 
 ### Usage
 
@@ -485,7 +485,7 @@
 
 ### `/report`
 
-**Description:** 🚨 Report a user to the moderators.
+**Description:** Report a user to the moderators.
 
 ### Usage
 
@@ -503,7 +503,7 @@
 
 ### `/serverinfo`
 
-**Description:** 📰 Displays detailed information about the server.
+**Description:** Displays detailed information about the server.
 
 ### Usage
 
@@ -513,11 +513,11 @@
 
 ### `/stats`
 
-**Description:** 📊 Displays kythia statistics.
+**Description:** Displays kythia statistics.
 
 ### Details
 
-- **Aliases:** `s`, `📊`
+- **Aliases:** `s`
 ### Usage
 
 `/stats`
@@ -526,7 +526,7 @@
 
 ### `/testevent`
 
-**Description:** 🧪 Trigger a Discord event for testing purposes
+**Description:** Trigger a Discord event for testing purposes
 
 ### Usage
 
@@ -544,7 +544,7 @@
 
 ### `/userinfo`
 
-**Description:** 📄 Displays information about a user.
+**Description:** Displays information about a user.
 
 ### Usage
 
@@ -559,7 +559,7 @@
 
 ### `/vote-leaderboard`
 
-**Description:** 🏆 View top voters for Kythia!
+**Description:** View top voters for Kythia!
 
 ### Usage
 
@@ -569,7 +569,7 @@
 
 ### `/vote`
 
-**Description:** ❤️ Vote for kythia on top.gg!
+**Description:** Vote for kythia on top.gg!
 
 ### Details
 
@@ -582,31 +582,20 @@
 
 ### `/widget`
 
-**Description:** 🛠️ Manage your Kythia Profile Widget on Discord.
+**Description:** Manage your Kythia Profile Widget on Discord.
 
 ### Details
 
 - **Aliases:** `wdg`
 ### Usage
 
-`/widget setup`
-`/widget refresh`
-
-### Subcommands
-
-**`/widget setup`**
-> Get the authorization link to enable the Kythia widget on your profile.
-
-
-**`/widget refresh`**
-> Refresh your Kythia Profile Widget data on Discord.
-
+`/widget`
 
 
 
 ### `/convert`
 
-**Description:** 🔄 Convert between units, currencies, etc.
+**Description:** Convert between units, currencies, etc.
 
 ### Usage
 
@@ -621,7 +610,7 @@
 ### Subcommands
 
 **`/convert area <from> <to> <value>`**
-> 🟦 Convert area units (e.g. m² to acre)
+> Convert area units (e.g. m² to acre)
 
 **Options for this subcommand:**
 - **`from*`**
@@ -636,7 +625,7 @@
   - **Description:** Value to convert
   - **Type:** Number
 **`/convert currency <from> <to> <amount>`**
-> 💰 Convert currency (e.g. USD to IDR)
+> Convert currency (e.g. USD to IDR)
 
 **Options for this subcommand:**
 - **`from*`**
@@ -649,7 +638,7 @@
   - **Description:** Amount to convert
   - **Type:** Number
 **`/convert data <from> <to> <value>`**
-> 💾 Convert data storage units (e.g. MB to GB)
+> Convert data storage units (e.g. MB to GB)
 
 **Options for this subcommand:**
 - **`from*`**
@@ -664,7 +653,7 @@
   - **Description:** Value to convert
   - **Type:** Number
 **`/convert length <from> <to> <value>`**
-> 📏 Convert length units (e.g. m to km)
+> Convert length units (e.g. m to km)
 
 **Options for this subcommand:**
 - **`from*`**
@@ -679,7 +668,7 @@
   - **Description:** Value to convert
   - **Type:** Number
 **`/convert mass <from> <to> <value>`**
-> ⚖️ Convert mass units (e.g. kg to lb)
+> Convert mass units (e.g. kg to lb)
 
 **Options for this subcommand:**
 - **`from*`**
@@ -694,7 +683,7 @@
   - **Description:** Value to convert
   - **Type:** Number
 **`/convert temperature <from> <to> <value>`**
-> 🌡️ Convert temperature (C, F, K, R, Re)
+> Convert temperature (C, F, K, R, Re)
 
 **Options for this subcommand:**
 - **`from*`**
@@ -709,7 +698,7 @@
   - **Description:** Value to convert
   - **Type:** Number
 **`/convert volume <from> <to> <value>`**
-> 🧪 Convert volume units (e.g. L to gal)
+> Convert volume units (e.g. L to gal)
 
 **Options for this subcommand:**
 - **`from*`**

@@ -2,7 +2,7 @@
 
 ### `/spicy`
 
-**Description:** 🌶️ Explore mature content (restricted to age-verified channels)
+**Description:** Explore mature content (restricted to age-verified channels)
 
 ### Usage
 
@@ -12,14 +12,14 @@
 ### Subcommands
 
 **`/spicy favorites [<private>]`**
-> 🌶️ View your favorited mature images
+> View your favorited mature images
 
 **Options for this subcommand:**
 - **`private`**
   - **Description:** Make the message private?
   - **Type:** Boolean
 **`/spicy get <category> <private> [<amount>]`**
-> 🌶️ Get random mature content (only in 18+ channels)
+> Get random mature content (only in 18+ channels)
 
 **Options for this subcommand:**
 - **`category*`**

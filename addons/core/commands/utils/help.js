@@ -11,13 +11,11 @@ const { MessageFlags, SlashCommandBuilder } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 
 class HelpCommand extends BaseCommand {
-	aliases = ['h', 'ℹ️'];
+	aliases = ['h'];
 
 	slashCommand = new SlashCommandBuilder()
 		.setName('help')
-		.setDescription(
-			'💡 Displays a list of bot commands with complete details.',
-		);
+		.setDescription('Displays a list of bot commands with complete details.');
 
 	async execute(interaction) {
 		const container = this.container;

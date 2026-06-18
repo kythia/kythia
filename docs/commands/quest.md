@@ -2,7 +2,7 @@
 
 ### `/quest`
 
-**Description:** 🎁 Manage the Discord Quest Notifier system.
+**Description:** Manage the Discord Quest Notifier system.
 
 ### Usage
 

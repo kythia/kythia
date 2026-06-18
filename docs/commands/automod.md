@@ -29,7 +29,7 @@
 ### Subcommands
 
 **`/mod announce <message> [<title>]`**
-> 📢 Sends an announcement to the current channel.
+> Sends an announcement to the current channel.
 
 **Options for this subcommand:**
 - **`message*`**
@@ -39,11 +39,11 @@
   - **Description:** Title for the announcement
   - **Type:** Text
 **`/mod autosetup`**
-> 🤖 Automatically setup moderation channels and roles.
+> Automatically setup moderation channels and roles.
 
 
 **`/mod ban <user> [<reason>]`**
-> 🔨 Bans a user from the server.
+> Bans a user from the server.
 
 **Options for this subcommand:**
 - **`user*`**
@@ -53,14 +53,14 @@
   - **Description:** Reason for the ban
   - **Type:** Text
 **`/mod clear <amount>`**
-> 🗑️ Delete messages from a channel.
+> Delete messages from a channel.
 
 **Options for this subcommand:**
 - **`amount*`**
   - **Description:** Amount of messages to delete (0 = all)
   - **Type:** Integer
 **`/mod kick <user> [<reason>]`**
-> 👢 Kicks a user from the server.
+> Kicks a user from the server.
 
 **Options for this subcommand:**
 - **`user*`**
@@ -70,14 +70,14 @@
   - **Description:** Reason for the kick
   - **Type:** Text
 **`/mod lock [<reason>]`**
-> 🔒 Locks the current channel.
+> Locks the current channel.
 
 **Options for this subcommand:**
 - **`reason`**
   - **Description:** Reason for locking the channel
   - **Type:** Text
 **`/mod mute <user> [<reason>]`**
-> 🔇 Mutes a user in voice channels.
+> Mutes a user in voice channels.
 
 **Options for this subcommand:**
 - **`user*`**
@@ -87,14 +87,14 @@
   - **Description:** Reason for the mute
   - **Type:** Text
 **`/mod pin <message_id>`**
-> 📌 Pins a message in the channel.
+> Pins a message in the channel.
 
 **Options for this subcommand:**
 - **`message_id*`**
   - **Description:** The ID of the message to pin
   - **Type:** Text
 **`/mod role <user> <role>`**
-> 🎭 Manage roles for a user.
+> Manage roles for a user.
 
 **Options for this subcommand:**
 - **`user*`**
@@ -104,14 +104,14 @@
   - **Description:** The role to add or remove
   - **Type:** Role
 **`/mod say <message>`**
-> 🗣️ Makes the bot say something.
+> Makes the bot say something.
 
 **Options for this subcommand:**
 - **`message*`**
   - **Description:** The message to say
   - **Type:** Text
 **`/mod slowmode <seconds> [<reason>]`**
-> 🐢 Sets the slowmode for the current channel.
+> Sets the slowmode for the current channel.
 
 **Options for this subcommand:**
 - **`seconds*`**
@@ -121,14 +121,14 @@
   - **Description:** Reason for changing slowmode
   - **Type:** Text
 **`/mod snipe [<index>]`**
-> 👀 Snipe deleted messages in this channel.
+> Snipe deleted messages in this channel.
 
 **Options for this subcommand:**
 - **`index`**
   - **Description:** The index of the deleted message to snipe (1 = most recent)
   - **Type:** Integer
 **`/mod timeout <user> <duration> [<reason>]`**
-> ⏳ Timeouts a user.
+> Timeouts a user.
 
 **Options for this subcommand:**
 - **`user*`**
@@ -141,35 +141,35 @@
   - **Description:** Reason for the timeout
   - **Type:** Text
 **`/mod unban <user_id>`**
-> 🔓 Unbans a user from the server.
+> Unbans a user from the server.
 
 **Options for this subcommand:**
 - **`user_id*`**
   - **Description:** The ID of the user to unban
   - **Type:** Text
 **`/mod unlock [<reason>]`**
-> 🔓 Unlocks the current channel.
+> Unlocks the current channel.
 
 **Options for this subcommand:**
 - **`reason`**
   - **Description:** Reason for unlocking the channel
   - **Type:** Text
 **`/mod unmute <user>`**
-> 🔊 Unmutes a user in voice channels.
+> Unmutes a user in voice channels.
 
 **Options for this subcommand:**
 - **`user*`**
   - **Description:** The user to unmute
   - **Type:** User
 **`/mod unpin <message_id>`**
-> 📌 Unpins a message from the channel.
+> Unpins a message from the channel.
 
 **Options for this subcommand:**
 - **`message_id*`**
   - **Description:** The ID of the message to unpin
   - **Type:** Text
 **`/mod warn <user> [<reason>]`**
-> ⚠️ Warns a user.
+> Warns a user.
 
 **Options for this subcommand:**
 - **`user*`**
@@ -179,7 +179,7 @@
   - **Description:** Reason for the warning
   - **Type:** Text
 **`/mod warnings <user>`**
-> ⚠️ View warnings for a user.
+> View warnings for a user.
 
 **Options for this subcommand:**
 - **`user*`**
@@ -189,7 +189,7 @@
 
 ### `/automod`
 
-**Description:** 🛡️ Automod settings
+**Description:** Automod settings
 
 ### Usage
 
