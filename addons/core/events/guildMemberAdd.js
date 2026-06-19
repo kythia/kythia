@@ -42,15 +42,25 @@ class GuildMemberAddEvent extends BaseEvent {
 						client: this.client,
 						guildId: guildId,
 					},
-					`Member Join\n\n` +
-						`**User:** ${member.user.tag} (<@${member.user.id}>)\n` +
-						`**User ID:** ${member.user.id}\n` +
-						`**Account Created:** <t:${Math.floor(member.user.createdTimestamp / 1000)}:F>\n` +
-						`**Joined Server:** ${member.joinedAt ? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>` : 'Unknown'}\n` +
-						`**Member Count:** ${member.guild.memberCount}` +
-						'\n\n' +
-						(`**User:** ${member.user.tag}\n` +
-							`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+					await t(
+						{
+							client: this.client,
+							guildId: guildId,
+						},
+						'core.events.guildMemberAdd.log',
+						{
+							tag: member.user.tag,
+							id: member.user.id,
+							id_1: member.user.id,
+							var3: Math.floor(member.user.createdTimestamp / 1000),
+							var4: member.joinedAt
+								? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>`
+								: 'Unknown',
+							memberCount: member.guild.memberCount,
+							tag_1: member.user.tag,
+							var7: Math.floor(Date.now() / 1000),
+						},
+					),
 					{
 						color: convertColor('Green', {
 							from: 'discord',

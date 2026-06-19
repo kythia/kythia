@@ -32,7 +32,7 @@
 				"cmd_head": "****\nRenders the full 3D head of a player.",
 				"cmd_body": "****\nRenders the full body of a player.",
 				"cmd_skin": "****\nShows the raw skin texture of a player.",
-				"cmd_pose": "****\nRenders a player in any of **31 poses**. Split across two dropdowns:\n- **pose** — 25 poses (default → high_ground)\n- **pose2** — 6 extra poses (clown, bitzel, pixel, ornament, skin, profile)\n- **crop** — Optional: , , , , , , \n  *(If the crop is invalid for the pose, the best crop is auto-selected)*",
+				"cmd_pose": "****\nRenders a player in any of **31 poses**. Split across two dropdowns:\n- **pose** — 25 poses (default → high_ground)\n- **pose2** — 6 extra poses (clown, bitzel, pixel, ornament, skin, profile)\n- **crop** — Optional: , , , , , , \n*(If the crop is invalid for the pose, the best crop is auto-selected)*",
 				"pose_list": "┌─ Full Pose List ──────────────────────────────┐\n│ default · marching · walking · crouching      │\n│ crossed · criss_cross · ultimate · isometric  │\n│ head · custom · cheering · relaxing · trudging │\n│ cowering · pointing · lunging · dungeons       │\n│ facepalm · sleeping · dead · archer · kicking  │\n│ mojavatar · reading · high_ground · clown      │\n│ bitzel · pixel · ornament · skin · profile     │\n└────────────────────────────────────────────────┘",
 				"cmd_wallpaper": "****\nGenerates a scenic wallpaper featuring one or more players.\nPlayers are comma-separated with no spaces: \n- **quick_hide** *(supports up to 3 players)*\n- herobrine_hill · malevolent · off_to_the_stars · wheat",
 				"server_commands_title": "### Server Commands",

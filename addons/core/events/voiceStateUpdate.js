@@ -85,10 +85,21 @@ class VoiceStateUpdateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**${action}** by <@${member.id}>\n\n${description}` +
-					'\n\n' +
-					(`**User:** ${member.user.tag} (${member.id})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.voiceStateUpdate.log',
+					{
+						action: action,
+						id: member.id,
+						description: description,
+						tag: member.user.tag,
+						id_1: member.id,
+						var5: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor(color, {
 						from: 'discord',

@@ -61,13 +61,20 @@ class ThreadMemberUpdateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Thread Member Updated**\n\n` +
-					`**Member:** <@${newMember.id}>\n` +
-					`**Thread:** <#${thread.id}>\n` +
-					`**Changes:**\n${changes.join('\n')}` +
-					'\n\n' +
-					(`**User:** ${newMember.id}\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.threadMemberUpdate.log',
+					{
+						id: newMember.id,
+						id_1: thread.id,
+						var2: changes.join('\n'),
+						id_2: newMember.id,
+						var4: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Blurple', {
 						from: 'discord',

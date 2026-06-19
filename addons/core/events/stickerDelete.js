@@ -56,15 +56,35 @@ class StickerDeleteEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Sticker Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Sticker Name:** ${sticker.name}\n` +
-					`**Description:** ${sticker.description || 'No description'}\n` +
-					`**Available:** ${sticker.available ? 'Yes' : 'No'}\n` +
-					`**Managed:** ${sticker.managed ? 'Yes' : 'No'}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.stickerDelete.log',
+					{
+						var0: executor?.id || 'Unknown',
+						name: sticker.name,
+						description: sticker.description || 'No description',
+						var3: sticker.available ? 'Yes' : 'No',
+						var4: sticker.managed ? 'Yes' : 'No',
+						conditional5: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var6: executor?.tag || 'Unknown',
+						var7: executor?.id || 'Unknown',
+						var8: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Red', {
 						from: 'discord',

@@ -67,12 +67,32 @@ class GuildUpdateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Server Updated** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Changes:**\n${formatChanges(entry.changes)}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.guildUpdate.log',
+					{
+						var0: executor?.id || 'Unknown',
+						var1: formatChanges(entry.changes),
+						conditional2: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var3: executor?.tag || 'Unknown',
+						var4: executor?.id || 'Unknown',
+						var5: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Blurple', {
 						from: 'discord',

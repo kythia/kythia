@@ -9,7 +9,7 @@
 					"player": {}
 				},
 				"queue": {
-					"nowplaying": "## 📜 Music Queue\n**Now Playing:**\n [{nowTitle}]({nowUrl}) `{nowDuration}`\n\n**Queue:**\n",
+					"nowplaying": "## 📜 Music Queue\n**Now Playing:**\n[{nowTitle}]({nowUrl}) `{nowDuration}`\n\n**Queue:**\n",
 					"footer": "-# Page {page} of {totalPages} • Total {totalTracks} tracks in queue"
 				},
 				"music": {
@@ -32,7 +32,7 @@
 					"playlist": {
 						"desc": {
 							"spotify": "## <:spotify:1418793905792487527> Spotify Playlist\n**Name:** {name}\n**({count} tracks)**",
-							"text": "## 🎵 Playlist {name}\n ({count} tracks) "
+							"text": "## 🎵 Playlist {name}\n({count} tracks) "
 						},
 						"save": {
 							"limit": {

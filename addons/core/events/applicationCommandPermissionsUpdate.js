@@ -60,15 +60,22 @@ class ApplicationCommandPermissionsUpdateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Slash Command Permissions Updated**\n\n` +
-					`**Application ID:** ${data.applicationId}\n` +
-					`**Command ID:** ${data.id}\n` +
-					(executor
-						? `**Updated By:** ${executor.tag} (<@${executor.id}>)`
-						: '') +
-					'\n\n' +
-					(`**Guild ID:** ${guild.id}\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.applicationCommandPermissionsUpdate.log',
+					{
+						applicationId: data.applicationId,
+						id: data.id,
+						conditional2: executor
+							? `**Updated By:** ${executor.tag} (<@${executor.id}>)`
+							: '',
+						id_1: guild.id,
+						var4: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Blurple', {
 						from: 'discord',

@@ -57,15 +57,27 @@ class GuildBanAddEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Member Banned** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**User:** ${ban.user.tag} (<@${ban.user.id}>)\n` +
-					`**User ID:** ${ban.user.id}\n` +
-					`**Account Created:** <t:${Math.floor(ban.user.createdTimestamp / 1000)}:F>\n` +
-					`**Ban Reason:** ${ban.reason || 'No reason provided'}` +
-					(entry.reason ? `\n**Audit Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.guildBanAdd.log',
+					{
+						var0: executor?.id || 'Unknown',
+						tag: ban.user.tag,
+						id: ban.user.id,
+						id_1: ban.user.id,
+						var4: Math.floor(ban.user.createdTimestamp / 1000),
+						reason: ban.reason || 'No reason provided',
+						conditional6: entry.reason
+							? `\n**Audit Reason:** ${entry.reason}`
+							: '',
+						var7: executor?.tag || 'Unknown',
+						var8: executor?.id || 'Unknown',
+						var9: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Red', {
 						from: 'discord',

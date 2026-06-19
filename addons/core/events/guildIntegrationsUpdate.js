@@ -61,13 +61,20 @@ class GuildIntegrationsUpdateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Integrations Updated**\n\n` +
-					`The integrations for **${guild.name}** were updated.` +
-					(executor
-						? `\n\n**Potential Executor:** ${executor.tag} (<@${executor.id}>)`
-						: '') +
-					'\n\n' +
-					`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`,
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.guildIntegrationsUpdate.log',
+					{
+						name: guild.name,
+						conditional1: executor
+							? `\n\n**Potential Executor:** ${executor.tag} (<@${executor.id}>)`
+							: '',
+						var2: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Blurple', {
 						from: 'discord',

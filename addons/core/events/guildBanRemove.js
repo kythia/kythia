@@ -57,14 +57,35 @@ class GuildBanRemoveEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Member Unbanned** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**User:** ${ban.user.tag} (<@${ban.user.id}>)\n` +
-					`**User ID:** ${ban.user.id}\n` +
-					`**Account Created:** <t:${Math.floor(ban.user.createdTimestamp / 1000)}:F>` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.guildBanRemove.log',
+					{
+						var0: executor?.id || 'Unknown',
+						tag: ban.user.tag,
+						id: ban.user.id,
+						id_1: ban.user.id,
+						var4: Math.floor(ban.user.createdTimestamp / 1000),
+						conditional5: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var6: executor?.tag || 'Unknown',
+						var7: executor?.id || 'Unknown',
+						var8: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Green', {
 						from: 'discord',

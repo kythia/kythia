@@ -57,17 +57,37 @@ class InviteCreateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Invite Created** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Invite Code:** ${invite.code}\n` +
-					`**Channel:** ${invite.channel ? `<#${invite.channel.id}>` : 'Unknown'}\n` +
-					`**Max Uses:** ${invite.maxUses ? invite.maxUses.toString() : 'Unlimited'}\n` +
-					`**Max Age:** ${invite.maxAge ? `${invite.maxAge} seconds` : 'Never expires'}\n` +
-					`**Temporary:** ${invite.temporary ? 'Yes' : 'No'}\n` +
-					`**Created At:** <t:${Math.floor(invite.createdTimestamp / 1000)}:F>` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.inviteCreate.log',
+					{
+						var0: executor?.id || 'Unknown',
+						code: invite.code,
+						var2: invite.channel ? `<#${invite.channel.id}>` : 'Unknown',
+						var3: invite.maxUses ? invite.maxUses.toString() : 'Unlimited',
+						var4: invite.maxAge ? `${invite.maxAge} seconds` : 'Never expires',
+						var5: invite.temporary ? 'Yes' : 'No',
+						var6: Math.floor(invite.createdTimestamp / 1000),
+						conditional7: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var8: executor?.tag || 'Unknown',
+						var9: executor?.id || 'Unknown',
+						var10: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Green', {
 						from: 'discord',

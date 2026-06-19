@@ -69,13 +69,34 @@ class ChannelPinsUpdateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Message ${isPinned ? 'Pinned' : 'Unpinned'}** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Channel:** <#${channel.id}>\n` +
-					`**Message ID:** ${entry.extra?.messageId || 'Unknown'}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.channelPinsUpdate.log',
+					{
+						var0: isPinned ? 'Pinned' : 'Unpinned',
+						var1: executor?.id || 'Unknown',
+						id: channel.id,
+						var3: entry.extra?.messageId || 'Unknown',
+						conditional4: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var5: executor?.tag || 'Unknown',
+						var6: executor?.id || 'Unknown',
+						var7: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor(isPinned ? 'Green' : 'Orange', {
 						from: 'discord',

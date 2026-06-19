@@ -43,15 +43,26 @@ class GuildScheduledEventUserAddEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Event Subscription**\n\n` +
-					`**User:** ${user.tag} (<@${user.id}>)\n` +
-					`**Event:** ${guildScheduledEvent.name}\n` +
-					`**Description:** ${guildScheduledEvent.description || 'No description'}\n` +
-					`**Start Time:** <t:${Math.floor(guildScheduledEvent.scheduledStartTimestamp / 1000)}:F>` +
-					'\n\n' +
-					(`**User:** ${user.tag} (${user.id})\n` +
-						`**Event ID:** ${guildScheduledEvent.id}\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.guildScheduledEventUserAdd.log',
+					{
+						tag: user.tag,
+						id: user.id,
+						name: guildScheduledEvent.name,
+						description: guildScheduledEvent.description || 'No description',
+						var4: Math.floor(
+							guildScheduledEvent.scheduledStartTimestamp / 1000,
+						),
+						tag_1: user.tag,
+						id_1: user.id,
+						id_2: guildScheduledEvent.id,
+						var8: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Green', {
 						from: 'discord',

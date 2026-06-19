@@ -51,15 +51,35 @@ class EmojiDeleteEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Emoji Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Emoji Name:** ${emoji.name}\n` +
-					`**Animated:** ${emoji.animated ? 'Yes' : 'No'}\n` +
-					`**Available:** ${emoji.available ? 'Yes' : 'No'}\n` +
-					`**Managed:** ${emoji.managed ? 'Yes' : 'No'}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.emojiDelete.log',
+					{
+						var0: executor?.id || 'Unknown',
+						name: emoji.name,
+						var2: emoji.animated ? 'Yes' : 'No',
+						var3: emoji.available ? 'Yes' : 'No',
+						var4: emoji.managed ? 'Yes' : 'No',
+						conditional5: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var6: executor?.tag || 'Unknown',
+						var7: executor?.id || 'Unknown',
+						var8: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Red', {
 						from: 'discord',

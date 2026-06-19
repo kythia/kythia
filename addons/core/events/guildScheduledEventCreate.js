@@ -58,16 +58,38 @@ class GuildScheduledEventCreateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Scheduled Event Created** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Event:** ${scheduledEvent.name}\n` +
-					`**Description:** ${scheduledEvent.description || 'No description'}\n` +
-					`**Start Time:** <t:${Math.floor(scheduledEvent.scheduledStartTimestamp / 1000)}:F>\n` +
-					`**Location:** ${scheduledEvent.channel ? `<#${scheduledEvent.channel.id}>` : scheduledEvent.entityMetadata?.location || 'External'}\n` +
-					`**Interested Count:** ${scheduledEvent.userCount || 0}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.guildScheduledEventCreate.log',
+					{
+						var0: executor?.id || 'Unknown',
+						name: scheduledEvent.name,
+						description: scheduledEvent.description || 'No description',
+						var3: Math.floor(scheduledEvent.scheduledStartTimestamp / 1000),
+						var4: scheduledEvent.channel
+							? `<#${scheduledEvent.channel.id}>`
+							: scheduledEvent.entityMetadata?.location || 'External',
+						userCount: scheduledEvent.userCount || 0,
+						conditional6: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var7: executor?.tag || 'Unknown',
+						var8: executor?.id || 'Unknown',
+						var9: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Green', {
 						from: 'discord',

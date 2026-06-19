@@ -56,16 +56,37 @@ class StickerCreateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Sticker Created** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Sticker:** <:${sticker.name}:${sticker.id}>\n` +
-					`**Name:** ${sticker.name}\n` +
-					`**Description:** ${sticker.description || 'No description'}\n` +
-					`**Available:** ${sticker.available ? 'Yes' : 'No'}\n` +
-					`**Managed:** ${sticker.managed ? 'Yes' : 'No'}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Un known'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.stickerCreate.log',
+					{
+						var0: executor?.id || 'Unknown',
+						name: sticker.name,
+						id: sticker.id,
+						name_1: sticker.name,
+						description: sticker.description || 'No description',
+						var5: sticker.available ? 'Yes' : 'No',
+						var6: sticker.managed ? 'Yes' : 'No',
+						conditional7: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var8: executor?.tag || 'Unknown',
+						var9: executor?.id || 'Un known',
+						var10: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Green', {
 						from: 'discord',

@@ -16,7 +16,7 @@ class ChannelDeleteEvent extends BaseEvent {
 			container: this.container,
 		};
 		if (!channel.guild) return;
-		const { kythiaConfig, models, helpers, logger } = container;
+		const { kythiaConfig, models, helpers, logger, t } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
@@ -76,10 +76,30 @@ class ChannelDeleteEvent extends BaseEvent {
 					client: this.client,
 					guildId: channel.guild.id,
 				},
-				`**Channel Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Channel Name:** ${channel.name || 'Unknown'}\n` +
-					`**Type:** ${channelTypeName}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : ''),
+				await t(
+					{
+						client: this.client,
+						guildId: channel.guild.id,
+					},
+					'core.events.channelDelete.log',
+					{
+						var0: executor?.id || 'Unknown',
+						name: channel.name || 'Unknown',
+						channelTypeName: channelTypeName,
+						conditional3: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: channel.guild.id,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+					},
+				),
 				{
 					color: convertColor('Red', {
 						from: 'discord',

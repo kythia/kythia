@@ -51,12 +51,20 @@ class MessageReactionRemoveEmojiEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Reaction Emoji Removed** in <#${message.channelId}>\n\n` +
-					`**Emoji:** ${emojiDisplay}\n` +
-					`**Message:** [Jump to Message](${message.url})` +
-					'\n\n' +
-					(`**Message ID:** ${message.id}\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.messageReactionRemoveEmoji.log',
+					{
+						channelId: message.channelId,
+						emojiDisplay: emojiDisplay,
+						url: message.url,
+						id: message.id,
+						var4: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Red', {
 						from: 'discord',

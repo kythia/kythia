@@ -57,13 +57,33 @@ class GuildSoundboardSoundDeleteEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Soundboard Sound Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Sound Name:** ${sound.name}\n` +
-					`**Emoji:** ${sound.emoji || 'None'}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.guildSoundboardSoundDelete.log',
+					{
+						var0: executor?.id || 'Unknown',
+						name: sound.name,
+						emoji: sound.emoji || 'None',
+						conditional3: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var4: executor?.tag || 'Unknown',
+						var5: executor?.id || 'Unknown',
+						var6: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Red', {
 						from: 'discord',

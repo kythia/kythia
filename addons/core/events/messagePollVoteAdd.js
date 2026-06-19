@@ -45,13 +45,25 @@ class MessagePollVoteAddEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Poll Vote Added** in <#${message.channelId}>\n\n` +
-					`**User:** ${user ? `${user.tag} (<@${user.id}>)` : `Unknown User (${userId})`}\n` +
-					`**Option:** ${pollAnswer.text || '(Image Only)'} (ID: ${pollAnswer.id})\n` +
-					`**Message:** [Jump to Message](${message.url})` +
-					'\n\n' +
-					(`**User:** ${user?.tag || 'Unknown'} (${userId})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.messagePollVoteAdd.log',
+					{
+						channelId: message.channelId,
+						var1: user
+							? `${user.tag} (<@${user.id}>)`
+							: `Unknown User (${userId})`,
+						text: pollAnswer.text || '(Image Only)',
+						id: pollAnswer.id,
+						url: message.url,
+						var5: user?.tag || 'Unknown',
+						userId: userId,
+						var7: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Green', {
 						from: 'discord',

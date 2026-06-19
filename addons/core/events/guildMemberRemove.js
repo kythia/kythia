@@ -54,15 +54,38 @@ class GuildMemberRemoveEvent extends BaseEvent {
 							client: this.client,
 							guildId: guildId,
 						},
-						`**Member Kicked** by <@${executor?.id || 'Unknown'}>\n\n` +
-							`**User:** ${member.user.tag} (<@${member.user.id}>)\n` +
-							`**User ID:** ${member.user.id}\n` +
-							`**Account Created:** <t:${Math.floor(member.user.createdTimestamp / 1000)}:F>\n` +
-							`**Joined Server:** ${member.joinedAt ? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>` : 'Unknown'}` +
-							(kickEntry.reason ? `\n\n**Reason:** ${kickEntry.reason}` : '') +
-							'\n\n' +
-							(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-								`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+						await t(
+							{
+								client: this.client,
+								guildId: guildId,
+							},
+							'core.events.guildMemberRemove.log',
+							{
+								var0: executor?.id || 'Unknown',
+								tag: member.user.tag,
+								id: member.user.id,
+								id_1: member.user.id,
+								var4: Math.floor(member.user.createdTimestamp / 1000),
+								var5: member.joinedAt
+									? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>`
+									: 'Unknown',
+								conditional6: kickEntry.reason
+									? await t(
+											{
+												client: this.client,
+												guildId: guildId,
+											},
+											'core.events.common.reason',
+											{
+												reason: kickEntry.reason,
+											},
+										)
+									: '',
+								var7: executor?.tag || 'Unknown',
+								var8: executor?.id || 'Unknown',
+								var9: Math.floor(Date.now() / 1000),
+							},
+						),
 						{
 							color: convertColor('Red', {
 								from: 'discord',
@@ -87,15 +110,25 @@ class GuildMemberRemoveEvent extends BaseEvent {
 						client: this.client,
 						guildId: guildId,
 					},
-					`Member Left\n\n` +
-						`**User:** ${member.user.tag} (<@${member.user.id}>)\n` +
-						`**User ID:** ${member.user.id}\n` +
-						`**Account Created:** <t:${Math.floor(member.user.createdTimestamp / 1000)}:F>\n` +
-						`**Joined Server:** ${member.joinedAt ? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>` : 'Unknown'}\n` +
-						`**Member Count:** ${member.guild.memberCount}` +
-						'\n\n' +
-						(`**User:** ${member.user.tag}\n` +
-							`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+					await t(
+						{
+							client: this.client,
+							guildId: guildId,
+						},
+						'core.events.guildMemberRemove.log_1',
+						{
+							tag: member.user.tag,
+							id: member.user.id,
+							id_1: member.user.id,
+							var3: Math.floor(member.user.createdTimestamp / 1000),
+							var4: member.joinedAt
+								? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>`
+								: 'Unknown',
+							memberCount: member.guild.memberCount,
+							tag_1: member.user.tag,
+							var7: Math.floor(Date.now() / 1000),
+						},
+					),
 					{
 						color: convertColor('Orange', {
 							from: 'discord',

@@ -92,13 +92,34 @@ class WebhooksUpdateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Webhook ${action}** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Channel:** <#${channel.id}>\n` +
-					`**Webhook Name:** ${entry.target?.name || 'Unknown'}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.webhooksUpdate.log',
+					{
+						action: action,
+						var1: executor?.id || 'Unknown',
+						id: channel.id,
+						var3: entry.target?.name || 'Unknown',
+						conditional4: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var5: executor?.tag || 'Unknown',
+						var6: executor?.id || 'Unknown',
+						var7: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor(color, {
 						from: 'discord',

@@ -81,17 +81,37 @@ class ThreadDeleteEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Thread Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Thread Name:** ${thread.name}\n` +
-					`**Type:** ${humanChannelType(thread.type)}\n` +
-					`**Parent Channel:** ${thread.parent ? `<#${thread.parent.id}>` : 'None'}\n` +
-					`**Archived:** ${thread.archived ? 'Yes' : 'No'}\n` +
-					`**Locked:** ${thread.locked ? 'Yes' : 'No'}\n` +
-					`**Auto Archive Duration:** ${thread.autoArchiveDuration} minutes` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.threadDelete.log',
+					{
+						var0: executor?.id || 'Unknown',
+						name: thread.name,
+						var2: humanChannelType(thread.type),
+						var3: thread.parent ? `<#${thread.parent.id}>` : 'None',
+						var4: thread.archived ? 'Yes' : 'No',
+						var5: thread.locked ? 'Yes' : 'No',
+						autoArchiveDuration: thread.autoArchiveDuration,
+						conditional7: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var8: executor?.tag || 'Unknown',
+						var9: executor?.id || 'Unknown',
+						var10: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Red', {
 						from: 'discord',

@@ -58,14 +58,35 @@ class MessageDeleteBulkEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Bulk Message Delete** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Channel:** <#${channel.id}>\n` +
-					`**Messages Deleted:** ${messages.size}\n` +
-					`**Message IDs:** ${messageIds}${messages.size > 10 ? '...' : ''}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.messageDeleteBulk.log',
+					{
+						var0: executor?.id || 'Unknown',
+						id: channel.id,
+						size: messages.size,
+						messageIds: messageIds,
+						var4: messages.size > 10 ? '...' : '',
+						conditional5: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var6: executor?.tag || 'Unknown',
+						var7: executor?.id || 'Unknown',
+						var8: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Red', {
 						from: 'discord',

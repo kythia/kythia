@@ -58,15 +58,35 @@ class GuildScheduledEventDeleteEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Scheduled Event Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Event Name:** ${scheduledEvent.name}\n` +
-					`**Description:** ${scheduledEvent.description || 'No description'}\n` +
-					`**Was Scheduled For:** <t:${Math.floor(scheduledEvent.scheduledStartTimestamp / 1000)}:F>\n` +
-					`**Interested Count:** ${scheduledEvent.userCount || 0}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.guildScheduledEventDelete.log',
+					{
+						var0: executor?.id || 'Unknown',
+						name: scheduledEvent.name,
+						description: scheduledEvent.description || 'No description',
+						var3: Math.floor(scheduledEvent.scheduledStartTimestamp / 1000),
+						userCount: scheduledEvent.userCount || 0,
+						conditional5: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var6: executor?.tag || 'Unknown',
+						var7: executor?.id || 'Unknown',
+						var8: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Red', {
 						from: 'discord',

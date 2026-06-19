@@ -78,10 +78,19 @@ class UserUpdateEvent extends BaseEvent {
 								client: this.client,
 								guildId: guildId,
 							},
-							description +
-								'\n\n' +
-								(`**User:** ${newUser.tag} (${newUser.id})\n` +
-									`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+							await t(
+								{
+									client: this.client,
+									guildId: guildId,
+								},
+								'core.events.userUpdate.log',
+								{
+									expr0: description,
+									tag: newUser.tag,
+									id: newUser.id,
+									var3: Math.floor(Date.now() / 1000),
+								},
+							),
 							{
 								color: convertColor('Blurple', {
 									from: 'discord',

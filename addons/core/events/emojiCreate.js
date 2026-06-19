@@ -51,16 +51,37 @@ class EmojiCreateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Emoji Created** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Emoji:** <:${emoji.name}:${emoji.id}>\n` +
-					`**Name:** ${emoji.name}\n` +
-					`**Animated:** ${emoji.animated ? 'Yes' : 'No'}\n` +
-					`**Available:** ${emoji.available ? 'Yes' : 'No'}\n` +
-					`**Managed:** ${emoji.managed ? 'Yes' : 'No'}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.emojiCreate.log',
+					{
+						var0: executor?.id || 'Unknown',
+						name: emoji.name,
+						id: emoji.id,
+						name_1: emoji.name,
+						var4: emoji.animated ? 'Yes' : 'No',
+						var5: emoji.available ? 'Yes' : 'No',
+						var6: emoji.managed ? 'Yes' : 'No',
+						conditional7: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var8: executor?.tag || 'Unknown',
+						var9: executor?.id || 'Unknown',
+						var10: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Green', {
 						from: 'discord',

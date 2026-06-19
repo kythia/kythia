@@ -56,17 +56,37 @@ class RoleCreateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Role Created** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Role:** <@&${role.id}>\n` +
-					`**Color:** ${role.hexColor || 'Default'}\n` +
-					`**Position:** ${role.position}\n` +
-					`**Mentionable:** ${role.mentionable ? 'Yes' : 'No'}\n` +
-					`**Hoisted:** ${role.hoist ? 'Yes' : 'No'}\n` +
-					`**Managed:** ${role.managed ? 'Yes' : 'No'}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.roleCreate.log',
+					{
+						var0: executor?.id || 'Unknown',
+						id: role.id,
+						hexColor: role.hexColor || 'Default',
+						position: role.position,
+						var4: role.mentionable ? 'Yes' : 'No',
+						var5: role.hoist ? 'Yes' : 'No',
+						var6: role.managed ? 'Yes' : 'No',
+						conditional7: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var8: executor?.tag || 'Unknown',
+						var9: executor?.id || 'Unknown',
+						var10: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Green', {
 						from: 'discord',

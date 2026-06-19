@@ -58,13 +58,33 @@ class StageInstanceDeleteEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Stage Ended** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Topic:** ${stageInstance.topic}\n` +
-					`**Channel:** <#${stageInstance.channelId}>` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.stageInstanceDelete.log',
+					{
+						var0: executor?.id || 'Unknown',
+						topic: stageInstance.topic,
+						channelId: stageInstance.channelId,
+						conditional3: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var4: executor?.tag || 'Unknown',
+						var5: executor?.id || 'Unknown',
+						var6: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Red', {
 						from: 'discord',

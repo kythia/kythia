@@ -55,10 +55,18 @@ class ThreadMembersUpdateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				description +
-					'\n\n' +
-					(`**Thread ID:** ${thread.id}\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.threadMembersUpdate.log',
+					{
+						expr0: description,
+						id: thread.id,
+						var2: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Blurple', {
 						from: 'discord',

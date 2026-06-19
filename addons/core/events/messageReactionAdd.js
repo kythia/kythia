@@ -72,13 +72,23 @@ class MessageReactionAddEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Reaction Added** in <#${message.channelId}>\n\n` +
-					`**User:** ${user.tag} (<@${user.id}>)\n` +
-					`**Emoji:** ${emojiDisplay}\n` +
-					`**Message:** [Jump to Message](${message.url})` +
-					'\n\n' +
-					(`**User:** ${user.tag} (${user.id})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.messageReactionAdd.log',
+					{
+						channelId: message.channelId,
+						tag: user.tag,
+						id: user.id,
+						emojiDisplay: emojiDisplay,
+						url: message.url,
+						tag_1: user.tag,
+						id_1: user.id,
+						var7: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Green', {
 						from: 'discord',

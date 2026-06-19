@@ -144,16 +144,39 @@ class MessageDeleteEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Message Deleted** in <#${message.channelId}>\n\n` +
-					`**Author:** ${message.author ? `<@${message.author.id}>` : 'Unknown (Partial)'}\n` +
-					`**Executor:** <@${executorId}> ${isSelfDelete ? '(Self)' : ''}` +
-					contentText +
-					attachmentText +
-					(logReason ? `\n\n**Reason:** ${logReason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executorTag}${isSelfDelete ? ' (Self Delete)' : ''}\n` +
-						`� **Message ID:** ${message.id}\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.messageDelete.log',
+					{
+						channelId: message.channelId,
+						var1: message.author
+							? `<@${message.author.id}>`
+							: 'Unknown (Partial)',
+						executorId: executorId,
+						var3: isSelfDelete ? '(Self)' : '',
+						expr4: contentText,
+						expr5: attachmentText,
+						conditional6: logReason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: logReason,
+									},
+								)
+							: '',
+						executorTag: executorTag,
+						var8: isSelfDelete ? ' (Self Delete)' : '',
+						id: message.id,
+						var10: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor(isSelfDelete ? 'Orange' : 'Red', {
 						from: 'discord',

@@ -57,17 +57,37 @@ class InviteDeleteEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Invite Deleted** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Invite Code:** ${invite.code}\n` +
-					`**Channel:** ${invite.channel ? `<#${invite.channel.id}>` : 'Unknown'}\n` +
-					`**Uses:** ${invite.uses || 0}\n` +
-					`**Max Uses:** ${invite.maxUses ? invite.maxUses.toString() : 'Unlimited'}\n` +
-					`**Max Age:** ${invite.maxAge ? `${invite.maxAge} seconds` : 'Never expires'}\n` +
-					`**Temporary:** ${invite.temporary ? 'Yes' : 'No'}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.inviteDelete.log',
+					{
+						var0: executor?.id || 'Unknown',
+						code: invite.code,
+						var2: invite.channel ? `<#${invite.channel.id}>` : 'Unknown',
+						uses: invite.uses || 0,
+						var4: invite.maxUses ? invite.maxUses.toString() : 'Unlimited',
+						var5: invite.maxAge ? `${invite.maxAge} seconds` : 'Never expires',
+						var6: invite.temporary ? 'Yes' : 'No',
+						conditional7: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var8: executor?.tag || 'Unknown',
+						var9: executor?.id || 'Unknown',
+						var10: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Red', {
 						from: 'discord',

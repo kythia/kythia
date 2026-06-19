@@ -57,14 +57,22 @@ class MessageReactionRemoveAllEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**All Reactions Removed** in <#${message.channelId}>\n\n` +
-					`**Message:** [Jump to Message](${message.url})` +
-					(executor
-						? `\n**Executor:** ${executor.tag} (<@${executor.id}>)`
-						: '') +
-					'\n\n' +
-					(`**Message ID:** ${message.id}\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.messageReactionRemoveAll.log',
+					{
+						channelId: message.channelId,
+						url: message.url,
+						conditional2: executor
+							? `\n**Executor:** ${executor.tag} (<@${executor.id}>)`
+							: '',
+						id: message.id,
+						var4: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Red', {
 						from: 'discord',

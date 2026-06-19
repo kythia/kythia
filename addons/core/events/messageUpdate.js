@@ -60,15 +60,25 @@ class MessageUpdateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Message Edited** in <#${newMessage.channelId}>\n\n` +
-					`**Author:** ${newMessage.author.tag} (<@${newMessage.author.id}>)\n` +
-					`**Message:** [Jump to Message](${newMessage.url})\n\n` +
-					`**Before:**\n${oldContent}\n\n` +
-					`**After:**\n${newContent}` +
-					'\n\n' +
-					(`**Author:** ${newMessage.author.tag} (${newMessage.author.id})\n` +
-						`**Message ID:** ${newMessage.id}\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.messageUpdate.log',
+					{
+						channelId: newMessage.channelId,
+						tag: newMessage.author.tag,
+						id: newMessage.author.id,
+						url: newMessage.url,
+						oldContent: oldContent,
+						newContent: newContent,
+						tag_1: newMessage.author.tag,
+						id_1: newMessage.author.id,
+						id_2: newMessage.id,
+						var9: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Blurple', {
 						from: 'discord',

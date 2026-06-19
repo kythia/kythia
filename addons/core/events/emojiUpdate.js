@@ -70,13 +70,34 @@ class EmojiUpdateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Emoji Updated** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Emoji:** <:${newEmoji.name}:${newEmoji.id}>\n\n` +
-					`**Changes:**\n${formatChanges(entry.changes)}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.emojiUpdate.log',
+					{
+						var0: executor?.id || 'Unknown',
+						name: newEmoji.name,
+						id: newEmoji.id,
+						var3: formatChanges(entry.changes),
+						conditional4: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var5: executor?.tag || 'Unknown',
+						var6: executor?.id || 'Unknown',
+						var7: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Blurple', {
 						from: 'discord',

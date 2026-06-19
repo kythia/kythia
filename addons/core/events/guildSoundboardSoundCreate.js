@@ -57,14 +57,34 @@ class GuildSoundboardSoundCreateEvent extends BaseEvent {
 					client: this.client,
 					guildId: guildId,
 				},
-				`**Soundboard Sound Created** by <@${executor?.id || 'Unknown'}>\n\n` +
-					`**Sound Name:** ${sound.name}\n` +
-					`**Emoji:** ${sound.emoji || 'None'}\n` +
-					`**Volume:** ${sound.volume || 1.0}` +
-					(entry.reason ? `\n\n**Reason:** ${entry.reason}` : '') +
-					'\n\n' +
-					(`**Executor:** ${executor?.tag || 'Unknown'} (${executor?.id || 'Unknown'})\n` +
-						`**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`),
+				await t(
+					{
+						client: this.client,
+						guildId: guildId,
+					},
+					'core.events.guildSoundboardSoundCreate.log',
+					{
+						var0: executor?.id || 'Unknown',
+						name: sound.name,
+						emoji: sound.emoji || 'None',
+						volume: sound.volume || 1.0,
+						conditional4: entry.reason
+							? await t(
+									{
+										client: this.client,
+										guildId: guildId,
+									},
+									'core.events.common.reason',
+									{
+										reason: entry.reason,
+									},
+								)
+							: '',
+						var5: executor?.tag || 'Unknown',
+						var6: executor?.id || 'Unknown',
+						var7: Math.floor(Date.now() / 1000),
+					},
+				),
 				{
 					color: convertColor('Green', {
 						from: 'discord',
