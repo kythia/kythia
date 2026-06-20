@@ -179,7 +179,7 @@
 			"win": "{user} wins!",
 			"draw": "The game ended in a draw!",
 			"lose": "I win... Better luck next time!",
-			"timeout": "⏳ Time's up! The game has been cancelled."
+			"timeout": "Time's up! The game has been cancelled."
 		},
 		"wordle": {
 			"already": {
@@ -282,7 +282,7 @@
 					"confirm": "Your partner {partnerName} has requested a divorce in {serverName}. You must also confirm the divorce by using the `/marry divorce` command."
 				},
 				"confirmation": {
-					"needed": "## Divorce Confirmation Needed\nDivorce requested for this marriage.\n\nBoth you and your partner ({partner}) must use the /divorce command to confirm.\n\n⏳ This divorce request will expire in 2 minutes."
+					"needed": "## Divorce Confirmation Needed\nDivorce requested for this marriage.\n\nBoth you and your partner ({partner}) must use the /divorce command to confirm.\n\nThis divorce request will expire in 2 minutes."
 				},
 				"already": {
 					"confirmed": "You have already confirmed the divorce. Waiting for your partner."
@@ -303,7 +303,7 @@
 			"result": {
 				"win": "**{winner}** wins!\n{winnerChoice} beats {loserChoice}!",
 				"draw": "It's a draw!\nYou both picked {choice}!",
-				"timeout": "⏰ Time's up! **{opponent}** didn't respond. Game cancelled."
+				"timeout": "Time's up! **{opponent}** didn't respond. Game cancelled."
 			},
 			"rematch": "Rematch",
 			"footer": {
@@ -321,7 +321,7 @@
 			"question": "Solve: **{question}**\nStreak: **{score}**",
 			"correct": "Correct! **+1**",
 			"wrong": "Wrong! The answer was `{answer}`.\nFinal streak: **{score}**",
-			"timeout": "⏰ Time's up! The answer was `{answer}`.\nFinal streak: **{score}**",
+			"timeout": "Time's up! The answer was `{answer}`.\nFinal streak: **{score}**",
 			"new_best": "New personal best: **{score}**!",
 			"modal": {
 				"title": "Your Answer",
@@ -396,7 +396,7 @@
 			}
 		},
 		"meme": {
-			"title": "## {title}\n-# r/{subreddit} • ⬆{upvotes} • u/{author}",
+			"title": "## {title}\n-# r/{subreddit} • {upvotes} • u/{author}",
 			"button": {
 				"view": "View on Reddit"
 			},

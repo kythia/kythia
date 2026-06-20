@@ -39,7 +39,7 @@
 			"role_ping": " · Pinging <@&{role}>",
 			"entry": "### {name}\nPosts to <#{channel}>{message_preview}\n-# {platform_badge} · ID: `{id}`",
 			"message_preview": "\n> {message}",
-			"footer": "-# © {bot} · Polled every 5 minutes · Use `/social-alert remove` to unsubscribe"
+			"footer": "-# {bot} · Polled every 5 minutes · Use `/social-alert remove` to unsubscribe"
 		},
 		"setting": {
 			"edit": {

@@ -206,10 +206,10 @@
 				}
 			},
 			"nav": {
-				"first": "⏪ First",
-				"prev": "◀Back",
-				"next": "Next ▶",
-				"last": "Last ⏩"
+				"first": "First",
+				"prev": "Back",
+				"next": "Next",
+				"last": "Last"
 			},
 			"not": {
 				"your": {
@@ -434,7 +434,7 @@
 				"success": "## Transfer Successful\nYou have successfully transferred **{amount} money** to **{target}** with a fee of **{fee} money**!",
 				"received": "## You Received a Transfer\nYou received **{amount} money** to your bank from **{from}**!",
 				"cancelled": "| Transfer has been cancelled.",
-				"timeout": "⌛ | Time's up. Transfer has been cancelled.",
+				"timeout": "| Time's up. Transfer has been cancelled.",
 				"error": "| An error occurred while executing this command. Please try again."
 			}
 		},
@@ -615,7 +615,7 @@
 					"cancel": "Cancel"
 				},
 				"cancelled": "The give operation was cancelled.",
-				"timeout": "⌛ Timed out. You did not respond in time.",
+				"timeout": "Timed out. You did not respond in time.",
 				"received": "## You Received a Coin\nYou have received **{amount}** kythia coin from **{from}**!"
 			}
 		},
@@ -877,7 +877,7 @@
 					"desc": "Sell cancelled."
 				},
 				"timeout": {
-					"desc": "⏱Confirmation timed out. Trade cancelled."
+					"desc": "Confirmation timed out. Trade cancelled."
 				},
 				"preview_title": "## KYTH Sell Preview",
 				"insufficient_kyth_md": "## Insufficient KYTH\nYou only have **{userKyth} KYTH**. Cannot sell **{sellQuantity} KYTH**.",
@@ -978,7 +978,7 @@
 					"desc": "Purchase cancelled."
 				},
 				"timeout": {
-					"desc": "⏱Confirmation timed out. Trade cancelled."
+					"desc": "Confirmation timed out. Trade cancelled."
 				}
 			},
 			"portfolio": {
@@ -1083,7 +1083,7 @@
 						"desc": "Please provide a valid KYTH amount."
 					},
 					"paused": {
-						"desc": "## ⏸Staking Paused\nKYTH staking is temporarily disabled by admin. Your existing stake is safe."
+						"desc": "## Staking Paused\nKYTH staking is temporarily disabled by admin. Your existing stake is safe."
 					},
 					"below_minimum": {
 						"desc": "## Below Minimum\nYou must stake at least **{minStake} KYTH**."
@@ -1184,7 +1184,7 @@
 				"sequence": "## Hacking Sequence (Node {nodeNum}/{totalNodes})\nTargeting: **{nodeName}**\n\n{difficultyText}\n\nChoose an attack vector quickly!",
 				"compromised": "## BANK COMPROMISED\n{user} bypassed your security and drained your bank of **{hacked}**!",
 				"breached": "## Mainframe Breached!\nYou successfully hacked {target}'s bank account and stole **{hacked}**!\nYour bounty increased by **{bounty}**!",
-				"timeout": "## ⏱Connection Timed Out\nYou took too long to inject the payload. Connection dropped."
+				"timeout": "## Connection Timed Out\nYou took too long to inject the payload. Connection dropped."
 			},
 			"rob": {
 				"event": {
@@ -1201,10 +1201,10 @@
 		"job": {
 			"apply": {
 				"prompt": {
-					"desc": "## ‍Job Application\nSelect a profession from the list. Once selected, your `/eco work` will focus on this job!\n\nNote: If you don't meet the item requirements, you won't be able to work!"
+					"desc": "## Job Application\nSelect a profession from the list. Once selected, your `/eco work` will focus on this job!\n\nNote: If you don't meet the item requirements, you won't be able to work!"
 				},
 				"success": {
-					"desc": "## ‍Hired!\nYou are now officially working as a professional! Use `/eco work` to start earning!"
+					"desc": "## Hired!\nYou are now officially working as a professional! Use `/eco work` to start earning!"
 				},
 				"timeout": {
 					"desc": "Application timed out."
@@ -1213,7 +1213,7 @@
 			"work": {
 				"error": {
 					"unemployed": {
-						"desc": "## ‍Unemployed\nYou don't have a profession yet! Use `/eco job_apply` to select a job."
+						"desc": "## Unemployed\nYou don't have a profession yet! Use `/eco job_apply` to select a job."
 					},
 					"invalid_profession": {
 						"desc": "## Invalid Profession\nYour chosen profession is no longer valid. Please apply for a new one using `/eco job_apply`."
@@ -1421,7 +1421,7 @@
 				"prompt": "## Job Offer\n**{employer}** has offered **{target}** a job at their company!\nIf accepted, the employer will take a 10% tax cut from your `/eco work` income.",
 				"success": "## Hired!\n**{target}** is now officially an employee of **{employer}**!",
 				"decline": "## Declined\n**{target}** declined the job offer.",
-				"timeout": "## ⏱Offer Expired\nThe job offer has expired."
+				"timeout": "## Offer Expired\nThe job offer has expired."
 			},
 			"fire": {
 				"error": {
@@ -1434,7 +1434,7 @@
 				"error": {
 					"not_employed": "## Error\nYou are not currently employed by anyone!"
 				},
-				"success": "## ‍Resigned!\nYou have successfully resigned from your employer.",
+				"success": "## Resigned!\nYou have successfully resigned from your employer.",
 				"dm": "## Resignation\nYour employee **{employee}** has resigned from your company."
 			}
 		},

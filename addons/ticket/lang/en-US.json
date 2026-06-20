@@ -40,7 +40,7 @@
 			"confirm_desc": "Are you sure you want to close this ticket? This action cannot be undone.",
 			"confirm_button": "Yes, Close",
 			"cancel_button": "Cancel",
-			"thinking": "### ⏳ Please Wait\nPreparing transcript and closing the ticket..."
+			"thinking": "### Please Wait\nPreparing transcript and closing the ticket..."
 		},
 		"panel": {
 			"start_button": "Start Panel Setup",

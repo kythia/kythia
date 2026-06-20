@@ -8,7 +8,7 @@
 					"categories": "Creating categories...",
 					"channels": "Creating channels in category **{category}**..."
 				},
-				"title_md": "## ⏳ Progress"
+				"title_md": "## Progress"
 			},
 			"autobuild": {
 				"template": {
@@ -27,7 +27,7 @@
 				},
 				"success": "## Complete!\nServer backup for **{name}** completed and sent to your DM!",
 				"failed": "## Failed!\nServer backup failed.",
-				"start": "⏳ Creating backup for this server...",
+				"start": "Creating backup for this server...",
 				"too": {
 					"large": "## Too Large!\nBackup file is too large to send via DM. Please contact support."
 				},

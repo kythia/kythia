@@ -15,7 +15,7 @@
 		},
 		"status": {
 			"done": "Completed",
-			"undone": "⬜ Not Completed"
+			"undone": "Not Completed"
 		},
 		"server": {
 			"toggle": {

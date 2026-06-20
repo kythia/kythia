@@ -91,7 +91,7 @@
 		"verify": {
 			"error": {
 				"not_for_you": "This captcha is not for you!",
-				"expired": "⏰ This captcha has expired."
+				"expired": "This captcha has expired."
 			}
 		}
 	}

@@ -23,9 +23,9 @@
 	"core": {
 		"utils": {
 			"widget": {
-				"success": "✅ Widget Updated!\nYour widget has been successfully refreshed! Check your Discord profile! 😉\n\n*-# Haven't set it up yet? Click the button below to authorize Kythia Widget!*",
-				"failed": "❌ Update Failed\nOh no, failed to update your widget right now 😭\n\n*-# If you haven't set up your widget, you must authorize first via the button below!*",
-				"error": "❌ Error\nAn error occurred while contacting Discord."
+				"success": "Widget Updated!\nYour widget has been successfully refreshed! Check your Discord profile! *-# Haven't set it up yet? Click the button below to authorize Kythia Widget!*",
+				"failed": "Update Failed\nOh no, failed to update your widget right now *-# If you haven't set up your widget, you must authorize first via the button below!*",
+				"error": "Error\nAn error occurred while contacting Discord."
 			},
 			"legal": {
 				"embed": {
@@ -44,7 +44,7 @@
 				"embed": {
 					"title": "## {username} is here!",
 					"desc": "helloo i'm {username}, your all-in-one cutie bot \ni was born on `27/05/2022` and since then i've been growing with lots of lovee \n\nmy amazing onii-chan is **kenndeclouv** >,<, you can dm them if you need help, wanna talk tech stuff, or even collab on something cool!\n\ni love making your server more fun, organized, and cozy! from utilities to cute interactions, i'll always try to make things easier and sweeter for you ><\n\nwanna invite me to your server or check out my website? just click the buttons below and let’s be friends!",
-					"footer": "-# © all rights reserved"
+					"footer": "-# all rights reserved"
 				},
 				"button": {
 					"invite": "Invite Bot",
@@ -178,7 +178,7 @@
 						"desc": "## Bot Restarting\nThe bot is restarting... please wait a moment"
 					},
 					"timeout": {
-						"desc": "## ⌛ Timed Out\nTime ran out! No action was taken "
+						"desc": "## Timed Out\nTime ran out! No action was taken "
 					}
 				},
 				"button": {
@@ -624,10 +624,10 @@
 				},
 				"debug": {
 					"msg": "Kythia Cache Debugger (Complete)\n\n{logs}",
-					"no_model": "❌ Model `Playlist` or `PlaylistTrack` not found in the container.",
-					"too_long": "🛠️ Kythia Cache Debugger\nLogs are too long, see the attached file for full results.",
-					"critical_failure": "💥 CRITICAL FAILURE\n\n{logs}\n\n**ERROR at Step {step}:**\n```js\n{error}\n```",
-					"critical_attached": "💥 CRITICAL FAILURE\nLogs attached."
+					"no_model": "Model `Playlist` or `PlaylistTrack` not found in the container.",
+					"too_long": "Kythia Cache Debugger\nLogs are too long, see the attached file for full results.",
+					"critical_failure": "CRITICAL FAILURE\n\n{logs}\n\n**ERROR at Step {step}:**\n```js\n{error}\n```",
+					"critical_attached": "CRITICAL FAILURE\nLogs attached."
 				},
 				"reload_config": "Kythia Configuration has been hot-reloaded successfully!",
 				"reload_node": "Config and Lavalink nodes have been reloaded!",
@@ -659,7 +659,7 @@
 					}
 				},
 				"delivery": {
-					"start": "⏳ Starting to send the announcement to all servers...",
+					"start": "Starting to send the announcement to all servers...",
 					"report": {
 						"list": "\n\n**Failed Server List:**\n```{names}```",
 						"success": "**Successfully Sent:** {count} server(s)",
@@ -690,9 +690,9 @@
 		},
 		"tools": {
 			"lastseen": {
-				"not_found": "🤷‍♀️ I don't know, {user} has never sent a message or their data is not recorded yet.",
-				"found": "👀 {user} was last seen sending a message on <t:{timestamp}:F> (<t:{timestamp}:R>).",
-				"error": "❌ An error occurred while fetching data: {message}"
+				"not_found": "I don't know, {user} has never sent a message or their data is not recorded yet.",
+				"found": "{user} was last seen sending a message on <t:{timestamp}:F> (<t:{timestamp}:R>).",
+				"error": "An error occurred while fetching data: {message}"
 			},
 			"avatar": {
 				"embed": {
@@ -982,14 +982,14 @@
 				},
 				"no": {
 					"config": "No settings have been saved for this server.",
-					"configured": "ℹNo settings have been configured."
+					"configured": "No settings have been configured."
 				},
 				"empty": "Empty",
 				"not": {
 					"set": "Not set"
 				},
 				"section": {
-					"boolean": "### ⭕ Active / Inactive Features",
+					"boolean": "### Active / Inactive Features",
 					"umum": "### General Settings",
 					"array": "### Structured Data",
 					"lainnya": "### Others"

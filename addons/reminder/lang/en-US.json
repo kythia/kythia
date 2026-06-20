@@ -8,7 +8,7 @@
 				},
 				"list": {
 					"empty": "You have no active reminders.",
-					"title": "## ⏱Your Active Reminders"
+					"title": "## Your Active Reminders"
 				},
 				"remove": {
 					"success": "Reminder **#{id}** has been successfully removed.",
@@ -21,7 +21,7 @@
 		},
 		"tasks": {
 			"processor": {
-				"title": "⏰ Reminder Alert!",
+				"title": "Reminder Alert!",
 				"desc": "{user}\n{reason}\n\n-# Set at: {createdAt}"
 			}
 		},

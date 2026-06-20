@@ -42,7 +42,7 @@
 				"cmd_autosetup": "****\nOne-command setup — creates a stat category + 4 voice channels,\nsaves all settings, and enables the live updater automatically.",
 				"cmd_set_ip": "**** — Set the guild's server IP\n**** — Set the server port (default: 25565)\n**** — Voice channel showing the IP\n**** — Voice channel showing the port\n**** — Voice channel showing /status",
 				"enable_feature": "Then enable the live updater via:\n> ",
-				"live_stats_title": "### ⏱Live Stats",
+				"live_stats_title": "### Live Stats",
 				"live_stats_desc": "Voice channels update automatically every **5 minutes**.\nYou can also force an update via the API:\n"
 			},
 			"pose": {

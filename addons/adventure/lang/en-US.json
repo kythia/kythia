@@ -385,7 +385,7 @@
 			"embed": {
 				"desc": "## {username}'s Character Stats"
 			},
-			"level": "`🆙` Level",
+			"level": "Level",
 			"hp": "HP",
 			"gold": "Gold",
 			"strength": "Strength",

@@ -1,27 +1,27 @@
 {
 	"reaction-role": {
-		"invalid_channel": "❌ Invalid channel or channel is not a text channel.",
-		"invalid_message": "❌ Could not find the message. It might have been deleted.",
-		"invalid_emoji": "❌ Failed to react with that emoji. Make sure I have access to it.",
-		"not_found": "❌ Could not find a reaction role configuration for that message and emoji.",
+		"invalid_channel": "Invalid channel or channel is not a text channel.",
+		"invalid_message": "Could not find the message. It might have been deleted.",
+		"invalid_emoji": "Failed to react with that emoji. Make sure I have access to it.",
+		"not_found": "Could not find a reaction role configuration for that message and emoji.",
 		"add": {
-			"success": "✅ **Reaction Role Configured!**\n\n**Message:** [Jump to Message]({messageUrl})\n**Emoji:** {emoji}\n**Role:** {role}"
+			"success": "**Reaction Role Configured!**\n\n**Message:** [Jump to Message]({messageUrl})\n**Emoji:** {emoji}\n**Role:** {role}"
 		},
 		"list": {
-			"empty": "ℹ️ No reaction roles configured on this server.",
+			"empty": "No reaction roles configured on this server.",
 			"title": "Reaction Roles Configuration",
 			"content_md": "### {title}\n\n{description}"
 		},
 		"edit": {
-			"nothing_to_edit": "❌ Nothing to edit. Please provide at least one field to update."
+			"nothing_to_edit": "Nothing to edit. Please provide at least one field to update."
 		},
 		"panel": {
 			"create": {
-				"intro_md": "## 🎭 Reaction Role Panel Setup\n\nClick the button below to create a new reaction role panel.\n\n**What is a panel?**\nA panel is a message that users can react to in order to receive roles. You can set up two modes:\n- **Post Embed** — the bot posts a new embed to a channel you choose.\n- **Use Message ID** — the bot attaches reactions to an existing message."
+				"intro_md": "## Reaction Role Panel Setup\n\nClick the button below to create a new reaction role panel.\n\n**What is a panel?**\nA panel is a message that users can react to in order to receive roles. You can set up two modes:\n- **Post Embed** — the bot posts a new embed to a channel you choose.\n- **Use Message ID** — the bot attaches reactions to an existing message."
 			},
 			"list": {
-				"empty_md": "### 🎭 Reaction Role Panels\n\n> No panels found. Use `/reaction-role panel create` to set one up.",
-				"content_md": "### 🎭 Reaction Role Panels ({count})\n\n{description}",
+				"empty_md": "### Reaction Role Panels\n\n> No panels found. Use `/reaction-role panel create` to set one up.",
+				"content_md": "### Reaction Role Panels ({count})\n\n{description}",
 				"error": "An error occurred while listing panels."
 			},
 			"delete": {
@@ -45,7 +45,7 @@
 			"ph_reaction": "reaction",
 			"ph_select_channel": "Select a channel...",
 			"ph_leave_empty": "Leave empty for post_embed mode",
-			"ph_pick_roles": "e.g. 🎭 Pick Your Roles",
+			"ph_pick_roles": "e.g. Pick Your Roles",
 			"ph_react_below": "React below to pick up a role.",
 			"emoji": "Emoji",
 			"role_id": "Role ID",

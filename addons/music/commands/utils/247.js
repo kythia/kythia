@@ -19,7 +19,13 @@ class Music247Command extends BaseCommand {
 		subcommand
 			.setName('247')
 			.setDescription(
-				'🎧 Enable or disable 24/7 mode to keep the bot in the voice channel.',
+				'Enable or disable 24/7 mode to keep the bot in the voice channel.',
+			)
+			.addBooleanOption((option) =>
+				option
+					.setName('lock')
+					.setDescription('Lock the bot to this channel so it cannot be moved.')
+					.setRequired(false),
 			);
 
 	async execute(interaction) {
@@ -43,8 +49,9 @@ class Music247Command extends BaseCommand {
 		}
 
 		const player = client.poru.players.get(guild.id);
+		const lock = interaction.options.getBoolean('lock') ?? false;
 
-		return musicHandlers.handle247(interaction, player);
+		return musicHandlers.handle247(interaction, player, lock);
 	}
 }
 

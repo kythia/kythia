@@ -117,6 +117,27 @@ class MusicHandlers {
 		await interaction.deferReply();
 		const query = options.getString('search');
 
+		const existingPlayer = client.poru.players.get(guild.id);
+		if (
+			existingPlayer &&
+			existingPlayer.voiceChannel !== member.voice.channel?.id
+		) {
+			if (await this.isLocked(interaction, existingPlayer)) {
+				const msg = await this.t(
+					interaction,
+					'music.helpers.handlers.247.locked_error',
+					{ defaultValue: '❌ This 24/7 session is locked by another user!' },
+				);
+				const components = await this.simpleContainer(interaction, msg, {
+					color: 'Red',
+				});
+				return interaction.editReply({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
+			}
+		}
+
 		if (!query) {
 			const components = await this.simpleContainer(
 				interaction,
@@ -407,6 +428,19 @@ class MusicHandlers {
 			existingPlayer &&
 			existingPlayer.voiceChannel !== member.voice.channel.id
 		) {
+			if (await this.isLocked(interaction, existingPlayer)) {
+				const msg = await this.t(
+					interaction,
+					'music.helpers.handlers.247.locked_error',
+				);
+				const components = await this.simpleContainer(interaction, msg, {
+					color: 'Red',
+				});
+				return interaction.reply({
+					components,
+					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
+				});
+			}
 			existingPlayer.destroy();
 		}
 
@@ -470,6 +504,21 @@ class MusicHandlers {
 				await this.t(interaction, 'music.music.player.not.found'),
 				{ color: 'Red' },
 			);
+			return interaction.reply({
+				components,
+				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
+			});
+		}
+
+		if (await this.isLocked(interaction, player)) {
+			const msg = await this.t(
+				interaction,
+				'music.helpers.handlers.247.locked_error',
+				{ defaultValue: '❌ This 24/7 session is locked by another user!' },
+			);
+			const components = await this.simpleContainer(interaction, msg, {
+				color: 'Red',
+			});
 			return interaction.reply({
 				components,
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
@@ -2352,6 +2401,27 @@ class MusicHandlers {
 
 	async handlePlaylist(interaction, player) {
 		await interaction.deferReply();
+
+		if (
+			player &&
+			player.voiceChannel !== interaction.member.voice.channel?.id
+		) {
+			if (await this.isLocked(interaction, player)) {
+				const msg = await this.t(
+					interaction,
+					'music.helpers.handlers.247.locked_error',
+					{ defaultValue: '❌ This 24/7 session is locked by another user!' },
+				);
+				const components = await this.simpleContainer(interaction, msg, {
+					color: 'Red',
+				});
+				return interaction.editReply({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
+			}
+		}
+
 		const s = interaction.options.getSubcommand();
 		if (s === 'save') return this._handlePlaylistSave(interaction, player);
 		if (s === 'load') return this._handlePlaylistLoad(interaction, player);
@@ -4071,16 +4141,54 @@ class MusicHandlers {
 	}
 
 	/**
+	 * Checks if the bot is locked to a 24/7 channel and the user is unauthorized.
+	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
+	 * @param {object} player
+	 * @returns {Promise<boolean>}
+	 */
+	async isLocked(interaction, player) {
+		if (!player || !player._247) return false;
+
+		const { guild, user, member } = interaction;
+		const existing247 = await this.Music247.getCache({
+			where: { guildId: guild.id },
+		});
+
+		if (existing247?.lockedById) {
+			const isAdmin = member.permissions.has('Administrator');
+			if (existing247.lockedById !== user.id && !isAdmin) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Handles the 24/7 (always-on) music mode for the player.
 	 * When enabled, the bot will attempt to stay in the voice channel even when the queue is empty.
 	 * @param {import('discord.js').ChatInputCommandInteraction} interaction
 	 */
-	async handle247(interaction, player) {
+	async handle247(interaction, player, lockOption = false) {
 		const isPremium = await this.premiumLocked(interaction, 'cute');
 		if (!isPremium) return;
 
 		await interaction.deferReply();
-		const { client, member, guild, channel } = interaction;
+		const { client, member, guild, channel, user } = interaction;
+
+		if (await this.isLocked(interaction, player)) {
+			const msg = await this.t(
+				interaction,
+				'music.helpers.handlers.247.locked_error',
+				{ defaultValue: '❌ This 24/7 session is locked by another user!' },
+			);
+			const components = await this.simpleContainer(interaction, msg, {
+				color: 'Red',
+			});
+			return interaction.editReply({
+				components,
+				flags: MessageFlags.IsComponentsV2,
+			});
+		}
 
 		let playerInstance = player;
 		if (!playerInstance) {
@@ -4094,6 +4202,12 @@ class MusicHandlers {
 			playerInstance._247 = false;
 		}
 
+		const existing247 = await this.Music247.getCache({
+			where: { guildId: guild.id },
+		});
+
+		// If it's already 247, and they explicitly provided lockOption without toggling intent
+		// Let's just keep toggle logic, but update lockedById if lockOption is true
 		const newState = !playerInstance._247;
 		playerInstance._247 = newState;
 
@@ -4101,14 +4215,21 @@ class MusicHandlers {
 
 		if (newState === true) {
 			try {
+				const lockedById = lockOption ? user.id : null;
 				await this.Music247.findOrCreateCache({
 					where: { guildId: guild.id },
 					defaults: {
 						guildId: guild.id,
 						textChannelId: playerInstance.textChannel,
 						voiceChannelId: playerInstance.voiceChannel,
+						lockedById: lockedById,
 					},
 				});
+				if (existing247) {
+					// It's possible it was recreated, update lockedById just in case
+					existing247.lockedById = lockedById;
+					await existing247.save();
+				}
 				msg = await this.t(interaction, 'music.helpers.handlers.247.enabled');
 			} catch (dbErr) {
 				this.logger.error(
@@ -4156,6 +4277,23 @@ class MusicHandlers {
 		});
 
 		await interaction.deferReply();
+
+		if (player && player.voiceChannel !== member.voice.channel?.id) {
+			if (await this.isLocked(interaction, player)) {
+				const msg = await this.t(
+					interaction,
+					'music.helpers.handlers.247.locked_error',
+					{ defaultValue: '❌ This 24/7 session is locked by another user!' },
+				);
+				const components = await this.simpleContainer(interaction, msg, {
+					color: 'Red',
+				});
+				return interaction.editReply({
+					components,
+					flags: MessageFlags.IsComponentsV2,
+				});
+			}
+		}
 
 		const playStation = async (stationData, interactionToUpdate) => {
 			if (!player) {

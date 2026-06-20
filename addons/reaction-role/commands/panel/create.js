@@ -24,9 +24,7 @@ class CreateCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('create')
-			.setDescription(
-				'➕ Create a new reaction role panel (interactive setup).',
-			);
+			.setDescription('Create a new reaction role panel (interactive setup).');
 
 	async execute(interaction) {
 		const container = this.container;

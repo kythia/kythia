@@ -68,11 +68,11 @@
 				}
 			},
 			"cooldown": {
-				"title_md": "## ⏳ On Cooldown\nYou can use items on your pet again in **{time}**."
+				"title_md": "## On Cooldown\nYou can use items on your pet again in **{time}**."
 			},
 			"dead": {
 				"title_md": "## Pet is Dead\nYour pet is currently dead. Use a revive item to bring it back!",
-				"dm": "Condolences: Your pet has died due to neglect! 💀"
+				"dm": "Condolences: Your pet has died due to neglect! "
 			},
 			"success": {
 				"desc": "{icon} **{name}** ({rarity}) Level {level} gained {bonusType} +{bonusValue}!",

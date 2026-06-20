@@ -17,9 +17,7 @@ class ApplyCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('apply')
-			.setDescription(
-				'\u200DApply for a specific profession to focus your work.',
-			);
+			.setDescription('Apply for a specific profession to focus your work.');
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers } = container;

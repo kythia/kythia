@@ -28,7 +28,7 @@
 			},
 			"delete": {
 				"error_notPremium": "This feature is only available for **Premium Users** or **Active Voters**.",
-				"error_noRecords": "ℹYou do not have any DNS records to delete.",
+				"error_noRecords": "You do not have any DNS records to delete.",
 				"error_notFound": "The selected DNS record was not found in our database. It might have already been deleted.",
 				"error_notOwner": "You are not the owner of this DNS record.",
 				"error_failedTitle": "Cloudflare API Error",
@@ -41,7 +41,7 @@
 				"not_allowed": "This feature is only available for **Premium Users** or **Active Voters**.",
 				"not_found": "You do not own a subdomain named `{subdomain}`.",
 				"title": "DNS Records for `{fqdn}`",
-				"no_record": "ℹYou have no DNS records set for this subdomain. Use `/pro dns set` to add one.",
+				"no_record": "You have no DNS records set for this subdomain. Use `/pro dns set` to add one.",
 				"has_record": "Displaying **{count}** DNS record(s) for this subdomain.",
 				"record_title": "Record ID: {id}  •  Type: {type}",
 				"record_value": "`Name:` {name}\n`Value:` {value}",

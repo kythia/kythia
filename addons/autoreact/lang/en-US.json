@@ -6,13 +6,13 @@
 				"invalid_emoji": "Invalid emoji provided. Please use a standard emoji or a custom emoji from a server the bot can access.",
 				"exists": "An auto-reaction for this trigger/channel already exists."
 			},
-			"success": "✅ **Auto-Reaction Added!**\nTrigger: {trigger}\nEmoji: {emoji}\nType: {type}"
+			"success": "**Auto-Reaction Added!**\nTrigger: {trigger}\nEmoji: {emoji}\nType: {type}"
 		},
 		"remove": {
 			"error": {
 				"not_found": "Auto-reaction not found."
 			},
-			"success": "✅ **Auto-Reaction Removed!**\nTrigger: `{trigger}`"
+			"success": "**Auto-Reaction Removed!**\nTrigger: `{trigger}`"
 		},
 		"list": {
 			"title": "## Auto-Reactions List ({page}/{totalPages})",

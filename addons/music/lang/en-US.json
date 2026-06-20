@@ -4,223 +4,223 @@
 		"helpers": {
 			"handlers": {
 				"247": {
-					"enabled": "✅ 24/7 mode enabled.",
-					"disabled": "⏹️ 24/7 mode disabled.",
-					"player": {}
+					"enabled": "## 24/7 Mode Enabled\nNow ill stay in this voice channel for 24/7",
+					"disabled": "## 24/7 Mode Disabled\nI will leave this voice channel shortly",
+					"locked_error": "## 24/7 Locked!\nThis 24/7 session is locked by another user!\n-# Only the user or Administrator can override"
 				},
 				"queue": {
-					"nowplaying": "## 📜 Music Queue\n**Now Playing:**\n[{nowTitle}]({nowUrl}) `{nowDuration}`\n\n**Queue:**\n",
+					"nowplaying": "## Music Queue\n**Now Playing:**\n[{nowTitle}]({nowUrl}) `{nowDuration}`\n\n**Queue:**\n",
 					"footer": "-# Page {page} of {totalPages} • Total {totalTracks} tracks in queue"
 				},
 				"music": {
 					"lyrics": {
 						"music": {
 							"not": {
-								"found": "❌ No song is currently playing."
+								"found": "No song is currently playing."
 							}
 						},
 						"lyrics": {
 							"not": {
-								"found": "❌ Lyrics not found for the song."
+								"found": "Lyrics not found for the song."
 							}
 						},
 						"title_md": "## **{artist} - {title}**"
 					},
-					"configured": "❌ Spotify integration is not configured by the bot owner. Please contact the developer.",
-					"failed": "❌ An error occurred while processing your music request.",
-					"results": "❌ No results found for your query.",
+					"configured": "Spotify integration is not configured by the bot owner. Please contact the developer.",
+					"failed": "An error occurred while processing your music request.",
+					"results": "No results found for your query.",
 					"playlist": {
 						"desc": {
-							"spotify": "## <:spotify:1418793905792487527> Spotify Playlist\n**Name:** {name}\n**({count} tracks)**",
-							"text": "## 🎵 Playlist {name}\n({count} tracks) "
+							"spotify": "## Spotify Playlist\n**Name:** {name}\n**({count} tracks)**",
+							"text": "## Playlist {name}\n({count} tracks) "
 						},
 						"save": {
 							"limit": {
-								"desc": "❌ You have reached the playlist limit. Please delete some playlists to save more. or you can upgrade to premium to save more playlists.",
-								"title": "## ❌ Playlist limit reached."
+								"desc": "You have reached the playlist limit. Please delete some playlists to save more. or you can upgrade to premium to save more playlists.",
+								"title": "## Playlist limit reached."
 							},
 							"empty": {
-								"queue": "❌ The queue is empty, cannot save!"
+								"queue": "The queue is empty, cannot save!"
 							},
-							"duplicate": "❌ Playlist with name \"{name}\" already exists.",
-							"success": "✅ Playlist \"{name}\" with {count} songs has been saved successfully!"
+							"duplicate": "Playlist with name \"{name}\" already exists.",
+							"success": "Playlist \"{name}\" with {count} songs has been saved successfully!"
 						},
 						"load": {
 							"not": {
-								"found": "❌ Playlist \"{name}\" not found."
+								"found": "Playlist \"{name}\" not found."
 							},
-							"empty": "❌ Playlist \"{name}\" is empty.",
+							"empty": "Playlist \"{name}\" is empty.",
 							"success": "▶️ Loading {count} songs from playlist \"{name}\"..."
 						},
 						"list": {
-							"empty": "❌ You don't have any playlists yet.",
-							"title": "## 🎶 Your Playlist"
+							"empty": "You don't have any playlists yet.",
+							"title": "## Your Playlist"
 						},
 						"delete": {
 							"not": {
-								"found": "❌ Playlist \"{name}\" not found."
+								"found": "Playlist \"{name}\" not found."
 							},
-							"success": "🗑️ Playlist \"{name}\" has been successfully deleted."
+							"success": "Playlist \"{name}\" has been successfully deleted."
 						},
 						"append": {
 							"no": {
-								"player": "❌ No music is currently playing."
+								"player": "No music is currently playing."
 							},
 							"success": {
-								"v2": "✅ Successfully added **{count}** songs from playlist **{name}** to the queue."
+								"v2": "Successfully added **{count}** songs from playlist **{name}** to the queue."
 							}
 						},
 						"remove": {
 							"track": {
 								"not": {
-									"found": "❌ Playlist \"{name}\" not found."
+									"found": "Playlist \"{name}\" not found."
 								},
-								"empty": "❌ Playlist \"{name}\" is empty.",
+								"empty": "Playlist \"{name}\" is empty.",
 								"invalid": {
-									"position": "❌ Invalid song position."
+									"position": "Invalid song position."
 								},
-								"success": "🗑️ Song at position {position} has been successfully removed from playlist \"{name}\"."
+								"success": "Song at position {position} has been successfully removed from playlist \"{name}\"."
 							}
 						},
 						"rename": {
 							"not": {
-								"found": "❌ Playlist \"{name}\" not found."
+								"found": "Playlist \"{name}\" not found."
 							},
-							"duplicate": "❌ Playlist with name \"{name}\" already exists.",
-							"success": "✏️ Playlist \"{oldName}\" has been successfully renamed to \"{newName}\"."
+							"duplicate": "Playlist with name \"{name}\" already exists.",
+							"success": "Playlist \"{oldName}\" has been successfully renamed to \"{newName}\"."
 						},
 						"track": {
 							"list": {
 								"not": {
-									"found": "❌ Playlist \"{name}\" not found."
+									"found": "Playlist \"{name}\" not found."
 								},
-								"empty": "❌ Playlist \"{name}\" is empty.",
-								"title": "## 🎶 Songs in {name}"
+								"empty": "Playlist \"{name}\" is empty.",
+								"title": "## Songs in {name}"
 							},
 							"add": {
-								"duplicate": "❌ Track **{track}** already exists in playlist \"{name}\".",
-								"success": "✅ Successfully added **{track}** to playlist \"{name}\".",
-								"error": "❌ Failed to add track to playlist."
+								"duplicate": "Track **{track}** already exists in playlist \"{name}\".",
+								"success": "Successfully added **{track}** to playlist \"{name}\".",
+								"error": "Failed to add track to playlist."
 							}
 						}
 					},
 					"added": {
 						"to": {
-							"queue": "## ✅ Added to queue\n[{title}]({url})\nDuration: `{duration}`\nAuthor: `{author}`"
+							"queue": "## Added to queue\n[{title}]({url})\nDuration: `{duration}`\nAuthor: `{author}`"
 						}
 					},
-					"joined": "## `🌸` Kythia Joined\nKythia ready for the party in {channel}!",
-					"left": "## `🌸` Kythia Left\nThanks for using Kythia Music!\nIf you like it, please consider supporting us on Ko-fi.",
-					"paused": "⏸️ The music is already paused.",
+					"joined": "## Kythia Joined\nKythia ready for the party in {channel}!",
+					"left": "## Kythia Left\nThanks for using Kythia Music!\nIf you like it, please consider supporting us on Ko-fi.",
+					"paused": "The music is already paused.",
 					"playing": {
-						"desc": "❌ Nothing is currently playing.",
-						"previous": "⏮️ Playing the previous track: **{title}**."
+						"desc": "Nothing is currently playing.",
+						"previous": "Playing the previous track: **{title}**."
 					},
-					"skip": "❌ An error occurred while skipping the track.",
-					"skipped": "⏭️ Skipped the current track.",
-					"stopped": "⏹️ Stopped music and cleared the queue.",
+					"skip": "An error occurred while skipping the track.",
+					"skipped": "Skipped the current track.",
+					"stopped": "Stopped music and cleared the queue.",
 					"more": "No more tracks in the queue.",
-					"empty": "❌ The queue is empty.",
+					"empty": "The queue is empty.",
 					"nowplaying": {
-						"error": "❌ An error occurred while showing the now playing panel.",
-						"text": "## 🎵 Now Playing\n[{title}]({url})\nDuration: `{duration}`\nAuthor: `{author}`"
+						"error": "An error occurred while showing the now playing panel.",
+						"text": "## Now Playing\n[{title}]({url})\nDuration: `{duration}`\nAuthor: `{author}`"
 					},
-					"track": "🔁 Loop track enabled.",
-					"queue": "🔁 Queue repeat enabled.",
-					"off": "❌ Loop disabled.",
+					"track": "Loop track enabled.",
+					"queue": "Queue repeat enabled.",
+					"off": "Loop disabled.",
 					"autoplay": {
 						"enabled": {
-							"message": "## 🔄 Autoplay enabled.\nAutoplay will now automatically queue songs after the current song ends, loop modes have been disabled.\n-# Feel free to support us on Ko-fi. "
+							"message": "## Autoplay enabled.\nAutoplay will now automatically queue songs after the current song ends, loop modes have been disabled.\n-# Feel free to support us on Ko-fi. "
 						},
 						"disabled": {
-							"message": "## 🔄 Autoplay disabled.\n-# Feel free to support us on Ko-fi. "
+							"message": "## Autoplay disabled.\n-# Feel free to support us on Ko-fi. "
 						}
 					},
-					"set": "🔊 Volume set to **{level}**.",
-					"enough": "❌ Not enough tracks in the queue to shuffle.",
-					"shuffled": "🔀 Queue shuffled.",
+					"set": "Volume set to **{level}**.",
+					"enough": "Not enough tracks in the queue to shuffle.",
+					"shuffled": "Queue shuffled.",
 					"no": {
 						"previous": {
-							"track": "❌ No previous track to play."
+							"track": "No previous track to play."
 						}
 					},
 					"filter": {
-						"reset": "🎧 All filters have been reset.",
-						"applied": "🎧 Applied filter: **{preset}**.",
+						"reset": "All filters have been reset.",
+						"applied": "Applied filter: **{preset}**.",
 						"not": {
-							"available": "🎧 Filter '{preset}' is not available."
+							"available": "Filter '{preset}' is not available."
 						}
 					},
-					"position": "❌ The source and destination positions are the same.",
-					"removed": "🗑️ Removed **[{title}]({url})** from position {position}.",
-					"positions": "❌ Invalid positions. The queue has {size} tracks.",
-					"found": "❌ Could not find the track to move.",
-					"moved": "🔀 Moved **[{title}]({url})** from position {from} to {to}.",
-					"clear": "🗑️ Queue Cleared",
-					"seeked": "⏩ Seeked to {time} seconds.",
+					"position": "The source and destination positions are the same.",
+					"removed": "Removed **[{title}]({url})** from position {position}.",
+					"positions": "Invalid positions. The queue has {size} tracks.",
+					"found": "Could not find the track to move.",
+					"moved": "Moved **[{title}]({url})** from position {from} to {to}.",
+					"clear": "Queue Cleared",
+					"seeked": "Seeked to {time} seconds.",
 					"play": {
 						"no": {
-							"results": "❌ No results found for your query.",
-							"query": "❌ Please provide a song name or URL to play."
+							"results": "No results found for your query.",
+							"query": "Please provide a song name or URL to play."
 						}
 					},
-					"jumped": "🐇 Jumped to position **{position}**.",
+					"jumped": "Jumped to position **{position}**.",
 					"grab": {
-						"success": "📥 Sent the track info to your DMs!",
-						"failed": "❌ I couldn't send you a DM. Please check your privacy settings."
+						"success": "Sent the track info to your DMs!",
+						"failed": "I couldn't send you a DM. Please check your privacy settings."
 					},
 					"download": {
-						"no_track_playing": "❌ No song is currently playing. Please provide a link/query!",
-						"duration_too_long": "❌ The song is too long (over 10 minutes). I cannot download it.",
-						"file_too_large": "❌ The file is too large (over 10MB), I cannot upload it. 😭",
-						"success": "## ✅ Download Ready",
+						"no_track_playing": "No song is currently playing. Please provide a link/query!",
+						"duration_too_long": "The song is too long (over 10 minutes). I cannot download it.",
+						"file_too_large": "The file is too large (over 10MB), I cannot upload it. ",
+						"success": "## Download Ready",
 						"title": "**Title:** {title}",
 						"author": "**Author:** {author}",
 						"query": "**Query:** {query}",
-						"failed": "❌ Failed to download the song. The link might be protected. 😭",
+						"failed": "Failed to download the song. The link might be protected. ",
 						"unavailable": "Download feature is not available, please contact owner."
 					},
-					"replayed": "🔄 Replaying the current track.",
+					"replayed": "Replaying the current track.",
 					"history": {
-						"empty": "📜 No history found.",
-						"title": "## 📜 Music History",
+						"empty": "No history found.",
+						"title": "## Music History",
 						"footer": "-# Page {page} of {totalPages} • Total {totalTracks} tracks in history"
 					},
 					"repair": {
-						"no_voice": "❌ You must be in a voice channel so I know where to reconnect!",
-						"connect_failed": "❌ Failed to reconnect to the voice channel: {error}",
-						"success": "🔧 **Repair complete!** Reconnected to {channel}. The queue was empty — use `/music play` to start fresh.",
-						"success_with_track": "🔧 **Repair complete!** Reconnected to {channel} and resumed **{title}**."
+						"no_voice": "You must be in a voice channel so I know where to reconnect!",
+						"connect_failed": "Failed to reconnect to the voice channel: {error}",
+						"success": "**Repair complete!** Reconnected to {channel}. The queue was empty — use `/music play` to start fresh.",
+						"success_with_track": "**Repair complete!** Reconnected to {channel} and resumed **{title}**."
 					},
 					"karaoke": {
-						"starting": "🎤 **Karaoke Mode** starting! Lyrics will appear in a moment...",
-						"stopped": "🎤 **Karaoke Mode** stopped.",
-						"failed": "⚠️ Could not start Karaoke Mode. Please contact developer.",
-						"mode": "### 🎤 Karaoke Mode\n-# {title}{author_divider}{author}",
+						"starting": "**Karaoke Mode** starting! Lyrics will appear in a moment...",
+						"stopped": "**Karaoke Mode** stopped.",
+						"failed": "Could not start Karaoke Mode. Please contact developer.",
+						"mode": "### Karaoke Mode\n-# {title}{author_divider}{author}",
 						"powered": "-# Powered by LavaLyrics",
-						"loading": "> *⏳ Loading lyrics...*",
-						"waiting": "> *⏳ Waiting for lyrics to start...*",
-						"not_found_title": "### 🎤 Karaoke — {title}\n-# by {author}",
-						"not_found_desc": "> ❌ **No synced lyrics found for this track.**\n> Karaoke mode requires timed lyrics from the LavaLyrics plugin."
+						"loading": "> *Loading lyrics...*",
+						"waiting": "> *Waiting for lyrics to start...*",
+						"not_found_title": "### Karaoke — {title}\n-# by {author}",
+						"not_found_desc": "> **No synced lyrics found for this track.**\n> Karaoke mode requires timed lyrics from the LavaLyrics plugin."
 					}
 				},
 				"filter": {
-					"title": "## 🎧 Audio Filter\nChoose an audio filter below:"
+					"title": "## Audio Filter\nChoose an audio filter below:"
 				},
 				"manager": {
-					"paused": "⏸️ Music paused.",
+					"paused": "Music paused.",
 					"resumed": "▶️ Music resumed.",
-					"reply": "⏯️ Music **{state}**."
+					"reply": "Music **{state}**."
 				},
 				"playlist": {
 					"share": {
 						"not": {
 							"found": {
-								"title": "❌ Playlist not found.",
+								"title": "Playlist not found.",
 								"desc": "Playlist with name **{name}** not found."
 							}
 						},
-						"title": "## 📤 Playlist Share: {name}",
+						"title": "## Playlist Share: {name}",
 						"desc": "Here is the share code for your playlist. Give this code to your friends so they can import it!",
 						"code": {
 							"label": "Share Code"
@@ -228,21 +228,21 @@
 					},
 					"import": {
 						"invalid": {
-							"title": "## ❌ Invalid playlist.",
+							"title": "## Invalid playlist.",
 							"desc": "The playlist you provided is invalid or corrupted. Make sure you copy the entire code correctly."
 						},
 						"success": {
-							"title": "## ✅ Successfully imported playlist.",
+							"title": "## Successfully imported playlist.",
 							"desc": "Successfully imported **{count}** songs from playlist **{name}**.",
-							"text": "✅ Successfully imported **{count}** **{source}** songs from playlist **{name}**."
+							"text": "Successfully imported **{count}** **{source}** songs from playlist **{name}**."
 						},
 						"error": {
-							"title": "## ❌ Failed to import playlist.",
+							"title": "## Failed to import playlist.",
 							"desc": "Failed to import playlist."
 						},
-						"failed": "❌ Failed to import playlist. Please make sure the URL is valid and public.",
+						"failed": "Failed to import playlist. Please make sure the URL is valid and public.",
 						"duplicate": {
-							"prompt": "❌ Playlist with name **{name}** already exists. What do you want to do?"
+							"prompt": "Playlist with name **{name}** already exists. What do you want to do?"
 						},
 						"btn": {
 							"overwrite": "Overwrite",
@@ -250,76 +250,76 @@
 							"cancel": "Cancel"
 						},
 						"overwrite": {
-							"success": "✅ Successfully imported **{count}** **{source}** songs from playlist **{name}** with overwrite."
+							"success": "Successfully imported **{count}** **{source}** songs from playlist **{name}** with overwrite."
 						},
 						"copy": {
-							"success": "✅ Successfully imported **{count}** **{source}** songs from playlist **{name}** with copy."
+							"success": "Successfully imported **{count}** **{source}** songs from playlist **{name}** with copy."
 						},
-						"cancelled": "👌 Import playlist cancelled.",
-						"timeout": "🕒 Time's up. Import playlist cancelled."
+						"cancelled": "Import playlist cancelled.",
+						"timeout": "Time's up. Import playlist cancelled."
 					}
 				},
 				"favorite": {
 					"play": {
-						"empty": "❤️ You don't have any favorite songs to play. Use the ♡ button on a playing song to add one!",
-						"success": "✅ Now playing **{count}** songs from your favorites."
+						"empty": "You don't have any favorite songs to play. Use the ♡ button on a playing song to add one!",
+						"success": "Now playing **{count}** songs from your favorites."
 					},
 					"list": {
-						"empty": "❤️ You haven't added any favorite songs yet.",
-						"title": "## 💖 Your Favorite Songs"
+						"empty": "You haven't added any favorite songs yet.",
+						"title": "## Your Favorite Songs"
 					},
 					"add": {
 						"no": {
-							"track": "❌ No song is currently playing to add to favorites."
+							"track": "No song is currently playing to add to favorites."
 						},
-						"duplicate": "⚠️ **{title}** is already in your favorites.",
-						"success": "❤️ Added **{title}** to your favorites."
+						"duplicate": "**{title}** is already in your favorites.",
+						"success": "Added **{title}** to your favorites."
 					},
 					"remove": {
 						"invalid": {
-							"name": "❌ Invalid name. Please provide a name of your favorite song."
+							"name": "Invalid name. Please provide a name of your favorite song."
 						},
-						"success": "🗑️ Successfully removed **{title}** from your favorites."
+						"success": "Successfully removed **{title}** from your favorites."
 					}
 				},
 				"radio": {
-					"load_failed": "❌ Failed to load radio stream. Please try another station (stream might be offline).",
-					"no_results": "❌ No radio stations found for **{query}**.",
+					"load_failed": "Failed to load radio stream. Please try another station (stream might be offline).",
+					"no_results": "No radio stations found for **{query}**.",
 					"select_desc": "Found multiple results for **{query}**. Please select a station below within 30 seconds.",
-					"timeout": "❌ Selection timed out. Please use the command again.",
-					"live_title": "## 🔴 LIVE RADIO STARTED",
-					"search_results_md": "## 📻 Search Results: \"{query}\""
+					"timeout": "Selection timed out. Please use the command again.",
+					"live_title": "## LIVE RADIO STARTED",
+					"search_results_md": "## Search Results: \"{query}\""
 				}
 			},
 			"musicManager": {
 				"manager": {
 					"now": {
-						"ended": "## 🎵 Music Ended\n[{title}]({url})\n"
+						"ended": "## Music Ended\n[{title}]({url})\n"
 					},
 					"channel": "**Artist/Channel:** \n{author}",
 					"requested": {
 						"by": "**Requested by**\n{user}"
 					},
-					"simple": "⚠️ You must be in a voice channel to use this command!",
-					"playing": "## 🎵 Now Playing... \n[{title}]({url}) \n\n",
+					"simple": "You must be in a voice channel to use this command!",
+					"playing": "## Now Playing... \n[{title}]({url}) \n\n",
 					"by": "By {author}",
-					"placeholder": "🎵 See recommended tracks",
-					"required": "⚠️ You must be in a voice channel to use music commands!",
-					"searching": "🔄 Searching for a recommendation to play next...",
-					"recommendation": "❌ No recommendation found. The queue will end.",
-					"played": "🎶 All tracks in the queue have been played.",
-					"failed": "❌ An error occurred while autoplaying the track.",
-					"ended": "⚠️ Music session has ended.",
-					"track": "❌ An error occurred while adding the track.",
-					"queue": "✅ **Added to queue:** [{title}]({url})",
+					"placeholder": "See recommended tracks",
+					"required": "You must be in a voice channel to use music commands!",
+					"searching": "Searching for a recommendation to play next...",
+					"recommendation": "No recommendation found. The queue will end.",
+					"played": "All tracks in the queue have been played.",
+					"failed": "An error occurred while autoplaying the track.",
+					"ended": "Music session has ended.",
+					"track": "An error occurred while adding the track.",
+					"queue": "**Added to queue:** [{title}]({url})",
 					"no": {
-						"listener": "❌ There is no one listening in the voice channel. exiting now..."
+						"listener": "There is no one listening in the voice channel. exiting now..."
 					},
-					"idleDisconnect": "❌ No activity in the voice channel for {seconds} seconds. Disconnecting..."
+					"idleDisconnect": "No activity in the voice channel for {seconds} seconds. Disconnecting..."
 				},
 				"music": {
 					"permission": {
-						"denied": "❌ You don't have permission right now! play your own track or play."
+						"denied": "You don't have permission right now! play your own track or play."
 					}
 				}
 			}
@@ -336,17 +336,17 @@
 			"error": {},
 			"player": {
 				"not": {
-					"found": "❌ No music player is active in this server."
+					"found": "No music player is active in this server."
 				}
 			},
 			"voice": {
 				"channel": {
 					"not": {
-						"found": "❌ You must be in a voice channel to use this command!"
+						"found": "You must be in a voice channel to use this command!"
 					}
 				}
 			},
-			"required": "⚠️ You must be in the same voice channel as the bot to use this command!",
+			"required": "You must be in the same voice channel as the bot to use this command!",
 			"filter": {
 				"generic": {}
 			},
@@ -364,8 +364,8 @@
 		},
 		"handlers": {
 			"error": {
-				"go_back": "❌ An error occurred while trying to go back.",
-				"no_channel": "❌ Could not find text channel."
+				"go_back": "An error occurred while trying to go back.",
+				"no_channel": "Could not find text channel."
 			}
 		},
 		"ui": {
