@@ -7,15 +7,16 @@
  */
 
 const {
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
-	SeparatorSpacingSize,
 	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
+	ContainerBuilder,
+	SeparatorBuilder,
+	TextDisplayBuilder,
+	SeparatorSpacingSize,
 } = require('discord.js');
+
 class GiveawayManager {
 	constructor(container) {
 		const { client, logger, t, kythiaConfig, helpers } = container;
@@ -27,6 +28,9 @@ class GiveawayManager {
 		this.convertColor = helpers.color.convertColor;
 		this.parseDuration = helpers.time.parseDuration;
 		this.simpleContainer = helpers.discord.simpleContainer;
+		this.getChannelSafe = helpers.discord.getChannelSafe;
+		this.getUserSafe = helpers.discord.getUserSafe;
+		this.getMessageSafe = helpers.discord.getMessageSafe;
 		this.CHECK_INTERVAL =
 			(this.config.addons.giveaway.checkInterval || 20) * 1000;
 	}
@@ -238,11 +242,7 @@ class GiveawayManager {
 		}
 		giveaway.ended = true;
 		await giveaway.save();
-		const channel =
-			await interaction.client.container.helpers.discord.getChannelSafe(
-				this.client,
-				giveaway.channelId,
-			);
+		const channel = await this.getChannelSafe(this.client, giveaway.channelId);
 		if (channel) {
 			const noWinnerMsg = await this.t(channel, 'giveaway.no.valid.winner');
 			const winnerMentions =
@@ -282,11 +282,7 @@ class GiveawayManager {
 			if (winners.length > 0) {
 				for (const winnerId of winners) {
 					try {
-						const user =
-							await interaction.client.container.helpers.discord.getUserSafe(
-								this.client,
-								winnerId,
-							);
+						const user = await this.getUserSafe(this.client, winnerId);
 						const dmContent = await this.t(user, 'giveaway.dm.winner', {
 							prize: giveaway.prize,
 							server: channel.guild.name,
@@ -312,11 +308,7 @@ class GiveawayManager {
 					} catch (_e) {}
 				}
 			}
-			const message =
-				await interaction.client.container.helpers.discord.getMessageSafe(
-					channel,
-					giveaway.messageId,
-				);
+			const message = await this.getMessageSafe(channel, giveaway.messageId);
 			if (message) {
 				const uiComponents = await this.buildGiveawayUI(channel, {
 					prize: giveaway.prize,
@@ -383,17 +375,9 @@ class GiveawayManager {
 		}
 		giveaway.ended = true;
 		await giveaway.save();
-		const channel =
-			await interaction.client.container.helpers.discord.getChannelSafe(
-				this.client,
-				giveaway.channelId,
-			);
+		const channel = await this.getChannelSafe(this.client, giveaway.channelId);
 		if (channel) {
-			const message =
-				await interaction.client.container.helpers.discord.getMessageSafe(
-					channel,
-					messageId,
-				);
+			const message = await this.getMessageSafe(channel, messageId);
 			if (message) {
 				const cancelledText = await this.t(
 					channel,
@@ -495,17 +479,9 @@ class GiveawayManager {
 			pool.splice(index, 1);
 		}
 		const winnerMentions = winners.map((id) => `<@${id}>`).join(', ');
-		const channel =
-			await interaction.client.container.helpers.discord.getChannelSafe(
-				this.client,
-				giveaway.channelId,
-			);
+		const channel = await this.getChannelSafe(this.client, giveaway.channelId);
 		if (channel) {
-			const message =
-				await interaction.client.container.helpers.discord.getMessageSafe(
-					channel,
-					messageId,
-				);
+			const message = await this.getMessageSafe(channel, messageId);
 			if (message) {
 				const uiComponents = await this.buildGiveawayUI(channel, {
 					prize: giveaway.prize,
