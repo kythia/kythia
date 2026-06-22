@@ -32,7 +32,7 @@ class ReportCommand extends BaseCommand {
 		.setName('Report User')
 		.setType(ApplicationCommandType.User)
 		.setContexts(InteractionContextType.Guild);
-	contextMenuDescription = '🚨 Report a user to the moderators.';
+	contextMenuDescription = 'Report a user to the moderators.';
 	guildOnly = true;
 	async execute(interaction) {
 		const container = this.container;

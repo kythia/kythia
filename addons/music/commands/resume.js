@@ -14,7 +14,7 @@ class ResumeCommand extends BaseCommand {
 	subcommand = true;
 
 	slashCommand = (subcommand) =>
-		subcommand.setName('resume').setDescription('▶️ Resume the paused song');
+		subcommand.setName('resume').setDescription('Resume the paused song');
 
 	async execute(interaction) {
 		const container = this.container;

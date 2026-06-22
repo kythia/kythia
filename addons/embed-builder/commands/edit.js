@@ -15,8 +15,11 @@ const {
 	TextInputBuilder,
 	SlashCommandSubcommandBuilder,
 } = require('discord.js');
+
 const { BaseCommand } = require('kythia-core');
+
 class EditCommand extends BaseCommand {
+	subcommand = true;
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('edit')
 		.setDescription('Edit a saved embed')
@@ -27,6 +30,7 @@ class EditCommand extends BaseCommand {
 				.setRequired(true)
 				.setAutocomplete(true),
 		);
+
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;

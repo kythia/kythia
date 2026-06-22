@@ -14,7 +14,7 @@ class SkipCommand extends BaseCommand {
 	subcommand = true;
 
 	slashCommand = (subcommand) =>
-		subcommand.setName('skip').setDescription('⏭️ Skip the current song');
+		subcommand.setName('skip').setDescription('Skip the current song');
 
 	async execute(interaction) {
 		const container = this.container;

@@ -8,10 +8,13 @@
 
 const { MessageFlags, SlashCommandSubcommandBuilder } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
+
 class ListCommand extends BaseCommand {
+	subcommand = true;
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('list')
 		.setDescription('List all saved embeds for this server');
+
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;

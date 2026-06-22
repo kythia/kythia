@@ -35,7 +35,7 @@ class TranslateCommand extends BaseCommand {
 		.setName('Translate Message')
 		.setType(ApplicationCommandType.Message);
 	contextMenuDescription =
-		'🌐 Translate message to another language using Gemini AI.';
+		'Translate message to another language using Gemini AI.';
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, logger } = container;

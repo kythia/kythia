@@ -26,7 +26,7 @@ class BannerCommand extends BaseCommand {
 	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('User Banner')
 		.setType(ApplicationCommandType.User);
-	contextMenuDescription = '🖼️ Show user banner.';
+	contextMenuDescription = 'Show user banner.';
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;

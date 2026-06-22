@@ -8,7 +8,9 @@
 
 const { MessageFlags, SlashCommandSubcommandBuilder } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
+
 class DeleteCommand extends BaseCommand {
+	subcommand = true;
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('delete')
 		.setDescription('Delete a saved embed')
@@ -27,6 +29,7 @@ class DeleteCommand extends BaseCommand {
 				)
 				.setRequired(false),
 		);
+
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;

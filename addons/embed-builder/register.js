@@ -8,7 +8,7 @@
 
 const { BaseRegister } = require('kythia-core');
 
-const editCommand = require('./commands/embed-builder/edit');
+const editCommand = require('./commands/edit');
 
 class EmbedBuilderRegister extends BaseRegister {
 	register() {

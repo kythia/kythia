@@ -26,7 +26,7 @@ class AvatarCommand extends BaseCommand {
 	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('User Avatar')
 		.setType(ApplicationCommandType.User);
-	contextMenuDescription = '🖼️ Show user avatar.';
+	contextMenuDescription = 'Show user avatar.';
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;

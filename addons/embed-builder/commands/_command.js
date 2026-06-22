@@ -11,13 +11,16 @@ const {
 	SlashCommandBuilder,
 	InteractionContextType,
 } = require('discord.js');
+
 const { BaseCommand } = require('kythia-core');
+
 class CommandsCommand extends BaseCommand {
 	slashCommand = new SlashCommandBuilder()
 		.setName('embed-builder')
 		.setDescription('Create and manage saved embeds for your server')
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
 		.setContexts(InteractionContextType.Guild);
+
 	async autocomplete(interaction) {
 		const container = this.container;
 		const focusedValue = interaction.options.getFocused();

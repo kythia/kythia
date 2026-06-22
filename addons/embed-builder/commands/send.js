@@ -11,8 +11,11 @@ const {
 	MessageFlags,
 	SlashCommandSubcommandBuilder,
 } = require('discord.js');
+
 const { BaseCommand } = require('kythia-core');
+
 class SendCommand extends BaseCommand {
+	subcommand = true;
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('send')
 		.setDescription('Send a saved embed to a channel')
@@ -53,6 +56,7 @@ class SendCommand extends BaseCommand {
 					},
 				),
 		);
+
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;

@@ -35,7 +35,7 @@ class UserInfoCommand extends BaseCommand {
 		.setName('User Info')
 		.setType(ApplicationCommandType.User)
 		.setContexts(InteractionContextType.Guild);
-	contextMenuDescription = '📄 Displays information about a user.';
+	contextMenuDescription = 'Displays information about a user.';
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, models } = container;

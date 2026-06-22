@@ -8,7 +8,9 @@
 
 const { MessageFlags, SlashCommandSubcommandBuilder } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
+
 class CreateCommand extends BaseCommand {
+	subcommand = true;
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('create')
 		.setDescription('Create a new saved embed')
@@ -37,6 +39,7 @@ class CreateCommand extends BaseCommand {
 					},
 				),
 		);
+
 	async execute(interaction) {
 		const container = this.container;
 		const { models, t } = container;

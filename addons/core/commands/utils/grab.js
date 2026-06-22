@@ -69,7 +69,7 @@ class GrabCommand extends BaseCommand {
 	contextMenuCommand = new ContextMenuCommandBuilder()
 		.setName('Grab Sticker/Emoji')
 		.setType(ApplicationCommandType.Message);
-	contextMenuDescription = '🛍️ Grab sticker or emoji from this message.';
+	contextMenuDescription = 'Grab sticker or emoji from this message.';
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
