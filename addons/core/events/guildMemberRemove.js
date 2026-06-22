@@ -61,15 +61,14 @@ class GuildMemberRemoveEvent extends BaseEvent {
 							},
 							'core.events.guildMemberRemove.log',
 							{
-								var0: executor?.id || 'Unknown',
 								tag: member.user.tag,
 								id: member.user.id,
-								id_1: member.user.id,
-								var4: Math.floor(member.user.createdTimestamp / 1000),
-								var5: member.joinedAt
+								userId: member.user.id,
+								accountCreated: Math.floor(member.user.createdTimestamp / 1000),
+								joinedServer: member.joinedAt
 									? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>`
 									: 'Unknown',
-								conditional6: kickEntry.reason
+								reason: kickEntry.reason
 									? await t(
 											{
 												client: this.client,
@@ -81,9 +80,9 @@ class GuildMemberRemoveEvent extends BaseEvent {
 											},
 										)
 									: '',
-								var7: executor?.tag || 'Unknown',
-								var8: executor?.id || 'Unknown',
-								var9: Math.floor(Date.now() / 1000),
+								executorTag: executor?.tag || 'Unknown',
+								executorId: executor?.id || 'Unknown',
+								timestamp: Math.floor(Date.now() / 1000),
 							},
 						),
 						{
@@ -119,14 +118,14 @@ class GuildMemberRemoveEvent extends BaseEvent {
 						{
 							tag: member.user.tag,
 							id: member.user.id,
-							id_1: member.user.id,
-							var3: Math.floor(member.user.createdTimestamp / 1000),
-							var4: member.joinedAt
+							userId: member.user.id,
+							accountCreated: Math.floor(member.user.createdTimestamp / 1000),
+							joinedServer: member.joinedAt
 								? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>`
 								: 'Unknown',
 							memberCount: member.guild.memberCount,
-							tag_1: member.user.tag,
-							var7: Math.floor(Date.now() / 1000),
+							userTag: member.user.tag,
+							timestamp: Math.floor(Date.now() / 1000),
 						},
 					),
 					{

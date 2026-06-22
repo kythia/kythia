@@ -76,10 +76,9 @@ class RoleUpdateEvent extends BaseEvent {
 					},
 					'core.events.roleUpdate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						id: newRole.id,
-						var2: formatChanges(entry.changes),
-						conditional3: entry.reason
+						changes: formatChanges(entry.changes),
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -91,9 +90,9 @@ class RoleUpdateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var4: executor?.tag || 'Unknown',
-						var5: executor?.id || 'Unknown',
-						var6: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

@@ -88,14 +88,13 @@ class ThreadCreateEvent extends BaseEvent {
 					},
 					'core.events.threadCreate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						id: thread.id,
-						var2: humanChannelType(thread.type),
-						var3: thread.parent ? `<#${thread.parent.id}>` : 'None',
-						var4: thread.archived ? 'Yes' : 'No',
-						var5: thread.locked ? 'Yes' : 'No',
+						threadType: humanChannelType(thread.type),
+						parentChannel: thread.parent ? `<#${thread.parent.id}>` : 'None',
+						archived: thread.archived ? 'Yes' : 'No',
+						locked: thread.locked ? 'Yes' : 'No',
 						autoArchiveDuration: thread.autoArchiveDuration,
-						conditional7: entry.reason
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -107,9 +106,9 @@ class ThreadCreateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var8: executor?.tag || 'Unknown',
-						var9: executor?.id || 'Unknown',
-						var10: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

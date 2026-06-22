@@ -93,11 +93,11 @@ class VoiceStateUpdateEvent extends BaseEvent {
 					'core.events.voiceStateUpdate.log',
 					{
 						action: action,
-						id: member.id,
+
 						description: description,
 						tag: member.user.tag,
-						id_1: member.id,
-						var5: Math.floor(Date.now() / 1000),
+						userId: member.id,
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

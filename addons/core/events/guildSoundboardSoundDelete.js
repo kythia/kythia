@@ -64,10 +64,9 @@ class GuildSoundboardSoundDeleteEvent extends BaseEvent {
 					},
 					'core.events.guildSoundboardSoundDelete.log',
 					{
-						var0: executor?.id || 'Unknown',
 						name: sound.name,
 						emoji: sound.emoji || 'None',
-						conditional3: entry.reason
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -79,9 +78,9 @@ class GuildSoundboardSoundDeleteEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var4: executor?.tag || 'Unknown',
-						var5: executor?.id || 'Unknown',
-						var6: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

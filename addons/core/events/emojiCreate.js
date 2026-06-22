@@ -58,14 +58,13 @@ class EmojiCreateEvent extends BaseEvent {
 					},
 					'core.events.emojiCreate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						name: emoji.name,
 						id: emoji.id,
-						name_1: emoji.name,
-						var4: emoji.animated ? 'Yes' : 'No',
-						var5: emoji.available ? 'Yes' : 'No',
-						var6: emoji.managed ? 'Yes' : 'No',
-						conditional7: entry.reason
+						emojiName: emoji.name,
+						animated: emoji.animated ? 'Yes' : 'No',
+						available: emoji.available ? 'Yes' : 'No',
+						managed: emoji.managed ? 'Yes' : 'No',
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -77,9 +76,9 @@ class EmojiCreateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var8: executor?.tag || 'Unknown',
-						var9: executor?.id || 'Unknown',
-						var10: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

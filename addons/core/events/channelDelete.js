@@ -83,10 +83,9 @@ class ChannelDeleteEvent extends BaseEvent {
 					},
 					'core.events.channelDelete.log',
 					{
-						var0: executor?.id || 'Unknown',
 						name: channel.name || 'Unknown',
 						channelTypeName: channelTypeName,
-						conditional3: entry.reason
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,

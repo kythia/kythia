@@ -64,14 +64,15 @@ class InviteCreateEvent extends BaseEvent {
 					},
 					'core.events.inviteCreate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						code: invite.code,
-						var2: invite.channel ? `<#${invite.channel.id}>` : 'Unknown',
-						var3: invite.maxUses ? invite.maxUses.toString() : 'Unlimited',
-						var4: invite.maxAge ? `${invite.maxAge} seconds` : 'Never expires',
-						var5: invite.temporary ? 'Yes' : 'No',
-						var6: Math.floor(invite.createdTimestamp / 1000),
-						conditional7: entry.reason
+						channelRef: invite.channel ? `<#${invite.channel.id}>` : 'Unknown',
+						maxUses: invite.maxUses ? invite.maxUses.toString() : 'Unlimited',
+						maxAge: invite.maxAge
+							? `${invite.maxAge} seconds`
+							: 'Never expires',
+						temporary: invite.temporary ? 'Yes' : 'No',
+						createdAt: Math.floor(invite.createdTimestamp / 1000),
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -83,9 +84,9 @@ class InviteCreateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var8: executor?.tag || 'Unknown',
-						var9: executor?.id || 'Unknown',
-						var10: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

@@ -64,12 +64,11 @@ class GuildBanRemoveEvent extends BaseEvent {
 					},
 					'core.events.guildBanRemove.log',
 					{
-						var0: executor?.id || 'Unknown',
 						tag: ban.user.tag,
 						id: ban.user.id,
-						id_1: ban.user.id,
-						var4: Math.floor(ban.user.createdTimestamp / 1000),
-						conditional5: entry.reason
+						userId: ban.user.id,
+						accountCreated: Math.floor(ban.user.createdTimestamp / 1000),
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -81,9 +80,9 @@ class GuildBanRemoveEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var6: executor?.tag || 'Unknown',
-						var7: executor?.id || 'Unknown',
-						var8: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

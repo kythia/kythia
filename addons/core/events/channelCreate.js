@@ -78,10 +78,9 @@ class ChannelCreateEvent extends BaseEvent {
 					},
 					'core.events.channelCreate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						id: channel.id,
 						channelTypeName: channelTypeName,
-						conditional3: entry.reason
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -93,9 +92,9 @@ class ChannelCreateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var4: executor?.tag || 'Unknown',
-						var5: executor?.id || 'Unknown',
-						var6: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

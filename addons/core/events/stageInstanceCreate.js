@@ -65,11 +65,11 @@ class StageInstanceCreateEvent extends BaseEvent {
 					},
 					'core.events.stageInstanceCreate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						topic: stageInstance.topic,
 						channelId: stageInstance.channelId,
-						var3: stageInstance.privacyLevel === 1 ? 'Public' : 'Guild Only',
-						conditional4: entry.reason
+						privacyLevel:
+							stageInstance.privacyLevel === 1 ? 'Public' : 'Guild Only',
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -81,9 +81,9 @@ class StageInstanceCreateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var5: executor?.tag || 'Unknown',
-						var6: executor?.id || 'Unknown',
-						var7: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

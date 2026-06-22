@@ -95,11 +95,10 @@ class GuildMemberUpdateEvent extends BaseEvent {
 					},
 					'core.events.guildMemberUpdate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						tag: newMember.user.tag,
 						id: newMember.id,
-						var3: changes.join('\n'),
-						conditional4: reason
+						changes: changes.join('\n'),
+						reason: reason
 							? await t(
 									{
 										client: this.client,
@@ -111,9 +110,9 @@ class GuildMemberUpdateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var5: executor?.tag || 'Unknown',
-						var6: executor?.id || 'Unknown',
-						var7: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

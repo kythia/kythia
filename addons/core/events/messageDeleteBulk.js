@@ -65,12 +65,11 @@ class MessageDeleteBulkEvent extends BaseEvent {
 					},
 					'core.events.messageDeleteBulk.log',
 					{
-						var0: executor?.id || 'Unknown',
 						id: channel.id,
 						size: messages.size,
 						messageIds: messageIds,
-						var4: messages.size > 10 ? '...' : '',
-						conditional5: entry.reason
+						truncated: messages.size > 10 ? '...' : '',
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -82,9 +81,9 @@ class MessageDeleteBulkEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var6: executor?.tag || 'Unknown',
-						var7: executor?.id || 'Unknown',
-						var8: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

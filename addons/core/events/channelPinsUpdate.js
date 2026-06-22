@@ -76,11 +76,11 @@ class ChannelPinsUpdateEvent extends BaseEvent {
 					},
 					'core.events.channelPinsUpdate.log',
 					{
-						var0: isPinned ? 'Pinned' : 'Unpinned',
-						var1: executor?.id || 'Unknown',
+						action: isPinned ? 'Pinned' : 'Unpinned',
+
 						id: channel.id,
-						var3: entry.extra?.messageId || 'Unknown',
-						conditional4: entry.reason
+						messageId: entry.extra?.messageId || 'Unknown',
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -92,9 +92,9 @@ class ChannelPinsUpdateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var5: executor?.tag || 'Unknown',
-						var6: executor?.id || 'Unknown',
-						var7: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

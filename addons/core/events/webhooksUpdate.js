@@ -100,10 +100,10 @@ class WebhooksUpdateEvent extends BaseEvent {
 					'core.events.webhooksUpdate.log',
 					{
 						action: action,
-						var1: executor?.id || 'Unknown',
+
 						id: channel.id,
-						var3: entry.target?.name || 'Unknown',
-						conditional4: entry.reason
+						webhookName: entry.target?.name || 'Unknown',
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -115,9 +115,9 @@ class WebhooksUpdateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var5: executor?.tag || 'Unknown',
-						var6: executor?.id || 'Unknown',
-						var7: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

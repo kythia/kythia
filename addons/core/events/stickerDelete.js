@@ -63,12 +63,11 @@ class StickerDeleteEvent extends BaseEvent {
 					},
 					'core.events.stickerDelete.log',
 					{
-						var0: executor?.id || 'Unknown',
 						name: sticker.name,
 						description: sticker.description || 'No description',
-						var3: sticker.available ? 'Yes' : 'No',
-						var4: sticker.managed ? 'Yes' : 'No',
-						conditional5: entry.reason
+						available: sticker.available ? 'Yes' : 'No',
+						managed: sticker.managed ? 'Yes' : 'No',
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -80,9 +79,9 @@ class StickerDeleteEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var6: executor?.tag || 'Unknown',
-						var7: executor?.id || 'Unknown',
-						var8: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

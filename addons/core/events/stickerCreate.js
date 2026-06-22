@@ -63,14 +63,13 @@ class StickerCreateEvent extends BaseEvent {
 					},
 					'core.events.stickerCreate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						name: sticker.name,
 						id: sticker.id,
-						name_1: sticker.name,
+						stickerName: sticker.name,
 						description: sticker.description || 'No description',
-						var5: sticker.available ? 'Yes' : 'No',
-						var6: sticker.managed ? 'Yes' : 'No',
-						conditional7: entry.reason
+						available: sticker.available ? 'Yes' : 'No',
+						managed: sticker.managed ? 'Yes' : 'No',
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -82,9 +81,9 @@ class StickerCreateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var8: executor?.tag || 'Unknown',
-						var9: executor?.id || 'Un known',
-						var10: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Un known',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

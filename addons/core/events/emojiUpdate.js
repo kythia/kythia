@@ -77,11 +77,10 @@ class EmojiUpdateEvent extends BaseEvent {
 					},
 					'core.events.emojiUpdate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						name: newEmoji.name,
 						id: newEmoji.id,
-						var3: formatChanges(entry.changes),
-						conditional4: entry.reason
+						changes: formatChanges(entry.changes),
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -93,9 +92,9 @@ class EmojiUpdateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var5: executor?.tag || 'Unknown',
-						var6: executor?.id || 'Unknown',
-						var7: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

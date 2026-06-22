@@ -63,14 +63,13 @@ class RoleDeleteEvent extends BaseEvent {
 					},
 					'core.events.roleDelete.log',
 					{
-						var0: executor?.id || 'Unknown',
 						name: role.name,
 						hexColor: role.hexColor || 'Default',
 						position: role.position,
-						var4: role.mentionable ? 'Yes' : 'No',
-						var5: role.hoist ? 'Yes' : 'No',
-						var6: role.managed ? 'Yes' : 'No',
-						conditional7: entry.reason
+						mentionable: role.mentionable ? 'Yes' : 'No',
+						hoisted: role.hoist ? 'Yes' : 'No',
+						managed: role.managed ? 'Yes' : 'No',
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -82,9 +81,9 @@ class RoleDeleteEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var8: executor?.tag || 'Unknown',
-						var9: executor?.id || 'Unknown',
-						var10: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

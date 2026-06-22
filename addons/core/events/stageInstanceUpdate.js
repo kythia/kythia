@@ -76,10 +76,9 @@ class StageInstanceUpdateEvent extends BaseEvent {
 					},
 					'core.events.stageInstanceUpdate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						channelId: newStage.channelId,
-						var2: changes.join('\n'),
-						conditional3: entry.reason
+						changes: changes.join('\n'),
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -91,9 +90,9 @@ class StageInstanceUpdateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var4: executor?.tag || 'Unknown',
-						var5: executor?.id || 'Unknown',
-						var6: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

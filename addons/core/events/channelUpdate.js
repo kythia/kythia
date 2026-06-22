@@ -73,10 +73,9 @@ class ChannelUpdateEvent extends BaseEvent {
 					},
 					'core.events.channelUpdate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						id: newChannel.id,
-						var2: formatChanges(entry.changes),
-						conditional3: entry.reason
+						changes: formatChanges(entry.changes),
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -88,9 +87,9 @@ class ChannelUpdateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var4: executor?.tag || 'Unknown',
-						var5: executor?.id || 'Unknown',
-						var6: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

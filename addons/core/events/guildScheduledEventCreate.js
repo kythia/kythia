@@ -65,15 +65,16 @@ class GuildScheduledEventCreateEvent extends BaseEvent {
 					},
 					'core.events.guildScheduledEventCreate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						name: scheduledEvent.name,
 						description: scheduledEvent.description || 'No description',
-						var3: Math.floor(scheduledEvent.scheduledStartTimestamp / 1000),
-						var4: scheduledEvent.channel
+						startTime: Math.floor(
+							scheduledEvent.scheduledStartTimestamp / 1000,
+						),
+						location: scheduledEvent.channel
 							? `<#${scheduledEvent.channel.id}>`
 							: scheduledEvent.entityMetadata?.location || 'External',
 						userCount: scheduledEvent.userCount || 0,
-						conditional6: entry.reason
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -85,9 +86,9 @@ class GuildScheduledEventCreateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var7: executor?.tag || 'Unknown',
-						var8: executor?.id || 'Unknown',
-						var9: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

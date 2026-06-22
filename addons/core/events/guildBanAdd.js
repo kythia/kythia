@@ -64,18 +64,17 @@ class GuildBanAddEvent extends BaseEvent {
 					},
 					'core.events.guildBanAdd.log',
 					{
-						var0: executor?.id || 'Unknown',
 						tag: ban.user.tag,
 						id: ban.user.id,
-						id_1: ban.user.id,
-						var4: Math.floor(ban.user.createdTimestamp / 1000),
+						userId: ban.user.id,
+						accountCreated: Math.floor(ban.user.createdTimestamp / 1000),
 						reason: ban.reason || 'No reason provided',
-						conditional6: entry.reason
+						auditReason: entry.reason
 							? `\n**Audit Reason:** ${entry.reason}`
 							: '',
-						var7: executor?.tag || 'Unknown',
-						var8: executor?.id || 'Unknown',
-						var9: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

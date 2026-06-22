@@ -1137,7 +1137,7 @@
 						}
 					}
 				},
-				"log": "## Channel Deleted\n\n**Channel Name:** {name}\n**Type:** {channelTypeName}{conditional3}"
+				"log": "## Channel Deleted\n\n**Channel Name:** {name}\n**Type:** {channelTypeName}{reason}"
 			},
 			"channelCreate": {
 				"events": {
@@ -1147,7 +1147,7 @@
 						}
 					}
 				},
-				"log": "## Channel Created\n\n**Channel:** <#{id}>\n**Type:** {channelTypeName}{conditional3}\n\n**Executor:** {var4} ({var5})\n**Timestamp:** <t:{var6}:F>"
+				"log": "## Channel Created\n\n**Channel:** <#{id}>\n**Type:** {channelTypeName}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"common": {
 				"reason": "\n\n**Reason:** {reason}"
@@ -1156,26 +1156,26 @@
 				"log": "## Slash Command Permissions Updated\n\n**Application ID:** {applicationId}\n**Command ID:** {id}\n{conditional2}\n\n**Guild ID:** {id_1}\n**Timestamp:** <t:{var4}:F>"
 			},
 			"channelPinsUpdate": {
-				"log": "## Message {var0}\n\n**Channel:** <#{id}>\n**Message ID:** {var3}{conditional4}\n\n**Executor:** {var5} ({var6})\n**Timestamp:** <t:{var7}:F>"
+				"log": "## Message {action}\n\n**Channel:** <#{id}>\n**Message ID:** {messageId}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"channelUpdate": {
-				"log": "## Channel Updated\n\n**Channel:** <#{id}>\n\n**Changes:**\n{var2}{conditional3}\n\n**Executor:** {var4} ({var5})\n**Timestamp:** <t:{var6}:F>"
+				"log": "## Channel Updated\n\n**Channel:** <#{id}>\n\n**Changes:**\n{changes}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"clientReady": {},
 			"emojiCreate": {
-				"log": "## Emoji Created\n\n**Emoji:** <:{name}:{id}>\n**Name:** {name_1}\n**Animated:** {var4}\n**Available:** {var5}\n**Managed:** {var6}{conditional7}\n\n**Executor:** {var8} ({var9})\n**Timestamp:** <t:{var10}:F>"
+				"log": "## Emoji Created\n\n**Emoji:** <:{name}:{id}>\n**Name:** {emojiName}\n**Animated:** {animated}\n**Available:** {available}\n**Managed:** {managed}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"emojiDelete": {
-				"log": "## Emoji Deleted\n\n**Emoji Name:** {name}\n**Animated:** {var2}\n**Available:** {var3}\n**Managed:** {var4}{conditional5}\n\n**Executor:** {var6} ({var7})\n**Timestamp:** <t:{var8}:F>"
+				"log": "## Emoji Deleted\n\n**Emoji Name:** {name}\n**Animated:** {animated}\n**Available:** {available}\n**Managed:** {managed}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"emojiUpdate": {
-				"log": "## Emoji Updated\n\n**Emoji:** <:{name}:{id}>\n\n**Changes:**\n{var3}{conditional4}\n\n**Executor:** {var5} ({var6})\n**Timestamp:** <t:{var7}:F>"
+				"log": "## Emoji Updated\n\n**Emoji:** <:{name}:{id}>\n\n**Changes:**\n{changes}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"guildBanAdd": {
-				"log": "## Member Banned\n\n**User:** {tag} (<@{id}>)\n**User ID:** {id_1}\n**Account Created:** <t:{var4}:F>\n**Ban Reason:** {reason}{conditional6}\n\n**Executor:** {var7} ({var8})\n**Timestamp:** <t:{var9}:F>"
+				"log": "## Member Banned\n\n**User:** {tag} (<@{id}>)\n**User ID:** {userId}\n**Account Created:** <t:{accountCreated}:F>\n**Ban Reason:** {reason}{auditReason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"guildBanRemove": {
-				"log": "## Member Unbanned\n\n**User:** {tag} (<@{id}>)\n**User ID:** {id_1}\n**Account Created:** <t:{var4}:F>{conditional5}\n\n**Executor:** {var6} ({var7})\n**Timestamp:** <t:{var8}:F>"
+				"log": "## Member Unbanned\n\n**User:** {tag} (<@{id}>)\n**User ID:** {userId}\n**Account Created:** <t:{accountCreated}:F>{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"guildIntegrationsUpdate": {
 				"log": "## Integrations Updated\n\nThe integrations for **{name}** were updated.{conditional1}\n\n**Timestamp:** <t:{var2}:F>"
@@ -1184,20 +1184,20 @@
 				"log": "Member Join\n\n**User:** {tag} (<@{id}>)\n**User ID:** {id_1}\n**Account Created:** <t:{var3}:F>\n**Joined Server:** {var4}\n**Member Count:** {memberCount}\n\n**User:** {tag_1}\n**Timestamp:** <t:{var7}:F>"
 			},
 			"guildMemberRemove": {
-				"log": "## Member Kicked\n\n**User:** {tag} (<@{id}>)\n**User ID:** {id_1}\n**Account Created:** <t:{var4}:F>\n**Joined Server:** {var5}{conditional6}\n\n**Executor:** {var7} ({var8})\n**Timestamp:** <t:{var9}:F>",
-				"log_1": "Member Left\n\n**User:** {tag} (<@{id}>)\n**User ID:** {id_1}\n**Account Created:** <t:{var3}:F>\n**Joined Server:** {var4}\n**Member Count:** {memberCount}\n\n**User:** {tag_1}\n**Timestamp:** <t:{var7}:F>"
+				"log": "## Member Kicked\n\n**User:** {tag} (<@{id}>)\n**User ID:** {userId}\n**Account Created:** <t:{accountCreated}:F>\n**Joined Server:** {joinedServer}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>",
+				"log_1": "Member Left\n\n**User:** {tag} (<@{id}>)\n**User ID:** {userId}\n**Account Created:** <t:{accountCreated}:F>\n**Joined Server:** {joinedServer}\n**Member Count:** {memberCount}\n\n**User:** {userTag}\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"guildMemberUpdate": {
-				"log": "## Member Updated\n\n**User:** {tag} (<@{id}>)\n\n**Changes:**\n{var3}{conditional4}\n\n**Executor:** {var5} ({var6})\n**Timestamp:** <t:{var7}:F>"
+				"log": "## Member Updated\n\n**User:** {tag} (<@{id}>)\n\n**Changes:**\n{changes}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"guildScheduledEventCreate": {
-				"log": "## Scheduled Event Created\n\n**Event:** {name}\n**Description:** {description}\n**Start Time:** <t:{var3}:F>\n**Location:** {var4}\n**Interested Count:** {userCount}{conditional6}\n\n**Executor:** {var7} ({var8})\n**Timestamp:** <t:{var9}:F>"
+				"log": "## Scheduled Event Created\n\n**Event:** {name}\n**Description:** {description}\n**Start Time:** <t:{startTime}:F>\n**Location:** {location}\n**Interested Count:** {userCount}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"guildScheduledEventDelete": {
-				"log": "## Scheduled Event Deleted\n\n**Event Name:** {name}\n**Description:** {description}\n**Was Scheduled For:** <t:{var3}:F>\n**Interested Count:** {userCount}{conditional5}\n\n**Executor:** {var6} ({var7})\n**Timestamp:** <t:{var8}:F>"
+				"log": "## Scheduled Event Deleted\n\n**Event Name:** {name}\n**Description:** {description}\n**Was Scheduled For:** <t:{scheduledFor}:F>\n**Interested Count:** {userCount}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"guildScheduledEventUpdate": {
-				"log": "## Scheduled Event Updated\n\n**Event:** {name}\n\n**Changes:**\n{var2}{conditional3}\n\n**Executor:** {var4} ({var5})\n**Timestamp:** <t:{var6}:F>"
+				"log": "## Scheduled Event Updated\n\n**Event:** {name}\n\n**Changes:**\n{changes}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"guildScheduledEventUserAdd": {
 				"log": "## Event Subscription\n\n**User:** {tag} (<@{id}>)\n**Event:** {name}\n**Description:** {description}\n**Start Time:** <t:{var4}:F>\n\n**User:** {tag_1} ({id_1})\n**Event ID:** {id_2}\n**Timestamp:** <t:{var8}:F>"
@@ -1206,28 +1206,28 @@
 				"log": "## Event Unsubscription\n\n**User:** {tag} (<@{id}>)\n**Event:** {name}\n**Description:** {description}\n**Start Time:** <t:{var4}:F>\n\n**User:** {tag_1} ({id_1})\n**Event ID:** {id_2}\n**Timestamp:** <t:{var8}:F>"
 			},
 			"guildSoundboardSoundCreate": {
-				"log": "## Soundboard Sound Created\n\n**Sound Name:** {name}\n**Emoji:** {emoji}\n**Volume:** {volume}{conditional4}\n\n**Executor:** {var5} ({var6})\n**Timestamp:** <t:{var7}:F>"
+				"log": "## Soundboard Sound Created\n\n**Sound Name:** {name}\n**Emoji:** {emoji}\n**Volume:** {volume}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"guildSoundboardSoundDelete": {
-				"log": "## Soundboard Sound Deleted\n\n**Sound Name:** {name}\n**Emoji:** {emoji}{conditional3}\n\n**Executor:** {var4} ({var5})\n**Timestamp:** <t:{var6}:F>"
+				"log": "## Soundboard Sound Deleted\n\n**Sound Name:** {name}\n**Emoji:** {emoji}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"guildSoundboardSoundUpdate": {
-				"log": "## Soundboard Sound Updated\n\n**Sound:** {name}\n\n**Changes:**\n{var2}{conditional3}\n\n**Executor:** {var4} ({var5})\n**Timestamp:** <t:{var6}:F>"
+				"log": "## Soundboard Sound Updated\n\n**Sound:** {name}\n\n**Changes:**\n{changes}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"guildUpdate": {
-				"log": "## Server Updated\n\n**Changes:**\n{var1}{conditional2}\n\n**Executor:** {var3} ({var4})\n**Timestamp:** <t:{var5}:F>"
+				"log": "## Server Updated\n\n**Changes:**\n{changes}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"inviteCreate": {
-				"log": "## Invite Created\n\n**Invite Code:** {code}\n**Channel:** {var2}\n**Max Uses:** {var3}\n**Max Age:** {var4}\n**Temporary:** {var5}\n**Created At:** <t:{var6}:F>{conditional7}\n\n**Executor:** {var8} ({var9})\n**Timestamp:** <t:{var10}:F>"
+				"log": "## Invite Created\n\n**Invite Code:** {code}\n**Channel:** {channelRef}\n**Max Uses:** {maxUses}\n**Max Age:** {maxAge}\n**Temporary:** {temporary}\n**Created At:** <t:{createdAt}:F>{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"inviteDelete": {
-				"log": "## Invite Deleted\n\n**Invite Code:** {code}\n**Channel:** {var2}\n**Uses:** {uses}\n**Max Uses:** {var4}\n**Max Age:** {var5}\n**Temporary:** {var6}{conditional7}\n\n**Executor:** {var8} ({var9})\n**Timestamp:** <t:{var10}:F>"
+				"log": "## Invite Deleted\n\n**Invite Code:** {code}\n**Channel:** {channelRef}\n**Uses:** {uses}\n**Max Uses:** {maxUses}\n**Max Age:** {maxAge}\n**Temporary:** {temporary}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"messageDelete": {
 				"log": "## Message Deleted in <#{channelId}>\n\n**Author:** {var1}\n**Executor:** <@{executorId}> {var3}{expr4}{expr5}{conditional6}\n\n**Executor:** {executorTag}{var8}\n**Message ID:** {id}\n**Timestamp:** <t:{var10}:F>"
 			},
 			"messageDeleteBulk": {
-				"log": "## Bulk Message Delete\n\n**Channel:** <#{id}>\n**Messages Deleted:** {size}\n**Message IDs:** {messageIds}{var4}{conditional5}\n\n**Executor:** {var6} ({var7})\n**Timestamp:** <t:{var8}:F>"
+				"log": "## Bulk Message Delete\n\n**Channel:** <#{id}>\n**Messages Deleted:** {size}\n**Message IDs:** {messageIds}{truncated}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"messagePollVoteAdd": {
 				"log": "## Poll Vote Added in <#{channelId}>\n\n**User:** {var1}\n**Option:** {text} (ID: {id})\n**Message:** [Jump to Message]({url})\n\n**User:** {var5} ({userId})\n**Timestamp:** <t:{var7}:F>"
@@ -1251,37 +1251,37 @@
 				"log": "## Message Edited in <#{channelId}>\n\n**Author:** {tag} (<@{id}>)\n**Message:** [Jump to Message]({url})\n\n**Before:**\n{oldContent}\n\n**After:**\n{newContent}\n\n**Author:** {tag_1} ({id_1})\n**Message ID:** {id_2}\n**Timestamp:** <t:{var9}:F>"
 			},
 			"roleCreate": {
-				"log": "## Role Created\n\n**Role:** <@&{id}>\n**Color:** {hexColor}\n**Position:** {position}\n**Mentionable:** {var4}\n**Hoisted:** {var5}\n**Managed:** {var6}{conditional7}\n\n**Executor:** {var8} ({var9})\n**Timestamp:** <t:{var10}:F>"
+				"log": "## Role Created\n\n**Role:** <@&{id}>\n**Color:** {hexColor}\n**Position:** {position}\n**Mentionable:** {mentionable}\n**Hoisted:** {hoisted}\n**Managed:** {managed}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"roleDelete": {
-				"log": "## Role Deleted\n\n**Role Name:** {name}\n**Color:** {hexColor}\n**Position:** {position}\n**Mentionable:** {var4}\n**Hoisted:** {var5}\n**Managed:** {var6}{conditional7}\n\n**Executor:** {var8} ({var9})\n**Timestamp:** <t:{var10}:F>"
+				"log": "## Role Deleted\n\n**Role Name:** {name}\n**Color:** {hexColor}\n**Position:** {position}\n**Mentionable:** {mentionable}\n**Hoisted:** {hoisted}\n**Managed:** {managed}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"roleUpdate": {
-				"log": "## Role Updated\n\n**Role:** <@&{id}>\n\n**Changes:**\n{var2}{conditional3}\n\n**Executor:** {var4} ({var5})\n**Timestamp:** <t:{var6}:F>"
+				"log": "## Role Updated\n\n**Role:** <@&{id}>\n\n**Changes:**\n{changes}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"stageInstanceCreate": {
-				"log": "## Stage Started\n\n**Topic:** {topic}\n**Channel:** <#{channelId}>\n**Privacy Level:** {var3}{conditional4}\n\n**Executor:** {var5} ({var6})\n**Timestamp:** <t:{var7}:F>"
+				"log": "## Stage Started\n\n**Topic:** {topic}\n**Channel:** <#{channelId}>\n**Privacy Level:** {privacyLevel}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"stageInstanceDelete": {
-				"log": "## Stage Ended\n\n**Topic:** {topic}\n**Channel:** <#{channelId}>{conditional3}\n\n**Executor:** {var4} ({var5})\n**Timestamp:** <t:{var6}:F>"
+				"log": "## Stage Ended\n\n**Topic:** {topic}\n**Channel:** <#{channelId}>{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"stageInstanceUpdate": {
-				"log": "## Stage Updated\n\n**Channel:** <#{channelId}>\n\n**Changes:**\n{var2}{conditional3}\n\n**Executor:** {var4} ({var5})\n**Timestamp:** <t:{var6}:F>"
+				"log": "## Stage Updated\n\n**Channel:** <#{channelId}>\n\n**Changes:**\n{changes}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"stickerCreate": {
-				"log": "## Sticker Created\n\n**Sticker:** <:{name}:{id}>\n**Name:** {name_1}\n**Description:** {description}\n**Available:** {var5}\n**Managed:** {var6}{conditional7}\n\n**Executor:** {var8} ({var9})\n**Timestamp:** <t:{var10}:F>"
+				"log": "## Sticker Created\n\n**Sticker:** <:{name}:{id}>\n**Name:** {stickerName}\n**Description:** {description}\n**Available:** {available}\n**Managed:** {managed}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"stickerDelete": {
-				"log": "## Sticker Deleted\n\n**Sticker Name:** {name}\n**Description:** {description}\n**Available:** {var3}\n**Managed:** {var4}{conditional5}\n\n**Executor:** {var6} ({var7})\n**Timestamp:** <t:{var8}:F>"
+				"log": "## Sticker Deleted\n\n**Sticker Name:** {name}\n**Description:** {description}\n**Available:** {available}\n**Managed:** {managed}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"stickerUpdate": {
-				"log": "## Sticker Updated\n\n**Sticker:** <:{name}:{id}>\n\n**Changes:**\n{var3}{conditional4}\n\n**Executor:** {var5} ({var6})\n**Timestamp:** <t:{var7}:F>"
+				"log": "## Sticker Updated\n\n**Sticker:** <:{name}:{id}>\n\n**Changes:**\n{changes}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"threadCreate": {
-				"log": "## Thread Created\n\n**Thread:** <#{id}>\n**Type:** {var2}\n**Parent Channel:** {var3}\n**Archived:** {var4}\n**Locked:** {var5}\n**Auto Archive Duration:** {autoArchiveDuration} minutes{conditional7}\n\n**Executor:** {var8} ({var9})\n**Timestamp:** <t:{var10}:F>"
+				"log": "## Thread Created\n\n**Thread:** <#{id}>\n**Type:** {threadType}\n**Parent Channel:** {parentChannel}\n**Archived:** {archived}\n**Locked:** {locked}\n**Auto Archive Duration:** {autoArchiveDuration} minutes{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"threadDelete": {
-				"log": "## Thread Deleted\n\n**Thread Name:** {name}\n**Type:** {var2}\n**Parent Channel:** {var3}\n**Archived:** {var4}\n**Locked:** {var5}\n**Auto Archive Duration:** {autoArchiveDuration} minutes{conditional7}\n\n**Executor:** {var8} ({var9})\n**Timestamp:** <t:{var10}:F>"
+				"log": "## Thread Deleted\n\n**Thread Name:** {name}\n**Type:** {threadType}\n**Parent Channel:** {parentChannel}\n**Archived:** {archived}\n**Locked:** {locked}\n**Auto Archive Duration:** {autoArchiveDuration} minutes{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"threadMembersUpdate": {
 				"log": "{expr0}\n\n**Thread ID:** {id}\n**Timestamp:** <t:{var2}:F>"
@@ -1290,16 +1290,16 @@
 				"log": "## Thread Member Updated\n\n**Member:** <@{id}>\n**Thread:** <#{id_1}>\n**Changes:**\n{var2}\n\n**User:** {id_2}\n**Timestamp:** <t:{var4}:F>"
 			},
 			"threadUpdate": {
-				"log": "## Thread Updated\n\n**Thread:** <#{id}>\n\n**Changes:**\n{var2}{conditional3}\n\n**Executor:** {var4} ({var5})\n**Timestamp:** <t:{var6}:F>"
+				"log": "## Thread Updated\n\n**Thread:** <#{id}>\n\n**Changes:**\n{changes}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"userUpdate": {
 				"log": "{expr0}\n\n**User:** {tag} ({id})\n**Timestamp:** <t:{var3}:F>"
 			},
 			"voiceStateUpdate": {
-				"log": "## {action}\n\n{description}\n\n**User:** {tag} ({id_1})\n**Timestamp:** <t:{var5}:F>"
+				"log": "## {action}\n\n{description}\n\n**User:** {tag} ({userId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"webhooksUpdate": {
-				"log": "## Webhook {action}\n\n**Channel:** <#{id}>\n**Webhook Name:** {var3}{conditional4}\n\n**Executor:** {var5} ({var6})\n**Timestamp:** <t:{var7}:F>"
+				"log": "## Webhook {action}\n\n**Channel:** <#{id}>\n**Webhook Name:** {webhookName}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			}
 		},
 		"helpers": {

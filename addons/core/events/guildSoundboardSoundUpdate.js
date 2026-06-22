@@ -79,10 +79,9 @@ class GuildSoundboardSoundUpdateEvent extends BaseEvent {
 					},
 					'core.events.guildSoundboardSoundUpdate.log',
 					{
-						var0: executor?.id || 'Unknown',
 						name: newSound.name,
-						var2: changes.join('\n'),
-						conditional3: entry.reason
+						changes: changes.join('\n'),
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -94,9 +93,9 @@ class GuildSoundboardSoundUpdateEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var4: executor?.tag || 'Unknown',
-						var5: executor?.id || 'Unknown',
-						var6: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

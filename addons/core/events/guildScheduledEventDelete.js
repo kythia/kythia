@@ -65,12 +65,13 @@ class GuildScheduledEventDeleteEvent extends BaseEvent {
 					},
 					'core.events.guildScheduledEventDelete.log',
 					{
-						var0: executor?.id || 'Unknown',
 						name: scheduledEvent.name,
 						description: scheduledEvent.description || 'No description',
-						var3: Math.floor(scheduledEvent.scheduledStartTimestamp / 1000),
+						scheduledFor: Math.floor(
+							scheduledEvent.scheduledStartTimestamp / 1000,
+						),
 						userCount: scheduledEvent.userCount || 0,
-						conditional5: entry.reason
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -82,9 +83,9 @@ class GuildScheduledEventDeleteEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var6: executor?.tag || 'Unknown',
-						var7: executor?.id || 'Unknown',
-						var8: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{

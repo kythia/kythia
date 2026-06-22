@@ -64,14 +64,15 @@ class InviteDeleteEvent extends BaseEvent {
 					},
 					'core.events.inviteDelete.log',
 					{
-						var0: executor?.id || 'Unknown',
 						code: invite.code,
-						var2: invite.channel ? `<#${invite.channel.id}>` : 'Unknown',
+						channelRef: invite.channel ? `<#${invite.channel.id}>` : 'Unknown',
 						uses: invite.uses || 0,
-						var4: invite.maxUses ? invite.maxUses.toString() : 'Unlimited',
-						var5: invite.maxAge ? `${invite.maxAge} seconds` : 'Never expires',
-						var6: invite.temporary ? 'Yes' : 'No',
-						conditional7: entry.reason
+						maxUses: invite.maxUses ? invite.maxUses.toString() : 'Unlimited',
+						maxAge: invite.maxAge
+							? `${invite.maxAge} seconds`
+							: 'Never expires',
+						temporary: invite.temporary ? 'Yes' : 'No',
+						reason: entry.reason
 							? await t(
 									{
 										client: this.client,
@@ -83,9 +84,9 @@ class InviteDeleteEvent extends BaseEvent {
 									},
 								)
 							: '',
-						var8: executor?.tag || 'Unknown',
-						var9: executor?.id || 'Unknown',
-						var10: Math.floor(Date.now() / 1000),
+						executorTag: executor?.tag || 'Unknown',
+						executorId: executor?.id || 'Unknown',
+						timestamp: Math.floor(Date.now() / 1000),
 					},
 				),
 				{
