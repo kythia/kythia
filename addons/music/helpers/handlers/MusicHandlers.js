@@ -4147,7 +4147,7 @@ class MusicHandlers {
 	 * @returns {Promise<boolean>}
 	 */
 	async isLocked(interaction, player) {
-		if (!player || !player._247) return false;
+		if (!player?._247) return false;
 
 		const { guild, user, member } = interaction;
 		const existing247 = await this.Music247.getCache({

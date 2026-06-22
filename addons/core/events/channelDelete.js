@@ -56,7 +56,7 @@ class ChannelDeleteEvent extends BaseEvent {
 					?.has(['ViewChannel', 'SendMessages'])
 			)
 				return;
-			const executor = entry.executor;
+			// const executor = entry.executor;
 			const channelTypeNames = {
 				[ChannelType.GuildText]: 'Text Channel',
 				[ChannelType.GuildVoice]: 'Voice Channel',
