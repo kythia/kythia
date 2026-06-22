@@ -16,27 +16,21 @@ const {
 	MediaGalleryItemBuilder,
 } = require('discord.js');
 const fetch = require('node-fetch');
-
 const { BaseCommand } = require('kythia-core');
-
 class InfoCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('info')
 			.setDescription(
 				'Show stats and information for the Kythia Global Chat network!',
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { kythiaConfig, helpers, logger, t } = container;
 		const { convertColor } = helpers.color;
 		const apiUrl = kythiaConfig?.addons?.globalchat?.apiUrl;
-
 		await interaction.deferReply();
-
 		let apiStats;
 		try {
 			const res = await fetch(`${apiUrl}/list`, {
@@ -54,7 +48,6 @@ class InfoCommand extends BaseCommand {
 					label: 'globalchat',
 				},
 			);
-
 			const errorContainer = [
 				new ContainerBuilder()
 					.setAccentColor(
@@ -65,7 +58,7 @@ class InfoCommand extends BaseCommand {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t(interaction, 'globalchat.info.error.fetch'),
+							await t(interaction, 'globalchat.commands.info.error.fetch'),
 						),
 					),
 			];
@@ -74,14 +67,15 @@ class InfoCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const { count, timestamp, guildsWithWebhook, guildsWithoutWebhook } =
 			apiStats || {};
-
 		const components = [
 			new ContainerBuilder()
 				.setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				)
 				.addMediaGalleryComponents(
 					new MediaGalleryBuilder().addItems([
@@ -92,7 +86,7 @@ class InfoCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'globalchat.info.title'),
+						await t(interaction, 'globalchat.commands.info.title'),
 					),
 				)
 				.addSeparatorComponents(
@@ -101,12 +95,10 @@ class InfoCommand extends BaseCommand {
 						.setDivider(true),
 				)
 				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(
-						`Connect and chat with users from different servers in real time! Kythia's Global Chat lets your community interact beyond your own server walls, making Discord even more lively and social.
+					new TextDisplayBuilder().setContent(`Connect and chat with users from different servers in real time! Kythia's Global Chat lets your community interact beyond your own server walls, making Discord even more lively and social.
 ・ Chat with users worldwide
 ・ Safe & moderated environment
-・ Made possible by Tronix Development`,
-					),
+・ Made possible by Tronix Development`),
 				)
 				.addSeparatorComponents(
 					new SeparatorBuilder()
@@ -139,12 +131,10 @@ class InfoCommand extends BaseCommand {
 					),
 				),
 		];
-
 		return interaction.editReply({
 			components: components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = InfoCommand;

@@ -37,7 +37,7 @@ class ChannelCommand extends BaseCommand {
 		await boosterSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'booster.booster.channel.set', {
+			await t(interaction, 'booster.commands.channel.booster.set', {
 				channelId: ch.id,
 			}),
 			{

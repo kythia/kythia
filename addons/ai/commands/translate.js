@@ -56,7 +56,7 @@ class TranslateCommand extends BaseCommand {
 			});
 			const tokenIdx = await getAndUseNextAvailableToken();
 			if (tokenIdx === -1) {
-				const msg = await t(interaction, 'ai.translate.limit');
+				const msg = await t(interaction, 'ai.commands.translate.limit');
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Red',
 				});
@@ -123,8 +123,8 @@ class TranslateCommand extends BaseCommand {
 			const translated =
 				finalResponse.text ||
 				finalResponse.response?.text ||
-				(await t(interaction, 'ai.translate.no.result'));
-			const msg = await t(interaction, 'ai.translate.success', {
+				(await t(interaction, 'ai.commands.translate.no.result'));
+			const msg = await t(interaction, 'ai.commands.translate.success', {
 				lang,
 				text,
 				translated,
@@ -138,7 +138,7 @@ class TranslateCommand extends BaseCommand {
 			logger.error(`Error in /translate: ${lastError.message || lastError}`, {
 				label: 'ai',
 			});
-			const msg = await t(interaction, 'ai.translate.error');
+			const msg = await t(interaction, 'ai.commands.translate.error');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});

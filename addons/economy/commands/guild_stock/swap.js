@@ -64,16 +64,20 @@ class SwapCommand extends BaseCommand {
 		if (!pool) {
 			const msg = await t(
 				interaction,
-				'economy.guild_stock.swap.error.not_found',
+				'economy.commands.guild_stock.swap.error.not_found',
 				{
 					ticker,
 				},
 			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.swap.not_found', {
-					msg,
-				}),
+				await t(
+					interaction,
+					'economy.commands.guild_stock.swap.stock.not_found',
+					{
+						msg,
+					},
+				),
 				{
 					color: 'Red',
 				},
@@ -86,14 +90,14 @@ class SwapCommand extends BaseCommand {
 		if (pool.tradingHalted) {
 			const msg = await t(
 				interaction,
-				'economy.guild_stock.swap.error.halted',
+				'economy.commands.guild_stock.swap.error.halted',
 				{
 					ticker,
 				},
 			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.swap.halted', {
+				await t(interaction, 'economy.commands.guild_stock.swap.stock.halted', {
 					msg,
 				}),
 				{
@@ -131,11 +135,11 @@ class SwapCommand extends BaseCommand {
 			if (newY <= 0) {
 				const msg = await t(
 					interaction,
-					'economy.guild_stock.swap.error.liquidity',
+					'economy.commands.guild_stock.swap.error.liquidity',
 				);
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.stock.swap.liquidity_error', {
+					await t(interaction, 'economy.shared.stock.swap.liquidity_error', {
 						msg,
 					}),
 					{
@@ -154,7 +158,7 @@ class SwapCommand extends BaseCommand {
 			if ((userEco.kythHolding || 0) < totalCost) {
 				const msg = await t(
 					interaction,
-					'economy.guild_stock.swap.error.funds',
+					'economy.commands.guild_stock.swap.error.funds',
 					{
 						cost: totalCost.toFixed(4),
 						amount,
@@ -164,9 +168,13 @@ class SwapCommand extends BaseCommand {
 				);
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.stock.swap.insufficient_funds', {
-						msg,
-					}),
+					await t(
+						interaction,
+						'economy.commands.guild_stock.swap.stock.insufficient_funds',
+						{
+							msg,
+						},
+					),
 					{
 						color: 'Red',
 					},
@@ -182,15 +190,19 @@ class SwapCommand extends BaseCommand {
 			pool.kythReserve += fee;
 			pool.tokenReserve -= amount;
 			await Promise.all([userEco.save(), userHolding.save(), pool.save()]);
-			const msg = await t(interaction, 'economy.guild_stock.swap.success.buy', {
-				amount,
-				ticker,
-				cost: totalCost.toFixed(4),
-				balance: userHolding.balance.toFixed(2),
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.guild_stock.swap.success.buy',
+				{
+					amount,
+					ticker,
+					cost: totalCost.toFixed(4),
+					balance: userHolding.balance.toFixed(2),
+				},
+			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.swap.success', {
+				await t(interaction, 'economy.shared.stock.swap.success', {
 					msg,
 				}),
 				{
@@ -205,7 +217,7 @@ class SwapCommand extends BaseCommand {
 			if (userHolding.balance < amount) {
 				const msg = await t(
 					interaction,
-					'economy.guild_stock.swap.error.balance',
+					'economy.commands.guild_stock.swap.error.balance',
 					{
 						ticker,
 						balance: userHolding.balance.toFixed(2),
@@ -213,9 +225,13 @@ class SwapCommand extends BaseCommand {
 				);
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.stock.swap.insufficient_balance', {
-						msg,
-					}),
+					await t(
+						interaction,
+						'economy.commands.guild_stock.swap.stock.insufficient_balance',
+						{
+							msg,
+						},
+					),
 					{
 						color: 'Red',
 					},
@@ -233,11 +249,11 @@ class SwapCommand extends BaseCommand {
 			if (pool.kythReserve <= kythOutput) {
 				const msg = await t(
 					interaction,
-					'economy.guild_stock.swap.error.kyth_liquidity',
+					'economy.commands.guild_stock.swap.error.kyth_liquidity',
 				);
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.stock.swap.liquidity_error', {
+					await t(interaction, 'economy.shared.stock.swap.liquidity_error', {
 						msg,
 					}),
 					{
@@ -257,7 +273,7 @@ class SwapCommand extends BaseCommand {
 			await Promise.all([userEco.save(), userHolding.save(), pool.save()]);
 			const msg = await t(
 				interaction,
-				'economy.guild_stock.swap.success.sell',
+				'economy.commands.guild_stock.swap.success.sell',
 				{
 					amount,
 					ticker,
@@ -267,7 +283,7 @@ class SwapCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.swap.success', {
+				await t(interaction, 'economy.shared.stock.swap.success', {
 					msg,
 				}),
 				{

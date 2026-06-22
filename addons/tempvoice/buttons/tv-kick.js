@@ -31,7 +31,10 @@ class TvKickButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.kick.no_active_channel'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-kick.kick.no_active_channel',
+						),
 						{
 							color: 'Red',
 						},
@@ -41,7 +44,9 @@ class TvKickButton extends BaseButton {
 		}
 		const selectMenu = new UserSelectMenuBuilder()
 			.setCustomId(`tv_kick_menu:${activeChannel.channelId}`)
-			.setPlaceholder(await t(interaction, 'tempvoice.kick.menu.placeholder'))
+			.setPlaceholder(
+				await t(interaction, 'tempvoice.buttons.tv-kick.kick.menu.placeholder'),
+			)
 			.setMinValues(1)
 			.setMaxValues(1);
 		const row = new ActionRowBuilder().addComponents(selectMenu);
@@ -54,7 +59,7 @@ class TvKickButton extends BaseButton {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'tempvoice.kick.menu.content'),
+					await t(interaction, 'tempvoice.buttons.tv-kick.kick.menu.content'),
 				),
 			)
 			.addActionRowComponents(row);

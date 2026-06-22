@@ -26,7 +26,7 @@ class ResignCommand extends BaseCommand {
 		if (!user?.employerId) {
 			const msg = await t(
 				interaction,
-				'economy.company.resign.error.not_employed',
+				'economy.commands.company.resign.error.not_employed',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -40,7 +40,7 @@ class ResignCommand extends BaseCommand {
 		user.employerId = null;
 		user.changed('employerId', true);
 		await user.save();
-		const msg = await t(interaction, 'economy.company.resign.success');
+		const msg = await t(interaction, 'economy.commands.company.resign.success');
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Green',
 		});
@@ -52,9 +52,13 @@ class ResignCommand extends BaseCommand {
 				employerId,
 			);
 			if (employerDiscordUser) {
-				const dmMsg = await t(interaction, 'economy.company.resign.dm', {
-					employee: interaction.user.username,
-				});
+				const dmMsg = await t(
+					interaction,
+					'economy.commands.company.resign.dm',
+					{
+						employee: interaction.user.username,
+					},
+				);
 				const dmComponents = await simpleContainer(interaction, dmMsg, {
 					color: 'Yellow',
 				});

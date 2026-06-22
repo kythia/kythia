@@ -21,7 +21,7 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.no_channel_id'),
+					await t(interaction, 'tempvoice.shared.common.no_channel_id'),
 					{
 						color: 'Red',
 					},
@@ -35,7 +35,7 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.not_owner'),
+					await t(interaction, 'tempvoice.shared.common.not_owner'),
 					{
 						color: 'Red',
 					},
@@ -57,7 +57,7 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -69,7 +69,7 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -82,7 +82,7 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 		try {
 			const inviteReason = await t(
 				interaction,
-				'tempvoice.invite.invite_reason',
+				'tempvoice.select_menus.tv-invite-menu.invite.invite_reason',
 			);
 			const invite = await channel.createInvite({
 				maxAge: 3600,
@@ -97,19 +97,26 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.invite.fail'),
+					await t(
+						interaction,
+						'tempvoice.select_menus.tv-invite-menu.invite.fail',
+					),
 					{
 						color: 'Red',
 					},
 				),
 			});
 		}
-		const dmContent = await t(interaction, 'tempvoice.invite.dm_message', {
-			user: interaction.user.globalName || interaction.user.username,
-			guild: interaction.guild.name,
-			channel: channel.name,
-			inviteUrl: inviteUrl,
-		});
+		const dmContent = await t(
+			interaction,
+			'tempvoice.select_menus.tv-invite-menu.invite.dm_message',
+			{
+				user: interaction.user.globalName || interaction.user.username,
+				guild: interaction.guild.name,
+				channel: channel.name,
+				inviteUrl: inviteUrl,
+			},
+		);
 		for (const userId of userIdsToInvite) {
 			const user = await client.container.helpers.discord.getUserSafe(
 				client,
@@ -132,14 +139,22 @@ class TvInviteMenuSelectMenu extends BaseSelectMenu {
 		}
 		let summaryContent = '';
 		if (successNames.length > 0) {
-			summaryContent += `${await t(interaction, 'tempvoice.invite.success_dm', {
-				users: successNames.join(', '),
-			})}\n`;
+			summaryContent += `${await t(
+				interaction,
+				'tempvoice.select_menus.tv-invite-menu.invite.success_dm',
+				{
+					users: successNames.join(', '),
+				},
+			)}\n`;
 		}
 		if (failNames.length > 0) {
-			summaryContent += await t(interaction, 'tempvoice.invite.fail_dm', {
-				users: failNames.join(', '),
-			});
+			summaryContent += await t(
+				interaction,
+				'tempvoice.select_menus.tv-invite-menu.invite.fail_dm',
+				{
+					users: failNames.join(', '),
+				},
+			);
 		}
 		await interaction.update({
 			components: await simpleContainer(interaction, summaryContent, {

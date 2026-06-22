@@ -35,7 +35,10 @@ class HireCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -51,7 +54,10 @@ class HireCommand extends BaseCommand {
 			itemName: '🏢 Company',
 		});
 		if (!companyItem || companyItem.quantity <= 0) {
-			const msg = await t(interaction, 'economy.company.hire.error.no_company');
+			const msg = await t(
+				interaction,
+				'economy.commands.company.hire.error.no_company',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -64,7 +70,7 @@ class HireCommand extends BaseCommand {
 		if (targetUser.bot || targetUser.id === interaction.user.id) {
 			const msg = await t(
 				interaction,
-				'economy.company.hire.error.invalid_target',
+				'economy.commands.company.hire.error.invalid_target',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -80,7 +86,7 @@ class HireCommand extends BaseCommand {
 		if (!target) {
 			const msg = await t(
 				interaction,
-				'economy.rob.rob.target.no.account.desc',
+				'economy.shared.rob.rob.target.no.account.desc',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -93,7 +99,7 @@ class HireCommand extends BaseCommand {
 		if (target.employerId) {
 			const msg = await t(
 				interaction,
-				'economy.company.hire.error.already_employed',
+				'economy.commands.company.hire.error.already_employed',
 				{
 					target: targetUser.username,
 				},
@@ -106,10 +112,14 @@ class HireCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-		const promptMsg = await t(interaction, 'economy.company.hire.prompt', {
-			employer: interaction.user.username,
-			target: targetUser.username,
-		});
+		const promptMsg = await t(
+			interaction,
+			'economy.commands.company.hire.prompt',
+			{
+				employer: interaction.user.username,
+				target: targetUser.username,
+			},
+		);
 		const row = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('hire-accept')
@@ -141,7 +151,7 @@ class HireCommand extends BaseCommand {
 				await target.save();
 				const successMsg = await t(
 					interaction,
-					'economy.company.hire.success',
+					'economy.commands.company.hire.success',
 					{
 						target: targetUser.username,
 						employer: interaction.user.username,
@@ -161,7 +171,7 @@ class HireCommand extends BaseCommand {
 			} else if (i.customId === 'hire-decline') {
 				const declineMsg = await t(
 					interaction,
-					'economy.company.hire.decline',
+					'economy.commands.company.hire.decline',
 					{
 						target: targetUser.username,
 					},
@@ -182,7 +192,10 @@ class HireCommand extends BaseCommand {
 		});
 		collector.on('end', async (_collected, reason) => {
 			if (reason !== 'responded') {
-				const timeoutMsg = await t(interaction, 'economy.company.hire.timeout');
+				const timeoutMsg = await t(
+					interaction,
+					'economy.commands.company.hire.timeout',
+				);
 				const timeoutComponents = await simpleContainer(
 					interaction,
 					timeoutMsg,

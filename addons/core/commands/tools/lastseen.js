@@ -36,7 +36,7 @@ class LastseenCommand extends BaseCommand {
 			if (!userData?.lastMessage) {
 				const reply = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.tools.lastseen.not_found', {
+					await t(interaction, 'core.commands.tools.lastseen.not_found', {
 						user: `<@${targetUser.id}>`,
 					}),
 					{
@@ -56,7 +56,7 @@ class LastseenCommand extends BaseCommand {
 			);
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.tools.lastseen.found', {
+				await t(interaction, 'core.commands.tools.lastseen.found', {
 					user: `<@${targetUser.id}>`,
 					timestamp,
 				}),
@@ -74,7 +74,7 @@ class LastseenCommand extends BaseCommand {
 		} catch (err) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.tools.lastseen.error', {
+				await t(interaction, 'core.commands.tools.lastseen.error', {
 					message: err.message,
 				}),
 				{

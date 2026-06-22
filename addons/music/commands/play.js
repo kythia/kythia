@@ -8,12 +8,9 @@
 
 const { MessageFlags } = require('discord.js');
 const { formatTrackDuration } = require('../helpers');
-
 const { BaseCommand } = require('kythia-core');
-
 class PlayCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('play')
@@ -27,14 +24,12 @@ class PlayCommand extends BaseCommand {
 					.setRequired(true)
 					.setAutocomplete(true),
 			);
-
 	async autocomplete(interaction) {
 		const container = this.container;
 		const run = async () => {
 			const { client, kythiaConfig } = container;
 			const focusedOption = interaction.options.getFocused(true);
 			const focusedValue = focusedOption.value;
-
 			if (focusedValue.toLowerCase().includes('spotify')) {
 				const truncatedUrl =
 					focusedValue.length > 50
@@ -69,20 +64,16 @@ class PlayCommand extends BaseCommand {
 					},
 				]);
 			}
-
 			if (!client._musicAutocompleteCache)
 				client._musicAutocompleteCache = new Map();
 			const searchCache = client._musicAutocompleteCache;
-
 			if (searchCache.has(focusedValue))
 				return interaction.respond(searchCache.get(focusedValue));
 			if (!focusedValue || focusedValue.trim().length === 0)
 				return interaction.respond([]);
 			if (/^https?:\/\//.test(focusedValue)) return interaction.respond([]);
-
 			if (!client.poru || typeof client.poru.resolve !== 'function')
 				return interaction.respond([]);
-
 			try {
 				const source = kythiaConfig.addons.music.defaultPlatform || 'ytsearch';
 				const res = await client.poru.resolve({
@@ -115,19 +106,19 @@ class PlayCommand extends BaseCommand {
 				return;
 		}
 	}
-
 	async execute(interaction) {
 		const { simpleContainer } = interaction.client.container.helpers.discord;
-
 		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers } = container;
-
 		if (!member?.voice?.channel) {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'music.music.voice.channel.not.found'),
+					await t(
+						interaction,
+						'music.helpers.index.music.voice.channel.not.found',
+					),
 					{
 						color: 'Red',
 					},
@@ -135,12 +126,10 @@ class PlayCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		return musicHandlers.handlePlay(
 			interaction,
 			client.poru.players.get(guild.id),
 		);
 	}
 }
-
 exports.default = PlayCommand;

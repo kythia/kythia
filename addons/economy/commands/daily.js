@@ -28,7 +28,10 @@ class DailyCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -49,9 +52,13 @@ class DailyCommand extends BaseCommand {
 			interaction,
 		);
 		if (cooldown.remaining) {
-			const msg = await t(interaction, 'economy.daily.daily.cooldown', {
-				time: cooldown.time,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.daily.daily.cooldown',
+				{
+					time: cooldown.time,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -74,7 +81,7 @@ class DailyCommand extends BaseCommand {
 		user.changed('kythiaCoin', true);
 		user.changed('lastDaily', true);
 		await user.save();
-		const msg = await t(interaction, 'economy.daily.daily.success', {
+		const msg = await t(interaction, 'economy.commands.daily.daily.success', {
 			amount: randomCoin,
 		});
 		const components = await simpleContainer(interaction, msg, {

@@ -18,7 +18,6 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
-
 class ErrorHandler {
 	/**
 	 * Handle error logging and reporting
@@ -32,7 +31,9 @@ class ErrorHandler {
 		// Log error
 		logger.error(
 			`Error in messageCreate handler for ${message.author ? message.author.tag : '???'}: ${error.message || error}`,
-			{ label: 'ErrorHandler' },
+			{
+				label: 'ErrorHandler',
+			},
 		);
 
 		// Sentry report
@@ -44,7 +45,6 @@ class ErrorHandler {
 		// Webhook logging
 		await this.sendWebhookLog(error, message, container);
 	}
-
 	sendToSentry(error, message, kythiaConfig) {
 		if (kythiaConfig.sentry?.dsn && Sentry?.withScope) {
 			try {
@@ -69,20 +69,20 @@ class ErrorHandler {
 			} catch (_e) {}
 		}
 	}
-
 	async sendUserError(message, container) {
 		const { kythiaConfig, t, helpers, logger } = container;
 		const { convertColor } = helpers.color;
-
 		try {
 			const ownerFirstId = kythiaConfig.owner?.ids
 				? kythiaConfig.owner.ids.split(',')[0].trim()
 				: '';
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Red', { from: 'discord', to: 'decimal' }),
+						convertColor('Red', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
@@ -109,7 +109,6 @@ class ErrorHandler {
 						),
 					),
 			];
-
 			if (message.channel && typeof message.reply === 'function') {
 				await message
 					.reply({
@@ -134,7 +133,6 @@ class ErrorHandler {
 			);
 		}
 	}
-
 	async sendWebhookLog(error, message, container) {
 		const { kythiaConfig, logger, t } = container;
 		try {
@@ -146,21 +144,19 @@ class ErrorHandler {
 				const webhookClient = new WebhookClient({
 					url: kythiaConfig.api.webhookErrorLogs,
 				});
-
 				const title = await t(
 					message,
-					'core.helpers.handlers.errorhandler.webhook.title',
+					'core.helpers.handlers.ErrorHandler.errorhandler.webhook.title',
 					{
 						user: message.author ? message.author.tag : '???',
 					},
 				);
-
 				const footerContext = message.guild
 					? `Error from server ${message.guild.name}`
 					: 'Error from DM';
 				const footer = await t(
 					message,
-					'core.helpers.handlers.errorhandler.webhook.footer',
+					'core.helpers.handlers.ErrorHandler.errorhandler.webhook.footer',
 					{
 						context: footerContext,
 					},
@@ -182,7 +178,6 @@ class ErrorHandler {
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(footer),
 					);
-
 				await webhookClient.send({
 					components: [errorContainer.toJSON()],
 					flags: MessageFlags.IsComponentsV2,
@@ -191,10 +186,11 @@ class ErrorHandler {
 		} catch (webhookErr) {
 			logger.error(
 				`Error sending messageCreate error webhook: ${webhookErr.message || webhookErr}`,
-				{ label: 'core' },
+				{
+					label: 'core',
+				},
 			);
 		}
 	}
 }
-
 module.exports = ErrorHandler;

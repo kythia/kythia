@@ -80,11 +80,6 @@
 		}
 	},
 	"verification": {
-		"panel": {
-			"send": {
-				"content_md": "## {title}\n{description}"
-			}
-		},
 		"helpers": {
 			"verify_md": "## Server Verification\nWelcome to **{guildName}**!\nPlease complete the captcha below to get access.\n\nYou have **{attempts}** attempt(s) and **{seconds}s** to complete this."
 		},
@@ -92,6 +87,13 @@
 			"error": {
 				"not_for_you": "This captcha is not for you!",
 				"expired": "This captcha has expired."
+			}
+		},
+		"commands": {
+			"panel": {
+				"send": {
+					"content_md": "## {title}\n{description}"
+				}
 			}
 		}
 	}

@@ -41,13 +41,13 @@ class AddCommand extends BaseCommand {
 		const targetId = targetUser.id;
 		if (targetUser.bot) {
 			return interaction.reply({
-				content: await t(interaction, 'fun.friend.bot.error'),
+				content: await t(interaction, 'fun.commands.friend.add.bot.error'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
 		if (targetId === proposerId) {
 			return interaction.reply({
-				content: await t(interaction, 'fun.friend.yourself.error'),
+				content: await t(interaction, 'fun.commands.friend.add.yourself.error'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -75,7 +75,10 @@ class AddCommand extends BaseCommand {
 			['pending', 'accepted'].includes(existingFriendship.status)
 		) {
 			return interaction.reply({
-				content: await t(interaction, 'fun.friend.already.friends'),
+				content: await t(
+					interaction,
+					'fun.commands.friend.add.already.friends',
+				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -99,25 +102,42 @@ class AddCommand extends BaseCommand {
 					size: 256,
 				})
 			: 'https://cdn.discordapp.com/embed/avatars/0.png';
-		const requestTitle = await t(interaction, 'fun.friend.request.title');
+		const requestTitle = await t(
+			interaction,
+			'fun.commands.friend.add.request.title',
+		);
 		const proposerBlock = await t(
 			interaction,
-			'fun.friend.request.user_block',
+			'fun.shared.friend.request.user_block',
 			{
 				user: proposer.username,
 				id: proposerId,
 			},
 		);
-		const targetBlock = await t(interaction, 'fun.friend.request.user_block', {
-			user: targetUser.username,
-			id: targetId,
-		});
-		const requestText = await t(interaction, 'fun.friend.request.description', {
-			proposer: proposer.toString(),
-			target: targetUser.toString(),
-		});
-		const acceptBtnLabel = await t(interaction, 'fun.friend.accept.button');
-		const rejectBtnLabel = await t(interaction, 'fun.friend.reject.button');
+		const targetBlock = await t(
+			interaction,
+			'fun.shared.friend.request.user_block',
+			{
+				user: targetUser.username,
+				id: targetId,
+			},
+		);
+		const requestText = await t(
+			interaction,
+			'fun.commands.friend.add.request.description',
+			{
+				proposer: proposer.toString(),
+				target: targetUser.toString(),
+			},
+		);
+		const acceptBtnLabel = await t(
+			interaction,
+			'fun.commands.friend.add.accept.button',
+		);
+		const rejectBtnLabel = await t(
+			interaction,
+			'fun.commands.friend.add.reject.button',
+		);
 		const addContainer = new ContainerBuilder()
 			.setAccentColor(
 				convertColor(kythiaConfig.bot.color, {

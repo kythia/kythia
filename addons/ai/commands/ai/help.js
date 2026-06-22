@@ -13,28 +13,26 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class HelpCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand.setName('help').setDescription('Learn how to use AI features');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
-
 		const helpContainer = new ContainerBuilder()
 			.setAccentColor(
-				convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+				convertColor(kythiaConfig.bot.color, {
+					from: 'hex',
+					to: 'decimal',
+				}),
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'ai.ai.help.title_md', {
-						title: await t(interaction, 'ai.ai.help.title'),
+					await t(interaction, 'ai.commands.ai.help.ai.title_md', {
+						title: await t(interaction, 'ai.commands.ai.help.ai.title'),
 					}),
 				),
 			)
@@ -45,7 +43,7 @@ class HelpCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'ai.ai.help.how_to_chat'),
+					await t(interaction, 'ai.commands.ai.help.ai.how_to_chat'),
 				),
 			)
 			.addSeparatorComponents(
@@ -55,7 +53,7 @@ class HelpCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'ai.ai.help.commands'),
+					await t(interaction, 'ai.commands.ai.help.ai'),
 				),
 			)
 			.addSeparatorComponents(
@@ -65,7 +63,7 @@ class HelpCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'ai.ai.help.memory'),
+					await t(interaction, 'ai.commands.ai.help.ai.memory'),
 				),
 			)
 			.addSeparatorComponents(
@@ -75,7 +73,7 @@ class HelpCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'ai.ai.help.features'),
+					await t(interaction, 'ai.commands.ai.help.ai.features'),
 				),
 			)
 			.addSeparatorComponents(
@@ -85,7 +83,7 @@ class HelpCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'ai.ai.help.tips'),
+					await t(interaction, 'ai.commands.ai.help.ai.tips'),
 				),
 			)
 			.addSeparatorComponents(
@@ -100,12 +98,10 @@ class HelpCommand extends BaseCommand {
 					}),
 				),
 			);
-
 		return interaction.reply({
 			components: [helpContainer],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = HelpCommand;

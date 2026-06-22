@@ -14,7 +14,6 @@ const listuiHelper = require('../../helpers/listUi');
 
 class ListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
@@ -77,7 +76,7 @@ class ListCommand extends BaseCommand {
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
-					content: await t(i, 'ai.ai.list.not.your.interaction'),
+					content: await t(i, 'ai.commands.ai.list.ai.not.your.interaction'),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
@@ -120,5 +119,4 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ListCommand;

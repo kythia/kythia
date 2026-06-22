@@ -30,7 +30,10 @@ class TvWaitingButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.waiting.no_active_channel'),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-waiting.waiting.no_active_channel',
+					),
 					{
 						color: 'Red',
 					},
@@ -55,7 +58,7 @@ class TvWaitingButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -67,7 +70,7 @@ class TvWaitingButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -86,7 +89,10 @@ class TvWaitingButton extends BaseButton {
 					// Kick semua user di waiting room
 					for (const [_, member] of waitingRoom.members) {
 						await member.voice.disconnect(
-							await t(interaction, 'tempvoice.waiting.wr_closed_reason'),
+							await t(
+								interaction,
+								'tempvoice.buttons.tv-waiting.waiting.wr_closed_reason',
+							),
 						);
 					}
 					await waitingRoom.delete('Waiting room disabled by owner.');
@@ -104,7 +110,10 @@ class TvWaitingButton extends BaseButton {
 				await interaction.reply({
 					components: await simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.waiting.disabled'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-waiting.waiting.disabled',
+						),
 						{
 							color: 'Green',
 						},
@@ -115,7 +124,7 @@ class TvWaitingButton extends BaseButton {
 				// --- LOGIKA ENABLE WAITING ROOM ---
 				const wrName = await t(
 					interaction,
-					'tempvoice.waiting.wr_channel_name',
+					'tempvoice.buttons.tv-waiting.waiting.wr_channel_name',
 					{
 						name: mainChannel.name,
 					},
@@ -157,9 +166,13 @@ class TvWaitingButton extends BaseButton {
 				await interaction.reply({
 					components: await simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.waiting.enabled', {
-							channel: waitingRoom.id,
-						}),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-waiting.waiting.enabled',
+							{
+								channel: waitingRoom.id,
+							},
+						),
 						{
 							color: 'Green',
 						},
@@ -174,7 +187,7 @@ class TvWaitingButton extends BaseButton {
 			await interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.fail'),
+					await t(interaction, 'tempvoice.shared.common.fail'),
 					{
 						color: 'Red',
 					},

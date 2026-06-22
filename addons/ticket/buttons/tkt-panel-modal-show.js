@@ -13,19 +13,14 @@ const {
 	TextInputStyle,
 	MessageFlags,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TktPanelModalShowButton extends BaseButton {
 	button = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const originalMessageId = interaction.message.id;
-
 		try {
 			const modal = new ModalBuilder()
 				.setCustomId(`tkt-panel-create:${originalMessageId}`)
@@ -58,7 +53,6 @@ class TktPanelModalShowButton extends BaseButton {
 								)
 								.setRequired(true),
 						),
-
 					new LabelBuilder()
 						.setLabel(
 							await interaction.client.container.t(
@@ -117,7 +111,6 @@ class TktPanelModalShowButton extends BaseButton {
 								.setRequired(false),
 						),
 				);
-
 			await interaction.showModal(modal);
 		} catch (error) {
 			logger.error(
@@ -129,7 +122,7 @@ class TktPanelModalShowButton extends BaseButton {
 			if (!interaction.replied && !interaction.deferred) {
 				const desc = await t(
 					interaction,
-					'ticket.errors.modal_show_failed_panel',
+					'ticket.buttons.tkt-panel-modal-show.errors.modal_show_failed_panel',
 				);
 				await interaction.reply({
 					components: await simpleContainer(interaction, desc, {
@@ -141,5 +134,4 @@ class TktPanelModalShowButton extends BaseButton {
 		}
 	}
 }
-
 exports.default = TktPanelModalShowButton;

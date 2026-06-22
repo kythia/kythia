@@ -7,31 +7,23 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class EnableCommand extends BaseCommand {
 	guildOnly = true;
-
 	subcommand = true;
 	voteLocked = true;
 	aliases = ['aion'];
 	permissions = [PermissionFlagsBits.ManageChannels];
-
 	slashCommand = (subcommand) =>
 		subcommand.setName('enable').setDescription('Enable AI in this channel');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const channelId = interaction.channel.id;
 		const guildId = interaction.guild.id;
-
 		const [setting] = await ServerSetting.findOrCreateCache({
 			where: {
 				guildId,
@@ -41,13 +33,14 @@ class EnableCommand extends BaseCommand {
 				guildName: interaction.guild.name,
 			},
 		});
-
 		const aiChannelIds = Array.isArray(setting?.aiChannelIds)
 			? [...setting.aiChannelIds]
 			: [];
-
 		if (aiChannelIds.includes(channelId)) {
-			const msg = await t(interaction, 'ai.ai.manage.already.enabled');
+			const msg = await t(
+				interaction,
+				'ai.commands.ai.enable.ai.manage.already.enabled',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -56,22 +49,18 @@ class EnableCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		aiChannelIds.push(channelId);
 		setting.aiChannelIds = aiChannelIds;
 		setting.changed('aiChannelIds', true);
 		await setting.save();
-
-		const msg = await t(interaction, 'ai.ai.manage.enable.success');
+		const msg = await t(interaction, 'ai.commands.ai.enable.ai.manage.success');
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Green',
 		});
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = EnableCommand;

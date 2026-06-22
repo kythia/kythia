@@ -48,18 +48,22 @@ class VoteLeaderboardCommand extends BaseCommand {
 			// Resolve User Mentions/Tags and convert into lines
 			const entries = await Promise.all(
 				leaderboard.map(async (lbUser, index) => {
-					return await t(interaction, 'core.utils.vote.leaderboard.entry', {
-						index: index + 1,
-						user: `<@${lbUser.userId}>`,
-						votes: lbUser.votePoints,
-					});
+					return await t(
+						interaction,
+						'core.commands.utils.vote-leaderboard.vote.leaderboard.entry',
+						{
+							index: index + 1,
+							user: `<@${lbUser.userId}>`,
+							votes: lbUser.votePoints,
+						},
+					);
 				}),
 			);
 			let leaderboardText = entries.join('\n');
 			if (!leaderboardText) {
 				leaderboardText = await t(
 					interaction,
-					'core.utils.vote.leaderboard.empty',
+					'core.commands.utils.vote-leaderboard.vote.leaderboard.empty',
 				);
 			}
 			const accentColor = convertColor(kythiaConfig.bot.color, {
@@ -70,7 +74,10 @@ class VoteLeaderboardCommand extends BaseCommand {
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'core.utils.vote.leaderboard.title'),
+						await t(
+							interaction,
+							'core.commands.utils.vote-leaderboard.vote.leaderboard.title',
+						),
 					),
 				)
 				.addSeparatorComponents(
@@ -90,9 +97,13 @@ class VoteLeaderboardCommand extends BaseCommand {
 					new ActionRowBuilder().addComponents(
 						new ButtonBuilder()
 							.setLabel(
-								await t(interaction, 'core.utils.vote.button.topgg', {
-									username: interaction.client.user.username,
-								}),
+								await t(
+									interaction,
+									'core.helpers.index.utils.vote.button.topgg',
+									{
+										username: interaction.client.user.username,
+									},
+								),
 							)
 							.setStyle(ButtonStyle.Link)
 							.setURL(`https://top.gg/bot/${kythiaConfig.bot.clientId}/vote`),

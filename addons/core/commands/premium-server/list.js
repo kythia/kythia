@@ -7,17 +7,13 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
 			.setDescription('List all servers bound to your Premium tier.');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { helpers, models, translator } = container;
@@ -25,18 +21,19 @@ class ListCommand extends BaseCommand {
 		const { KythiaUser, PremiumServerBind } = models;
 		const userId = interaction.user.id;
 		const t = translator.t.bind(translator);
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		let maxSlots = 0;
 		let activeTier = 'none';
 		const isOwner = helpers.discord.isOwner(userId);
-
 		if (isOwner) {
 			maxSlots = 100;
 			activeTier = 'yours';
 		} else {
-			const user = await KythiaUser.getCache({ userId });
+			const user = await KythiaUser.getCache({
+				userId,
+			});
 			if (
 				user?.premiumTier &&
 				user?.premiumExpiresAt &&
@@ -47,43 +44,58 @@ class ListCommand extends BaseCommand {
 				if (activeTier === 'ecosystem') maxSlots = 3;
 			}
 		}
-
 		if (maxSlots === 0) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.premium_server.access_denied'),
-				{ color: 'Red' },
+				await t(interaction, 'core.helpers.index.premium_server.access_denied'),
+				{
+					color: 'Red',
+				},
 			);
-			return interaction.editReply({ components });
+			return interaction.editReply({
+				components,
+			});
 		}
-
-		const binds = await PremiumServerBind.getAllCache({ where: { userId } });
-
-		let text = await t(interaction, 'core.premium_server.list.header', {
-			tier: activeTier.toUpperCase(),
-			used: binds.length,
-			max: maxSlots,
+		const binds = await PremiumServerBind.getAllCache({
+			where: {
+				userId,
+			},
 		});
-
+		let text = await t(
+			interaction,
+			'core.commands.premium-server.list.premium_server.header',
+			{
+				tier: activeTier.toUpperCase(),
+				used: binds.length,
+				max: maxSlots,
+			},
+		);
 		if (binds.length === 0) {
-			text += await t(interaction, 'core.premium_server.list.empty');
+			text += await t(
+				interaction,
+				'core.commands.premium-server.list.premium_server.empty',
+			);
 		} else {
 			const items = await Promise.all(
 				binds.map((b, i) =>
-					t(interaction, 'core.premium_server.list.item', {
-						index: i + 1,
-						guildId: b.guildId,
-					}),
+					t(
+						interaction,
+						'core.commands.premium-server.list.premium_server.item',
+						{
+							index: i + 1,
+							guildId: b.guildId,
+						},
+					),
 				),
 			);
 			text += items.join('');
 		}
-
 		const components = await simpleContainer(interaction, text, {
 			color: '#00ffff',
 		});
-		return interaction.editReply({ components });
+		return interaction.editReply({
+			components,
+		});
 	}
 }
-
 exports.default = ListCommand;

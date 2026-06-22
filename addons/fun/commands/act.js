@@ -131,7 +131,7 @@ class ActCommand extends BaseCommand {
 		const author = interaction.user;
 		if (!constantsHelper.VALID_ACTIONS.includes(action)) {
 			return interaction.reply({
-				content: await t(interaction, 'fun.act.errors.invalid_action'),
+				content: await t(interaction, 'fun.commands.act.errors.invalid_action'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}

@@ -7,21 +7,15 @@
  */
 const { closeTicket } = require('../helpers');
 const { MessageFlags } = require('discord.js');
-
 const { BaseModal } = require('kythia-core');
-
 class TktCloseReasonSubmitModal extends BaseModal {
 	modal = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		try {
 			const reason = interaction.fields.getTextInputValue('reason');
-
 			await closeTicket(interaction, container, reason);
 		} catch (error) {
 			logger.error(
@@ -30,7 +24,10 @@ class TktCloseReasonSubmitModal extends BaseModal {
 					label: 'ticket',
 				},
 			);
-			const descError = await t(interaction, 'ticket.errors.close_failed');
+			const descError = await t(
+				interaction,
+				'ticket.helpers.index.errors.close_failed',
+			);
 			if (interaction.replied || interaction.deferred) {
 				await interaction.followUp({
 					components: await simpleContainer(interaction, descError, {
@@ -42,5 +39,4 @@ class TktCloseReasonSubmitModal extends BaseModal {
 		}
 	}
 }
-
 exports.default = TktCloseReasonSubmitModal;

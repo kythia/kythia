@@ -35,7 +35,7 @@ class SubdomainCommand extends BaseCommand {
 		if (!user) {
 			const desc = await t(
 				interaction,
-				'pro.claim.subdomain.error_mustHaveAccount',
+				'pro.commands.claim.subdomain.error_mustHaveAccount',
 			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
@@ -51,7 +51,7 @@ class SubdomainCommand extends BaseCommand {
 		if (!isPremiumActive && !isVoterActive) {
 			const desc = await t(
 				interaction,
-				'pro.claim.subdomain.error_proOrVoterRequired',
+				'pro.commands.claim.subdomain.error_proOrVoterRequired',
 			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
@@ -68,7 +68,7 @@ class SubdomainCommand extends BaseCommand {
 		if (userSubdomains >= MAX_SUBDOMAINS) {
 			const desc = await t(
 				interaction,
-				'pro.claim.subdomain.error_maxReached',
+				'pro.commands.claim.subdomain.error_maxReached',
 				{
 					max: MAX_SUBDOMAINS,
 				},
@@ -88,7 +88,7 @@ class SubdomainCommand extends BaseCommand {
 		) {
 			const desc = await t(
 				interaction,
-				'pro.claim.subdomain.error_invalidName',
+				'pro.commands.claim.subdomain.error_invalidName',
 			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
@@ -110,9 +110,13 @@ class SubdomainCommand extends BaseCommand {
 			'hyperion',
 		];
 		if (forbiddenNames.includes(namaSubdomain)) {
-			const desc = await t(interaction, 'pro.claim.subdomain.error_forbidden', {
-				name: namaSubdomain,
-			});
+			const desc = await t(
+				interaction,
+				'pro.commands.claim.subdomain.error_forbidden',
+				{
+					name: namaSubdomain,
+				},
+			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Red',
@@ -125,13 +129,20 @@ class SubdomainCommand extends BaseCommand {
 				userId: interaction.user.id,
 				name: namaSubdomain,
 			});
-			const title = await t(interaction, 'pro.claim.subdomain.success_title');
-			const desc = await t(interaction, 'pro.claim.subdomain.success_desc', {
-				subdomain: namaSubdomain,
-				domain: kythiaConfig.addons.pro.cloudflare.domain,
-				used: userSubdomains + 1,
-				max: MAX_SUBDOMAINS,
-			});
+			const title = await t(
+				interaction,
+				'pro.commands.claim.subdomain.success_title',
+			);
+			const desc = await t(
+				interaction,
+				'pro.commands.claim.subdomain.success_desc',
+				{
+					subdomain: namaSubdomain,
+					domain: kythiaConfig.addons.pro.cloudflare.domain,
+					used: userSubdomains + 1,
+					max: MAX_SUBDOMAINS,
+				},
+			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Green',
@@ -141,9 +152,13 @@ class SubdomainCommand extends BaseCommand {
 			});
 		} catch (error) {
 			if (error.name === 'SequelizeUniqueConstraintError') {
-				const desc = await t(interaction, 'pro.claim.subdomain.error_taken', {
-					name: namaSubdomain,
-				});
+				const desc = await t(
+					interaction,
+					'pro.commands.claim.subdomain.error_taken',
+					{
+						name: namaSubdomain,
+					},
+				);
 				return interaction.editReply({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -157,7 +172,10 @@ class SubdomainCommand extends BaseCommand {
 					label: 'pro',
 				},
 			);
-			const desc = await t(interaction, 'pro.claim.subdomain.error_technical');
+			const desc = await t(
+				interaction,
+				'pro.commands.claim.subdomain.error_technical',
+			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Red',

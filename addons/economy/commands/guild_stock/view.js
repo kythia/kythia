@@ -53,9 +53,13 @@ class ViewCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.view.not_found', {
-					msg,
-				}),
+				await t(
+					interaction,
+					'economy.commands.guild_stock.view.stock.not_found',
+					{
+						msg,
+					},
+				),
 				{
 					color: 'Red',
 				},
@@ -72,48 +76,72 @@ class ViewCommand extends BaseCommand {
 				guildId: pool.guildId,
 			},
 		});
-		const title = await t(interaction, 'economy.guild_stock.view.title', {
-			ticker: pool.ticker,
-		});
+		const title = await t(
+			interaction,
+			'economy.commands.guild_stock.view.title',
+			{
+				ticker: pool.ticker,
+			},
+		);
 		const status = pool.tradingHalted
-			? await t(interaction, 'economy.guild_stock.view.halted')
-			: await t(interaction, 'economy.guild_stock.view.active');
-		const priceStr = await t(interaction, 'economy.guild_stock.view.price', {
-			price: price.toFixed(4),
-		});
-		const capStr = await t(interaction, 'economy.guild_stock.view.cap', {
-			cap: marketCap.toFixed(2),
-		});
+			? await t(interaction, 'economy.commands.guild_stock.view.halted')
+			: await t(interaction, 'economy.commands.guild_stock.view.active');
+		const priceStr = await t(
+			interaction,
+			'economy.commands.guild_stock.view.price',
+			{
+				price: price.toFixed(4),
+			},
+		);
+		const capStr = await t(
+			interaction,
+			'economy.commands.guild_stock.view.cap',
+			{
+				cap: marketCap.toFixed(2),
+			},
+		);
 		const holdersStr = await t(
 			interaction,
-			'economy.guild_stock.view.holders',
+			'economy.commands.guild_stock.view.holders',
 			{
 				holders: holdersCount,
 			},
 		);
-		const xStr = await t(interaction, 'economy.guild_stock.view.x', {
+		const xStr = await t(interaction, 'economy.commands.guild_stock.view.x', {
 			x: pool.kythReserve.toFixed(2),
 		});
-		const yStr = await t(interaction, 'economy.guild_stock.view.y', {
+		const yStr = await t(interaction, 'economy.commands.guild_stock.view.y', {
 			y: pool.tokenReserve.toFixed(2),
 		});
-		const feeStr = await t(interaction, 'economy.guild_stock.view.fee', {
-			fee: pool.feeRatePct,
-		});
-		const footer = await t(interaction, 'economy.guild_stock.view.footer', {
-			guildId: pool.guildId,
-		});
-		const fullText = await t(interaction, 'economy.guild_stock.view.title_md', {
-			title,
-			status,
-			priceStr,
-			capStr,
-			holdersStr,
-			xStr,
-			yStr,
-			feeStr,
-			footer,
-		});
+		const feeStr = await t(
+			interaction,
+			'economy.commands.guild_stock.view.fee',
+			{
+				fee: pool.feeRatePct,
+			},
+		);
+		const footer = await t(
+			interaction,
+			'economy.commands.guild_stock.view.footer',
+			{
+				guildId: pool.guildId,
+			},
+		);
+		const fullText = await t(
+			interaction,
+			'economy.commands.guild_stock.view.title_md',
+			{
+				title,
+				status,
+				priceStr,
+				capStr,
+				holdersStr,
+				xStr,
+				yStr,
+				feeStr,
+				footer,
+			},
+		);
 		const components = await simpleContainer(interaction, fullText, {
 			color: 'Blue',
 		});

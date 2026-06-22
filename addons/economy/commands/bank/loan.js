@@ -48,7 +48,10 @@ class LoanCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -62,7 +65,10 @@ class LoanCommand extends BaseCommand {
 		if (amount <= 0) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.bank.loan.error.invalid_amount.desc'),
+				await t(
+					interaction,
+					'economy.commands.bank.loan.error.invalid_amount.desc',
+				),
 				{
 					color: 'Red',
 				},
@@ -80,7 +86,7 @@ class LoanCommand extends BaseCommand {
 					interaction,
 					await t(
 						interaction,
-						'economy.bank.loan.borrow.error.active_loan.desc',
+						'economy.commands.bank.loan.borrow.error.active_loan.desc',
 						{
 							loan: user.activeLoan.toLocaleString(),
 						},
@@ -98,10 +104,14 @@ class LoanCommand extends BaseCommand {
 			if (amount > maxLoan) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.bank.loan.borrow.error.max_loan.desc', {
-						score: user.creditScore,
-						max: maxLoan.toLocaleString(),
-					}),
+					await t(
+						interaction,
+						'economy.commands.bank.loan.borrow.error.max_loan.desc',
+						{
+							score: user.creditScore,
+							max: maxLoan.toLocaleString(),
+						},
+					),
 					{
 						color: 'Red',
 					},
@@ -126,7 +136,7 @@ class LoanCommand extends BaseCommand {
 			await user.save();
 			const msg = await t(
 				interaction,
-				'economy.bank.loan.borrow.success.desc',
+				'economy.commands.bank.loan.borrow.success.desc',
 				{
 					amount: amount.toLocaleString(),
 					rate: interestRate * 100,
@@ -144,7 +154,10 @@ class LoanCommand extends BaseCommand {
 			if (user.activeLoan <= 0) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.bank.loan.repay.error.no_loan.desc'),
+					await t(
+						interaction,
+						'economy.commands.bank.loan.repay.error.no_loan.desc',
+					),
 					{
 						color: 'Yellow',
 					},
@@ -165,7 +178,7 @@ class LoanCommand extends BaseCommand {
 					interaction,
 					await t(
 						interaction,
-						'economy.bank.loan.repay.error.insufficient_funds.desc',
+						'economy.commands.bank.loan.repay.error.insufficient_funds.desc',
 						{
 							amount: repayAmount.toLocaleString(),
 						},
@@ -191,7 +204,7 @@ class LoanCommand extends BaseCommand {
 				if (user.creditScore > 850) user.creditScore = 850;
 				extraMsg = await t(
 					interaction,
-					'economy.bank.loan.repay.credit_increase',
+					'economy.commands.bank.loan.repay.credit_increase',
 					{
 						increase: creditIncrease,
 						score: user.creditScore,
@@ -204,11 +217,15 @@ class LoanCommand extends BaseCommand {
 			user.changed('kythiaCoin', true);
 			user.changed('activeLoan', true);
 			await user.save();
-			const msg = await t(interaction, 'economy.bank.loan.repay.success.desc', {
-				amount: repayAmount.toLocaleString(),
-				balance: user.activeLoan.toLocaleString(),
-				extra: extraMsg,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.bank.loan.repay.success.desc',
+				{
+					amount: repayAmount.toLocaleString(),
+					balance: user.activeLoan.toLocaleString(),
+					extra: extraMsg,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});

@@ -49,7 +49,10 @@ class GiveCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!giver) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -59,7 +62,10 @@ class GiveCommand extends BaseCommand {
 			});
 		}
 		if (amount <= 0) {
-			const msg = await t(interaction, 'economy.give.give.invalid.amount');
+			const msg = await t(
+				interaction,
+				'economy.commands.give.give.invalid.amount',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -69,7 +75,7 @@ class GiveCommand extends BaseCommand {
 			});
 		}
 		if (target.id === interaction.user.id) {
-			const msg = await t(interaction, 'economy.give.give.self');
+			const msg = await t(interaction, 'economy.commands.give.give.self');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -82,7 +88,10 @@ class GiveCommand extends BaseCommand {
 			userId: target.id,
 		});
 		if (!receiver) {
-			const msg = await t(interaction, 'economy.give.give.no.target.account');
+			const msg = await t(
+				interaction,
+				'economy.commands.give.give.no.target.account',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -93,9 +102,13 @@ class GiveCommand extends BaseCommand {
 		}
 		const fee = Math.floor(amount * 0.05);
 		if (giver.kythiaCoin < amount + fee) {
-			const msg = await t(interaction, 'economy.give.give.not.enough.cash', {
-				fee,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.give.give.not.enough.cash',
+				{
+					fee,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -115,7 +128,7 @@ class GiveCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'economy.give.give.confirm', {
+					await t(interaction, 'economy.commands.give.give.confirm', {
 						amount,
 						target: target.username,
 						fee,
@@ -131,11 +144,15 @@ class GiveCommand extends BaseCommand {
 				new ActionRowBuilder().addComponents(
 					new ButtonBuilder()
 						.setCustomId('confirm')
-						.setLabel(await t(interaction, 'economy.give.give.btn.confirm'))
+						.setLabel(
+							await t(interaction, 'economy.commands.give.give.btn.confirm'),
+						)
 						.setStyle(ButtonStyle.Success),
 					new ButtonBuilder()
 						.setCustomId('cancel')
-						.setLabel(await t(interaction, 'economy.give.give.btn.cancel'))
+						.setLabel(
+							await t(interaction, 'economy.commands.give.give.btn.cancel'),
+						)
 						.setStyle(ButtonStyle.Danger),
 				),
 			);
@@ -158,7 +175,7 @@ class GiveCommand extends BaseCommand {
 				receiver.changed('kythiaCoin', true);
 				await giver.save();
 				await receiver.save();
-				const msg = await t(interaction, 'economy.give.give.success', {
+				const msg = await t(interaction, 'economy.commands.give.give.success', {
 					amount,
 					target: target.username,
 					fee,
@@ -172,7 +189,7 @@ class GiveCommand extends BaseCommand {
 				});
 
 				// Send DM to receiver
-				const receiverMsg = await t(i, 'economy.give.give.received', {
+				const receiverMsg = await t(i, 'economy.commands.give.give.received', {
 					amount,
 					from: interaction.user.username,
 				});
@@ -190,7 +207,7 @@ class GiveCommand extends BaseCommand {
 					});
 				} catch (_e) {}
 			} else if (i.customId === 'cancel') {
-				const msg = await t(i, 'economy.give.give.cancelled');
+				const msg = await t(i, 'economy.commands.give.give.cancelled');
 				const components = await simpleContainer(i, msg, {
 					color: kythiaConfig.bot.color,
 				});
@@ -202,7 +219,7 @@ class GiveCommand extends BaseCommand {
 		});
 		collector.on('end', async (collected) => {
 			if (collected.size === 0) {
-				const msg = await t(interaction, 'economy.give.give.timeout');
+				const msg = await t(interaction, 'economy.commands.give.give.timeout');
 				const components = await simpleContainer(interaction, msg, {
 					color: kythiaConfig.bot.color,
 				});

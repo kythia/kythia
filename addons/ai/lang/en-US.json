@@ -21,88 +21,125 @@
 				"cooldown": "Slow down a bit! You're sending messages too fast. Please wait **{seconds}s** before chatting with me again. ^-^"
 			}
 		},
-		"translate": {
-			"limit": "## Limit Reached\nSorry, the AI token limit has been reached for this minute. I need a short break, please try again in a minute!",
-			"success": "## Translated\n### Language: `{lang}`\n### Input: ```{text}```\n### Translated: ```{translated}```",
-			"error": "## Error\nAn error occurred while translating the text. Please try again later! ><",
-			"no": {
-				"result": "## Error\nNo translation result."
-			}
-		},
-		"ai": {
-			"manage": {
-				"already": {
-					"enabled": "## AI Enable\nAI is already enabled in this channel! You can start chatting with the AI here."
+		"commands": {
+			"ai": {
+				"disable": {
+					"ai": {
+						"manage": {
+							"not": {
+								"enabled": "## AI Disable\nAI is not enabled in this channel. Nothing to disable."
+							},
+							"success": "## AI Disabled\nAI has been disabled in this channel. See you again!"
+						}
+					}
 				},
 				"enable": {
-					"success": "## AI Enabled\nAI has been enabled in this channel! Feel free to start chatting with the AI"
+					"ai": {
+						"manage": {
+							"already": {
+								"enabled": "## AI Enable\nAI is already enabled in this channel! You can start chatting with the AI here."
+							},
+							"success": "## AI Enabled\nAI has been enabled in this channel! Feel free to start chatting with the AI"
+						}
+					}
 				},
-				"not": {
-					"enabled": "## AI Disable\nAI is not enabled in this channel. Nothing to disable."
+				"fact-delete": {
+					"ai": {
+						"fact_delete": {
+							"no_facts": "## Error\nYou don't have any saved facts to delete!",
+							"invalid_number": "## Error\nInvalid fact number! You only have {max} fact(s). Use `/ai facts` to see all your facts.",
+							"success": "## Fact Deleted\nSuccessfully deleted fact: **{fact}**"
+						}
+					}
 				},
-				"disable": {
-					"success": "## AI Disabled\nAI has been disabled in this channel. See you again!"
-				}
-			},
-			"list": {
-				"empty": "There are no AI-enabled channels in this server yet.",
-				"title": "## AI-Enabled Channels",
-				"footer": "Page {page} of {totalPages} • Total AI Channels: {totalChannels}",
-				"not": {
-					"your": {
-						"interaction": "This is not your interaction! Use the command yourself to view the AI channel list."
+				"facts": {
+					"ai": {
+						"not": {
+							"your": {
+								"interaction": "This is not your interaction! Use the command yourself to view your facts."
+							}
+						}
+					}
+				},
+				"forget": {
+					"ai": {
+						"success": "## Memory Cleared\nI've cleared our conversation history! We can start fresh from here. Your saved facts are still remembered though."
+					}
+				},
+				"help": {
+					"ai": {
+						"title": "AI Help & Guide",
+						"title_md": "## {title}",
+						"how_to_chat": "### How to Chat\nSimply mention the bot or reply to its messages to start chatting! The AI understands natural language and can help you with various tasks.",
+						"memory": "### Memory & Facts System\n\nI can remember facts about you! Just say:\n• **\"Remember that I like pizza\"**\n• **\"Ingat aku suka coding\"**\n• **\"Catat bahwa saya dari Jakarta\"**\n\nSupported languages: English, Indonesian\n\nI categorize facts into types like:\n• Birthday, Name, Hobbies\n• Location, Job, Education\n• Preferences (food, music, games, etc.)\n\nView your facts with `/ai facts` anytime!",
+						"features": "### AI Features\n\n**Multi-Media Support**\n• Send images - I can describe and analyze them\n• Share videos - I can understand video content\n• Upload PDFs - I can read documents\n• Share YouTube links - I can discuss videos\n\n**Command Execution**\n• Ask me to roll dice, check ping, play music\n• I can execute bot commands for you!\n\n**Web Search**\n• Ask me current questions\n• I can search the web for answers",
+						"tips": "### Tips & Tricks\n\n**Be conversational** - Talk to me naturally!\n**Use context** - I remember our previous messages\n**Ask follow-ups** - Continue the conversation\n**Share media** - I can see images and videos\n**Save facts** - Tell me things to remember\n\n**Privacy Notes:**\n• Conversation history is cached for 30 minutes\n• Facts are stored until you delete them\n• Use `/ai forget` to clear history\n• Use `/ai facts` to manage your data"
+					}
+				},
+				"list": {
+					"ai": {
+						"not": {
+							"your": {
+								"interaction": "This is not your interaction! Use the command yourself to view the AI channel list."
+							}
+						}
+					}
+				},
+				"optout": {
+					"ai": {
+						"database_error": "## Error\nDatabase not initialized. Please try again later.",
+						"success": "## Opted Out\nYou have successfully **opted out** of AI features. The bot will no longer process your messages, and your existing AI memories have been permanently deleted. Use this command again to opt back in.",
+						"revert": "## Opted In\nYou have successfully **opted back in** to AI features. The bot will now interact with you normally.",
+						"error": "## Error\nAn unexpected error occurred while processing your request."
+					}
+				},
+				"personality": {
+					"ai": {
+						"reset": "## Personality Reset\nAI personality reset to config default!\n\nI'll now use the default personality set by the bot administrator.",
+						"success": "## Personality Updated\nAI personality changed to **{personality}**!\n{description}\n\nTry chatting with me now to experience the new style!"
 					}
 				}
 			},
-			"facts": {
-				"empty": "I haven't learned any facts about you yet! Chat with me to help me remember things about you.",
-				"title": "## Facts I Remember About You",
-				"footer": "Page {page} of {totalPages} • Total Facts: {totalFacts}",
-				"not": {
-					"your": {
-						"interaction": "This is not your interaction! Use the command yourself to view your facts."
-					}
-				}
+			"imagen": {
+				"no_input": "## Error\nPlease provide a prompt and/or an image to generate from.",
+				"invalid_attachment": "## Error\nThe attached file must be an image.",
+				"limit": "## Limit Reached\nYou have reached your daily limit of **{limit}** image generations. Please try again tomorrow!",
+				"loading_transform": "## Transforming\nTransforming your image{prompt}...",
+				"loading": "## Generating\nYour image is generating now, please wait...",
+				"fetch_error": "## Error\nFailed to fetch the source image. Please try again.",
+				"rate_limit": "## Rate Limit\nAI is currently rate limited. Please try again later.",
+				"result_transform": "## Transformed Image\nPrompt: {prompt}",
+				"result": "## Generated Image\nPrompt: {prompt}",
+				"error": "## Error\nFailed to generate image: {error}"
 			},
-			"forget": {
-				"success": "## Memory Cleared\nI've cleared our conversation history! We can start fresh from here. Your saved facts are still remembered though."
-			},
-			"help": {
-				"title": "AI Help Guide",
-				"how_to_chat": "### How to Chat with AI\n\n**Three ways to talk to me:**\n1. **DM me** - Just send me a direct message!\n2. **@mention me** - Tag me in any channel: @Kythia hello!\n3. **AI-enabled channels** - Admins can enable AI in specific channels with `/ai enable`\n\nI remember our conversation context, so you can have natural back-and-forth discussions!",
-				"commands": "### Available Commands\n\n**`/ai enable`** - Enable AI in current channel (Admin only)\n**`/ai disable`** - Disable AI in current channel (Admin only)\n**`/ai list`** - View all AI-enabled channels\n**`/ai facts`** - See all facts I've learned about you\n**`/ai fact-delete`** - Delete a specific fact by number\n**`/ai forget`** - Clear conversation history\n**`/ai personality`** - Change my conversation style\n**`/ai help`** - Show this help guide",
-				"memory": "### Memory & Facts System\n\nI can remember facts about you! Just say:\n• **\"Remember that I like pizza\"**\n• **\"Ingat aku suka coding\"**\n• **\"Catat bahwa saya dari Jakarta\"**\n\nSupported languages: English, Indonesian\n\nI categorize facts into types like:\n• Birthday, Name, Hobbies\n• Location, Job, Education\n• Preferences (food, music, games, etc.)\n\nView your facts with `/ai facts` anytime!",
-				"features": "### AI Features\n\n**Multi-Media Support**\n• Send images - I can describe and analyze them\n• Share videos - I can understand video content\n• Upload PDFs - I can read documents\n• Share YouTube links - I can discuss videos\n\n**Command Execution**\n• Ask me to roll dice, check ping, play music\n• I can execute bot commands for you!\n\n**Web Search**\n• Ask me current questions\n• I can search the web for answers",
-				"tips": "### Tips & Tricks\n\n**Be conversational** - Talk to me naturally!\n**Use context** - I remember our previous messages\n**Ask follow-ups** - Continue the conversation\n**Share media** - I can see images and videos\n**Save facts** - Tell me things to remember\n\n**Privacy Notes:**\n• Conversation history is cached for 30 minutes\n• Facts are stored until you delete them\n• Use `/ai forget` to clear history\n• Use `/ai facts` to manage your data",
-				"title_md": "## {title}"
-			},
-			"fact_delete": {
-				"no_facts": "## Error\nYou don't have any saved facts to delete!",
-				"invalid_number": "## Error\nInvalid fact number! You only have {max} fact(s). Use `/ai facts` to see all your facts.",
-				"success": "## Fact Deleted\nSuccessfully deleted fact: **{fact}**"
-			},
-			"personality": {
-				"success": "## Personality Updated\nAI personality changed to **{personality}**!\n{description}\n\nTry chatting with me now to experience the new style!",
-				"reset": "## Personality Reset\nAI personality reset to config default!\n\nI'll now use the default personality set by the bot administrator."
-			},
-			"optout": {
-				"database_error": "## Error\nDatabase not initialized. Please try again later.",
-				"success": "## Opted Out\nYou have successfully **opted out** of AI features. The bot will no longer process your messages, and your existing AI memories have been permanently deleted. Use this command again to opt back in.",
-				"revert": "## Opted In\nYou have successfully **opted back in** to AI features. The bot will now interact with you normally.",
-				"error": "## Error\nAn unexpected error occurred while processing your request."
+			"translate": {
+				"limit": "## Limit Reached\nSorry, the AI token limit has been reached for this minute. I need a short break, please try again in a minute!",
+				"no": {
+					"result": "## Error\nNo translation result."
+				},
+				"success": "## Translated\n### Language: `{lang}`\n### Input: ```{text}```\n### Translated: ```{translated}```",
+				"error": "## Error\nAn error occurred while translating the text. Please try again later! ><"
 			}
 		},
-		"imagen": {
-			"no_input": "## Error\nPlease provide a prompt and/or an image to generate from.",
-			"invalid_attachment": "## Error\nThe attached file must be an image.",
-			"limit": "## Limit Reached\nYou have reached your daily limit of **{limit}** image generations. Please try again tomorrow!",
-			"loading": "## Generating\nYour image is generating now, please wait...",
-			"loading_transform": "## Transforming\nTransforming your image{prompt}...",
-			"fetch_error": "## Error\nFailed to fetch the source image. Please try again.",
-			"rate_limit": "## Rate Limit\nAI is currently rate limited. Please try again later.",
-			"result": "## Generated Image\nPrompt: {prompt}",
-			"result_transform": "## Transformed Image\nPrompt: {prompt}",
-			"error": "## Error\nFailed to generate image: {error}"
+		"helpers": {
+			"factsUi": {
+				"ai": {
+					"facts": {
+						"empty": "I haven't learned any facts about you yet! Chat with me to help me remember things about you.",
+						"title": "## Facts I Remember About You",
+						"footer": "Page {page} of {totalPages} • Total Facts: {totalFacts}"
+					}
+				}
+			},
+			"listUi": {
+				"ai": {
+					"list": {
+						"empty": "There are no AI-enabled channels in this server yet.",
+						"title": "## AI-Enabled Channels",
+						"footer": "Page {page} of {totalPages} • Total AI Channels: {totalChannels}"
+					}
+				}
+			}
 		}
 	}
 }

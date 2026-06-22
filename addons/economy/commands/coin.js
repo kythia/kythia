@@ -24,7 +24,10 @@ class CoinCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -33,10 +36,14 @@ class CoinCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-		const msg = await t(interaction, 'economy.cash.cash.balance', {
-			username: interaction.user.username,
-			cash: user.kythiaCoin.toLocaleString(),
-		});
+		const msg = await t(
+			interaction,
+			'economy.commands.coin.cash.cash.balance',
+			{
+				username: interaction.user.username,
+				cash: user.kythiaCoin.toLocaleString(),
+			},
+		);
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,
 		});

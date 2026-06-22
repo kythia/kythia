@@ -1,286 +1,6 @@
 {
 	"automod": {
-		"moderation": {
-			"announce": {
-				"default": {
-					"title": "## Announcement"
-				},
-				"failed": "Failed to send announcement: {error}",
-				"footer": "Announced by {user}",
-				"success": "Announcement sent successfully!"
-			},
-			"autosetup": {
-				"created": {
-					"channel": "Created channel {channel}",
-					"role": "Created role {role}"
-				},
-				"failed": "Auto setup failed: {error}",
-				"nothing": {
-					"new": "Nothing new to setup."
-				},
-				"success": {
-					"title": "## Auto Setup Complete"
-				}
-			},
-			"ban": {
-				"failed": "Failed to ban user: {error}",
-				"success": {
-					"desc": "**{user}** has been banned for: {reason}",
-					"title": "## User Banned"
-				},
-				"default": {
-					"reason": "No reason provided"
-				}
-			},
-			"clear": {
-				"cancelled": "Clear command cancelled.",
-				"failed": "Failed to clear messages: {error}",
-				"not": {
-					"allowed": "I cannot delete messages older than 14 days."
-				},
-				"nuked": {
-					"success": "Channel has been nuked!"
-				},
-				"timeout": "Clear command timed out.",
-				"text": {
-					"only": "This command can only be used in text channels."
-				},
-				"nothing": {
-					"deleted": "No messages were deleted. Maybe they are too old or already deleted."
-				},
-				"embed": {
-					"desc": "Completely deleted {count} messages have been deleted!"
-				},
-				"error": "An error occurred while deleting messages.",
-				"options": {
-					"title": "## Clear Channel Options",
-					"desc": "Choose how you want to clear the channel. You can nuke (clone & delete) or bulk delete all messages.",
-					"nuke": {
-						"value": "Completely wipes the channel by cloning and deleting it. All settings and permissions are preserved."
-					},
-					"bulk": {
-						"value": "Deletes all messages that can be bulk deleted (from the last 14 days)."
-					}
-				}
-			},
-			"kick": {
-				"failed": "Failed to kick user: {error}",
-				"success": {
-					"desc": "**{user}** has been kicked for: {reason}",
-					"title": "## User Kicked"
-				},
-				"default": {
-					"reason": "No reason provided"
-				},
-				"modlog": {
-					"desc": "**Member:** {user}\n**Kicked by:** {moderator}\n**Reason:** {reason}",
-					"title": "## Kick"
-				}
-			},
-			"lock": {
-				"confirm": "Channel locked!",
-				"default": {
-					"reason": "No reason provided"
-				},
-				"success": {
-					"desc": "{channel} has been locked for: {reason}",
-					"title": "## Channel Locked"
-				},
-				"failed": "Failed to lock the channel: {error}"
-			},
-			"mute": {
-				"embed": {
-					"desc": "## Muted\n**{tag}** has been muted by **{moderator}** via command."
-				}
-			},
-			"pin": {
-				"already": {
-					"pinned": "This message is already pinned."
-				},
-				"success": {
-					"desc": "Message has been pinned. [Jump to Message]({messageUrl})",
-					"title": "## Message Pinned"
-				},
-				"not": {
-					"found": "Message not found!"
-				},
-				"failed": "Failed to pin the message: {error}"
-			},
-			"role": {
-				"added": {
-					"desc": "Role {role} has been added to {user}.",
-					"title": "## Role Added"
-				},
-				"failed": "Failed to modify roles: {error}",
-				"removed": {
-					"desc": "Role {role} has been removed from {user}.",
-					"title": "## Role Removed"
-				}
-			},
-			"say": {
-				"failed": "Failed to send message: {error}",
-				"success": "Message sent successfully."
-			},
-			"slowmode": {
-				"confirm": "Slowmode set!",
-				"default": {
-					"reason": "No reason provided"
-				},
-				"failed": "Failed to set slowmode: {error}",
-				"success": {
-					"desc": "Slowmode for {channel} set to {seconds} seconds for: {reason}",
-					"title": "## Slowmode Set"
-				}
-			},
-			"timeout": {
-				"default": {
-					"reason": "No reason provided"
-				},
-				"success": {
-					"desc": "**{user}** has been timed out for {duration} for: {reason}",
-					"title": "## User Timed Out"
-				},
-				"failed": "Failed to timeout user: {error}"
-			},
-			"unban": {
-				"success": {
-					"desc": "<@{userId}> has been unbanned.",
-					"title": "## User Unbanned"
-				},
-				"failed": "Failed to unban user: {error}"
-			},
-			"unlock": {
-				"confirm": "Channel unlocked!",
-				"default": {
-					"reason": "No reason provided"
-				},
-				"failed": "Failed to unlock channel: {error}",
-				"success": {
-					"desc": "{channel} has been unlocked for: {reason}",
-					"title": "## Channel Unlocked"
-				}
-			},
-			"unmute": {
-				"failed": "Failed to unmute user: {error}",
-				"not": {
-					"in": {
-						"voice": "User is not in a voice channel."
-					}
-				},
-				"success": {
-					"desc": "**{user}** has been unmuted.",
-					"title": "## User Unmuted"
-				}
-			},
-			"unpin": {
-				"not": {
-					"pinned": "This message is not pinned.",
-					"found": "Message not found."
-				},
-				"success": {
-					"desc": "Message has been unpinned. [Jump to Message]({messageUrl})",
-					"title": "## Message Unpinned"
-				},
-				"failed": "Failed to unpin message: {error}"
-			},
-			"warn": {
-				"cannot": {
-					"self": "You cannot warn yourself."
-				},
-				"default": {
-					"reason": "No reason provided"
-				},
-				"dm": {
-					"desc": "You have been warned by **{moderator}** for: {reason}",
-					"title": "## Warned in {guild}"
-				},
-				"failed": "Failed to warn user: {error}",
-				"modlog": {
-					"desc": "**{user}** has been warned by **{moderator}** for: {reason}",
-					"title": "## Warn"
-				},
-				"success": {
-					"desc": "**{user}** has been warned for: {reason}",
-					"title": "## User Warned"
-				}
-			},
-			"warnings": {
-				"failed": "Failed to fetch warnings: {error}",
-				"title": "## Warnings for {user}",
-				"none": "{user} has no warnings."
-			},
-			"snipe": {
-				"ui": {
-					"author": "**Author:** {author} ({tag})",
-					"sent": "**Sent:** {time}",
-					"no_content": "*(No text content)*",
-					"footer": "- Snipe {page} of {totalPages}"
-				}
-			}
-		},
 		"setting": {
-			"whitelist": {
-				"already": "This user/role is already in the whitelist.",
-				"add": {
-					"role": "Role {role} has been added to the whitelist!",
-					"user": "User {user} has been added to the whitelist!"
-				},
-				"notfound": "This user/role is not in the whitelist.",
-				"remove": {
-					"role": "Role {role} has been removed from the whitelist!",
-					"user": "User {user} has been removed from the whitelist!"
-				},
-				"empty": "The automod whitelist is empty.",
-				"list": "Automod whitelist:\n{list}"
-			},
-			"invalid": {
-				"id": "Invalid ID: {id}"
-			},
-			"badword": {
-				"already": "That word is already in the badword list.",
-				"add": "Word `{word}` has been added to the badword list.",
-				"notfound": "That word is not in the badword list.",
-				"remove": "Word `{word}` has been removed from the badword list.",
-				"empty": "The automod badword list is empty.",
-				"list": "Automod badword list:\n{list}",
-				"whitelist": {
-					"already": "That word is already in the badword whitelist.",
-					"add": "Word `{word}` has been added to the badword whitelist.",
-					"notfound": "That word is not in the badword whitelist.",
-					"remove": "Word `{word}` has been removed from the badword whitelist.",
-					"empty": "The automod badword whitelist is empty.",
-					"list": "Automod badword whitelist:\n{list}"
-				}
-			},
-			"exception": {
-				"channel": {
-					"already": "This channel is already in the exception list.",
-					"add": "Channel {channel} has been added to the exception list!",
-					"notfound": "This channel is not in the exception list.",
-					"remove": "Channel {channel} has been removed from the exception list!",
-					"empty": "The exception channel list is empty.",
-					"list": "Exception Channels:\n{list}"
-				}
-			},
-			"log": {
-				"channel": {
-					"invalid": "The selected channel must be a text channel."
-				}
-			},
-			"mod": {
-				"log": {
-					"channel": {
-						"set": "Channel {channel} has been set as the automod log channel!"
-					}
-				}
-			},
-			"audit": {
-				"log": {
-					"channel": {
-						"set": "Channel {channel} has been set as the audit log channel!"
-					}
-				}
-			},
 			"feature": {
 				"anti": {},
 				"server": {},
@@ -293,34 +13,6 @@
 			"clan": {
 				"category": {},
 				"forum": {}
-			},
-			"antinuke": {
-				"toggle": {
-					"success": "## AntiNuke Updated\nAntiNuke system **{status}** successfully."
-				},
-				"module": {
-					"success": "## Module Updated\nModule **{module}** {status}."
-				},
-				"threshold": {
-					"success": "## Threshold Updated\n**{module}** threshold set to **{count} actions** in **{seconds}s**."
-				},
-				"action": {
-					"success": "## Action Updated\n**{module}** action set to **{action}**."
-				},
-				"whitelist": {
-					"success": "## Immunity Updated\n{target} **{action}** AntiNuke immunity list."
-				},
-				"log_channel": {
-					"invalid": "## Error\nThat is not a text channel.",
-					"success": "## Log Channel Updated\nAntiNuke log channel set to {channel}."
-				},
-				"status": {
-					"title": "## AntiNuke Status",
-					"system": "**System:** {status}",
-					"log_channel": "**Log Channel:** {channel}",
-					"modules": "### Modules\n{modules}",
-					"immunity": "### Immunity List\nUsers: {users}\nRoles: {roles}"
-				}
 			}
 		},
 		"snipe": {
@@ -331,6 +23,332 @@
 				"nuke": "Nuke Channel",
 				"bulk": "Bulk Delete All",
 				"cancel": "Cancel"
+			}
+		},
+		"commands": {
+			"moderation": {
+				"announce": {
+					"default": {
+						"title": "## Announcement"
+					},
+					"footer": "Announced by {user}",
+					"success": "Announcement sent successfully!",
+					"failed": "Failed to send announcement: {error}"
+				},
+				"autosetup": {
+					"created": {
+						"channel": "Created channel {channel}",
+						"role": "Created role {role}"
+					},
+					"nothing": {
+						"new": "Nothing new to setup."
+					},
+					"success": {
+						"title": "## Auto Setup Complete"
+					},
+					"failed": "Auto setup failed: {error}"
+				},
+				"ban": {
+					"default": {
+						"reason": "No reason provided"
+					},
+					"success": {
+						"title": "## User Banned",
+						"desc": "**{user}** has been banned for: {reason}"
+					},
+					"failed": "Failed to ban user: {error}"
+				},
+				"clear": {
+					"text": {
+						"only": "This command can only be used in text channels."
+					},
+					"nothing": {
+						"deleted": "No messages were deleted. Maybe they are too old or already deleted."
+					},
+					"options": {
+						"desc": "Choose how you want to clear the channel. You can nuke (clone & delete) or bulk delete all messages.",
+						"nuke": {
+							"value": "Completely wipes the channel by cloning and deleting it. All settings and permissions are preserved."
+						},
+						"bulk": {
+							"value": "Deletes all messages that can be bulk deleted (from the last 14 days)."
+						},
+						"title": "## Clear Channel Options"
+					},
+					"not": {
+						"allowed": "I cannot delete messages older than 14 days."
+					},
+					"cancelled": "Clear command cancelled.",
+					"timeout": "Clear command timed out.",
+					"nuked": {
+						"success": "Channel has been nuked!"
+					},
+					"failed": "Failed to clear messages: {error}"
+				},
+				"kick": {
+					"default": {
+						"reason": "No reason provided"
+					},
+					"success": {
+						"title": "## User Kicked",
+						"desc": "**{user}** has been kicked for: {reason}"
+					},
+					"modlog": {
+						"title": "## Kick",
+						"desc": "**Member:** {user}\n**Kicked by:** {moderator}\n**Reason:** {reason}"
+					},
+					"failed": "Failed to kick user: {error}"
+				},
+				"lock": {
+					"default": {
+						"reason": "No reason provided"
+					},
+					"success": {
+						"title": "## Channel Locked",
+						"desc": "{channel} has been locked for: {reason}"
+					},
+					"confirm": "Channel locked!",
+					"failed": "Failed to lock the channel: {error}"
+				},
+				"mute": {
+					"embed": {
+						"desc": "## Muted\n**{tag}** has been muted by **{moderator}** via command."
+					}
+				},
+				"pin": {
+					"not": {
+						"found": "Message not found!"
+					},
+					"already": {
+						"pinned": "This message is already pinned."
+					},
+					"success": {
+						"title": "## Message Pinned",
+						"desc": "Message has been pinned. [Jump to Message]({messageUrl})"
+					},
+					"failed": "Failed to pin the message: {error}"
+				},
+				"role": {
+					"removed": {
+						"title": "## Role Removed",
+						"desc": "Role {role} has been removed from {user}."
+					},
+					"added": {
+						"title": "## Role Added",
+						"desc": "Role {role} has been added to {user}."
+					},
+					"failed": "Failed to modify roles: {error}"
+				},
+				"say": {
+					"success": "Message sent successfully.",
+					"failed": "Failed to send message: {error}"
+				},
+				"slowmode": {
+					"default": {
+						"reason": "No reason provided"
+					},
+					"success": {
+						"title": "## Slowmode Set",
+						"desc": "Slowmode for {channel} set to {seconds} seconds for: {reason}"
+					},
+					"confirm": "Slowmode set!",
+					"failed": "Failed to set slowmode: {error}"
+				},
+				"timeout": {
+					"default": {
+						"reason": "No reason provided"
+					},
+					"success": {
+						"title": "## User Timed Out",
+						"desc": "**{user}** has been timed out for {duration} for: {reason}"
+					},
+					"failed": "Failed to timeout user: {error}"
+				},
+				"unban": {
+					"success": {
+						"title": "## User Unbanned",
+						"desc": "<@{userId}> has been unbanned."
+					},
+					"failed": "Failed to unban user: {error}"
+				},
+				"unlock": {
+					"default": {
+						"reason": "No reason provided"
+					},
+					"success": {
+						"title": "## Channel Unlocked",
+						"desc": "{channel} has been unlocked for: {reason}"
+					},
+					"confirm": "Channel unlocked!",
+					"failed": "Failed to unlock channel: {error}"
+				},
+				"unmute": {
+					"success": {
+						"title": "## User Unmuted",
+						"desc": "**{user}** has been unmuted."
+					},
+					"not": {
+						"in": {
+							"voice": "User is not in a voice channel."
+						}
+					},
+					"failed": "Failed to unmute user: {error}"
+				},
+				"unpin": {
+					"not": {
+						"found": "Message not found.",
+						"pinned": "This message is not pinned."
+					},
+					"success": {
+						"title": "## Message Unpinned",
+						"desc": "Message has been unpinned. [Jump to Message]({messageUrl})"
+					},
+					"failed": "Failed to unpin message: {error}"
+				},
+				"warn": {
+					"default": {
+						"reason": "No reason provided"
+					},
+					"cannot": {
+						"self": "You cannot warn yourself."
+					},
+					"dm": {
+						"title": "## Warned in {guild}",
+						"desc": "You have been warned by **{moderator}** for: {reason}"
+					},
+					"modlog": {
+						"title": "## Warn",
+						"desc": "**{user}** has been warned by **{moderator}** for: {reason}"
+					},
+					"success": {
+						"title": "## User Warned",
+						"desc": "**{user}** has been warned for: {reason}"
+					},
+					"failed": "Failed to warn user: {error}"
+				},
+				"warnings": {
+					"none": "{user} has no warnings.",
+					"title": "## Warnings for {user}",
+					"failed": "Failed to fetch warnings: {error}"
+				}
+			},
+			"setting": {
+				"automod-setting": {
+					"whitelist": {
+						"already": "This user/role is already in the whitelist.",
+						"add": {
+							"role": "Role {role} has been added to the whitelist!",
+							"user": "User {user} has been added to the whitelist!"
+						},
+						"notfound": "This user/role is not in the whitelist.",
+						"remove": {
+							"role": "Role {role} has been removed from the whitelist!",
+							"user": "User {user} has been removed from the whitelist!"
+						},
+						"empty": "The automod whitelist is empty.",
+						"list": "Automod whitelist:\n{list}"
+					},
+					"badword": {
+						"already": "That word is already in the badword list.",
+						"add": "Word `{word}` has been added to the badword list.",
+						"notfound": "That word is not in the badword list.",
+						"remove": "Word `{word}` has been removed from the badword list.",
+						"empty": "The automod badword list is empty.",
+						"list": "Automod badword list:\n{list}",
+						"whitelist": {
+							"already": "That word is already in the badword whitelist.",
+							"add": "Word `{word}` has been added to the badword whitelist.",
+							"notfound": "That word is not in the badword whitelist.",
+							"remove": "Word `{word}` has been removed from the badword whitelist.",
+							"empty": "The automod badword whitelist is empty.",
+							"list": "Automod badword whitelist:\n{list}"
+						}
+					},
+					"exception": {
+						"channel": {
+							"already": "This channel is already in the exception list.",
+							"add": "Channel {channel} has been added to the exception list!",
+							"notfound": "This channel is not in the exception list.",
+							"remove": "Channel {channel} has been removed from the exception list!",
+							"empty": "The exception channel list is empty.",
+							"list": "Exception Channels:\n{list}"
+						}
+					},
+					"invalid": {
+						"id": "Invalid ID: {id}"
+					},
+					"log": {
+						"channel": {
+							"invalid": "The selected channel must be a text channel."
+						}
+					},
+					"mod": {
+						"log": {
+							"channel": {
+								"set": "Channel {channel} has been set as the automod log channel!"
+							}
+						}
+					},
+					"audit": {
+						"log": {
+							"channel": {
+								"set": "Channel {channel} has been set as the audit log channel!"
+							}
+						}
+					},
+					"antinuke": {
+						"toggle": {
+							"success": "## AntiNuke Updated\nAntiNuke system **{status}** successfully."
+						},
+						"module": {
+							"success": "## Module Updated\nModule **{module}** {status}."
+						},
+						"threshold": {
+							"success": "## Threshold Updated\n**{module}** threshold set to **{count} actions** in **{seconds}s**."
+						},
+						"action": {
+							"success": "## Action Updated\n**{module}** action set to **{action}**."
+						},
+						"whitelist": {
+							"success": "## Immunity Updated\n{target} **{action}** AntiNuke immunity list."
+						},
+						"log_channel": {
+							"invalid": "## Error\nThat is not a text channel.",
+							"success": "## Log Channel Updated\nAntiNuke log channel set to {channel}."
+						},
+						"status": {
+							"title": "## AntiNuke Status",
+							"system": "**System:** {status}",
+							"log_channel": "**Log Channel:** {channel}",
+							"modules": "### Modules\n{modules}",
+							"immunity": "### Immunity List\nUsers: {users}\nRoles: {roles}"
+						}
+					}
+				}
+			}
+		},
+		"shared": {
+			"moderation": {
+				"clear": {
+					"embed": {
+						"desc": "Completely deleted {count} messages have been deleted!"
+					},
+					"error": "An error occurred while deleting messages."
+				}
+			}
+		},
+		"helpers": {
+			"snipeUi": {
+				"moderation": {
+					"snipe": {
+						"ui": {
+							"author": "**Author:** {author} ({tag})",
+							"sent": "**Sent:** {time}",
+							"no_content": "*(No text content)*",
+							"footer": "- Snipe {page} of {totalPages}"
+						}
+					}
+				}
 			}
 		}
 	}

@@ -44,7 +44,10 @@ class CoinflipCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -58,7 +61,7 @@ class CoinflipCommand extends BaseCommand {
 		if (user.kythiaCoin < bet) {
 			const msg = await t(
 				interaction,
-				'economy.coinflip.coinflip.not.enough.cash',
+				'economy.commands.gamble.coinflip.coinflip.not.enough.cash',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -73,10 +76,14 @@ class CoinflipCommand extends BaseCommand {
 			user.kythiaCoin = toBigIntSafe(user.kythiaCoin) + toBigIntSafe(bet);
 			user.changed('kythiaCoin', true);
 			await user.save();
-			const msg = await t(interaction, 'economy.coinflip.coinflip.win', {
-				flip: flip.charAt(0).toUpperCase() + flip.slice(1),
-				amount: bet,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.gamble.coinflip.coinflip.win',
+				{
+					flip: flip.charAt(0).toUpperCase() + flip.slice(1),
+					amount: bet,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -88,10 +95,14 @@ class CoinflipCommand extends BaseCommand {
 			user.kythiaCoin = toBigIntSafe(user.kythiaCoin) - toBigIntSafe(bet);
 			user.changed('kythiaCoin', true);
 			await user.save();
-			const msg = await t(interaction, 'economy.coinflip.coinflip.lose', {
-				flip: flip.charAt(0).toUpperCase() + flip.slice(1),
-				amount: bet,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.gamble.coinflip.coinflip.lose',
+				{
+					flip: flip.charAt(0).toUpperCase() + flip.slice(1),
+					amount: bet,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});

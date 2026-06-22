@@ -43,7 +43,7 @@ class RepairCommand extends BaseCommand {
 			return interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.repair.no_config'),
+					await t(interaction, 'tempvoice.commands.repair.no_config'),
 					{
 						color: 'Red',
 					},
@@ -54,16 +54,18 @@ class RepairCommand extends BaseCommand {
 		const logs = [];
 		const missingItems = [];
 		logs.push(
-			await t(interaction, 'tempvoice.repair.start_log', {
+			await t(interaction, 'tempvoice.commands.repair.start_log', {
 				guildName: guild.name,
 			}),
 		);
 		try {
 			await helpers.discord.getChannelSafe(guild, config.categoryId);
-			logs.push(await t(interaction, 'tempvoice.repair.category.found'));
+			logs.push(
+				await t(interaction, 'tempvoice.commands.repair.category.found'),
+			);
 		} catch (_e) {
 			logs.push(
-				await t(interaction, 'tempvoice.repair.category.not_found', {
+				await t(interaction, 'tempvoice.commands.repair.category.not_found', {
 					id: config.categoryId,
 				}),
 			);
@@ -71,10 +73,12 @@ class RepairCommand extends BaseCommand {
 		}
 		try {
 			await helpers.discord.getChannelSafe(guild, config.triggerChannelId);
-			logs.push(await t(interaction, 'tempvoice.repair.trigger.found'));
+			logs.push(
+				await t(interaction, 'tempvoice.commands.repair.trigger.found'),
+			);
 		} catch (_e) {
 			logs.push(
-				await t(interaction, 'tempvoice.repair.trigger.not_found', {
+				await t(interaction, 'tempvoice.commands.repair.trigger.not_found', {
 					id: config.triggerChannelId,
 				}),
 			);
@@ -87,12 +91,18 @@ class RepairCommand extends BaseCommand {
 					guild,
 					config.controlPanelChannelId,
 				);
-				logs.push(await t(interaction, 'tempvoice.repair.interface.found'));
+				logs.push(
+					await t(interaction, 'tempvoice.commands.repair.interface.found'),
+				);
 			} catch (_e) {
 				logs.push(
-					await t(interaction, 'tempvoice.repair.interface.not_found', {
-						id: config.controlPanelChannelId,
-					}),
+					await t(
+						interaction,
+						'tempvoice.commands.repair.interface.not_found',
+						{
+							id: config.controlPanelChannelId,
+						},
+					),
 				);
 				missingItems.push('interface');
 			}
@@ -107,10 +117,15 @@ class RepairCommand extends BaseCommand {
 					interfaceChannel,
 					config.interfaceMessageId,
 				);
-				logs.push(await t(interaction, 'tempvoice.repair.interface.msg_found'));
+				logs.push(
+					await t(interaction, 'tempvoice.commands.repair.interface.msg_found'),
+				);
 			} catch (_e) {
 				logs.push(
-					await t(interaction, 'tempvoice.repair.interface.msg_missing'),
+					await t(
+						interaction,
+						'tempvoice.commands.repair.interface.msg_missing',
+					),
 				);
 				try {
 					const { components, flags } = await buildInterface(interaction);
@@ -122,14 +137,21 @@ class RepairCommand extends BaseCommand {
 						config.interfaceMessageId = interfaceMessage.id;
 						await config.save();
 						logs.push(
-							await t(interaction, 'tempvoice.repair.interface.msg_sent'),
+							await t(
+								interaction,
+								'tempvoice.commands.repair.interface.msg_sent',
+							),
 						);
 					}
 				} catch (sendErr) {
 					logs.push(
-						await t(interaction, 'tempvoice.repair.interface.msg_fail', {
-							error: sendErr.message,
-						}),
+						await t(
+							interaction,
+							'tempvoice.commands.repair.interface.msg_fail',
+							{
+								error: sendErr.message,
+							},
+						),
 					);
 				}
 			}
@@ -140,7 +162,7 @@ class RepairCommand extends BaseCommand {
 			},
 		});
 		logs.push(
-			await t(interaction, 'tempvoice.repair.scan_active', {
+			await t(interaction, 'tempvoice.commands.repair.scan_active', {
 				count: activeChannels.length,
 			}),
 		);
@@ -164,14 +186,14 @@ class RepairCommand extends BaseCommand {
 				/* silent */
 			}
 		}
-		logs.push(await t(interaction, 'tempvoice.repair.result.header'));
+		logs.push(await t(interaction, 'tempvoice.commands.repair.result.header'));
 		logs.push(
-			await t(interaction, 'tempvoice.repair.result.cleaned', {
+			await t(interaction, 'tempvoice.commands.repair.result.cleaned', {
 				count: cleaned,
 			}),
 		);
 		logs.push(
-			await t(interaction, 'tempvoice.repair.result.fixed', {
+			await t(interaction, 'tempvoice.commands.repair.result.fixed', {
 				count: fixed,
 			}),
 		);
@@ -186,7 +208,7 @@ class RepairCommand extends BaseCommand {
 		if (missingItems.length > 0) {
 			finalContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'tempvoice.repair.critical_missing'),
+					await t(interaction, 'tempvoice.commands.repair.critical_missing'),
 				),
 			);
 			finalContainer.addSeparatorComponents(
@@ -198,7 +220,9 @@ class RepairCommand extends BaseCommand {
 				new ActionRowBuilder().addComponents(
 					new ButtonBuilder()
 						.setCustomId('tv_fix_config')
-						.setLabel(await t(interaction, 'tempvoice.repair.button_label'))
+						.setLabel(
+							await t(interaction, 'tempvoice.commands.repair.button_label'),
+						)
 						.setStyle(ButtonStyle.Danger),
 				),
 			);

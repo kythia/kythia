@@ -56,7 +56,10 @@ class DeleteCommand extends BaseCommand {
 				messageId: panelMessageId,
 			});
 			if (!panel) {
-				const desc = await t(interaction, 'ticket.errors.no_panels_found');
+				const desc = await t(
+					interaction,
+					'ticket.helpers.index.errors.no_panels_found',
+				);
 				return interaction.editReply({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -93,9 +96,13 @@ class DeleteCommand extends BaseCommand {
 				}
 			}
 			await panel.destroy();
-			const desc = await t(interaction, 'ticket.panel.delete_success', {
-				title: panel.title,
-			});
+			const desc = await t(
+				interaction,
+				'ticket.commands.panel.delete.delete_success',
+				{
+					title: panel.title,
+				},
+			);
 			await interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Green',
@@ -106,7 +113,7 @@ class DeleteCommand extends BaseCommand {
 			logger.error(`Error deleting panel: ${error.message || error}`, {
 				label: 'ticket',
 			});
-			const desc = await t(interaction, 'ticket.errors.generic');
+			const desc = await t(interaction, 'ticket.helpers.index.errors.generic');
 			await interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Red',

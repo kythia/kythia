@@ -30,7 +30,10 @@ class TvRenameButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.rename.no_active_channel'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-rename.rename.no_active_channel',
+						),
 						{
 							color: 'Red',
 						},
@@ -40,13 +43,20 @@ class TvRenameButton extends BaseButton {
 		}
 		const modal = new ModalBuilder()
 			.setCustomId(`tv_rename_modal:${activeChannel.channelId}`)
-			.setTitle(await t(interaction, 'tempvoice.rename.modal_title'));
+			.setTitle(
+				await t(interaction, 'tempvoice.buttons.tv-rename.rename.modal_title'),
+			);
 		const nameInput = new TextInputBuilder()
 			.setCustomId('channel_name')
-			.setLabel(await t(interaction, 'tempvoice.rename.input_label'))
+			.setLabel(
+				await t(interaction, 'tempvoice.buttons.tv-rename.rename.input_label'),
+			)
 			.setStyle(TextInputStyle.Short)
 			.setPlaceholder(
-				await t(interaction, 'tempvoice.rename.input_placeholder'),
+				await t(
+					interaction,
+					'tempvoice.buttons.tv-rename.rename.input_placeholder',
+				),
 			)
 			.setRequired(true)
 			.setMaxLength(100);
@@ -55,5 +65,4 @@ class TvRenameButton extends BaseButton {
 		await interaction.showModal(modal);
 	}
 }
-
 exports.default = TvRenameButton;

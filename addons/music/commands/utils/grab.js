@@ -7,28 +7,26 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class GrabCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('grab')
 			.setDescription('Grab the current song to your DMs');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		if (!member?.voice?.channel) {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'music.music.voice.channel.not.found'),
+					await t(
+						interaction,
+						'music.helpers.index.music.voice.channel.not.found',
+					),
 					{
 						color: 'Red',
 					},
@@ -36,13 +34,14 @@ class GrabCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const player = client.poru.players.get(guild.id);
 		if (!player) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'music.music.player.not.found'),
-				{ color: 'Red' },
+				await t(interaction, 'music.helpers.index.music.player.not.found'),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.reply({
 				components: reply,
@@ -53,7 +52,7 @@ class GrabCommand extends BaseCommand {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'music.music.required'),
+					await t(interaction, 'music.helpers.index.music.required'),
 					{
 						color: 'Red',
 					},
@@ -61,9 +60,7 @@ class GrabCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		return musicHandlers.handleGrab(interaction, player);
 	}
 }
-
 exports.default = GrabCommand;

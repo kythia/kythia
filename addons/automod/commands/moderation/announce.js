@@ -36,7 +36,10 @@ class AnnounceCommand extends BaseCommand {
 		const message = interaction.options.getString('message');
 		const title =
 			interaction.options.getString('title') ||
-			(await t(interaction, 'automod.moderation.announce.default.title'));
+			(await t(
+				interaction,
+				'automod.commands.moderation.announce.default.title',
+			));
 		try {
 			const announcement = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
@@ -44,9 +47,13 @@ class AnnounceCommand extends BaseCommand {
 				description: message,
 				thumbnail: interaction.guild.iconURL(),
 				footer: {
-					text: await t(interaction, 'automod.moderation.announce.footer', {
-						user: interaction.user.tag,
-					}),
+					text: await t(
+						interaction,
+						'automod.commands.moderation.announce.footer',
+						{
+							user: interaction.user.tag,
+						},
+					),
 					iconURL: interaction.user.displayAvatarURL(),
 				},
 			});
@@ -55,7 +62,7 @@ class AnnounceCommand extends BaseCommand {
 			});
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'automod.moderation.announce.success'),
+				await t(interaction, 'automod.commands.moderation.announce.success'),
 				{
 					color: 'Green',
 				},
@@ -67,7 +74,7 @@ class AnnounceCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'automod.moderation.announce.failed', {
+				await t(interaction, 'automod.commands.moderation.announce.failed', {
 					error: error.message,
 				}),
 				{

@@ -8,34 +8,26 @@
 
 const { MessageFlags } = require('discord.js');
 const fetch = require('node-fetch');
-
 const { BaseCommand } = require('kythia-core');
-
 class RemoveCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
 			.setDescription('Remove this server from the global chat network');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers, logger } = container;
 		const { GlobalChat } = models;
 		const { simpleContainer } = helpers.discord;
-
 		const apiUrl = kythiaConfig?.addons?.globalchat?.apiUrl;
-
 		await interaction.deferReply();
-
 		const localDbChat = await GlobalChat.getCache({
 			guildId: interaction.guild.id,
 		});
 		if (localDbChat) {
 			await localDbChat.destroy();
 		}
-
 		try {
 			const res = await fetch(`${apiUrl}/remove/${interaction.guild.id}`, {
 				method: 'DELETE',
@@ -44,12 +36,13 @@ class RemoveCommand extends BaseCommand {
 				},
 			});
 			const resJson = await res.json();
-
 			if (resJson.status === 'ok') {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'globalchat.remove.success'),
-					{ color: 'Green' },
+					await t(interaction, 'globalchat.commands.remove.success'),
+					{
+						color: 'Green',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -58,8 +51,10 @@ class RemoveCommand extends BaseCommand {
 			} else if (resJson.code === 'GUILD_NOT_FOUND') {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'globalchat.remove.not.found'),
-					{ color: 'Orange' },
+					await t(interaction, 'globalchat.commands.remove.not.found'),
+					{
+						color: 'Orange',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -68,8 +63,10 @@ class RemoveCommand extends BaseCommand {
 			} else {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'globalchat.remove.failed'),
-					{ color: 'Red' },
+					await t(interaction, 'globalchat.commands.remove.failed'),
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -79,12 +76,16 @@ class RemoveCommand extends BaseCommand {
 		} catch (error) {
 			logger.error(
 				`Failed to remove guild from global chat via API: ${error.message || error}`,
-				{ label: 'globalchat' },
+				{
+					label: 'globalchat',
+				},
 			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'globalchat.remove.error'),
-				{ color: 'Red' },
+				await t(interaction, 'globalchat.commands.remove.error'),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -93,5 +94,4 @@ class RemoveCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = RemoveCommand;

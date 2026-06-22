@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ConfigCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('config')
@@ -22,10 +19,22 @@ class ConfigCommand extends BaseCommand {
 					.setName('mode')
 					.setDescription('The number format to use.')
 					.addChoices(
-						{ name: 'Normal Numbers (1, 2, 3...)', value: 'decimal' },
-						{ name: 'Roman Numerals (I, II, III, IV...)', value: 'roman' },
-						{ name: 'Binary / Hacker (1, 10, 11, 100...)', value: 'binary' },
-						{ name: 'Hexadecimal (1...9, A, B, C...)', value: 'hex' },
+						{
+							name: 'Normal Numbers (1, 2, 3...)',
+							value: 'decimal',
+						},
+						{
+							name: 'Roman Numerals (I, II, III, IV...)',
+							value: 'roman',
+						},
+						{
+							name: 'Binary / Hacker (1, 10, 11, 100...)',
+							value: 'binary',
+						},
+						{
+							name: 'Hexadecimal (1...9, A, B, C...)',
+							value: 'hex',
+						},
 					),
 			)
 			.addStringOption((option) =>
@@ -51,36 +60,36 @@ class ConfigCommand extends BaseCommand {
 					)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, t, helpers } = container;
 		const { Counting } = models;
 		const { simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
-		const counting = await Counting.getCache({ guildId: interaction.guild.id });
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
+		const counting = await Counting.getCache({
+			guildId: interaction.guild.id,
+		});
 		if (!counting) {
 			await interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'counting.game.not_enabled'),
-					{ color: 'Red' },
+					await t(interaction, 'counting.commands.config.game.not_enabled'),
+					{
+						color: 'Red',
+					},
 				),
 				flags: MessageFlags.IsComponentsV2,
 			});
 			return;
 		}
-
 		const mode = interaction.options.getString('mode');
 		const success = interaction.options.getString('success_reaction');
 		const fail = interaction.options.getString('fail_reaction');
 		const math = interaction.options.getBoolean('math');
 		const strict = interaction.options.getBoolean('strict');
-
 		let updated = false;
-
 		if (mode) {
 			counting.mode = mode;
 			updated = true;
@@ -102,10 +111,9 @@ class ConfigCommand extends BaseCommand {
 			counting.strictEnabled = strict;
 			updated = true;
 		}
-
 		if (updated) {
 			await counting.save();
-			const desc = await t(interaction, 'counting.config.success');
+			const desc = await t(interaction, 'counting.commands.config.success');
 			await interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Green',
@@ -113,7 +121,7 @@ class ConfigCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		} else {
-			const desc = await t(interaction, 'counting.config.no_changes');
+			const desc = await t(interaction, 'counting.commands.config.no_changes');
 			await interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Yellow',
@@ -123,5 +131,4 @@ class ConfigCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = ConfigCommand;

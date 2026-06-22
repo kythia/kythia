@@ -26,11 +26,11 @@ class TiktokCommand extends BaseCommand {
 		const tiktokUrl = interaction.options.getString('link');
 		const invalidUrlTitle = await t(
 			interaction,
-			'core.tools.tiktok.error.invalid.url.title',
+			'core.commands.tools.tiktok.error.invalid.url.title',
 		);
 		const invalidUrlDesc = await t(
 			interaction,
-			'core.tools.tiktok.error.invalid.url.desc',
+			'core.commands.tools.tiktok.error.invalid.url.desc',
 		);
 		if (
 			!/^https?:\/\/(www\.)?tiktok\.com\/.+/.test(tiktokUrl) &&
@@ -56,7 +56,7 @@ class TiktokCommand extends BaseCommand {
 			const videoUrl = data.data.play;
 			const rawTitle =
 				data.data.title ||
-				(await t(interaction, 'core.tools.tiktok.default_title'));
+				(await t(interaction, 'core.commands.tools.tiktok.default_title'));
 			const title =
 				rawTitle.length > 256 ? `${rawTitle.substring(0, 253)}...` : rawTitle;
 			try {
@@ -72,11 +72,11 @@ class TiktokCommand extends BaseCommand {
 			} catch (fileError) {
 				const tooLargeTitle = await t(
 					interaction,
-					'core.tools.tiktok.error.too.large.title',
+					'core.commands.tools.tiktok.error.too.large.title',
 				);
 				const tooLargeDesc = await t(
 					interaction,
-					'core.tools.tiktok.error.too.large.desc',
+					'core.commands.tools.tiktok.error.too.large.desc',
 					{
 						url: videoUrl,
 					},
@@ -103,11 +103,23 @@ class TiktokCommand extends BaseCommand {
 			});
 			let title, desc;
 			if (err.message?.includes('No video found')) {
-				title = await t(interaction, 'core.tools.tiktok.error.no.video.title');
-				desc = await t(interaction, 'core.tools.tiktok.error.no.video.desc');
+				title = await t(
+					interaction,
+					'core.commands.tools.tiktok.error.no.video.title',
+				);
+				desc = await t(
+					interaction,
+					'core.commands.tools.tiktok.error.no.video.desc',
+				);
 			} else {
-				title = await t(interaction, 'core.tools.tiktok.error.unknown.title');
-				desc = await t(interaction, 'core.tools.tiktok.error.unknown.desc');
+				title = await t(
+					interaction,
+					'core.commands.tools.tiktok.error.unknown.title',
+				);
+				desc = await t(
+					interaction,
+					'core.commands.tools.tiktok.error.unknown.desc',
+				);
 			}
 			const msg = `${title}\n${desc}`;
 			const components = await simpleContainer(interaction, msg, {

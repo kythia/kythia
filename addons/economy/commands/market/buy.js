@@ -84,7 +84,10 @@ class BuyCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -100,7 +103,7 @@ class BuyCommand extends BaseCommand {
 		if (userCoin < amountToSpend) {
 			const msg = await t(
 				interaction,
-				'economy.market.buy.insufficient.funds.desc',
+				'economy.shared.market.buy.insufficient.funds.desc',
 				{
 					amount: amountToSpend.toLocaleString(),
 				},
@@ -128,7 +131,10 @@ class BuyCommand extends BaseCommand {
 			if (!pool) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.market.buy.error.amm_unavailable.desc'),
+					await t(
+						interaction,
+						'economy.commands.market.buy.error.amm_unavailable.desc',
+					),
 					{
 						color: 'Red',
 					},
@@ -143,7 +149,10 @@ class BuyCommand extends BaseCommand {
 			if (pool.tradingHalted) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.market.buy.error.trading_halted.desc'),
+					await t(
+						interaction,
+						'economy.commands.market.buy.error.trading_halted.desc',
+					),
 					{
 						color: 'Red',
 					},
@@ -160,9 +169,13 @@ class BuyCommand extends BaseCommand {
 			if (amountToSpend < minTrade) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.market.buy.error.below_minimum.desc', {
-						minTrade: minTrade.toLocaleString(),
-					}),
+					await t(
+						interaction,
+						'economy.commands.market.buy.error.below_minimum.desc',
+						{
+							minTrade: minTrade.toLocaleString(),
+						},
+					),
 					{
 						color: 'Red',
 					},
@@ -177,7 +190,7 @@ class BuyCommand extends BaseCommand {
 					interaction,
 					await t(
 						interaction,
-						'economy.market.buy.error.exceeds_maximum.desc',
+						'economy.commands.market.buy.error.exceeds_maximum.desc',
 						{
 							maxTrade: maxTrade.toLocaleString(),
 						},
@@ -208,7 +221,7 @@ class BuyCommand extends BaseCommand {
 					interaction,
 					await t(
 						interaction,
-						'economy.market.buy.error.invalid_parameters.desc',
+						'economy.commands.market.buy.error.invalid_parameters.desc',
 					),
 					{
 						color: 'Red',
@@ -224,7 +237,7 @@ class BuyCommand extends BaseCommand {
 					interaction,
 					await t(
 						interaction,
-						'economy.market.buy.error.insufficient_liquidity.desc',
+						'economy.commands.market.buy.error.insufficient_liquidity.desc',
 					),
 					{
 						color: 'Red',
@@ -252,7 +265,7 @@ class BuyCommand extends BaseCommand {
 			).toFixed(6);
 			const previewStr = await t(
 				interaction,
-				'economy.market.buy.preview.desc',
+				'economy.commands.market.buy.preview.desc',
 				{
 					amountToSpend: amountToSpend.toLocaleString(),
 					feeRate: (result.feeRate * 100).toFixed(1),
@@ -271,12 +284,12 @@ class BuyCommand extends BaseCommand {
 			if (impactLevel === 'warning')
 				warningNote = await t(
 					interaction,
-					'economy.market.buy.warning.high_impact',
+					'economy.commands.market.buy.warning.high_impact',
 				);
 			else if (impactLevel === 'danger')
 				warningNote = await t(
 					interaction,
-					'economy.market.buy.warning.extreme_impact',
+					'economy.commands.market.buy.warning.extreme_impact',
 				);
 			if (warningNote) previewLines.push('', warningNote);
 
@@ -337,7 +350,7 @@ class BuyCommand extends BaseCommand {
 				}
 				const cancelComponents = await simpleContainer(
 					i,
-					await t(i, 'economy.market.buy.cancel.desc'),
+					await t(i, 'economy.commands.market.buy.cancel.desc'),
 					{
 						color: kythiaConfig.bot.color,
 					},
@@ -351,7 +364,7 @@ class BuyCommand extends BaseCommand {
 				if (collected.size === 0) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'economy.market.buy.timeout.desc'),
+						await t(interaction, 'economy.commands.market.buy.timeout.desc'),
 						{
 							color: kythiaConfig.bot.color,
 						},
@@ -374,7 +387,7 @@ class BuyCommand extends BaseCommand {
 			if (!assetData) {
 				const msg = await t(
 					interaction,
-					'economy.market.buy.asset.not.found.desc',
+					'economy.shared.market.buy.asset.not.found.desc',
 				);
 				const components = await simpleContainer(interaction, msg, {
 					color: kythiaConfig.bot.color,
@@ -390,7 +403,7 @@ class BuyCommand extends BaseCommand {
 			if (!stockData) {
 				const msg = await t(
 					interaction,
-					'economy.market.buy.asset.not.found.desc',
+					'economy.shared.market.buy.asset.not.found.desc',
 				);
 				const components = await simpleContainer(interaction, msg, {
 					color: kythiaConfig.bot.color,
@@ -433,11 +446,15 @@ class BuyCommand extends BaseCommand {
 				toBigIntSafe(user.kythiaCoin) - toBigIntSafe(Math.round(amountToSpend));
 			user.changed('kythiaCoin', true);
 			await user.save();
-			const msg = await t(interaction, 'economy.market.buy.success.desc', {
-				quantity: quantityToBuy.toFixed(6),
-				asset: assetId.toUpperCase(),
-				amount: amountToSpend.toLocaleString(),
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.market.buy.success.desc',
+				{
+					quantity: quantityToBuy.toFixed(6),
+					asset: assetId.toUpperCase(),
+					amount: amountToSpend.toLocaleString(),
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -449,7 +466,10 @@ class BuyCommand extends BaseCommand {
 			logger.error(`Error during market buy: ${error.message || error}`, {
 				label: 'economy:market:buy',
 			});
-			const msg = await t(interaction, 'economy.market.buy.error.desc');
+			const msg = await t(
+				interaction,
+				'economy.commands.market.buy.error.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});

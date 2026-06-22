@@ -36,7 +36,7 @@ class MarryButton extends BaseButton {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t(interaction, 'fun.marry.proposal.expired'),
+							await t(interaction, 'fun.shared.marry.proposal.expired'),
 						),
 					)
 					.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
@@ -53,7 +53,7 @@ class MarryButton extends BaseButton {
 			}
 			if (interaction.user.id !== marriage.user2Id) {
 				return interaction.reply({
-					content: await t(interaction, 'fun.marry.not.your.proposal'),
+					content: await t(interaction, 'fun.shared.marry.not.your.proposal'),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
@@ -73,10 +73,13 @@ class MarryButton extends BaseButton {
 				user1Display = 'Unknown';
 			}
 			user2Display = interaction.user.toString();
-			const congratsTitle = await t(interaction, 'fun.marry.congrats.title');
+			const congratsTitle = await t(
+				interaction,
+				'fun.buttons.marry.congrats.title',
+			);
 			const congratsDesc = await t(
 				interaction,
-				'fun.marry.congrats.description',
+				'fun.buttons.marry.congrats.description',
 				{
 					user1: user1Display,
 					user2: user2Display,
@@ -115,7 +118,7 @@ class MarryButton extends BaseButton {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t(interaction, 'fun.marry.proposal.expired'),
+							await t(interaction, 'fun.shared.marry.proposal.expired'),
 						),
 					)
 					.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
@@ -132,17 +135,21 @@ class MarryButton extends BaseButton {
 			}
 			if (interaction.user.id !== marriage.user2Id) {
 				return interaction.reply({
-					content: await t(interaction, 'fun.marry.not.your.proposal'),
+					content: await t(interaction, 'fun.shared.marry.not.your.proposal'),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
 			await marriage.update({
 				status: 'rejected',
 			});
-			const rejectedText = await t(interaction, 'fun.marry.proposal.rejected', {
-				user1: `<@${marriage.user1Id}>`,
-				user2: `<@${marriage.user2Id}>`,
-			});
+			const rejectedText = await t(
+				interaction,
+				'fun.buttons.marry.proposal.rejected',
+				{
+					user1: `<@${marriage.user1Id}>`,
+					user2: `<@${marriage.user2Id}>`,
+				},
+			);
 			const footer = await t(interaction, 'common.container.footer', {
 				username: interaction.client.user.username,
 			});

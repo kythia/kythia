@@ -17,9 +17,7 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const axios = require('axios');
-
 const { BaseCommand } = require('kythia-core');
-
 const { HOST_REGEX } = require('../../helpers/constants');
 
 /**
@@ -29,7 +27,10 @@ function parseAddress(raw) {
 	const parts = raw.split(':');
 	const host = parts[0];
 	const port = parts[1] ? parseInt(parts[1], 10) : 25565;
-	return { host, port };
+	return {
+		host,
+		port,
+	};
 }
 
 /**
@@ -41,7 +42,9 @@ function parseAddress(raw) {
 async function fetchServerStatus(host, port, type = 'java') {
 	const endpoint = type === 'bedrock' ? 'bedrock/3' : '3';
 	const url = `https://api.mcsrvstat.us/${endpoint}/${host}:${port}`;
-	const res = await axios.get(url, { timeout: 10_000 });
+	const res = await axios.get(url, {
+		timeout: 10_000,
+	});
 	return res.data;
 }
 
@@ -59,67 +62,66 @@ async function buildStatusComponents(
 ) {
 	const isOnline = data.online ?? false;
 	const statusEmoji = isOnline ? '🟢' : '🔴';
-
 	const address = `\`${host}:${port}\``;
 	const typeLabel =
 		type === 'bedrock'
-			? await t(interaction, 'minecraft.server.status.type.bedrock')
-			: await t(interaction, 'minecraft.server.status.type.java');
-
+			? await t(interaction, 'minecraft.commands.server.status.type.bedrock')
+			: await t(interaction, 'minecraft.commands.server.status.type.java');
 	const version =
 		isOnline && data.version
 			? `\`${data.version}\``
-			: await t(interaction, 'minecraft.server.status.unknown');
+			: await t(interaction, 'minecraft.commands.server.status.unknown');
 	const onlinePlayers = isOnline ? (data.players?.online ?? 0) : 0;
 	const maxPlayers = isOnline ? (data.players?.max ?? 0) : 0;
-
 	const motd =
 		isOnline && data.motd?.clean?.join('\n')
 			? `> ${data.motd.clean.join('\n> ')}`
 			: null;
-
 	const now = Math.floor(Date.now() / 1000);
 	const lastUpdated = await t(
 		interaction,
-		'minecraft.server.status.last_updated',
+		'minecraft.commands.server.status.last_updated',
 		{
 			timestamp: `<t:${now}:R>`,
 		},
 	);
-
 	let bodyText =
-		(await t(interaction, 'minecraft.server.status.info_header_md')) +
+		(await t(interaction, 'minecraft.commands.server.status.info_header_md')) +
 		'\n' +
-		`${await t(interaction, 'minecraft.server.status.field.ip')} ${address}\n` +
-		`${await t(interaction, 'minecraft.server.status.field.type')} ${typeLabel}\n` +
-		`${await t(interaction, 'minecraft.server.status.field.version')} ${version}\n\n` +
-		(await t(interaction, 'minecraft.server.status.players_header_md')) +
+		`${await t(interaction, 'minecraft.commands.server.status.field.ip')} ${address}\n` +
+		`${await t(interaction, 'minecraft.commands.server.status.field.type')} ${typeLabel}\n` +
+		`${await t(interaction, 'minecraft.commands.server.status.field.version')} ${version}\n\n` +
+		(await t(
+			interaction,
+			'minecraft.commands.server.status.players_header_md',
+		)) +
 		'\n' +
-		`${await t(interaction, 'minecraft.server.status.field.online')} \`${onlinePlayers}/${maxPlayers}\``;
-
+		`${await t(interaction, 'minecraft.commands.server.status.field.online')} \`${onlinePlayers}/${maxPlayers}\``;
 	if (motd) {
 		bodyText +=
 			'\n\n' +
-			(await t(interaction, 'minecraft.server.status.motd_header_md', {
+			(await t(interaction, 'minecraft.commands.server.status.motd_header_md', {
 				motd,
 			}));
 	}
-
 	bodyText += `\n\n${lastUpdated}`;
 
 	// Encode address into customId: mc-r:<type>:<host>:<port>
 	const customId = `mc-r:${type}:${host}:${port}`;
-
 	const refreshButton = new ButtonBuilder()
 		.setCustomId(customId)
-		.setLabel(await t(interaction, 'minecraft.server.status.button.refresh'))
+		.setLabel(
+			await t(interaction, 'minecraft.commands.server.status.button.refresh'),
+		)
 		.setStyle(ButtonStyle.Secondary)
 		.setEmoji('🔄');
-
-	const title = await t(interaction, 'minecraft.server.status.title_md', {
-		emoji: statusEmoji,
-	});
-
+	const title = await t(
+		interaction,
+		'minecraft.commands.server.status.title_md',
+		{
+			emoji: statusEmoji,
+		},
+	);
 	const serverContainer = new ContainerBuilder()
 		.setAccentColor(accentColor)
 		.addTextDisplayComponents(new TextDisplayBuilder().setContent(title))
@@ -147,13 +149,10 @@ async function buildStatusComponents(
 				}),
 			),
 		);
-
 	return [serverContainer];
 }
-
 class StatusCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('status')
@@ -172,46 +171,50 @@ class StatusCommand extends BaseCommand {
 					.setDescription('Server type (default: Java)')
 					.setRequired(false)
 					.addChoices(
-						{ name: '☕ Java Edition', value: 'java' },
-						{ name: '🪨 Bedrock Edition', value: 'bedrock' },
+						{
+							name: '☕ Java Edition',
+							value: 'java',
+						},
+						{
+							name: '🪨 Bedrock Edition',
+							value: 'bedrock',
+						},
 					),
 			);
-
 	buildStatusComponents = buildStatusComponents;
 	fetchServerStatus = fetchServerStatus;
 	parseAddress = parseAddress;
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
-
 		const rawHost = interaction.options.getString('host').trim();
 		const type = interaction.options.getString('type') ?? 'java';
-
 		if (!HOST_REGEX.test(rawHost)) {
 			return interaction.reply({
-				content: await t(interaction, 'minecraft.server.errors.invalid_host'),
+				content: await t(
+					interaction,
+					'minecraft.shared.server.errors.invalid_host',
+				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		await interaction.deferReply();
-
 		const { host, port } = parseAddress(rawHost);
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		let data;
 		try {
 			data = await fetchServerStatus(host, port, type);
 		} catch {
 			return interaction.editReply({
-				content: await t(interaction, 'minecraft.server.errors.fetch_failed'),
+				content: await t(
+					interaction,
+					'minecraft.shared.server.errors.fetch_failed',
+				),
 			});
 		}
-
 		const components = await buildStatusComponents(
 			interaction,
 			data,
@@ -221,12 +224,10 @@ class StatusCommand extends BaseCommand {
 			t,
 			accentColor,
 		);
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = StatusCommand;

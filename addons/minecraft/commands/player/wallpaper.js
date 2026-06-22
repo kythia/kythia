@@ -64,7 +64,7 @@ class WallpaperCommand extends BaseCommand {
 		if (allPlayers.length === 0) {
 			const msg = await t(
 				interaction,
-				'minecraft.player.errors.invalid_username',
+				'minecraft.shared.player.errors.invalid_username',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -78,7 +78,7 @@ class WallpaperCommand extends BaseCommand {
 			if (!USERNAME_REGEX.test(name)) {
 				const msg = await t(
 					interaction,
-					'minecraft.player.errors.invalid_username',
+					'minecraft.shared.player.errors.invalid_username',
 				);
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Red',
@@ -106,7 +106,7 @@ class WallpaperCommand extends BaseCommand {
 			if (!contentType.startsWith('image/')) {
 				const msg = await t(
 					interaction,
-					'minecraft.player.wallpaper.errors.api_error',
+					'minecraft.commands.player.wallpaper.errors.api_error',
 					{
 						players: playerList.join(', '),
 					},
@@ -122,7 +122,7 @@ class WallpaperCommand extends BaseCommand {
 		} catch {
 			const msg = await t(
 				interaction,
-				'minecraft.player.wallpaper.errors.api_unreachable',
+				'minecraft.commands.player.wallpaper.errors.api_unreachable',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -146,7 +146,7 @@ class WallpaperCommand extends BaseCommand {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'minecraft.player.wallpaper.title', {
+					await t(interaction, 'minecraft.commands.player.wallpaper.title', {
 						wallpaper: wallpaperLabel,
 						players: playerDisplay,
 					}),

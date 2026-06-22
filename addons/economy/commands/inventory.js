@@ -24,7 +24,10 @@ class InventoryCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -37,7 +40,10 @@ class InventoryCommand extends BaseCommand {
 			userId: user.userId,
 		});
 		if (inventoryItems.length === 0) {
-			const msg = await t(interaction, 'economy.inventory.inventory.empty');
+			const msg = await t(
+				interaction,
+				'economy.commands.inventory.inventory.empty',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -55,7 +61,7 @@ class InventoryCommand extends BaseCommand {
 		for (const [itemName, count] of itemEntries) {
 			const name = await t(
 				interaction,
-				'economy.inventory.inventory.item.field.name',
+				'economy.commands.inventory.inventory.item.field.name',
 				{
 					itemName,
 					count,
@@ -63,14 +69,14 @@ class InventoryCommand extends BaseCommand {
 			);
 			const value = await t(
 				interaction,
-				'economy.inventory.inventory.item.field.value',
+				'economy.commands.inventory.inventory.item.field.value',
 				{
 					count,
 				},
 			);
 			itemList.push(`**${name}:** ${value}`);
 		}
-		const msg = `${await t(interaction, 'economy.inventory.inventory.title')}\n\n${itemList.join('\n')}`;
+		const msg = `${await t(interaction, 'economy.commands.inventory.inventory.title')}\n\n${itemList.join('\n')}`;
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,
 		});

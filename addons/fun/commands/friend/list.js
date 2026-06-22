@@ -38,13 +38,13 @@ class ListCommand extends BaseCommand {
 		});
 		let formattedList = '';
 		if (!existingFriendships || existingFriendships.length === 0) {
-			formattedList = await t(interaction, 'fun.friend.list.empty');
+			formattedList = await t(interaction, 'fun.commands.friend.list.empty');
 		} else {
 			const arr = [];
 			for (const f of existingFriendships) {
 				const targetId = f.user1Id === userId ? f.user2Id : f.user1Id;
 				arr.push(
-					await t(interaction, 'fun.friend.list.format', {
+					await t(interaction, 'fun.commands.friend.list.format', {
 						user: `<@${targetId}>`,
 					}),
 				);
@@ -60,7 +60,7 @@ class ListCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'fun.friend.list.title'),
+					await t(interaction, 'fun.commands.friend.list.title'),
 				),
 			)
 			.addSeparatorComponents(new SeparatorBuilder().setDivider(true))

@@ -27,7 +27,10 @@ class RemoveCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!birthDay) {
-			const msg = await t(interaction, 'birthday.remove.error.not_found');
+			const msg = await t(
+				interaction,
+				'birthday.commands.remove.error.not_found',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -37,7 +40,7 @@ class RemoveCommand extends BaseCommand {
 			});
 		}
 		await birthDay.destroy();
-		const msg = await t(interaction, 'birthday.remove.success');
+		const msg = await t(interaction, 'birthday.commands.remove.success');
 		const components = await simpleContainer(interaction, msg);
 		await interaction.editReply({
 			components,

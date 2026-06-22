@@ -6,36 +6,31 @@
  * @version 26.0.0-rc.1
  */
 const { MessageFlags, ContainerBuilder } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('list')
 			.setDescription('List all reaction roles in this server.');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, logger } = container;
 		const { ReactionRole } = models;
 		const { chunkTextDisplay } = helpers.discord;
 		const { convertColor } = helpers.color;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		try {
 			const roles = await ReactionRole.getAllCache({
 				where: {
 					guildId: interaction.guildId,
 				},
 			});
-
 			if (!roles || roles.length === 0) {
 				return interaction.editReply({
-					content: await t(interaction, 'reaction-role.list.empty'),
+					content: await t(interaction, 'reaction-role.commands.list.empty'),
 				});
 			}
 
@@ -55,7 +50,6 @@ class ListCommand extends BaseCommand {
 					roleId: rr.roleId,
 				});
 			}
-
 			let description = '';
 			for (const group of Object.values(grouped)) {
 				const jumpLink = `https://discord.com/channels/${interaction.guildId}/${group.channelId}/${group.messageId}`;
@@ -65,21 +59,24 @@ class ListCommand extends BaseCommand {
 				}
 				description += '\n';
 			}
-
-			const title = await t(interaction, 'reaction-role.list.title');
+			const title = await t(interaction, 'reaction-role.commands.list.title');
 			const fullContent = await t(
 				interaction,
-				'reaction-role.list.content_md',
-				{ title, description },
+				'reaction-role.commands.list.content_md',
+				{
+					title,
+					description,
+				},
 			);
-
 			const chunks = chunkTextDisplay(fullContent);
 			const listContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor('Blue', { from: 'discord', to: 'decimal' }),
+					convertColor('Blue', {
+						from: 'discord',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(...chunks);
-
 			return interaction.editReply({
 				components: [listContainer],
 				flags: MessageFlags.IsComponentsV2,
@@ -94,5 +91,4 @@ class ListCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = ListCommand;

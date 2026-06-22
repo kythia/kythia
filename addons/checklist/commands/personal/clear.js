@@ -8,25 +8,19 @@
 
 const { getScopeMeta, getChecklistAndItems } = require('../../helpers');
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ClearCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand.setName('clear').setDescription('Clear all personal checklist');
-
 	async execute(interaction) {
 		const container = this.container;
 		// Dependency
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		const guildId = interaction.guild?.id;
 		const userId = interaction.user.id; // Personal scope
 		const group = 'personal';
-
 		const { checklist, items } = await getChecklistAndItems({
 			container,
 			guildId,
@@ -37,15 +31,23 @@ class ClearCommand extends BaseCommand {
 			userId,
 			group,
 		);
-
 		if (!checklist || !Array.isArray(items) || items.length === 0) {
-			await interaction.deferReply({ ephemeral });
+			await interaction.deferReply({
+				ephemeral,
+			});
 			const msg =
-				(await t(interaction, 'checklist.server.clear.already.empty.title', {
-					scope: await t(interaction, scopeKey),
-				})) +
+				(await t(
+					interaction,
+					'checklist.helpers.index.server.clear.already.empty.title',
+					{
+						scope: await t(interaction, scopeKey),
+					},
+				)) +
 				'\n' +
-				(await t(interaction, 'checklist.server.clear.clear.empty.desc'));
+				(await t(
+					interaction,
+					'checklist.helpers.index.server.clear.clear.empty.desc',
+				));
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -54,12 +56,18 @@ class ClearCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		try {
-			await checklist.update({ items: '[]' });
+			await checklist.update({
+				items: '[]',
+			});
 		} catch (_e) {
-			await interaction.deferReply({ ephemeral });
-			const msg = await t(interaction, 'checklist.error.clear');
+			await interaction.deferReply({
+				ephemeral,
+			});
+			const msg = await t(
+				interaction,
+				'checklist.commands.personal.clear.error',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -68,14 +76,22 @@ class ClearCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
-		await interaction.deferReply({ ephemeral });
+		await interaction.deferReply({
+			ephemeral,
+		});
 		const msg =
-			(await t(interaction, 'checklist.server.clear.clear.success.title', {
-				scope: await t(interaction, scopeKey),
-			})) +
+			(await t(
+				interaction,
+				'checklist.helpers.index.server.clear.clear.success.title',
+				{
+					scope: await t(interaction, scopeKey),
+				},
+			)) +
 			'\n' +
-			(await t(interaction, 'checklist.server.clear.clear.success.desc'));
+			(await t(
+				interaction,
+				'checklist.helpers.index.server.clear.clear.success.desc',
+			));
 		const components = await simpleContainer(interaction, msg, {
 			color: colorName,
 		});
@@ -85,5 +101,4 @@ class ClearCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ClearCommand;

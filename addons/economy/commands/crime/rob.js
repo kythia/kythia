@@ -31,7 +31,10 @@ class RobCommand extends BaseCommand {
 		await interaction.deferReply();
 		const targetUser = interaction.options.getUser('target');
 		if (targetUser.id === interaction.user.id) {
-			const msg = await t(interaction, 'economy.rob.rob.cannot.rob.self');
+			const msg = await t(
+				interaction,
+				'economy.commands.crime.rob.rob.cannot.rob.self',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -44,7 +47,10 @@ class RobCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -65,7 +71,7 @@ class RobCommand extends BaseCommand {
 		if (!target) {
 			const msg = await t(
 				interaction,
-				'economy.rob.rob.target.no.account.desc',
+				'economy.shared.rob.rob.target.no.account.desc',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
@@ -81,9 +87,13 @@ class RobCommand extends BaseCommand {
 			interaction,
 		);
 		if (cooldown.remaining) {
-			const msg = await t(interaction, 'economy.rob.rob.cooldown', {
-				time: cooldown.time,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.crime.rob.rob.cooldown',
+				{
+					time: cooldown.time,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -141,7 +151,7 @@ class RobCommand extends BaseCommand {
 				} else {
 					const msg = await t(
 						interaction,
-						'economy.crime.rob.event.lockpick_fail.desc',
+						'economy.commands.crime.rob.event.lockpick_fail.desc',
 						{
 							target: targetUser.username,
 						},
@@ -158,7 +168,7 @@ class RobCommand extends BaseCommand {
 				await padlock.destroy();
 				const msg = await t(
 					interaction,
-					'economy.crime.rob.event.blocked.desc',
+					'economy.commands.crime.rob.event.blocked.desc',
 					{
 						target: targetUser.username,
 					},
@@ -197,7 +207,7 @@ class RobCommand extends BaseCommand {
 			if (target.kythiaCoin < robAmount) {
 				const msg = await t(
 					interaction,
-					'economy.rob.rob.target.not.enough.money',
+					'economy.commands.crime.rob.rob.target.not.enough.money',
 				);
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Red',
@@ -241,14 +251,14 @@ class RobCommand extends BaseCommand {
 			await user.save();
 			await target.save();
 			const msgText = fakeWallet
-				? await t(interaction, 'economy.crime.rob.fake_wallet', {
+				? await t(interaction, 'economy.commands.crime.rob.fake_wallet', {
 						target: targetUser.username,
 						robAmount: finalRobAmount.toLocaleString(),
 						bounty: bountyIncrease.toLocaleString(),
 						stealthMsg,
 						lockpickMsg,
 					})
-				: (await t(interaction, 'economy.rob.rob.success.text', {
+				: (await t(interaction, 'economy.commands.crime.rob.rob.success.text', {
 						amount: finalRobAmount,
 						target: targetUser.username,
 					})) +
@@ -261,10 +271,14 @@ class RobCommand extends BaseCommand {
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
-			const dmMsg = await t(interaction, 'economy.rob.rob.success.dm', {
-				robber: cctv ? interaction.user.username : 'Someone (Anonymous)',
-				amount: finalRobAmount,
-			});
+			const dmMsg = await t(
+				interaction,
+				'economy.commands.crime.rob.rob.success.dm',
+				{
+					robber: cctv ? interaction.user.username : 'Someone (Anonymous)',
+					amount: finalRobAmount,
+				},
+			);
 			const dmComponents = await simpleContainer(interaction, dmMsg, {
 				color: 'Red',
 			});
@@ -278,7 +292,7 @@ class RobCommand extends BaseCommand {
 			if (user.kythiaCoin < basePenalty && !poison) {
 				const msg = await t(
 					interaction,
-					'economy.rob.rob.user.not.enough.money.fail',
+					'economy.commands.crime.rob.rob.user.not.enough.money.fail',
 				);
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Red',
@@ -317,18 +331,31 @@ class RobCommand extends BaseCommand {
 			target.changed('kythiaCoin', true);
 			await user.save();
 			await target.save();
-			const msg = `${await t(interaction, 'economy.rob.rob.fail.text', {
-				target: targetUser.username,
-				penalty: poison
-					? await t(interaction, 'economy.rob.rob.fail.penalty.all')
-					: `${penalty} kythia coin`,
-				guard: guard
-					? await t(interaction, 'economy.rob.rob.fail.guard.text')
-					: '',
-				poison: poison
-					? await t(interaction, 'economy.rob.rob.fail.poison.text')
-					: '',
-			})}${smokeMsg}${lawyerMsg}${lockpickMsg}`;
+			const msg = `${await t(
+				interaction,
+				'economy.commands.crime.rob.rob.fail.text',
+				{
+					target: targetUser.username,
+					penalty: poison
+						? await t(
+								interaction,
+								'economy.commands.crime.rob.rob.fail.penalty.all',
+							)
+						: `${penalty} kythia coin`,
+					guard: guard
+						? await t(
+								interaction,
+								'economy.commands.crime.rob.rob.fail.guard.text',
+							)
+						: '',
+					poison: poison
+						? await t(
+								interaction,
+								'economy.commands.crime.rob.rob.fail.poison.text',
+							)
+						: '',
+				},
+			)}${smokeMsg}${lawyerMsg}${lockpickMsg}`;
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -336,17 +363,27 @@ class RobCommand extends BaseCommand {
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
-			const dmMsg = await t(interaction, 'economy.rob.rob.fail.dm', {
-				robber: cctv ? interaction.user.username : 'Someone (Anonymous)',
-				amount: robAmount,
-				penalty: penalty,
-				guard: guard
-					? await t(interaction, 'economy.rob.rob.fail.guard.dm')
-					: '',
-				poison: poison
-					? await t(interaction, 'economy.rob.rob.fail.poison.dm')
-					: '',
-			});
+			const dmMsg = await t(
+				interaction,
+				'economy.commands.crime.rob.rob.fail.dm',
+				{
+					robber: cctv ? interaction.user.username : 'Someone (Anonymous)',
+					amount: robAmount,
+					penalty: penalty,
+					guard: guard
+						? await t(
+								interaction,
+								'economy.commands.crime.rob.rob.fail.guard.dm',
+							)
+						: '',
+					poison: poison
+						? await t(
+								interaction,
+								'economy.commands.crime.rob.rob.fail.poison.dm',
+							)
+						: '',
+				},
+			);
 			const dmComponents = await simpleContainer(interaction, dmMsg, {
 				color: kythiaConfig.bot.color,
 			});

@@ -34,7 +34,7 @@ class BackgroundCommand extends BaseCommand {
 		if (!url.startsWith('http')) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'booster.booster.background.invalid.url'),
+				await t(interaction, 'booster.commands.background.booster.invalid.url'),
 				{
 					color: 'Red',
 				},
@@ -51,7 +51,7 @@ class BackgroundCommand extends BaseCommand {
 		await boosterSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'booster.booster.background.set', {
+			await t(interaction, 'booster.commands.background.booster.set', {
 				url,
 			}),
 			{

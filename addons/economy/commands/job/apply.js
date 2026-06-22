@@ -28,7 +28,10 @@ class ApplyCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -75,7 +78,10 @@ class ApplyCommand extends BaseCommand {
 				.addOptions(options),
 		);
 		const applyContainer = await createContainer(interaction, {
-			description: await t(interaction, 'economy.job.apply.prompt.desc'),
+			description: await t(
+				interaction,
+				'economy.commands.job.apply.prompt.desc',
+			),
 			components: [row],
 		});
 		const message = await interaction.editReply({
@@ -93,7 +99,7 @@ class ApplyCommand extends BaseCommand {
 				user.profession = selectedJobId;
 				user.changed('profession', true);
 				await user.save();
-				const msg = await t(i, 'economy.job.apply.success.desc');
+				const msg = await t(i, 'economy.commands.job.apply.success.desc');
 				const components = await simpleContainer(i, msg, {
 					color: 'Green',
 				});
@@ -107,7 +113,7 @@ class ApplyCommand extends BaseCommand {
 			if (collected.size === 0) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.job.apply.timeout.desc'),
+					await t(interaction, 'economy.commands.job.apply.timeout.desc'),
 					{
 						color: kythiaConfig.bot.color,
 					},

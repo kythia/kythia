@@ -8,26 +8,25 @@
 
 const { createTicketChannel } = require('../helpers');
 const { MessageFlags } = require('discord.js');
-
 const { BaseModal } = require('kythia-core');
-
 class TktOpenReasonModal extends BaseModal {
 	modal = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, t, helpers, logger } = container;
 		const { TicketConfig } = models;
 		const { simpleContainer } = helpers.discord;
-
 		try {
 			const configId = interaction.customId.split(':')[1];
 			const reason = interaction.fields.getTextInputValue('reason');
-
-			const ticketConfig = await TicketConfig.getCache({ id: configId });
+			const ticketConfig = await TicketConfig.getCache({
+				id: configId,
+			});
 			if (!ticketConfig) {
-				const desc = await t(interaction, 'ticket.errors.invalid_config');
+				const desc = await t(
+					interaction,
+					'ticket.helpers.index.errors.invalid_config',
+				);
 				return interaction.reply({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -35,7 +34,6 @@ class TktOpenReasonModal extends BaseModal {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			await createTicketChannel(interaction, ticketConfig, container, reason);
 		} catch (error) {
 			logger.error(
@@ -44,7 +42,10 @@ class TktOpenReasonModal extends BaseModal {
 					label: 'core:modals:tkt-open-reason',
 				},
 			);
-			const descError = await t(interaction, 'ticket.errors.create_failed');
+			const descError = await t(
+				interaction,
+				'ticket.helpers.index.errors.create_failed',
+			);
 			if (interaction.replied || interaction.deferred) {
 				await interaction.followUp({
 					components: await simpleContainer(interaction, descError, {
@@ -63,5 +64,4 @@ class TktOpenReasonModal extends BaseModal {
 		}
 	}
 }
-
 exports.default = TktOpenReasonModal;

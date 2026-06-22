@@ -28,7 +28,10 @@ class TktPanelCreateModal extends BaseModal {
 		try {
 			const originalMessageId = interaction.customId.split(':')[1];
 			if (!originalMessageId) {
-				const desc = await t(interaction, 'ticket.errors.no_message_id');
+				const desc = await t(
+					interaction,
+					'ticket.helpers.index.errors.no_message_id',
+				);
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -43,7 +46,7 @@ class TktPanelCreateModal extends BaseModal {
 			if (!channelId) {
 				const desc = await t(
 					interaction,
-					'ticket.errors.panel_channel_required',
+					'ticket.modals.tkt-panel-create.errors.panel_channel_required',
 				);
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
@@ -59,7 +62,7 @@ class TktPanelCreateModal extends BaseModal {
 			if (!channel || channel.type !== ChannelType.GuildText) {
 				const desc = await t(
 					interaction,
-					'ticket.errors.panel_channel_invalid',
+					'ticket.modals.tkt-panel-create.errors.panel_channel_invalid',
 				);
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
@@ -79,7 +82,9 @@ class TktPanelCreateModal extends BaseModal {
 						await interaction.client.container.t(
 							interaction,
 							'ticket.helpers.panel_title_md',
-							{ title },
+							{
+								title,
+							},
 						),
 					),
 				)
@@ -115,7 +120,7 @@ class TktPanelCreateModal extends BaseModal {
 			);
 			panelContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'ticket.panel.no_types'),
+					await t(interaction, 'ticket.helpers.index.panel.no_types'),
 				),
 			);
 			const panelMessage = await channel.send({
@@ -130,9 +135,13 @@ class TktPanelCreateModal extends BaseModal {
 				description: description || null,
 				image: image || null,
 			});
-			const descSuccess = await t(interaction, 'ticket.panel.create_success', {
-				channel: channel.toString(),
-			});
+			const descSuccess = await t(
+				interaction,
+				'ticket.modals.tkt-panel-create.panel.create_success',
+				{
+					channel: channel.toString(),
+				},
+			);
 			const successContainer = await simpleContainer(
 				interaction,
 				`${descSuccess}`,
@@ -150,7 +159,7 @@ class TktPanelCreateModal extends BaseModal {
 					label: 'core:modals:tkt-panel-create',
 				},
 			);
-			const desc = await t(interaction, 'ticket.errors.generic');
+			const desc = await t(interaction, 'ticket.helpers.index.errors.generic');
 			await interaction.followUp({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Red',

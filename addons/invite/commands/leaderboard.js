@@ -72,7 +72,10 @@ class LeaderboardCommand extends BaseCommand {
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
-					content: await t(i, 'economy.leaderboard.not.your.interaction'),
+					content: await t(
+						i,
+						'economy.commands.leaderboard.not.your.interaction',
+					),
 					flags: MessageFlags.Ephemeral,
 					allowedMentions: {
 						parse: [],

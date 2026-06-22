@@ -33,7 +33,7 @@ class WordleCommand extends BaseCommand {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'fun.wordle.already.playing'),
+					await t(interaction, 'fun.commands.wordle.already.playing'),
 					{
 						color: '#e67e22',
 					},
@@ -52,7 +52,7 @@ class WordleCommand extends BaseCommand {
 		const row = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('wordle_guess_button')
-				.setLabel(await t(interaction, 'fun.wordle.button.guess'))
+				.setLabel(await t(interaction, 'fun.commands.wordle.button.guess'))
 				.setStyle(ButtonStyle.Primary),
 		);
 		const gameContainer = await wordleHelpers.buildGameEmbed(
@@ -75,7 +75,7 @@ class WordleCommand extends BaseCommand {
 				return i.reply({
 					components: await simpleContainer(
 						i,
-						await t(i, 'fun.wordle.not.your.game'),
+						await t(i, 'fun.commands.wordle.not.your.game'),
 						{
 							color: '#e67e22',
 						},
@@ -85,10 +85,10 @@ class WordleCommand extends BaseCommand {
 			}
 			const modal = new ModalBuilder()
 				.setCustomId(`wordle_modal_${userId}`)
-				.setTitle(await t(i, 'fun.wordle.modal.title'));
+				.setTitle(await t(i, 'fun.commands.wordle.modal.title'));
 			const wordInput = new TextInputBuilder()
 				.setCustomId('wordle_input')
-				.setLabel(await t(i, 'fun.wordle.modal.label'))
+				.setLabel(await t(i, 'fun.commands.wordle.modal.label'))
 				.setStyle(TextInputStyle.Short)
 				.setMinLength(5)
 				.setMaxLength(5)
@@ -107,7 +107,7 @@ class WordleCommand extends BaseCommand {
 					return modalSubmit.reply({
 						components: await simpleContainer(
 							modalSubmit,
-							await t(modalSubmit, 'fun.wordle.invalid.word', {
+							await t(modalSubmit, 'fun.commands.wordle.invalid.word', {
 								word: guess,
 							}),
 							{
@@ -122,7 +122,7 @@ class WordleCommand extends BaseCommand {
 					return modalSubmit.reply({
 						components: await simpleContainer(
 							modalSubmit,
-							await t(modalSubmit, 'fun.wordle.already.guessed', {
+							await t(modalSubmit, 'fun.commands.wordle.already.guessed', {
 								word: guess,
 							}),
 							{
@@ -159,7 +159,7 @@ class WordleCommand extends BaseCommand {
 			const finalRow = new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
 					.setCustomId('wordle_guess_button')
-					.setLabel(await t(interaction, 'fun.wordle.button.end'))
+					.setLabel(await t(interaction, 'fun.commands.wordle.button.end'))
 					.setStyle(ButtonStyle.Secondary)
 					.setDisabled(true),
 			);

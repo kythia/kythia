@@ -365,7 +365,6 @@ async function getAllMembersSafe(guild) {
 	} catch (_e) {}
 	return guild.members.cache;
 }
-
 async function getAllChannelsSafe(guild) {
 	if (!guild) return null;
 	if (guild.channels.cache.size > 0) return guild.channels.cache;
@@ -374,7 +373,6 @@ async function getAllChannelsSafe(guild) {
 	} catch (_e) {}
 	return guild.channels.cache;
 }
-
 async function getAllRolesSafe(guild) {
 	if (!guild) return null;
 	if (guild.roles.cache.size > 0) return guild.roles.cache;
@@ -383,7 +381,6 @@ async function getAllRolesSafe(guild) {
 	} catch (_e) {}
 	return guild.roles.cache;
 }
-
 async function getAllEmojisSafe(guild) {
 	if (!guild) return null;
 	if (guild.emojis.cache.size > 0) return guild.emojis.cache;
@@ -392,7 +389,6 @@ async function getAllEmojisSafe(guild) {
 	} catch (_e) {}
 	return guild.emojis.cache;
 }
-
 async function getAllStickersSafe(guild) {
 	if (!guild) return null;
 	if (guild.stickers.cache.size > 0) return guild.stickers.cache;
@@ -401,7 +397,6 @@ async function getAllStickersSafe(guild) {
 	} catch (_e) {}
 	return guild.stickers.cache;
 }
-
 async function getAllInvitesSafe(guild) {
 	if (!guild) return null;
 	try {
@@ -409,7 +404,6 @@ async function getAllInvitesSafe(guild) {
 	} catch (_e) {}
 	return null;
 }
-
 async function getAllBansSafe(guild) {
 	if (!guild) return null;
 	try {
@@ -417,7 +411,6 @@ async function getAllBansSafe(guild) {
 	} catch (_e) {}
 	return null;
 }
-
 async function fetchMessagesQuerySafe(channel, query) {
 	if (!channel) return null;
 	try {
@@ -426,7 +419,6 @@ async function fetchMessagesQuerySafe(channel, query) {
 		return null;
 	}
 }
-
 async function resolvePartialSafe(discordObject) {
 	if (!discordObject) return null;
 	if (discordObject.partial) {
@@ -436,7 +428,6 @@ async function resolvePartialSafe(discordObject) {
 	}
 	return discordObject;
 }
-
 async function refreshObjectSafe(discordObject, force = false) {
 	if (!discordObject) return null;
 	try {
@@ -444,7 +435,6 @@ async function refreshObjectSafe(discordObject, force = false) {
 	} catch (_e) {}
 	return discordObject;
 }
-
 async function getRoleSafe(guild, roleId) {
 	if (!guild || !roleId) return null;
 	let role = guild.roles.cache.get(roleId);
@@ -755,43 +745,43 @@ async function getLocalizedTime(container, locale) {
 			{
 				locale,
 			},
-			'core.helpers.stats.days.sunday',
+			'core.helpers.discord.stats.days.sunday',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.days.monday',
+			'core.helpers.discord.stats.days.monday',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.days.tuesday',
+			'core.helpers.discord.stats.days.tuesday',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.days.wednesday',
+			'core.helpers.discord.stats.days.wednesday',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.days.thursday',
+			'core.helpers.discord.stats.days.thursday',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.days.friday',
+			'core.helpers.discord.stats.days.friday',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.days.saturday',
+			'core.helpers.discord.stats.days.saturday',
 		),
 	]);
 	const months = await Promise.all([
@@ -799,73 +789,73 @@ async function getLocalizedTime(container, locale) {
 			{
 				locale,
 			},
-			'core.helpers.stats.months.january',
+			'core.helpers.discord.stats.months.january',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.months.february',
+			'core.helpers.discord.stats.months.february',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.months.march',
+			'core.helpers.discord.stats.months.march',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.months.april',
+			'core.helpers.discord.stats.months.april',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.months.may',
+			'core.helpers.discord.stats.months.may',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.months.june',
+			'core.helpers.discord.stats.months.june',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.months.july',
+			'core.helpers.discord.stats.months.july',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.months.august',
+			'core.helpers.discord.stats.months.august',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.months.september',
+			'core.helpers.discord.stats.months.september',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.months.october',
+			'core.helpers.discord.stats.months.october',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.months.november',
+			'core.helpers.discord.stats.months.november',
 		),
 		t(
 			{
 				locale,
 			},
-			'core.helpers.stats.months.december',
+			'core.helpers.discord.stats.months.december',
 		),
 	]);
 	timeLocaleCache[locale] = {
@@ -900,20 +890,20 @@ async function resolvePlaceholders(container, str, data, locale) {
 						{
 							locale,
 						},
-						'core.helpers.stats.years',
+						'core.helpers.discord.stats.years',
 					)
 				: '';
 		const monthsLabel = await t(
 			{
 				locale,
 			},
-			'core.helpers.stats.months.months',
+			'core.helpers.discord.stats.months.months',
 		);
 		const daysLabel = await t(
 			{
 				locale,
 			},
-			'core.helpers.stats.days.days',
+			'core.helpers.discord.stats.days.days',
 		);
 		guildAge =
 			years > 0
@@ -925,26 +915,26 @@ async function resolvePlaceholders(container, str, data, locale) {
 				{
 					locale,
 				},
-				'core.helpers.stats.verified.yes',
+				'core.helpers.discord.stats.verified.yes',
 			)
 		: await t(
 				{
 					locale,
 				},
-				'core.helpers.stats.verified.no',
+				'core.helpers.discord.stats.verified.no',
 			);
 	const partneredStr = data.partnered
 		? await t(
 				{
 					locale,
 				},
-				'core.helpers.stats.partnered.yes',
+				'core.helpers.discord.stats.partnered.yes',
 			)
 		: await t(
 				{
 					locale,
 				},
-				'core.helpers.stats.partnered.no',
+				'core.helpers.discord.stats.partnered.no',
 			);
 	const formatDate = (d) => {
 		if (!(d instanceof Date) || Number.isNaN(d)) return 'Unknown';

@@ -21,7 +21,7 @@ class TvBlockMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.no_channel_id'),
+					await t(interaction, 'tempvoice.shared.common.no_channel_id'),
 					{
 						color: 'Red',
 					},
@@ -35,7 +35,7 @@ class TvBlockMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.not_owner'),
+					await t(interaction, 'tempvoice.shared.common.not_owner'),
 					{
 						color: 'Red',
 					},
@@ -57,7 +57,7 @@ class TvBlockMenuSelectMenu extends BaseSelectMenu {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -69,7 +69,7 @@ class TvBlockMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -94,9 +94,13 @@ class TvBlockMenuSelectMenu extends BaseSelectMenu {
 			await interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.block.success', {
-						users: blockedNames.join(', '),
-					}),
+					await t(
+						interaction,
+						'tempvoice.select_menus.tv-block-menu.block.success',
+						{
+							users: blockedNames.join(', '),
+						},
+					),
 					{
 						color: 'Green',
 					},
@@ -106,7 +110,7 @@ class TvBlockMenuSelectMenu extends BaseSelectMenu {
 			await interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.fail'),
+					await t(interaction, 'tempvoice.shared.common.fail'),
 					{
 						color: 'Red',
 					},

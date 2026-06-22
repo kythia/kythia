@@ -1,85 +1,15 @@
 {
 	"adventure": {
-		"battle": {
-			"continue": {
-				"button": "Continue Adventure"
-			},
-			"revive": "## You Revived!\nYou were revived by Revival and your HP is restored to **{hp}**.\nYou're ready to fight again!",
-			"lose": "## You Lost!\nYou were defeated by the monster! But you rise again with **{hp} HP**.",
-			"levelup": "## Level Up!\nYou reached level **{level}**!\nYour stats increased! Your HP is restored to **{hp} / {maxHp}**.",
-			"win": "## You Won!\nYou defeated **{monster}**!\nYou earned **{gold} gold** and **{xp} XP**!",
-			"round": "## Adventure Battle!\n**{user}** attacks **{monster}**, dealing **{playerDamage}** damage!\n**{monster}** strikes back, dealing **{monsterDamage}** damage!",
-			"hp": {
-				"you": "Your HP",
-				"monster": "{monster}'s HP"
-			}
-		},
 		"inventory": {
-			"title": "## {username}'s Inventory",
-			"empty": "## Your inventory is empty!\nYou can collect items here!",
-			"use": {
-				"title": "## Use Item",
-				"desc": "Select an item to use from your inventory.",
-				"item": {
-					"button": "Use Item"
-				}
-			},
-			"select": {
-				"item": {
-					"placeholder": "Select an item to use..."
-				}
-			},
-			"no": {
-				"usable": {
-					"items": "You don't have any usable items in your inventory."
-				}
-			},
 			"item": {
 				"not": {}
 			},
-			"cannot": {
-				"use": {
-					"item": "You can't use this item right now."
-				}
-			},
-			"selection": {},
-			"footer": "Page {page} / {totalPages}, Total items: {totalItems}"
-		},
-		"recall": {
-			"recalled": "## Recall\nYou are recall and back to the city!\nYour HP is full!"
+			"selection": {}
 		},
 		"shop": {
 			"gold": {},
-			"item": {
-				"not": {
-					"found": "The selected item could not be found."
-				}
-			},
-			"select": {
-				"option": {
-					"desc": "Price: {price} gold"
-				},
-				"category": "Select a category...",
-				"item": {
-					"placeholder": "Select an item to purchase..."
-				}
-			},
-			"not": {
-				"enough": {
-					"gold": "## Not Enough Gold!\nYou need **{price} gold** to buy {item}, but you only have **{gold} gold**."
-				}
-			},
 			"confirm": {},
 			"cancel": {},
-			"purchase": {
-				"success": "## Purchase Successful!\nYou have successfully bought **{item}** for **{price} gold**."
-			},
-			"desc": "## {bot}'s Adventure Shop - {category}\nWelcome to the adventure shop! Here you can buy items to aid you on your journey.\n> Your gold: **{gold}**",
-			"footer": "Page {page} of {totalPages}",
-			"empty": {
-				"title": "## No Items Available",
-				"desc": "There are no items available in this category at the moment."
-			},
 			"category": {
 				"equipment": "Equipment",
 				"consumables": "Consumables",
@@ -361,53 +291,11 @@
 			}
 		},
 		"start": {
-			"already": {
-				"have": "You already have an adventure character!\nUse `/adventure profile` to view your status."
-			},
-			"success": {
-				"title": "## Character Created Successfully!",
-				"desc": "Your character has been created! You are ready to start your adventure! Use `/adventure battle` to start fighting or `/adventure stats` to view your status.",
-				"title_md": "## {title}\n{desc}"
-			},
-			"choose": {
-				"char": {
-					"stats": "**Character Bonuses**\n• Strength: {str}\n• Defense: {def}\n• Max HP%: {hp}\n• XP%: {xp}\n• Gold%: {gold}"
-				}
-			},
 			"select": {},
-			"confirm": {},
-			"selected": {
-				"char": "Chosen Character"
-			},
-			"invalid_char": "Invalid character selection. Please try again."
-		},
-		"stats": {
-			"embed": {
-				"desc": "## {username}'s Character Stats"
-			},
-			"level": "Level",
-			"hp": "HP",
-			"gold": "Gold",
-			"strength": "Strength",
-			"defense": "Defense",
-			"xp": {
-				"progress": {
-					"text": "XP Progress",
-					"value": "{xp} / {xpForNextLevel}\n{progressBar}"
-				}
-			},
-			"character": "Character"
-		},
-		"no": {
-			"character": "You don't have a character yet! Use `/adventure start` first!"
+			"confirm": {}
 		},
 		"items": {
 			"no_desc": "No description."
-		},
-		"item": {
-			"not": {
-				"found": "Item definition not found."
-			}
 		},
 		"characters": {
 			"shadow_blade": {
@@ -458,20 +346,158 @@
 			"shadow_reaper": "Shadow Reaper",
 			"titan": "Titan"
 		},
-		"use": {
-			"hp": {
-				"full": "Your HP is already full!"
+		"shared": {
+			"no": {
+				"character": "You don't have a character yet! Use `/adventure start` first!"
 			},
-			"revive": {
-				"failed": {
-					"alive": "You are not dead!"
+			"battle": {
+				"continue": {
+					"button": "Continue Adventure"
 				}
 			},
-			"success": {
-				"heal": "Used {item} and recovered {amount} HP!",
-				"revive": "Used {item}! You have been revived!"
+			"inventory": {
+				"no": {
+					"usable": {
+						"items": "You don't have any usable items in your inventory."
+					}
+				},
+				"select": {
+					"item": {
+						"placeholder": "Select an item to use..."
+					}
+				},
+				"use": {
+					"title": "## Use Item",
+					"desc": "Select an item to use from your inventory."
+				},
+				"cannot": {
+					"use": {
+						"item": "You can't use this item right now."
+					}
+				}
 			},
-			"cancelled": "Cancelled"
+			"use": {
+				"hp": {
+					"full": "Your HP is already full!"
+				},
+				"success": {
+					"heal": "Used {item} and recovered {amount} HP!",
+					"revive": "Used {item}! You have been revived!"
+				},
+				"revive": {
+					"failed": {
+						"alive": "You are not dead!"
+					}
+				},
+				"cancelled": "Cancelled"
+			},
+			"item": {
+				"not": {
+					"found": "Item definition not found."
+				}
+			}
+		},
+		"commands": {
+			"battle": {
+				"inventory": {
+					"use": {
+						"item": {
+							"button": "Use Item"
+						}
+					}
+				},
+				"revive": "## You Revived!\nYou were revived by Revival and your HP is restored to **{hp}**.\nYou're ready to fight again!",
+				"lose": "## You Lost!\nYou were defeated by the monster! But you rise again with **{hp} HP**.",
+				"levelup": "## Level Up!\nYou reached level **{level}**!\nYour stats increased! Your HP is restored to **{hp} / {maxHp}**.",
+				"win": "## You Won!\nYou defeated **{monster}**!\nYou earned **{gold} gold** and **{xp} XP**!",
+				"round": "## Adventure Battle!\n**{user}** attacks **{monster}**, dealing **{playerDamage}** damage!\n**{monster}** strikes back, dealing **{monsterDamage}** damage!",
+				"hp": {
+					"you": "Your HP",
+					"monster": "{monster}'s HP"
+				}
+			},
+			"inventory": {
+				"empty": "## Your inventory is empty!\nYou can collect items here!",
+				"title": "## {username}'s Inventory",
+				"footer": "Page {page} / {totalPages}, Total items: {totalItems}"
+			},
+			"profile": {
+				"stats": {
+					"embed": {
+						"desc": "## {username}'s Character Stats"
+					},
+					"level": "Level",
+					"hp": "HP",
+					"gold": "Gold",
+					"strength": "Strength",
+					"defense": "Defense",
+					"xp": {
+						"progress": {
+							"text": "XP Progress",
+							"value": "{xp} / {xpForNextLevel}\n{progressBar}"
+						}
+					},
+					"character": "Character"
+				}
+			},
+			"recall": {
+				"recalled": "## Recall\nYou are recall and back to the city!\nYour HP is full!"
+			},
+			"shop": {
+				"item": {
+					"not": {
+						"found": "The selected item could not be found."
+					}
+				},
+				"not": {
+					"enough": {
+						"gold": "## Not Enough Gold!\nYou need **{price} gold** to buy {item}, but you only have **{gold} gold**."
+					}
+				},
+				"purchase": {
+					"success": "## Purchase Successful!\nYou have successfully bought **{item}** for **{price} gold**."
+				}
+			},
+			"start": {
+				"already": {
+					"have": "You already have an adventure character!\nUse `/adventure profile` to view your status."
+				},
+				"invalid_char": "Invalid character selection. Please try again.",
+				"choose": {
+					"char": {
+						"stats": "**Character Bonuses**\n• Strength: {str}\n• Defense: {def}\n• Max HP%: {hp}\n• XP%: {xp}\n• Gold%: {gold}"
+					}
+				},
+				"success": {
+					"title_md": "## {title}\n{desc}",
+					"title": "## Character Created Successfully!",
+					"desc": "Your character has been created! You are ready to start your adventure! Use `/adventure battle` to start fighting or `/adventure stats` to view your status."
+				},
+				"selected": {
+					"char": "Chosen Character"
+				}
+			}
+		},
+		"helpers": {
+			"shopUi": {
+				"shop": {
+					"desc": "## {bot}'s Adventure Shop - {category}\nWelcome to the adventure shop! Here you can buy items to aid you on your journey.\n> Your gold: **{gold}**",
+					"empty": {
+						"title": "## No Items Available",
+						"desc": "There are no items available in this category at the moment."
+					},
+					"footer": "Page {page} of {totalPages}",
+					"select": {
+						"category": "Select a category...",
+						"option": {
+							"desc": "Price: {price} gold"
+						},
+						"item": {
+							"placeholder": "Select an item to purchase..."
+						}
+					}
+				}
+			}
 		}
 	}
 }

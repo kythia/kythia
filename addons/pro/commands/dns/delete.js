@@ -107,7 +107,10 @@ class DeleteCommand extends BaseCommand {
 		const isPremiumDonatur = await isPremium(container, interaction.user.id);
 		const isVoter = await isVoterActive(container, interaction.user.id);
 		if (!isPremiumDonatur && !isVoter) {
-			const desc = await t(interaction, 'pro.dns.delete.error_notPremium');
+			const desc = await t(
+				interaction,
+				'pro.commands.dns.delete.error_notPremium',
+			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Red',
@@ -117,7 +120,10 @@ class DeleteCommand extends BaseCommand {
 		}
 		const databaseRecordId = interaction.options.getString('record');
 		if (databaseRecordId === 'none') {
-			const desc = await t(interaction, 'pro.dns.delete.error_noRecords');
+			const desc = await t(
+				interaction,
+				'pro.commands.dns.delete.error_noRecords',
+			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Yellow',
@@ -138,7 +144,10 @@ class DeleteCommand extends BaseCommand {
 			typeof recordToDelete.subdomain.userId === 'undefined' ||
 			recordToDelete.subdomain.userId === null
 		) {
-			const desc = await t(interaction, 'pro.dns.delete.error_notFound');
+			const desc = await t(
+				interaction,
+				'pro.commands.dns.delete.error_notFound',
+			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Red',
@@ -147,7 +156,10 @@ class DeleteCommand extends BaseCommand {
 			});
 		}
 		if (recordToDelete.subdomain.userId !== interaction.user.id) {
-			const desc = await t(interaction, 'pro.dns.delete.error_notOwner');
+			const desc = await t(
+				interaction,
+				'pro.commands.dns.delete.error_notOwner',
+			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Red',
@@ -163,8 +175,11 @@ class DeleteCommand extends BaseCommand {
 				},
 			);
 			await recordToDelete.destroy();
-			const title = await t(interaction, 'pro.dns.delete.success_title');
-			const desc = await t(interaction, 'pro.dns.delete.orphaned_desc');
+			const title = await t(interaction, 'pro.shared.dns.delete.success_title');
+			const desc = await t(
+				interaction,
+				'pro.commands.dns.delete.orphaned_desc',
+			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					title: title,
@@ -186,17 +201,21 @@ class DeleteCommand extends BaseCommand {
 					},
 				);
 			}
-			const title = await t(interaction, 'pro.dns.delete.success_title');
+			const title = await t(interaction, 'pro.shared.dns.delete.success_title');
 			const baseDomain = kythiaConfig.addons.pro.cloudflare.domain || 'kyth.me';
 			const recordName =
 				recordToDelete.name === '@'
 					? `${recordToDelete.subdomain.name}.${baseDomain}`
 					: `${recordToDelete.name}.${recordToDelete.subdomain.name}.${baseDomain}`;
-			const desc = await t(interaction, 'pro.dns.delete.success_desc', {
-				type: recordToDelete.type,
-				name: recordName,
-				value: recordToDelete.value,
-			});
+			const desc = await t(
+				interaction,
+				'pro.commands.dns.delete.success_desc',
+				{
+					type: recordToDelete.type,
+					name: recordName,
+					value: recordToDelete.value,
+				},
+			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					title: title,
@@ -205,10 +224,17 @@ class DeleteCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		} else {
-			const title = await t(interaction, 'pro.dns.delete.error_failedTitle');
-			const desc = await t(interaction, 'pro.dns.delete.error_failedDesc', {
-				error: result.error,
-			});
+			const title = await t(
+				interaction,
+				'pro.commands.dns.delete.error_failedTitle',
+			);
+			const desc = await t(
+				interaction,
+				'pro.commands.dns.delete.error_failedDesc',
+				{
+					error: result.error,
+				},
+			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					title: title,

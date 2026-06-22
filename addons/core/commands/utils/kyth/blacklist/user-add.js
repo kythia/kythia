@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class UserAddCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('user-add')
@@ -29,28 +26,29 @@ class UserAddCommand extends BaseCommand {
 					.setDescription('Reason for blacklisting')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, logger, helpers } = container;
 		const { KythiaBlacklist } = models;
 		const { createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const user = interaction.options.getUser('user');
 		const reason = interaction.options.getString('reason') || null;
-
 		try {
 			const existing = await KythiaBlacklist.getCache({
-				where: { type: 'user', targetId: user.id },
+				where: {
+					type: 'user',
+					targetId: user.id,
+				},
 			});
 			if (existing) {
 				const components = await createContainer(interaction, {
 					description: await t(
 						interaction,
-						'core.utils.kyth.blacklist.user.add.already',
-						{ tag: user.tag },
+						'core.commands.utils.kyth.blacklist.user-add.user.add.already',
+						{
+							tag: user.tag,
+						},
 					),
 					color: 'Red',
 				});
@@ -59,20 +57,28 @@ class UserAddCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
-			await KythiaBlacklist.create({ type: 'user', targetId: user.id, reason });
-
+			await KythiaBlacklist.create({
+				type: 'user',
+				targetId: user.id,
+				reason,
+			});
 			const components = await createContainer(interaction, {
-				title: await t(interaction, 'core.utils.kyth.blacklist.user.add.title'),
+				title: await t(
+					interaction,
+					'core.commands.utils.kyth.blacklist.user-add.user.add.title',
+				),
 				description: await t(
 					interaction,
-					'core.utils.kyth.blacklist.user.add.success',
+					'core.commands.utils.kyth.blacklist.user-add.user.add.success',
 					{
 						tag: user.tag,
 						id: user.id,
 						reason:
 							reason ||
-							(await t(interaction, 'core.utils.kyth.blacklist.no.reason')),
+							(await t(
+								interaction,
+								'core.helpers.index.utils.kyth.blacklist.no.reason',
+							)),
 					},
 				),
 				color: 'Green',
@@ -83,7 +89,9 @@ class UserAddCommand extends BaseCommand {
 			});
 			logger.info(
 				`User ${user.tag} (${user.id}) blacklisted by ${interaction.user.tag} | Reason: ${reason ?? 'none'}`,
-				{ label: 'core' },
+				{
+					label: 'core',
+				},
 			);
 		} catch (error) {
 			logger.error(`Failed to blacklist user: ${error.message || error}`, {
@@ -92,8 +100,10 @@ class UserAddCommand extends BaseCommand {
 			const components = await createContainer(interaction, {
 				description: await t(
 					interaction,
-					'core.utils.kyth.blacklist.user.add.error',
-					{ error: error.message },
+					'core.commands.utils.kyth.blacklist.user-add.user.add.error',
+					{
+						error: error.message,
+					},
 				),
 				color: 'Red',
 			});
@@ -104,5 +114,4 @@ class UserAddCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = UserAddCommand;

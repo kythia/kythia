@@ -38,7 +38,7 @@ class OutTextCommand extends BaseCommand {
 		await welcomeSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'welcomer.welcomer.out.text.set', {
+			await t(interaction, 'welcomer.commands.out-text.welcomer.out.text.set', {
 				text,
 			}),
 			{

@@ -7,13 +7,10 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class SetCommand extends BaseCommand {
 	subcommand = true;
 	permissions = [PermissionFlagsBits.ManageGuild];
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('set')
@@ -30,55 +27,53 @@ class SetCommand extends BaseCommand {
 					.setDescription('The level to set.')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { User } = models;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const targetUser = interaction.options.getUser('user');
 		const levelToSet = interaction.options.getInteger('level');
 		const user = await User.getCache({
 			userId: targetUser.id,
 			guildId: interaction.guild.id,
 		});
-
 		if (!user) {
 			const components = await simpleContainer(
 				interaction,
-				`${await t(interaction, 'leveling.set.leveling.user.not.found.title')}\n${await t(interaction, 'leveling.set.leveling.user.not.found.desc')}`,
-				{ color: 'Red' },
+				`${await t(interaction, 'leveling.commands.set.leveling.user.not.found.title')}\n${await t(interaction, 'leveling.commands.set.leveling.user.not.found.desc')}`,
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		user.level = levelToSet;
 		user.xp = 0;
 		user.changed('level', true);
 		user.changed('xp', true);
 		await user.save();
-
 		const components = await simpleContainer(
 			interaction,
-			`${await t(interaction, 'leveling.set.leveling.level.set.title')}\n` +
-				(await t(interaction, 'leveling.set.leveling.level.set.desc', {
+			`${await t(interaction, 'leveling.commands.set.leveling.level.set.title')}\n` +
+				(await t(interaction, 'leveling.commands.set.leveling.level.set.desc', {
 					username: targetUser.username,
 					newLevel: user.level,
 				})),
-			{ color: kythiaConfig.bot.color },
+			{
+				color: kythiaConfig.bot.color,
+			},
 		);
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = SetCommand;

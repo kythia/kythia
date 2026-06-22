@@ -8,7 +8,6 @@
 
 const { MessageFlags, SlashCommandSubcommandBuilder } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
-
 class CreateCommand extends BaseCommand {
 	subcommand = true;
 	slashCommand = new SlashCommandSubcommandBuilder()
@@ -39,7 +38,6 @@ class CreateCommand extends BaseCommand {
 					},
 				),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, t } = container;
@@ -62,7 +60,7 @@ class CreateCommand extends BaseCommand {
 			return interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'embed-builder.create.duplicate', {
+					await t(interaction, 'embed-builder.commands.create.duplicate', {
 						name,
 					}),
 					{
@@ -79,11 +77,11 @@ class CreateCommand extends BaseCommand {
 				? {
 						title: await t(
 							interaction,
-							'embed-builder.create.default.embed_title',
+							'embed-builder.commands.create.default.embed_title',
 						),
 						description: await t(
 							interaction,
-							'embed-builder.create.default.embed_desc',
+							'embed-builder.commands.create.default.embed_desc',
 						),
 						color: 0x5865f2,
 					}
@@ -99,7 +97,7 @@ class CreateCommand extends BaseCommand {
 										// TextDisplay
 										content: await t(
 											interaction,
-											'embed-builder.create.default.component_content',
+											'embed-builder.commands.create.default.component_content',
 										),
 									},
 								],
@@ -118,12 +116,19 @@ class CreateCommand extends BaseCommand {
 		const { createContainer } = container.helpers.discord;
 		return interaction.editReply({
 			components: await createContainer(interaction, {
-				title: await t(interaction, 'embed-builder.create.success.title'),
-				description: await t(interaction, 'embed-builder.create.success.desc', {
-					name,
-					mode,
-					id: record.id,
-				}),
+				title: await t(
+					interaction,
+					'embed-builder.commands.create.success.title',
+				),
+				description: await t(
+					interaction,
+					'embed-builder.commands.create.success.desc',
+					{
+						name,
+						mode,
+						id: record.id,
+					},
+				),
 				color: 'Green',
 			}),
 			flags: MessageFlags.IsComponentsV2,

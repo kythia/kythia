@@ -143,12 +143,16 @@ class EventCommand extends BaseCommand {
 				channelId,
 				announcement,
 			);
-			const msg = await t(interaction, 'core.utils.kyth.eco.event.whale', {
-				kyth: kythToSell,
-				old: oldPrice.toFixed(4),
-				new: newPrice.toFixed(4),
-				drop: priceDrop,
-			});
+			const msg = await t(
+				interaction,
+				'core.commands.utils.kyth.eco.event.whale',
+				{
+					kyth: kythToSell,
+					old: oldPrice.toFixed(4),
+					new: newPrice.toFixed(4),
+					drop: priceDrop,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -197,12 +201,16 @@ class EventCommand extends BaseCommand {
 				channelId,
 				announcement,
 			);
-			const msg = await t(interaction, 'core.utils.kyth.eco.event.burn', {
-				amount: burnAmount.toFixed(4),
-				old: oldPrice.toFixed(4),
-				new: newPrice.toFixed(4),
-				inc: priceIncrease,
-			});
+			const msg = await t(
+				interaction,
+				'core.commands.utils.kyth.eco.event.burn',
+				{
+					amount: burnAmount.toFixed(4),
+					old: oldPrice.toFixed(4),
+					new: newPrice.toFixed(4),
+					inc: priceIncrease,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -259,12 +267,16 @@ class EventCommand extends BaseCommand {
 				channelId,
 				announcement,
 			);
-			const msg = await t(interaction, 'core.utils.kyth.eco.event.bull', {
-				coin: coinToInject.toLocaleString(),
-				old: oldPrice.toFixed(6),
-				new: newPrice.toFixed(6),
-				inc: priceIncrease,
-			});
+			const msg = await t(
+				interaction,
+				'core.commands.utils.kyth.eco.event.bull',
+				{
+					coin: coinToInject.toLocaleString(),
+					old: oldPrice.toFixed(6),
+					new: newPrice.toFixed(6),
+					inc: priceIncrease,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});

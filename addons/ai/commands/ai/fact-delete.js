@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class FactDeleteCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('fact-delete')
@@ -24,18 +21,16 @@ class FactDeleteCommand extends BaseCommand {
 					.setRequired(true)
 					.setMinValue(1),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { UserFact } = models;
 		const { simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const factNumber = interaction.options.getInteger('number');
 		const userId = interaction.user.id;
-
 		const allFacts = await UserFact.getAllCache({
 			where: {
 				userId,
@@ -43,9 +38,11 @@ class FactDeleteCommand extends BaseCommand {
 			order: [['createdAt', 'DESC']],
 			cacheTags: [`UserFact:byUser:${userId}`],
 		});
-
 		if (allFacts.length === 0) {
-			const msg = await t(interaction, 'ai.ai.fact_delete.no_facts');
+			const msg = await t(
+				interaction,
+				'ai.commands.ai.fact-delete.ai.fact_delete.no_facts',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -54,11 +51,14 @@ class FactDeleteCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (factNumber > allFacts.length) {
-			const msg = await t(interaction, 'ai.ai.fact_delete.invalid_number', {
-				max: allFacts.length,
-			});
+			const msg = await t(
+				interaction,
+				'ai.commands.ai.fact-delete.ai.fact_delete.invalid_number',
+				{
+					max: allFacts.length,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -67,22 +67,22 @@ class FactDeleteCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const factToDelete = allFacts[factNumber - 1];
 		await factToDelete.destroy();
-
-		const msg = await t(interaction, 'ai.ai.fact_delete.success', {
-			fact: factToDelete.fact,
-		});
+		const msg = await t(
+			interaction,
+			'ai.commands.ai.fact-delete.ai.fact_delete.success',
+			{
+				fact: factToDelete.fact,
+			},
+		);
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Green',
 		});
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = FactDeleteCommand;

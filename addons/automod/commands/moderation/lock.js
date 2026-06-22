@@ -28,7 +28,7 @@ class LockCommand extends BaseCommand {
 		await interaction.deferReply();
 		const reason =
 			interaction.options.getString('reason') ||
-			(await t(interaction, 'automod.moderation.lock.default.reason'));
+			(await t(interaction, 'automod.commands.moderation.lock.default.reason'));
 		try {
 			await interaction.channel.permissionOverwrites.edit(
 				interaction.guild.roles.everyone,
@@ -41,10 +41,13 @@ class LockCommand extends BaseCommand {
 			);
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
-				title: await t(interaction, 'automod.moderation.lock.success.title'),
+				title: await t(
+					interaction,
+					'automod.commands.moderation.lock.success.title',
+				),
 				description: await t(
 					interaction,
-					'automod.moderation.lock.success.desc',
+					'automod.commands.moderation.lock.success.desc',
 					{
 						channel: interaction.channel.toString(),
 						reason,
@@ -58,7 +61,7 @@ class LockCommand extends BaseCommand {
 			});
 			const confirmReply = await simpleContainer(
 				interaction,
-				await t(interaction, 'automod.moderation.lock.confirm'),
+				await t(interaction, 'automod.commands.moderation.lock.confirm'),
 				{
 					color: 'Green',
 				},
@@ -70,7 +73,7 @@ class LockCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'automod.moderation.lock.failed', {
+				await t(interaction, 'automod.commands.moderation.lock.failed', {
 					error: error.message,
 				}),
 				{

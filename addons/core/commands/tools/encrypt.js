@@ -40,7 +40,7 @@ class EncryptCommand extends BaseCommand {
 			const components = await createContainer(interaction, {
 				description: await t(
 					interaction,
-					'core.tools.encrypt.invalid.key.length',
+					'core.commands.tools.encrypt.invalid.key.length',
 				),
 				color: 'Red',
 			});
@@ -57,12 +57,12 @@ class EncryptCommand extends BaseCommand {
 		const authTag = cipher.getAuthTag();
 		const encryptedData = `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
 		const description =
-			(await t(interaction, 'core.tools.encrypt.embed.desc')) +
+			(await t(interaction, 'core.commands.tools.encrypt.embed.desc')) +
 			'\n\n' +
-			`**${await t(interaction, 'core.tools.encrypt.secret.key.used')}:**\n\`\`\`${'*'.repeat(32)}\`\`\`\n\n` +
-			`**${await t(interaction, 'core.tools.encrypt.encrypted.data')}:**\n\`\`\`${encryptedData}\`\`\``;
+			`**${await t(interaction, 'core.commands.tools.encrypt.secret.key.used')}:**\n\`\`\`${'*'.repeat(32)}\`\`\`\n\n` +
+			`**${await t(interaction, 'core.commands.tools.encrypt.encrypted.data')}:**\n\`\`\`${encryptedData}\`\`\``;
 		const components = await createContainer(interaction, {
-			title: await t(interaction, 'core.tools.encrypt.success'),
+			title: await t(interaction, 'core.commands.tools.encrypt.success'),
 			description,
 			color: kythiaConfig.bot.color,
 		});

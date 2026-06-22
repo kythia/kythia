@@ -24,11 +24,17 @@ class TopCommand extends BaseCommand {
 		const { MessageFlags } = require('discord.js');
 		const pools = await GuildLiquidityPool.getAllCache();
 		if (!pools || pools.length === 0) {
-			const msg = await t(interaction, 'economy.guild_stock.top.empty');
-			const title = await t(interaction, 'economy.guild_stock.top.title');
+			const msg = await t(
+				interaction,
+				'economy.commands.guild_stock.top.empty',
+			);
+			const title = await t(
+				interaction,
+				'economy.shared.guild_stock.top.title',
+			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.guild_stock.top.title_md', {
+				await t(interaction, 'economy.commands.guild_stock.top.title_md', {
 					title,
 					msg,
 				}),
@@ -56,8 +62,8 @@ class TopCommand extends BaseCommand {
 		// Sort by Market Cap descending
 		mappedPools.sort((a, b) => b.marketCap - a.marketCap);
 		const topPools = mappedPools.slice(0, 10);
-		const title = await t(interaction, 'economy.guild_stock.top.title');
-		const desc = await t(interaction, 'economy.guild_stock.top.desc');
+		const title = await t(interaction, 'economy.shared.guild_stock.top.title');
+		const desc = await t(interaction, 'economy.commands.guild_stock.top.desc');
 		let description = '';
 		for (let i = 0; i < topPools.length; i++) {
 			const p = topPools[i];
@@ -69,7 +75,7 @@ class TopCommand extends BaseCommand {
 		}
 		const fullText = await t(
 			interaction,
-			'economy.guild_stock.top.full_title_md',
+			'economy.commands.guild_stock.top.full_title_md',
 			{
 				title,
 				desc,

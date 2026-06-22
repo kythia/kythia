@@ -29,7 +29,10 @@ class UpgradeCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -43,7 +46,7 @@ class UpgradeCommand extends BaseCommand {
 		if (user.kythiaCoin < UPGRADE_COST) {
 			const msg = await t(
 				interaction,
-				'economy.bank.upgrade.error.insufficient_funds.desc',
+				'economy.commands.bank.upgrade.error.insufficient_funds.desc',
 				{
 					cost: UPGRADE_COST.toLocaleString(),
 				},
@@ -67,11 +70,15 @@ class UpgradeCommand extends BaseCommand {
 				.setStyle(ButtonStyle.Danger),
 		);
 		const confirmContainer = await createContainer(interaction, {
-			description: await t(interaction, 'economy.bank.upgrade.prompt.desc', {
-				cost: UPGRADE_COST.toLocaleString(),
-				increase: CAPACITY_INCREASE.toLocaleString(),
-				current: (user.extraBankCapacity || 0).toLocaleString(),
-			}),
+			description: await t(
+				interaction,
+				'economy.commands.bank.upgrade.prompt.desc',
+				{
+					cost: UPGRADE_COST.toLocaleString(),
+					increase: CAPACITY_INCREASE.toLocaleString(),
+					current: (user.extraBankCapacity || 0).toLocaleString(),
+				},
+			),
 			components: [row],
 		});
 		await interaction.editReply({
@@ -93,7 +100,7 @@ class UpgradeCommand extends BaseCommand {
 				user.changed('kythiaCoin', true);
 				user.changed('extraBankCapacity', true);
 				await user.save();
-				const msg = await t(i, 'economy.bank.upgrade.success.desc', {
+				const msg = await t(i, 'economy.commands.bank.upgrade.success.desc', {
 					cost: UPGRADE_COST.toLocaleString(),
 					capacity: CAPACITY_INCREASE.toLocaleString(),
 					newCapacity: user.extraBankCapacity.toLocaleString(),
@@ -108,7 +115,7 @@ class UpgradeCommand extends BaseCommand {
 			} else if (i.customId === 'cancel') {
 				const components = await simpleContainer(
 					i,
-					await t(i, 'economy.bank.upgrade.cancel.desc'),
+					await t(i, 'economy.commands.bank.upgrade.cancel.desc'),
 					{
 						color: kythiaConfig.bot.color,
 					},
@@ -123,7 +130,7 @@ class UpgradeCommand extends BaseCommand {
 			if (collected.size === 0) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.bank.upgrade.timeout.desc'),
+					await t(interaction, 'economy.commands.bank.upgrade.timeout.desc'),
 					{
 						color: kythiaConfig.bot.color,
 					},

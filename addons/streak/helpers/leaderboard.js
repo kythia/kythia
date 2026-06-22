@@ -7,7 +7,6 @@
  */
 
 const USERS_PER_PAGE = 10;
-
 async function generateLeaderboardContainer(
 	interaction,
 	page,
@@ -18,16 +17,16 @@ async function generateLeaderboardContainer(
 ) {
 	const { t, helpers } = interaction.client.container;
 	const { createPaginationContainer } = helpers.discord;
-
 	const totalPages = Math.max(1, Math.ceil(totalUsers / USERS_PER_PAGE));
 	page = Math.max(1, Math.min(page, totalPages));
-
 	const startIndex = (page - 1) * USERS_PER_PAGE;
 	const pageStreaks = topStreaks.slice(startIndex, startIndex + USERS_PER_PAGE);
-
 	let leaderboardText = '';
 	if (pageStreaks.length === 0) {
-		leaderboardText = await t(interaction, 'streak.streak.leaderboard.empty');
+		leaderboardText = await t(
+			interaction,
+			'streak.helpers.leaderboard.streak.empty',
+		);
 	} else {
 		const entries = await Promise.all(
 			pageStreaks.map(async (streak, index) => {
@@ -40,10 +39,8 @@ async function generateLeaderboardContainer(
 							: rank === 3
 								? '🥉'
 								: `**${rank}.**`;
-
 				const username = `<@${streak.userId}>`;
-
-				return await t(interaction, 'streak.streak.leaderboard.entry', {
+				return await t(interaction, 'streak.helpers.leaderboard.streak.entry', {
 					medal,
 					username,
 					emoji: streakEmoji,
@@ -55,22 +52,23 @@ async function generateLeaderboardContainer(
 		);
 		leaderboardText = entries.join('\n');
 	}
-
 	const [leaderboardContainer] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: await t(interaction, 'streak.streak.leaderboard.title_md'),
+		title: await t(interaction, 'streak.helpers.leaderboard.streak.title_md'),
 		content: leaderboardText,
-		footer: await t(interaction, 'streak.streak.leaderboard.footer', {
+		footer: await t(interaction, 'streak.helpers.leaderboard.streak.footer', {
 			server: interaction.guild.name,
 		}),
 		customIdPrefix: 'leaderboard',
 		navDisabled,
 	});
-
-	return { leaderboardContainer, page, totalPages };
+	return {
+		leaderboardContainer,
+		page,
+		totalPages,
+	};
 }
-
 module.exports = {
 	generateLeaderboardContainer,
 };

@@ -32,7 +32,7 @@ class BackupCommand extends BaseCommand {
 		});
 		let components = await simpleContainer(
 			interaction,
-			`${await t(interaction, 'server.server.backup.start')}`,
+			`${await t(interaction, 'server.commands.server.backup.server.start')}`,
 			{
 				color: 'Blurple',
 			},
@@ -201,7 +201,7 @@ class BackupCommand extends BaseCommand {
 			if (buffer.length > 10 * 1024 * 1024) {
 				components = await simpleContainer(
 					interaction,
-					`${await t(interaction, 'server.server.backup.too.large')}`,
+					`${await t(interaction, 'server.commands.server.backup.server.too.large')}`,
 					{
 						color: 'Red',
 					},
@@ -223,9 +223,13 @@ class BackupCommand extends BaseCommand {
 			const fileComponent = new FileBuilder()
 				.setURL(`attachment://${filename}`)
 				.setSpoiler(false);
-			const titleLine = await t(interaction, 'server.server.backup.title_md', {
-				name: guild.name,
-			});
+			const titleLine = await t(
+				interaction,
+				'server.commands.server.backup.server.title_md',
+				{
+					name: guild.name,
+				},
+			);
 			const metaLine = [
 				`> **Guild ID:** \`${guild.id}\``,
 				`> **Created:** <t:${ts}:F>`,
@@ -272,7 +276,10 @@ class BackupCommand extends BaseCommand {
 					},
 				);
 				// DM failed, fallback: attach directly in channel reply
-				const failMsg = await t(interaction, 'server.server.backup.dm.failed');
+				const failMsg = await t(
+					interaction,
+					'server.commands.server.backup.server.dm.failed',
+				);
 				return interaction.editReply({
 					components: [
 						new ContainerBuilder()
@@ -296,9 +303,13 @@ class BackupCommand extends BaseCommand {
 			}
 			components = await simpleContainer(
 				interaction,
-				`${await t(interaction, 'server.server.backup.success', {
-					name: guild.name,
-				})}`,
+				`${await t(
+					interaction,
+					'server.commands.server.backup.server.success',
+					{
+						name: guild.name,
+					},
+				)}`,
 				{
 					color: 'Green',
 				},
@@ -313,7 +324,7 @@ class BackupCommand extends BaseCommand {
 			});
 			components = await simpleContainer(
 				interaction,
-				`${await t(interaction, 'server.server.backup.failed')}`,
+				`${await t(interaction, 'server.commands.server.backup.server.failed')}`,
 				{
 					color: 'Red',
 				},

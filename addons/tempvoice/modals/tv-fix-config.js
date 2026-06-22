@@ -26,7 +26,7 @@ class TvFixConfigModal extends BaseModal {
 		});
 		if (!config)
 			return interaction.editReply(
-				await t(interaction, 'tempvoice.fix_config.config_not_found'),
+				await t(interaction, 'tempvoice.shared.fix_config.config_not_found'),
 			);
 		const getChannelId = (customId) => {
 			try {
@@ -42,13 +42,22 @@ class TvFixConfigModal extends BaseModal {
 		const newCatId = getChannelId('new_category_id');
 		const newTrigId = getChannelId('new_trigger_id');
 		const newIntId = getChannelId('new_interface_id');
-		const logs = [await t(interaction, 'tempvoice.fix_config.applying_fixes')];
+		const logs = [
+			await t(
+				interaction,
+				'tempvoice.modals.tv-fix-config.fix_config.applying_fixes',
+			),
+		];
 		if (newCatId) {
 			config.categoryId = newCatId;
 			logs.push(
-				await t(interaction, 'tempvoice.fix_config.category_updated', {
-					id: newCatId,
-				}),
+				await t(
+					interaction,
+					'tempvoice.modals.tv-fix-config.fix_config.category_updated',
+					{
+						id: newCatId,
+					},
+				),
 			);
 			try {
 				const cat = await container.helpers.discord.getChannelSafe(
@@ -62,18 +71,32 @@ class TvFixConfigModal extends BaseModal {
 						Connect: true,
 						MoveMembers: true,
 					});
-					logs.push(await t(interaction, 'tempvoice.fix_config.perms_fixed'));
+					logs.push(
+						await t(
+							interaction,
+							'tempvoice.modals.tv-fix-config.fix_config.perms_fixed',
+						),
+					);
 				}
 			} catch (_e) {
-				logs.push(await t(interaction, 'tempvoice.fix_config.perms_warning'));
+				logs.push(
+					await t(
+						interaction,
+						'tempvoice.modals.tv-fix-config.fix_config.perms_warning',
+					),
+				);
 			}
 		}
 		if (newTrigId) {
 			config.triggerChannelId = newTrigId;
 			logs.push(
-				await t(interaction, 'tempvoice.fix_config.trigger_updated', {
-					id: newTrigId,
-				}),
+				await t(
+					interaction,
+					'tempvoice.modals.tv-fix-config.fix_config.trigger_updated',
+					{
+						id: newTrigId,
+					},
+				),
 			);
 			try {
 				const trig = await container.helpers.discord.getChannelSafe(
@@ -82,26 +105,45 @@ class TvFixConfigModal extends BaseModal {
 				);
 				if (trig) {
 					await trig.lockPermissions().catch(() => {});
-					logs.push(await t(interaction, 'tempvoice.fix_config.perms_synced'));
+					logs.push(
+						await t(
+							interaction,
+							'tempvoice.modals.tv-fix-config.fix_config.perms_synced',
+						),
+					);
 				}
 			} catch (_e) {
-				logs.push(await t(interaction, 'tempvoice.fix_config.trigger_warning'));
+				logs.push(
+					await t(
+						interaction,
+						'tempvoice.modals.tv-fix-config.fix_config.trigger_warning',
+					),
+				);
 			}
 		}
 		if (newIntId) {
 			config.controlPanelChannelId = newIntId;
 			config.interfaceMessageId = null;
 			logs.push(
-				await t(interaction, 'tempvoice.fix_config.interface_updated', {
-					id: newIntId,
-				}),
+				await t(
+					interaction,
+					'tempvoice.modals.tv-fix-config.fix_config.interface_updated',
+					{
+						id: newIntId,
+					},
+				),
 			);
 			logs.push(
-				await t(interaction, 'tempvoice.fix_config.interface_regenerate'),
+				await t(
+					interaction,
+					'tempvoice.modals.tv-fix-config.fix_config.interface_regenerate',
+				),
 			);
 		}
 		await config.save();
-		logs.push(await t(interaction, 'tempvoice.fix_config.success'));
+		logs.push(
+			await t(interaction, 'tempvoice.modals.tv-fix-config.fix_config.success'),
+		);
 		await interaction.editReply({
 			content: logs.join('\n'),
 		});

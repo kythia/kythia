@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class RemoveCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
@@ -23,25 +20,27 @@ class RemoveCommand extends BaseCommand {
 					.setDescription('User to remove')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		const user = interaction.options.getUser('user');
 		await interaction.channel.permissionOverwrites.edit(user.id, {
 			ViewChannel: false,
 		});
-
-		const desc = await t(interaction, 'ticket.util.remove_success', {
-			userTag: user.tag,
-		});
+		const desc = await t(
+			interaction,
+			'ticket.commands.remove.util.remove_success',
+			{
+				userTag: user.tag,
+			},
+		);
 		return await interaction.reply({
-			components: await simpleContainer(interaction, desc, { color: 'Green' }),
+			components: await simpleContainer(interaction, desc, {
+				color: 'Green',
+			}),
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = RemoveCommand;

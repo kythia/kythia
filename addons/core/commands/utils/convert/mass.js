@@ -47,7 +47,7 @@ class MassCommand extends BaseCommand {
 		if (result == null) {
 			const components = await simpleContainer(
 				interaction,
-				`${await t(interaction, 'core.utils.convert.mass.failed')}`,
+				`${await t(interaction, 'core.commands.utils.convert.mass.failed')}`,
 				{
 					color: 'Red',
 				},
@@ -59,9 +59,9 @@ class MassCommand extends BaseCommand {
 		}
 		const desc =
 			'' +
-			(await t(interaction, 'core.utils.convert.mass.title')) +
+			(await t(interaction, 'core.commands.utils.convert.mass.title')) +
 			'\n' +
-			(await t(interaction, 'core.utils.convert.mass.result', {
+			(await t(interaction, 'core.commands.utils.convert.mass.result', {
 				value,
 				from,
 				result,

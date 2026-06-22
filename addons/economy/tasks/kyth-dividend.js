@@ -112,7 +112,7 @@ class KythDividendTask extends BaseTask {
 							staker.userId,
 						);
 					await discordUser.send(
-						(await t(null, 'economy.tasks.dividend.title')) +
+						(await t(null, 'economy.tasks.kyth-dividend.dividend.title')) +
 							'\n' +
 							`You earned **🪙 ${reward.toLocaleString()} Coin** as your daily dividend!\n` +
 							`Your stake: **${Number(staker.kythStaked).toFixed(6)} KYTH** (${(share * 100).toFixed(2)}% of pool)\n` +

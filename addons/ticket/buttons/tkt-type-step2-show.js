@@ -14,24 +14,21 @@ const {
 	ChannelType,
 	MessageFlags,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TktTypeStep2ShowButton extends BaseButton {
 	button = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { t, helpers, redis, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		try {
 			const cacheKey = `ticket:type-create:${interaction.user.id}`;
 			const cachedData = await redis.get(cacheKey);
-
 			if (!cachedData) {
-				const desc = await t(interaction, 'ticket.errors.setup_expired');
+				const desc = await t(
+					interaction,
+					'ticket.helpers.index.errors.setup_expired',
+				);
 				return interaction.reply({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -39,9 +36,7 @@ class TktTypeStep2ShowButton extends BaseButton {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			const messageId = interaction.message.id;
-
 			const modal = new ModalBuilder()
 				.setCustomId(`tkt-type-step2-submit:${messageId}`)
 				.setTitle(
@@ -132,7 +127,6 @@ class TktTypeStep2ShowButton extends BaseButton {
 								.setMaxValues(1),
 						),
 				);
-
 			await interaction.showModal(modal);
 		} catch (error) {
 			logger.error(
@@ -142,7 +136,10 @@ class TktTypeStep2ShowButton extends BaseButton {
 				},
 			);
 			if (!interaction.replied && !interaction.deferred) {
-				const desc = await t(interaction, 'ticket.errors.modal_show_failed');
+				const desc = await t(
+					interaction,
+					'ticket.helpers.index.errors.modal_show_failed',
+				);
 				await interaction.reply({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -153,5 +150,4 @@ class TktTypeStep2ShowButton extends BaseButton {
 		}
 	}
 }
-
 exports.default = TktTypeStep2ShowButton;

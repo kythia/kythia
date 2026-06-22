@@ -83,7 +83,10 @@ class FleaCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -100,7 +103,10 @@ class FleaCommand extends BaseCommand {
 			if (!itemName || !price) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.flea.error.missing_params.desc'),
+					await t(
+						interaction,
+						'economy.commands.flea.error.missing_params.desc',
+					),
 					{
 						color: 'Red',
 					},
@@ -113,7 +119,10 @@ class FleaCommand extends BaseCommand {
 			if (price <= 0) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.flea.error.invalid_price.desc'),
+					await t(
+						interaction,
+						'economy.commands.flea.error.invalid_price.desc',
+					),
 					{
 						color: 'Red',
 					},
@@ -130,7 +139,7 @@ class FleaCommand extends BaseCommand {
 			if (!item) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.flea.error.not_owned.desc', {
+					await t(interaction, 'economy.commands.flea.error.not_owned.desc', {
 						item: itemName,
 					}),
 					{
@@ -159,7 +168,7 @@ class FleaCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.flea.list.success.desc', {
+				await t(interaction, 'economy.commands.flea.list.success.desc', {
 					item: itemName,
 					type: type.toUpperCase(),
 					price: price.toLocaleString(),
@@ -206,7 +215,7 @@ class FleaCommand extends BaseCommand {
 					return {
 						components: await simpleContainer(
 							interaction,
-							await t(interaction, 'economy.flea.view.empty.desc'),
+							await t(interaction, 'economy.commands.flea.view.empty.desc'),
 							{
 								color: 'Yellow',
 							},
@@ -221,7 +230,7 @@ class FleaCommand extends BaseCommand {
 							label: listing.itemName.substring(0, 50),
 							description: await t(
 								interaction,
-								'economy.flea.view.price_desc',
+								'economy.commands.flea.view.price_desc',
 								{
 									type: isAuction ? 'Bid' : 'BIN',
 									price: displayPrice.toLocaleString(),
@@ -235,7 +244,7 @@ class FleaCommand extends BaseCommand {
 					new StringSelectMenuBuilder()
 						.setCustomId('interact_flea_item')
 						.setPlaceholder(
-							await t(interaction, 'economy.flea.view.placeholder'),
+							await t(interaction, 'economy.commands.flea.view.placeholder'),
 						)
 						.addOptions(options),
 				);
@@ -257,7 +266,7 @@ class FleaCommand extends BaseCommand {
 						.setDisabled(page >= totalPages),
 				);
 				const viewContainer = await createContainer(interaction, {
-					description: await t(interaction, 'economy.flea.view.title'),
+					description: await t(interaction, 'economy.commands.flea.view.title'),
 					components: [row, navRow],
 				});
 				return {
@@ -301,7 +310,7 @@ class FleaCommand extends BaseCommand {
 					if (!listing || new Date() > new Date(listing.expiresAt)) {
 						const components = await simpleContainer(
 							i,
-							await t(i, 'economy.flea.error.unavailable.desc'),
+							await t(i, 'economy.commands.flea.error.unavailable.desc'),
 							{
 								color: 'Red',
 							},
@@ -314,7 +323,7 @@ class FleaCommand extends BaseCommand {
 					if (listing.sellerId === interaction.user.id) {
 						const components = await simpleContainer(
 							i,
-							await t(i, 'economy.flea.error.self_buy.desc'),
+							await t(i, 'economy.commands.flea.error.self_buy.desc'),
 							{
 								color: 'Red',
 							},
@@ -332,7 +341,7 @@ class FleaCommand extends BaseCommand {
 						if (user.kythiaCoin < listing.price) {
 							const components = await simpleContainer(
 								i,
-								await t(i, 'economy.flea.buy.error.funds.desc'),
+								await t(i, 'economy.commands.flea.buy.error.funds.desc'),
 								{
 									color: 'Red',
 								},
@@ -364,7 +373,7 @@ class FleaCommand extends BaseCommand {
 						await listing.destroy();
 						const components = await simpleContainer(
 							i,
-							await t(i, 'economy.flea.buy.success.desc', {
+							await t(i, 'economy.commands.flea.buy.success.desc', {
 								item: listing.itemName,
 								price: listing.price.toLocaleString(),
 							}),
@@ -391,14 +400,18 @@ class FleaCommand extends BaseCommand {
 								.setStyle(ButtonStyle.Danger),
 						);
 						const components = await createContainer(i, {
-							description: await t(i, 'economy.flea.buy.auction_desc', {
-								item: listing.itemName,
-								currentBid: listing.currentBid.toLocaleString(),
-								timeLeft: Math.floor(
-									new Date(listing.expiresAt).getTime() / 1000,
-								),
-								minBid: minBid.toLocaleString(),
-							}),
+							description: await t(
+								i,
+								'economy.commands.flea.buy.auction_desc',
+								{
+									item: listing.itemName,
+									currentBid: listing.currentBid.toLocaleString(),
+									timeLeft: Math.floor(
+										new Date(listing.expiresAt).getTime() / 1000,
+									),
+									minBid: minBid.toLocaleString(),
+								},
+							),
 							components: [bidRow],
 						});
 						await i.update({
@@ -416,7 +429,7 @@ class FleaCommand extends BaseCommand {
 					if (!listing || new Date() > new Date(listing.expiresAt)) {
 						const components = await simpleContainer(
 							i,
-							await t(i, 'economy.flea.bid.error.ended.desc'),
+							await t(i, 'economy.commands.flea.bid.error.ended.desc'),
 							{
 								color: 'Red',
 							},
@@ -434,7 +447,7 @@ class FleaCommand extends BaseCommand {
 					if (user.kythiaCoin < minBid) {
 						const components = await simpleContainer(
 							i,
-							await t(i, 'economy.flea.bid.error.funds.desc'),
+							await t(i, 'economy.commands.flea.bid.error.funds.desc'),
 							{
 								color: 'Red',
 							},
@@ -468,7 +481,7 @@ class FleaCommand extends BaseCommand {
 					await listing.save();
 					const components = await simpleContainer(
 						i,
-						await t(i, 'economy.flea.bid.success.desc', {
+						await t(i, 'economy.commands.flea.bid.success.desc', {
 							bid: minBid.toLocaleString(),
 							item: listing.itemName,
 						}),
@@ -500,7 +513,7 @@ class FleaCommand extends BaseCommand {
 			if (listings.length === 0) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.flea.manage.empty.desc'),
+					await t(interaction, 'economy.commands.flea.manage.empty.desc'),
 					{
 						color: 'Yellow',
 					},
@@ -519,12 +532,12 @@ class FleaCommand extends BaseCommand {
 				new StringSelectMenuBuilder()
 					.setCustomId('cancel_listing')
 					.setPlaceholder(
-						await t(interaction, 'economy.flea.manage.placeholder'),
+						await t(interaction, 'economy.commands.flea.manage.placeholder'),
 					)
 					.addOptions(options),
 			);
 			const myContainer = await createContainer(interaction, {
-				description: await t(interaction, 'economy.flea.manage.title'),
+				description: await t(interaction, 'economy.commands.flea.manage.title'),
 				components: [row],
 			});
 			const message = await interaction.editReply({
@@ -548,7 +561,7 @@ class FleaCommand extends BaseCommand {
 					if (!listing) {
 						const components = await simpleContainer(
 							i,
-							await t(i, 'economy.flea.manage.error.not_found.desc'),
+							await t(i, 'economy.commands.flea.manage.error.not_found.desc'),
 							{
 								color: 'Red',
 							},
@@ -561,7 +574,7 @@ class FleaCommand extends BaseCommand {
 					if (listing.type === 'auction' && listing.highestBidderId) {
 						const components = await simpleContainer(
 							i,
-							await t(i, 'economy.flea.manage.error.has_bids.desc'),
+							await t(i, 'economy.commands.flea.manage.error.has_bids.desc'),
 							{
 								color: 'Red',
 							},
@@ -578,7 +591,7 @@ class FleaCommand extends BaseCommand {
 					await listing.destroy();
 					const components = await simpleContainer(
 						i,
-						await t(i, 'economy.flea.manage.cancel_success.desc', {
+						await t(i, 'economy.commands.flea.manage.cancel_success.desc', {
 							item: listing.itemName,
 						}),
 						{

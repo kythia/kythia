@@ -55,7 +55,10 @@ class StakeCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -73,11 +76,15 @@ class StakeCommand extends BaseCommand {
 				user.bankType !== 'solara_mutual'
 					? '\n⚠️ You are not using **Solara Mutual** bank. Only Solara Mutual users earn staking dividends!'
 					: '✅ You are using **Solara Mutual**. You are eligible for dividends!';
-			const msg = await t(interaction, 'economy.market.stake.status.desc', {
-				wallet: userKyth.toFixed(6),
-				staked: userStaked.toFixed(6),
-				bankStatus: bankStatusStr,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.market.stake.status.desc',
+				{
+					wallet: userKyth.toFixed(6),
+					staked: userStaked.toFixed(6),
+					bankStatus: bankStatusStr,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -89,7 +96,10 @@ class StakeCommand extends BaseCommand {
 		if (!amount || amount <= 0) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.market.stake.error.invalid_amount.desc'),
+				await t(
+					interaction,
+					'economy.commands.market.stake.error.invalid_amount.desc',
+				),
 				{
 					color: 'Red',
 				},
@@ -112,7 +122,10 @@ class StakeCommand extends BaseCommand {
 			if (pool && pool.stakingActive === false) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.market.stake.error.paused.desc'),
+					await t(
+						interaction,
+						'economy.commands.market.stake.error.paused.desc',
+					),
 					{
 						color: 'Red',
 					},
@@ -130,7 +143,7 @@ class StakeCommand extends BaseCommand {
 					interaction,
 					await t(
 						interaction,
-						'economy.market.stake.error.below_minimum.desc',
+						'economy.commands.market.stake.error.below_minimum.desc',
 						{
 							minStake: minStake.toFixed(4),
 						},
@@ -147,7 +160,10 @@ class StakeCommand extends BaseCommand {
 			if (user.bankType !== 'solara_mutual') {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.market.stake.error.wrong_bank.desc'),
+					await t(
+						interaction,
+						'economy.commands.market.stake.error.wrong_bank.desc',
+					),
 					{
 						color: 'Red',
 					},
@@ -162,7 +178,7 @@ class StakeCommand extends BaseCommand {
 					interaction,
 					await t(
 						interaction,
-						'economy.market.stake.error.insufficient_kyth.desc',
+						'economy.commands.market.stake.error.insufficient_kyth.desc',
 						{
 							balance: userKyth.toFixed(6),
 						},
@@ -181,10 +197,14 @@ class StakeCommand extends BaseCommand {
 			user.changed('kythHolding', true);
 			user.changed('kythStaked', true);
 			await user.save();
-			const msg = await t(interaction, 'economy.market.stake.success.desc', {
-				amount: amount.toFixed(6),
-				totalStaked: user.kythStaked.toFixed(6),
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.market.stake.success.desc',
+				{
+					amount: amount.toFixed(6),
+					totalStaked: user.kythStaked.toFixed(6),
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -199,7 +219,7 @@ class StakeCommand extends BaseCommand {
 					interaction,
 					await t(
 						interaction,
-						'economy.market.stake.error.insufficient_staked.desc',
+						'economy.commands.market.stake.error.insufficient_staked.desc',
 						{
 							balance: userStaked.toFixed(6),
 						},
@@ -220,7 +240,7 @@ class StakeCommand extends BaseCommand {
 			await user.save();
 			const msg = await t(
 				interaction,
-				'economy.market.stake.unstake_success.desc',
+				'economy.commands.market.stake.unstake_success.desc',
 				{
 					amount: amount.toFixed(6),
 					totalStaked: user.kythStaked.toFixed(6),

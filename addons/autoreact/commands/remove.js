@@ -8,12 +8,9 @@
 
 const { Op } = require('sequelize');
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class RemoveCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) => {
 		return subcommand
 			.setName('remove')
@@ -26,21 +23,24 @@ class RemoveCommand extends BaseCommand {
 					.setAutocomplete(true),
 			);
 	};
-
 	async autocomplete(interaction) {
 		const container = this.container;
 		const { models } = container;
 		const { AutoReact } = models;
 		const focusedValue = interaction.options.getFocused();
-
 		const choices = await AutoReact.getAllCache({
 			where: {
 				guildId: interaction.guild.id,
-				[Op.or]: [{ trigger: { [Op.like]: `%${focusedValue}%` } }],
+				[Op.or]: [
+					{
+						trigger: {
+							[Op.like]: `%${focusedValue}%`,
+						},
+					},
+				],
 			},
 			limit: 25,
 		});
-
 		const responseChoices = await Promise.all(
 			choices.map(async (choice) => {
 				let display = choice.trigger;
@@ -53,7 +53,6 @@ class RemoveCommand extends BaseCommand {
 						? `#${channel.name}`
 						: `Deleted Channel (${choice.trigger})`;
 				}
-
 				const finalName = `${choice.emoji} ${display} (${choice.type})`;
 				return {
 					name: finalName.length > 100 ? finalName.slice(0, 100) : finalName,
@@ -63,18 +62,14 @@ class RemoveCommand extends BaseCommand {
 		);
 		await interaction.respond(responseChoices);
 	}
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { AutoReact } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const triggerInput = interaction.options.getString('trigger');
 		let deleted = 0;
-
 		if (triggerInput.startsWith('id:')) {
 			const id = triggerInput.split(':')[1];
 			const trigger = await AutoReact.getCache({
@@ -99,9 +94,11 @@ class RemoveCommand extends BaseCommand {
 				deleted = 1;
 			}
 		}
-
 		if (!deleted) {
-			const msg = await t(interaction, 'autoreact.remove.error.not_found');
+			const msg = await t(
+				interaction,
+				'autoreact.commands.remove.error.not_found',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -110,17 +107,14 @@ class RemoveCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
-		const msg = await t(interaction, 'autoreact.remove.success', {
+		const msg = await t(interaction, 'autoreact.commands.remove.success', {
 			trigger: triggerInput,
 		});
 		const components = await simpleContainer(interaction, msg);
-
 		await interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = RemoveCommand;

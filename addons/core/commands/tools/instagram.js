@@ -26,11 +26,11 @@ class InstagramCommand extends BaseCommand {
 		const instaUrl = interaction.options.getString('link');
 		const invalidUrlTitle = await t(
 			interaction,
-			'core.tools.instagram.error.invalid.url.title',
+			'core.commands.tools.instagram.error.invalid.url.title',
 		);
 		const invalidUrlDesc = await t(
 			interaction,
-			'core.tools.instagram.error.invalid.url.desc',
+			'core.commands.tools.instagram.error.invalid.url.desc',
 		);
 		if (
 			!/^https?:\/\/(www\.)?instagram\.com\/(p|reel|tv)\/[a-zA-Z0-9_-]+\/?/.test(
@@ -90,7 +90,7 @@ class InstagramCommand extends BaseCommand {
 			);
 			const rawTitle =
 				titleMatch?.[1]?.trim() ||
-				(await t(interaction, 'core.tools.instagram.default_title'));
+				(await t(interaction, 'core.commands.tools.instagram.default_title'));
 			const title =
 				rawTitle.length > 256 ? `${rawTitle.substring(0, 253)}...` : rawTitle;
 			try {
@@ -107,11 +107,11 @@ class InstagramCommand extends BaseCommand {
 			} catch (fileError) {
 				const tooLargeTitle = await t(
 					interaction,
-					'core.tools.instagram.error.too.large.title',
+					'core.commands.tools.instagram.error.too.large.title',
 				);
 				const tooLargeDesc = await t(
 					interaction,
-					'core.tools.instagram.error.too.large.desc',
+					'core.commands.tools.instagram.error.too.large.desc',
 					{
 						url: mediaUrl,
 					},
@@ -144,15 +144,21 @@ class InstagramCommand extends BaseCommand {
 			if (err.message?.includes('No media found')) {
 				title = await t(
 					interaction,
-					'core.tools.instagram.error.no.media.title',
+					'core.commands.tools.instagram.error.no.media.title',
 				);
-				desc = await t(interaction, 'core.tools.instagram.error.no.media.desc');
+				desc = await t(
+					interaction,
+					'core.commands.tools.instagram.error.no.media.desc',
+				);
 			} else {
 				title = await t(
 					interaction,
-					'core.tools.instagram.error.unknown.title',
+					'core.commands.tools.instagram.error.unknown.title',
 				);
-				desc = await t(interaction, 'core.tools.instagram.error.unknown.desc');
+				desc = await t(
+					interaction,
+					'core.commands.tools.instagram.error.unknown.desc',
+				);
 			}
 			const components = await simpleContainer(
 				interaction,

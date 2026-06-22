@@ -10,7 +10,6 @@ const { MessageFlags } = require('discord.js');
 const { toBigIntSafe } = require('./bigint');
 const { calcBuyOutput, calcSellOutput } = require('./kythAmm');
 const { waitAndAcquireLock, releaseLock } = require('./lock');
-
 const LOCK_KEY = 'kythia:locks:amm_pool';
 
 /**
@@ -29,29 +28,29 @@ async function executeBuyKyth({
 	const { KythLiquidityPool, MarketTransaction } = models;
 	const method =
 		interactionOrI.deferred || interactionOrI.replied ? 'editReply' : 'update';
-
 	try {
 		let lockAcquired = false;
 		let result;
 		let newSpotPrice;
-
 		try {
 			await waitAndAcquireLock(LOCK_KEY);
 			lockAcquired = true;
 
 			// Fetch fresh pool state from DB after lock is acquired
 			const freshPool = await KythLiquidityPool.getCache(
-				{ id: 1 },
-				{ noCache: true },
+				{
+					id: 1,
+				},
+				{
+					noCache: true,
+				},
 			);
-
 			const poolState = {
 				coinReserve: Number(freshPool.coinReserve),
 				kythReserve: Number(freshPool.kythReserve),
 				kConstant: Number(freshPool.kConstant),
 				feeRate: Number(freshPool.feeRatePct ?? 2) / 100,
 			};
-
 			result = calcBuyOutput(amountToSpend, poolState);
 			newSpotPrice = result.newCoinReserve / result.newKythReserve;
 
@@ -59,11 +58,17 @@ async function executeBuyKyth({
 			if (result.kythOut < minOut) {
 				const components = await simpleContainer(
 					interactionOrI,
-					await t(interactionOrI, 'economy.market.buy.error.slippage.desc', {
-						received: result.kythOut.toFixed(6),
-						minOut: minOut.toFixed(6),
-					}),
-					{ color: 'Red' },
+					await t(
+						interactionOrI,
+						'economy.helpers.kythTrade.market.buy.error.slippage.desc',
+						{
+							received: result.kythOut.toFixed(6),
+							minOut: minOut.toFixed(6),
+						},
+					),
+					{
+						color: 'Red',
+					},
 				);
 				return interactionOrI[method]({
 					components,
@@ -102,16 +107,14 @@ async function executeBuyKyth({
 			quantity: result.kythOut,
 			price: newSpotPrice,
 		});
-
 		const successMsg = [
-			await t(interactionOrI, 'economy.trade.buy_success'),
+			await t(interactionOrI, 'economy.helpers.kythTrade.trade.buy_success'),
 			``,
 			`**Spent:** 🪙 ${amountToSpend.toLocaleString()} Coin`,
 			`**Received:** 💎 ${result.kythOut.toFixed(6)} KYTH`,
 			`**Effective Price:** ${result.executionPrice.toFixed(6)} Coin/KYTH`,
 			`**New Market Price:** ${newSpotPrice.toFixed(6)} Coin/KYTH 📈`,
 		].join('\n');
-
 		const components = await simpleContainer(interactionOrI, successMsg, {
 			color: 'Green',
 		});
@@ -125,10 +128,12 @@ async function executeBuyKyth({
 		});
 		const components = await simpleContainer(
 			interactionOrI,
-			await t(interactionOrI, 'economy.trade.fail', {
+			await t(interactionOrI, 'economy.shared.trade.fail', {
 				err: err.message || 'Unknown error.',
 			}),
-			{ color: 'Red' },
+			{
+				color: 'Red',
+			},
 		);
 		await interactionOrI[method]({
 			components,
@@ -153,29 +158,29 @@ async function executeSellKyth({
 	const { KythLiquidityPool, MarketTransaction } = models;
 	const method =
 		interactionOrI.deferred || interactionOrI.replied ? 'editReply' : 'update';
-
 	try {
 		let lockAcquired = false;
 		let result;
 		let newSpotPrice;
-
 		try {
 			await waitAndAcquireLock(LOCK_KEY);
 			lockAcquired = true;
 
 			// Fetch fresh pool state from DB after lock is acquired
 			const freshPool = await KythLiquidityPool.getCache(
-				{ id: 1 },
-				{ noCache: true },
+				{
+					id: 1,
+				},
+				{
+					noCache: true,
+				},
 			);
-
 			const poolState = {
 				coinReserve: Number(freshPool.coinReserve),
 				kythReserve: Number(freshPool.kythReserve),
 				kConstant: Number(freshPool.kConstant),
 				feeRate: Number(freshPool.feeRatePct ?? 2) / 100,
 			};
-
 			result = calcSellOutput(sellQuantity, poolState);
 			newSpotPrice = result.newCoinReserve / result.newKythReserve;
 
@@ -183,15 +188,21 @@ async function executeSellKyth({
 			if (result.coinOut < minCoinOut) {
 				const components = await simpleContainer(
 					interactionOrI,
-					await t(interactionOrI, 'economy.market.sell.error.slippage.desc', {
-						received: result.coinOut.toLocaleString(undefined, {
-							maximumFractionDigits: 2,
-						}),
-						minOut: minCoinOut.toLocaleString(undefined, {
-							maximumFractionDigits: 2,
-						}),
-					}),
-					{ color: 'Red' },
+					await t(
+						interactionOrI,
+						'economy.helpers.kythTrade.market.sell.error.slippage.desc',
+						{
+							received: result.coinOut.toLocaleString(undefined, {
+								maximumFractionDigits: 2,
+							}),
+							minOut: minCoinOut.toLocaleString(undefined, {
+								maximumFractionDigits: 2,
+							}),
+						},
+					),
+					{
+						color: 'Red',
+					},
 				);
 				return interactionOrI[method]({
 					components,
@@ -221,7 +232,6 @@ async function executeSellKyth({
 		user.changed('kythHolding', true);
 		user.changed('kythiaCoin', true);
 		await user.save();
-
 		await MarketTransaction.create({
 			userId: user.userId,
 			assetId: 'kyth',
@@ -229,16 +239,16 @@ async function executeSellKyth({
 			quantity: sellQuantity,
 			price: newSpotPrice,
 		});
-
 		const successMsg = [
-			await t(interactionOrI, 'economy.trade.sell_success'),
+			await t(interactionOrI, 'economy.helpers.kythTrade.trade.sell_success'),
 			``,
 			`**Sold:** 💎 ${sellQuantity.toFixed(6)} KYTH`,
-			`**Received:** 🪙 ${result.coinOut.toLocaleString(undefined, { maximumFractionDigits: 2 })} Coin`,
+			`**Received:** 🪙 ${result.coinOut.toLocaleString(undefined, {
+				maximumFractionDigits: 2,
+			})} Coin`,
 			`**Effective Price:** ${result.executionPrice.toFixed(6)} Coin/KYTH`,
 			`**New Market Price:** ${newSpotPrice.toFixed(6)} Coin/KYTH 📉`,
 		].join('\n');
-
 		const components = await simpleContainer(interactionOrI, successMsg, {
 			color: 'Yellow',
 		});
@@ -252,10 +262,12 @@ async function executeSellKyth({
 		});
 		const components = await simpleContainer(
 			interactionOrI,
-			await t(interactionOrI, 'economy.trade.fail', {
+			await t(interactionOrI, 'economy.shared.trade.fail', {
 				err: err.message || 'Unknown error.',
 			}),
-			{ color: 'Red' },
+			{
+				color: 'Red',
+			},
 		);
 		await interactionOrI[method]({
 			components,
@@ -263,7 +275,6 @@ async function executeSellKyth({
 		});
 	}
 }
-
 module.exports = {
 	executeBuyKyth,
 	executeSellKyth,

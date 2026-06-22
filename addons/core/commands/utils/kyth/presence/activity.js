@@ -55,10 +55,14 @@ class ActivityCommand extends BaseCommand {
 			await interaction.client.user.setActivity(activityPayload);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.activity.success', {
-					activity: activityName,
-					type,
-				}),
+				await t(
+					interaction,
+					'core.commands.utils.kyth.presence.activity.success',
+					{
+						activity: activityName,
+						type,
+					},
+				),
 				{
 					color: 'Green',
 				},
@@ -73,7 +77,7 @@ class ActivityCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.error', {
+				await t(interaction, 'core.helpers.index.utils.presence.error', {
 					error: error.message,
 				}),
 				{

@@ -28,7 +28,10 @@ class LootboxCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -43,9 +46,13 @@ class LootboxCommand extends BaseCommand {
 			interaction,
 		);
 		if (cooldown.remaining) {
-			const msg = await t(interaction, 'economy.lootbox.lootbox.cooldown', {
-				time: cooldown.time,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.lootbox.lootbox.cooldown',
+				{
+					time: cooldown.time,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -69,9 +76,9 @@ class LootboxCommand extends BaseCommand {
 		user.changed('kythiaCoin', true);
 		user.changed('lastLootbox', true);
 		await user.save();
-		const msg = `${await t(interaction, 'economy.lootbox.lootbox.title')}\n${await t(
+		const msg = `${await t(interaction, 'economy.commands.lootbox.lootbox.title')}\n${await t(
 			interaction,
-			'economy.lootbox.lootbox.success',
+			'economy.commands.lootbox.lootbox.success',
 			{
 				amount: randomReward,
 			},

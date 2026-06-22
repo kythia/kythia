@@ -120,7 +120,7 @@ class RestartCommand extends BaseCommand {
 				) {
 					const msg = await t(
 						interaction,
-						'core.utils.kyth.restart.invalid_time',
+						'core.commands.utils.kyth.restart.invalid_time',
 					);
 					const components = await simpleContainer(interaction, msg, {
 						color: 'Red',
@@ -185,7 +185,10 @@ class RestartCommand extends BaseCommand {
 					restartTimer = null;
 				}
 				interaction.client.kythiaRestartTimestamp = null;
-				const msg = await t(interaction, 'core.utils.kyth.restart.cancelled');
+				const msg = await t(
+					interaction,
+					'core.commands.utils.kyth.restart.cancelled',
+				);
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Green',
 				});
@@ -205,7 +208,10 @@ class RestartCommand extends BaseCommand {
 		);
 		restartContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				await t(interaction, 'core.utils.restart.embed.confirm.desc'),
+				await t(
+					interaction,
+					'core.commands.utils.kyth.restart.embed.confirm.desc',
+				),
 			),
 		);
 		restartContainer.addSeparatorComponents(
@@ -217,11 +223,21 @@ class RestartCommand extends BaseCommand {
 			new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
 					.setCustomId('confirm_restart')
-					.setLabel(await t(interaction, 'core.utils.restart.button.confirm'))
+					.setLabel(
+						await t(
+							interaction,
+							'core.commands.utils.kyth.restart.button.confirm',
+						),
+					)
 					.setStyle(ButtonStyle.Danger),
 				new ButtonBuilder()
 					.setCustomId('cancel_restart')
-					.setLabel(await t(interaction, 'core.utils.restart.button.cancel'))
+					.setLabel(
+						await t(
+							interaction,
+							'core.commands.utils.kyth.restart.button.cancel',
+						),
+					)
 					.setStyle(ButtonStyle.Secondary),
 			),
 		);
@@ -244,7 +260,10 @@ class RestartCommand extends BaseCommand {
 				);
 				cancelContainer.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'core.utils.restart.embed.cancelled.desc'),
+						await t(
+							interaction,
+							'core.commands.utils.kyth.restart.embed.cancelled.desc',
+						),
 					),
 				);
 				try {
@@ -262,7 +281,10 @@ class RestartCommand extends BaseCommand {
 				);
 				loadingContainer.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'core.utils.restart.embed.restarting.desc'),
+						await t(
+							interaction,
+							'core.commands.utils.kyth.restart.embed.restarting.desc',
+						),
 					),
 				);
 				try {
@@ -284,7 +306,10 @@ class RestartCommand extends BaseCommand {
 				);
 				timeoutContainer.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'core.utils.restart.embed.timeout.desc'),
+						await t(
+							interaction,
+							'core.commands.utils.kyth.restart.embed.timeout.desc',
+						),
 					),
 				);
 				await interaction.editReply({

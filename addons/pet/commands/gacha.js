@@ -8,43 +8,42 @@
 const { checkCooldown } = require('@coreHelpers/time');
 const { MessageFlags } = require('discord.js');
 const { Op } = require('sequelize');
-
 const { BaseCommand } = require('kythia-core');
-
 class GachaCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand.setName('gacha').setDescription('Gacha your pet!');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { User, UserPet, Pet } = models;
-
 		await interaction.deferReply();
-
 		const userId = interaction.user.id;
 		const userPet = await UserPet.getCache({
 			where: {
 				userId: userId,
 			},
-			include: [{ model: Pet, as: 'pet' }],
+			include: [
+				{
+					model: Pet,
+					as: 'pet',
+				},
+			],
 		});
-
 		if (!userPet) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'pet.gacha.no.pet.msg_md'),
-				{ color: kythiaConfig.bot.color },
+				await t(interaction, 'pet.commands.gacha.no.pet.msg_md'),
+				{
+					color: kythiaConfig.bot.color,
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const cooldown = checkCooldown(
 			userPet.lastGacha,
 			kythiaConfig.addons.pet.gachaCooldown || 86400,
@@ -53,24 +52,29 @@ class GachaCommand extends BaseCommand {
 		if (cooldown.remaining) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'pet.gacha.cooldown.msg_md', {
+				await t(interaction, 'pet.commands.gacha.cooldown.msg_md', {
 					time: cooldown.time,
 				}),
-				{ color: kythiaConfig.bot.color },
+				{
+					color: kythiaConfig.bot.color,
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
-		const pet = await Pet.getCache({ id: userPet.petId });
+		const pet = await Pet.getCache({
+			id: userPet.petId,
+		});
 		const rarity = pet.rarity;
-
 		const rarityChance = {
-			common: 0.9, // 90% chance for same rarity
-			rare: 0.75, // 75% chance for same rarity
-			epic: 0.5, // 50% chance for same rarity
+			common: 0.9,
+			// 90% chance for same rarity
+			rare: 0.75,
+			// 75% chance for same rarity
+			epic: 0.5,
+			// 50% chance for same rarity
 			legendary: 0.1, // 10% chance for same rarity
 		};
 		const random = Math.random();
@@ -85,7 +89,10 @@ class GachaCommand extends BaseCommand {
 		// Get the new pet based on the rarity
 		const selectedPet = await Pet.getCache({
 			rarity: selectedRarity,
-			id: { [Op.ne]: userPet.petId }, // Exclude current pet
+			id: {
+				[Op.ne]: userPet.petId,
+			},
+			// Exclude current pet
 			order: User.sequelize.random(), // Randomize to select one from the rarity pool
 		});
 
@@ -105,18 +112,18 @@ class GachaCommand extends BaseCommand {
 			level: newLevel,
 			lastGacha: now,
 		});
-
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'pet.gacha.success.msg_md', {
+			await t(interaction, 'pet.commands.gacha.success.msg_md', {
 				icon: selectedPet.icon,
 				name: selectedPet.name,
 				rarity: selectedPet.rarity,
 				level: newLevel,
 			}),
-			{ color: kythiaConfig.bot.color },
+			{
+				color: kythiaConfig.bot.color,
+			},
 		);
-
 		return await interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
@@ -137,5 +144,4 @@ class GachaCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = GachaCommand;

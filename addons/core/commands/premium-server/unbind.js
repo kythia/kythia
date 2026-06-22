@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class UnbindCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('unbind')
@@ -25,32 +22,31 @@ class UnbindCommand extends BaseCommand {
 					)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { helpers, models, translator } = container;
 		const { simpleContainer } = helpers.discord;
 		const { PremiumServerBind } = models;
 		const t = translator.t.bind(translator);
-
 		const targetGuildId =
 			interaction.options.getString('server_id') || interaction.guildId;
 		const userId = interaction.user.id;
-
 		if (!targetGuildId) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.premium_server.no_server_id'),
-				{ color: 'Red' },
+				await t(interaction, 'core.helpers.index.premium_server.no_server_id'),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.reply({
 				components,
 				flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 			});
 		}
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const bind = await PremiumServerBind.getCache({
 			guildId: targetGuildId,
 			userId,
@@ -58,26 +54,36 @@ class UnbindCommand extends BaseCommand {
 		if (!bind) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.premium_server.unbind.not_bound_self'),
-				{ color: 'Red' },
+				await t(
+					interaction,
+					'core.commands.premium-server.unbind.premium_server.not_bound_self',
+				),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		await bind.destroy();
-
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'core.premium_server.unbind.success', {
-				guildId: targetGuildId,
-			}),
-			{ color: 'Green' },
+			await t(
+				interaction,
+				'core.commands.premium-server.unbind.premium_server.success',
+				{
+					guildId: targetGuildId,
+				},
+			),
+			{
+				color: 'Green',
+			},
 		);
-		return interaction.editReply({ components });
+		return interaction.editReply({
+			components,
+		});
 	}
 }
-
 exports.default = UnbindCommand;

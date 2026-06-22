@@ -15,27 +15,21 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class CreateCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('create')
 			.setDescription('Create a new reaction role panel (interactive setup).');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { kythiaConfig, helpers, t } = container;
 		const { convertColor } = helpers.color;
-
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const setupButton = new ButtonBuilder()
 			.setCustomId('rr-panel-setup-show')
 			.setLabel(
@@ -46,12 +40,11 @@ class CreateCommand extends BaseCommand {
 			)
 			.setStyle(ButtonStyle.Primary)
 			.setEmoji('🎭');
-
 		const setupContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'reaction-role.panel.create.intro_md'),
+					await t(interaction, 'reaction-role.commands.panel.create.intro_md'),
 				),
 			)
 			.addSeparatorComponents(
@@ -62,12 +55,10 @@ class CreateCommand extends BaseCommand {
 			.addActionRowComponents(
 				new ActionRowBuilder().addComponents(setupButton),
 			);
-
 		await interaction.reply({
 			components: [setupContainer],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = CreateCommand;

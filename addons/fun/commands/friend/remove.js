@@ -55,7 +55,7 @@ class RemoveCommand extends BaseCommand {
 				: null;
 		if (!existingFriendship) {
 			return interaction.reply({
-				content: await t(interaction, 'fun.friend.not.friends'),
+				content: await t(interaction, 'fun.commands.friend.remove.not.friends'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -70,15 +70,19 @@ class RemoveCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'fun.friend.removed.title'),
+					await t(interaction, 'fun.commands.friend.remove.removed.title'),
 				),
 			)
 			.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'fun.friend.removed.description', {
-						user: targetUser.toString(),
-					}),
+					await t(
+						interaction,
+						'fun.commands.friend.remove.removed.description',
+						{
+							user: targetUser.toString(),
+						},
+					),
 				),
 			)
 			.addSeparatorComponents(new SeparatorBuilder().setDivider(true))

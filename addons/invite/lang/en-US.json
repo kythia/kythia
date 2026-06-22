@@ -1,13 +1,5 @@
 {
 	"invite": {
-		"command": {
-			"add": {
-				"success": "Added {amount} invites to {user}. Now {total}."
-			},
-			"remove": {
-				"success": "Removed {amount} invites from {user}. Now {total}."
-			}
-		},
 		"events": {
 			"guildMemberAdd": {
 				"tracker": {
@@ -37,20 +29,48 @@
 				}
 			}
 		},
-		"invite": {
-			"command": {
-				"title": "## Invites",
-				"user": {
-					"stats": "{user} has {invites} invites (fake: {fake}, leaves: {leaves})."
-				},
-				"leaderboard": {
-					"title": "## Invite Leaderboard\n**Page {page} of {totalPages}**",
-					"empty": "No data yet.",
-					"entry": "### {medal} **{username}**\n> Total Invites: **{invites}**",
-					"footer": "Total Inviters: {totalUsers}"
-				},
-				"reset": {
-					"success": "All invite data has been reset."
+		"helpers": {
+			"index": {
+				"invite": {
+					"command": {
+						"title": "## Invites"
+					}
+				}
+			},
+			"leaderboard": {
+				"invite": {
+					"command": {
+						"empty": "No data yet.",
+						"entry": "### {medal} **{username}**\n> Total Invites: **{invites}**",
+						"title": "## Invite Leaderboard\n**Page {page} of {totalPages}**",
+						"footer": "Total Inviters: {totalUsers}"
+					}
+				}
+			}
+		},
+		"commands": {
+			"add": {
+				"command": {
+					"success": "Added {amount} invites to {user}. Now {total}."
+				}
+			},
+			"remove": {
+				"command": {
+					"success": "Removed {amount} invites from {user}. Now {total}."
+				}
+			},
+			"reset": {
+				"invite": {
+					"command": {
+						"success": "All invite data has been reset."
+					}
+				}
+			},
+			"user": {
+				"invite": {
+					"command": {
+						"stats": "{user} has {invites} invites (fake: {fake}, leaves: {leaves})."
+					}
 				}
 			}
 		}

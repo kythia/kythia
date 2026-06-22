@@ -61,7 +61,10 @@ class SetCommand extends BaseCommand {
 			year: year || 2000,
 		});
 		if (!dateObj.isValid) {
-			const msg = await t(interaction, 'birthday.set.error.invalid_date');
+			const msg = await t(
+				interaction,
+				'birthday.commands.set.error.invalid_date',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -81,7 +84,7 @@ class SetCommand extends BaseCommand {
 				year,
 			},
 		);
-		const successMsg = await t(interaction, 'birthday.set.success', {
+		const successMsg = await t(interaction, 'birthday.commands.set.success', {
 			date: dateObj.toFormat(year ? 'DDDD' : 'MMMM d'),
 		});
 		const components = await simpleContainer(interaction, successMsg);

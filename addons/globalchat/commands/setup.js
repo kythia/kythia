@@ -12,12 +12,9 @@ const {
 	PermissionFlagsBits,
 } = require('discord.js');
 const fetch = require('node-fetch');
-
 const { BaseCommand } = require('kythia-core');
-
 class SetupCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('setup')
@@ -31,29 +28,22 @@ class SetupCommand extends BaseCommand {
 					.addChannelTypes(ChannelType.GuildText)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers, logger, client } = container;
 		const { GlobalChat } = models;
 		const { simpleContainer, getChannelSafe } = helpers.discord;
-
 		const apiUrl = kythiaConfig?.addons?.globalchat?.apiUrl;
 		const webhookName = 'Kythia Global Chat';
-
 		await interaction.deferReply();
-
 		let alreadySetup = false;
 		let existingChannelId = null;
-
 		try {
 			const res = await fetch(`${apiUrl}/list`);
 			const resJson = await res.json();
-
 			const found = resJson?.data?.guilds?.find(
 				(g) => g.id === interaction.guild.id,
 			);
-
 			if (found) {
 				alreadySetup = true;
 				existingChannelId = found.globalChannelId;
@@ -67,36 +57,37 @@ class SetupCommand extends BaseCommand {
 			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'globalchat.setup.check.failed'),
-				{ color: 'Red' },
+				await t(interaction, 'globalchat.commands.setup.check.failed'),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const localDbChat = await GlobalChat.getCache({
 			guildId: interaction.guild.id,
 		});
 		if (alreadySetup || localDbChat) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'globalchat.setup.already.set', {
+				await t(interaction, 'globalchat.commands.setup.already.set', {
 					channel: `<#${existingChannelId || localDbChat?.globalChannelId}>`,
 				}),
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		let channel = interaction.options.getChannel('channel');
 		let usedChannelId;
 		let webhook;
-
 		if (channel) {
 			usedChannelId = channel.id;
 			try {
@@ -107,13 +98,15 @@ class SetupCommand extends BaseCommand {
 
 				// Send simple welcome message
 				await channel.send({
-					content: `${await t(interaction, 'globalchat.setup.title')}\n${await t(interaction, 'globalchat.setup.intro.desc')}`,
+					content: `${await t(interaction, 'globalchat.shared.setup.title')}\n${await t(interaction, 'globalchat.shared.setup.intro.desc')}`,
 				});
 			} catch (_err) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'globalchat.setup.webhook.failed'),
-					{ color: 'Red' },
+					await t(interaction, 'globalchat.commands.setup.webhook.failed'),
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -150,18 +143,17 @@ class SetupCommand extends BaseCommand {
 						},
 					],
 				});
-
 				try {
 					channel = await getChannelSafe(interaction.guild, createdChannel.id);
 				} catch (fetchError) {
 					logger.error(
 						`Failed to re-fetch the newly created channel: ${fetchError.message || fetchError}`,
-						{ label: 'globalchat' },
+						{
+							label: 'globalchat',
+						},
 					);
 				}
-
 				usedChannelId = channel.id;
-
 				webhook = await channel.createWebhook({
 					name: webhookName,
 					avatar: client.user.displayAvatarURL(),
@@ -169,17 +161,24 @@ class SetupCommand extends BaseCommand {
 
 				// Send simple welcome message
 				await channel.send({
-					content: `${await t(interaction, 'globalchat.setup.title')}\n${await t(interaction, 'globalchat.setup.intro.desc')}`,
+					content: `${await t(interaction, 'globalchat.shared.setup.title')}\n${await t(interaction, 'globalchat.shared.setup.intro.desc')}`,
 				});
 			} catch (err) {
 				logger.error(
 					`Failed to create global chat channel: ${err.message || err}`,
-					{ label: 'globalchat' },
+					{
+						label: 'globalchat',
+					},
 				);
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'globalchat.setup.create.channel.failed'),
-					{ color: 'Red' },
+					await t(
+						interaction,
+						'globalchat.commands.setup.create.channel.failed',
+					),
+					{
+						color: 'Red',
+					},
 				);
 				return interaction.editReply({
 					components,
@@ -187,7 +186,6 @@ class SetupCommand extends BaseCommand {
 				});
 			}
 		}
-
 		try {
 			await GlobalChat.create({
 				guildId: interaction.guild.id,
@@ -200,7 +198,6 @@ class SetupCommand extends BaseCommand {
 				label: 'globalchat',
 			});
 		}
-
 		try {
 			await fetch(`${apiUrl}/add`, {
 				method: 'POST',
@@ -218,21 +215,24 @@ class SetupCommand extends BaseCommand {
 		} catch (_err) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'globalchat.setup.register.api.failed'),
-				{ color: 'Red' },
+				await t(interaction, 'globalchat.commands.setup.register.api.failed'),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'globalchat.setup.success', {
+			await t(interaction, 'globalchat.commands.setup.success', {
 				channel: `<#${usedChannelId}>`,
 			}),
-			{ color: 'Green' },
+			{
+				color: 'Green',
+			},
 		);
 		return interaction.editReply({
 			components,
@@ -240,5 +240,4 @@ class SetupCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = SetupCommand;

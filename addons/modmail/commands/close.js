@@ -16,12 +16,9 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class CloseCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('close')
@@ -35,7 +32,6 @@ class CloseCommand extends BaseCommand {
 					.setRequired(false)
 					.setMaxLength(500),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, t, helpers, kythiaConfig } = container;
@@ -48,15 +44,18 @@ class CloseCommand extends BaseCommand {
 			threadChannelId: interaction.channel.id,
 			status: 'open',
 		});
-
 		if (!modmail) {
-			const desc = await t(interaction, 'modmail.errors.not_a_modmail');
+			const desc = await t(
+				interaction,
+				'modmail.helpers.index.errors.not_a_modmail',
+			);
 			return interaction.reply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const reason = interaction.options.getString('reason') || null;
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
@@ -68,10 +67,9 @@ class CloseCommand extends BaseCommand {
 
 		// Show confirmation UI with optional reason info
 		const bodyLines = [
-			await t(interaction, 'modmail.close.confirm_desc'),
+			await t(interaction, 'modmail.helpers.index.close.confirm_desc'),
 			reason ? `\n> **Reason:** ${reason}` : '',
 		].join('');
-
 		const row = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId(
@@ -79,26 +77,34 @@ class CloseCommand extends BaseCommand {
 						? `mm-confirm-close:${encodeURIComponent(reason)}`
 						: 'mm-confirm-close:',
 				)
-				.setLabel(await t(interaction, 'modmail.close.confirm_button'))
+				.setLabel(
+					await t(interaction, 'modmail.helpers.index.close.confirm_button'),
+				)
 				.setStyle(ButtonStyle.Danger)
 				.setEmoji('✅'),
 			new ButtonBuilder()
 				.setCustomId('mm-close-with-reason')
-				.setLabel(await t(interaction, 'modmail.close.with_reason_button'))
+				.setLabel(
+					await t(
+						interaction,
+						'modmail.helpers.index.close.with_reason_button',
+					),
+				)
 				.setStyle(ButtonStyle.Secondary)
 				.setEmoji('🔏'),
 			new ButtonBuilder()
 				.setCustomId('mm-cancel-close')
-				.setLabel(await t(interaction, 'modmail.close.cancel_button'))
+				.setLabel(
+					await t(interaction, 'modmail.helpers.index.close.cancel_button'),
+				)
 				.setStyle(ButtonStyle.Secondary)
 				.setEmoji('❌'),
 		);
-
 		const confirmContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'modmail.close.confirm_title'),
+					await t(interaction, 'modmail.helpers.index.close.confirm_title'),
 				),
 			)
 			.addSeparatorComponents(
@@ -116,12 +122,10 @@ class CloseCommand extends BaseCommand {
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(footerText),
 			);
-
 		return interaction.reply({
 			components: [confirmContainer],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = CloseCommand;

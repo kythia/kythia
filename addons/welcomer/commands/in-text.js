@@ -38,7 +38,7 @@ class InTextCommand extends BaseCommand {
 		await welcomeSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'welcomer.welcomer.in.text.set', {
+			await t(interaction, 'welcomer.commands.in-text.welcomer.in.text.set', {
 				text,
 			}),
 			{

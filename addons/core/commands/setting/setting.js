@@ -248,9 +248,13 @@ class SettingCommand extends BaseCommand {
 					await serverSetting.save();
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.setting.setting.language.set', {
-							lang,
-						}),
+						await t(
+							interaction,
+							'core.commands.setting.setting.setting.language.set',
+							{
+								lang,
+							},
+						),
 						{
 							color: 'Green',
 						},
@@ -265,7 +269,10 @@ class SettingCommand extends BaseCommand {
 			default: {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.setting.setting.command.not.found'),
+					await t(
+						interaction,
+						'core.commands.setting.setting.setting.command.not.found',
+					),
 					{
 						color: 'Red',
 					},

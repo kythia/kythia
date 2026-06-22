@@ -14,10 +14,8 @@ const uiHelper = require('../../helpers/ui');
 
 class ListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand.setName('list').setDescription('Show all pets in the system');
-
 	teamOnly = true;
 	async execute(interaction) {
 		const container = this.container;
@@ -36,7 +34,7 @@ class ListCommand extends BaseCommand {
 		if (totalPets === 0) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'pet.admin.list.list.empty.msg_md'),
+				await t(interaction, 'pet.commands.admin.list.list.empty.msg_md'),
 				{
 					color: 'Red',
 				},
@@ -102,5 +100,4 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ListCommand;

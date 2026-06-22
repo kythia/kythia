@@ -44,7 +44,7 @@ class ProfileCommand extends BaseCommand {
 			userId,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'adventure.no.character');
+			const msg = await t(interaction, 'adventure.shared.no.character');
 			const components = await helpers.discord.createContainer(interaction, {
 				description: msg,
 				color: 'Red',
@@ -64,9 +64,13 @@ class ProfileCommand extends BaseCommand {
 			to: 'decimal',
 		});
 		const profileContainer = new ContainerBuilder().setAccentColor(accentColor);
-		const introText = await t(interaction, 'adventure.stats.embed.desc', {
-			username: interaction.user.username,
-		});
+		const introText = await t(
+			interaction,
+			'adventure.commands.profile.stats.embed.desc',
+			{
+				username: interaction.user.username,
+			},
+		);
 		profileContainer.addSectionComponents(
 			new SectionBuilder()
 				.addTextDisplayComponents(
@@ -84,9 +88,9 @@ class ProfileCommand extends BaseCommand {
 				.setDivider(true),
 		);
 		const statsLine1 = [
-			`**${await t(interaction, 'adventure.stats.level')}:** ${user.level}`,
-			`**${await t(interaction, 'adventure.stats.hp')}:** ${user.hp}`,
-			`**${await t(interaction, 'adventure.stats.gold')}:** ${user.gold.toLocaleString()}`,
+			`**${await t(interaction, 'adventure.commands.profile.stats.level')}:** ${user.level}`,
+			`**${await t(interaction, 'adventure.commands.profile.stats.hp')}:** ${user.hp}`,
+			`**${await t(interaction, 'adventure.commands.profile.stats.gold')}:** ${user.gold.toLocaleString()}`,
 		].join('\n');
 		profileContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(statsLine1),
@@ -97,8 +101,8 @@ class ProfileCommand extends BaseCommand {
 				.setDivider(true),
 		);
 		const statsLine2 = [
-			`**${await t(interaction, 'adventure.stats.strength')}:** ${user.strength}`,
-			`**${await t(interaction, 'adventure.stats.defense')}:** ${user.defense}`,
+			`**${await t(interaction, 'adventure.commands.profile.stats.strength')}:** ${user.strength}`,
+			`**${await t(interaction, 'adventure.commands.profile.stats.defense')}:** ${user.defense}`,
 		].join('\n');
 		profileContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(statsLine2),
@@ -108,12 +112,19 @@ class ProfileCommand extends BaseCommand {
 				.setSpacing(SeparatorSpacingSize.Small)
 				.setDivider(true),
 		);
-		const xpTitle = await t(interaction, 'adventure.stats.xp.progress.text');
-		const xpValue = await t(interaction, 'adventure.stats.xp.progress.value', {
-			xp: user.xp,
-			xpForNextLevel,
-			progressBar,
-		});
+		const xpTitle = await t(
+			interaction,
+			'adventure.commands.profile.stats.xp.progress.text',
+		);
+		const xpValue = await t(
+			interaction,
+			'adventure.commands.profile.stats.xp.progress.value',
+			{
+				xp: user.xp,
+				xpForNextLevel,
+				progressBar,
+			},
+		);
 		profileContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(`**${xpTitle}**\n${xpValue}`),
 		);
@@ -125,7 +136,10 @@ class ProfileCommand extends BaseCommand {
 						.setSpacing(SeparatorSpacingSize.Small)
 						.setDivider(true),
 				);
-				const charTitle = await t(interaction, 'adventure.stats.character');
+				const charTitle = await t(
+					interaction,
+					'adventure.commands.profile.stats.character',
+				);
 				profileContainer.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
 						`**${charTitle}**\n${c.emoji} ${c.name}`,

@@ -19,32 +19,28 @@ const {
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AboutCommand extends BaseCommand {
 	aliases = ['abt', '🌸'];
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('about')
 		.setDescription(`A brief introduction about kythia`);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
-
 		await interaction.deferReply();
-
 		const components = [
 			new ContainerBuilder()
 				.setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				)
-
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'core.utils.about.embed.title', {
+						await t(interaction, 'core.commands.utils.about.embed.title', {
 							username: interaction.client.user.username,
 						}),
 					),
@@ -68,7 +64,7 @@ class AboutCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'core.utils.about.embed.desc', {
+						await t(interaction, 'core.commands.utils.about.embed.desc', {
 							username: interaction.client.user.username,
 						}),
 					),
@@ -82,16 +78,26 @@ class AboutCommand extends BaseCommand {
 					new ActionRowBuilder().addComponents(
 						new ButtonBuilder()
 							.setStyle(ButtonStyle.Link)
-							.setLabel(await t(interaction, 'core.utils.about.button.invite'))
+							.setLabel(
+								await t(interaction, 'core.commands.utils.about.button.invite'),
+							)
 							.setURL(kythiaConfig.settings.inviteLink),
 						new ButtonBuilder()
 							.setStyle(ButtonStyle.Link)
-							.setLabel(await t(interaction, 'core.utils.about.button.website'))
+							.setLabel(
+								await t(
+									interaction,
+									'core.commands.utils.about.button.website',
+								),
+							)
 							.setURL(kythiaConfig.settings.kythiaWeb),
 						new ButtonBuilder()
 							.setStyle(ButtonStyle.Link)
 							.setLabel(
-								await t(interaction, 'core.utils.about.button.owner.web'),
+								await t(
+									interaction,
+									'core.commands.utils.about.button.owner.web',
+								),
 							)
 							.setURL(kythiaConfig.settings.ownerWeb),
 					),
@@ -103,16 +109,14 @@ class AboutCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'core.utils.about.embed.footer'),
+						await t(interaction, 'core.commands.utils.about.embed.footer'),
 					),
 				),
 		];
-
 		await interaction.editReply({
 			components: components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = AboutCommand;

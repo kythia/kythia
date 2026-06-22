@@ -1,23 +1,29 @@
 {
 	"autoreact": {
-		"add": {
-			"error": {
-				"ambiguous": "Please provide either a `trigger` (for text) OR a `channel` (for channel mode), but not both.",
-				"invalid_emoji": "Invalid emoji provided. Please use a standard emoji or a custom emoji from a server the bot can access.",
-				"exists": "An auto-reaction for this trigger/channel already exists."
+		"commands": {
+			"add": {
+				"error": {
+					"ambiguous": "Please provide either a `trigger` (for text) OR a `channel` (for channel mode), but not both.",
+					"invalid_emoji": "Invalid emoji provided. Please use a standard emoji or a custom emoji from a server the bot can access.",
+					"exists": "An auto-reaction for this trigger/channel already exists."
+				},
+				"success": "**Auto-Reaction Added!**\nTrigger: {trigger}\nEmoji: {emoji}\nType: {type}"
 			},
-			"success": "**Auto-Reaction Added!**\nTrigger: {trigger}\nEmoji: {emoji}\nType: {type}"
+			"remove": {
+				"error": {
+					"not_found": "Auto-reaction not found."
+				},
+				"success": "**Auto-Reaction Removed!**\nTrigger: `{trigger}`"
+			}
 		},
-		"remove": {
-			"error": {
-				"not_found": "Auto-reaction not found."
-			},
-			"success": "**Auto-Reaction Removed!**\nTrigger: `{trigger}`"
-		},
-		"list": {
-			"title": "## Auto-Reactions List ({page}/{totalPages})",
-			"empty": "No auto-reactions set for this server.",
-			"footer": "Page {page} of {totalPages}"
+		"helpers": {
+			"ui": {
+				"list": {
+					"empty": "No auto-reactions set for this server.",
+					"title": "## Auto-Reactions List ({page}/{totalPages})",
+					"footer": "Page {page} of {totalPages}"
+				}
+			}
 		}
 	}
 }

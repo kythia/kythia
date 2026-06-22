@@ -17,7 +17,6 @@ const {
 	StringSelectMenuBuilder,
 } = require('discord.js');
 const shopData = require('./items');
-
 const allItems = Object.values(shopData).flat();
 
 /**
@@ -32,7 +31,6 @@ function safeLocaleString(value, fallback = '0') {
 		? value.toLocaleString()
 		: fallback;
 }
-
 async function generateShopContainer(
 	interaction,
 	user,
@@ -42,7 +40,6 @@ async function generateShopContainer(
 	componentsBelow = [],
 ) {
 	const { t, kythiaConfig } = interaction.client.container;
-
 	let cashDisplay = '0';
 	if (
 		user &&
@@ -51,17 +48,16 @@ async function generateShopContainer(
 	) {
 		cashDisplay = safeLocaleString(user.kythiaCoin, '0');
 	}
-	const headerText = await t(interaction, 'economy.shop.desc', {
+	const headerText = await t(interaction, 'economy.helpers.shop.desc', {
 		bot: interaction.client.user.username,
 		category: category.charAt(0).toUpperCase() + category.slice(1),
 		cash: cashDisplay,
 	});
-
 	const itemBlocks = [];
 	if (pageItems.length === 0) {
 		itemBlocks.push(
 			new TextDisplayBuilder().setContent(
-				`**${await t(interaction, 'economy.shop.empty.title')}**\n${await t(interaction, 'economy.shop.empty.desc')}`,
+				`**${await t(interaction, 'economy.helpers.shop.empty.title')}**\n${await t(interaction, 'economy.helpers.shop.empty.desc')}`,
 			),
 		);
 	} else {
@@ -79,7 +75,6 @@ async function generateShopContainer(
 			);
 		}
 	}
-
 	const totalPages = Math.max(
 		1,
 		Math.ceil(
@@ -90,12 +85,10 @@ async function generateShopContainer(
 		),
 	);
 	page = Math.max(1, Math.min(page, totalPages));
-
-	const footerText = await t(interaction, 'economy.shop.footer', {
+	const footerText = await t(interaction, 'economy.helpers.shop.footer', {
 		page,
 		totalPages,
 	});
-
 	const shopContainer = new ContainerBuilder()
 		.setAccentColor(
 			kythiaConfig.bot.color
@@ -117,7 +110,6 @@ async function generateShopContainer(
 		.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(footerText ?? ''),
 		);
-
 	if (componentsBelow?.length) {
 		shopContainer
 			.addSeparatorComponents(
@@ -127,7 +119,6 @@ async function generateShopContainer(
 			)
 			.addActionRowComponents(...componentsBelow);
 	}
-
 	return {
 		shopContainer,
 		pageItems,
@@ -135,7 +126,6 @@ async function generateShopContainer(
 		totalPages,
 	};
 }
-
 async function generateShopComponentRows(
 	interaction,
 	page,
@@ -152,23 +142,24 @@ async function generateShopComponentRows(
 			default: category === cat,
 		})),
 	);
-
 	const categoryRow = new ActionRowBuilder().addComponents(
 		new StringSelectMenuBuilder()
 			.setCustomId('select_category')
 			.setPlaceholder(
-				await t(interaction, 'economy.shop.select.category.placeholder'),
+				await t(
+					interaction,
+					'economy.helpers.shop.select.category.placeholder',
+				),
 			)
 			.addOptions([
 				{
-					label: await t(interaction, 'economy.shop.category.all'),
+					label: await t(interaction, 'economy.helpers.shop.category.all'),
 					value: 'shop_category_all',
 					default: category === 'all',
 				},
 				...categoryOptions,
 			]),
 	);
-
 	const buyOptions = await Promise.all(
 		pageItems.map(async (item) => {
 			const actualPrice = Math.floor(
@@ -176,7 +167,7 @@ async function generateShopComponentRows(
 			);
 			return {
 				label: await t(interaction, item.nameKey),
-				description: await t(interaction, 'economy.shop.item.price', {
+				description: await t(interaction, 'economy.helpers.shop.item.price', {
 					price: safeLocaleString(actualPrice, '?'),
 				}),
 				value: item.id,
@@ -184,41 +175,39 @@ async function generateShopComponentRows(
 			};
 		}),
 	);
-
 	const buyRow = new ActionRowBuilder().addComponents(
 		new StringSelectMenuBuilder()
 			.setCustomId('buy_item')
-			.setPlaceholder(await t(interaction, 'economy.shop.buy.placeholder'))
+			.setPlaceholder(
+				await t(interaction, 'economy.helpers.shop.buy.placeholder'),
+			)
 			.setDisabled(pageItems.length === 0)
 			.addOptions(buyOptions),
 	);
-
 	const navigationRow = new ActionRowBuilder().addComponents(
 		new ButtonBuilder()
 			.setCustomId(`shop_nav_first_${category}`)
-			.setLabel(await t(interaction, 'economy.shop.nav.first'))
+			.setLabel(await t(interaction, 'economy.helpers.shop.nav.first'))
 			.setStyle(ButtonStyle.Secondary)
 			.setDisabled(page <= 1),
 		new ButtonBuilder()
 			.setCustomId(`shop_nav_prev_${category}`)
-			.setLabel(await t(interaction, 'economy.shop.nav.prev'))
+			.setLabel(await t(interaction, 'economy.helpers.shop.nav.prev'))
 			.setStyle(ButtonStyle.Primary)
 			.setDisabled(page <= 1),
 		new ButtonBuilder()
 			.setCustomId(`shop_nav_next_${category}`)
-			.setLabel(await t(interaction, 'economy.shop.nav.next'))
+			.setLabel(await t(interaction, 'economy.helpers.shop.nav.next'))
 			.setStyle(ButtonStyle.Primary)
 			.setDisabled(page >= totalPages),
 		new ButtonBuilder()
 			.setCustomId(`shop_nav_last_${category}`)
-			.setLabel(await t(interaction, 'economy.shop.nav.last'))
+			.setLabel(await t(interaction, 'economy.helpers.shop.nav.last'))
 			.setStyle(ButtonStyle.Secondary)
 			.setDisabled(page >= totalPages),
 	);
-
 	return [categoryRow, buyRow, navigationRow];
 }
-
 module.exports = {
 	safeLocaleString,
 	generateShopContainer,

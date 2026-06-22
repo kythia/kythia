@@ -194,12 +194,16 @@ class PoolCommand extends BaseCommand {
 				coinReserve: Number(pool.coinReserve),
 				kythReserve: Number(pool.kythReserve),
 			});
-			const msg = await t(interaction, 'core.utils.kyth.eco.pool.update', {
-				coin: Number(pool.coinReserve).toLocaleString(),
-				kyth: Number(pool.kythReserve).toFixed(4),
-				k: pool.kConstant.toLocaleString(),
-				price: newPrice.toFixed(4),
-			});
+			const msg = await t(
+				interaction,
+				'core.commands.utils.kyth.eco.pool.update',
+				{
+					coin: Number(pool.coinReserve).toLocaleString(),
+					kyth: Number(pool.kythReserve).toFixed(4),
+					k: pool.kConstant.toLocaleString(),
+					price: newPrice.toFixed(4),
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -213,10 +217,14 @@ class PoolCommand extends BaseCommand {
 			pool.kConstant = Number(pool.coinReserve) * Number(pool.kythReserve);
 			pool.changed('kConstant', true);
 			await pool.save();
-			const msg = await t(interaction, 'core.utils.kyth.eco.pool.recalc', {
-				old: Number(oldK).toLocaleString(),
-				new: pool.kConstant.toLocaleString(),
-			});
+			const msg = await t(
+				interaction,
+				'core.commands.utils.kyth.eco.pool.recalc',
+				{
+					old: Number(oldK).toLocaleString(),
+					new: pool.kConstant.toLocaleString(),
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});

@@ -59,7 +59,7 @@ class StartCommand extends BaseCommand {
 			userId,
 		});
 		if (existing) {
-			const msg = await t(interaction, 'adventure.start.already.have');
+			const msg = await t(interaction, 'adventure.commands.start.already.have');
 			const components = await createContainer(interaction, {
 				description: msg,
 				color: 'Red',
@@ -72,7 +72,7 @@ class StartCommand extends BaseCommand {
 		const charId = interaction.options.getString('character');
 		const selected = characters.getChar(charId);
 		if (!selected) {
-			const msg = await t(interaction, 'adventure.start.invalid_char');
+			const msg = await t(interaction, 'adventure.commands.start.invalid_char');
 			const components = await createContainer(interaction, {
 				description: msg,
 				color: 'Red',
@@ -104,7 +104,7 @@ class StartCommand extends BaseCommand {
 		});
 		const charStatsString = await t(
 			interaction,
-			'adventure.start.choose.char.stats',
+			'adventure.commands.start.choose.char.stats',
 			{
 				str: `${strength - selected.strengthBonus} (${selected.strengthBonus >= 0 ? '+' : ''}${selected.strengthBonus})`,
 				def: `${defense - selected.defenseBonus} (${selected.defenseBonus >= 0 ? '+' : ''}${selected.defenseBonus})`,
@@ -122,9 +122,15 @@ class StartCommand extends BaseCommand {
 			new SectionBuilder()
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'adventure.start.success.title_md', {
-							title: await t(interaction, 'adventure.start.success.title'),
-							desc: await t(interaction, 'adventure.start.success.desc'),
+						await t(interaction, 'adventure.commands.start.success.title_md', {
+							title: await t(
+								interaction,
+								'adventure.commands.start.success.title',
+							),
+							desc: await t(
+								interaction,
+								'adventure.commands.start.success.desc',
+							),
 						}),
 					),
 				)
@@ -141,7 +147,7 @@ class StartCommand extends BaseCommand {
 		);
 		startContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`**${await t(interaction, 'adventure.start.selected.char')}**\n${selected.emoji} **${await t(interaction, selected.nameKey)}**\n*${await t(interaction, selected.descKey)}*`,
+				`**${await t(interaction, 'adventure.commands.start.selected.char')}**\n${selected.emoji} **${await t(interaction, selected.nameKey)}**\n*${await t(interaction, selected.descKey)}*`,
 			),
 		);
 		startContainer.addSeparatorComponents(

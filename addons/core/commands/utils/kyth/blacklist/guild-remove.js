@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class GuildRemoveCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('guild-remove')
@@ -23,27 +20,28 @@ class GuildRemoveCommand extends BaseCommand {
 					.setDescription('Guild ID to remove from blacklist')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, logger, helpers } = container;
 		const { KythiaBlacklist } = models;
 		const { createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const guildId = interaction.options.getString('guild_id');
-
 		try {
 			const existing = await KythiaBlacklist.getCache({
-				where: { type: 'guild', targetId: guildId },
+				where: {
+					type: 'guild',
+					targetId: guildId,
+				},
 			});
 			if (!existing) {
 				const components = await createContainer(interaction, {
 					description: await t(
 						interaction,
-						'core.utils.kyth.blacklist.guild.remove.not.found',
-						{ id: guildId },
+						'core.commands.utils.kyth.blacklist.guild-remove.guild.remove.not.found',
+						{
+							id: guildId,
+						},
 					),
 					color: 'Red',
 				});
@@ -52,20 +50,23 @@ class GuildRemoveCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			await KythiaBlacklist.destroy({
-				where: { type: 'guild', targetId: guildId },
+				where: {
+					type: 'guild',
+					targetId: guildId,
+				},
 			});
-
 			const components = await createContainer(interaction, {
 				title: await t(
 					interaction,
-					'core.utils.kyth.blacklist.guild.remove.title',
+					'core.commands.utils.kyth.blacklist.guild-remove.guild.remove.title',
 				),
 				description: await t(
 					interaction,
-					'core.utils.kyth.blacklist.guild.remove.success',
-					{ id: guildId },
+					'core.commands.utils.kyth.blacklist.guild-remove.guild.remove.success',
+					{
+						id: guildId,
+					},
 				),
 				color: 'Green',
 			});
@@ -75,7 +76,9 @@ class GuildRemoveCommand extends BaseCommand {
 			});
 			logger.info(
 				`Guild ${guildId} removed from blacklist by ${interaction.user.tag}`,
-				{ label: 'core' },
+				{
+					label: 'core',
+				},
 			);
 		} catch (error) {
 			logger.error(
@@ -87,8 +90,10 @@ class GuildRemoveCommand extends BaseCommand {
 			const components = await createContainer(interaction, {
 				description: await t(
 					interaction,
-					'core.utils.kyth.blacklist.guild.remove.error',
-					{ error: error.message },
+					'core.commands.utils.kyth.blacklist.guild-remove.guild.remove.error',
+					{
+						error: error.message,
+					},
 				),
 				color: 'Red',
 			});
@@ -99,5 +104,4 @@ class GuildRemoveCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = GuildRemoveCommand;

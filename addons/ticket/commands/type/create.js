@@ -16,45 +16,40 @@ const {
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class CreateCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('create')
 			.setDescription('Creates a new ticket type (interactive setup)');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
-
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const startButton = new ButtonBuilder()
 			.setCustomId('tkt-type-step1-show')
-			.setLabel(await t(interaction, 'ticket.type.start_button'))
+			.setLabel(
+				await t(interaction, 'ticket.commands.type.create.start_button'),
+			)
 			.setStyle(ButtonStyle.Primary)
 			.setEmoji('🎟️');
-
 		const components = [
 			new ContainerBuilder()
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'ticket.type.start_title'),
+						await t(interaction, 'ticket.commands.type.create.start_title'),
 					),
 				)
 				// .addSeparatorComponents(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true))
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'ticket.type.start_desc'),
+						await t(interaction, 'ticket.commands.type.create.start_desc'),
 					),
 				)
 				.addSeparatorComponents(
@@ -78,7 +73,6 @@ class CreateCommand extends BaseCommand {
 					),
 				),
 		];
-
 		await interaction.reply({
 			components: components,
 			flags: MessageFlags.IsComponentsV2,
@@ -86,5 +80,4 @@ class CreateCommand extends BaseCommand {
 		return;
 	}
 }
-
 exports.default = CreateCommand;

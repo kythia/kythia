@@ -30,7 +30,10 @@ class FireCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -46,7 +49,7 @@ class FireCommand extends BaseCommand {
 		if (!target || target.employerId !== interaction.user.id) {
 			const msg = await t(
 				interaction,
-				'economy.company.fire.error.not_employee',
+				'economy.commands.company.fire.error.not_employee',
 				{
 					target: targetUser.username,
 				},
@@ -62,7 +65,7 @@ class FireCommand extends BaseCommand {
 		target.employerId = null;
 		target.changed('employerId', true);
 		await target.save();
-		const msg = await t(interaction, 'economy.company.fire.success', {
+		const msg = await t(interaction, 'economy.commands.company.fire.success', {
 			target: targetUser.username,
 		});
 		const components = await simpleContainer(interaction, msg, {
@@ -70,7 +73,7 @@ class FireCommand extends BaseCommand {
 		});
 
 		// Notify employee
-		const dmMsg = await t(interaction, 'economy.company.fire.dm', {
+		const dmMsg = await t(interaction, 'economy.commands.company.fire.dm', {
 			employer: interaction.user.username,
 		});
 		const dmComponents = await simpleContainer(interaction, dmMsg, {

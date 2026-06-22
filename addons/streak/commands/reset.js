@@ -12,27 +12,23 @@ const {
 	getOrCreateStreak,
 } = require('../helpers');
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class ResetCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('reset')
 			.setDescription("Reset YOUR streak to 0 (be careful, can't be undone).");
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { ServerSetting } = models;
 		const { simpleContainer } = helpers.discord;
-
 		const userId = interaction.user.id;
 		const guildId = interaction.guild.id;
-
-		const serverSetting = await ServerSetting.getCache({ guildId });
+		const serverSetting = await ServerSetting.getCache({
+			guildId,
+		});
 		const streakEmoji = serverSetting.streakEmoji || '🔥';
 		const streakMinimum =
 			typeof serverSetting.streakMinimum === 'number'
@@ -41,15 +37,15 @@ class ResetCommand extends BaseCommand {
 		const streakRoleReward = Array.isArray(serverSetting.streakRoleRewards)
 			? serverSetting.streakRoleRewards
 			: [];
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const streak = await getOrCreateStreak(container, userId, guildId);
-
 		if (streak.currentStreak === 0) {
 			const msg =
-				(await t(interaction, 'streak.streak.reset.title_md')) +
+				(await t(interaction, 'streak.helpers.index.streak.reset.title_md')) +
 				'\n' +
-				(await t(interaction, 'streak.streak.reset.already.zero'));
+				(await t(interaction, 'streak.commands.reset.streak.already.zero'));
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -58,7 +54,6 @@ class ResetCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		streak.lastStreak = streak.currentStreak; // snapshot for /streak restore
 		streak.currentStreak = 0;
 		streak.lastClaimTimestamp = null;
@@ -68,21 +63,16 @@ class ResetCommand extends BaseCommand {
 		if (serverSetting.streakNickname === true) {
 			await updateNickname(interaction.member, 0, streakEmoji, streakMinimum);
 		}
-
 		await syncStreakRoles(interaction.member, 0, streakRoleReward);
-
 		const msg =
-			(await t(interaction, 'streak.streak.reset.title_md')) +
+			(await t(interaction, 'streak.helpers.index.streak.reset.title_md')) +
 			'\n' +
-			(await t(interaction, 'streak.streak.reset.success'));
-
+			(await t(interaction, 'streak.commands.reset.streak.success'));
 		const components = await simpleContainer(interaction, msg);
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = ResetCommand;

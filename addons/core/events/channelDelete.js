@@ -91,7 +91,7 @@ class ChannelDeleteEvent extends BaseEvent {
 										client: this.client,
 										guildId: channel.guild.id,
 									},
-									'core.events.common.reason',
+									'core.helpers.index.events.common.reason',
 									{
 										reason: entry.reason,
 									},

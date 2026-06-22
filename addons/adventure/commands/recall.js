@@ -35,7 +35,7 @@ class RecallCommand extends BaseCommand {
 			userId,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'adventure.no.character');
+			const msg = await t(interaction, 'adventure.shared.no.character');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -51,7 +51,7 @@ class RecallCommand extends BaseCommand {
 		user.monsterGoldDrop = 0;
 		user.monsterXpDrop = 0;
 		await user.save();
-		const msg = await t(interaction, 'adventure.recall.recalled');
+		const msg = await t(interaction, 'adventure.commands.recall.recalled');
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,
 		});

@@ -77,7 +77,10 @@ class RemoveCommand extends BaseCommand {
 			deleted = 1;
 		}
 		if (!deleted) {
-			const msg = await t(interaction, 'autoreply.remove.error.not_found');
+			const msg = await t(
+				interaction,
+				'autoreply.commands.remove.error.not_found',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -86,9 +89,13 @@ class RemoveCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-		const msg = await t(interaction, 'autoreply.remove.success.plain', {
-			trigger: triggerInput,
-		});
+		const msg = await t(
+			interaction,
+			'autoreply.commands.remove.success.plain',
+			{
+				trigger: triggerInput,
+			},
+		);
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Red',
 		});

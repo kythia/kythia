@@ -37,17 +37,20 @@ class BanCommand extends BaseCommand {
 		const user = interaction.options.getUser('user');
 		const reason =
 			interaction.options.getString('reason') ||
-			(await t(interaction, 'automod.moderation.ban.default.reason'));
+			(await t(interaction, 'automod.commands.moderation.ban.default.reason'));
 		try {
 			await interaction.guild.members.ban(user, {
 				reason,
 			});
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
-				title: await t(interaction, 'automod.moderation.ban.success.title'),
+				title: await t(
+					interaction,
+					'automod.commands.moderation.ban.success.title',
+				),
 				description: await t(
 					interaction,
-					'automod.moderation.ban.success.desc',
+					'automod.commands.moderation.ban.success.desc',
 					{
 						user: user.tag,
 						reason,
@@ -62,7 +65,7 @@ class BanCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'automod.moderation.ban.failed', {
+				await t(interaction, 'automod.commands.moderation.ban.failed', {
 					error: error.message,
 				}),
 				{

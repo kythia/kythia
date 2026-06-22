@@ -26,7 +26,7 @@ async function generateLeaderboardContainer(
 	if (pageUsers.length === 0) {
 		leaderboardText = await t(
 			interaction,
-			'invite.invite.command.leaderboard.empty',
+			'invite.helpers.leaderboard.invite.command.empty',
 		);
 	} else {
 		const entries = await Promise.all(
@@ -52,11 +52,15 @@ async function generateLeaderboardContainer(
 				} catch (_error) {
 					username = `Unknown User (${row.userId})`;
 				}
-				return await t(interaction, 'invite.invite.command.leaderboard.entry', {
-					medal,
-					username,
-					invites: row.invites || 0,
-				});
+				return await t(
+					interaction,
+					'invite.helpers.leaderboard.invite.command.entry',
+					{
+						medal,
+						username,
+						invites: row.invites || 0,
+					},
+				);
 			}),
 		);
 		leaderboardText = entries.join('\n');
@@ -66,14 +70,22 @@ async function generateLeaderboardContainer(
 	const [leaderboardContainer] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: await t(interaction, 'invite.invite.command.leaderboard.title', {
-			page,
-			totalPages,
-		}),
+		title: await t(
+			interaction,
+			'invite.helpers.leaderboard.invite.command.title',
+			{
+				page,
+				totalPages,
+			},
+		),
 		content: leaderboardText,
-		footer: await t(interaction, 'invite.invite.command.leaderboard.footer', {
-			totalUsers,
-		}),
+		footer: await t(
+			interaction,
+			'invite.helpers.leaderboard.invite.command.footer',
+			{
+				totalUsers,
+			},
+		),
 		customIdPrefix: 'leaderboard',
 		navDisabled,
 	});

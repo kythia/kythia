@@ -7,18 +7,17 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class MmCancelCloseButton extends BaseButton {
 	button = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-		const desc = await t(interaction, 'modmail.close.cancelled');
+		const desc = await t(
+			interaction,
+			'modmail.buttons.mm-cancel-close.close.cancelled',
+		);
 		return interaction.reply({
 			components: await simpleContainer(interaction, desc, {
 				color: 'Blurple',
@@ -27,5 +26,4 @@ class MmCancelCloseButton extends BaseButton {
 		});
 	}
 }
-
 exports.default = MmCancelCloseButton;

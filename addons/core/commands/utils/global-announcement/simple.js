@@ -19,10 +19,8 @@ const {
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 const announcementHelper = require('../../../helpers/announcement');
-
 class SimpleCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('simple')
@@ -37,7 +35,7 @@ class SimpleCommand extends BaseCommand {
 			.setTitle(
 				await t(
 					interaction,
-					'core.utils.global-announcement.simple.modal.title',
+					'core.commands.utils.global-announcement.simple.modal.title',
 				),
 			);
 		modal.addComponents(
@@ -47,7 +45,7 @@ class SimpleCommand extends BaseCommand {
 					.setLabel(
 						await t(
 							interaction,
-							'core.utils.global-announcement.simple.modal.label.title',
+							'core.commands.utils.global-announcement.simple.modal.label.title',
 						),
 					)
 					.setStyle(TextInputStyle.Short)
@@ -59,7 +57,7 @@ class SimpleCommand extends BaseCommand {
 					.setLabel(
 						await t(
 							interaction,
-							'core.utils.global-announcement.simple.modal.label.content',
+							'core.commands.utils.global-announcement.simple.modal.label.content',
 						),
 					)
 					.setStyle(TextInputStyle.Paragraph)
@@ -94,10 +92,14 @@ class SimpleCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'core.utils.global-announcement.simple.prefix', {
-						title,
-						content,
-					}),
+					await t(
+						interaction,
+						'core.commands.utils.global-announcement.simple.prefix',
+						{
+							title,
+							content,
+						},
+					),
 				),
 			)
 			.addSeparatorComponents(
@@ -107,10 +109,14 @@ class SimpleCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'core.utils.global-announcement.simple.footer', {
-						username: interaction.client.user.username,
-						timestamp: Math.floor(Date.now() / 1000),
-					}),
+					await t(
+						interaction,
+						'core.commands.utils.global-announcement.simple.footer',
+						{
+							username: interaction.client.user.username,
+							timestamp: Math.floor(Date.now() / 1000),
+						},
+					),
 				),
 			);
 		const payload = {
@@ -120,5 +126,4 @@ class SimpleCommand extends BaseCommand {
 		await announcementHelper.sendToAllGuilds(container, modalSubmit, payload);
 	}
 }
-
 exports.default = SimpleCommand;

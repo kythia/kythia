@@ -1,12 +1,20 @@
 {
 	"nsfw": {
-		"ui": {
-			"delete": "Delete",
-			"refresh": "Refresh"
-		},
 		"favorites": {
 			"empty": "You don't have any favorited NSFW images yet.",
 			"not_yours": "This message is not for you."
+		},
+		"buttons": {
+			"nsfw-refresh": {
+				"ui": {
+					"refresh": "Refresh"
+				}
+			}
+		},
+		"shared": {
+			"ui": {
+				"delete": "Delete"
+			}
 		}
 	}
 }

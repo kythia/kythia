@@ -16,11 +16,9 @@ const {
 const { toBigIntSafe } = require('./bigint');
 const banks = require('./banks');
 const TIERS = require('@coreHelpers/premiumTiers');
-
 async function buildPremiumMainMenu(container, interaction, kythiaUser) {
 	const { simpleContainer } = container.helpers.discord;
 	const { kythiaConfig } = container;
-
 	let currentPremiumText = 'No active premium.';
 	if (kythiaUser.premiumTier !== 'none') {
 		const expireDateVal = kythiaUser.premiumExpiresAt;
@@ -29,14 +27,13 @@ async function buildPremiumMainMenu(container, interaction, kythiaUser) {
 			: 'Permanent';
 		currentPremiumText = `Active Tier: **${kythiaUser.premiumTier}** (Expires: ${expireDate})`;
 	}
-
 	const contentText = `💎 **Kythia Premium Shop**\n\nUpgrade your Kythia experience by purchasing Premium Tiers using KythiaCoins! Select a tier below to see its perks and pricing.\n\n${currentPremiumText}`;
-
 	const components = await simpleContainer(interaction, contentText, {
 		color: kythiaConfig.bot.color,
-		footer: { text: 'Kythia Ecosystem • Premium' },
+		footer: {
+			text: 'Kythia Ecosystem • Premium',
+		},
 	});
-
 	const row = new ActionRowBuilder().addComponents(
 		new ButtonBuilder()
 			.setCustomId('tier_cute')
@@ -69,11 +66,9 @@ async function buildPremiumMainMenu(container, interaction, kythiaUser) {
 			.setEmoji('👑')
 			.setStyle(ButtonStyle.Secondary),
 	);
-
 	components.push(row);
 	return components;
 }
-
 async function buildPremiumDurationMenu(
 	container,
 	interaction,
@@ -83,13 +78,10 @@ async function buildPremiumDurationMenu(
 	const { simpleContainer } = container.helpers.discord;
 	const { formatNumber } = require('kythia-core').utils;
 	const { t } = container;
-
 	const contentText = `**${tierData.name}**\n\n${tierData.desc}\n\nSelect a duration below to see the price.`;
-
 	const components = await simpleContainer(interaction, contentText, {
 		color: tierData.color,
 	});
-
 	const durationSelect = new StringSelectMenuBuilder()
 		.setCustomId('premium_duration')
 		.setPlaceholder(
@@ -115,19 +107,16 @@ async function buildPremiumDurationMenu(
 				value: '365',
 			},
 		]);
-
 	const row1 = new ActionRowBuilder().addComponents(durationSelect);
 	const row2 = new ActionRowBuilder().addComponents(
 		new ButtonBuilder()
 			.setCustomId('back_main')
-			.setLabel(await t(interaction, 'economy.ui.back'))
+			.setLabel(await t(interaction, 'economy.helpers.premium.ui.back'))
 			.setStyle(ButtonStyle.Secondary),
 	);
-
 	components.push(row1, row2);
 	return components;
 }
-
 async function buildPremiumConfirmMenu(
 	container,
 	interaction,
@@ -138,13 +127,10 @@ async function buildPremiumConfirmMenu(
 	const { simpleContainer } = container.helpers.discord;
 	const { formatNumber } = require('kythia-core').utils;
 	const { t } = container;
-
 	const contentText = `**${tierData.name} (${selectedDuration} Days)**\n\nPrice: **${formatNumber(price)} KC**\n\nAre you sure you want to purchase this?`;
-
 	const components = await simpleContainer(interaction, contentText, {
 		color: tierData.color,
 	});
-
 	const row = new ActionRowBuilder().addComponents(
 		new ButtonBuilder()
 			.setCustomId('confirm_buy')
@@ -152,14 +138,12 @@ async function buildPremiumConfirmMenu(
 			.setStyle(ButtonStyle.Success),
 		new ButtonBuilder()
 			.setCustomId('back_main')
-			.setLabel(await t(interaction, 'economy.ui.cancel'))
+			.setLabel(await t(interaction, 'economy.helpers.premium.ui.cancel'))
 			.setStyle(ButtonStyle.Danger),
 	);
-
 	components.push(row);
 	return components;
 }
-
 async function handlePremiumPurchase(
 	container,
 	interaction,
@@ -180,7 +164,9 @@ async function handlePremiumPurchase(
 			const components = await simpleContainer(
 				interaction,
 				`You don't have enough KythiaCoins! You need **${formatNumber(price)} KC** but only have **${formatNumber(total)} KC** in total.`,
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.update({
 				components,
@@ -188,7 +174,6 @@ async function handlePremiumPurchase(
 			});
 		}
 	}
-
 	try {
 		// Deduct funds (prefer wallet, then bank)
 		let amountLeft = price;
@@ -212,19 +197,21 @@ async function handlePremiumPurchase(
 			: new Date();
 		now.setDate(now.getDate() + selectedDuration);
 		kythiaUser.premiumExpiresAt = now;
-
 		await kythiaUser.save();
 
 		// Log Transaction
 		container.logger.info(
 			`[PREMIUM_PURCHASE] User ${interaction.user.id} purchased ${tierData.name} for ${selectedDuration} days for ${price} KC. Balance after: ${toBigIntSafe(kythiaUser.kythiaCoinWallet) + toBigIntSafe(kythiaUser.kythiaCoinBank)}`,
-			{ label: 'economy' },
+			{
+				label: 'economy',
+			},
 		);
-
 		const components = await simpleContainer(
 			interaction,
 			`🎉 **Payment Successful!**\n\nYou are now subscribed to **${tierData.name}** for **${selectedDuration} Days**!\nYour Premium features have been unlocked globally.`,
-			{ color: '#57F287' },
+			{
+				color: '#57F287',
+			},
 		);
 		await interaction.update({
 			components,
@@ -238,7 +225,9 @@ async function handlePremiumPurchase(
 		const components = await simpleContainer(
 			interaction,
 			'An error occurred during your transaction. Please try again or contact support.',
-			{ color: 'Red' },
+			{
+				color: 'Red',
+			},
 		);
 		await interaction.update({
 			components,
@@ -247,7 +236,6 @@ async function handlePremiumPurchase(
 		return false;
 	}
 }
-
 module.exports = {
 	buildPremiumMainMenu,
 	buildPremiumDurationMenu,

@@ -68,7 +68,7 @@ class ListCommand extends BaseCommand {
 		const isPremiumDonor = await isPremium(container, interaction.user.id);
 		const isVoter = await isVoterActive(container, interaction.user.id);
 		if (!isPremiumDonor && !isVoter) {
-			const desc = await t(interaction, 'pro.dns.list.not_allowed');
+			const desc = await t(interaction, 'pro.commands.dns.list.not_allowed');
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Red',
@@ -82,7 +82,7 @@ class ListCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!targetSubdomain) {
-			const desc = await t(interaction, 'pro.dns.list.not_found', {
+			const desc = await t(interaction, 'pro.commands.dns.list.not_found', {
 				subdomain: subdomainName,
 			});
 			return interaction.editReply({
@@ -104,20 +104,20 @@ class ListCommand extends BaseCommand {
 			to: 'decimal',
 		});
 		const mainContainer = new ContainerBuilder().setAccentColor(accentColor);
-		const title = await t(interaction, 'pro.dns.list.title', {
+		const title = await t(interaction, 'pro.commands.dns.list.title', {
 			fqdn: fqdn,
 		});
 		let description;
 		if (records.length === 0) {
-			description = await t(interaction, 'pro.dns.list.no_record');
+			description = await t(interaction, 'pro.commands.dns.list.no_record');
 		} else {
-			description = await t(interaction, 'pro.dns.list.has_record', {
+			description = await t(interaction, 'pro.commands.dns.list.has_record', {
 				count: records.length,
 			});
 		}
 		mainContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				await t(interaction, 'pro.dns.list.display_md', {
+				await t(interaction, 'pro.commands.dns.list.display_md', {
 					title,
 					description,
 				}),
@@ -129,14 +129,22 @@ class ListCommand extends BaseCommand {
 					.setSpacing(SeparatorSpacingSize.Small)
 					.setDivider(true),
 			);
-			const fieldTitle = await t(interaction, 'pro.dns.list.record_title', {
-				id: record.id,
-				type: record.type,
-			});
-			const fieldValue = await t(interaction, 'pro.dns.list.record_value', {
-				name: record.name,
-				value: record.value,
-			});
+			const fieldTitle = await t(
+				interaction,
+				'pro.commands.dns.list.record_title',
+				{
+					id: record.id,
+					type: record.type,
+				},
+			);
+			const fieldValue = await t(
+				interaction,
+				'pro.commands.dns.list.record_value',
+				{
+					name: record.name,
+					value: record.value,
+				},
+			);
 			mainContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(`**${fieldTitle}**\n${fieldValue}`),
 			);

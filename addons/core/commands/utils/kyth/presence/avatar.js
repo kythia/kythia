@@ -30,7 +30,10 @@ class AvatarCommand extends BaseCommand {
 			if (!attachment.contentType?.startsWith('image/')) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.utils.presence.avatar.invalid'),
+					await t(
+						interaction,
+						'core.commands.utils.kyth.presence.avatar.invalid',
+					),
 					{
 						color: 'Red',
 					},
@@ -43,7 +46,10 @@ class AvatarCommand extends BaseCommand {
 			await interaction.client.user.setAvatar(attachment.url);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.avatar.success'),
+				await t(
+					interaction,
+					'core.commands.utils.kyth.presence.avatar.success',
+				),
 				{
 					color: 'Green',
 				},
@@ -58,7 +64,7 @@ class AvatarCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.error', {
+				await t(interaction, 'core.helpers.index.utils.presence.error', {
 					error: error.message,
 				}),
 				{

@@ -51,7 +51,10 @@ class AddCommand extends BaseCommand {
 		const useContainer =
 			interaction.options.getBoolean('use_container') || false;
 		if (!response && !media) {
-			const msg = await t(interaction, 'autoreply.add.error.no_content');
+			const msg = await t(
+				interaction,
+				'autoreply.commands.add.error.no_content',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -65,7 +68,7 @@ class AddCommand extends BaseCommand {
 			trigger: trigger,
 		});
 		if (existing) {
-			const msg = await t(interaction, 'autoreply.add.error.exists');
+			const msg = await t(interaction, 'autoreply.shared.add.error.exists');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -89,7 +92,7 @@ class AddCommand extends BaseCommand {
 			});
 		} catch (err) {
 			if (err.name === 'SequelizeUniqueConstraintError') {
-				const msg = await t(interaction, 'autoreply.add.error.exists');
+				const msg = await t(interaction, 'autoreply.shared.add.error.exists');
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Red',
 				});
@@ -100,7 +103,7 @@ class AddCommand extends BaseCommand {
 			}
 			throw err;
 		}
-		const msg = await t(interaction, 'autoreply.add.success.plain', {
+		const msg = await t(interaction, 'autoreply.commands.add.success.plain', {
 			trigger: trigger,
 		});
 		const components = await simpleContainer(interaction, msg);

@@ -54,17 +54,26 @@ class SetupCommand extends BaseCommand {
 		let triggerChannel = interaction.options.getChannel('trigger_channel');
 		let category = interaction.options.getChannel('category');
 		let controlPanel = interaction.options.getChannel('control_panel');
-		const autoReason = await t(interaction, 'tempvoice.setup.auto_reason');
+		const autoReason = await t(
+			interaction,
+			'tempvoice.commands.setup.auto_reason',
+		);
 		if (!category) {
 			category = await interaction.guild.channels.create({
-				name: await t(interaction, 'tempvoice.setup.auto_category_name'),
+				name: await t(
+					interaction,
+					'tempvoice.commands.setup.auto_category_name',
+				),
 				type: ChannelType.GuildCategory,
 				reason: autoReason,
 			});
 		}
 		if (!triggerChannel) {
 			triggerChannel = await interaction.guild.channels.create({
-				name: await t(interaction, 'tempvoice.setup.auto_trigger_name'),
+				name: await t(
+					interaction,
+					'tempvoice.commands.setup.auto_trigger_name',
+				),
 				type: ChannelType.GuildVoice,
 				parent: category.id,
 				reason: autoReason,
@@ -79,7 +88,10 @@ class SetupCommand extends BaseCommand {
 		}
 		if (!controlPanel) {
 			controlPanel = await interaction.guild.channels.create({
-				name: await t(interaction, 'tempvoice.setup.auto_control_name'),
+				name: await t(
+					interaction,
+					'tempvoice.commands.setup.auto_control_name',
+				),
 				type: ChannelType.GuildText,
 				parent: category.id,
 				reason: autoReason,
@@ -122,7 +134,7 @@ class SetupCommand extends BaseCommand {
 			return interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.setup.panel_send_fail'),
+					await t(interaction, 'tempvoice.commands.setup.panel_send_fail'),
 					{
 						color: 'Red',
 					},
@@ -144,7 +156,7 @@ class SetupCommand extends BaseCommand {
 		});
 		const setupSuccessContent = await t(
 			interaction,
-			'tempvoice.setup.success_content',
+			'tempvoice.commands.setup.success_content',
 			{
 				triggerChannel: triggerChannel.id,
 				categoryName: category.name,

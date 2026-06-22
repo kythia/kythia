@@ -8,12 +8,9 @@
 
 const { getScopeMeta, getChecklistAndItems } = require('../../helpers');
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AddCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
@@ -24,23 +21,28 @@ class AddCommand extends BaseCommand {
 					.setDescription('Checklist item')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		const guildId = interaction.guild?.id;
 		const userId = null; // Server scope
 		const group = 'server';
-
 		const item = interaction.options.getString('item');
 		if (!item || typeof item !== 'string' || !item.trim()) {
-			await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+			await interaction.deferReply({
+				flags: MessageFlags.Ephemeral,
+			});
 			const msg =
-				(await t(interaction, 'checklist.server.add.invalid.item.title')) +
+				(await t(
+					interaction,
+					'checklist.helpers.index.server.add.invalid.item.title',
+				)) +
 				'\n' +
-				(await t(interaction, 'checklist.server.add.invalid.item.desc'));
+				(await t(
+					interaction,
+					'checklist.helpers.index.server.add.invalid.item.desc',
+				));
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -49,21 +51,24 @@ class AddCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const { checklist, items } = await getChecklistAndItems({
 			container,
 			guildId,
 			userId,
 			createIfNotExist: true,
 		});
-
 		if (items.length >= 100) {
 			// Limit checklist size
-			await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+			await interaction.deferReply({
+				flags: MessageFlags.Ephemeral,
+			});
 			const msg =
-				(await t(interaction, 'checklist.server.add.full.title')) +
+				(await t(
+					interaction,
+					'checklist.helpers.index.server.add.full.title',
+				)) +
 				'\n' +
-				(await t(interaction, 'checklist.server.add.full.desc'));
+				(await t(interaction, 'checklist.helpers.index.server.add.full.desc'));
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -72,12 +77,18 @@ class AddCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
-		items.push({ text: item, checked: false });
+		items.push({
+			text: item,
+			checked: false,
+		});
 		try {
-			await checklist.update({ items: JSON.stringify(items) });
+			await checklist.update({
+				items: JSON.stringify(items),
+			});
 		} catch (_e) {
-			await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+			await interaction.deferReply({
+				flags: MessageFlags.Ephemeral,
+			});
 			const msg =
 				'Checklist Error\nFailed to update checklist. Please try again.';
 			const components = await simpleContainer(interaction, msg, {
@@ -88,25 +99,37 @@ class AddCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const { scopeKey, color, ephemeral } = getScopeMeta(
 			container,
 			userId,
 			group,
 		);
-		await interaction.deferReply({ ephemeral });
+		await interaction.deferReply({
+			ephemeral,
+		});
 		const msg =
-			(await t(interaction, 'checklist.server.add.add.success.title', {
-				scope: await t(interaction, scopeKey),
-			})) +
+			(await t(
+				interaction,
+				'checklist.helpers.index.server.add.add.success.title',
+				{
+					scope: await t(interaction, scopeKey),
+				},
+			)) +
 			'\n' +
-			(await t(interaction, 'checklist.server.add.add.success.desc', { item }));
-		const components = await simpleContainer(interaction, msg, { color });
+			(await t(
+				interaction,
+				'checklist.helpers.index.server.add.add.success.desc',
+				{
+					item,
+				},
+			));
+		const components = await simpleContainer(interaction, msg, {
+			color,
+		});
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = AddCommand;

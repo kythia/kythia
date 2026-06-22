@@ -1,105 +1,155 @@
 {
 	"streak": {
 		"streak": {
-			"auto": {
-				"claimed": "{emoji} **+1 streak!** Your streak is now **{streak} days**.",
-				"new": "{emoji} **Streak started!** Keep chatting to build it up!"
-			},
+			"error": {},
+			"setting": {
+				"quota": {
+					"disabled": "Streak restores have been **disabled** for this server. Members can no longer restore their streaks.",
+					"set": "Monthly streak restore quota set to **{quota}** per member."
+				}
+			}
+		},
+		"commands": {
 			"claim": {
-				"already": {
-					"title": "You have already claimed today!",
-					"desc": "Your streak is safe! You can claim again tomorrow.\n\n{emoji} **Current Streak:** {streak} days"
-				},
-				"freeze": {
-					"used": "Your streak was saved by a **Streak Freeze**! Remaining Streak Freezes: **{streakFreezes}**\n\nYour streak continues! Congrats!"
-				},
-				"new": {
-					"streak": "You started a new streak today! Keep it up!"
-				},
-				"continue": "Your streak continues! Congrats!",
-				"reward": "**You received a role reward:** {roles}",
-				"desc": "{emoji} Current Streak\n{currentStreak} days\nHighest Record\n{highestStreak} days\nStreak Freeze\n{streakFreezes}",
-				"title_md": "## Daily Streak"
-			},
-			"me": {
-				"status": {
-					"claimed": "Already claimed today!",
-					"not": {
-						"claimed": "Not claimed today!"
+				"streak": {
+					"already": {
+						"title": "You have already claimed today!",
+						"desc": "Your streak is safe! You can claim again tomorrow.\n\n{emoji} **Current Streak:** {streak} days"
+					},
+					"restore": {
+						"desc": "You missed claiming yesterday, but your streak of **{streak} {emoji}** can be saved!\n\nVote for Kythia on **top.gg** and click the button below to restore your streak.",
+						"button": "Restore Streak",
+						"vote": {
+							"required": "Your streak of **{streak} {emoji}** is waiting! You haven't voted for Kythia on top.gg in the last 12 hours.\n\nClick the button below to vote, then run `/streak claim` again!",
+							"button": "Vote for {username} on top.gg"
+						},
+						"success": "Your streak of **{streak} {emoji}** has been restored and extended! Keep it up!",
+						"expired": "You didn't restore your streak in time. Your streak has been reset. Start fresh!"
+					},
+					"continue": "Your streak continues! Congrats!",
+					"new": {
+						"streak": "You started a new streak today! Keep it up!"
 					}
 				}
 			},
 			"leaderboard": {
-				"empty": "No one has started a streak in this server yet. Be the first with `/streak claim`!",
-				"entry": "{medal} {username} — {emoji} {current} days (Max: {highest}) {freeze}",
-				"footer": "Streak data in server {server}",
-				"not": {
-					"your": {
-						"interaction": "You cannot use this interaction!"
-					}
-				},
-				"title_md": "## Streak Leaderboard"
-			},
-			"reset": {
-				"already": {
-					"zero": "Your streak is already 0. No need to reset."
-				},
-				"success": "Your streak has been reset to 0. Start again tomorrow!",
-				"title_md": "## Streak Reset"
-			},
-			"user": {
-				"title": {
-					"user_md": "## {username}'s Streak"
-				},
-				"not": {
-					"found": {
-						"title": "User Not Found",
-						"desc": "User not found."
+				"streak": {
+					"not": {
+						"your": {
+							"interaction": "You cannot use this interaction!"
+						}
 					}
 				}
 			},
-			"error": {},
-			"setting": {
-				"rolereward": {
-					"add": "Role {role} has been added as a reward for streak `{streak}`!",
-					"notfound": "No role reward found for streak `{streak}`!",
-					"remove": "Role reward for streak `{streak}` has been removed!"
-				},
-				"minimum": {
-					"set": "Minimum streak set to `{minimum}` days."
-				},
-				"emoji": {
-					"set": "Streak emoji set to `{emoji}`."
-				},
-				"nickname": {
-					"set": "Streak auto-nickname has been **{status}**."
-				},
-				"quota": {
-					"disabled": "Streak restores have been **disabled** for this server. Members can no longer restore their streaks.",
-					"set": "Monthly streak restore quota set to **{quota}** per member."
-				},
-				"timezone": {
-					"set": "Streak timezone set to **{timezone}**. Daily streak resets will now follow this timezone."
+			"reset": {
+				"streak": {
+					"already": {
+						"zero": "Your streak is already 0. No need to reset."
+					},
+					"success": "Your streak has been reset to 0. Start again tomorrow!"
 				}
 			},
 			"restore": {
-				"desc": "You missed claiming yesterday, but your streak of **{streak} {emoji}** can be saved!\n\nVote for Kythia on **top.gg** and click the button below to restore your streak.",
-				"button": "Restore Streak",
-				"vote": {
-					"required": "Your streak of **{streak} {emoji}** is waiting! You haven't voted for Kythia on top.gg in the last 12 hours.\n\nClick the button below to vote, then run `/streak claim` again!",
-					"button": "Vote for {username} on top.gg"
+				"streak": {
+					"last": {
+						"nothing": "You have no previous streak to restore, {emoji}. Keep counting from 1!",
+						"already": "You have already restored your streak this period, {emoji}. Keep it going!",
+						"quota_exceeded": "You have used all **{quota}** of your restore quota for this period, {emoji}. Keep counting from 1!",
+						"success": "{user}'s previous streak has been restored to **{streak} days** {emoji}! Keep it up!",
+						"quota_remaining": "Restores remaining this period: **{remaining}/{quota}**"
+					}
+				}
+			},
+			"setting": {
+				"emoji": {
+					"streak": {
+						"set": "Streak emoji set to `{emoji}`."
+					}
 				},
-				"success": "Your streak of **{streak} {emoji}** has been restored and extended! Keep it up!",
-				"expired": "You didn't restore your streak in time. Your streak has been reset. Start fresh!",
-				"last": {
-					"title_md": "## Restore Last Streak",
-					"nothing": "You have no previous streak to restore, {emoji}. Keep counting from 1!",
-					"already": "You have already restored your streak this period, {emoji}. Keep it going!",
-					"quota_exceeded": "You have used all **{quota}** of your restore quota for this period, {emoji}. Keep counting from 1!",
-					"quota_remaining": "Restores remaining this period: **{remaining}/{quota}**",
-					"success": "{user}'s previous streak has been restored to **{streak} days** {emoji}! Keep it up!"
+				"minimum": {
+					"streak": {
+						"set": "Minimum streak set to `{minimum}` days."
+					}
 				},
-				"title_md": "## Restore Streak"
+				"nickname": {
+					"streak": {
+						"set": "Streak auto-nickname has been **{status}**."
+					}
+				},
+				"rolereward": {
+					"streak": {
+						"add": "Role {role} has been added as a reward for streak `{streak}`!",
+						"notfound": "No role reward found for streak `{streak}`!",
+						"remove": "Role reward for streak `{streak}` has been removed!"
+					}
+				},
+				"timezone": {
+					"streak": {
+						"set": "Streak timezone set to **{timezone}**. Daily streak resets will now follow this timezone."
+					}
+				}
+			},
+			"user": {
+				"streak": {
+					"not": {
+						"found": {
+							"title": "User Not Found",
+							"desc": "User not found."
+						}
+					},
+					"me": {
+						"status": {
+							"claimed": "Already claimed today!",
+							"not": {
+								"claimed": "Not claimed today!"
+							}
+						}
+					},
+					"title": {
+						"user_md": "## {username}'s Streak"
+					}
+				}
+			}
+		},
+		"helpers": {
+			"index": {
+				"streak": {
+					"restore": {
+						"title_md": "## Restore Streak",
+						"last": {
+							"title_md": "## Restore Last Streak"
+						}
+					},
+					"claim": {
+						"reward": "**You received a role reward:** {roles}",
+						"desc": "{emoji} Current Streak\n{currentStreak} days\nHighest Record\n{highestStreak} days\nStreak Freeze\n{streakFreezes}",
+						"title_md": "## Daily Streak",
+						"freeze": {
+							"used": "Your streak was saved by a **Streak Freeze**! Remaining Streak Freezes: **{streakFreezes}**\n\nYour streak continues! Congrats!"
+						}
+					},
+					"reset": {
+						"title_md": "## Streak Reset"
+					}
+				}
+			},
+			"leaderboard": {
+				"streak": {
+					"empty": "No one has started a streak in this server yet. Be the first with `/streak claim`!",
+					"entry": "{medal} {username} — {emoji} {current} days (Max: {highest}) {freeze}",
+					"title_md": "## Streak Leaderboard",
+					"footer": "Streak data in server {server}"
+				}
+			}
+		},
+		"events": {
+			"messageCreate": {
+				"streak": {
+					"auto": {
+						"claimed": "{emoji} **+1 streak!** Your streak is now **{streak} days**.",
+						"new": "{emoji} **Streak started!** Keep chatting to build it up!"
+					}
+				}
 			}
 		}
 	}

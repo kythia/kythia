@@ -25,7 +25,6 @@ const statsHelper = require('../../helpers/stats');
 
 class StatsCommand extends BaseCommand {
 	aliases = ['s'];
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('stats')
 		.setDescription(`Displays kythia statistics.`);
@@ -162,7 +161,7 @@ class StatsCommand extends BaseCommand {
 		const kythiaVersion = kythiaConfig.version;
 		const kythiaCoreVersion = statsHelper.getKythiaCoreVersion() || 'N/A';
 		const githubCommit = statsHelper.getGitCommitId();
-		const desc = await t(interaction, 'core.utils.stats.embed.desc', {
+		const desc = await t(interaction, 'core.commands.utils.stats.embed.desc', {
 			username,
 			uptime,
 			memory,
@@ -221,5 +220,4 @@ class StatsCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = StatsCommand;

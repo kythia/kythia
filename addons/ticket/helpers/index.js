@@ -79,16 +79,16 @@ async function refreshTicketPanel(panelMessageId, container) {
 		});
 		const placeholder = await t(
 			fakeInteraction,
-			'ticket.panel.select_placeholder',
+			'ticket.helpers.index.panel.select_placeholder',
 		);
 		const description =
 			panel.description ||
-			(await t(fakeInteraction, 'ticket.panel.default_desc'));
+			(await t(fakeInteraction, 'ticket.helpers.index.panel.default_desc'));
 		const panelContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(fakeInteraction, 'ticket.helpers.panel_title_md', {
+					await t(fakeInteraction, 'ticket.helpers.index.panel_title_md', {
 						title: panel.title,
 					}),
 				),
@@ -124,7 +124,7 @@ async function refreshTicketPanel(panelMessageId, container) {
 		if (!allTypes || allTypes.length === 0) {
 			panelContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(fakeInteraction, 'ticket.panel.no_types'),
+					await t(fakeInteraction, 'ticket.helpers.index.panel.no_types'),
 				),
 			);
 		} else {
@@ -214,9 +214,13 @@ async function createTicketChannel(
 			status: 'open',
 		});
 		if (existingTicket) {
-			const desc = await t(interaction, 'ticket.errors.already_open', {
-				channelId: existingTicket.channelId,
-			});
+			const desc = await t(
+				interaction,
+				'ticket.helpers.index.errors.already_open',
+				{
+					channelId: existingTicket.channelId,
+				},
+			);
 			return interaction.reply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Red',
@@ -242,7 +246,7 @@ async function createTicketChannel(
 			if (!parentChannel) {
 				const desc = await t(
 					interaction,
-					'ticket.errors.thread_channel_required',
+					'ticket.helpers.index.errors.thread_channel_required',
 				);
 				return interaction.reply({
 					components: await simpleContainer(interaction, desc, {
@@ -293,7 +297,7 @@ async function createTicketChannel(
 		}
 		const defaultMessage = await t(
 			interaction,
-			'ticket.v2.open_message_default',
+			'ticket.helpers.index.v2.open_message_default',
 			{
 				user: interaction.user.toString(),
 				staffRoleId: ticketConfig.staffRoleId,
@@ -314,7 +318,7 @@ async function createTicketChannel(
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'ticket.helpers.type_title_md', {
+					await t(interaction, 'ticket.helpers.index.type_title_md', {
 						typeName: ticketConfig.typeName,
 					}),
 				),
@@ -339,12 +343,12 @@ async function createTicketChannel(
 		const closeButton = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('ticket-close')
-				.setLabel(await t(interaction, 'ticket.v2.close_button'))
+				.setLabel(await t(interaction, 'ticket.helpers.index.v2.close_button'))
 				.setStyle(ButtonStyle.Secondary)
 				.setEmoji('🔒'),
 			new ButtonBuilder()
 				.setCustomId('ticket-claim')
-				.setLabel(await t(interaction, 'ticket.v2.claim_button'))
+				.setLabel(await t(interaction, 'ticket.helpers.index.v2.claim_button'))
 				.setStyle(ButtonStyle.Secondary)
 				.setEmoji('🛄'),
 		);
@@ -357,7 +361,7 @@ async function createTicketChannel(
 		if (reason != null) {
 			mainContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'ticket.v2.reason_field', {
+					await t(interaction, 'ticket.helpers.index.v2.reason_field', {
 						reason: reason,
 					}),
 				),
@@ -392,9 +396,13 @@ async function createTicketChannel(
 			status: 'open',
 			openedAt: Date.now(),
 		});
-		const descSuccess = await t(interaction, 'ticket.create.success', {
-			ticketChannel: ticketChannel.toString(),
-		});
+		const descSuccess = await t(
+			interaction,
+			'ticket.helpers.index.create.success',
+			{
+				ticketChannel: ticketChannel.toString(),
+			},
+		);
 		await interaction.reply({
 			components: await simpleContainer(interaction, descSuccess, {
 				color: 'Green',
@@ -408,7 +416,10 @@ async function createTicketChannel(
 				label: 'core:helpers:ticket:create-ticket-channel',
 			},
 		);
-		const descError = await t(interaction, 'ticket.errors.create_failed');
+		const descError = await t(
+			interaction,
+			'ticket.helpers.index.errors.create_failed',
+		);
 		if (interaction.replied || interaction.deferred) {
 			await interaction.followUp({
 				components: await simpleContainer(interaction, descError, {
@@ -513,7 +524,10 @@ async function closeTicket(interaction, container, reason = null) {
 			status: 'open',
 		});
 		if (!ticket) {
-			const desc = await t(interaction, 'ticket.errors.not_a_ticket');
+			const desc = await t(
+				interaction,
+				'ticket.helpers.index.errors.not_a_ticket',
+			);
 			if (interaction.replied || interaction.deferred) {
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
@@ -533,7 +547,10 @@ async function closeTicket(interaction, container, reason = null) {
 			id: ticket.ticketConfigId,
 		});
 		if (!ticketConfig) {
-			const desc = await t(interaction, 'ticket.errors.config_missing');
+			const desc = await t(
+				interaction,
+				'ticket.helpers.index.errors.config_missing',
+			);
 			if (interaction.replied || interaction.deferred) {
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
@@ -560,7 +577,7 @@ async function closeTicket(interaction, container, reason = null) {
 		if (!transcriptChannel) {
 			const desc = await t(
 				interaction,
-				'ticket.errors.transcript_channel_missing',
+				'ticket.helpers.index.errors.transcript_channel_missing',
 				{
 					channelId: ticketConfig.transcriptChannelId,
 				},
@@ -582,7 +599,7 @@ async function closeTicket(interaction, container, reason = null) {
 		}
 		if (!interaction.replied && !interaction.deferred) {
 			await interaction.reply({
-				content: await t(interaction, 'ticket.close.thinking'),
+				content: await t(interaction, 'ticket.helpers.index.close.thinking'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -596,13 +613,21 @@ async function closeTicket(interaction, container, reason = null) {
 			from: 'hex',
 			to: 'decimal',
 		});
-		const title = await t(interaction, 'ticket.transcript.title', {
-			ticketId: ticket.id,
-			typeName: ticketConfig.typeName,
-		});
-		const userLine = await t(interaction, 'ticket.transcript.user', {
-			userId: ticket.userId,
-		});
+		const title = await t(
+			interaction,
+			'ticket.helpers.index.transcript.title',
+			{
+				ticketId: ticket.id,
+				typeName: ticketConfig.typeName,
+			},
+		);
+		const userLine = await t(
+			interaction,
+			'ticket.helpers.index.transcript.user',
+			{
+				userId: ticket.userId,
+			},
+		);
 		const footerText = await t(interaction, 'common.container.footer', {
 			username: interaction.client.user.username,
 		});
@@ -636,14 +661,18 @@ async function closeTicket(interaction, container, reason = null) {
 			},
 		});
 		if (logsChannel) {
-			const logDesc = await t(interaction, 'ticket.v2.log_message', {
-				ticketId: ticket.id,
-				typeName: ticketConfig.typeName,
-				userId: ticket.userId,
-				openedAt: `<t:${Math.floor(ticket.openedAt / 1000)}:R>`,
-				closerId: interaction.user.id,
-				reason: reason ? reason : 'No Reason Specified',
-			});
+			const logDesc = await t(
+				interaction,
+				'ticket.helpers.index.v2.log_message',
+				{
+					ticketId: ticket.id,
+					typeName: ticketConfig.typeName,
+					userId: ticket.userId,
+					openedAt: `<t:${Math.floor(ticket.openedAt / 1000)}:R>`,
+					closerId: interaction.user.id,
+					reason: reason ? reason : 'No Reason Specified',
+				},
+			);
 			await logsChannel.send({
 				components: await simpleContainer(interaction, logDesc),
 				allowedMentions: {
@@ -662,7 +691,10 @@ async function closeTicket(interaction, container, reason = null) {
 		logger.error(`Failed to close ticket: ${error.message || error}`, {
 			label: 'core:helpers:ticket:close-ticket',
 		});
-		const descError = await t(interaction, 'ticket.errors.close_failed');
+		const descError = await t(
+			interaction,
+			'ticket.helpers.index.errors.close_failed',
+		);
 		if (!interaction.replied && !interaction.deferred) {
 			await interaction.reply({
 				components: await simpleContainer(interaction, descError, {

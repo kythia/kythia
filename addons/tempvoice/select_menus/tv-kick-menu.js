@@ -23,7 +23,7 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.no_channel_id'),
+					await t(interaction, 'tempvoice.shared.common.no_channel_id'),
 					{
 						color: 'Red',
 					},
@@ -38,7 +38,7 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.not_owner'),
+					await t(interaction, 'tempvoice.shared.common.not_owner'),
 					{
 						color: 'Red',
 					},
@@ -61,7 +61,7 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -73,7 +73,7 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -88,7 +88,10 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.kick.menu.user_not_found'),
+					await t(
+						interaction,
+						'tempvoice.select_menus.tv-kick-menu.kick.menu.user_not_found',
+					),
 					{
 						color: 'Red',
 					},
@@ -99,9 +102,13 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.kick.menu.not_in_channel', {
-						user: memberToKick.displayName,
-					}),
+					await t(
+						interaction,
+						'tempvoice.select_menus.tv-kick-menu.kick.menu.not_in_channel',
+						{
+							user: memberToKick.displayName,
+						},
+					),
 					{
 						color: 'Red',
 					},
@@ -110,14 +117,21 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 		}
 		try {
 			await memberToKick.voice.disconnect(
-				await t(interaction, 'tempvoice.kick.menu.kick_reason'),
+				await t(
+					interaction,
+					'tempvoice.select_menus.tv-kick-menu.kick.menu.kick_reason',
+				),
 			);
 			await interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.kick.menu.success', {
-						user: memberToKick.displayName,
-					}),
+					await t(
+						interaction,
+						'tempvoice.select_menus.tv-kick-menu.kick.menu.success',
+						{
+							user: memberToKick.displayName,
+						},
+					),
 					{
 						color: 'Green',
 					},
@@ -127,7 +141,7 @@ class TvKickMenuSelectMenu extends BaseSelectMenu {
 			await interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.fail'),
+					await t(interaction, 'tempvoice.shared.common.fail'),
 					{
 						color: 'Red',
 					},

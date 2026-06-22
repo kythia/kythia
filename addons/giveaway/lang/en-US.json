@@ -2,8 +2,7 @@
 	"giveaway": {
 		"error": {
 			"fatal": {
-				"title": "## Fatal Error",
-				"join": "A fatal error occurred while joining."
+				"title": "## Fatal Error"
 			}
 		},
 		"no": {
@@ -66,16 +65,23 @@
 			}
 		},
 		"buttons": {
-			"giveawayjoin": {
-				"error": {
-					"ended": "This giveaway has ended.",
-					"role": {
-						"required": "You need the <@&{role}> role to join."
+			"giveaway-join": {
+				"giveawayjoin": {
+					"error": {
+						"ended": "This giveaway has ended.",
+						"role": {
+							"required": "You need the <@&{role}> role to join."
+						}
+					},
+					"response": {
+						"unjoin": "You left the giveaway.",
+						"join": "You joined the giveaway!"
 					}
 				},
-				"response": {
-					"unjoin": "You left the giveaway.",
-					"join": "You joined the giveaway!"
+				"error": {
+					"fatal": {
+						"join": "A fatal error occurred while joining."
+					}
 				}
 			}
 		},

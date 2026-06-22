@@ -83,7 +83,10 @@ class LeaderboardCommand extends BaseCommand {
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
-					content: await t(i, 'streak.streak.leaderboard.not.your.interaction'),
+					content: await t(
+						i,
+						'streak.commands.leaderboard.streak.not.your.interaction',
+					),
 					flags: MessageFlags.Ephemeral,
 				});
 			}

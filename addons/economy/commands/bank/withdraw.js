@@ -9,12 +9,9 @@
 const { MessageFlags } = require('discord.js');
 const banks = require('../../helpers/banks');
 const { toBigIntSafe } = require('../../helpers/bigint');
-
 const { BaseCommand } = require('kythia-core');
-
 class WithdrawCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('withdraw')
@@ -25,20 +22,22 @@ class WithdrawCommand extends BaseCommand {
 					.setDescription('Amount to withdraw')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers, logger } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
 		try {
 			const amount = interaction.options.getInteger('amount');
-			const user = await KythiaUser.getCache({ userId: interaction.user.id });
-
+			const user = await KythiaUser.getCache({
+				userId: interaction.user.id,
+			});
 			if (!user) {
-				const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+				const msg = await t(
+					interaction,
+					'economy.shared.withdraw.no.account.desc',
+				);
 				const components = await simpleContainer(interaction, msg, {
 					color: kythiaConfig.bot.color,
 				});
@@ -47,16 +46,14 @@ class WithdrawCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const userBank = banks.getBank(user.bankType);
 			const withdrawFeePercent = userBank.withdrawFeePercent;
 			const fee = Math.floor(amount * (withdrawFeePercent / 100));
 			const totalRequired = amount + fee;
-
 			if (user.kythiaBank < totalRequired) {
 				const msg = await t(
 					interaction,
-					'economy.withdraw.withdraw.not.enough.bank',
+					'economy.commands.bank.withdraw.withdraw.not.enough',
 				);
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Red',
@@ -66,20 +63,20 @@ class WithdrawCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			user.kythiaBank =
 				toBigIntSafe(user.kythiaBank) - toBigIntSafe(totalRequired);
 			user.kythiaCoin = toBigIntSafe(user.kythiaCoin) + toBigIntSafe(amount);
-
 			user.changed('kythiaBank', true);
 			user.changed('kythiaCoin', true);
-
 			await user.save();
-
-			const msg = await t(interaction, 'economy.withdraw.withdraw.success', {
-				user: interaction.user.username,
-				amount,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.bank.withdraw.withdraw.success',
+				{
+					user: interaction.user.username,
+					amount,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -94,7 +91,10 @@ class WithdrawCommand extends BaseCommand {
 					label: 'economy:withdraw',
 				},
 			);
-			const msg = await t(interaction, 'economy.withdraw.withdraw.error');
+			const msg = await t(
+				interaction,
+				'economy.commands.bank.withdraw.withdraw.error',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -105,5 +105,4 @@ class WithdrawCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = WithdrawCommand;

@@ -12,25 +12,29 @@
 		"trigger": {}
 	},
 	"quest": {
-		"helper": {
-			"title_md": "## {questName}",
-			"info_header": "## Quest Info\n",
-			"info_duration": "**Duration:** {startDate} - {endDate}",
-			"info_platforms": "**Reedemable Platforms:** Cross Platform",
-			"info_game": "**Game:** {gameTitle} {gamePublisher}",
-			"info_application": "**Application:** {appName} ( `{applicationId}` )",
-			"info_features": "**Features:** {features}",
-			"tasks_header": "## Tasks\nUser must complete any of the following tasks",
-			"tasks_item": "{taskList}",
-			"rewards_header": "## Rewards\n",
-			"rewards_type": "**Reward Type:** {rewardName}",
-			"rewards_sku": "**SKU ID:** `{skuId}`",
-			"rewards_name": "**Name:** {rewardName}",
-			"rewards_quest_id": "Quest ID: `{questId}`",
-			"notify_md": "**Notification:** {role}"
-		},
-		"ui": {
-			"view": "View Quest"
+		"helpers": {
+			"questHelper": {
+				"helper": {
+					"title_md": "## {questName}",
+					"info_header": "## Quest Info\n",
+					"info_duration": "**Duration:** {startDate} - {endDate}",
+					"info_platforms": "**Reedemable Platforms:** Cross Platform",
+					"info_game": "**Game:** {gameTitle} {gamePublisher}",
+					"info_application": "**Application:** {appName} ( `{applicationId}` )",
+					"info_features": "**Features:** {features}",
+					"tasks_header": "## Tasks\nUser must complete any of the following tasks",
+					"tasks_item": "{taskList}",
+					"rewards_header": "## Rewards\n",
+					"rewards_type": "**Reward Type:** {rewardName}",
+					"rewards_sku": "**SKU ID:** `{skuId}`",
+					"rewards_name": "**Name:** {rewardName}",
+					"rewards_quest_id": "Quest ID: `{questId}`",
+					"notify_md": "**Notification:** {role}"
+				},
+				"ui": {
+					"view": "View Quest"
+				}
+			}
 		}
 	}
 }

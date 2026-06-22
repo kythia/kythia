@@ -7,9 +7,7 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class EditCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
@@ -21,33 +19,34 @@ class EditCommand extends BaseCommand {
 					.setDescription('User to edit premium access')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const user = interaction.options.getUser('user');
 		const days = interaction.options.getInteger('days');
-
-		const kythiaUser = await KythiaUser.getCache({ userId: user.id });
+		const kythiaUser = await KythiaUser.getCache({
+			userId: user.id,
+		});
 		if (!kythiaUser) {
 			return interaction.editReply(
-				await t(interaction, 'core.premium.premium.not.premium'),
+				await t(interaction, 'core.helpers.index.premium.premium.not.premium'),
 			);
 		}
 		const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 		kythiaUser.premiumExpiresAt = expiresAt;
 		await kythiaUser.save();
-
-		const msg = await t(interaction, 'core.premium.premium.edit.success', {
-			user: `<@${user.id}>`,
-			days,
-			expires: `<t:${Math.floor(expiresAt.getTime() / 1000)}:R>`,
-		});
+		const msg = await t(
+			interaction,
+			'core.commands.utils.kyth.premium.edit.premium.success',
+			{
+				user: `<@${user.id}>`,
+				days,
+				expires: `<t:${Math.floor(expiresAt.getTime() / 1000)}:R>`,
+			},
+		);
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Red',
 		});
@@ -57,5 +56,4 @@ class EditCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = EditCommand;

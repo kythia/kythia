@@ -6,34 +6,36 @@
  * @version 26.0.0-rc.1
  */
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class InfoCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand.setName('info').setDescription('View your pet info!');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { UserPet, Pet } = models;
 		await interaction.deferReply();
-
 		const userId = interaction.user.id;
 		const userPet = await UserPet.getCache({
 			where: {
 				userId: userId,
 			},
-			include: [{ model: Pet, as: 'pet' }],
+			include: [
+				{
+					model: Pet,
+					as: 'pet',
+				},
+			],
 		});
 		if (!userPet) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'pet.info.no.pet.msg_md'),
-				{ color: kythiaConfig.bot.color },
+				await t(interaction, 'pet.commands.info.no.pet.msg_md'),
+				{
+					color: kythiaConfig.bot.color,
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -43,8 +45,10 @@ class InfoCommand extends BaseCommand {
 		if (userPet.isDead) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'pet.info.dead.msg_md'),
-				{ color: kythiaConfig.bot.color },
+				await t(interaction, 'pet.commands.info.dead.msg_md'),
+				{
+					color: kythiaConfig.bot.color,
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -53,9 +57,9 @@ class InfoCommand extends BaseCommand {
 		}
 		const components = await simpleContainer(
 			interaction,
-			(await t(interaction, 'pet.info.title_md')) +
+			(await t(interaction, 'pet.commands.info.title_md')) +
 				'\n' +
-				(await t(interaction, 'pet.info.desc', {
+				(await t(interaction, 'pet.commands.info.desc', {
 					icon: userPet.pet.icon,
 					name: userPet.pet.name,
 					rarity: userPet.pet.rarity,
@@ -66,14 +70,14 @@ class InfoCommand extends BaseCommand {
 					hunger: userPet.hunger,
 					level: userPet.level,
 				})),
-			{ color: kythiaConfig.bot.color },
+			{
+				color: kythiaConfig.bot.color,
+			},
 		);
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = InfoCommand;

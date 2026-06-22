@@ -35,10 +35,14 @@ class MuteCommand extends BaseCommand {
 		const user = interaction.options.getUser('user');
 		const reply = await createContainer(interaction, {
 			color: 'Red',
-			description: await t(interaction, 'automod.moderation.mute.embed.desc', {
-				tag: user.tag,
-				moderator: interaction.user.tag,
-			}),
+			description: await t(
+				interaction,
+				'automod.commands.moderation.mute.embed.desc',
+				{
+					tag: user.tag,
+					moderator: interaction.user.tag,
+				},
+			),
 			thumbnail: interaction.client.user.displayAvatarURL(),
 		});
 		return interaction.editReply({

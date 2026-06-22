@@ -8,10 +8,8 @@
 
 const { MessageFlags } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
-
 class TimezoneCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('timezone')
@@ -22,23 +20,24 @@ class TimezoneCommand extends BaseCommand {
 					.setDescription('Your timezone (e.g. Asia/Jakarta, UTC)')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const { helpers, kythiaConfig, redis, t } = this.container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const tz = interaction.options.getString('timezone');
 
 		// Validate timezone
 		try {
-			Intl.DateTimeFormat(undefined, { timeZone: tz });
+			Intl.DateTimeFormat(undefined, {
+				timeZone: tz,
+			});
 		} catch (_e) {
 			const errContainer = await simpleContainer(
 				interaction,
 				'Invalid timezone format. Please use standard IANA timezones (e.g., `Asia/Jakarta`, `America/New_York`, `UTC`).',
-				{ color: 'Red' },
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: errContainer,
@@ -49,24 +48,20 @@ class TimezoneCommand extends BaseCommand {
 		// Store in redis
 		const cacheKey = `kythia:reminder:timezone:${interaction.user.id}`;
 		await redis.set(cacheKey, tz);
-
 		const msg = await t(
 			interaction,
-			'reminder.commands.reminder.timezone.success',
+			'reminder.commands.timezone.reminder.success',
 			{
 				timezone: tz,
 			},
 		);
-
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,
 		});
-
 		await interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 module.exports = TimezoneCommand;

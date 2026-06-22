@@ -7,9 +7,7 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class VoteRemindButton extends BaseButton {
 	async execute(interaction) {
 		const container = this.container;
@@ -22,26 +20,27 @@ class VoteRemindButton extends BaseButton {
 
 		// Create a reminder for 12 hours from now
 		const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000);
-
 		await KythiaReminder.create({
 			userId: interaction.user.id,
-			channelId: null, // Force DM
+			channelId: null,
+			// Force DM
 			reason: `Time to vote for ${container.client.user.username} again! >.<`,
 			timezone: kythiaConfig.bot.timezone || 'Asia/Jakarta',
 			expiresAt,
 		});
 
 		// Reply with an ephemeral message confirming the reminder
-		const msg = await t(interaction, 'reminder.buttons.vote_remind.success');
+		const msg = await t(
+			interaction,
+			'reminder.buttons.vote-remind.vote_remind.success',
+		);
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,
 		});
-
 		await interaction.followUp({
 			components,
 			flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = VoteRemindButton;

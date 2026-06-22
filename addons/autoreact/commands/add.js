@@ -7,12 +7,9 @@
  */
 
 const { ChannelType, MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AddCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) => {
 		return subcommand
 			.setName('add')
@@ -41,22 +38,22 @@ class AddCommand extends BaseCommand {
 					.setRequired(false),
 			);
 	};
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { AutoReact } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const emoji = interaction.options.getString('emoji');
 		const triggerText = interaction.options.getString('trigger');
 		const channel = interaction.options.getChannel('channel');
 
 		// Validation: Must provide exactly one trigger type
 		if ((triggerText && channel) || (!triggerText && !channel)) {
-			const msg = await t(interaction, 'autoreact.add.error.ambiguous');
+			const msg = await t(
+				interaction,
+				'autoreact.commands.add.error.ambiguous',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -71,7 +68,10 @@ class AddCommand extends BaseCommand {
 		const emojiRegex =
 			/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|<a?:.+?:\d+>)/g;
 		if (!emoji.match(emojiRegex)) {
-			const msg = await t(interaction, 'autoreact.add.error.invalid_emoji');
+			const msg = await t(
+				interaction,
+				'autoreact.commands.add.error.invalid_emoji',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -80,7 +80,6 @@ class AddCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const type = channel ? 'channel' : 'text';
 		const triggerValue = channel ? channel.id : triggerText;
 
@@ -92,9 +91,8 @@ class AddCommand extends BaseCommand {
 				type: type,
 			},
 		});
-
 		if (existing) {
-			const msg = await t(interaction, 'autoreact.add.error.exists');
+			const msg = await t(interaction, 'autoreact.commands.add.error.exists');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -103,7 +101,6 @@ class AddCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		await AutoReact.create({
 			guildId: interaction.guild.id,
 			userId: interaction.user.id,
@@ -111,13 +108,11 @@ class AddCommand extends BaseCommand {
 			emoji: emoji,
 			type: type,
 		});
-
-		const successMsg = await t(interaction, 'autoreact.add.success', {
+		const successMsg = await t(interaction, 'autoreact.commands.add.success', {
 			trigger: channel ? channel.toString() : `\`${triggerText}\``,
 			emoji: emoji,
 			type: type === 'channel' ? 'Channel' : 'Text',
 		});
-
 		const components = await simpleContainer(interaction, successMsg);
 		await interaction.editReply({
 			components,
@@ -125,5 +120,4 @@ class AddCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = AddCommand;

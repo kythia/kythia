@@ -36,9 +36,13 @@ class OutChannelCommand extends BaseCommand {
 		await welcomeSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'welcomer.welcomer.out.channel.set', {
-				channelId: ch.id,
-			}),
+			await t(
+				interaction,
+				'welcomer.commands.out-channel.welcomer.out.channel.set',
+				{
+					channelId: ch.id,
+				},
+			),
 			{
 				color: 'Green',
 			},

@@ -133,7 +133,7 @@ class VoiceStateUpdateEvent extends BaseEvent {
 						};
 						const msgContent = await t(
 							fakeInteraction,
-							'tempvoice.waiting.join_request',
+							'tempvoice.events.voiceStateUpdate.waiting.join_request',
 							{
 								owner: `<@${owner.id}>`,
 								user: `<@${member.id}>`,
@@ -155,7 +155,10 @@ class VoiceStateUpdateEvent extends BaseEvent {
 											`tv_waiting_allow:${mainChannel.channelId}:${member.id}`,
 										)
 										.setLabel(
-											await t(fakeInteraction, 'tempvoice.waiting.allow_btn'),
+											await t(
+												fakeInteraction,
+												'tempvoice.events.voiceStateUpdate.waiting.allow_btn',
+											),
 										)
 										.setStyle(ButtonStyle.Success)
 										.setEmoji('✅'),
@@ -164,7 +167,10 @@ class VoiceStateUpdateEvent extends BaseEvent {
 											`tv_waiting_deny:${mainChannel.channelId}:${member.id}`,
 										)
 										.setLabel(
-											await t(fakeInteraction, 'tempvoice.waiting.deny_btn'),
+											await t(
+												fakeInteraction,
+												'tempvoice.events.voiceStateUpdate.waiting.deny_btn',
+											),
 										)
 										.setStyle(ButtonStyle.Danger)
 										.setEmoji('❌'),

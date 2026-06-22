@@ -41,7 +41,7 @@ class InventoryCommand extends BaseCommand {
 			userId,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'adventure.no.character');
+			const msg = await t(interaction, 'adventure.shared.no.character');
 			const components = await createContainer(interaction, {
 				description: msg,
 				color: 'Red',
@@ -58,7 +58,7 @@ class InventoryCommand extends BaseCommand {
 			cacheTags: [`InventoryAdventure:inventory:byUser:${userId}`],
 		});
 		if (rawInventory.length === 0) {
-			const msg = await t(interaction, 'adventure.inventory.empty');
+			const msg = await t(interaction, 'adventure.commands.inventory.empty');
 			const components = await createContainer(interaction, {
 				description: msg,
 				color: kythiaConfig.bot.color,
@@ -129,12 +129,12 @@ class InventoryCommand extends BaseCommand {
 				);
 			}
 			const containerData = await createContainer(interaction, {
-				title: await t(interaction, 'adventure.inventory.title', {
+				title: await t(interaction, 'adventure.commands.inventory.title', {
 					username: interaction.user.username,
 				}),
 				description,
 				color: kythiaConfig.bot.color,
-				footer: await t(interaction, 'adventure.inventory.footer', {
+				footer: await t(interaction, 'adventure.commands.inventory.footer', {
 					page: currentPage,
 					totalPages,
 					totalItems: processedInventory.length,

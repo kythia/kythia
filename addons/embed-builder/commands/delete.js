@@ -8,7 +8,6 @@
 
 const { MessageFlags, SlashCommandSubcommandBuilder } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
-
 class DeleteCommand extends BaseCommand {
 	subcommand = true;
 	slashCommand = new SlashCommandSubcommandBuilder()
@@ -29,7 +28,6 @@ class DeleteCommand extends BaseCommand {
 				)
 				.setRequired(false),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;
@@ -52,7 +50,7 @@ class DeleteCommand extends BaseCommand {
 			return interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'embed-builder.delete.not_found'),
+					await t(interaction, 'embed-builder.commands.delete.not_found'),
 					{
 						color: 'Red',
 					},
@@ -83,9 +81,13 @@ class DeleteCommand extends BaseCommand {
 		await record.destroy();
 		const { simpleContainer } = container.helpers.discord;
 		const { t } = container;
-		const baseMsg = await t(interaction, 'embed-builder.delete.success', {
-			name: embedName,
-		});
+		const baseMsg = await t(
+			interaction,
+			'embed-builder.commands.delete.success',
+			{
+				name: embedName,
+			},
+		);
 		const finalMsg =
 			baseMsg + (deleteMessage ? ' (including the Discord message)' : '');
 		return interaction.editReply({

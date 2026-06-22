@@ -36,9 +36,13 @@ class InChannelCommand extends BaseCommand {
 		await welcomeSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'welcomer.welcomer.in.channel.set', {
-				channelId: ch.id,
-			}),
+			await t(
+				interaction,
+				'welcomer.commands.in-channel.welcomer.in.channel.set',
+				{
+					channelId: ch.id,
+				},
+			),
 			{
 				color: 'Green',
 			},

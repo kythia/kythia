@@ -46,7 +46,7 @@ class CrackHashCommand extends BaseCommand {
 			const components = await createContainer(interaction, {
 				description: await t(
 					interaction,
-					'core.tools.crackhash.invalid.hash.length',
+					'core.commands.tools.crack-hash.crackhash.invalid.hash.length',
 					{
 						algorithm: algorithm.toUpperCase(),
 						hashLength: hashLengths[algorithm],
@@ -61,7 +61,10 @@ class CrackHashCommand extends BaseCommand {
 		}
 		const { SUPPORTED_HASHES } = cryptoHelper;
 		const algoObj = SUPPORTED_HASHES.find((a) => a.value === algorithm);
-		let resultText = await t(interaction, 'core.tools.crackhash.not.found');
+		let resultText = await t(
+			interaction,
+			'core.commands.tools.crack-hash.crackhash.not.found',
+		);
 		let _found = false;
 		try {
 			const response = await axios.get(
@@ -85,14 +88,20 @@ class CrackHashCommand extends BaseCommand {
 			logger.error(`Hash lookup API error: ${error.message || error}`, {
 				label: 'crack-hash',
 			});
-			resultText = await t(interaction, 'core.tools.crackhash.api.error');
+			resultText = await t(
+				interaction,
+				'core.commands.tools.crack-hash.crackhash.api.error',
+			);
 		}
 		const description =
-			(await t(interaction, 'core.tools.crackhash.result.desc')) +
+			(await t(
+				interaction,
+				'core.commands.tools.crack-hash.crackhash.result.desc',
+			)) +
 			'\n\n' +
-			`**${await t(interaction, 'core.tools.crackhash.algorithm')}:** ${algoObj.name}\n\n` +
-			`**${await t(interaction, 'core.tools.crackhash.hash')}:**\n\`\`\`${hash}\`\`\`\n\n` +
-			`**${await t(interaction, 'core.tools.crackhash.result.text')}:**\n${resultText}`;
+			`**${await t(interaction, 'core.commands.tools.crack-hash.crackhash.algorithm')}:** ${algoObj.name}\n\n` +
+			`**${await t(interaction, 'core.commands.tools.crack-hash.crackhash.hash')}:**\n\`\`\`${hash}\`\`\`\n\n` +
+			`**${await t(interaction, 'core.commands.tools.crack-hash.crackhash.result.text')}:**\n${resultText}`;
 		const components = await createContainer(interaction, {
 			description,
 			color: kythiaConfig.bot.color,

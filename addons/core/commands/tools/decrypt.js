@@ -40,7 +40,7 @@ class DecryptCommand extends BaseCommand {
 			const components = await createContainer(interaction, {
 				description: await t(
 					interaction,
-					'core.tools.decrypt.invalid.key.length',
+					'core.commands.tools.decrypt.invalid.key.length',
 				),
 				color: 'Red',
 			});
@@ -56,7 +56,7 @@ class DecryptCommand extends BaseCommand {
 				const components = await createContainer(interaction, {
 					description: await t(
 						interaction,
-						'core.tools.decrypt.invalid.data.format',
+						'core.commands.tools.decrypt.invalid.data.format',
 					),
 					color: 'Red',
 				});
@@ -76,9 +76,9 @@ class DecryptCommand extends BaseCommand {
 			decipher.setAuthTag(authTag);
 			let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
 			decrypted += decipher.final('utf8');
-			const description = `**${await t(interaction, 'core.tools.decrypt.decrypted.plaintext')}:**\n\`\`\`${decrypted}\`\`\``;
+			const description = `**${await t(interaction, 'core.commands.tools.decrypt.decrypted.plaintext')}:**\n\`\`\`${decrypted}\`\`\``;
 			const components = await createContainer(interaction, {
-				title: await t(interaction, 'core.tools.decrypt.success'),
+				title: await t(interaction, 'core.commands.tools.decrypt.success'),
 				description,
 				color: kythiaConfig.bot.color,
 			});
@@ -88,8 +88,11 @@ class DecryptCommand extends BaseCommand {
 			});
 		} catch (_error) {
 			const components = await createContainer(interaction, {
-				title: await t(interaction, 'core.tools.decrypt.failed.title'),
-				description: await t(interaction, 'core.tools.decrypt.failed.desc'),
+				title: await t(interaction, 'core.commands.tools.decrypt.failed.title'),
+				description: await t(
+					interaction,
+					'core.commands.tools.decrypt.failed.desc',
+				),
 				color: 'Red',
 			});
 			await interaction.editReply({

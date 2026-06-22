@@ -51,7 +51,10 @@ class DepositCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -66,7 +69,7 @@ class DepositCommand extends BaseCommand {
 			if (amount === null) {
 				const msg = await t(
 					interaction,
-					'economy.deposit.deposit.amount.required',
+					'economy.commands.bank.deposit.deposit.amount.required',
 				);
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Yellow',
@@ -80,7 +83,7 @@ class DepositCommand extends BaseCommand {
 		if (amount <= 0) {
 			const msg = await t(
 				interaction,
-				'economy.deposit.deposit.invalid.amount',
+				'economy.commands.bank.deposit.deposit.invalid.amount',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
@@ -93,7 +96,7 @@ class DepositCommand extends BaseCommand {
 		if (user.kythiaCoin < amount) {
 			const msg = await t(
 				interaction,
-				'economy.deposit.deposit.not.enough.cash',
+				'economy.commands.bank.deposit.deposit.not.enough.cash',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -104,7 +107,10 @@ class DepositCommand extends BaseCommand {
 			});
 		}
 		if (amount === 0) {
-			const msg = await t(interaction, 'economy.deposit.deposit.zero.cash');
+			const msg = await t(
+				interaction,
+				'economy.commands.bank.deposit.deposit.zero.cash',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -119,9 +125,13 @@ class DepositCommand extends BaseCommand {
 				? Infinity
 				: userBank.maxBalance + (user.extraBankCapacity || 0);
 		if (user.kythiaBank + amount > maxBalance) {
-			const msg = await t(interaction, 'economy.deposit.deposit.max.balance', {
-				max: maxBalance.toLocaleString(),
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.bank.deposit.deposit.max.balance',
+				{
+					max: maxBalance.toLocaleString(),
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -135,9 +145,13 @@ class DepositCommand extends BaseCommand {
 		user.changed('kythiaCoin', true);
 		user.changed('kythiaBank', true);
 		await user.save();
-		const msg = await t(interaction, 'economy.deposit.deposit.success', {
-			amount,
-		});
+		const msg = await t(
+			interaction,
+			'economy.commands.bank.deposit.deposit.success',
+			{
+				amount,
+			},
+		);
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,
 		});

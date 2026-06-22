@@ -7,14 +7,10 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class Music247Command extends BaseCommand {
 	premiumLocked = 'powerful';
-
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('247')
@@ -27,19 +23,19 @@ class Music247Command extends BaseCommand {
 					.setDescription('Lock the bot to this channel so it cannot be moved.')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const { simpleContainer } = interaction.client.container.helpers.discord;
-
 		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers } = container;
-
 		if (!member?.voice?.channel) {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'music.music.voice.channel.not.found'),
+					await t(
+						interaction,
+						'music.helpers.index.music.voice.channel.not.found',
+					),
 					{
 						color: 'Red',
 					},
@@ -47,12 +43,9 @@ class Music247Command extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const player = client.poru.players.get(guild.id);
 		const lock = interaction.options.getBoolean('lock') ?? false;
-
 		return musicHandlers.handle247(interaction, player, lock);
 	}
 }
-
 exports.default = Music247Command;

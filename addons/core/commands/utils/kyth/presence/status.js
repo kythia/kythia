@@ -32,9 +32,13 @@ class StatusCommand extends BaseCommand {
 			await interaction.client.user.setStatus(status);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.status.success', {
-					status,
-				}),
+				await t(
+					interaction,
+					'core.commands.utils.kyth.presence.status.success',
+					{
+						status,
+					},
+				),
 				{
 					color: 'Green',
 				},
@@ -49,7 +53,7 @@ class StatusCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.error', {
+				await t(interaction, 'core.helpers.index.utils.presence.error', {
 					error: error.message,
 				}),
 				{

@@ -219,26 +219,35 @@ async function createModmailThread(
 		};
 
 		// ─── Opening container inside the thread (staff-side) ───────────────
-		const titleText = await t(fakeInteraction, 'modmail.thread.open_title');
-		const userInfoText = await t(fakeInteraction, 'modmail.thread.user_info', {
-			userId: user.id,
-			username: user.username,
-			tag: user.tag,
-			createdAt: `<t:${Math.floor(user.createdTimestamp / 1000)}:D>`,
-		});
+		const titleText = await t(
+			fakeInteraction,
+			'modmail.helpers.index.thread.open_title',
+		);
+		const userInfoText = await t(
+			fakeInteraction,
+			'modmail.helpers.index.thread.user_info',
+			{
+				userId: user.id,
+				username: user.username,
+				tag: user.tag,
+				createdAt: `<t:${Math.floor(user.createdTimestamp / 1000)}:D>`,
+			},
+		);
 		const footerText = await t(fakeInteraction, 'common.container.footer', {
 			username: kythiaConfig.bot.name,
 		});
 		const closeRow = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('mm-close')
-				.setLabel(await t(fakeInteraction, 'modmail.thread.close_button'))
+				.setLabel(
+					await t(fakeInteraction, 'modmail.helpers.index.thread.close_button'),
+				)
 				.setStyle(ButtonStyle.Secondary)
 				.setEmoji('🔒'),
 		);
 		const openContainer = buildModmailContainer(
 			accentColor,
-			await t(fakeInteraction, 'modmail.thread.open_title_md', {
+			await t(fakeInteraction, 'modmail.helpers.index.thread.open_title_md', {
 				title: titleText,
 			}),
 			userInfoText,
@@ -255,19 +264,27 @@ async function createModmailThread(
 			await processAttachments(attachments);
 		const receivedTitle = await t(
 			fakeInteraction,
-			'modmail.relay.received_title',
+			'modmail.helpers.index.relay.received_title',
 		);
-		const fromLine = await t(fakeInteraction, 'modmail.relay.received_from', {
-			userId: user.id,
-			username: user.username,
-		});
+		const fromLine = await t(
+			fakeInteraction,
+			'modmail.helpers.index.relay.received_from',
+			{
+				userId: user.id,
+				username: user.username,
+			},
+		);
 		const firstMsgCard = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
-				await t(fakeInteraction, 'modmail.relay.received_title_md', {
-					title: receivedTitle,
-					user: fromLine,
-				}),
+				await t(
+					fakeInteraction,
+					'modmail.helpers.index.relay.received_title_md',
+					{
+						title: receivedTitle,
+						user: fromLine,
+					},
+				),
 			)
 			.addSeparatorComponents(
 				new SeparatorBuilder()
@@ -320,7 +337,7 @@ async function createModmailThread(
 		// ─── Send greeting DM to user ───────────────────────────────────────
 		const greetingText =
 			config.greetingMessage ||
-			(await t(fakeInteraction, 'modmail.dm.greeting'));
+			(await t(fakeInteraction, 'modmail.helpers.index.dm.greeting'));
 
 		// Use custom greeting color if set, else fall back to bot color
 		const greetingAccent = config.greetingColor
@@ -436,16 +453,23 @@ async function relayUserMessage(message, modmail, container) {
 		);
 		const receivedTitle = await t(
 			fakeInteraction,
-			'modmail.relay.received_title',
+			'modmail.helpers.index.relay.received_title',
 		);
-		const fromLine = await t(fakeInteraction, 'modmail.relay.received_from', {
-			userId: message.author.id,
-			username: message.author.username,
-		});
+		const fromLine = await t(
+			fakeInteraction,
+			'modmail.helpers.index.relay.received_from',
+			{
+				userId: message.author.id,
+				username: message.author.username,
+			},
+		);
 		const headerText = await t(
 			fakeInteraction,
-			'modmail.relay.received_title_md',
-			{ title: receivedTitle, user: fromLine },
+			'modmail.helpers.index.relay.received_title_md',
+			{
+				title: receivedTitle,
+				user: fromLine,
+			},
 		);
 		const threadCard = new ContainerBuilder()
 			.setAccentColor(accentColor)
@@ -494,14 +518,21 @@ async function relayUserMessage(message, modmail, container) {
 
 		// ── Send "Message Sent" confirmation card to user ──────────────────────
 		try {
-			const sentTitle = await t(fakeInteraction, 'modmail.relay.sent_title');
+			const sentTitle = await t(
+				fakeInteraction,
+				'modmail.helpers.index.relay.sent_title',
+			);
 			const sentCard = new ContainerBuilder()
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
-					await t(fakeInteraction, 'modmail.relay.sent_title_md', {
-						title: sentTitle,
-						user: message.author.username,
-					}),
+					await t(
+						fakeInteraction,
+						'modmail.helpers.index.relay.sent_title_md',
+						{
+							title: sentTitle,
+							user: message.author.username,
+						},
+					),
 				)
 				.addSeparatorComponents(
 					new SeparatorBuilder()
@@ -567,7 +598,10 @@ async function relayStaffReply(interaction, content, anonymous, container) {
 			status: 'open',
 		});
 		if (!modmail) {
-			const desc = await t(interaction, 'modmail.errors.not_a_modmail');
+			const desc = await t(
+				interaction,
+				'modmail.helpers.index.errors.not_a_modmail',
+			);
 			return interaction.reply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Red',
@@ -576,7 +610,7 @@ async function relayStaffReply(interaction, content, anonymous, container) {
 			});
 		}
 		const displayName = anonymous
-			? await t(interaction, 'modmail.reply.anonymous_name')
+			? await t(interaction, 'modmail.helpers.index.reply.anonymous_name')
 			: interaction.user.username;
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
@@ -595,7 +629,9 @@ async function relayStaffReply(interaction, content, anonymous, container) {
 		});
 		const dmContainer = buildModmailContainer(
 			accentColor,
-			await t(interaction, 'modmail.dm.title_md', { title: dmTitle }),
+			await t(interaction, 'modmail.helpers.index.dm.title_md', {
+				title: dmTitle,
+			}),
 			content,
 			footerText,
 		);
@@ -616,8 +652,8 @@ async function relayStaffReply(interaction, content, anonymous, container) {
 
 		// ─── Mirror in thread ────────────────────────────────────────────────
 		const threadTag = anonymous
-			? await t(interaction, 'modmail.relay.anon_reply_prefix')
-			: await t(interaction, 'modmail.relay.staff_reply_prefix', {
+			? await t(interaction, 'modmail.helpers.index.relay.anon_reply_prefix')
+			: await t(interaction, 'modmail.helpers.index.relay.staff_reply_prefix', {
 					userId: interaction.user.id,
 				});
 		await interaction.channel.send({
@@ -643,7 +679,10 @@ async function relayStaffReply(interaction, content, anonymous, container) {
 				label: 'modmail:helpers:relay-staff-reply',
 			},
 		);
-		const descError = await t(interaction, 'modmail.errors.generic');
+		const descError = await t(
+			interaction,
+			'modmail.helpers.index.errors.generic',
+		);
 		if (interaction.replied || interaction.deferred) {
 			return interaction.followUp({
 				components: await simpleContainer(interaction, descError, {
@@ -700,7 +739,7 @@ async function relayGuildReply(
 		username: kythiaConfig.bot.name,
 	});
 	const displayName = anonymous
-		? await t(fakeInteraction, 'modmail.reply.anonymous_name')
+		? await t(fakeInteraction, 'modmail.helpers.index.reply.anonymous_name')
 		: message.author.username;
 
 	// Build attachment components
@@ -712,21 +751,25 @@ async function relayGuildReply(
 	// ── Thread card: "Message Sent" ──────────────────────────────────────────
 	const threadTitle = await t(
 		fakeInteraction,
-		'modmail.guild_reply.sent_title',
+		'modmail.helpers.index.guild_reply.sent_title',
 	);
 	const sentByLine = anonymous
-		? await t(fakeInteraction, 'modmail.guild_reply.sent_by_anon')
-		: await t(fakeInteraction, 'modmail.guild_reply.sent_by', {
+		? await t(fakeInteraction, 'modmail.helpers.index.guild_reply.sent_by_anon')
+		: await t(fakeInteraction, 'modmail.helpers.index.guild_reply.sent_by', {
 				userId: message.author.id,
 				username: message.author.username,
 			});
 	const threadCard = new ContainerBuilder()
 		.setAccentColor(accentColor)
 		.addTextDisplayComponents(
-			await t(fakeInteraction, 'modmail.guild_reply.sent_title_md', {
-				title: threadTitle,
-				user: sentByLine,
-			}),
+			await t(
+				fakeInteraction,
+				'modmail.helpers.index.guild_reply.sent_title_md',
+				{
+					title: threadTitle,
+					user: sentByLine,
+				},
+			),
 		)
 		.addSeparatorComponents(
 			new SeparatorBuilder()
@@ -783,7 +826,7 @@ async function relayGuildReply(
 	const dmCard = new ContainerBuilder()
 		.setAccentColor(accentColor)
 		.addTextDisplayComponents(
-			await t(fakeInteraction, 'modmail.dm.title_user_md', {
+			await t(fakeInteraction, 'modmail.helpers.index.dm.title_user_md', {
 				title: dmTitle,
 				user: displayName,
 			}),
@@ -830,7 +873,10 @@ async function relayGuildReply(
 		});
 	} catch (_e) {
 		// User DMs closed: add a note in the thread
-		const failNote = await t(fakeInteraction, 'modmail.errors.dm_closed');
+		const failNote = await t(
+			fakeInteraction,
+			'modmail.helpers.index.errors.dm_closed',
+		);
 		await message.channel
 			.send({
 				components: [
@@ -938,7 +984,10 @@ async function closeModmail(interaction, container, reason = null) {
 			status: 'open',
 		});
 		if (!modmail) {
-			const desc = await t(interaction, 'modmail.errors.not_a_modmail');
+			const desc = await t(
+				interaction,
+				'modmail.helpers.index.errors.not_a_modmail',
+			);
 			if (interaction.replied || interaction.deferred) {
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
@@ -958,7 +1007,10 @@ async function closeModmail(interaction, container, reason = null) {
 			guildId: modmail.guildId,
 		});
 		if (!config) {
-			const desc = await t(interaction, 'modmail.errors.config_missing');
+			const desc = await t(
+				interaction,
+				'modmail.helpers.index.errors.config_missing',
+			);
 			if (interaction.replied || interaction.deferred) {
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
@@ -978,7 +1030,7 @@ async function closeModmail(interaction, container, reason = null) {
 		// Defer early so we don't time out while processing transcript
 		if (!interaction.replied && !interaction.deferred) {
 			await interaction.reply({
-				content: await t(interaction, 'modmail.close.thinking'),
+				content: await t(interaction, 'modmail.helpers.index.close.thinking'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -1006,12 +1058,16 @@ async function closeModmail(interaction, container, reason = null) {
 			? await getChannelSafe(interaction.guild, config.transcriptChannelId)
 			: null;
 		if (transcriptChannel) {
-			const transcriptTitle = await t(interaction, 'modmail.transcript.title', {
-				modmailId: modmail.id,
-			});
+			const transcriptTitle = await t(
+				interaction,
+				'modmail.helpers.index.transcript.title',
+				{
+					modmailId: modmail.id,
+				},
+			);
 			const transcriptUserLine = await t(
 				interaction,
-				'modmail.transcript.user',
+				'modmail.helpers.index.transcript.user',
 				{
 					userId: modmail.userId,
 				},
@@ -1051,13 +1107,17 @@ async function closeModmail(interaction, container, reason = null) {
 			? await getChannelSafe(interaction.guild, config.logsChannelId)
 			: null;
 		if (logsChannel) {
-			const logDesc = await t(interaction, 'modmail.close.log_message', {
-				modmailId: modmail.id,
-				userId: modmail.userId,
-				openedAt: `<t:${Math.floor(modmail.openedAt / 1000)}:R>`,
-				closerId: interaction.user.id,
-				reason: reason || 'No reason specified',
-			});
+			const logDesc = await t(
+				interaction,
+				'modmail.helpers.index.close.log_message',
+				{
+					modmailId: modmail.id,
+					userId: modmail.userId,
+					openedAt: `<t:${Math.floor(modmail.openedAt / 1000)}:R>`,
+					closerId: interaction.user.id,
+					reason: reason || 'No reason specified',
+				},
+			);
 			await logsChannel.send({
 				components: await simpleContainer(interaction, logDesc),
 				flags: MessageFlags.IsComponentsV2,
@@ -1070,7 +1130,7 @@ async function closeModmail(interaction, container, reason = null) {
 		// ─── DM closing message to user ──────────────────────────────────────
 		const closingText =
 			config.closingMessage ||
-			(await t(interaction, 'modmail.dm.closing_message'));
+			(await t(interaction, 'modmail.helpers.index.dm.closing_message'));
 
 		// Use custom closing color if set, else fall back to bot color
 		const closingAccent = config.closingColor
@@ -1146,7 +1206,10 @@ async function closeModmail(interaction, container, reason = null) {
 				label: 'modmail:helpers:close-modmail',
 			},
 		);
-		const descError = await t(interaction, 'modmail.errors.close_failed');
+		const descError = await t(
+			interaction,
+			'modmail.helpers.index.errors.close_failed',
+		);
 		if (!interaction.replied && !interaction.deferred) {
 			return interaction.reply({
 				components: await simpleContainer(interaction, descError, {

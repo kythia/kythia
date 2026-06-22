@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class GuildAddCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('guild-add')
@@ -29,28 +26,29 @@ class GuildAddCommand extends BaseCommand {
 					.setDescription('Reason for blacklisting')
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, logger, helpers, client } = container;
 		const { KythiaBlacklist } = models;
 		const { createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const guildId = interaction.options.getString('guild_id');
 		const reason = interaction.options.getString('reason') || null;
-
 		try {
 			const existing = await KythiaBlacklist.getCache({
-				where: { type: 'guild', targetId: guildId },
+				where: {
+					type: 'guild',
+					targetId: guildId,
+				},
 			});
 			if (existing) {
 				const components = await createContainer(interaction, {
 					description: await t(
 						interaction,
-						'core.utils.kyth.blacklist.guild.add.already',
-						{ id: guildId },
+						'core.commands.utils.kyth.blacklist.guild-add.guild.add.already',
+						{
+							id: guildId,
+						},
 					),
 					color: 'Red',
 				});
@@ -59,7 +57,6 @@ class GuildAddCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			await KythiaBlacklist.create({
 				type: 'guild',
 				targetId: guildId,
@@ -88,7 +85,11 @@ class GuildAddCommand extends BaseCommand {
 						}
 						return false;
 					},
-					{ context: { id: guildId } },
+					{
+						context: {
+							id: guildId,
+						},
+					},
 				);
 				left = results.some((r) => r === true);
 			} else {
@@ -103,27 +104,34 @@ class GuildAddCommand extends BaseCommand {
 					} catch (leaveErr) {
 						logger.warn(
 							`Failed to leave blacklisted guild ${guildId}: ${leaveErr.message}`,
-							{ label: 'core' },
+							{
+								label: 'core',
+							},
 						);
 					}
 				}
 			}
-
 			const components = await createContainer(interaction, {
 				title: await t(
 					interaction,
-					'core.utils.kyth.blacklist.guild.add.title',
+					'core.commands.utils.kyth.blacklist.guild-add.guild.add.title',
 				),
 				description: await t(
 					interaction,
-					'core.utils.kyth.blacklist.guild.add.success',
+					'core.commands.utils.kyth.blacklist.guild-add.guild.add.success',
 					{
 						id: guildId,
 						reason:
 							reason ||
-							(await t(interaction, 'core.utils.kyth.blacklist.no.reason')),
+							(await t(
+								interaction,
+								'core.helpers.index.utils.kyth.blacklist.no.reason',
+							)),
 						left: left
-							? await t(interaction, 'core.utils.kyth.blacklist.guild.add.left')
+							? await t(
+									interaction,
+									'core.commands.utils.kyth.blacklist.guild-add.guild.add.left',
+								)
 							: '',
 					},
 				),
@@ -135,7 +143,9 @@ class GuildAddCommand extends BaseCommand {
 			});
 			logger.info(
 				`Guild ${guildId} blacklisted by ${interaction.user.tag} | Reason: ${reason ?? 'none'} | Left: ${left}`,
-				{ label: 'core' },
+				{
+					label: 'core',
+				},
 			);
 		} catch (error) {
 			logger.error(`Failed to blacklist guild: ${error.message || error}`, {
@@ -144,8 +154,10 @@ class GuildAddCommand extends BaseCommand {
 			const components = await createContainer(interaction, {
 				description: await t(
 					interaction,
-					'core.utils.kyth.blacklist.guild.add.error',
-					{ error: error.message },
+					'core.commands.utils.kyth.blacklist.guild-add.guild.add.error',
+					{
+						error: error.message,
+					},
 				),
 				color: 'Red',
 			});
@@ -156,5 +168,4 @@ class GuildAddCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = GuildAddCommand;

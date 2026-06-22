@@ -26,7 +26,10 @@ class CollectCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -44,7 +47,7 @@ class CollectCommand extends BaseCommand {
 			interaction,
 		);
 		if (cooldown.remaining) {
-			const msg = await t(interaction, 'economy.collect.cooldown', {
+			const msg = await t(interaction, 'economy.commands.collect.cooldown', {
 				time: cooldown.time,
 			});
 			const components = await simpleContainer(interaction, msg, {
@@ -66,7 +69,7 @@ class CollectCommand extends BaseCommand {
 			itemName: '🏢 Company',
 		});
 		if (!house && !company) {
-			const msg = await t(interaction, 'economy.collect.no_assets');
+			const msg = await t(interaction, 'economy.commands.collect.no_assets');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -91,7 +94,7 @@ class CollectCommand extends BaseCommand {
 		user.changed('kythiaCoin', true);
 		user.changed('lastCollect', true);
 		await user.save();
-		const msg = await t(interaction, 'economy.collect.success', {
+		const msg = await t(interaction, 'economy.commands.collect.success', {
 			amount: passiveIncome,
 			assets: assetMsgs.join('\n> '),
 		});

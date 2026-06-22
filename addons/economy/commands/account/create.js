@@ -44,7 +44,7 @@ class CreateCommand extends BaseCommand {
 		if (existingUser) {
 			const msg = await t(
 				interaction,
-				'economy.account.create.account.create.already.desc',
+				'economy.commands.account.create.account.create.already.desc',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
@@ -62,7 +62,7 @@ class CreateCommand extends BaseCommand {
 		});
 		const msg = await t(
 			interaction,
-			'economy.account.create.account.create.success.desc',
+			'economy.commands.account.create.account.create.success.desc',
 			{
 				bankType: bankDisplay,
 			},

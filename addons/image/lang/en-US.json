@@ -1,28 +1,5 @@
 {
 	"image": {
-		"add": {
-			"invalid": {
-				"type": {
-					"desc": "## Image Upload Failed!\nPlease upload a valid image file (image/* only)."
-				}
-			},
-			"error": {
-				"upload_failed": "**Failed to upload image:** {error}"
-			},
-			"success": {
-				"desc": "## Image Saved!\nYour image has been saved successfully!\nURL: {url}"
-			}
-		},
-		"delete": {
-			"not": {
-				"found": {
-					"desc": "## Image Not Found!\nThe image code could not be found or you do not have permission to delete it."
-				}
-			},
-			"success": {
-				"desc": "## Image Deleted!\nThe image has been deleted successfully."
-			}
-		},
 		"commands": {
 			"list": {
 				"empty": "You have not uploaded any images yet.",
@@ -33,6 +10,29 @@
 				"item": "**Code:** `{code}`\n[View Image]({url})",
 				"footer": {
 					"help": "Use the filenames above with the image commands to show or delete your uploaded images."
+				}
+			},
+			"add": {
+				"invalid": {
+					"type": {
+						"desc": "## Image Upload Failed!\nPlease upload a valid image file (image/* only)."
+					}
+				},
+				"success": {
+					"desc": "## Image Saved!\nYour image has been saved successfully!\nURL: {url}"
+				},
+				"error": {
+					"upload_failed": "**Failed to upload image:** {error}"
+				}
+			},
+			"delete": {
+				"not": {
+					"found": {
+						"desc": "## Image Not Found!\nThe image code could not be found or you do not have permission to delete it."
+					}
+				},
+				"success": {
+					"desc": "## Image Deleted!\nThe image has been deleted successfully."
 				}
 			}
 		}

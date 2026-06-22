@@ -7,28 +7,26 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class FilterCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('filter')
 			.setDescription('Apply audio filter (equalizer)');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		if (!member?.voice?.channel) {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'music.music.voice.channel.not.found'),
+					await t(
+						interaction,
+						'music.helpers.index.music.voice.channel.not.found',
+					),
 					{
 						color: 'Red',
 					},
@@ -36,13 +34,14 @@ class FilterCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const player = client.poru.players.get(guild.id);
 		if (!player) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'music.music.player.not.found'),
-				{ color: 'Red' },
+				await t(interaction, 'music.helpers.index.music.player.not.found'),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.reply({
 				components: reply,
@@ -53,7 +52,7 @@ class FilterCommand extends BaseCommand {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'music.music.required'),
+					await t(interaction, 'music.helpers.index.music.required'),
 					{
 						color: 'Red',
 					},
@@ -61,9 +60,7 @@ class FilterCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		return musicHandlers.handleFilter(interaction, player);
 	}
 }
-
 exports.default = FilterCommand;

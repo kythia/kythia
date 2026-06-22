@@ -29,7 +29,7 @@ class RemoveCommand extends BaseCommand {
 			return interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.unset.not_setup'),
+					await t(interaction, 'tempvoice.commands.remove.unset.not_setup'),
 					{
 						color: 'Yellow',
 					},
@@ -37,18 +37,21 @@ class RemoveCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-		const deleteReason = await t(interaction, 'tempvoice.unset.delete_reason');
+		const deleteReason = await t(
+			interaction,
+			'tempvoice.commands.remove.unset.delete_reason',
+		);
 		const deleteReasonPanel = await t(
 			interaction,
-			'tempvoice.unset.delete_reason_panel',
+			'tempvoice.commands.remove.unset.delete_reason_panel',
 		);
 		const deleteReasonTrigger = await t(
 			interaction,
-			'tempvoice.unset.delete_reason_trigger',
+			'tempvoice.commands.remove.unset.delete_reason_trigger',
 		);
 		const deleteReasonCategory = await t(
 			interaction,
-			'tempvoice.unset.delete_reason_category',
+			'tempvoice.commands.remove.unset.delete_reason_category',
 		);
 		const activeChannels = await TempVoiceChannel.getAllCache({
 			where: {
@@ -176,7 +179,7 @@ class RemoveCommand extends BaseCommand {
 		return interaction.editReply({
 			components: await simpleContainer(
 				interaction,
-				await t(interaction, 'tempvoice.unset.success_content'),
+				await t(interaction, 'tempvoice.commands.remove.unset.success_content'),
 				{
 					color: 'Red',
 				},

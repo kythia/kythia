@@ -8,12 +8,9 @@
 
 const { MessageFlags } = require('discord.js');
 const { EMBEDDED, resetServer, runTemplate } = require('../../helpers/server');
-
 const { BaseCommand } = require('kythia-core');
-
 class AutobuildCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('autobuild')
@@ -56,14 +53,11 @@ class AutobuildCommand extends BaseCommand {
 			.addStringOption((option) =>
 				option.setName('locale').setDescription('id/en').setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const templateKey = interaction.options.getString('template');
 		const shouldReset = interaction.options.getBoolean('reset');
 		const dryRun = interaction.options.getBoolean('dry_run') ?? false;
@@ -72,42 +66,49 @@ class AutobuildCommand extends BaseCommand {
 		const privateStaff =
 			interaction.options.getBoolean('private_staff') ?? false;
 		const locale = interaction.options.getString('locale') || 'id';
-
 		const tpl = EMBEDDED[templateKey];
 		if (!tpl) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'server.server.autobuild.template.not.found_md', {
-					key: templateKey,
-				}),
-				{ color: 'Red' },
+				await t(
+					interaction,
+					'server.commands.server.autobuild.server.template.not.found_md',
+					{
+						key: templateKey,
+					},
+				),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		if (shouldReset && !dryRun) {
 			await resetServer(interaction);
 		}
-
 		let components = await simpleContainer(
 			interaction,
-			await t(interaction, 'server.server.autobuild.start_md', {
+			await t(interaction, 'server.commands.server.autobuild.server.start_md', {
 				template: tpl?.meta?.display ?? templateKey,
 				dryRunMsg: dryRun ? '\n> ⚠️ Dry run — no changes will be made.' : '',
 			}),
-			{ color: 'Blurple' },
+			{
+				color: 'Blurple',
+			},
 		);
 		await interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-
 		const tplData = typeof tpl[locale] === 'object' ? tpl[locale] : tpl;
-
-		const opts = { dryRun, includeVoice, privateStaff };
+		const opts = {
+			dryRun,
+			includeVoice,
+			privateStaff,
+		};
 		let stats;
 		try {
 			stats = await runTemplate(interaction, tplData, opts);
@@ -117,23 +118,28 @@ class AutobuildCommand extends BaseCommand {
 			});
 			components = await simpleContainer(
 				interaction,
-				await t(interaction, 'server.server.autobuild.failed_md', {
-					error: err.message,
-				}),
-				{ color: 'Red' },
+				await t(
+					interaction,
+					'server.commands.server.autobuild.server.failed_md',
+					{
+						error: err.message,
+					},
+				),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const desc =
-			(await t(interaction, 'server.server.autobuild.done_md', {
+			(await t(interaction, 'server.commands.server.autobuild.server.done_md', {
 				template: tpl?.meta?.display ?? templateKey,
 			})) +
 			'\n' +
-			`${await t(interaction, 'server.server.autobuild.stats', {
+			`${await t(interaction, 'server.commands.server.autobuild.server.stats', {
 				rolesCreated: stats.role.created,
 				rolesSkipped: stats.role.skipped,
 				catCreated: stats.category.created,
@@ -143,12 +149,13 @@ class AutobuildCommand extends BaseCommand {
 				failed: stats.failed,
 				dryRunMsg: dryRun ? '\n\n> ⚠️ Dry run — no changes were made.' : '',
 			})}`;
-		components = await simpleContainer(interaction, desc, { color: 'Green' });
+		components = await simpleContainer(interaction, desc, {
+			color: 'Green',
+		});
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = AutobuildCommand;

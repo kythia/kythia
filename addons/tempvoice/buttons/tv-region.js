@@ -98,7 +98,10 @@ class TvRegionButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.region.no_active_channel'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-region.region.no_active_channel',
+						),
 						{
 							color: 'Red',
 						},
@@ -108,7 +111,12 @@ class TvRegionButton extends BaseButton {
 		}
 		const selectMenu = new StringSelectMenuBuilder()
 			.setCustomId(`tv_region_menu:${activeChannel.channelId}`)
-			.setPlaceholder(await t(interaction, 'tempvoice.region.menu.placeholder'))
+			.setPlaceholder(
+				await t(
+					interaction,
+					'tempvoice.buttons.tv-region.region.menu.placeholder',
+				),
+			)
 			.addOptions(
 				REGIONS.map((r) => ({
 					...r,
@@ -124,7 +132,10 @@ class TvRegionButton extends BaseButton {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'tempvoice.region.menu.content'),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-region.region.menu.content',
+					),
 				),
 			)
 			.addActionRowComponents(row);

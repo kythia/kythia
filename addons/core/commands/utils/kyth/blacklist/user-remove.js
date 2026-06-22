@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class UserRemoveCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('user-remove')
@@ -23,27 +20,28 @@ class UserRemoveCommand extends BaseCommand {
 					.setDescription('User to remove from blacklist')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, logger, helpers } = container;
 		const { KythiaBlacklist } = models;
 		const { createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const user = interaction.options.getUser('user');
-
 		try {
 			const existing = await KythiaBlacklist.getCache({
-				where: { type: 'user', targetId: user.id },
+				where: {
+					type: 'user',
+					targetId: user.id,
+				},
 			});
 			if (!existing) {
 				const components = await createContainer(interaction, {
 					description: await t(
 						interaction,
-						'core.utils.kyth.blacklist.user.remove.not.found',
-						{ tag: user.tag },
+						'core.commands.utils.kyth.blacklist.user-remove.user.remove.not.found',
+						{
+							tag: user.tag,
+						},
 					),
 					color: 'Red',
 				});
@@ -52,20 +50,24 @@ class UserRemoveCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			await KythiaBlacklist.destroy({
-				where: { type: 'user', targetId: user.id },
+				where: {
+					type: 'user',
+					targetId: user.id,
+				},
 			});
-
 			const components = await createContainer(interaction, {
 				title: await t(
 					interaction,
-					'core.utils.kyth.blacklist.user.remove.title',
+					'core.commands.utils.kyth.blacklist.user-remove.user.remove.title',
 				),
 				description: await t(
 					interaction,
-					'core.utils.kyth.blacklist.user.remove.success',
-					{ tag: user.tag, id: user.id },
+					'core.commands.utils.kyth.blacklist.user-remove.user.remove.success',
+					{
+						tag: user.tag,
+						id: user.id,
+					},
 				),
 				color: 'Green',
 			});
@@ -75,7 +77,9 @@ class UserRemoveCommand extends BaseCommand {
 			});
 			logger.info(
 				`User ${user.tag} (${user.id}) removed from blacklist by ${interaction.user.tag}`,
-				{ label: 'core' },
+				{
+					label: 'core',
+				},
 			);
 		} catch (error) {
 			logger.error(
@@ -87,8 +91,10 @@ class UserRemoveCommand extends BaseCommand {
 			const components = await createContainer(interaction, {
 				description: await t(
 					interaction,
-					'core.utils.kyth.blacklist.user.remove.error',
-					{ error: error.message },
+					'core.commands.utils.kyth.blacklist.user-remove.user.remove.error',
+					{
+						error: error.message,
+					},
 				),
 				color: 'Red',
 			});
@@ -99,5 +105,4 @@ class UserRemoveCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = UserRemoveCommand;

@@ -43,12 +43,12 @@ class RoastCommand extends BaseCommand {
 			insult = response.data?.insult;
 		} catch {
 			return interaction.editReply({
-				content: await t(interaction, 'fun.roast.error.fetch'),
+				content: await t(interaction, 'fun.shared.roast.error.fetch'),
 			});
 		}
 		if (!insult) {
 			return interaction.editReply({
-				content: await t(interaction, 'fun.roast.error.fetch'),
+				content: await t(interaction, 'fun.shared.roast.error.fetch'),
 			});
 		}
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
@@ -73,7 +73,7 @@ class RoastCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'fun.roast.insult', {
+					await t(interaction, 'fun.commands.roast.insult', {
 						insult,
 					}),
 				),

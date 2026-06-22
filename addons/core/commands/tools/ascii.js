@@ -60,7 +60,7 @@ class AsciiCommand extends BaseCommand {
 		if (!text || text.length > 20) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.tools.ascii.invalid.text.allfonts'),
+				await t(interaction, 'core.commands.tools.ascii.invalid.text.allfonts'),
 				{
 					color: 'Red',
 				},
@@ -71,7 +71,7 @@ class AsciiCommand extends BaseCommand {
 			});
 		}
 		if (allFonts) {
-			const msg = await t(interaction, 'core.tools.ascii.generating', {
+			const msg = await t(interaction, 'core.commands.tools.ascii.generating', {
 				text,
 				count: figletFonts.length,
 			});
@@ -131,7 +131,7 @@ class AsciiCommand extends BaseCommand {
 					if (err || !data) {
 						const components = await simpleContainer(
 							interaction,
-							await t(interaction, 'core.tools.ascii.failed'),
+							await t(interaction, 'core.commands.tools.ascii.failed'),
 							{
 								color: 'Red',
 							},
@@ -145,7 +145,7 @@ class AsciiCommand extends BaseCommand {
 					if (asciiArt.length > 4096) {
 						const components = await simpleContainer(
 							interaction,
-							await t(interaction, 'core.tools.ascii.too.long'),
+							await t(interaction, 'core.commands.tools.ascii.too.long'),
 							{
 								color: 'Red',
 							},
@@ -157,7 +157,7 @@ class AsciiCommand extends BaseCommand {
 					}
 					const description = await t(
 						interaction,
-						'core.tools.ascii.embed.desc',
+						'core.commands.tools.ascii.embed.desc',
 						{
 							asciiArt,
 							font,

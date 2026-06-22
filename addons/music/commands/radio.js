@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class RadioCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('radio')
@@ -26,14 +23,12 @@ class RadioCommand extends BaseCommand {
 					.setRequired(true)
 					.setAutocomplete(true),
 			);
-
 	async autocomplete(interaction) {
 		const container = this.container;
 		const run = async () => {
 			const { client } = container;
 			const focusedOption = interaction.options.getFocused(true);
 			const focusedValue = focusedOption.value;
-
 			if (!client._radioAutocompleteCache)
 				client._radioAutocompleteCache = new Map();
 			if (client._radioAutocompleteCache.has(focusedValue))
@@ -42,12 +37,13 @@ class RadioCommand extends BaseCommand {
 				);
 			if (!focusedValue || focusedValue.trim().length === 0)
 				return interaction.respond([]);
-
 			try {
 				const axios = require('axios');
 				const response = await axios.get(
 					`https://de1.api.radio-browser.info/json/stations/search?name=${encodeURIComponent(focusedValue)}&limit=20&hidebroken=true&order=clickcount&reverse=true`,
-					{ timeout: 2000 },
+					{
+						timeout: 2000,
+					},
 				);
 				if (!response.data || !Array.isArray(response.data))
 					return interaction.respond([]);
@@ -82,19 +78,19 @@ class RadioCommand extends BaseCommand {
 				return;
 		}
 	}
-
 	async execute(interaction) {
 		const { simpleContainer } = interaction.client.container.helpers.discord;
-
 		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers } = container;
-
 		if (!member?.voice?.channel) {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'music.music.voice.channel.not.found'),
+					await t(
+						interaction,
+						'music.helpers.index.music.voice.channel.not.found',
+					),
 					{
 						color: 'Red',
 					},
@@ -102,12 +98,10 @@ class RadioCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		return musicHandlers.handleRadio(
 			interaction,
 			client.poru.players.get(guild.id),
 		);
 	}
 }
-
 exports.default = RadioCommand;

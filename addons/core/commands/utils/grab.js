@@ -87,7 +87,10 @@ class GrabCommand extends BaseCommand {
 					if (!sticker) {
 						const components = await simpleContainer(
 							interaction,
-							await t(interaction, 'core.utils.grab.sticker.not.found'),
+							await t(
+								interaction,
+								'core.helpers.index.utils.grab.sticker.not.found',
+							),
 							{
 								color: 'Red',
 							},
@@ -100,7 +103,7 @@ class GrabCommand extends BaseCommand {
 					if (!interaction.guild?.stickers?.create) {
 						const components = await simpleContainer(
 							interaction,
-							await t(interaction, 'core.utils.grab.no.perm.sticker'),
+							await t(interaction, 'core.commands.utils.grab.no.perm.sticker'),
 							{
 								color: 'Red',
 							},
@@ -114,7 +117,10 @@ class GrabCommand extends BaseCommand {
 					if (!url) {
 						const components = await simpleContainer(
 							interaction,
-							await t(interaction, 'core.utils.grab.sticker.no.url'),
+							await t(
+								interaction,
+								'core.helpers.index.utils.grab.sticker.no.url',
+							),
 							{
 								color: 'Red',
 							},
@@ -132,9 +138,13 @@ class GrabCommand extends BaseCommand {
 						});
 						const components = await simpleContainer(
 							interaction,
-							await t(interaction, 'core.utils.grab.sticker.success', {
-								name: created.name,
-							}),
+							await t(
+								interaction,
+								'core.helpers.index.utils.grab.sticker.success',
+								{
+									name: created.name,
+								},
+							),
 							{
 								color: 'Green',
 							},
@@ -145,13 +155,19 @@ class GrabCommand extends BaseCommand {
 						});
 					} catch (_e) {
 						return interaction.editReply({
-							content: await t(interaction, 'core.utils.grab.sticker.manual'),
+							content: await t(
+								interaction,
+								'core.helpers.index.utils.grab.sticker.manual',
+							),
 							files: [url],
 						});
 					}
 				} catch (_err) {
 					return interaction.editReply({
-						content: await t(interaction, 'core.utils.grab.sticker.error'),
+						content: await t(
+							interaction,
+							'core.commands.utils.grab.sticker.error',
+						),
 					});
 				}
 			} else if (sub === 'emoji') {
@@ -161,7 +177,7 @@ class GrabCommand extends BaseCommand {
 				if (!match) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.utils.grab.emoji.invalid'),
+						await t(interaction, 'core.helpers.index.utils.grab.emoji.invalid'),
 						{
 							color: 'Red',
 						},
@@ -177,7 +193,10 @@ class GrabCommand extends BaseCommand {
 				try {
 					if (!interaction.guild?.emojis?.create) {
 						return interaction.editReply({
-							content: await t(interaction, 'core.utils.grab.no.perm.emoji'),
+							content: await t(
+								interaction,
+								'core.helpers.index.utils.grab.no.perm.emoji',
+							),
 						});
 					}
 					const created = await interaction.guild.emojis.create({
@@ -186,9 +205,13 @@ class GrabCommand extends BaseCommand {
 					});
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.utils.grab.emoji.success', {
-							name: created.name,
-						}),
+						await t(
+							interaction,
+							'core.helpers.index.utils.grab.emoji.success',
+							{
+								name: created.name,
+							},
+						),
 						{
 							color: 'Green',
 						},
@@ -199,7 +222,10 @@ class GrabCommand extends BaseCommand {
 					});
 				} catch (_e) {
 					return interaction.editReply({
-						content: await t(interaction, 'core.utils.grab.emoji.manual'),
+						content: await t(
+							interaction,
+							'core.helpers.index.utils.grab.emoji.manual',
+						),
 						files: [url],
 					});
 				}
@@ -216,7 +242,10 @@ class GrabCommand extends BaseCommand {
 				} catch {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.utils.grab.image.message.not_found'),
+						await t(
+							interaction,
+							'core.commands.utils.grab.image.message.not_found',
+						),
 						{
 							color: 'Red',
 						},
@@ -247,7 +276,7 @@ class GrabCommand extends BaseCommand {
 				if (!url) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.utils.grab.image.not_found'),
+						await t(interaction, 'core.commands.utils.grab.image.not_found'),
 						{
 							color: 'Red',
 						},
@@ -268,9 +297,13 @@ class GrabCommand extends BaseCommand {
 					});
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.utils.grab.sticker.success', {
-							name: created.name,
-						}),
+						await t(
+							interaction,
+							'core.helpers.index.utils.grab.sticker.success',
+							{
+								name: created.name,
+							},
+						),
 						{
 							color: 'Green',
 						},
@@ -281,7 +314,10 @@ class GrabCommand extends BaseCommand {
 					});
 				} catch (_e) {
 					return interaction.editReply({
-						content: await t(interaction, 'core.utils.grab.sticker.manual'),
+						content: await t(
+							interaction,
+							'core.helpers.index.utils.grab.sticker.manual',
+						),
 						files: [url],
 					});
 				}
@@ -297,7 +333,10 @@ class GrabCommand extends BaseCommand {
 				if (!sticker) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.utils.grab.sticker.not.found'),
+						await t(
+							interaction,
+							'core.helpers.index.utils.grab.sticker.not.found',
+						),
 						{
 							color: 'Red',
 						},
@@ -311,7 +350,10 @@ class GrabCommand extends BaseCommand {
 				if (!url) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.utils.grab.sticker.no.url'),
+						await t(
+							interaction,
+							'core.helpers.index.utils.grab.sticker.no.url',
+						),
 						{
 							color: 'Red',
 						},
@@ -331,9 +373,13 @@ class GrabCommand extends BaseCommand {
 					});
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.utils.grab.sticker.success', {
-							name: created.name,
-						}),
+						await t(
+							interaction,
+							'core.helpers.index.utils.grab.sticker.success',
+							{
+								name: created.name,
+							},
+						),
 						{
 							color: 'Green',
 						},
@@ -344,7 +390,10 @@ class GrabCommand extends BaseCommand {
 					});
 				} catch (_e) {
 					return interaction.editReply({
-						content: await t(interaction, 'core.utils.grab.sticker.manual'),
+						content: await t(
+							interaction,
+							'core.helpers.index.utils.grab.sticker.manual',
+						),
 						files: [url],
 					});
 				}
@@ -356,7 +405,7 @@ class GrabCommand extends BaseCommand {
 				if (!emojiData) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.utils.grab.emoji.invalid'),
+						await t(interaction, 'core.helpers.index.utils.grab.emoji.invalid'),
 						{
 							color: 'Red',
 						},
@@ -371,7 +420,10 @@ class GrabCommand extends BaseCommand {
 				try {
 					if (!interaction.guild?.emojis?.create) {
 						return interaction.editReply({
-							content: await t(interaction, 'core.utils.grab.no.perm.emoji'),
+							content: await t(
+								interaction,
+								'core.helpers.index.utils.grab.no.perm.emoji',
+							),
 						});
 					}
 					const created = await interaction.guild.emojis.create({
@@ -380,9 +432,13 @@ class GrabCommand extends BaseCommand {
 					});
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.utils.grab.emoji.success', {
-							name: created.name,
-						}),
+						await t(
+							interaction,
+							'core.helpers.index.utils.grab.emoji.success',
+							{
+								name: created.name,
+							},
+						),
 						{
 							color: 'Green',
 						},
@@ -393,7 +449,10 @@ class GrabCommand extends BaseCommand {
 					});
 				} catch (_e) {
 					return interaction.editReply({
-						content: await t(interaction, 'core.utils.grab.emoji.manual'),
+						content: await t(
+							interaction,
+							'core.helpers.index.utils.grab.emoji.manual',
+						),
 						files: [url],
 					});
 				}
@@ -427,9 +486,13 @@ class GrabCommand extends BaseCommand {
 					});
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.utils.grab.sticker.success', {
-							name: created.name,
-						}),
+						await t(
+							interaction,
+							'core.helpers.index.utils.grab.sticker.success',
+							{
+								name: created.name,
+							},
+						),
 						{
 							color: 'Green',
 						},
@@ -440,14 +503,20 @@ class GrabCommand extends BaseCommand {
 					});
 				} catch (_e) {
 					return interaction.editReply({
-						content: await t(interaction, 'core.utils.grab.sticker.manual'),
+						content: await t(
+							interaction,
+							'core.helpers.index.utils.grab.sticker.manual',
+						),
 						files: [imageUrl],
 					});
 				}
 			}
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.grab.sticker.or.emoji.not.found'),
+				await t(
+					interaction,
+					'core.commands.utils.grab.sticker.or.emoji.not.found',
+				),
 				{
 					color: 'Red',
 				},

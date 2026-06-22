@@ -40,7 +40,10 @@ class BlackmarketCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -62,7 +65,10 @@ class BlackmarketCommand extends BaseCommand {
 		if (pool && pool.blackmarketActive === false) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.crime.blackmarket.error.closed.desc'),
+				await t(
+					interaction,
+					'economy.commands.crime.blackmarket.error.closed.desc',
+				),
 				{
 					color: 'Red',
 				},
@@ -114,11 +120,15 @@ class BlackmarketCommand extends BaseCommand {
 				.setAccentColor(0x1a1a2e)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'economy.crime.blackmarket.title.desc', {
-							balance: userKyth.toFixed(4),
-							page,
-							total: totalPages,
-						}),
+						await t(
+							interaction,
+							'economy.commands.crime.blackmarket.title.desc',
+							{
+								balance: userKyth.toFixed(4),
+								page,
+								total: totalPages,
+							},
+						),
 					),
 				)
 				.addSeparatorComponents(
@@ -129,7 +139,10 @@ class BlackmarketCommand extends BaseCommand {
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
 						itemText.trim() ||
-							(await t(interaction, 'economy.crime.blackmarket.empty.desc')),
+							(await t(
+								interaction,
+								'economy.commands.crime.blackmarket.empty.desc',
+							)),
 					),
 				)
 				.addSeparatorComponents(
@@ -161,7 +174,7 @@ class BlackmarketCommand extends BaseCommand {
 				if (!item) {
 					const comps = await simpleContainer(
 						i,
-						await t(i, 'economy.crime.blackmarket.error.no_item.desc'),
+						await t(i, 'economy.commands.crime.blackmarket.error.no_item.desc'),
 						{
 							color: 'Red',
 						},
@@ -174,9 +187,13 @@ class BlackmarketCommand extends BaseCommand {
 				if (item.stock !== null && item.stock <= 0) {
 					const comps = await simpleContainer(
 						i,
-						await t(i, 'economy.crime.blackmarket.error.out_of_stock.desc', {
-							item: `${item.emoji} ${item.name}`,
-						}),
+						await t(
+							i,
+							'economy.commands.crime.blackmarket.error.out_of_stock.desc',
+							{
+								item: `${item.emoji} ${item.name}`,
+							},
+						),
 						{
 							color: 'Red',
 						},
@@ -200,7 +217,7 @@ class BlackmarketCommand extends BaseCommand {
 						i,
 						await t(
 							i,
-							'economy.crime.blackmarket.error.insufficient_kyth.desc',
+							'economy.commands.crime.blackmarket.error.insufficient_kyth.desc',
 							{
 								price: item.priceKyth,
 								balance: freshKyth.toFixed(4),
@@ -233,7 +250,7 @@ class BlackmarketCommand extends BaseCommand {
 				}
 				const comps = await simpleContainer(
 					i,
-					await t(i, 'economy.crime.blackmarket.success.desc', {
+					await t(i, 'economy.commands.crime.blackmarket.success.desc', {
 						item: `${item.emoji} ${item.name}`,
 						price: item.priceKyth,
 					}),

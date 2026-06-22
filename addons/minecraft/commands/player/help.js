@@ -29,40 +29,55 @@ class HelpCommand extends BaseCommand {
 		});
 		const sections = [
 			// ── Header ────────────────────────────────────────────────────────
-			await t(interaction, 'minecraft.player.help.header'),
-			await t(interaction, 'minecraft.player.help.header_sub'),
+			await t(interaction, 'minecraft.commands.player.help.header'),
+			await t(interaction, 'minecraft.commands.player.help.header_sub'),
 			// ── Player commands ────────────────────────────────────────────────
 			'',
-			await t(interaction, 'minecraft.player.help.player_commands_title'),
-			await t(interaction, 'minecraft.player.help.player_commands_desc'),
+			await t(
+				interaction,
+				'minecraft.commands.player.help.player_commands_title',
+			),
+			await t(
+				interaction,
+				'minecraft.commands.player.help.player_commands_desc',
+			),
 			'',
-			await t(interaction, 'minecraft.player.help.cmd_avatar'),
-			await t(interaction, 'minecraft.player.help.cmd_head'),
-			await t(interaction, 'minecraft.player.help.cmd_body'),
-			await t(interaction, 'minecraft.player.help.cmd_skin'),
-			await t(interaction, 'minecraft.player.help.cmd_pose'),
-			await t(interaction, 'minecraft.player.help.pose_list'),
+			await t(interaction, 'minecraft.commands.player.help.cmd_avatar'),
+			await t(interaction, 'minecraft.commands.player.help.cmd_head'),
+			await t(interaction, 'minecraft.commands.player.help.cmd_body'),
+			await t(interaction, 'minecraft.commands.player.help.cmd_skin'),
+			await t(interaction, 'minecraft.commands.player.help.cmd_pose'),
+			await t(interaction, 'minecraft.commands.player.help.pose_list'),
 			'',
-			await t(interaction, 'minecraft.player.help.cmd_wallpaper'),
+			await t(interaction, 'minecraft.commands.player.help.cmd_wallpaper'),
 			// ── Server commands ────────────────────────────────────────────────
 			'',
-			await t(interaction, 'minecraft.player.help.server_commands_title'),
+			await t(
+				interaction,
+				'minecraft.commands.player.help.server_commands_title',
+			),
 			'',
-			await t(interaction, 'minecraft.player.help.cmd_status'),
+			await t(interaction, 'minecraft.commands.player.help.cmd_status'),
 			// ── Settings commands ──────────────────────────────────────────────
 			'',
-			await t(interaction, 'minecraft.player.help.settings_commands_title'),
-			await t(interaction, 'minecraft.player.help.settings_commands_desc'),
+			await t(
+				interaction,
+				'minecraft.commands.player.help.settings_commands_title',
+			),
+			await t(
+				interaction,
+				'minecraft.commands.player.help.settings_commands_desc',
+			),
 			'',
-			await t(interaction, 'minecraft.player.help.cmd_autosetup'),
+			await t(interaction, 'minecraft.commands.player.help.cmd_autosetup'),
 			'',
-			await t(interaction, 'minecraft.player.help.cmd_set_ip'),
+			await t(interaction, 'minecraft.commands.player.help.cmd_set_ip'),
 			'',
-			await t(interaction, 'minecraft.player.help.enable_feature'),
+			await t(interaction, 'minecraft.commands.player.help.enable_feature'),
 			// ── Cron info ──────────────────────────────────────────────────────
 			'',
-			await t(interaction, 'minecraft.player.help.live_stats_title'),
-			await t(interaction, 'minecraft.player.help.live_stats_desc'),
+			await t(interaction, 'minecraft.commands.player.help.live_stats_title'),
+			await t(interaction, 'minecraft.commands.player.help.live_stats_desc'),
 		];
 		const responseContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)

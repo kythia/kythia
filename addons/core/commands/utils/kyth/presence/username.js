@@ -33,10 +33,14 @@ class UsernameCommand extends BaseCommand {
 			await interaction.client.user.setUsername(username);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.username.success', {
-					old: oldUsername,
-					new: username,
-				}),
+				await t(
+					interaction,
+					'core.commands.utils.kyth.presence.username.success',
+					{
+						old: oldUsername,
+						new: username,
+					},
+				),
 				{
 					color: 'Green',
 				},
@@ -51,7 +55,7 @@ class UsernameCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.error', {
+				await t(interaction, 'core.helpers.index.utils.presence.error', {
 					error: error.message,
 				}),
 				{

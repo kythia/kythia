@@ -30,13 +30,17 @@ class PortfolioCommand extends BaseCommand {
 		if (ownedHoldings.length === 0) {
 			const msg = await t(
 				interaction,
-				'economy.guild_stock.portfolio.empty.desc',
+				'economy.commands.guild_stock.portfolio.empty.desc',
 			);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.stock.portfolio.empty', {
-					msg,
-				}),
+				await t(
+					interaction,
+					'economy.commands.guild_stock.portfolio.stock.empty',
+					{
+						msg,
+					},
+				),
 				{
 					color: 'Red',
 				},
@@ -60,27 +64,38 @@ class PortfolioCommand extends BaseCommand {
 				totalKythValue += kythValue;
 				const fieldText = await t(
 					interaction,
-					'economy.guild_stock.portfolio.field',
+					'economy.commands.guild_stock.portfolio.field',
 					{
 						balance: holding.balance.toFixed(2),
 						value: kythValue.toFixed(4),
 					},
 				);
 				fieldsText.push(
-					await t(interaction, 'economy.guild_stock.portfolio.holding_md', {
-						ticker: pool.ticker,
-						fieldText,
-					}),
+					await t(
+						interaction,
+						'economy.commands.guild_stock.portfolio.holding_md',
+						{
+							ticker: pool.ticker,
+							fieldText,
+						},
+					),
 				);
 			}
 		}
-		const title = await t(interaction, 'economy.guild_stock.portfolio.title');
-		const desc = await t(interaction, 'economy.guild_stock.portfolio.desc', {
-			value: totalKythValue.toFixed(4),
-		});
+		const title = await t(
+			interaction,
+			'economy.commands.guild_stock.portfolio.title',
+		);
+		const desc = await t(
+			interaction,
+			'economy.commands.guild_stock.portfolio.desc',
+			{
+				value: totalKythValue.toFixed(4),
+			},
+		);
 		const fullText = await t(
 			interaction,
-			'economy.guild_stock.portfolio.title_md',
+			'economy.commands.guild_stock.portfolio.title_md',
 			{
 				title,
 				desc,

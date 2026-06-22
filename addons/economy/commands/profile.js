@@ -39,7 +39,10 @@ class ProfileCommand extends BaseCommand {
 			userId: userId,
 		});
 		if (!userData) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -58,17 +61,17 @@ class ProfileCommand extends BaseCommand {
 
 		// Build message
 		const msg = [
-			await t(interaction, 'economy.profile.profile.title'),
-			await t(interaction, 'economy.profile.profile.user.line', {
+			await t(interaction, 'economy.commands.profile.profile.title'),
+			await t(interaction, 'economy.commands.profile.profile.user.line', {
 				username: targetUser.username,
 				userId: targetUser.id,
 			}),
-			await t(interaction, 'economy.profile.profile.finance.title'),
-			await t(interaction, 'economy.profile.profile.bank.line', {
+			await t(interaction, 'economy.commands.profile.profile.finance.title'),
+			await t(interaction, 'economy.commands.profile.profile.bank.line', {
 				bank: bank.toLocaleString(),
 				bankType: bankDisplay || '',
 			}),
-			await t(interaction, 'economy.profile.profile.cash.line', {
+			await t(interaction, 'economy.commands.profile.profile.cash.line', {
 				cash: coin.toLocaleString(),
 			}),
 		].join('\n');

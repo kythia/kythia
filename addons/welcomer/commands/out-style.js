@@ -52,13 +52,23 @@ class OutStyleCommand extends BaseCommand {
 		await welcomeSetting.save();
 		const styleLabel =
 			style === 'components-v2'
-				? await t(interaction, 'welcomer.welcomer.style.label.components.v2')
-				: await t(interaction, 'welcomer.welcomer.style.label.plain.text');
+				? await t(
+						interaction,
+						'welcomer.shared.welcomer.style.label.components.v2',
+					)
+				: await t(
+						interaction,
+						'welcomer.shared.welcomer.style.label.plain.text',
+					);
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'welcomer.welcomer.out.style.set', {
-				styleLabel,
-			}),
+			await t(
+				interaction,
+				'welcomer.commands.out-style.welcomer.out.style.set',
+				{
+					styleLabel,
+				},
+			),
 			{
 				color: 'Green',
 			},

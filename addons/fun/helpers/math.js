@@ -15,21 +15,17 @@ const {
 	SeparatorSpacingSize,
 	TextDisplayBuilder,
 } = require('discord.js');
-
 function rand(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
 function pick(arr) {
 	return arr[Math.floor(Math.random() * arr.length)];
 }
-
 function generateQuestion(score) {
 	// Scale difficulty based on score brackets
 	const tier = Math.floor(score / 5); // 0-4: easy, 5-9: medium, 10-14: hard, 15+: extreme
 
 	let a, b, op, answer, display;
-
 	if (tier === 0) {
 		// Easy: add/sub with small numbers
 		a = rand(1, 20);
@@ -51,7 +47,6 @@ function generateQuestion(score) {
 		b = rand(2, 15);
 		op = pick(['×', '+', '-', '÷']);
 	}
-
 	switch (op) {
 		case '+':
 			answer = a + b;
@@ -75,14 +70,14 @@ function generateQuestion(score) {
 			break;
 		}
 	}
-
-	return { question: display, answer };
+	return {
+		question: display,
+		answer,
+	};
 }
-
 async function buildMathContainer(interaction, { body, footer, accentColor }) {
 	const { helpers, kythiaConfig, t } = interaction.client.container;
 	const { convertColor } = helpers.color;
-
 	return new ContainerBuilder()
 		.setAccentColor(
 			convertColor(accentColor ?? kythiaConfig.bot.color, {
@@ -92,7 +87,7 @@ async function buildMathContainer(interaction, { body, footer, accentColor }) {
 		)
 		.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`${await t(interaction, 'fun.math.title')}\n\n${body}`,
+				`${await t(interaction, 'fun.helpers.math.title')}\n\n${body}`,
 			),
 		)
 		.addSeparatorComponents(
@@ -104,7 +99,6 @@ async function buildMathContainer(interaction, { body, footer, accentColor }) {
 			new TextDisplayBuilder().setContent(`-# ${footer}`),
 		);
 }
-
 function buildAnswerRow(disabled = false) {
 	return new ActionRowBuilder().addComponents(
 		new ButtonBuilder()
@@ -114,50 +108,44 @@ function buildAnswerRow(disabled = false) {
 			.setDisabled(disabled),
 	);
 }
-
 async function buildLeaderboard(interaction, container) {
 	const { models, t } = container;
 	const { MathScore } = models;
-
 	const top = await MathScore.getAllCache({
 		order: [['bestScore', 'DESC']],
 		limit: 10,
 	});
-
-	const title = await t(interaction, 'fun.math.leaderboard.title');
-
+	const title = await t(interaction, 'fun.helpers.math.leaderboard.title');
 	if (!top || top.length === 0) {
-		const empty = await t(interaction, 'fun.math.leaderboard.empty');
+		const empty = await t(interaction, 'fun.helpers.math.leaderboard.empty');
 		return new ContainerBuilder()
 			.setAccentColor(0xf1c40f)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(`${title}\n\n${empty}`),
 			);
 	}
-
 	const lines = await Promise.all(
 		top.map((entry, i) =>
-			t(interaction, 'fun.math.leaderboard.entry', {
+			t(interaction, 'fun.helpers.math.leaderboard.entry', {
 				rank: i + 1,
 				user: entry.username ?? `<@${entry.userId}>`,
 				score: entry.bestScore,
 			}),
 		),
 	);
-
 	return new ContainerBuilder()
 		.setAccentColor(0xf1c40f)
 		.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(`${title}\n\n${lines.join('\n')}`),
 		);
 }
-
 async function saveScore(container, userId, username, score) {
 	const { models } = container;
 	const { MathScore } = models;
-
 	const [record] = await MathScore.getOrCreateCache(
-		{ userId },
+		{
+			userId,
+		},
 		{
 			userId,
 			username,
@@ -165,17 +153,14 @@ async function saveScore(container, userId, username, score) {
 			totalGames: 1,
 		},
 	);
-
 	record.totalGames = (record.totalGames ?? 0) + 1;
 	if (score > (record.bestScore ?? 0)) {
 		record.bestScore = score;
 	}
 	record.username = username;
 	await record.save();
-
 	return record;
 }
-
 module.exports = {
 	generateQuestion,
 	buildMathContainer,

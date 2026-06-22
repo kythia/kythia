@@ -106,13 +106,13 @@ class ImagenCommand extends BaseCommand {
 		const imageAttachment = interaction.options.getAttachment('image');
 		if (!prompt && !imageAttachment) {
 			return interaction.reply({
-				content: await t(interaction, 'ai.imagen.no_input'),
+				content: await t(interaction, 'ai.commands.imagen.no_input'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
 		if (imageAttachment && !imageAttachment.contentType?.startsWith('image/')) {
 			return interaction.reply({
-				content: await t(interaction, 'ai.imagen.invalid_attachment'),
+				content: await t(interaction, 'ai.commands.imagen.invalid_attachment'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -121,7 +121,7 @@ class ImagenCommand extends BaseCommand {
 		const limit = kythiaConfig.addons.ai.imagenLimit || 2;
 		const canUse = await checkAndUseLimit(userId, limit);
 		if (!canUse && !isOwner(userId)) {
-			const msg = await t(interaction, 'ai.imagen.limit', {
+			const msg = await t(interaction, 'ai.commands.imagen.limit', {
 				limit,
 			});
 			const components = await simpleContainer(interaction, msg, {
@@ -139,10 +139,10 @@ class ImagenCommand extends BaseCommand {
 			},
 		);
 		const initMsg = imageAttachment
-			? await t(interaction, 'ai.imagen.loading_transform', {
+			? await t(interaction, 'ai.commands.imagen.loading_transform', {
 					prompt: prompt || '',
 				})
-			: await t(interaction, 'ai.imagen.loading');
+			: await t(interaction, 'ai.commands.imagen.loading');
 		const initComponents = await simpleContainer(interaction, initMsg);
 		await interaction.editReply({
 			components: initComponents,
@@ -160,7 +160,7 @@ class ImagenCommand extends BaseCommand {
 				});
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'ai.imagen.fetch_error'),
+					await t(interaction, 'ai.commands.imagen.fetch_error'),
 					{
 						color: 'Red',
 					},
@@ -178,7 +178,7 @@ class ImagenCommand extends BaseCommand {
 			.map((k) => k.trim())
 			.filter(Boolean);
 		if (imagenKeys.length === 0) {
-			const msg = await t(interaction, 'ai.imagen.rate_limit');
+			const msg = await t(interaction, 'ai.commands.imagen.rate_limit');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -266,10 +266,10 @@ class ImagenCommand extends BaseCommand {
 				name: 'imagen.png',
 			});
 			const msgContent = imageAttachment
-				? await t(interaction, 'ai.imagen.result_transform', {
+				? await t(interaction, 'ai.commands.imagen.result_transform', {
 						prompt: prompt || '',
 					})
-				: await t(interaction, 'ai.imagen.result', {
+				: await t(interaction, 'ai.commands.imagen.result', {
 						prompt: prompt || '',
 					});
 			const finalComponents = [
@@ -305,7 +305,7 @@ class ImagenCommand extends BaseCommand {
 			const valError = lastError
 				? lastError.message || lastError
 				: 'Unknown error.';
-			const msg = await t(interaction, 'ai.imagen.error', {
+			const msg = await t(interaction, 'ai.commands.imagen.error', {
 				error: valError,
 			});
 			const components = await simpleContainer(interaction, msg, {

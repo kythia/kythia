@@ -9,10 +9,8 @@
 const { ChannelType, MessageFlags } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 const restoreHelper = require('../../helpers/restore');
-
 class RestoreCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('restore')
@@ -37,7 +35,10 @@ class RestoreCommand extends BaseCommand {
 		await interaction.deferReply();
 		let components = await simpleContainer(
 			interaction,
-			await t(interaction, 'server.server.restore.progress.start_md'),
+			await t(
+				interaction,
+				'server.commands.server.restore.server.progress.start_md',
+			),
 			{
 				color: kythiaConfig.bot.color,
 			},
@@ -50,7 +51,10 @@ class RestoreCommand extends BaseCommand {
 		if (!file?.name.endsWith('.json')) {
 			components = await simpleContainer(
 				interaction,
-				await t(interaction, 'server.server.restore.file.invalid_md'),
+				await t(
+					interaction,
+					'server.commands.server.restore.server.file.invalid_md',
+				),
 				{
 					color: 'Red',
 				},
@@ -76,9 +80,13 @@ class RestoreCommand extends BaseCommand {
 		const updateStatus = async (text) => {
 			const comps = await simpleContainer(
 				interaction,
-				await t(interaction, 'server.server.restore.progress.generic_md', {
-					text,
-				}),
+				await t(
+					interaction,
+					'server.commands.server.restore.server.progress.generic_md',
+					{
+						text,
+					},
+				),
 				{
 					color: kythiaConfig.bot.color,
 				},
@@ -98,7 +106,10 @@ class RestoreCommand extends BaseCommand {
 			if (!backup?.metadata) {
 				components = await simpleContainer(
 					interaction,
-					await t(interaction, 'server.server.restore.data.invalid_md'),
+					await t(
+						interaction,
+						'server.commands.server.restore.server.data.invalid_md',
+					),
 					{
 						color: 'Red',
 					},
@@ -112,7 +123,10 @@ class RestoreCommand extends BaseCommand {
 			// ─────────────────────────── CLEAR ───────────────────────────
 			if (clearBefore) {
 				await updateStatus(
-					await t(interaction, 'server.server.restore.clearing'),
+					await t(
+						interaction,
+						'server.commands.server.restore.server.clearing',
+					),
 				);
 
 				// Delete channels
@@ -147,7 +161,7 @@ class RestoreCommand extends BaseCommand {
 
 			// ────────────────────────── SETTINGS ─────────────────────────
 			await updateStatus(
-				await t(interaction, 'server.server.restore.settings'),
+				await t(interaction, 'server.commands.server.restore.server.settings'),
 			);
 			const settings = backup.settings;
 			const iconBuffer = await fetchAssetBuffer(settings.iconURL);
@@ -181,7 +195,10 @@ class RestoreCommand extends BaseCommand {
 
 			// ─────────────────────────── ROLES ───────────────────────────
 			await updateStatus(
-				await t(interaction, 'server.server.restore.roles.text'),
+				await t(
+					interaction,
+					'server.commands.server.restore.server.roles.text',
+				),
 			);
 
 			// roleMap: oldId → new Role
@@ -219,17 +236,24 @@ class RestoreCommand extends BaseCommand {
 				roleIdx++;
 				if (roleIdx % 5 === 0 || roleIdx === roleList.length) {
 					await updateStatus(
-						await t(interaction, 'server.server.restore.roles.progress', {
-							current: roleIdx,
-							total: roleList.length,
-						}),
+						await t(
+							interaction,
+							'server.commands.server.restore.server.roles.progress',
+							{
+								current: roleIdx,
+								total: roleList.length,
+							},
+						),
 					);
 				}
 			}
 
 			// ────────────────────────── CHANNELS ─────────────────────────
 			await updateStatus(
-				await t(interaction, 'server.server.restore.channels.text'),
+				await t(
+					interaction,
+					'server.commands.server.restore.server.channels.text',
+				),
 			);
 
 			// channelMap: oldId → new Channel
@@ -257,10 +281,14 @@ class RestoreCommand extends BaseCommand {
 				catIdx++;
 				if (catIdx % 3 === 0 || catIdx === categories.length) {
 					await updateStatus(
-						await t(interaction, 'server.server.restore.categories.progress', {
-							current: catIdx,
-							total: categories.length,
-						}),
+						await t(
+							interaction,
+							'server.commands.server.restore.server.categories.progress',
+							{
+								current: catIdx,
+								total: categories.length,
+							},
+						),
 					);
 				}
 			}
@@ -333,10 +361,14 @@ class RestoreCommand extends BaseCommand {
 				chIdx++;
 				if (chIdx % 5 === 0 || chIdx === nonCatChannels.length) {
 					await updateStatus(
-						await t(interaction, 'server.server.restore.channels.progress', {
-							current: chIdx,
-							total: nonCatChannels.length,
-						}),
+						await t(
+							interaction,
+							'server.commands.server.restore.server.channels.progress',
+							{
+								current: chIdx,
+								total: nonCatChannels.length,
+							},
+						),
 					);
 				}
 			}
@@ -350,7 +382,9 @@ class RestoreCommand extends BaseCommand {
 			);
 
 			// ──────────────────────────── EMOJIS & STICKERS ──────────────────────────
-			await updateStatus(await t(interaction, 'server.server.restore.assets'));
+			await updateStatus(
+				await t(interaction, 'server.commands.server.restore.server.assets'),
+			);
 			for (const emoji of backup.emojis ?? []) {
 				const buffer = await fetchAssetBuffer(emoji.url);
 				if (!buffer) continue;
@@ -388,9 +422,13 @@ class RestoreCommand extends BaseCommand {
 			// ─────────────────────────── DONE ─────────────────────────
 			components = await simpleContainer(
 				interaction,
-				await t(interaction, 'server.server.restore.success_md', {
-					name: backup.metadata.guildName,
-				}),
+				await t(
+					interaction,
+					'server.commands.server.restore.server.success_md',
+					{
+						name: backup.metadata.guildName,
+					},
+				),
 				{
 					color: 'Green',
 				},
@@ -405,7 +443,7 @@ class RestoreCommand extends BaseCommand {
 			});
 			components = await simpleContainer(
 				interaction,
-				await t(interaction, 'server.server.restore.failed_md'),
+				await t(interaction, 'server.commands.server.restore.server.failed_md'),
 				{
 					color: 'Red',
 				},
@@ -417,5 +455,4 @@ class RestoreCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = RestoreCommand;

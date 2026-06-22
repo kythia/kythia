@@ -8,13 +8,11 @@
 
 const { MessageFlags, SlashCommandSubcommandBuilder } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
-
 class ListCommand extends BaseCommand {
 	subcommand = true;
 	slashCommand = new SlashCommandSubcommandBuilder()
 		.setName('list')
 		.setDescription('List all saved embeds for this server');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;
@@ -34,7 +32,7 @@ class ListCommand extends BaseCommand {
 			return interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'embed-builder.list.empty'),
+					await t(interaction, 'embed-builder.commands.list.empty'),
 					{
 						color: 'Yellow',
 					},
@@ -61,7 +59,7 @@ class ListCommand extends BaseCommand {
 		const { t } = container;
 		return interaction.editReply({
 			components: await createContainer(interaction, {
-				title: await t(interaction, 'embed-builder.list.title'),
+				title: await t(interaction, 'embed-builder.commands.list.title'),
 				description: lines.join('\n') + footer,
 				color: '#5865F2',
 				footer: {

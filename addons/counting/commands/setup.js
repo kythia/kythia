@@ -7,12 +7,9 @@
  */
 
 const { ChannelType, MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class SetupCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('setup')
@@ -29,10 +26,22 @@ class SetupCommand extends BaseCommand {
 					.setName('mode')
 					.setDescription('The number format to use.')
 					.addChoices(
-						{ name: 'Normal Numbers (1, 2, 3...)', value: 'decimal' },
-						{ name: 'Roman Numerals (I, II, III, IV...)', value: 'roman' },
-						{ name: 'Binary / Hacker (1, 10, 11, 100...)', value: 'binary' },
-						{ name: 'Hexadecimal (1...9, A, B, C...)', value: 'hex' },
+						{
+							name: 'Normal Numbers (1, 2, 3...)',
+							value: 'decimal',
+						},
+						{
+							name: 'Roman Numerals (I, II, III, IV...)',
+							value: 'roman',
+						},
+						{
+							name: 'Binary / Hacker (1, 10, 11, 100...)',
+							value: 'binary',
+						},
+						{
+							name: 'Hexadecimal (1...9, A, B, C...)',
+							value: 'hex',
+						},
 					),
 			)
 			.addStringOption((option) =>
@@ -58,31 +67,31 @@ class SetupCommand extends BaseCommand {
 					)
 					.setRequired(false),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, t, helpers } = container;
 		const { Counting } = models;
 		const { simpleContainer, getChannelSafe } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const channel = interaction.options.getChannel('channel');
 		const strict = interaction.options.getBoolean('strict');
 		const mode = interaction.options.getString('mode');
 		const success = interaction.options.getString('success_reaction');
 		const fail = interaction.options.getString('fail_reaction');
 		const math = interaction.options.getBoolean('math');
-
 		const existingCounting = await Counting.getCache({
 			guildId: interaction.guild.id,
 		});
-
 		if (existingCounting) {
 			await interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'counting.setup.already_configured'),
+					await t(
+						interaction,
+						'counting.helpers.index.setup.already_configured',
+					),
 					{
 						color: 'Red',
 					},
@@ -91,7 +100,6 @@ class SetupCommand extends BaseCommand {
 			});
 			return;
 		}
-
 		const createData = {
 			guildId: interaction.guild.id,
 			channelId: channel.id,
@@ -100,11 +108,9 @@ class SetupCommand extends BaseCommand {
 			mathEnabled: math !== null ? math : true,
 			strictEnabled: strict !== null ? strict : false,
 		};
-
 		if (mode) createData.mode = mode;
 		if (success) createData.successReaction = success;
 		if (fail) createData.failReaction = fail;
-
 		try {
 			await Counting.create(createData);
 		} catch (err) {
@@ -112,7 +118,10 @@ class SetupCommand extends BaseCommand {
 				await interaction.editReply({
 					components: await simpleContainer(
 						interaction,
-						await t(interaction, 'counting.setup.already_configured'),
+						await t(
+							interaction,
+							'counting.helpers.index.setup.already_configured',
+						),
 						{
 							color: 'Red',
 						},
@@ -127,8 +136,7 @@ class SetupCommand extends BaseCommand {
 		// const desc =
 
 		const targetChannel = await getChannelSafe(interaction.client, channel.id);
-		const desc = await t(interaction, 'counting.setup.start');
-
+		const desc = await t(interaction, 'counting.commands.setup.start');
 		const sentMessage = await targetChannel.send({
 			components: await simpleContainer(interaction, desc, {
 				color: 'Green',
@@ -139,7 +147,7 @@ class SetupCommand extends BaseCommand {
 		await interaction.editReply({
 			components: await simpleContainer(
 				interaction,
-				await t(interaction, 'counting.setup.success', {
+				await t(interaction, 'counting.commands.setup.success', {
 					channel: channel.toString(),
 				}),
 				{
@@ -150,5 +158,4 @@ class SetupCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = SetupCommand;

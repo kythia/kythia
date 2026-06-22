@@ -7,16 +7,13 @@
  */
 
 const { MessageFlags, PermissionFlagsBits } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AddCommand extends BaseCommand {
 	subcommand = true;
 	permissions = [
 		PermissionFlagsBits.ManageGuild,
 		PermissionFlagsBits.Administrator,
 	];
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
@@ -27,41 +24,46 @@ class AddCommand extends BaseCommand {
 			.addIntegerOption((option) =>
 				option.setName('number').setDescription('Amount').setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, helpers, t } = container;
 		const { simpleContainer } = helpers.discord;
 		const { Invite } = models;
 		const guildId = interaction.guild.id;
-
 		await interaction.deferReply();
-
 		const target = interaction.options.getUser('user');
 		const number = interaction.options.getInteger('number');
 		const amountToAdd = Math.abs(number);
-
 		const [row] = await Invite.findOrCreateCache({
-			where: { guildId, userId: target.id },
-			defaults: { invites: 0, guildId, userId: target.id },
+			where: {
+				guildId,
+				userId: target.id,
+			},
+			defaults: {
+				invites: 0,
+				guildId,
+				userId: target.id,
+			},
 		});
-
 		row.invites = (row.invites || 0) + amountToAdd;
-
 		await row.save();
-
-		const title = await t(interaction, 'invite.invite.command.title');
-		const successMsg = await t(interaction, 'invite.command.add.success', {
-			amount: amountToAdd,
-			user: `<@${target.id}>`,
-			total: row.invites,
-		});
-
+		const title = await t(
+			interaction,
+			'invite.helpers.index.invite.command.title',
+		);
+		const successMsg = await t(
+			interaction,
+			'invite.commands.add.command.success',
+			{
+				amount: amountToAdd,
+				user: `<@${target.id}>`,
+				total: row.invites,
+			},
+		);
 		const msg = `${title}\n${successMsg}`;
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Green',
 		});
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
@@ -71,5 +73,4 @@ class AddCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = AddCommand;

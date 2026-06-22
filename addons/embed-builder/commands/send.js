@@ -11,9 +11,7 @@ const {
 	MessageFlags,
 	SlashCommandSubcommandBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class SendCommand extends BaseCommand {
 	subcommand = true;
 	slashCommand = new SlashCommandSubcommandBuilder()
@@ -56,7 +54,6 @@ class SendCommand extends BaseCommand {
 					},
 				),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;
@@ -100,7 +97,7 @@ class SendCommand extends BaseCommand {
 			return interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'embed-builder.send.not_found'),
+					await t(interaction, 'embed-builder.commands.send.not_found'),
 					{
 						color: 'Red',
 					},
@@ -157,7 +154,7 @@ class SendCommand extends BaseCommand {
 					return interaction.editReply({
 						components: await simpleContainer(
 							interaction,
-							await t(interaction, 'embed-builder.send.no_components'),
+							await t(interaction, 'embed-builder.commands.send.no_components'),
 							{
 								color: 'Yellow',
 							},
@@ -182,12 +179,16 @@ class SendCommand extends BaseCommand {
 			const { t } = container;
 			return interaction.editReply({
 				components: await createContainer(interaction, {
-					title: await t(interaction, 'embed-builder.ui.sent'),
-					description: await t(interaction, 'embed-builder.ui.sent_desc', {
-						name: record.name,
-						channelId: targetChannel.id,
-						url: `https://discord.com/channels/${interaction.guild.id}/${targetChannel.id}/${message.id}`,
-					}),
+					title: await t(interaction, 'embed-builder.commands.send.ui.sent'),
+					description: await t(
+						interaction,
+						'embed-builder.commands.send.ui.sent_desc',
+						{
+							name: record.name,
+							channelId: targetChannel.id,
+							url: `https://discord.com/channels/${interaction.guild.id}/${targetChannel.id}/${message.id}`,
+						},
+					),
 					color: 'Green',
 				}),
 				flags: MessageFlags.IsComponentsV2,
@@ -204,7 +205,7 @@ class SendCommand extends BaseCommand {
 			return interaction.editReply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'embed-builder.send.error', {
+					await t(interaction, 'embed-builder.commands.send.error', {
 						error: error.message,
 					}),
 					{

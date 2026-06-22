@@ -47,7 +47,7 @@ class DataCommand extends BaseCommand {
 		if (result == null) {
 			const components = await simpleContainer(
 				interaction,
-				`${await t(interaction, 'core.utils.convert.data.failed')}`,
+				`${await t(interaction, 'core.commands.utils.convert.data.failed')}`,
 				{
 					color: 'Red',
 				},
@@ -59,9 +59,9 @@ class DataCommand extends BaseCommand {
 		}
 		const desc =
 			'' +
-			(await t(interaction, 'core.utils.convert.data.title')) +
+			(await t(interaction, 'core.commands.utils.convert.data.title')) +
 			'\n' +
-			(await t(interaction, 'core.utils.convert.data.result', {
+			(await t(interaction, 'core.commands.utils.convert.data.result', {
 				value,
 				from: from.toUpperCase(),
 				result,

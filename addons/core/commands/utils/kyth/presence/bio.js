@@ -33,7 +33,7 @@ class BioCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.bio.success', {
+				await t(interaction, 'core.commands.utils.kyth.presence.bio.success', {
 					bio,
 				}),
 				{
@@ -50,7 +50,7 @@ class BioCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.error', {
+				await t(interaction, 'core.helpers.index.utils.presence.error', {
 					error: error.message,
 				}),
 				{

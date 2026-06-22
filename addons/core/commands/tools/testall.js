@@ -399,7 +399,7 @@ class TestallCommand extends BaseCommand {
 		await sendContainer(footerContainer);
 		await interaction
 			.editReply({
-				content: await t(interaction, 'core.tools.testall.done'),
+				content: await t(interaction, 'core.commands.tools.testall.done'),
 			})
 			.catch((err) =>
 				logger.warn(`testall editReply failed: ${err.message || err}`, {

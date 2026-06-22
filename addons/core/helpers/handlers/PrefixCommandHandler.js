@@ -641,7 +641,7 @@ class PrefixCommandHandler {
 				// Guide the user toward a valid subcommand.
 				const helpMessage = await t(
 					fakeInteraction,
-					'core.events.messageCreate.subcommand.required',
+					'core.helpers.handlers.PrefixCommandHandler.events.messageCreate.subcommand.required',
 					{
 						command: commandName,
 					},
@@ -658,7 +658,12 @@ class PrefixCommandHandler {
 				},
 			);
 			await fakeInteraction
-				.reply(await t(fakeInteraction, 'core.events.messageCreate.error'))
+				.reply(
+					await t(
+						fakeInteraction,
+						'core.helpers.index.events.messageCreate.error',
+					),
+				)
 				.catch(() => {});
 		}
 	}

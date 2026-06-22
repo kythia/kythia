@@ -14,7 +14,6 @@ const factsuiHelper = require('../../helpers/factsUi');
 
 class FactsCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('facts')
@@ -67,7 +66,7 @@ class FactsCommand extends BaseCommand {
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
-					content: await t(i, 'ai.ai.facts.not.your.interaction'),
+					content: await t(i, 'ai.commands.ai.facts.ai.not.your.interaction'),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
@@ -104,5 +103,4 @@ class FactsCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = FactsCommand;

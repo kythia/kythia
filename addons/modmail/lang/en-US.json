@@ -1,91 +1,135 @@
 {
 	"modmail": {
-		"server_select": {
-			"placeholder": "Select a server to contact...",
-			"prompt": "## Which server would you like to contact?\nYou're in multiple servers that use modmail. Please select one below.",
-			"confirmed": "## Now chatting with **{server}**\nYour message has been sent. A staff member will get back to you shortly.\n-# Reply here to continue the conversation."
-		},
-		"errors": {
-			"not_configured": "## Not Configured\nModmail is not configured for this server. Use `/modmail setup` to get started.",
-			"not_a_modmail": "## Not a Modmail Thread\nThis channel is not an active modmail thread.",
-			"config_missing": "## Config Missing\nThe modmail configuration for this server could not be found.",
-			"generic": "## Error\nAn unexpected error occurred. Please try again.",
-			"close_failed": "## Close Failed\nFailed to close this modmail thread. Please try again.",
-			"dm_closed": "## DMs Closed\nYour message was sent, but we were unable to DM the user — they may have DMs disabled."
-		},
-		"guild_reply": {
-			"sent_title": "Message Sent",
-			"sent_by": "<@{userId}> (`{username}`)",
-			"sent_by_anon": "Staff (anonymous)",
-			"sent_title_md": "## {title}\n-# {user}"
-		},
-		"setup": {
-			"success_title": "## Modmail Configured!",
-			"info": "-# Users can now DM this bot to contact your moderation team. Use `/modmail snippet add` to create quick-reply templates.",
-			"invalid_color": "## Invalid Color\n`{field}` must be a valid hex color (e.g. `#5865F2` or `#FFF`)."
-		},
-		"thread": {
-			"open_title": "New Modmail Thread",
-			"user_info": "**User:** <@{userId}> (`{username}` - `{tag}`)\n**Account Created:** {createdAt}\n\n-# Use `/modmail reply` to respond · `/modmail areply` to reply anonymously · `/modmail close` to close",
-			"close_button": "Close Thread",
-			"open_title_md": "## {title}"
-		},
-		"close": {
-			"confirm_title": "## Close Modmail?",
-			"confirm_desc": "Are you sure you want to close this modmail? The conversation will be saved as a transcript and the thread will be deleted.",
-			"confirm_button": "Yes, Close",
-			"with_reason_button": "Close With Reason",
-			"cancel_button": "Cancel",
-			"cancelled": "## Cancelled\nClosing action has been cancelled.",
-			"thinking": "### Please Wait\nGenerating transcript and closing this modmail...",
-			"log_message": "## Modmail #{modmailId} Closed\n**Opened By:** <@{userId}>\n**Opened:** {openedAt}\n**Closed By:** <@{closerId}>\n**Close Reason:** {reason}",
-			"reason_modal_title": "Close Modmail With Reason",
-			"reason_label": "Reason for closing this modmail",
-			"reason_placeholder": "e.g. Issue resolved, user unresponsive, ban appeal declined..."
-		},
 		"reply": {
 			"success": "## Reply Sent\nYour message has been sent to the user.",
-			"dm_failed": "## Reply Sent (DM Failed)\nYour message was logged in the thread, but we could not deliver the DM — the user may have DMs disabled.",
-			"anonymous_name": "Staff"
-		},
-		"block": {
-			"success": "## User Blocked\n<@{userId}> has been blocked from opening new modmail threads.\n**Reason:** {reason}",
-			"already_blocked": "## Already Blocked\n<@{userId}> is already blocked from using modmail."
-		},
-		"unblock": {
-			"success": "## User Unblocked\n<@{userId}> can now open modmail threads again.",
-			"not_blocked": "## Not Blocked\n<@{userId}> is not currently blocked from using modmail."
-		},
-		"snippet": {
-			"add_success": "## Snippet Added\nSnippet `{name}` has been saved. Use `/modmail snippet use {name}` to send it.",
-			"remove_success": "## Snippet Removed\nSnippet `{name}` has been deleted.",
-			"not_found": "## Snippet Not Found\nNo snippet named `{name}` exists. Use `/modmail snippet list` to view all snippets.",
-			"list_empty": "## No Snippets\nThis server has no saved snippets yet.\n\nUse `/modmail snippet add <name> <content>` to create your first quick-reply template.",
-			"list_header": "## Quick-Reply Snippets\n-# {count} snippet{s} saved",
-			"limit": "## Snippet Limit Reached\nYou have reached the maximum of **50** snippets. Remove one before adding more."
-		},
-		"relay": {
-			"received_title": "Message Received",
-			"received_from": "<@{userId}> (`{username}`)",
-			"sent_title": "Message Sent",
-			"staff_reply_prefix": "<@{userId}> replied:",
-			"anon_reply_prefix": "**Staff** replied:",
-			"received_title_md": "## {title}\n-# {user}",
-			"sent_title_md": "## {title}\n-# {user}"
-		},
-		"transcript": {
-			"title": "## Modmail Transcript #{modmailId}",
-			"user": "User: <@{userId}>"
+			"dm_failed": "## Reply Sent (DM Failed)\nYour message was logged in the thread, but we could not deliver the DM — the user may have DMs disabled."
 		},
 		"dm": {
-			"greeting": "## Modmail Opened\nThank you for contacting us! A member of our team will be with you shortly.\n\n-# Please be patient and keep this DM open while we review your message.",
-			"closing_message": "## Modmail Closed\nYour modmail thread has been closed. If you need further assistance, feel free to DM us again.",
-			"blocked": "## Blocked\nYou are not able to open a modmail thread in this server.",
-			"cooldown": "## Please Wait\nYou recently had a modmail thread closed. Please wait **{minutes} more minute(s)** before opening a new one.",
 			"staff_reply": "Reply from {name}",
-			"staff_reply_anon": "Reply from Staff",
-			"title_md": "## {title}",
-			"title_user_md": "## {title}\n-# {user}"
+			"staff_reply_anon": "Reply from Staff"
+		},
+		"buttons": {
+			"mm-cancel-close": {
+				"close": {
+					"cancelled": "## Cancelled\nClosing action has been cancelled."
+				}
+			},
+			"mm-close-with-reason": {
+				"close": {
+					"reason_modal_title": "Close Modmail With Reason",
+					"reason_label": "Reason for closing this modmail",
+					"reason_placeholder": "e.g. Issue resolved, user unresponsive, ban appeal declined..."
+				}
+			}
+		},
+		"helpers": {
+			"index": {
+				"close": {
+					"confirm_button": "Yes, Close",
+					"with_reason_button": "Close With Reason",
+					"cancel_button": "Cancel",
+					"confirm_title": "## Close Modmail?",
+					"confirm_desc": "Are you sure you want to close this modmail? The conversation will be saved as a transcript and the thread will be deleted.",
+					"thinking": "### Please Wait\nGenerating transcript and closing this modmail...",
+					"log_message": "## Modmail #{modmailId} Closed\n**Opened By:** <@{userId}>\n**Opened:** {openedAt}\n**Closed By:** <@{closerId}>\n**Close Reason:** {reason}"
+				},
+				"errors": {
+					"not_configured": "## Not Configured\nModmail is not configured for this server. Use `/modmail setup` to get started.",
+					"generic": "## Error\nAn unexpected error occurred. Please try again.",
+					"not_a_modmail": "## Not a Modmail Thread\nThis channel is not an active modmail thread.",
+					"dm_closed": "## DMs Closed\nYour message was sent, but we were unable to DM the user — they may have DMs disabled.",
+					"config_missing": "## Config Missing\nThe modmail configuration for this server could not be found.",
+					"close_failed": "## Close Failed\nFailed to close this modmail thread. Please try again."
+				},
+				"setup": {
+					"invalid_color": "## Invalid Color\n`{field}` must be a valid hex color (e.g. `#5865F2` or `#FFF`)."
+				},
+				"snippet": {
+					"not_found": "## Snippet Not Found\nNo snippet named `{name}` exists. Use `/modmail snippet list` to view all snippets."
+				},
+				"thread": {
+					"open_title": "New Modmail Thread",
+					"user_info": "**User:** <@{userId}> (`{username}` - `{tag}`)\n**Account Created:** {createdAt}\n\n-# Use `/modmail reply` to respond · `/modmail areply` to reply anonymously · `/modmail close` to close",
+					"close_button": "Close Thread",
+					"open_title_md": "## {title}"
+				},
+				"relay": {
+					"received_title": "Message Received",
+					"received_from": "<@{userId}> (`{username}`)",
+					"received_title_md": "## {title}\n-# {user}",
+					"sent_title": "Message Sent",
+					"sent_title_md": "## {title}\n-# {user}",
+					"anon_reply_prefix": "**Staff** replied:",
+					"staff_reply_prefix": "<@{userId}> replied:"
+				},
+				"dm": {
+					"greeting": "## Modmail Opened\nThank you for contacting us! A member of our team will be with you shortly.\n\n-# Please be patient and keep this DM open while we review your message.",
+					"title_md": "## {title}",
+					"title_user_md": "## {title}\n-# {user}",
+					"closing_message": "## Modmail Closed\nYour modmail thread has been closed. If you need further assistance, feel free to DM us again."
+				},
+				"reply": {
+					"anonymous_name": "Staff"
+				},
+				"guild_reply": {
+					"sent_title": "Message Sent",
+					"sent_by_anon": "Staff (anonymous)",
+					"sent_by": "<@{userId}> (`{username}`)",
+					"sent_title_md": "## {title}\n-# {user}"
+				},
+				"transcript": {
+					"title": "## Modmail Transcript #{modmailId}",
+					"user": "User: <@{userId}>"
+				}
+			}
+		},
+		"commands": {
+			"block": {
+				"already_blocked": "## Already Blocked\n<@{userId}> is already blocked from using modmail.",
+				"success": "## User Blocked\n<@{userId}> has been blocked from opening new modmail threads.\n**Reason:** {reason}"
+			},
+			"setup": {
+				"info": "-# Users can now DM this bot to contact your moderation team. Use `/modmail snippet add` to create quick-reply templates.",
+				"success_title": "## Modmail Configured!"
+			},
+			"snippet": {
+				"add": {
+					"limit": "## Snippet Limit Reached\nYou have reached the maximum of **50** snippets. Remove one before adding more.",
+					"add_success": "## Snippet Added\nSnippet `{name}` has been saved. Use `/modmail snippet use {name}` to send it."
+				},
+				"list": {
+					"list_empty": "## No Snippets\nThis server has no saved snippets yet.\n\nUse `/modmail snippet add <name> <content>` to create your first quick-reply template.",
+					"list_header": "## Quick-Reply Snippets\n-# {count} snippet{s} saved"
+				},
+				"remove": {
+					"remove_success": "## Snippet Removed\nSnippet `{name}` has been deleted."
+				}
+			},
+			"unblock": {
+				"not_blocked": "## Not Blocked\n<@{userId}> is not currently blocked from using modmail.",
+				"success": "## User Unblocked\n<@{userId}> can now open modmail threads again."
+			}
+		},
+		"events": {
+			"messageCreate": {
+				"dm": {
+					"cooldown": "## Please Wait\nYou recently had a modmail thread closed. Please wait **{minutes} more minute(s)** before opening a new one."
+				},
+				"server_select": {
+					"prompt": "## Which server would you like to contact?\nYou're in multiple servers that use modmail. Please select one below.",
+					"placeholder": "Select a server to contact..."
+				}
+			}
+		},
+		"select_menus": {
+			"mm-server-select": {
+				"dm": {
+					"blocked": "## Blocked\nYou are not able to open a modmail thread in this server."
+				},
+				"server_select": {
+					"confirmed": "## Now chatting with **{server}**\nYour message has been sent. A staff member will get back to you shortly.\n-# Reply here to continue the conversation."
+				}
+			}
 		}
 	}
 }

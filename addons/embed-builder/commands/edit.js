@@ -15,9 +15,7 @@ const {
 	TextInputBuilder,
 	SlashCommandSubcommandBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class EditCommand extends BaseCommand {
 	subcommand = true;
 	slashCommand = new SlashCommandSubcommandBuilder()
@@ -30,7 +28,6 @@ class EditCommand extends BaseCommand {
 				.setRequired(true)
 				.setAutocomplete(true),
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models } = container;
@@ -48,7 +45,7 @@ class EditCommand extends BaseCommand {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'embed-builder.edit.not_found'),
+					await t(interaction, 'embed-builder.shared.edit.not_found'),
 					{
 						color: 'Red',
 					},
@@ -125,10 +122,13 @@ class EditCommand extends BaseCommand {
 		const { t } = container;
 		return interaction.reply({
 			components: await createContainer(interaction, {
-				title: await t(interaction, 'embed-builder.ui.components_v2'),
+				title: await t(
+					interaction,
+					'embed-builder.commands.edit.ui.components_v2',
+				),
 				description: await t(
 					interaction,
-					'embed-builder.ui.components_v2_desc',
+					'embed-builder.commands.edit.ui.components_v2_desc',
 					{
 						name: record.name,
 						id: record.id,
@@ -158,7 +158,7 @@ class EditCommand extends BaseCommand {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'embed-builder.edit.not_found'),
+					await t(interaction, 'embed-builder.shared.edit.not_found'),
 					{
 						color: 'Red',
 					},
@@ -236,12 +236,19 @@ class EditCommand extends BaseCommand {
 		const { t } = container;
 		return interaction.reply({
 			components: await createContainer(interaction, {
-				title: await t(interaction, 'embed-builder.ui.updated'),
+				title: await t(interaction, 'embed-builder.commands.edit.ui.updated'),
 				description: messageUrl
-					? await t(interaction, 'embed-builder.ui.updated_desc_msg', {
-							url: messageUrl,
-						})
-					: await t(interaction, 'embed-builder.ui.updated_desc_nomsg'),
+					? await t(
+							interaction,
+							'embed-builder.commands.edit.ui.updated_desc_msg',
+							{
+								url: messageUrl,
+							},
+						)
+					: await t(
+							interaction,
+							'embed-builder.commands.edit.ui.updated_desc_nomsg',
+						),
 				color: 'Green',
 			}),
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,

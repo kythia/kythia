@@ -56,7 +56,7 @@ class LoanProcessorTask extends BaseTask {
 								user.userId,
 							);
 						await discordUser.send(
-							await t(null, 'economy.tasks.loan.defaulted'),
+							await t(null, 'economy.tasks.loan-processor.loan.defaulted'),
 						);
 					} catch (_e) {}
 				} else {

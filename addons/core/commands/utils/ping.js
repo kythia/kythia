@@ -21,13 +21,11 @@ const pingHelper = require('../../helpers/ping');
 
 class PingCommand extends BaseCommand {
 	aliases = ['p', 'pong', '🏓'];
-
 	slashCommand = new SlashCommandBuilder()
 		.setName('ping')
 		.setDescription(
 			"Checks the bot's, Discord API's, database and cache/redis connection speed.",
 		);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
@@ -57,7 +55,7 @@ class PingCommand extends BaseCommand {
 		);
 		embedContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				await t(interaction, 'core.utils.ping.embed.title'),
+				await t(interaction, 'core.commands.utils.ping.embed.title'),
 			),
 		);
 		embedContainer.addSeparatorComponents(
@@ -67,12 +65,12 @@ class PingCommand extends BaseCommand {
 		);
 		embedContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`**${await t(interaction, 'core.utils.ping.field.bot.latency')}**\n\`\`\`${botLatency}ms\`\`\``,
+				`**${await t(interaction, 'core.commands.utils.ping.field.bot.latency')}**\n\`\`\`${botLatency}ms\`\`\``,
 			),
 		);
 		embedContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`**${await t(interaction, 'core.utils.ping.field.api.latency')}**\n\`\`\`${apiLatency}ms\`\`\``,
+				`**${await t(interaction, 'core.commands.utils.ping.field.api.latency')}**\n\`\`\`${apiLatency}ms\`\`\``,
 			),
 		);
 		embedContainer.addTextDisplayComponents(
@@ -82,7 +80,7 @@ class PingCommand extends BaseCommand {
 		);
 		embedContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`**${await t(interaction, 'core.utils.ping.field.db.latency')}**\n\`\`\`${dbPingInfo.status === 'connected' ? `${dbPingInfo.ping}ms` : dbPingInfo.status === 'not_configured' ? 'Not Configured' : dbPingInfo.status === 'error' ? 'Error' : 'Unknown'}\`\`\`` +
+				`**${await t(interaction, 'core.commands.utils.ping.field.db.latency')}**\n\`\`\`${dbPingInfo.status === 'connected' ? `${dbPingInfo.ping}ms` : dbPingInfo.status === 'not_configured' ? 'Not Configured' : dbPingInfo.status === 'error' ? 'Error' : 'Unknown'}\`\`\`` +
 					(dbPingInfo.status === 'error' && dbPingInfo.error
 						? `\n\`\`\`Error: ${dbPingInfo.error}\`\`\``
 						: ''),
@@ -91,7 +89,7 @@ class PingCommand extends BaseCommand {
 		if (redisNodes.length > 0) {
 			embedContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`**${await t(interaction, 'core.utils.ping.field.redis.nodes')}**`,
+					`**${await t(interaction, 'core.commands.utils.ping.field.redis.nodes')}**`,
 				),
 			);
 			for (const node of redisNodes) {
@@ -124,7 +122,7 @@ class PingCommand extends BaseCommand {
 			);
 			embedContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`**${await t(interaction, 'core.utils.ping.field.lavalink.nodes')}**`,
+					`**${await t(interaction, 'core.commands.utils.ping.field.lavalink.nodes')}**`,
 				),
 			);
 			for (const node of lavalinkNodes) {
@@ -170,5 +168,4 @@ class PingCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = PingCommand;

@@ -35,7 +35,10 @@ class WantedCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -58,7 +61,7 @@ class WantedCommand extends BaseCommand {
 			if (wantedUsers.length === 0) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.crime.wanted.empty.desc'),
+					await t(interaction, 'economy.commands.crime.wanted.empty.desc'),
 					{
 						color: 'Green',
 					},
@@ -68,14 +71,21 @@ class WantedCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-			let listText = await t(interaction, 'economy.crime.wanted.list.title');
+			let listText = await t(
+				interaction,
+				'economy.commands.crime.wanted.list.title',
+			);
 			for (let i = 0; i < wantedUsers.length; i++) {
 				const wUser = wantedUsers[i];
-				listText += await t(interaction, 'economy.crime.wanted.list.entry', {
-					rank: i + 1,
-					userId: wUser.userId,
-					bounty: wUser.bountyAmount.toLocaleString(),
-				});
+				listText += await t(
+					interaction,
+					'economy.commands.crime.wanted.list.entry',
+					{
+						rank: i + 1,
+						userId: wUser.userId,
+						bounty: wUser.bountyAmount.toLocaleString(),
+					},
+				);
 			}
 			const replyContainer = new ContainerBuilder()
 				.setAccentColor(
@@ -94,7 +104,7 @@ class WantedCommand extends BaseCommand {
 		if (targetOpt.id === interaction.user.id) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.crime.wanted.error.self.desc'),
+				await t(interaction, 'economy.commands.crime.wanted.error.self.desc'),
 				{
 					color: 'Red',
 				},
@@ -110,7 +120,10 @@ class WantedCommand extends BaseCommand {
 		if (!target?.bountyAmount || target.bountyAmount <= 0) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.crime.wanted.error.no_bounty.desc'),
+				await t(
+					interaction,
+					'economy.commands.crime.wanted.error.no_bounty.desc',
+				),
 				{
 					color: 'Yellow',
 				},
@@ -128,7 +141,10 @@ class WantedCommand extends BaseCommand {
 		if (!bountyLicense) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.crime.wanted.error.no_license.desc'),
+				await t(
+					interaction,
+					'economy.commands.crime.wanted.error.no_license.desc',
+				),
 				{
 					color: 'Red',
 				},
@@ -155,10 +171,14 @@ class WantedCommand extends BaseCommand {
 			target.changed('bountyAmount', true);
 			await user.save();
 			await target.save();
-			const msg = await t(interaction, 'economy.crime.wanted.success.desc', {
-				username: targetOpt.username,
-				reward: reward.toLocaleString(),
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.crime.wanted.success.desc',
+				{
+					username: targetOpt.username,
+					reward: reward.toLocaleString(),
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -167,9 +187,13 @@ class WantedCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		} else {
-			const msg = await t(interaction, 'economy.crime.wanted.fail.desc', {
-				username: targetOpt.username,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.crime.wanted.fail.desc',
+				{
+					username: targetOpt.username,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});

@@ -7,7 +7,6 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
 const constantsHelper = require('../../helpers/constants');
 
@@ -15,9 +14,7 @@ const constantsHelper = require('../../helpers/constants');
 
 class PersonalityCommand extends BaseCommand {
 	premiumLocked = 'powerful';
-
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('personality')
@@ -36,15 +33,14 @@ class PersonalityCommand extends BaseCommand {
 						),
 					),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { KythiaUser } = models;
 		const { simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const personality = interaction.options.getString('style') || 'default';
 		const personalityData =
 			constantsHelper.PERSONALITIES[personality] ||
@@ -52,7 +48,9 @@ class PersonalityCommand extends BaseCommand {
 
 		// Get or create user
 		const [user] = await KythiaUser.findOrCreateCache({
-			where: { userId: interaction.user.id },
+			where: {
+				userId: interaction.user.id,
+			},
 			defaults: {
 				userId: interaction.user.id,
 			},
@@ -65,23 +63,20 @@ class PersonalityCommand extends BaseCommand {
 		// Show appropriate message
 		let msg;
 		if (personality === 'default') {
-			msg = await t(interaction, 'ai.ai.personality.reset');
+			msg = await t(interaction, 'ai.commands.ai.personality.ai.reset');
 		} else {
-			msg = await t(interaction, 'ai.ai.personality.success', {
+			msg = await t(interaction, 'ai.commands.ai.personality.ai.success', {
 				personality: personalityData.name,
 				description: personalityData.description,
 			});
 		}
-
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Green',
 		});
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = PersonalityCommand;

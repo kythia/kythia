@@ -29,7 +29,10 @@ class SwitchCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -42,7 +45,7 @@ class SwitchCommand extends BaseCommand {
 		if (user.kythiaCoin < SWITCH_COST) {
 			const msg = await t(
 				interaction,
-				'economy.bank.switch.error.insufficient_funds.desc',
+				'economy.commands.bank.switch.error.insufficient_funds.desc',
 				{
 					cost: SWITCH_COST.toLocaleString(),
 				},
@@ -75,10 +78,14 @@ class SwitchCommand extends BaseCommand {
 				.addOptions(options),
 		);
 		const switchContainer = await createContainer(interaction, {
-			description: await t(interaction, 'economy.bank.switch.prompt.desc', {
-				cost: SWITCH_COST.toLocaleString(),
-				currentBank: banks.getBank(user.bankType).name,
-			}),
+			description: await t(
+				interaction,
+				'economy.commands.bank.switch.prompt.desc',
+				{
+					cost: SWITCH_COST.toLocaleString(),
+					currentBank: banks.getBank(user.bankType).name,
+				},
+			),
 			components: [row],
 		});
 		const message = await interaction.editReply({
@@ -96,7 +103,7 @@ class SwitchCommand extends BaseCommand {
 				if (user.bankType === selectedBankId) {
 					const msg = await t(
 						i,
-						'economy.bank.switch.error.already_using.desc',
+						'economy.commands.bank.switch.error.already_using.desc',
 						{
 							bank: banks.getBank(selectedBankId).name,
 						},
@@ -117,7 +124,7 @@ class SwitchCommand extends BaseCommand {
 				if (user.kythiaBank > maxCap) {
 					const msg = await t(
 						i,
-						'economy.bank.switch.error.over_capacity.desc',
+						'economy.commands.bank.switch.error.over_capacity.desc',
 						{
 							bank: selectedBank.name,
 						},
@@ -136,7 +143,7 @@ class SwitchCommand extends BaseCommand {
 				user.changed('kythiaCoin', true);
 				user.changed('bankType', true);
 				await user.save();
-				const msg = await t(i, 'economy.bank.switch.success.desc', {
+				const msg = await t(i, 'economy.commands.bank.switch.success.desc', {
 					cost: SWITCH_COST.toLocaleString(),
 					bank: selectedBank.name,
 				});
@@ -153,7 +160,7 @@ class SwitchCommand extends BaseCommand {
 			if (collected.size === 0) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.bank.switch.timeout.desc'),
+					await t(interaction, 'economy.commands.bank.switch.timeout.desc'),
 					{
 						color: kythiaConfig.bot.color,
 					},

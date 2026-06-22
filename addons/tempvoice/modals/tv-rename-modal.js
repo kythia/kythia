@@ -21,7 +21,10 @@ class TvRenameModalModal extends BaseModal {
 		const channelId = interaction.customId.split(':')[1];
 		if (!channelId) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.rename.modal.error.no_id'),
+				content: await t(
+					interaction,
+					'tempvoice.modals.tv-rename-modal.rename.modal.error.no_id',
+				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -31,7 +34,10 @@ class TvRenameModalModal extends BaseModal {
 		});
 		if (!activeChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.rename.modal.error.not_owner'),
+				content: await t(
+					interaction,
+					'tempvoice.modals.tv-rename-modal.rename.modal.error.not_owner',
+				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -51,7 +57,7 @@ class TvRenameModalModal extends BaseModal {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -61,15 +67,22 @@ class TvRenameModalModal extends BaseModal {
 		}
 		if (!channel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.rename.modal.error.not_found'),
+				content: await t(
+					interaction,
+					'tempvoice.modals.tv-rename-modal.rename.modal.error.not_found',
+				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
 		await channel.setName(newName);
 		await interaction.reply({
-			content: await t(interaction, 'tempvoice.rename.modal.success', {
-				newName,
-			}),
+			content: await t(
+				interaction,
+				'tempvoice.modals.tv-rename-modal.rename.modal.success',
+				{
+					newName,
+				},
+			),
 			flags: MessageFlags.Ephemeral,
 		});
 	}

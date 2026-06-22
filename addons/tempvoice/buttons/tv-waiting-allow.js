@@ -28,7 +28,7 @@ class TvWaitingAllowButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.common.not_owner'),
+						await t(interaction, 'tempvoice.shared.common.not_owner'),
 						{
 							color: 'Red',
 						},
@@ -53,7 +53,7 @@ class TvWaitingAllowButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -70,7 +70,10 @@ class TvWaitingAllowButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.waiting.user_or_channel_gone'),
+						await t(
+							interaction,
+							'tempvoice.shared.waiting.user_or_channel_gone',
+						),
 					),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
@@ -84,7 +87,10 @@ class TvWaitingAllowButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.waiting.move_fail'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-waiting-allow.waiting.move_fail',
+						),
 						{
 							color: 'Red',
 						},

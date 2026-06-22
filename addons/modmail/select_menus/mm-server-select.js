@@ -47,7 +47,10 @@ class MmServerSelectSelectMenu extends BaseSelectMenu {
 				username: kythiaConfig.bot.name,
 			});
 			if (!config) {
-				const desc = await t(fakeInteraction, 'modmail.errors.not_configured');
+				const desc = await t(
+					fakeInteraction,
+					'modmail.helpers.index.errors.not_configured',
+				);
 				await interaction
 					.update({
 						components: await simpleContainer(fakeInteraction, desc, {
@@ -65,7 +68,10 @@ class MmServerSelectSelectMenu extends BaseSelectMenu {
 				? config.blockedUserIds
 				: [];
 			if (blocked.includes(userId)) {
-				const blockedMsg = await t(fakeInteraction, 'modmail.dm.blocked');
+				const blockedMsg = await t(
+					fakeInteraction,
+					'modmail.select_menus.mm-server-select.dm.blocked',
+				);
 				await interaction
 					.update({
 						components: await simpleContainer(fakeInteraction, blockedMsg, {
@@ -88,7 +94,7 @@ class MmServerSelectSelectMenu extends BaseSelectMenu {
 			// ── Replace the picker with a "Now chatting with…" Components V2 card ──
 			const nowChattingText = await t(
 				fakeInteraction,
-				'modmail.server_select.confirmed',
+				'modmail.select_menus.mm-server-select.server_select.confirmed',
 				{
 					server: guildName,
 				},

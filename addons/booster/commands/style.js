@@ -52,11 +52,17 @@ class StyleCommand extends BaseCommand {
 		await boosterSetting.save();
 		const styleLabel =
 			style === 'components-v2'
-				? await t(interaction, 'booster.booster.style.label.components.v2')
-				: await t(interaction, 'booster.booster.style.label.plain.text');
+				? await t(
+						interaction,
+						'booster.commands.style.booster.label.components.v2',
+					)
+				: await t(
+						interaction,
+						'booster.commands.style.booster.label.plain.text',
+					);
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'booster.booster.style.set', {
+			await t(interaction, 'booster.commands.style.booster.set', {
 				styleLabel,
 			}),
 			{

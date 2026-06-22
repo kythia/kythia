@@ -31,7 +31,10 @@ class TvUntrustButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.untrust.no_active_channel'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-untrust.untrust.no_active_channel',
+						),
 						{
 							color: 'Red',
 						},
@@ -42,7 +45,10 @@ class TvUntrustButton extends BaseButton {
 		const selectMenu = new UserSelectMenuBuilder()
 			.setCustomId(`tv_untrust_menu:${activeChannel.channelId}`)
 			.setPlaceholder(
-				await t(interaction, 'tempvoice.untrust.menu.placeholder'),
+				await t(
+					interaction,
+					'tempvoice.buttons.tv-untrust.untrust.menu.placeholder',
+				),
 			)
 			.setMinValues(1)
 			.setMaxValues(10);
@@ -55,7 +61,10 @@ class TvUntrustButton extends BaseButton {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'tempvoice.untrust.menu.content'),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-untrust.untrust.menu.content',
+					),
 				),
 			)
 			.addActionRowComponents(row);

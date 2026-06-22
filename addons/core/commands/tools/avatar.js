@@ -42,9 +42,13 @@ class AvatarCommand extends BaseCommand {
 		});
 		const components = await createContainer(interaction, {
 			title: user.tag,
-			description: await t(interaction, 'core.tools.avatar.embed.desc', {
-				url: avatarURL,
-			}),
+			description: await t(
+				interaction,
+				'core.commands.tools.avatar.embed.desc',
+				{
+					url: avatarURL,
+				},
+			),
 			media: [avatarURL],
 			color: kythiaConfig.bot.color,
 		});

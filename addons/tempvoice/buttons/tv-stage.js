@@ -24,7 +24,10 @@ class TvStageButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.stage.no_active_channel'),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-stage.stage.no_active_channel',
+					),
 					{
 						color: 'Red',
 					},
@@ -49,7 +52,7 @@ class TvStageButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -61,7 +64,7 @@ class TvStageButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -80,7 +83,7 @@ class TvStageButton extends BaseButton {
 				await interaction.reply({
 					components: await simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.stage.enabled'),
+						await t(interaction, 'tempvoice.buttons.tv-stage.stage.enabled'),
 						{
 							color: 'Green',
 						},
@@ -94,7 +97,7 @@ class TvStageButton extends BaseButton {
 				await interaction.reply({
 					components: await simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.stage.disabled'),
+						await t(interaction, 'tempvoice.buttons.tv-stage.stage.disabled'),
 						{
 							color: 'Green',
 						},
@@ -106,7 +109,7 @@ class TvStageButton extends BaseButton {
 			await interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.fail'),
+					await t(interaction, 'tempvoice.shared.common.fail'),
 					{
 						color: 'Red',
 					},

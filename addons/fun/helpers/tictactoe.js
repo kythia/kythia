@@ -15,7 +15,6 @@ const {
 	SeparatorSpacingSize,
 	TextDisplayBuilder,
 } = require('discord.js');
-
 function createGame(interaction, opponent, mode) {
 	const playerX = interaction.user;
 	const playerO = opponent;
@@ -27,12 +26,14 @@ function createGame(interaction, opponent, mode) {
 		botDifficulty: mode.startsWith('bot_') ? mode : null,
 		board: Array(9).fill(null),
 		currentPlayer: playerX,
-		symbols: { [playerX.id]: 'X', [playerO.id]: 'O' },
+		symbols: {
+			[playerX.id]: 'X',
+			[playerO.id]: 'O',
+		},
 		isGameOver: false,
 		statusMessage: null,
 	};
 }
-
 async function buildGameUI(game) {
 	const {
 		board,
@@ -47,14 +48,12 @@ async function buildGameUI(game) {
 	const container = interaction.client.container;
 	const { t, helpers } = container;
 	const { convertColor } = helpers.color;
-
 	const turnText = isGameOver
 		? `**${statusMessage}**`
-		: await t(interaction, 'fun.tictactoe.turn', {
+		: await t(interaction, 'fun.helpers.tictactoe.turn', {
 				mention: currentPlayer.toString(),
 				symbol: game.symbols[currentPlayer.id] === 'X' ? '❌' : '⭕',
 			});
-
 	const gameContainer = new ContainerBuilder()
 		.setAccentColor(
 			convertColor(isGameOver ? '#2ecc71' : '#3498db', {
@@ -64,16 +63,14 @@ async function buildGameUI(game) {
 		)
 		.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`${await t(interaction, 'fun.tictactoe.title')}\n\`❌\` ${playerX.username}\n\`⭕\` ${playerO.username}`,
+				`${await t(interaction, 'fun.helpers.tictactoe.title')}\n\`❌\` ${playerX.username}\n\`⭕\` ${playerO.username}`,
 			),
 		);
-
 	for (let i = 0; i < 3; i++) {
 		const row = new ActionRowBuilder();
 		for (let j = 0; j < 3; j++) {
 			const index = i * 3 + j;
 			const cell = board[index];
-
 			let style = ButtonStyle.Secondary;
 			let symbol = '\u200B';
 			if (cell === 'X') {
@@ -84,7 +81,6 @@ async function buildGameUI(game) {
 				style = ButtonStyle.Primary;
 				symbol = '⭕';
 			}
-
 			row.addComponents(
 				new ButtonBuilder()
 					.setCustomId(`tictactoe_${index}`)
@@ -95,7 +91,6 @@ async function buildGameUI(game) {
 		}
 		gameContainer.addActionRowComponents(row);
 	}
-
 	gameContainer.addTextDisplayComponents(
 		new TextDisplayBuilder().setContent(turnText),
 	);
@@ -111,10 +106,8 @@ async function buildGameUI(game) {
 			}),
 		),
 	);
-
 	return [gameContainer];
 }
-
 function checkWin(board, playerSymbol) {
 	const winPatterns = [
 		[0, 1, 2],
@@ -130,11 +123,9 @@ function checkWin(board, playerSymbol) {
 		pattern.every((index) => board[index] === playerSymbol),
 	);
 }
-
 function checkDraw(board) {
 	return board.every((cell) => cell !== null);
 }
-
 function botMove(game) {
 	let bestMove;
 	const board = game.board;
@@ -152,7 +143,6 @@ function botMove(game) {
 		board[bestMove] = 'O';
 	}
 }
-
 function findWinningMove(board, playerSymbol) {
 	for (let i = 0; i < 9; i++) {
 		if (board[i] === null) {
@@ -166,38 +156,42 @@ function findWinningMove(board, playerSymbol) {
 	}
 	return null;
 }
-
 function getRandomMove(board) {
 	const emptyCells = board
 		.map((cell, i) => (cell === null ? i : null))
 		.filter((i) => i !== null);
 	return emptyCells[Math.floor(Math.random() * emptyCells.length)];
 }
-
 function minimax(game, newBoard, playerSymbol) {
 	const emptyCells = newBoard
 		.map((cell, i) => (cell === null ? i : null))
 		.filter((i) => i !== null);
-
-	if (checkWinBoard(newBoard, 'X')) return { score: -10 };
-	if (checkWinBoard(newBoard, 'O')) return { score: 10 };
-	if (emptyCells.length === 0) return { score: 0 };
-
+	if (checkWinBoard(newBoard, 'X'))
+		return {
+			score: -10,
+		};
+	if (checkWinBoard(newBoard, 'O'))
+		return {
+			score: 10,
+		};
+	if (emptyCells.length === 0)
+		return {
+			score: 0,
+		};
 	const moves = [];
 	for (const index of emptyCells) {
-		const move = { index };
+		const move = {
+			index,
+		};
 		newBoard[index] = playerSymbol;
-
 		if (playerSymbol === 'O') {
 			move.score = minimax(game, newBoard, 'X').score;
 		} else {
 			move.score = minimax(game, newBoard, 'O').score;
 		}
-
 		newBoard[index] = null;
 		moves.push(move);
 	}
-
 	let bestMove;
 	if (playerSymbol === 'O') {
 		let bestScore = -Infinity;
@@ -218,7 +212,6 @@ function minimax(game, newBoard, playerSymbol) {
 	}
 	return bestMove;
 }
-
 function checkWinBoard(board, playerSymbol) {
 	const winPatterns = [
 		[0, 1, 2],
@@ -234,7 +227,6 @@ function checkWinBoard(board, playerSymbol) {
 		pattern.every((index) => board[index] === playerSymbol),
 	);
 }
-
 module.exports = {
 	createGame,
 	buildGameUI,

@@ -37,7 +37,7 @@ class ListCommand extends BaseCommand {
 		if (birthdays.length === 0) {
 			const components = await helpers.discord.simpleContainer(
 				interaction,
-				await t(interaction, 'birthday.list.empty'),
+				await t(interaction, 'birthday.shared.list.empty'),
 			);
 			return interaction.editReply({
 				components,

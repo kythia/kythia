@@ -46,11 +46,11 @@ class RpsCommand extends BaseCommand {
 		if (vsBot) {
 			const playGame = async (iCtx, isUpdate = false) => {
 				const botChoice = CHOICES[Math.floor(Math.random() * 3)];
-				const title = await t(iCtx, 'fun.rps.title');
+				const title = await t(iCtx, 'fun.shared.rps.title');
 				const questionContainer = await rpsHelpers.buildRPSContainer(iCtx, {
 					title,
-					body: await t(iCtx, 'fun.rps.choose'),
-					footer: await t(iCtx, 'fun.rps.footer.play'),
+					body: await t(iCtx, 'fun.shared.rps.choose'),
+					footer: await t(iCtx, 'fun.shared.rps.footer.play'),
 					row: rpsHelpers.buildChoiceRow(false),
 				});
 				let message;
@@ -81,19 +81,19 @@ class RpsCommand extends BaseCommand {
 					let body;
 					let accentColor;
 					if (result === 'draw') {
-						body = await t(i, 'fun.rps.result.draw', {
+						body = await t(i, 'fun.shared.rps.result.draw', {
 							choice: `${EMOJI[playerChoice]} **${playerChoice}**`,
 						});
 						accentColor = '#95a5a6';
 					} else if (result === 'win') {
-						body = await t(i, 'fun.rps.result.win', {
+						body = await t(i, 'fun.shared.rps.result.win', {
 							winner: challenger.toString(),
 							winnerChoice: `${EMOJI[playerChoice]} **${playerChoice}**`,
 							loserChoice: `${EMOJI[botChoice]} **${botChoice}**`,
 						});
 						accentColor = '#2ecc71';
 					} else {
-						body = await t(i, 'fun.rps.result.win', {
+						body = await t(i, 'fun.shared.rps.result.win', {
 							winner: botName,
 							winnerChoice: `${EMOJI[botChoice]} **${botChoice}**`,
 							loserChoice: `${EMOJI[playerChoice]} **${playerChoice}**`,
@@ -103,9 +103,11 @@ class RpsCommand extends BaseCommand {
 					const resultContainer = await rpsHelpers.buildRPSContainer(i, {
 						title: `${title}\n> ${challenger.toString()} ${EMOJI[playerChoice]} vs ${EMOJI[botChoice]} ${botName}`,
 						body,
-						footer: await t(i, 'fun.rps.footer.end'),
+						footer: await t(i, 'fun.shared.rps.footer.end'),
 						accentColor,
-						row: rpsHelpers.buildRematchRow(await t(i, 'fun.rps.rematch')),
+						row: rpsHelpers.buildRematchRow(
+							await t(i, 'fun.commands.rps.rematch'),
+						),
 					});
 					await i.update({
 						components: [resultContainer],
@@ -118,9 +120,9 @@ class RpsCommand extends BaseCommand {
 						const disabledContainer = await rpsHelpers.buildRPSContainer(
 							isUpdate ? iCtx : interaction,
 							{
-								title: await t(interaction, 'fun.rps.title'),
-								body: await t(interaction, 'fun.rps.choose'),
-								footer: await t(interaction, 'fun.rps.footer.play'),
+								title: await t(interaction, 'fun.shared.rps.title'),
+								body: await t(interaction, 'fun.shared.rps.choose'),
+								footer: await t(interaction, 'fun.shared.rps.footer.play'),
 								row: rpsHelpers.buildChoiceRow(true),
 							},
 						);
@@ -164,7 +166,7 @@ class RpsCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-		const title = await t(interaction, 'fun.rps.title');
+		const title = await t(interaction, 'fun.shared.rps.title');
 		const pickRow = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('rps_duel_pick')
@@ -173,10 +175,10 @@ class RpsCommand extends BaseCommand {
 		);
 		const waitingContainer = await rpsHelpers.buildRPSContainer(interaction, {
 			title: `${title}\n> ⚔️ ${challenger.toString()} vs ${opponent.toString()}`,
-			body: await t(interaction, 'fun.rps.waiting', {
+			body: await t(interaction, 'fun.commands.rps.waiting', {
 				opponent: opponent.toString(),
 			}),
-			footer: await t(interaction, 'fun.rps.footer.play'),
+			footer: await t(interaction, 'fun.shared.rps.footer.play'),
 			row: pickRow,
 		});
 		const message = await interaction.reply({
@@ -195,7 +197,7 @@ class RpsCommand extends BaseCommand {
 		collector.on('collect', async (i) => {
 			if (picks[i.user.id]) {
 				return i.reply({
-					content: await t(interaction, 'fun.rps.duel.already_locked'),
+					content: await t(interaction, 'fun.commands.rps.duel.already_locked'),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
@@ -214,7 +216,7 @@ class RpsCommand extends BaseCommand {
 					.setStyle(ButtonStyle.Secondary),
 			);
 			await i.reply({
-				content: await t(interaction, 'fun.rps.duel.pick_weapon'),
+				content: await t(interaction, 'fun.commands.rps.duel.pick_weapon'),
 				components: [epRow],
 				flags: MessageFlags.Ephemeral,
 			});
@@ -231,7 +233,7 @@ class RpsCommand extends BaseCommand {
 			epCollector.on('collect', async (b) => {
 				picks[b.user.id] = b.customId.replace('rps_duel_', '');
 				await b.update({
-					content: await t(interaction, 'fun.rps.duel.locked_in', {
+					content: await t(interaction, 'fun.commands.rps.duel.locked_in', {
 						emoji: EMOJI[picks[b.user.id]],
 					}),
 					components: [],
@@ -251,10 +253,10 @@ class RpsCommand extends BaseCommand {
 					interaction,
 					{
 						title: headerTitle,
-						body: await t(interaction, 'fun.rps.result.timeout', {
+						body: await t(interaction, 'fun.commands.rps.result.timeout', {
 							opponent: missing,
 						}),
-						footer: await t(interaction, 'fun.rps.footer.end'),
+						footer: await t(interaction, 'fun.shared.rps.footer.end'),
 						accentColor: '#95a5a6',
 					},
 				);
@@ -272,7 +274,7 @@ class RpsCommand extends BaseCommand {
 			let body;
 			let accentColor;
 			if (result === 'draw') {
-				body = await t(interaction, 'fun.rps.result.draw', {
+				body = await t(interaction, 'fun.shared.rps.result.draw', {
 					choice: `${EMOJI[cPick]} **${cPick}**`,
 				});
 				accentColor = '#95a5a6';
@@ -281,7 +283,7 @@ class RpsCommand extends BaseCommand {
 					result === 'win'
 						? [challenger, cPick, oPick]
 						: [opponent, oPick, cPick];
-				body = await t(interaction, 'fun.rps.result.win', {
+				body = await t(interaction, 'fun.shared.rps.result.win', {
 					winner: winner.toString(),
 					winnerChoice: `${EMOJI[winnerPick]} **${winnerPick}**`,
 					loserChoice: `${EMOJI[loserPick]} **${loserPick}**`,
@@ -291,7 +293,7 @@ class RpsCommand extends BaseCommand {
 			const resultContainer = await rpsHelpers.buildRPSContainer(interaction, {
 				title: headerTitle + revealText,
 				body,
-				footer: await t(interaction, 'fun.rps.footer.end'),
+				footer: await t(interaction, 'fun.shared.rps.footer.end'),
 				accentColor,
 			});
 			await interaction

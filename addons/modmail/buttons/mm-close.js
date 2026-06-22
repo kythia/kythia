@@ -16,46 +16,48 @@ const {
 	ButtonBuilder,
 	ButtonStyle,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class MmCloseButton extends BaseButton {
 	button = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { t, helpers, kythiaConfig } = container;
 		const { convertColor } = helpers.color;
-
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const row = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('mm-confirm-close:')
-				.setLabel(await t(interaction, 'modmail.close.confirm_button'))
+				.setLabel(
+					await t(interaction, 'modmail.helpers.index.close.confirm_button'),
+				)
 				.setStyle(ButtonStyle.Danger)
 				.setEmoji('✅'),
 			new ButtonBuilder()
 				.setCustomId('mm-close-with-reason')
-				.setLabel(await t(interaction, 'modmail.close.with_reason_button'))
+				.setLabel(
+					await t(
+						interaction,
+						'modmail.helpers.index.close.with_reason_button',
+					),
+				)
 				.setStyle(ButtonStyle.Secondary)
 				.setEmoji('🔏'),
 			new ButtonBuilder()
 				.setCustomId('mm-cancel-close')
-				.setLabel(await t(interaction, 'modmail.close.cancel_button'))
+				.setLabel(
+					await t(interaction, 'modmail.helpers.index.close.cancel_button'),
+				)
 				.setStyle(ButtonStyle.Secondary)
 				.setEmoji('❌'),
 		);
-
 		const confirmContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'modmail.close.confirm_title'),
+					await t(interaction, 'modmail.helpers.index.close.confirm_title'),
 				),
 			)
 			.addSeparatorComponents(
@@ -65,7 +67,7 @@ class MmCloseButton extends BaseButton {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'modmail.close.confirm_desc'),
+					await t(interaction, 'modmail.helpers.index.close.confirm_desc'),
 				),
 			)
 			.addActionRowComponents(row)
@@ -81,12 +83,10 @@ class MmCloseButton extends BaseButton {
 					}),
 				),
 			);
-
 		return interaction.reply({
 			components: [confirmContainer],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = MmCloseButton;

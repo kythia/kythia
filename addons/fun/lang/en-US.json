@@ -132,18 +132,9 @@
 				"shinobu": "{user} channels their inner Shinobu!",
 				"megumin": "{user} yells 'Explosion!'",
 				"bully": "{user} wants to bully someone!"
-			},
-			"errors": {
-				"invalid_action": "That's not a valid action! Use one of: {VALID_ACTIONS.join(', ')}"
 			}
 		},
 		"8ball": {
-			"thinking": {
-				"desc": "## Magic 8 Ball is thinking...\nWait a moment, let me divine your answer"
-			},
-			"result": {
-				"desc": "## Magic 8 Ball Result\n### **{question}**\n{answer}"
-			},
 			"answer": {
 				"yes": "Yes, just believe",
 				"maybe": {
@@ -167,50 +158,6 @@
 				"almost": {}
 			}
 		},
-		"tictactoe": {
-			"title": "## Tic Tac Toe",
-			"turn": "Turn: {mention} ({symbol})",
-			"error": {
-				"title": "## Tic Tac Toe Error",
-				"self": "You cannot play against yourself!",
-				"rematch": "Only players can start a rematch!",
-				"turn": "It's not your turn, please wait!"
-			},
-			"win": "{user} wins!",
-			"draw": "The game ended in a draw!",
-			"lose": "I win... Better luck next time!",
-			"timeout": "Time's up! The game has been cancelled."
-		},
-		"wordle": {
-			"already": {
-				"playing": "You already have an ongoing Wordle game!",
-				"guessed": "You already guessed the word \"{word}\"!"
-			},
-			"button": {
-				"guess": "Guess Word",
-				"end": "Game Over"
-			},
-			"not": {
-				"your": {
-					"game": "This is not your Wordle game!"
-				}
-			},
-			"modal": {
-				"title": "Enter Your Guess",
-				"label": "5-letter Word"
-			},
-			"invalid": {
-				"word": "The word \"{word}\" is not in the list! Try again."
-			},
-			"win": "**Congratulations! You guessed the word `{answer}`!**",
-			"lose": "**Game Over! The answer was `{answer}`**",
-			"remaining": "Guesses left: **{remaining}**",
-			"footer": {
-				"play": "Click the 'Guess Word' button to answer.",
-				"end": "Type /wordle to play again!"
-			},
-			"title": "## Wordle"
-		},
 		"marry": {
 			"yourself": {
 				"error": "You can't marry yourself!"
@@ -226,16 +173,11 @@
 				"married": {
 					"default": "You're not currently married!",
 					"both": "Neither of you are married!"
-				},
-				"your": {
-					"proposal": "This isn't your marriage proposal to accept!"
 				}
 			},
 			"proposal": {
 				"title": "Marriage Proposal",
-				"description": "{proposer} just popped the question to {target} in front of everyone! Will you say YES and make it official?",
-				"expired": "This marriage proposal has expired or been cancelled.",
-				"rejected": "The marriage proposal of {user1} and {user2} has been rejected."
+				"description": "{proposer} just popped the question to {target} in front of everyone! Will you say YES and make it official?"
 			},
 			"accept": {
 				"button": "Accept"
@@ -244,10 +186,6 @@
 				"button": "Reject"
 			},
 			"no": {},
-			"congrats": {
-				"title": "## Congratulations!",
-				"description": "{user1} and {user2} are now married! May your love last forever!"
-			},
 			"divorced": {
 				"title": "Divorced",
 				"description": "Your marriage has been ended. Wishing you both the best in your future endeavors."
@@ -296,151 +234,277 @@
 				}
 			}
 		},
-		"rps": {
-			"title": "## Rock Paper Scissors",
-			"choose": "Pick your weapon!",
-			"waiting": "Waiting for {opponent} to pick their weapon...",
-			"result": {
-				"win": "**{winner}** wins!\n{winnerChoice} beats {loserChoice}!",
-				"draw": "It's a draw!\nYou both picked {choice}!",
-				"timeout": "Time's up! **{opponent}** didn't respond. Game cancelled."
-			},
-			"rematch": "Rematch",
-			"footer": {
-				"play": "Click a button to make your move!",
-				"end": "Play again with /rps"
-			},
-			"duel": {
-				"already_locked": "You already locked in! Waiting for the other player...",
-				"pick_weapon": "Pick your weapon — only you can see this!",
-				"locked_in": "Locked in: **{emoji}** — waiting for the other player!"
-			}
-		},
-		"math": {
-			"title": "## Math Quiz",
-			"question": "Solve: **{question}**\nStreak: **{score}**",
-			"correct": "Correct! **+1**",
-			"wrong": "Wrong! The answer was `{answer}`.\nFinal streak: **{score}**",
-			"timeout": "Time's up! The answer was `{answer}`.\nFinal streak: **{score}**",
-			"new_best": "New personal best: **{score}**!",
-			"modal": {
-				"title": "Your Answer",
-				"label": "Enter the answer (numbers only)"
-			},
-			"footer": {
-				"play": "You have 30 seconds per question!",
-				"end": "Play again with /math"
-			},
-			"leaderboard": {
-				"title": "## Math Quiz — Global Leaderboard",
-				"empty": "No scores yet! Be the first to play with `/math`.",
-				"entry": "{rank}. **{user}** — `{score}` pts"
-			},
-			"invalid": {
-				"number": "Please enter a valid number."
-			}
-		},
-		"friend": {
-			"yourself": {
-				"error": "You can't add yourself as a friend!"
-			},
-			"bot": {
-				"error": "Bots cannot be friends!"
-			},
-			"already": {
-				"friends": "You are already friends or have a pending friend request with this user!"
-			},
-			"not": {
-				"friends": "You are not friends with this user!",
-				"found": "Friend request not found or already processed."
-			},
-			"request": {
-				"title": "## Friend Request",
-				"description": "{proposer} wants to be friends with {target}! Will you accept?",
-				"expired": "This friend request has expired or been cancelled.",
-				"rejected": "The friend request from {user1} to {user2} was rejected.",
-				"user_block": "## {user}\n-# {id}"
-			},
-			"accept": {
-				"button": "Accept Friend"
-			},
-			"reject": {
-				"button": "Reject"
-			},
-			"congrats": {
-				"title": "## New Friendship!",
-				"description": "{user1} and {user2} are now friends!"
-			},
-			"removed": {
-				"title": "## Friend Removed",
-				"description": "You are no longer friends with {user}."
-			},
-			"list": {
-				"title": "## Your Friends",
-				"empty": "You don't have any friends yet! Use `/friend add` to add someone.",
-				"format": "• {user}"
-			}
-		},
-		"summon": {
-			"not": {
-				"friend": "You can only summon your friends! Use `/friend add @user` to add them first."
-			},
-			"dm": {
-				"failed": "I couldn't DM {user}. Their DMs might be closed.",
-				"title": "## You have been summoned!",
-				"description": "You were summoned by **{author}** in the server **{server}**!\nClick the button below to jump to the channel."
-			},
-			"success": "Successfully summoned {user} via DM!",
-			"button": {
-				"jump": "Jump to Channel"
-			}
-		},
-		"meme": {
-			"title": "## {title}\n-# r/{subreddit} • {upvotes} • u/{author}",
-			"button": {
-				"view": "View on Reddit"
-			},
-			"error": {
-				"fetch": "Couldn't fetch a meme right now. Try again in a moment!",
-				"nsfw": "The fetched meme was NSFW or unavailable. Try again!"
-			}
-		},
-		"joke": {
-			"setup": "## Joke — {category}\n{setup}",
-			"punchline": "**{punchline}**",
-			"button": {
-				"reveal": "Reveal Punchline"
-			},
-			"error": {
-				"fetch": "Couldn't fetch a joke right now. Try again!"
-			}
-		},
 		"roast": {
 			"title": {
 				"self": "## Self-Roast\n{author} decided to roast themselves...",
 				"other": "## Roasted!\n{author} is roasting {target}:"
-			},
-			"insult": "> {insult}",
-			"error": {
-				"fetch": "Couldn't fetch a roast right now. Try again!"
 			}
 		},
-		"fact": {
-			"title": "## Random Fact\n{fact}",
-			"button": {
-				"another": "Another Fact"
+		"shared": {
+			"friend": {
+				"request": {
+					"expired": "This friend request has expired or been cancelled.",
+					"user_block": "## {user}\n-# {id}"
+				},
+				"not": {
+					"found": "Friend request not found or already processed."
+				}
 			},
-			"error": {
-				"fetch": "Couldn't fetch a fact right now. Try again!"
+			"marry": {
+				"proposal": {
+					"expired": "This marriage proposal has expired or been cancelled."
+				},
+				"not": {
+					"your": {
+						"proposal": "This isn't your marriage proposal to accept!"
+					}
+				}
+			},
+			"fact": {
+				"error": {
+					"fetch": "Couldn't fetch a fact right now. Try again!"
+				}
+			},
+			"joke": {
+				"error": {
+					"fetch": "Couldn't fetch a joke right now. Try again!"
+				}
+			},
+			"math": {
+				"question": "Solve: **{question}**\nStreak: **{score}**"
+			},
+			"quote": {
+				"error": {
+					"fetch": "Couldn't fetch a quote right now. Try again!"
+				}
+			},
+			"roast": {
+				"error": {
+					"fetch": "Couldn't fetch a roast right now. Try again!"
+				}
+			},
+			"rps": {
+				"title": "## Rock Paper Scissors",
+				"choose": "Pick your weapon!",
+				"footer": {
+					"play": "Click a button to make your move!",
+					"end": "Play again with /rps"
+				},
+				"result": {
+					"draw": "It's a draw!\nYou both picked {choice}!",
+					"win": "**{winner}** wins!\n{winnerChoice} beats {loserChoice}!"
+				}
+			},
+			"summon": {
+				"not": {
+					"friend": "You can only summon your friends! Use `/friend add @user` to add them first."
+				}
+			},
+			"tictactoe": {
+				"error": {
+					"title": "## Tic Tac Toe Error"
+				},
+				"draw": "The game ended in a draw!"
 			}
 		},
-		"quote": {
-			"title": "## Quote\n> {text}\n\n— **{author}**",
-			"button": {
-				"another": "Another Quote"
+		"buttons": {
+			"friend": {
+				"congrats": {
+					"title": "## New Friendship!",
+					"description": "{user1} and {user2} are now friends!"
+				},
+				"request": {
+					"rejected": "The friend request from {user1} to {user2} was rejected."
+				}
 			},
-			"error": {
-				"fetch": "Couldn't fetch a quote right now. Try again!"
+			"marry": {
+				"congrats": {
+					"title": "## Congratulations!",
+					"description": "{user1} and {user2} are now married! May your love last forever!"
+				},
+				"proposal": {
+					"rejected": "The marriage proposal of {user1} and {user2} has been rejected."
+				}
+			}
+		},
+		"commands": {
+			"8ball": {
+				"thinking": {
+					"desc": "## Magic 8 Ball is thinking...\nWait a moment, let me divine your answer"
+				},
+				"result": {
+					"desc": "## Magic 8 Ball Result\n### **{question}**\n{answer}"
+				}
+			},
+			"act": {
+				"errors": {
+					"invalid_action": "That's not a valid action! Use one of: {VALID_ACTIONS.join(', ')}"
+				}
+			},
+			"fact": {
+				"title": "## Random Fact\n{fact}",
+				"button": {
+					"another": "Another Fact"
+				}
+			},
+			"friend": {
+				"add": {
+					"bot": {
+						"error": "Bots cannot be friends!"
+					},
+					"yourself": {
+						"error": "You can't add yourself as a friend!"
+					},
+					"already": {
+						"friends": "You are already friends or have a pending friend request with this user!"
+					},
+					"request": {
+						"title": "## Friend Request",
+						"description": "{proposer} wants to be friends with {target}! Will you accept?"
+					},
+					"accept": {
+						"button": "Accept Friend"
+					},
+					"reject": {
+						"button": "Reject"
+					}
+				},
+				"list": {
+					"empty": "You don't have any friends yet! Use `/friend add` to add someone.",
+					"format": "• {user}",
+					"title": "## Your Friends"
+				},
+				"remove": {
+					"not": {
+						"friends": "You are not friends with this user!"
+					},
+					"removed": {
+						"title": "## Friend Removed",
+						"description": "You are no longer friends with {user}."
+					}
+				}
+			},
+			"joke": {
+				"setup": "## Joke — {category}\n{setup}",
+				"punchline": "**{punchline}**",
+				"button": {
+					"reveal": "Reveal Punchline"
+				}
+			},
+			"math": {
+				"footer": {
+					"play": "You have 30 seconds per question!",
+					"end": "Play again with /math"
+				},
+				"modal": {
+					"title": "Your Answer",
+					"label": "Enter the answer (numbers only)"
+				},
+				"invalid": {
+					"number": "Please enter a valid number."
+				},
+				"correct": "Correct! **+1**",
+				"timeout": "Time's up! The answer was `{answer}`.\nFinal streak: **{score}**",
+				"wrong": "Wrong! The answer was `{answer}`.\nFinal streak: **{score}**",
+				"new_best": "New personal best: **{score}**!"
+			},
+			"meme": {
+				"error": {
+					"fetch": "Couldn't fetch a meme right now. Try again in a moment!",
+					"nsfw": "The fetched meme was NSFW or unavailable. Try again!"
+				},
+				"title": "## {title}\n-# r/{subreddit} • {upvotes} • u/{author}",
+				"button": {
+					"view": "View on Reddit"
+				}
+			},
+			"quote": {
+				"title": "## Quote\n> {text}\n\n— **{author}**",
+				"button": {
+					"another": "Another Quote"
+				}
+			},
+			"roast": {
+				"insult": "> {insult}"
+			},
+			"rps": {
+				"rematch": "Rematch",
+				"waiting": "Waiting for {opponent} to pick their weapon...",
+				"duel": {
+					"already_locked": "You already locked in! Waiting for the other player...",
+					"pick_weapon": "Pick your weapon — only you can see this!",
+					"locked_in": "Locked in: **{emoji}** — waiting for the other player!"
+				},
+				"result": {
+					"timeout": "Time's up! **{opponent}** didn't respond. Game cancelled."
+				}
+			},
+			"summon": {
+				"dm": {
+					"title": "## You have been summoned!",
+					"description": "You were summoned by **{author}** in the server **{server}**!\nClick the button below to jump to the channel.",
+					"failed": "I couldn't DM {user}. Their DMs might be closed."
+				},
+				"button": {
+					"jump": "Jump to Channel"
+				},
+				"success": "Successfully summoned {user} via DM!"
+			},
+			"tictactoe": {
+				"error": {
+					"self": "You cannot play against yourself!",
+					"rematch": "Only players can start a rematch!",
+					"turn": "It's not your turn, please wait!"
+				},
+				"win": "{user} wins!",
+				"lose": "I win... Better luck next time!",
+				"timeout": "Time's up! The game has been cancelled."
+			},
+			"wordle": {
+				"already": {
+					"playing": "You already have an ongoing Wordle game!",
+					"guessed": "You already guessed the word \"{word}\"!"
+				},
+				"button": {
+					"guess": "Guess Word",
+					"end": "Game Over"
+				},
+				"not": {
+					"your": {
+						"game": "This is not your Wordle game!"
+					}
+				},
+				"modal": {
+					"title": "Enter Your Guess",
+					"label": "5-letter Word"
+				},
+				"invalid": {
+					"word": "The word \"{word}\" is not in the list! Try again."
+				}
+			}
+		},
+		"helpers": {
+			"math": {
+				"title": "## Math Quiz",
+				"leaderboard": {
+					"title": "## Math Quiz — Global Leaderboard",
+					"empty": "No scores yet! Be the first to play with `/math`.",
+					"entry": "{rank}. **{user}** — `{score}` pts"
+				}
+			},
+			"tictactoe": {
+				"turn": "Turn: {mention} ({symbol})",
+				"title": "## Tic Tac Toe"
+			},
+			"wordle": {
+				"win": "**Congratulations! You guessed the word `{answer}`!**",
+				"lose": "**Game Over! The answer was `{answer}`**",
+				"remaining": "Guesses left: **{remaining}**",
+				"footer": {
+					"end": "Type /wordle to play again!",
+					"play": "Click the 'Guess Word' button to answer."
+				},
+				"title": "## Wordle"
 			}
 		}
 	}

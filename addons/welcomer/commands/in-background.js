@@ -34,7 +34,10 @@ class InBackgroundCommand extends BaseCommand {
 		if (!url.startsWith('http')) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'welcomer.welcomer.in.background.invalid.url'),
+				await t(
+					interaction,
+					'welcomer.commands.in-background.welcomer.in.background.invalid.url',
+				),
 				{
 					color: 'Red',
 				},
@@ -51,9 +54,13 @@ class InBackgroundCommand extends BaseCommand {
 		await welcomeSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'welcomer.welcomer.in.background.set', {
-				url,
-			}),
+			await t(
+				interaction,
+				'welcomer.commands.in-background.welcomer.in.background.set',
+				{
+					url,
+				},
+			),
 			{
 				color: 'Green',
 			},

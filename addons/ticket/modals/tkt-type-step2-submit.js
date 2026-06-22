@@ -16,29 +16,25 @@ const {
 	ButtonStyle,
 	ActionRowBuilder,
 } = require('discord.js');
-
 const { BaseModal } = require('kythia-core');
-
 class TktTypeStep2SubmitModal extends BaseModal {
 	modal = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { redis, kythiaConfig, t, helpers, logger } = container;
 		const { convertColor } = helpers.color;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferUpdate();
 		const cacheKey = `ticket:type-create:${interaction.user.id}`;
-
 		try {
 			const messageId = interaction.customId.split(':')[1];
 			if (!messageId) throw new Error('Missing messageId in modal customId');
-
 			const step1DataString = await redis.get(cacheKey);
 			if (!step1DataString) {
-				const desc = await t(interaction, 'ticket.errors.setup_expired');
+				const desc = await t(
+					interaction,
+					'ticket.helpers.index.errors.setup_expired',
+				);
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -47,7 +43,6 @@ class TktTypeStep2SubmitModal extends BaseModal {
 				});
 			}
 			const step1Data = JSON.parse(step1DataString);
-
 			const staffRoleId = interaction.fields
 				.getSelectedRoles('staffRoleId')
 				?.first()?.id;
@@ -60,7 +55,6 @@ class TktTypeStep2SubmitModal extends BaseModal {
 			const ticketCategoryId = interaction.fields
 				.getSelectedChannels('ticketCategoryId')
 				?.first()?.id;
-
 			const step2Data = {
 				...step1Data,
 				staffRoleId,
@@ -69,28 +63,37 @@ class TktTypeStep2SubmitModal extends BaseModal {
 				ticketCategoryId: ticketCategoryId || null,
 			};
 			await redis.set(cacheKey, JSON.stringify(step2Data), 'EX', 1800);
-
 			const accentColor = convertColor(kythiaConfig.bot.color, {
 				from: 'hex',
 				to: 'decimal',
 			});
 			const nextButton = new ButtonBuilder()
 				.setCustomId('tkt-type-step3-show')
-				.setLabel(await t(interaction, 'ticket.type.next_button_step3'))
+				.setLabel(
+					await t(
+						interaction,
+						'ticket.modals.tkt-type-step2-submit.type.next_button_step3',
+					),
+				)
 				.setStyle(ButtonStyle.Secondary)
 				.setEmoji('🎟️');
-
 			const components = [
 				new ContainerBuilder()
 					.setAccentColor(accentColor)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t(interaction, 'ticket.type.step3_title'),
+							await t(
+								interaction,
+								'ticket.modals.tkt-type-step2-submit.type.step3_title',
+							),
 						),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t(interaction, 'ticket.type.step3_desc'),
+							await t(
+								interaction,
+								'ticket.modals.tkt-type-step2-submit.type.step3_desc',
+							),
 						),
 					)
 					.addSeparatorComponents(
@@ -100,7 +103,6 @@ class TktTypeStep2SubmitModal extends BaseModal {
 						new ActionRowBuilder().addComponents(nextButton),
 					),
 			];
-
 			await interaction.channel.messages.edit(messageId, {
 				components: components,
 			});
@@ -111,7 +113,10 @@ class TktTypeStep2SubmitModal extends BaseModal {
 					label: 'core:modals:tkt-type-step2-submit',
 				},
 			);
-			const errDesc = await t(interaction, 'ticket.errors.generic');
+			const errDesc = await t(
+				interaction,
+				'ticket.helpers.index.errors.generic',
+			);
 			await interaction.followUp({
 				components: await simpleContainer(interaction, errDesc, {
 					color: 'Red',
@@ -121,5 +126,4 @@ class TktTypeStep2SubmitModal extends BaseModal {
 		}
 	}
 }
-
 exports.default = TktTypeStep2SubmitModal;

@@ -77,7 +77,7 @@ class RolerewardCommand extends BaseCommand {
 			});
 			components = await simpleContainer(
 				interaction,
-				await t(interaction, 'streak.streak.setting.rolereward.add', {
+				await t(interaction, 'streak.commands.setting.rolereward.streak.add', {
 					role: `<@&${role.id}>`,
 					streak,
 				}),
@@ -93,9 +93,13 @@ class RolerewardCommand extends BaseCommand {
 			if (serverSetting.streakRoleRewards.length === initial) {
 				components = await simpleContainer(
 					interaction,
-					await t(interaction, 'streak.streak.setting.rolereward.notfound', {
-						streak,
-					}),
+					await t(
+						interaction,
+						'streak.commands.setting.rolereward.streak.notfound',
+						{
+							streak,
+						},
+					),
 					{
 						color: 'Red',
 					},
@@ -103,9 +107,13 @@ class RolerewardCommand extends BaseCommand {
 			} else {
 				components = await simpleContainer(
 					interaction,
-					await t(interaction, 'streak.streak.setting.rolereward.remove', {
-						streak,
-					}),
+					await t(
+						interaction,
+						'streak.commands.setting.rolereward.streak.remove',
+						{
+							streak,
+						},
+					),
 					{
 						color: 'Green',
 					},

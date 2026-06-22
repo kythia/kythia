@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class SeekCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('seek')
@@ -23,18 +20,19 @@ class SeekCommand extends BaseCommand {
 					.setDescription('The time to seek to. eg. 10, 2:30, 1:20:30')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		if (!member?.voice?.channel) {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'music.music.voice.channel.not.found'),
+					await t(
+						interaction,
+						'music.helpers.index.music.voice.channel.not.found',
+					),
 					{
 						color: 'Red',
 					},
@@ -42,13 +40,14 @@ class SeekCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const player = client.poru.players.get(guild.id);
 		if (!player) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'music.music.player.not.found'),
-				{ color: 'Red' },
+				await t(interaction, 'music.helpers.index.music.player.not.found'),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.reply({
 				components: reply,
@@ -59,7 +58,7 @@ class SeekCommand extends BaseCommand {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'music.music.required'),
+					await t(interaction, 'music.helpers.index.music.required'),
 					{
 						color: 'Red',
 					},
@@ -67,9 +66,7 @@ class SeekCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		return musicHandlers.handleSeek(interaction, player);
 	}
 }
-
 exports.default = SeekCommand;

@@ -131,7 +131,10 @@ class WidgetCommand extends BaseCommand {
 			});
 			if (response.ok) {
 				const components = await createContainer(interaction, {
-					description: await t(interaction, 'core.utils.widget.success'),
+					description: await t(
+						interaction,
+						'core.commands.utils.widget.success',
+					),
 					color: kythiaConfig.bot.color,
 					components: [row],
 				});
@@ -143,7 +146,10 @@ class WidgetCommand extends BaseCommand {
 				const errText = await response.text();
 				logger.error('[WIDGET ERROR]', errText);
 				const components = await createContainer(interaction, {
-					description: await t(interaction, 'core.utils.widget.failed'),
+					description: await t(
+						interaction,
+						'core.commands.utils.widget.failed',
+					),
 					color: 'Red',
 					components: [row],
 				});
@@ -156,7 +162,7 @@ class WidgetCommand extends BaseCommand {
 			logger.error('[WIDGET FETCH ERROR]', error);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.widget.error'),
+				await t(interaction, 'core.commands.utils.widget.error'),
 				{
 					color: 'Red',
 				},

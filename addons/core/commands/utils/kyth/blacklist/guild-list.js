@@ -7,35 +7,30 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class GuildListCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('guild-list')
 			.setDescription('List all blacklisted guilds');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, logger, helpers } = container;
 		const { KythiaBlacklist } = models;
 		const { createContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		try {
 			const entries = await KythiaBlacklist.getAllCache({
-				where: { type: 'guild' },
+				where: {
+					type: 'guild',
+				},
 			});
-
 			if (entries.length === 0) {
 				const components = await createContainer(interaction, {
 					description: await t(
 						interaction,
-						'core.utils.kyth.blacklist.guild.list.empty',
+						'core.commands.utils.kyth.blacklist.guild-list.guild.list.empty',
 					),
 					color: 'Blurple',
 				});
@@ -44,31 +39,36 @@ class GuildListCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const noReason = await t(
 				interaction,
-				'core.utils.kyth.blacklist.no.reason',
+				'core.helpers.index.utils.kyth.blacklist.no.reason',
 			);
 			const rows = await Promise.all(
 				entries.map(async (entry) =>
-					t(interaction, 'core.utils.kyth.blacklist.guild.list.row', {
-						id: entry.targetId,
-						reason: entry.reason || noReason,
-					}),
+					t(
+						interaction,
+						'core.commands.utils.kyth.blacklist.guild-list.guild.list.row',
+						{
+							id: entry.targetId,
+							reason: entry.reason || noReason,
+						},
+					),
 				),
 			);
-
 			const description =
-				(await t(interaction, 'core.utils.kyth.blacklist.guild.list.total', {
-					count: entries.length,
-				})) +
+				(await t(
+					interaction,
+					'core.commands.utils.kyth.blacklist.guild-list.guild.list.total',
+					{
+						count: entries.length,
+					},
+				)) +
 				'\n\n' +
 				rows.join('\n\n');
-
 			const components = await createContainer(interaction, {
 				title: await t(
 					interaction,
-					'core.utils.kyth.blacklist.guild.list.title',
+					'core.commands.utils.kyth.blacklist.guild-list.guild.list.title',
 				),
 				description,
 				color: 'Blurple',
@@ -90,8 +90,10 @@ class GuildListCommand extends BaseCommand {
 			const components = await createContainer(interaction, {
 				description: await t(
 					interaction,
-					'core.utils.kyth.blacklist.guild.list.error',
-					{ error: error.message },
+					'core.commands.utils.kyth.blacklist.guild-list.guild.list.error',
+					{
+						error: error.message,
+					},
 				),
 				color: 'Red',
 			});
@@ -102,5 +104,4 @@ class GuildListCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = GuildListCommand;

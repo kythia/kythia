@@ -14,27 +14,24 @@ const {
 	StringSelectMenuBuilder,
 	MessageFlags,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TktTypeStep1ShowButton extends BaseButton {
 	button = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { t, helpers, models, logger } = container;
 		const { simpleContainer, getTextChannelSafe } = helpers.discord;
 		const { TicketPanel } = models;
-
 		try {
 			const messageId = interaction.message.id;
-
 			const panels = await TicketPanel.getAllCache({
 				guildId: interaction.guild.id,
 			});
 			if (!panels || panels.length === 0) {
-				const desc = await t(interaction, 'ticket.errors.no_panels_found');
+				const desc = await t(
+					interaction,
+					'ticket.helpers.index.errors.no_panels_found',
+				);
 				return interaction.reply({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -42,7 +39,6 @@ class TktTypeStep1ShowButton extends BaseButton {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			const panelOptions = await Promise.all(
 				panels.map(async (panel) => {
 					let channelName = panel.channelId;
@@ -60,7 +56,6 @@ class TktTypeStep1ShowButton extends BaseButton {
 					};
 				}),
 			);
-
 			const modal = new ModalBuilder()
 				.setCustomId(`tkt-type-step1-submit:${messageId}`)
 				.setTitle(
@@ -164,7 +159,6 @@ class TktTypeStep1ShowButton extends BaseButton {
 								.setRequired(false),
 						),
 				);
-
 			await interaction.showModal(modal);
 		} catch (error) {
 			logger.error(
@@ -174,7 +168,10 @@ class TktTypeStep1ShowButton extends BaseButton {
 				},
 			);
 			if (!interaction.replied && !interaction.deferred) {
-				const desc = await t(interaction, 'ticket.errors.modal_show_failed');
+				const desc = await t(
+					interaction,
+					'ticket.helpers.index.errors.modal_show_failed',
+				);
 				await interaction.reply({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -185,5 +182,4 @@ class TktTypeStep1ShowButton extends BaseButton {
 		}
 	}
 }
-
 exports.default = TktTypeStep1ShowButton;

@@ -8,9 +8,7 @@
 
 const { MessageFlags } = require('discord.js');
 const { relayStaffReply } = require('../../helpers');
-
 const { BaseCommand } = require('kythia-core');
-
 class UseCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
@@ -25,21 +23,21 @@ class UseCommand extends BaseCommand {
 					.setRequired(true)
 					.setMaxLength(32),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, t, helpers, logger } = container;
 		const { ModmailConfig } = models;
 		const { simpleContainer } = helpers.discord;
-
 		const name = interaction.options.getString('name').toLowerCase().trim();
-
 		try {
 			const config = await ModmailConfig.getCache({
 				guildId: interaction.guild.id,
 			});
 			if (!config) {
-				const desc = await t(interaction, 'modmail.errors.not_configured');
+				const desc = await t(
+					interaction,
+					'modmail.helpers.index.errors.not_configured',
+				);
 				return interaction.reply({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -47,16 +45,18 @@ class UseCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			const snippets =
 				typeof config.snippets === 'object' && config.snippets !== null
 					? config.snippets
 					: {};
-
 			if (!snippets[name]) {
-				const desc = await t(interaction, 'modmail.snippet.not_found', {
-					name,
-				});
+				const desc = await t(
+					interaction,
+					'modmail.helpers.index.snippet.not_found',
+					{
+						name,
+					},
+				);
 				return interaction.reply({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -71,13 +71,14 @@ class UseCommand extends BaseCommand {
 			logger.error(`snippet use failed: ${error.message || error}`, {
 				label: 'modmail',
 			});
-			const desc = await t(interaction, 'modmail.errors.generic');
+			const desc = await t(interaction, 'modmail.helpers.index.errors.generic');
 			return interaction.reply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 	}
 }
-
 exports.default = UseCommand;

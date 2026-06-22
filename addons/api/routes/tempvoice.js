@@ -75,7 +75,7 @@ app.post('/setup', async (c) => {
 			{
 				guildId,
 			},
-			'tempvoice.setup.auto_reason',
+			'tempvoice.commands.setup.auto_reason',
 		);
 		if (!category) {
 			category = await guild.channels.create({
@@ -83,7 +83,7 @@ app.post('/setup', async (c) => {
 					{
 						guildId,
 					},
-					'tempvoice.setup.auto_category_name',
+					'tempvoice.commands.setup.auto_category_name',
 				),
 				type: ChannelType.GuildCategory,
 				reason: autoReason,
@@ -95,7 +95,7 @@ app.post('/setup', async (c) => {
 					{
 						guildId,
 					},
-					'tempvoice.setup.auto_trigger_name',
+					'tempvoice.commands.setup.auto_trigger_name',
 				),
 				type: ChannelType.GuildVoice,
 				parent: category.id,
@@ -115,7 +115,7 @@ app.post('/setup', async (c) => {
 					{
 						guildId,
 					},
-					'tempvoice.setup.auto_control_name',
+					'tempvoice.commands.setup.auto_control_name',
 				),
 				type: ChannelType.GuildText,
 				parent: category.id,

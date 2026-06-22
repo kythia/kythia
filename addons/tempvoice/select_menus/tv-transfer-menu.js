@@ -21,7 +21,7 @@ class TvTransferMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.no_channel_id'),
+					await t(interaction, 'tempvoice.shared.common.no_channel_id'),
 					{
 						color: 'Red',
 					},
@@ -35,7 +35,7 @@ class TvTransferMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.not_owner'),
+					await t(interaction, 'tempvoice.shared.common.not_owner'),
 					{
 						color: 'Red',
 					},
@@ -57,7 +57,7 @@ class TvTransferMenuSelectMenu extends BaseSelectMenu {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -69,7 +69,7 @@ class TvTransferMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -81,7 +81,10 @@ class TvTransferMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.transfer.transfer_to_self'),
+					await t(
+						interaction,
+						'tempvoice.select_menus.tv-transfer-menu.transfer.transfer_to_self',
+					),
 					{
 						color: 'Yellow',
 					},
@@ -96,7 +99,10 @@ class TvTransferMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.transfer.user_not_found'),
+					await t(
+						interaction,
+						'tempvoice.select_menus.tv-transfer-menu.transfer.user_not_found',
+					),
 					{
 						color: 'Red',
 					},
@@ -117,9 +123,13 @@ class TvTransferMenuSelectMenu extends BaseSelectMenu {
 			await interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.transfer.success', {
-						user: newOwnerMember.displayName,
-					}),
+					await t(
+						interaction,
+						'tempvoice.select_menus.tv-transfer-menu.transfer.success',
+						{
+							user: newOwnerMember.displayName,
+						},
+					),
 					{
 						color: 'Green',
 					},
@@ -128,7 +138,7 @@ class TvTransferMenuSelectMenu extends BaseSelectMenu {
 			try {
 				const newOwnerMsgContent = await t(
 					interaction,
-					'tempvoice.transfer.newowner',
+					'tempvoice.select_menus.tv-transfer-menu.transfer.newowner',
 					{
 						user: `<@${newOwnerId}>`,
 					},
@@ -151,7 +161,7 @@ class TvTransferMenuSelectMenu extends BaseSelectMenu {
 			await interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.fail'),
+					await t(interaction, 'tempvoice.shared.common.fail'),
 					{
 						color: 'Red',
 					},

@@ -77,13 +77,13 @@ class MemeCommand extends BaseCommand {
 			meme = response.data;
 		} catch {
 			return interaction.editReply({
-				content: await t(interaction, 'fun.meme.error.fetch'),
+				content: await t(interaction, 'fun.commands.meme.error.fetch'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
 		if (!meme?.url || meme.nsfw) {
 			return interaction.editReply({
-				content: await t(interaction, 'fun.meme.error.nsfw'),
+				content: await t(interaction, 'fun.commands.meme.error.nsfw'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -95,7 +95,7 @@ class MemeCommand extends BaseCommand {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'fun.meme.title', {
+					await t(interaction, 'fun.commands.meme.title', {
 						title: meme.title,
 						subreddit: meme.subreddit,
 						upvotes: meme.ups.toLocaleString(),
@@ -121,7 +121,7 @@ class MemeCommand extends BaseCommand {
 			.addActionRowComponents(
 				new ActionRowBuilder().addComponents(
 					new ButtonBuilder()
-						.setLabel(await t(interaction, 'fun.meme.button.view'))
+						.setLabel(await t(interaction, 'fun.commands.meme.button.view'))
 						.setStyle(ButtonStyle.Link)
 						.setURL(meme.postLink)
 						.setEmoji('🔗'),

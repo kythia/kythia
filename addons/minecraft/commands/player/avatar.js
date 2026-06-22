@@ -15,14 +15,10 @@ const {
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 const { SKIN_API_BASE, USERNAME_REGEX } = require('../../helpers/constants');
-
 class AvatarCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('avatar')
@@ -37,34 +33,29 @@ class AvatarCommand extends BaseCommand {
 					.setMinLength(3)
 					.setMaxLength(16),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
-
 		const playerName = interaction.options.getString('player');
-
 		if (!USERNAME_REGEX.test(playerName)) {
 			return interaction.reply({
 				content: await t(
 					interaction,
-					'minecraft.player.errors.invalid_username',
+					'minecraft.shared.player.errors.invalid_username',
 				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		const imageUrl = `${SKIN_API_BASE}/default/${encodeURIComponent(playerName)}/face`;
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const container_ = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'minecraft.player.avatar.title', {
+					await t(interaction, 'minecraft.commands.player.avatar.title', {
 						player: playerName,
 					}),
 				),
@@ -91,12 +82,10 @@ class AvatarCommand extends BaseCommand {
 					}),
 				),
 			);
-
 		return interaction.reply({
 			components: [container_],
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = AvatarCommand;

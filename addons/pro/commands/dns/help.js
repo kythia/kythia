@@ -30,10 +30,13 @@ class HelpCommand extends BaseCommand {
 			to: 'decimal',
 		});
 		const mainContainer = new ContainerBuilder().setAccentColor(accentColor);
-		const title = await t(interaction, 'pro.dns.help.title');
-		const description = await t(interaction, 'pro.dns.help.description');
-		const labels = await t(interaction, 'pro.dns.help.labels');
-		const recordTypes = await t(interaction, 'pro.dns.help.types');
+		const title = await t(interaction, 'pro.commands.dns.help.title');
+		const description = await t(
+			interaction,
+			'pro.commands.dns.help.description',
+		);
+		const labels = await t(interaction, 'pro.commands.dns.help.labels');
+		const recordTypes = await t(interaction, 'pro.commands.dns.help.types');
 		mainContainer.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(`${title}\n${description}`),
 		);

@@ -21,7 +21,10 @@ class TvClaimButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.claim.not_in_channel'),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-claim.claim.not_in_channel',
+					),
 					{
 						color: 'Red',
 					},
@@ -37,7 +40,10 @@ class TvClaimButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.claim.not_temp_channel'),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-claim.claim.not_temp_channel',
+					),
 					{
 						color: 'Red',
 					},
@@ -49,7 +55,10 @@ class TvClaimButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.claim.already_owner'),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-claim.claim.already_owner',
+					),
 					{
 						color: 'Yellow',
 					},
@@ -65,9 +74,13 @@ class TvClaimButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.claim.owner_exists', {
-						user: oldOwner.displayName,
-					}),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-claim.claim.owner_exists',
+						{
+							user: oldOwner.displayName,
+						},
+					),
 					{
 						color: 'Red',
 					},
@@ -93,7 +106,7 @@ class TvClaimButton extends BaseButton {
 				return interaction.reply({
 					components: await simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.common.channel_not_found'),
+						await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 						{
 							color: 'Red',
 						},
@@ -113,7 +126,7 @@ class TvClaimButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.claim.success'),
+					await t(interaction, 'tempvoice.buttons.tv-claim.claim.success'),
 					{
 						color: 'Green',
 					},
@@ -124,7 +137,7 @@ class TvClaimButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.fail'),
+					await t(interaction, 'tempvoice.shared.common.fail'),
 					{
 						color: 'Red',
 					},

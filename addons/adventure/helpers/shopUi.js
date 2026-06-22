@@ -16,17 +16,14 @@ const {
 	SeparatorSpacingSize,
 	StringSelectMenuBuilder,
 } = require('discord.js');
-
 const itemsDataFile = require('./items');
 const shopData = itemsDataFile.items;
 const allItems = Object.values(shopData).flat();
-
 function safeLocaleString(value, fallback = '0') {
 	return typeof value === 'number' && Number.isFinite(value)
 		? value.toLocaleString()
 		: fallback;
 }
-
 async function generateShopContainer(
 	interaction,
 	user,
@@ -38,23 +35,24 @@ async function generateShopContainer(
 	const container = interaction.client.container;
 	const { t, kythiaConfig, helpers } = container;
 	const { convertColor } = helpers.color;
-
 	let goldDisplay = '0';
 	if (user && typeof user.gold !== 'undefined' && user.gold !== null) {
 		goldDisplay = safeLocaleString(user.gold, '0');
 	}
-
-	const headerText = await t(interaction, 'adventure.shop.desc', {
-		bot: interaction.client.user.username,
-		category: await t(interaction, `adventure.shop.category.${category}`),
-		gold: goldDisplay,
-	});
-
+	const headerText = await t(
+		interaction,
+		'adventure.helpers.shopUi.shop.desc',
+		{
+			bot: interaction.client.user.username,
+			category: await t(interaction, `adventure.shop.category.${category}`),
+			gold: goldDisplay,
+		},
+	);
 	const itemBlocks = [];
 	if (pageItems.length === 0) {
 		itemBlocks.push(
 			new TextDisplayBuilder().setContent(
-				`**${await t(interaction, 'adventure.shop.empty.title')}**\n${await t(interaction, 'adventure.shop.empty.desc')}`,
+				`**${await t(interaction, 'adventure.helpers.shopUi.shop.empty.title')}**\n${await t(interaction, 'adventure.helpers.shopUi.shop.empty.desc')}`,
 			),
 		);
 	} else {
@@ -69,7 +67,6 @@ async function generateShopContainer(
 			);
 		}
 	}
-
 	const totalPages = Math.max(
 		1,
 		Math.ceil(
@@ -80,15 +77,20 @@ async function generateShopContainer(
 		),
 	);
 	page = Math.max(1, Math.min(page, totalPages));
-
-	const footerText = await t(interaction, 'adventure.shop.footer', {
-		page,
-		totalPages,
-	});
-
+	const footerText = await t(
+		interaction,
+		'adventure.helpers.shopUi.shop.footer',
+		{
+			page,
+			totalPages,
+		},
+	);
 	const shopContainer = new ContainerBuilder()
 		.setAccentColor(
-			convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+			convertColor(kythiaConfig.bot.color, {
+				from: 'hex',
+				to: 'decimal',
+			}),
 		)
 		.addTextDisplayComponents(new TextDisplayBuilder().setContent(headerText))
 		.addSeparatorComponents(
@@ -105,7 +107,6 @@ async function generateShopContainer(
 		.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(footerText || ''),
 		);
-
 	if (componentsBelow?.length) {
 		shopContainer
 			.addSeparatorComponents(
@@ -115,7 +116,6 @@ async function generateShopContainer(
 			)
 			.addActionRowComponents(...componentsBelow);
 	}
-
 	return {
 		shopContainer,
 		pageItems,
@@ -123,7 +123,6 @@ async function generateShopContainer(
 		totalPages,
 	};
 }
-
 async function generateShopComponentRows(
 	interaction,
 	page,
@@ -132,7 +131,6 @@ async function generateShopComponentRows(
 	pageItems,
 ) {
 	const t = interaction.client.container.t;
-
 	const categoryOptions = await Promise.all(
 		Object.keys(shopData).map(async (cat) => ({
 			label: await t(interaction, `adventure.shop.category.${cat}`),
@@ -140,41 +138,45 @@ async function generateShopComponentRows(
 			default: category === cat,
 		})),
 	);
-
 	const rows = [];
-
 	const categoryRow = new ActionRowBuilder().addComponents(
 		new StringSelectMenuBuilder()
 			.setCustomId('adventure_shop_category')
-			.setPlaceholder(await t(interaction, 'adventure.shop.select.category'))
+			.setPlaceholder(
+				await t(interaction, 'adventure.helpers.shopUi.shop.select.category'),
+			)
 			.addOptions(categoryOptions),
 	);
 	rows.push(categoryRow);
-
 	if (pageItems.length > 0) {
 		const itemOptions = await Promise.all(
 			pageItems.map(async (item) => ({
 				label: await t(interaction, item.nameKey),
-				description: await t(interaction, 'adventure.shop.select.option.desc', {
-					price: item.price,
-				}),
+				description: await t(
+					interaction,
+					'adventure.helpers.shopUi.shop.select.option.desc',
+					{
+						price: item.price,
+					},
+				),
 				value: item.id,
 				emoji: item.emoji,
 			})),
 		);
-
 		rows.push(
 			new ActionRowBuilder().addComponents(
 				new StringSelectMenuBuilder()
 					.setCustomId('adventure_shop_select_item')
 					.setPlaceholder(
-						await t(interaction, 'adventure.shop.select.item.placeholder'),
+						await t(
+							interaction,
+							'adventure.helpers.shopUi.shop.select.item.placeholder',
+						),
 					)
 					.addOptions(itemOptions),
 			),
 		);
 	}
-
 	const navButtons = [];
 	if (page > 1) {
 		navButtons.push(
@@ -184,7 +186,6 @@ async function generateShopComponentRows(
 				.setStyle(ButtonStyle.Secondary),
 		);
 	}
-
 	if (page < totalPages) {
 		navButtons.push(
 			new ButtonBuilder()
@@ -193,30 +194,24 @@ async function generateShopComponentRows(
 				.setStyle(ButtonStyle.Primary),
 		);
 	}
-
 	if (navButtons.length > 0) {
 		rows.push(new ActionRowBuilder().addComponents(navButtons));
 	}
-
 	return rows;
 }
-
 function getItemsInCategory(category, page = 1, itemsPerPage = 5) {
 	const items =
 		category === 'all'
 			? allItems.filter((item) => item.buyable)
 			: (shopData[category] || []).filter((item) => item.buyable);
-
 	const startIdx = (page - 1) * itemsPerPage;
 	const endIdx = startIdx + itemsPerPage;
-
 	return {
 		items: items.slice(startIdx, endIdx),
 		totalItems: items.length,
 		totalPages: Math.ceil(items.length / itemsPerPage),
 	};
 }
-
 module.exports = {
 	safeLocaleString,
 	generateShopContainer,

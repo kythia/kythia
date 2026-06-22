@@ -50,13 +50,13 @@ class ReminderProcessorTask extends BaseTask {
 						{
 							locale: 'en-US',
 						},
-						'reminder.tasks.processor.title',
+						'reminder.tasks.reminder-processor.processor.title',
 					);
 					const msgContent = await t(
 						{
 							locale: 'en-US',
 						},
-						'reminder.tasks.processor.desc',
+						'reminder.tasks.reminder-processor.processor.desc',
 						{
 							reason: reminder.reason,
 							user: `<@${reminder.userId}>`,

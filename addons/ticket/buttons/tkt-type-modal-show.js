@@ -15,18 +15,13 @@ const {
 	ChannelType,
 	ChannelSelectMenuBuilder,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TktTypeModalShowButton extends BaseButton {
 	button = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		try {
 			const modal = new ModalBuilder()
 				.setCustomId('tkt-type-create')
@@ -133,7 +128,6 @@ class TktTypeModalShowButton extends BaseButton {
 								.setRequired(false),
 						),
 				);
-
 			await interaction.showModal(modal);
 		} catch (error) {
 			logger.error(
@@ -145,7 +139,7 @@ class TktTypeModalShowButton extends BaseButton {
 			if (!interaction.replied && !interaction.deferred) {
 				const desc = await t(
 					interaction,
-					'ticket.errors.modal_show_failed_type',
+					'ticket.buttons.tkt-type-modal-show.errors.modal_show_failed_type',
 				);
 				await interaction.reply({
 					components: await simpleContainer(interaction, desc, {
@@ -157,5 +151,4 @@ class TktTypeModalShowButton extends BaseButton {
 		}
 	}
 }
-
 exports.default = TktTypeModalShowButton;

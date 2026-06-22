@@ -43,10 +43,13 @@ class RoleCommand extends BaseCommand {
 				await member.roles.remove(role);
 				const reply = await createContainer(interaction, {
 					color: kythiaConfig.bot.color,
-					title: await t(interaction, 'automod.moderation.role.removed.title'),
+					title: await t(
+						interaction,
+						'automod.commands.moderation.role.removed.title',
+					),
 					description: await t(
 						interaction,
-						'automod.moderation.role.removed.desc',
+						'automod.commands.moderation.role.removed.desc',
 						{
 							user: user.tag,
 							role: role.name,
@@ -62,10 +65,13 @@ class RoleCommand extends BaseCommand {
 				await member.roles.add(role);
 				const reply = await createContainer(interaction, {
 					color: kythiaConfig.bot.color,
-					title: await t(interaction, 'automod.moderation.role.added.title'),
+					title: await t(
+						interaction,
+						'automod.commands.moderation.role.added.title',
+					),
 					description: await t(
 						interaction,
-						'automod.moderation.role.added.desc',
+						'automod.commands.moderation.role.added.desc',
 						{
 							user: user.tag,
 							role: role.name,
@@ -81,7 +87,7 @@ class RoleCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'automod.moderation.role.failed', {
+				await t(interaction, 'automod.commands.moderation.role.failed', {
 					error: error.message,
 				}),
 				{

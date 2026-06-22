@@ -24,13 +24,16 @@ class ViewCommand extends BaseCommand {
 		const [setting] = await BirthdaySetting.firstOrCreateCache({
 			guildId: interaction.guild.id,
 		});
-		const notSet = await t(interaction, 'birthday.setting.view.not_set');
+		const notSet = await t(
+			interaction,
+			'birthday.commands.setting.view.not_set',
+		);
 		const systemDefault = await t(
 			interaction,
-			'birthday.setting.view.system_default',
+			'birthday.commands.setting.view.system_default',
 		);
-		const yes = await t(interaction, 'birthday.setting.view.yes');
-		const no = await t(interaction, 'birthday.setting.view.no');
+		const yes = await t(interaction, 'birthday.shared.setting.view.yes');
+		const no = await t(interaction, 'birthday.shared.setting.view.no');
 		const channelVal = setting.channelId
 			? `<#${setting.channelId}>`
 			: systemDefault;
@@ -43,30 +46,30 @@ class ViewCommand extends BaseCommand {
 		const colorVal = setting.embedColor || '🎨 Gold (Default)';
 		const imageVal = setting.bgUrl ? `[Link](${setting.bgUrl})` : notSet;
 		const desc = [
-			await t(interaction, 'birthday.setting.view.channel', {
+			await t(interaction, 'birthday.commands.setting.view.channel', {
 				channel: channelVal,
 			}),
-			await t(interaction, 'birthday.setting.view.role', {
+			await t(interaction, 'birthday.commands.setting.view.role', {
 				role: roleVal,
 			}),
-			await t(interaction, 'birthday.setting.view.ping_role', {
+			await t(interaction, 'birthday.commands.setting.view.ping_role', {
 				role: pingRoleVal,
 			}),
-			await t(interaction, 'birthday.setting.view.show_age', {
+			await t(interaction, 'birthday.commands.setting.view.show_age', {
 				status: showAgeVal,
 			}),
-			await t(interaction, 'birthday.setting.view.color', {
+			await t(interaction, 'birthday.commands.setting.view.color', {
 				color: colorVal,
 			}),
-			await t(interaction, 'birthday.setting.view.image', {
+			await t(interaction, 'birthday.commands.setting.view.image', {
 				url: imageVal,
 			}),
-			await t(interaction, 'birthday.setting.view.message', {
+			await t(interaction, 'birthday.commands.setting.view.message', {
 				message: messageVal,
 			}),
 		].join('\n');
 		const components = await simpleContainer(interaction, desc, {
-			title: await t(interaction, 'birthday.setting.view.title'),
+			title: await t(interaction, 'birthday.commands.setting.view.title'),
 		});
 		return interaction.editReply({
 			components,

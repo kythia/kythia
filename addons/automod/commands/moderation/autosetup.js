@@ -47,9 +47,13 @@ class AutosetupCommand extends BaseCommand {
 					],
 				});
 				createdItems.push(
-					await t(interaction, 'automod.moderation.autosetup.created.channel', {
-						channel: modLogChannel.toString(),
-					}),
+					await t(
+						interaction,
+						'automod.commands.moderation.autosetup.created.channel',
+						{
+							channel: modLogChannel.toString(),
+						},
+					),
 				);
 			}
 			if (!muteRole) {
@@ -59,9 +63,13 @@ class AutosetupCommand extends BaseCommand {
 					permissions: [],
 				});
 				createdItems.push(
-					await t(interaction, 'automod.moderation.autosetup.created.role', {
-						role: muteRole.name,
-					}),
+					await t(
+						interaction,
+						'automod.commands.moderation.autosetup.created.role',
+						{
+							role: muteRole.name,
+						},
+					),
 				);
 
 				// Apply mute role to all channels
@@ -89,12 +97,15 @@ class AutosetupCommand extends BaseCommand {
 			const description =
 				createdItems.length > 0
 					? createdItems.join('\n')
-					: await t(interaction, 'automod.moderation.autosetup.nothing.new');
+					: await t(
+							interaction,
+							'automod.commands.moderation.autosetup.nothing.new',
+						);
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
 				title: await t(
 					interaction,
-					'automod.moderation.autosetup.success.title',
+					'automod.commands.moderation.autosetup.success.title',
 				),
 				description,
 				thumbnail: guild.iconURL(),
@@ -106,7 +117,7 @@ class AutosetupCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'automod.moderation.autosetup.failed', {
+				await t(interaction, 'automod.commands.moderation.autosetup.failed', {
 					error: error.message,
 				}),
 				{

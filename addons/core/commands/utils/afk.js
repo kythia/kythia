@@ -25,12 +25,12 @@ class AfkCommand extends BaseCommand {
 		const { simpleContainer } = helpers.discord;
 		const reason =
 			interaction.options.getString('reason') ||
-			(await t(interaction, 'core.utils.afk.no.reason'));
+			(await t(interaction, 'core.commands.utils.afk.no.reason'));
 		const afkData = await UserAFK.getCache({
 			userId: interaction.user.id,
 		});
 		if (afkData) {
-			const msg = await t(interaction, 'core.utils.afk.already.afk');
+			const msg = await t(interaction, 'core.commands.utils.afk.already.afk');
 			const components = await simpleContainer(interaction, msg);
 			return interaction.reply({
 				components,
@@ -47,9 +47,13 @@ class AfkCommand extends BaseCommand {
 				individualHooks: true,
 			},
 		);
-		const replyMessage = await t(interaction, 'core.utils.afk.set.success', {
-			reason: reason,
-		});
+		const replyMessage = await t(
+			interaction,
+			'core.commands.utils.afk.set.success',
+			{
+				reason: reason,
+			},
+		);
 		const components = await simpleContainer(interaction, replyMessage);
 		await interaction.reply({
 			components,

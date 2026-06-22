@@ -50,10 +50,14 @@ class FleaProcessorTask extends BaseTask {
 									listing.sellerId,
 								);
 							await sellerDiscord.send(
-								await t(null, 'economy.tasks.flea.auction_ended', {
-									itemName: listing.itemName,
-									profit: profit.toLocaleString(),
-								}),
+								await t(
+									null,
+									'economy.tasks.flea-processor.flea.auction_ended',
+									{
+										itemName: listing.itemName,
+										profit: profit.toLocaleString(),
+									},
+								),
 							);
 						} catch (_e) {}
 					}
@@ -68,7 +72,7 @@ class FleaProcessorTask extends BaseTask {
 								listing.highestBidderId,
 							);
 						await winnerDiscord.send(
-							await t(null, 'economy.tasks.flea.auction_won', {
+							await t(null, 'economy.tasks.flea-processor.flea.auction_won', {
 								itemName: listing.itemName,
 								bid: listing.currentBid.toLocaleString(),
 							}),
@@ -86,9 +90,13 @@ class FleaProcessorTask extends BaseTask {
 								listing.sellerId,
 							);
 						await sellerDiscord.send(
-							await t(null, 'economy.tasks.flea.listing_expired', {
-								itemName: listing.itemName,
-							}),
+							await t(
+								null,
+								'economy.tasks.flea-processor.flea.listing_expired',
+								{
+									itemName: listing.itemName,
+								},
+							),
 						);
 					} catch (_e) {}
 				}

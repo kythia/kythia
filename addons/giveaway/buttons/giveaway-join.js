@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class GiveawayJoinButton extends BaseButton {
 	button = {};
-
 	async execute(interaction) {
 		const container = this.container;
 
@@ -20,21 +17,27 @@ class GiveawayJoinButton extends BaseButton {
 		const { models, helpers, t, giveawayManager, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const { Giveaway } = models;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		try {
 			const messageId = interaction.message.id;
 			// Cari data giveaway
-			const giveaway = await Giveaway.getCache({ where: { messageId } });
+			const giveaway = await Giveaway.getCache({
+				where: {
+					messageId,
+				},
+			});
 
 			// 1. Validasi: Udah kelar / Gak ketemu
 			if (!giveaway || giveaway.ended) {
 				const msg = await t(
 					interaction,
-					'giveaway.buttons.giveawayjoin.error.ended',
+					'giveaway.buttons.giveaway-join.giveawayjoin.error.ended',
 				);
-				const err = await simpleContainer(interaction, msg, { color: 'Red' });
+				const err = await simpleContainer(interaction, msg, {
+					color: 'Red',
+				});
 				return interaction.editReply({
 					components: err,
 					flags: MessageFlags.IsComponentsV2,
@@ -48,10 +51,14 @@ class GiveawayJoinButton extends BaseButton {
 			) {
 				const msg = await t(
 					interaction,
-					'giveaway.buttons.giveawayjoin.error.role.required',
-					{ role: giveaway.roleId },
+					'giveaway.buttons.giveaway-join.giveawayjoin.error.role.required',
+					{
+						role: giveaway.roleId,
+					},
 				);
-				const err = await simpleContainer(interaction, msg, { color: 'Red' });
+				const err = await simpleContainer(interaction, msg, {
+					color: 'Red',
+				});
 				return interaction.editReply({
 					components: err,
 					flags: MessageFlags.IsComponentsV2,
@@ -68,17 +75,15 @@ class GiveawayJoinButton extends BaseButton {
 			} catch (_e) {
 				participants = [];
 			}
-
 			const userId = interaction.user.id;
 			let message = '';
 			let color = 'Green';
-
 			if (participants.includes(userId)) {
 				// LEAVE
 				participants = participants.filter((id) => id !== userId);
 				message = await t(
 					interaction,
-					'giveaway.buttons.giveawayjoin.response.unjoin',
+					'giveaway.buttons.giveaway-join.giveawayjoin.response.unjoin',
 				);
 				color = 'Red'; // Merah = Leave
 			} else {
@@ -86,7 +91,7 @@ class GiveawayJoinButton extends BaseButton {
 				participants.push(userId);
 				message = await t(
 					interaction,
-					'giveaway.buttons.giveawayjoin.response.join',
+					'giveaway.buttons.giveaway-join.giveawayjoin.response.join',
 				);
 				color = 'Green'; // Hijau = Join
 			}
@@ -113,8 +118,9 @@ class GiveawayJoinButton extends BaseButton {
 						roleId: giveaway.roleId,
 					},
 				);
-
-				await interaction.message.edit({ components: uiComponents });
+				await interaction.message.edit({
+					components: uiComponents,
+				});
 			} catch (e) {
 				logger.warn(`Failed to update UI for ${messageId}: ${e.message}`, {
 					label: 'giveaway',
@@ -133,7 +139,10 @@ class GiveawayJoinButton extends BaseButton {
 			logger.error(`Fatal Error: ${error.message || error}`, {
 				label: 'giveawayjoin',
 			});
-			const msg = await t(interaction, 'giveaway.error.fatal.join');
+			const msg = await t(
+				interaction,
+				'giveaway.buttons.giveaway-join.error.fatal.join',
+			);
 			const err = await simpleContainer(interaction, msg, {
 				color: 'Red',
 				title: 'System Error',
@@ -145,5 +154,4 @@ class GiveawayJoinButton extends BaseButton {
 		}
 	}
 }
-
 exports.default = GiveawayJoinButton;

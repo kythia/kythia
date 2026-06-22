@@ -26,7 +26,7 @@ class RemoveCommand extends BaseCommand {
 		if (!sticky) {
 			const msg = await t(
 				interaction,
-				'core.tools.sticky.remove.error.not.found',
+				'core.commands.tools.sticky.remove.error.not.found',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -48,7 +48,10 @@ class RemoveCommand extends BaseCommand {
 		await sticky.destroy({
 			individualHooks: true,
 		});
-		const msg = await t(interaction, 'core.tools.sticky.remove.success');
+		const msg = await t(
+			interaction,
+			'core.commands.tools.sticky.remove.success',
+		);
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Red',
 		});

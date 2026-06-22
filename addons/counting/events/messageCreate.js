@@ -184,7 +184,10 @@ class MessageCreateEvent extends BaseEvent {
 					// Handled by the firstInput check above
 					return;
 				} else if (failReason === 'double_count') {
-					const warning = await t(message, 'counting.game.double_count');
+					const warning = await t(
+						message,
+						'counting.events.messageCreate.game.double_count',
+					);
 					const components = await simpleContainer(message, warning, {
 						color: 'Red',
 					});
@@ -202,17 +205,25 @@ class MessageCreateEvent extends BaseEvent {
 					let desc;
 					const formattedPrev = formatNumberByMode(expectedFromDB - 1n, mode);
 					if (isStrict) {
-						desc = await t(message, 'counting.game.wrong_number_reset', {
-							number: formattedPrev,
-							user: message.author.toString(),
-						});
+						desc = await t(
+							message,
+							'counting.helpers.index.game.wrong_number_reset',
+							{
+								number: formattedPrev,
+								user: message.author.toString(),
+							},
+						);
 						setting.currentCount = 0;
 						setting.lastUserId = null;
 					} else {
-						desc = await t(message, 'counting.game.wrong_number', {
-							number: formattedPrev,
-							user: message.author.toString(),
-						});
+						desc = await t(
+							message,
+							'counting.helpers.index.game.wrong_number',
+							{
+								number: formattedPrev,
+								user: message.author.toString(),
+							},
+						);
 					}
 					const components = await simpleContainer(message, desc, {
 						color: 'Red',
@@ -241,10 +252,14 @@ class MessageCreateEvent extends BaseEvent {
 					}
 				}
 				if (hitMilestone) {
-					const milestoneDesc = await t(message, 'counting.game.milestone', {
-						number: formatNumberByMode(highestMilestone, mode),
-						user: message.author.toString(),
-					});
+					const milestoneDesc = await t(
+						message,
+						'counting.events.messageCreate.game.milestone',
+						{
+							number: formatNumberByMode(highestMilestone, mode),
+							user: message.author.toString(),
+						},
+					);
 					const components = await simpleContainer(message, milestoneDesc, {
 						color: 'Gold',
 					});
@@ -262,17 +277,25 @@ class MessageCreateEvent extends BaseEvent {
 					let desc;
 					const formattedPrev = formatNumberByMode(simulatedNext - 1n, mode);
 					if (isStrict) {
-						desc = await t(message, 'counting.game.wrong_number_reset', {
-							number: formattedPrev,
-							user: message.author.toString(),
-						});
+						desc = await t(
+							message,
+							'counting.helpers.index.game.wrong_number_reset',
+							{
+								number: formattedPrev,
+								user: message.author.toString(),
+							},
+						);
 						setting.currentCount = 0;
 						setting.lastUserId = null;
 					} else {
-						desc = await t(message, 'counting.game.wrong_number', {
-							number: formattedPrev,
-							user: message.author.toString(),
-						});
+						desc = await t(
+							message,
+							'counting.helpers.index.game.wrong_number',
+							{
+								number: formattedPrev,
+								user: message.author.toString(),
+							},
+						);
 						setting.currentCount = Number(simulatedNext - 1n);
 						setting.lastUserId = message.author.id;
 					}

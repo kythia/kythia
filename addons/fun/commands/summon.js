@@ -37,7 +37,7 @@ class SummonCommand extends BaseCommand {
 		const author = interaction.user;
 		if (targetUser.bot || targetUser.id === author.id) {
 			return interaction.reply({
-				content: await t(interaction, 'fun.summon.not.friend'),
+				content: await t(interaction, 'fun.shared.summon.not.friend'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -59,7 +59,7 @@ class SummonCommand extends BaseCommand {
 		});
 		if (!existingFriendships || existingFriendships.length === 0) {
 			return interaction.reply({
-				content: await t(interaction, 'fun.summon.not.friend'),
+				content: await t(interaction, 'fun.shared.summon.not.friend'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -82,13 +82,13 @@ class SummonCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'fun.summon.dm.title'),
+						await t(interaction, 'fun.commands.summon.dm.title'),
 					),
 				)
 				.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'fun.summon.dm.description', {
+						await t(interaction, 'fun.commands.summon.dm.description', {
 							author: author.username,
 							server: interaction.guild.name,
 						}),
@@ -99,7 +99,7 @@ class SummonCommand extends BaseCommand {
 					new ActionRowBuilder().addComponents(
 						new ButtonBuilder()
 							.setStyle(ButtonStyle.Link)
-							.setLabel(await t(interaction, 'fun.summon.button.jump'))
+							.setLabel(await t(interaction, 'fun.commands.summon.button.jump'))
 							.setURL(jumpUrl),
 					),
 				)
@@ -116,13 +116,13 @@ class SummonCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 			await interaction.editReply({
-				content: await t(interaction, 'fun.summon.success', {
+				content: await t(interaction, 'fun.commands.summon.success', {
 					user: targetUser.toString(),
 				}),
 			});
 		} catch (_e) {
 			await interaction.editReply({
-				content: await t(interaction, 'fun.summon.dm.failed', {
+				content: await t(interaction, 'fun.commands.summon.dm.failed', {
 					user: targetUser.toString(),
 				}),
 			});

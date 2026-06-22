@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class DeleteCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('delete')
@@ -23,26 +20,32 @@ class DeleteCommand extends BaseCommand {
 					.setDescription('Name of the pet to delete')
 					.setRequired(true),
 			);
-
 	teamOnly = true;
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { Pet } = models;
-
 		await interaction.deferReply();
-
 		const name = interaction.options.getString('name');
-		const deleted = await Pet.destroy({ where: { name } });
+		const deleted = await Pet.destroy({
+			where: {
+				name,
+			},
+		});
 		if (deleted) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'pet.admin.delete.delete.success.msg_md', {
-					name,
-				}),
-				{ color: kythiaConfig.bot.color },
+				await t(
+					interaction,
+					'pet.commands.admin.delete.delete.success.msg_md',
+					{
+						name,
+					},
+				),
+				{
+					color: kythiaConfig.bot.color,
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -51,8 +54,13 @@ class DeleteCommand extends BaseCommand {
 		} else {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'pet.admin.delete.delete.notfound.msg_md'),
-				{ color: 'Red' },
+				await t(
+					interaction,
+					'pet.commands.admin.delete.delete.notfound.msg_md',
+				),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -61,5 +69,4 @@ class DeleteCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = DeleteCommand;

@@ -1,12 +1,18 @@
 {
 	"globalvoice": {
-		"connect": {
-			"not": {
-				"in": {
-					"vc": "You must be in a voice channel first!"
+		"commands": {
+			"connect": {
+				"not": {
+					"in": {
+						"vc": "You must be in a voice channel first!"
+					}
 				}
-			},
-			"success": "**Connected to Wormhole!**\nRoom: `{roomId}`\nStatus: Listening & Broadcasting"
+			}
+		},
+		"shared": {
+			"connect": {
+				"success": "**Connected to Wormhole!**\nRoom: `{roomId}`\nStatus: Listening & Broadcasting"
+			}
 		}
 	}
 }

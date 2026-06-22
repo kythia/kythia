@@ -45,7 +45,7 @@ class MinimumCommand extends BaseCommand {
 		await serverSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'streak.streak.setting.minimum.set', {
+			await t(interaction, 'streak.commands.setting.minimum.streak.set', {
 				minimum,
 			}),
 			{

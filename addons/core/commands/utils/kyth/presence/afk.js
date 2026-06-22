@@ -30,7 +30,7 @@ class AfkCommand extends BaseCommand {
 			await interaction.client.user.setAFK(afk);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.afk.success', {
+				await t(interaction, 'core.commands.utils.kyth.presence.afk.success', {
 					state: afk ? 'enabled' : 'disabled',
 				}),
 				{
@@ -47,7 +47,7 @@ class AfkCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.error', {
+				await t(interaction, 'core.helpers.index.utils.presence.error', {
 					error: error.message,
 				}),
 				{

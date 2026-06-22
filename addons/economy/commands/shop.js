@@ -45,7 +45,7 @@ class ShopCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'economy.withdraw.no.account.desc'),
+						await t(interaction, 'economy.shared.withdraw.no.account.desc'),
 					),
 				)
 				.addTextDisplayComponents(new TextDisplayBuilder().setContent(''));
@@ -97,7 +97,7 @@ class ShopCommand extends BaseCommand {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t(i, 'economy.shop.not.your.interaction.desc'),
+							await t(i, 'economy.commands.shop.not.your.interaction.desc'),
 						),
 					);
 				return i.reply({
@@ -139,7 +139,7 @@ class ShopCommand extends BaseCommand {
 						)
 						.addTextDisplayComponents(
 							new TextDisplayBuilder().setContent(
-								await t(i, 'economy.shop.item.not.found.desc'),
+								await t(i, 'economy.commands.shop.item.not.found.desc'),
 							),
 						);
 					return i.followUp({
@@ -165,7 +165,7 @@ class ShopCommand extends BaseCommand {
 						)
 						.addTextDisplayComponents(
 							new TextDisplayBuilder().setContent(
-								await t(i, 'economy.shop.not.enough.money.desc', {
+								await t(i, 'economy.shared.shop.not.enough.money.desc', {
 									item: itemNameWithEmoji,
 								}),
 							),
@@ -187,7 +187,7 @@ class ShopCommand extends BaseCommand {
 						)
 						.addTextDisplayComponents(
 							new TextDisplayBuilder().setContent(
-								await t(i, 'economy.shop.not.enough.money.desc', {
+								await t(i, 'economy.shared.shop.not.enough.money.desc', {
 									item: itemNameWithEmoji,
 								}),
 							),
@@ -214,7 +214,7 @@ class ShopCommand extends BaseCommand {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t(i, 'economy.shop.buy.success.desc', {
+							await t(i, 'economy.commands.shop.buy.success.desc', {
 								item: itemNameWithEmoji,
 								price: priceStr,
 							}),

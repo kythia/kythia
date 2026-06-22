@@ -38,7 +38,10 @@ class WorkCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -62,9 +65,13 @@ class WorkCommand extends BaseCommand {
 			interaction,
 		);
 		if (cooldown.remaining) {
-			const msg = await t(interaction, 'economy.work.work.cooldown.desc', {
-				time: cooldown.time,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.job.work.work.cooldown.desc',
+				{
+					time: cooldown.time,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -76,7 +83,7 @@ class WorkCommand extends BaseCommand {
 		if (!user.profession) {
 			const msg = await t(
 				interaction,
-				'economy.job.work.error.unemployed.desc',
+				'economy.commands.job.work.error.unemployed.desc',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
@@ -105,7 +112,7 @@ class WorkCommand extends BaseCommand {
 			await user.save();
 			const msg = await t(
 				interaction,
-				'economy.job.work.error.invalid_profession.desc',
+				'economy.commands.job.work.error.invalid_profession.desc',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -140,7 +147,7 @@ class WorkCommand extends BaseCommand {
 				: tierObj.requiredItem;
 			const msg = await t(
 				interaction,
-				'economy.job.work.error.missing_tool.desc',
+				'economy.commands.job.work.error.missing_tool.desc',
 				{
 					job: await t(interaction, job.nameKey),
 					req: reqStr,
@@ -175,7 +182,7 @@ class WorkCommand extends BaseCommand {
 			const eventContainer = await createContainer(interaction, {
 				description: await t(
 					interaction,
-					'economy.job.work.event.crossroads.desc.desc',
+					'economy.commands.job.work.event.crossroads.desc.desc',
 					{
 						job: await t(interaction, job.nameKey),
 					},
@@ -206,7 +213,7 @@ class WorkCommand extends BaseCommand {
 						await user.save();
 						outcomeMsg = await t(
 							interaction,
-							'economy.job.work.event.crossroads.busted',
+							'economy.commands.job.work.event.crossroads.busted',
 						);
 					} else {
 						// Success
@@ -216,7 +223,7 @@ class WorkCommand extends BaseCommand {
 						await user.save();
 						outcomeMsg = await t(
 							interaction,
-							'economy.job.work.event.crossroads.success',
+							'economy.commands.job.work.event.crossroads.success',
 						);
 					}
 				} else {
@@ -226,7 +233,7 @@ class WorkCommand extends BaseCommand {
 					await user.save();
 					outcomeMsg = await t(
 						interaction,
-						'economy.job.work.event.crossroads.declined',
+						'economy.commands.job.work.event.crossroads.declined',
 					);
 				}
 				const components = await simpleContainer(i, outcomeMsg, {
@@ -241,7 +248,10 @@ class WorkCommand extends BaseCommand {
 				if (collected.size === 0) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'economy.job.work.event.timeout.desc'),
+						await t(
+							interaction,
+							'economy.commands.job.work.event.timeout.desc',
+						),
 						{
 							color: 'Yellow',
 						},
@@ -325,9 +335,13 @@ class WorkCommand extends BaseCommand {
 				itemName: requiredItemFound,
 			});
 			if (toolToBreak) await toolToBreak.destroy();
-			extraText += await t(interaction, 'economy.job.work.result.tool_broke', {
-				tool: requiredItemFound,
-			});
+			extraText += await t(
+				interaction,
+				'economy.commands.job.work.result.tool_broke',
+				{
+					tool: requiredItemFound,
+				},
+			);
 		}
 		user.changed('kythiaCoin', true);
 		user.changed('jobExp', true);
@@ -346,7 +360,7 @@ class WorkCommand extends BaseCommand {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'economy.job.work.result.title', {
+					await t(interaction, 'economy.commands.job.work.result.title', {
 						emoji: job.emoji,
 						title: fullJobTitle,
 					}),
@@ -359,7 +373,7 @@ class WorkCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`${await t(interaction, 'economy.work.result.title.outcome')}\n*${scenarioDesc}*${extraText}`,
+					`${await t(interaction, 'economy.commands.job.work.result.title.outcome')}\n*${scenarioDesc}*${extraText}`,
 				),
 			)
 			.addSeparatorComponents(
@@ -369,11 +383,15 @@ class WorkCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`**${await t(interaction, 'economy.work.work.basepay.field')}:** 🪙 ${baseEarning.toLocaleString()}\n` +
-						`**${await t(interaction, 'economy.work.work.bonus.field', {
-							modifier: scenario.modifier,
-						})}:** 🪙 ${(finalEarning - baseEarning).toLocaleString()}\n` +
-						`**${await t(interaction, 'economy.work.work.total.field')}:** 💰 ${finalEarning.toLocaleString()}`,
+					`**${await t(interaction, 'economy.commands.job.work.work.basepay.field')}:** 🪙 ${baseEarning.toLocaleString()}\n` +
+						`**${await t(
+							interaction,
+							'economy.commands.job.work.work.bonus.field',
+							{
+								modifier: scenario.modifier,
+							},
+						)}:** 🪙 ${(finalEarning - baseEarning).toLocaleString()}\n` +
+						`**${await t(interaction, 'economy.commands.job.work.work.total.field')}:** 💰 ${finalEarning.toLocaleString()}`,
 				),
 			);
 		await interaction.editReply({

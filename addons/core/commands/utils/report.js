@@ -46,7 +46,7 @@ class ReportCommand extends BaseCommand {
 			interaction.user;
 		const reason =
 			interaction.options.getString('reason') ||
-			(await t(interaction, 'core.utils.report.reason'));
+			(await t(interaction, 'core.commands.utils.report.reason'));
 		const guildId = interaction.guild?.id;
 		const setting = await ServerSetting.findOrCreateCache({
 			where: {
@@ -59,7 +59,10 @@ class ReportCommand extends BaseCommand {
 		});
 		if (!setting.modLogChannelId && !interaction.guild) {
 			const components = await createContainer(interaction, {
-				description: await t(interaction, 'core.utils.report.no.channel'),
+				description: await t(
+					interaction,
+					'core.commands.utils.report.no.channel',
+				),
 				color: 'Red',
 			});
 			return interaction.editReply({
@@ -74,11 +77,15 @@ class ReportCommand extends BaseCommand {
 
 		// Send report to mod channel (still using embed for mod channel)
 		const reportComponents = await createContainer(interaction, {
-			description: await t(interaction, 'core.utils.report.embed.desc', {
-				reported: user.tag,
-				reporter: interaction.user?.tag,
-				reason,
-			}),
+			description: await t(
+				interaction,
+				'core.commands.utils.report.embed.desc',
+				{
+					reported: user.tag,
+					reporter: interaction.user?.tag,
+					reason,
+				},
+			),
 			color: 'Red',
 		});
 		await reportChannel?.send({
@@ -88,7 +95,7 @@ class ReportCommand extends BaseCommand {
 
 		// Confirm to user
 		const confirmComponents = await createContainer(interaction, {
-			description: await t(interaction, 'core.utils.report.success', {
+			description: await t(interaction, 'core.commands.utils.report.success', {
 				user: user.tag,
 			}),
 			color: 'Green',

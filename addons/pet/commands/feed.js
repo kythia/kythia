@@ -6,36 +6,36 @@
  * @version 26.0.0-rc.1
  */
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class FeedCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand.setName('feed').setDescription('Feed your pet!');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { Pet, UserPet, Inventory } = models;
-
 		await interaction.deferReply();
-
 		const userId = interaction.user.id;
 		const userPet = await UserPet.getCache({
 			where: {
 				userId: userId,
 			},
-			include: [{ model: Pet, as: 'pet' }],
+			include: [
+				{
+					model: Pet,
+					as: 'pet',
+				},
+			],
 		});
-
 		if (!userPet) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'pet.feed.no.pet.msg_md'),
-				{ color: 'Red' }, // 0xed4245 is Red
+				await t(interaction, 'pet.commands.feed.no.pet.msg_md'),
+				{
+					color: 'Red',
+				}, // 0xed4245 is Red
 			);
 			return interaction.editReply({
 				components,
@@ -45,15 +45,16 @@ class FeedCommand extends BaseCommand {
 		if (userPet.isDead) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'pet.feed.dead.msg_md'),
-				{ color: 'Red' }, // 0xed4245 is Red
+				await t(interaction, 'pet.commands.feed.dead.msg_md'),
+				{
+					color: 'Red',
+				}, // 0xed4245 is Red
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const petFood = await Inventory.getCache({
 			userId: userId,
 			itemName: '🍪 Pet Food',
@@ -61,8 +62,10 @@ class FeedCommand extends BaseCommand {
 		if (!petFood) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'pet.feed.no.food.msg_md'),
-				{ color: 'Red' }, // 0xed4245 is Red
+				await t(interaction, 'pet.commands.feed.no.food.msg_md'),
+				{
+					color: 'Red',
+				}, // 0xed4245 is Red
 			);
 			return interaction.editReply({
 				components,
@@ -78,31 +81,32 @@ class FeedCommand extends BaseCommand {
 		if (userPet.hunger >= 100) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'pet.feed.full.msg_md'),
-				{ color: '#57f287' }, // 0x57f287
+				await t(interaction, 'pet.commands.feed.full.msg_md'),
+				{
+					color: '#57f287',
+				}, // 0x57f287
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'pet.feed.success.msg_md', {
+			await t(interaction, 'pet.commands.feed.success.msg_md', {
 				icon: userPet.pet.icon,
 				name: userPet.pet.name,
 				rarity: userPet.pet.rarity,
 				hunger: userPet.hunger,
 			}),
-			{ color: kythiaConfig.bot.color },
+			{
+				color: kythiaConfig.bot.color,
+			},
 		);
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = FeedCommand;

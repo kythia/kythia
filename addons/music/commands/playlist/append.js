@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AppendCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('append')
@@ -24,7 +21,6 @@ class AppendCommand extends BaseCommand {
 					.setRequired(true)
 					.setAutocomplete(true),
 			);
-
 	async autocomplete(interaction) {
 		const container = this.container;
 		const run = async () => {
@@ -32,10 +28,11 @@ class AppendCommand extends BaseCommand {
 			const { Playlist } = models;
 			const focusedOption = interaction.options.getFocused(true);
 			const focusedValue = focusedOption.value;
-
 			try {
 				const userPlaylists = await Playlist.getAllCache({
-					where: { userId: interaction.user.id },
+					where: {
+						userId: interaction.user.id,
+					},
 					limit: 25,
 					cacheTags: [`Playlist:byUser:${interaction.user.id}`],
 				});
@@ -61,19 +58,19 @@ class AppendCommand extends BaseCommand {
 				return;
 		}
 	}
-
 	async execute(interaction) {
 		const { simpleContainer } = interaction.client.container.helpers.discord;
-
 		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers } = container;
-
 		if (!member?.voice?.channel) {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'music.music.voice.channel.not.found'),
+					await t(
+						interaction,
+						'music.helpers.index.music.voice.channel.not.found',
+					),
 					{
 						color: 'Red',
 					},
@@ -81,12 +78,10 @@ class AppendCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		return musicHandlers.handlePlaylist(
 			interaction,
 			client.poru.players.get(guild.id),
 		);
 	}
 }
-
 exports.default = AppendCommand;

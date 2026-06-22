@@ -14,89 +14,95 @@
 							"desc": "{mention} get role **{role}** for reaching level **{level}**.\nKeep up the good work!"
 						}
 					}
-				}
-			}
-		},
-		"xp-set": {
-			"leveling": {
-				"user": {
-					"not": {
-						"found": {
-							"title": "## User Not Found",
-							"desc": "The user was not found."
-						}
-					}
 				},
-				"xp": {
-					"set": {
-						"title": "## XP Set",
-						"desc": "Successfully set XP for **{username}**. Now their level is **{newLevel}** and XP is **{newXp}**."
-					}
-				}
-			}
-		},
-		"xp-add": {
-			"leveling": {
-				"xp": {
-					"add": {
-						"title": "## XP Added",
-						"desc": "Successfully added **{xp}** XP to **{username}**. Now their level is **{newLevel}** and XP is **{newXp}**."
-					}
-				}
-			}
-		},
-		"set": {
-			"leveling": {
-				"level": {
-					"set": {
-						"title": "## Level Set",
-						"desc": "Successfully set the level of **{username}**. Now their level is **{newLevel}**. XP has been reset to 0."
-					}
-				},
-				"user": {
-					"not": {
-						"found": {
-							"title": "## User Not Found",
-							"desc": "The user was not found."
+				"xp-set": {
+					"leveling": {
+						"user": {
+							"not": {
+								"found": {
+									"title": "## User Not Found",
+									"desc": "The user was not found."
+								}
+							}
 						}
 					}
 				}
 			}
 		},
-		"profile": {
-			"leveling": {
-				"profile": {
-					"created": {
-						"title": "## Profile Created",
-						"desc": "You did not have a level profile, one has been created for you."
+		"commands": {
+			"add": {
+				"leveling": {
+					"user": {
+						"not": {
+							"found": {
+								"title": "## User Not Found",
+								"desc": "The user was not found."
+							}
+						}
 					},
-					"title": "## Level Profile",
-					"desc": "**{username}**, you are at level **{level}** with a total of **{xp}** XP. **Current XP:** {xp}/{nextLevelXp}."
-				}
-			}
-		},
-		"leaderboard": {
-			"leveling": {
-				"leaderboard": {
-					"empty": "No data yet.",
-					"entry": "{rank}. <@{userId}> - Level **{level}** ({xp} XP)",
-					"title": "## Level Leaderboard"
-				}
-			}
-		},
-		"add": {
-			"leveling": {
-				"level": {
-					"add": {
-						"title": "## Level Added",
-						"desc": "Successfully added **{level}** level(s) to **{username}**. Now their level is **{newLevel}**. XP has been reset to 0."
+					"level": {
+						"add": {
+							"title": "## Level Added",
+							"desc": "Successfully added **{level}** level(s) to **{username}**. Now their level is **{newLevel}**. XP has been reset to 0."
+						}
 					}
-				},
-				"user": {
-					"not": {
-						"found": {
-							"title": "## User Not Found",
-							"desc": "The user was not found."
+				}
+			},
+			"leaderboard": {
+				"leveling": {
+					"leaderboard": {
+						"empty": "No data yet.",
+						"entry": "{rank}. <@{userId}> - Level **{level}** ({xp} XP)",
+						"title": "## Level Leaderboard"
+					}
+				}
+			},
+			"profile": {
+				"leveling": {
+					"profile": {
+						"created": {
+							"title": "## Profile Created",
+							"desc": "You did not have a level profile, one has been created for you."
+						},
+						"title": "## Level Profile",
+						"desc": "**{username}**, you are at level **{level}** with a total of **{xp}** XP. **Current XP:** {xp}/{nextLevelXp}."
+					}
+				}
+			},
+			"set": {
+				"leveling": {
+					"user": {
+						"not": {
+							"found": {
+								"title": "## User Not Found",
+								"desc": "The user was not found."
+							}
+						}
+					},
+					"level": {
+						"set": {
+							"title": "## Level Set",
+							"desc": "Successfully set the level of **{username}**. Now their level is **{newLevel}**. XP has been reset to 0."
+						}
+					}
+				}
+			},
+			"xp-add": {
+				"leveling": {
+					"xp": {
+						"add": {
+							"title": "## XP Added",
+							"desc": "Successfully added **{xp}** XP to **{username}**. Now their level is **{newLevel}** and XP is **{newXp}**."
+						}
+					}
+				}
+			},
+			"xp-set": {
+				"leveling": {
+					"xp": {
+						"set": {
+							"title": "## XP Set",
+							"desc": "Successfully set XP for **{username}**. Now their level is **{newLevel}** and XP is **{newXp}**."
 						}
 					}
 				}

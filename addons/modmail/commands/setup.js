@@ -15,7 +15,6 @@ const {
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
 
 /** Validate a hex color string like #RRGGBB or #RGB */
@@ -27,10 +26,8 @@ function isValidHex(str) {
 function hexToDecimal(hex) {
 	return parseInt(hex.replace('#', ''), 16);
 }
-
 class SetupCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('setup')
@@ -127,16 +124,15 @@ class SetupCommand extends BaseCommand {
 					.setRequired(false)
 					.setMaxLength(512),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, t, helpers, kythiaConfig, logger } = container;
 		const { ModmailConfig } = models;
 		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		try {
 			// ── Read options ──────────────────────────────────────────────────
 			const inboxChannel = interaction.options.getChannel('inbox_channel');
@@ -149,7 +145,6 @@ class SetupCommand extends BaseCommand {
 				interaction.options.getString('greeting_message') || null;
 			const closingMessage =
 				interaction.options.getString('closing_message') || null;
-
 			const rawGreetingColor =
 				interaction.options.getString('greeting_color') || null;
 			const greetingImage =
@@ -161,9 +156,13 @@ class SetupCommand extends BaseCommand {
 
 			// ── Validate hex colors ───────────────────────────────────────────
 			if (rawGreetingColor && !isValidHex(rawGreetingColor)) {
-				const errMsg = await t(interaction, 'modmail.setup.invalid_color', {
-					field: 'greeting_color',
-				});
+				const errMsg = await t(
+					interaction,
+					'modmail.helpers.index.setup.invalid_color',
+					{
+						field: 'greeting_color',
+					},
+				);
 				return interaction.editReply({
 					components: await simpleContainer(interaction, errMsg, {
 						color: 'Red',
@@ -172,9 +171,13 @@ class SetupCommand extends BaseCommand {
 				});
 			}
 			if (rawClosingColor && !isValidHex(rawClosingColor)) {
-				const errMsg = await t(interaction, 'modmail.setup.invalid_color', {
-					field: 'closing_color',
-				});
+				const errMsg = await t(
+					interaction,
+					'modmail.helpers.index.setup.invalid_color',
+					{
+						field: 'closing_color',
+					},
+				);
 				return interaction.editReply({
 					components: await simpleContainer(interaction, errMsg, {
 						color: 'Red',
@@ -182,7 +185,6 @@ class SetupCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const greetingColor = rawGreetingColor?.trim() || null;
 			const closingColor = rawClosingColor?.trim() || null;
 
@@ -190,7 +192,6 @@ class SetupCommand extends BaseCommand {
 			const existing = await ModmailConfig.getCache({
 				guildId: interaction.guild.id,
 			});
-
 			const data = {
 				guildId: interaction.guild.id,
 				inboxChannelId: inboxChannel.id,
@@ -205,7 +206,6 @@ class SetupCommand extends BaseCommand {
 				closingColor,
 				closingImage,
 			};
-
 			if (existing) {
 				Object.assign(existing, data);
 				await existing.save();
@@ -221,11 +221,13 @@ class SetupCommand extends BaseCommand {
 			// The success card uses the greeting_color as accent (preview)
 			const previewColor = greetingColor
 				? hexToDecimal(greetingColor)
-				: convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' });
+				: convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					});
 			const footerText = await t(interaction, 'common.container.footer', {
 				username: kythiaConfig.bot.name,
 			});
-
 			const lines = [
 				`📥 **Inbox:** <#${inboxChannel.id}>`,
 				staffRole ? `👥 **Staff Role:** <@&${staffRole.id}>` : null,
@@ -241,11 +243,10 @@ class SetupCommand extends BaseCommand {
 				closingColor ? `🎨 **Close Color:** \`${closingColor}\`` : null,
 				closingImage ? `🖼️ **Close Image:** Set` : null,
 				'',
-				await t(interaction, 'modmail.setup.info'),
+				await t(interaction, 'modmail.commands.setup.info'),
 			]
 				.filter(Boolean)
 				.join('\n');
-
 			const card = new ContainerBuilder().setAccentColor(previewColor);
 
 			// Show greeting image as a preview if provided
@@ -261,11 +262,10 @@ class SetupCommand extends BaseCommand {
 						.setDivider(true),
 				);
 			}
-
 			card
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'modmail.setup.success_title'),
+						await t(interaction, 'modmail.commands.setup.success_title'),
 					),
 				)
 				.addSeparatorComponents(
@@ -282,7 +282,6 @@ class SetupCommand extends BaseCommand {
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(footerText),
 				);
-
 			return interaction.editReply({
 				components: [card],
 				flags: MessageFlags.IsComponentsV2,
@@ -291,13 +290,14 @@ class SetupCommand extends BaseCommand {
 			logger.error(`setup command failed: ${error.message || error}`, {
 				label: 'modmail',
 			});
-			const desc = await t(interaction, 'modmail.errors.generic');
+			const desc = await t(interaction, 'modmail.helpers.index.errors.generic');
 			return interaction.editReply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
 	}
 }
-
 exports.default = SetupCommand;

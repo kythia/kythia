@@ -52,7 +52,7 @@ class ObfuscateCommand extends BaseCommand {
 		const file = interaction.options.getAttachment('file');
 		if (!file?.url) {
 			return interaction.editReply({
-				content: await t(interaction, 'core.tools.obfuscate.no.file'),
+				content: await t(interaction, 'core.commands.tools.obfuscate.no.file'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -62,7 +62,10 @@ class ObfuscateCommand extends BaseCommand {
 			scriptText = res.data;
 		} catch (_err) {
 			return interaction.editReply({
-				content: await t(interaction, 'core.tools.obfuscate.failed.download'),
+				content: await t(
+					interaction,
+					'core.commands.tools.obfuscate.failed.download',
+				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -78,7 +81,7 @@ class ObfuscateCommand extends BaseCommand {
 				return interaction.editReply({
 					content: await t(
 						interaction,
-						'core.tools.obfuscate.failed.javascript',
+						'core.commands.tools.obfuscate.failed.javascript',
 					),
 					flags: MessageFlags.Ephemeral,
 				});
@@ -111,7 +114,10 @@ class ObfuscateCommand extends BaseCommand {
 						},
 					);
 					return interaction.editReply({
-						content: await t(interaction, 'core.tools.obfuscate.failed.lua'),
+						content: await t(
+							interaction,
+							'core.helpers.index.tools.obfuscate.failed.lua',
+						),
 						flags: MessageFlags.Ephemeral,
 					});
 				}
@@ -125,13 +131,19 @@ class ObfuscateCommand extends BaseCommand {
 					label: 'obfuscate',
 				});
 				return interaction.editReply({
-					content: await t(interaction, 'core.tools.obfuscate.failed.lua'),
+					content: await t(
+						interaction,
+						'core.helpers.index.tools.obfuscate.failed.lua',
+					),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
 		} else {
 			return interaction.editReply({
-				content: await t(interaction, 'core.tools.obfuscate.invalid.type'),
+				content: await t(
+					interaction,
+					'core.commands.tools.obfuscate.invalid.type',
+				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -140,7 +152,7 @@ class ObfuscateCommand extends BaseCommand {
 			name: filename,
 		});
 		await interaction.editReply({
-			content: await t(interaction, 'core.tools.obfuscate.success', {
+			content: await t(interaction, 'core.commands.tools.obfuscate.success', {
 				type,
 			}),
 			flags: MessageFlags.Ephemeral,

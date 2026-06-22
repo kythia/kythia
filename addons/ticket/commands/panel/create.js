@@ -18,31 +18,27 @@ const {
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
 } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class CreateCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('create')
 			.setDescription('Creates a new ticket panel (interactive setup)');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers } = container;
 		const { convertColor } = helpers.color;
-
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const startButton = new ButtonBuilder()
 			.setCustomId('tkt-panel-modal-show')
-			.setLabel(await t(interaction, 'ticket.panel.start_button'))
+			.setLabel(
+				await t(interaction, 'ticket.commands.panel.create.start_button'),
+			)
 			.setStyle(ButtonStyle.Primary)
 			.setEmoji('🎟️');
-
 		const components = [
 			new ContainerBuilder()
 				.setAccentColor(accentColor)
@@ -60,7 +56,7 @@ class CreateCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'ticket.panel.start_title'),
+						await t(interaction, 'ticket.commands.panel.create.start_title'),
 					),
 				)
 				.addSeparatorComponents(
@@ -70,7 +66,7 @@ class CreateCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'ticket.panel.start_desc'),
+						await t(interaction, 'ticket.commands.panel.create.start_desc'),
 					),
 				)
 				.addSeparatorComponents(
@@ -94,14 +90,11 @@ class CreateCommand extends BaseCommand {
 					),
 				),
 		];
-
 		await interaction.reply({
 			components: components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-
 		return;
 	}
 }
-
 exports.default = CreateCommand;

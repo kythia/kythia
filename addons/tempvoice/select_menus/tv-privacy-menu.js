@@ -22,7 +22,10 @@ class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.privacy.menu.no_channel_id'),
+					await t(
+						interaction,
+						'tempvoice.select_menus.tv-privacy-menu.privacy.menu.no_channel_id',
+					),
 					{
 						color: 'Red',
 					},
@@ -37,7 +40,10 @@ class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.privacy.menu.not_owner'),
+					await t(
+						interaction,
+						'tempvoice.select_menus.tv-privacy-menu.privacy.menu.not_owner',
+					),
 					{
 						color: 'Red',
 					},
@@ -60,7 +66,7 @@ class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -72,7 +78,10 @@ class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
 			return interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.privacy.menu.channel_not_found'),
+					await t(
+						interaction,
+						'tempvoice.select_menus.tv-privacy-menu.privacy.menu.channel_not_found',
+					),
 					{
 						color: 'Red',
 					},
@@ -88,23 +97,29 @@ class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
 		};
 		if (selectedOp === 'lock_channel') {
 			newPerms.Connect = false;
-			resultMsg = await t(interaction, 'tempvoice.privacy.menu.lock_success');
+			resultMsg = await t(
+				interaction,
+				'tempvoice.select_menus.tv-privacy-menu.privacy.menu.lock_success',
+			);
 		} else if (selectedOp === 'unlock_channel') {
 			newPerms.Connect = true;
-			resultMsg = await t(interaction, 'tempvoice.privacy.menu.unlock_success');
+			resultMsg = await t(
+				interaction,
+				'tempvoice.select_menus.tv-privacy-menu.privacy.menu.unlock_success',
+			);
 		} else if (selectedOp === 'invisible_channel') {
 			newPerms.ViewChannel = false;
 			newPerms.Connect = false;
 			resultMsg = await t(
 				interaction,
-				'tempvoice.privacy.menu.invisible_success',
+				'tempvoice.select_menus.tv-privacy-menu.privacy.menu.invisible_success',
 			);
 		} else if (selectedOp === 'visible_channel') {
 			newPerms.ViewChannel = true;
 			newPerms.Connect = true;
 			resultMsg = await t(
 				interaction,
-				'tempvoice.privacy.menu.visible_success',
+				'tempvoice.select_menus.tv-privacy-menu.privacy.menu.visible_success',
 			);
 		}
 		try {
@@ -124,7 +139,10 @@ class TvPrivacyMenuSelectMenu extends BaseSelectMenu {
 			await interaction.update({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.privacy.menu.fail'),
+					await t(
+						interaction,
+						'tempvoice.select_menus.tv-privacy-menu.privacy.menu.fail',
+					),
 					{
 						color: 'Red',
 					},

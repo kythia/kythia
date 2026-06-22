@@ -38,7 +38,7 @@ class TextCommand extends BaseCommand {
 		await boosterSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'booster.booster.text.set', {
+			await t(interaction, 'booster.commands.text.booster.set', {
 				text,
 			}),
 			{

@@ -12,7 +12,7 @@ async function sendToAllGuilds(container, interaction, payload) {
 	await interaction.editReply({
 		content: await t(
 			interaction,
-			'core.utils.global-announcement.delivery.start',
+			'core.helpers.announcement.utils.global-announcement.delivery.start',
 		),
 		flags: MessageFlags.Ephemeral,
 	});
@@ -114,7 +114,7 @@ async function sendToAllGuilds(container, interaction, payload) {
 		failedServers.length > 0
 			? await t(
 					interaction,
-					'core.utils.global-announcement.delivery.report.list',
+					'core.helpers.announcement.utils.global-announcement.delivery.report.list',
 					{
 						names: failedServers.slice(0, 10).join('\n'),
 					},
@@ -123,7 +123,7 @@ async function sendToAllGuilds(container, interaction, payload) {
 	const description =
 		(await t(
 			interaction,
-			'core.utils.global-announcement.delivery.report.success',
+			'core.helpers.announcement.utils.global-announcement.delivery.report.success',
 			{
 				count: successCount,
 			},
@@ -131,7 +131,7 @@ async function sendToAllGuilds(container, interaction, payload) {
 		'\n' +
 		(await t(
 			interaction,
-			'core.utils.global-announcement.delivery.report.failed',
+			'core.helpers.announcement.utils.global-announcement.delivery.report.failed',
 			{
 				count: failCount,
 			},
@@ -142,7 +142,7 @@ async function sendToAllGuilds(container, interaction, payload) {
 		interaction,
 		(await t(
 			interaction,
-			'core.utils.global-announcement.delivery.report.title',
+			'core.helpers.announcement.utils.global-announcement.delivery.report.title',
 		)) +
 			'\n' +
 			description,

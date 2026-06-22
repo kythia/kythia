@@ -1,92 +1,100 @@
 {
 	"minecraft": {
-		"player": {
-			"avatar": {
-				"title": "## {player}'s Avatar\n-# Minecraft: Java Edition"
-			},
-			"body": {
-				"title": "## {player}'s Body\n-# Minecraft: Java Edition"
-			},
-			"head": {
-				"title": "## {player}'s Head\n-# Minecraft: Java Edition"
-			},
-			"skin": {
-				"title": "## {player}'s Skin\n-# Minecraft: Java Edition"
-			},
-			"wallpaper": {
-				"title": "## {wallpaper}\n-# Featuring: {players}",
+		"shared": {
+			"server": {
 				"errors": {
-					"api_error": "The wallpaper API returned an error for `{players}`. Make sure the player name(s) are correct.",
-					"api_unreachable": "Could not reach the wallpaper API. Please try again later."
+					"fetch_failed": "Failed to reach the server status API. Please try again later.",
+					"invalid_host": "Invalid server address! Please provide a valid hostname or IP (e.g. `mc.hypixel.net` or `play.server.net:25565`)."
 				}
 			},
-			"errors": {
-				"invalid_username": "Invalid player name! Minecraft usernames must be 3–16 characters and only contain letters, numbers, or underscores."
-			},
-			"help": {
-				"header": "## Minecraft Addon — Command Guide",
-				"header_sub": "-# Powered by [Starlight Skins](https://starlightskins.lunareclipse.studio) & [mcsrvstat.us](https://api.mcsrvstat.us)",
-				"player_commands_title": "### Player Commands",
-				"player_commands_desc": "> All renders are fetched live from Starlight Skins.",
-				"cmd_avatar": "****\nShows the face/avatar of a player.",
-				"cmd_head": "****\nRenders the full 3D head of a player.",
-				"cmd_body": "****\nRenders the full body of a player.",
-				"cmd_skin": "****\nShows the raw skin texture of a player.",
-				"cmd_pose": "****\nRenders a player in any of **31 poses**. Split across two dropdowns:\n- **pose** — 25 poses (default → high_ground)\n- **pose2** — 6 extra poses (clown, bitzel, pixel, ornament, skin, profile)\n- **crop** — Optional: , , , , , , \n*(If the crop is invalid for the pose, the best crop is auto-selected)*",
-				"pose_list": "┌─ Full Pose List ──────────────────────────────┐\n│ default · marching · walking · crouching      │\n│ crossed · criss_cross · ultimate · isometric  │\n│ head · custom · cheering · relaxing · trudging │\n│ cowering · pointing · lunging · dungeons       │\n│ facepalm · sleeping · dead · archer · kicking  │\n│ mojavatar · reading · high_ground · clown      │\n│ bitzel · pixel · ornament · skin · profile     │\n└────────────────────────────────────────────────┘",
-				"cmd_wallpaper": "****\nGenerates a scenic wallpaper featuring one or more players.\nPlayers are comma-separated with no spaces: \n- **quick_hide** *(supports up to 3 players)*\n- herobrine_hill · malevolent · off_to_the_stars · wheat",
-				"server_commands_title": "### Server Commands",
-				"cmd_status": "****\nCheck the status of any Java or Bedrock server.\nIncludes online players, MOTD, version, and a Refresh button.",
-				"settings_commands_title": "### Settings Commands",
-				"settings_commands_desc": "> Requires **Manage Server** permission.",
-				"cmd_autosetup": "****\nOne-command setup — creates a stat category + 4 voice channels,\nsaves all settings, and enables the live updater automatically.",
-				"cmd_set_ip": "**** — Set the guild's server IP\n**** — Set the server port (default: 25565)\n**** — Voice channel showing the IP\n**** — Voice channel showing the port\n**** — Voice channel showing /status",
-				"enable_feature": "Then enable the live updater via:\n> ",
-				"live_stats_title": "### Live Stats",
-				"live_stats_desc": "Voice channels update automatically every **5 minutes**.\nYou can also force an update via the API:\n"
-			},
-			"pose": {
-				"title_md": "## {player} — {pose}\n-# Crop: {crop}"
+			"player": {
+				"errors": {
+					"invalid_username": "Invalid player name! Minecraft usernames must be 3–16 characters and only contain letters, numbers, or underscores."
+				}
 			}
 		},
-		"server": {
-			"status": {
-				"unknown": "`Unknown`",
-				"last_updated": "-# Last updated | {timestamp}",
-				"type": {
-					"java": "Java",
-					"bedrock": "Bedrock"
+		"commands": {
+			"player": {
+				"avatar": {
+					"title": "## {player}'s Avatar\n-# Minecraft: Java Edition"
 				},
-				"field": {
-					"ip": "**IP:**",
-					"type": "**Type:**",
-					"version": "**Version:**",
-					"online": "**Online:**"
+				"body": {
+					"title": "## {player}'s Body\n-# Minecraft: Java Edition"
 				},
-				"button": {
-					"refresh": "Refresh"
+				"head": {
+					"title": "## {player}'s Head\n-# Minecraft: Java Edition"
 				},
-				"info_header_md": "### Server Information",
-				"players_header_md": "### Players",
-				"motd_header_md": "### MOTD\n{motd}",
-				"title_md": "## {emoji} Minecraft Server Status"
+				"help": {
+					"header": "## Minecraft Addon — Command Guide",
+					"header_sub": "-# Powered by [Starlight Skins](https://starlightskins.lunareclipse.studio) & [mcsrvstat.us](https://api.mcsrvstat.us)",
+					"player_commands_title": "### Player Commands",
+					"player_commands_desc": "> All renders are fetched live from Starlight Skins.",
+					"cmd_avatar": "****\nShows the face/avatar of a player.",
+					"cmd_head": "****\nRenders the full 3D head of a player.",
+					"cmd_body": "****\nRenders the full body of a player.",
+					"cmd_skin": "****\nShows the raw skin texture of a player.",
+					"cmd_pose": "****\nRenders a player in any of **31 poses**. Split across two dropdowns:\n- **pose** — 25 poses (default → high_ground)\n- **pose2** — 6 extra poses (clown, bitzel, pixel, ornament, skin, profile)\n- **crop** — Optional: , , , , , , \n*(If the crop is invalid for the pose, the best crop is auto-selected)*",
+					"pose_list": "┌─ Full Pose List ──────────────────────────────┐\n│ default · marching · walking · crouching      │\n│ crossed · criss_cross · ultimate · isometric  │\n│ head · custom · cheering · relaxing · trudging │\n│ cowering · pointing · lunging · dungeons       │\n│ facepalm · sleeping · dead · archer · kicking  │\n│ mojavatar · reading · high_ground · clown      │\n│ bitzel · pixel · ornament · skin · profile     │\n└────────────────────────────────────────────────┘",
+					"cmd_wallpaper": "****\nGenerates a scenic wallpaper featuring one or more players.\nPlayers are comma-separated with no spaces: \n- **quick_hide** *(supports up to 3 players)*\n- herobrine_hill · malevolent · off_to_the_stars · wheat",
+					"server_commands_title": "### Server Commands",
+					"cmd_status": "****\nCheck the status of any Java or Bedrock server.\nIncludes online players, MOTD, version, and a Refresh button.",
+					"settings_commands_title": "### Settings Commands",
+					"settings_commands_desc": "> Requires **Manage Server** permission.",
+					"cmd_autosetup": "****\nOne-command setup — creates a stat category + 4 voice channels,\nsaves all settings, and enables the live updater automatically.",
+					"cmd_set_ip": "**** — Set the guild's server IP\n**** — Set the server port (default: 25565)\n**** — Voice channel showing the IP\n**** — Voice channel showing the port\n**** — Voice channel showing /status",
+					"enable_feature": "Then enable the live updater via:\n> ",
+					"live_stats_title": "### Live Stats",
+					"live_stats_desc": "Voice channels update automatically every **5 minutes**.\nYou can also force an update via the API:\n"
+				},
+				"pose": {
+					"title_md": "## {player} — {pose}\n-# Crop: {crop}"
+				},
+				"skin": {
+					"title": "## {player}'s Skin\n-# Minecraft: Java Edition"
+				},
+				"wallpaper": {
+					"errors": {
+						"api_error": "The wallpaper API returned an error for `{players}`. Make sure the player name(s) are correct.",
+						"api_unreachable": "Could not reach the wallpaper API. Please try again later."
+					},
+					"title": "## {wallpaper}\n-# Featuring: {players}"
+				}
 			},
-			"errors": {
-				"invalid_host": "Invalid server address! Please provide a valid hostname or IP (e.g. `mc.hypixel.net` or `play.server.net:25565`).",
-				"fetch_failed": "Failed to reach the server status API. Please try again later."
-			}
-		},
-		"set": {
-			"autosetup": {
-				"error": {
-					"category": "Failed to create the category: {error}"
-				},
-				"success": {
-					"server": "**Server:**",
-					"category": "**Category:**",
-					"note": "Channels will update automatically every 5 minutes. Make sure the bot has permission to rename voice channels!",
-					"title_md": "## Minecraft Stats Auto-Setup Complete!",
-					"channels_md": "### Channels Created"
+			"server": {
+				"status": {
+					"type": {
+						"bedrock": "Bedrock",
+						"java": "Java"
+					},
+					"unknown": "`Unknown`",
+					"last_updated": "-# Last updated | {timestamp}",
+					"info_header_md": "### Server Information",
+					"field": {
+						"ip": "**IP:**",
+						"type": "**Type:**",
+						"version": "**Version:**",
+						"online": "**Online:**"
+					},
+					"players_header_md": "### Players",
+					"motd_header_md": "### MOTD\n{motd}",
+					"button": {
+						"refresh": "Refresh"
+					},
+					"title_md": "## {emoji} Minecraft Server Status"
+				}
+			},
+			"set": {
+				"autosetup": {
+					"error": {
+						"category": "Failed to create the category: {error}"
+					},
+					"success": {
+						"title_md": "## Minecraft Stats Auto-Setup Complete!",
+						"server": "**Server:**",
+						"category": "**Category:**",
+						"channels_md": "### Channels Created",
+						"note": "Channels will update automatically every 5 minutes. Make sure the bot has permission to rename voice channels!"
+					}
 				}
 			}
 		}

@@ -19,29 +19,26 @@ const {
 	MediaGalleryItemBuilder,
 	PermissionsBitField,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TicketClaimButton extends BaseButton {
 	button = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { models, t, helpers, kythiaConfig, logger } = container;
 		const { Ticket, TicketConfig } = models;
 		const { simpleContainer } = helpers.discord;
 		const { convertColor } = helpers.color;
-
 		await interaction.deferUpdate();
-
 		try {
 			const ticket = await Ticket.getCache({
 				channelId: interaction.channel.id,
 				status: 'open',
 			});
 			if (!ticket) {
-				const desc = await t(interaction, 'ticket.errors.not_a_ticket');
+				const desc = await t(
+					interaction,
+					'ticket.helpers.index.errors.not_a_ticket',
+				);
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -49,12 +46,14 @@ class TicketClaimButton extends BaseButton {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			const ticketConfig = await TicketConfig.getCache({
 				id: ticket.ticketConfigId,
 			});
 			if (!ticketConfig) {
-				const desc = await t(interaction, 'ticket.errors.config_missing');
+				const desc = await t(
+					interaction,
+					'ticket.helpers.index.errors.config_missing',
+				);
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -62,16 +61,17 @@ class TicketClaimButton extends BaseButton {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			const isStaff = interaction.member.roles.cache.has(
 				ticketConfig.staffRoleId,
 			);
 			const isAdmin = interaction.member.permissions.has(
 				PermissionsBitField.Flags.Administrator,
 			);
-
 			if (!isStaff && !isAdmin) {
-				const desc = await t(interaction, 'ticket.errors.only_staff');
+				const desc = await t(
+					interaction,
+					'ticket.buttons.ticket-claim.errors.only_staff',
+				);
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -79,11 +79,14 @@ class TicketClaimButton extends BaseButton {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			if (ticket.claimedByUserId) {
-				const desc = await t(interaction, 'ticket.claim.already_claimed', {
-					userId: ticket.claimedByUserId,
-				});
+				const desc = await t(
+					interaction,
+					'ticket.buttons.ticket-claim.claim.already_claimed',
+					{
+						userId: ticket.claimedByUserId,
+					},
+				);
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -91,15 +94,12 @@ class TicketClaimButton extends BaseButton {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			ticket.claimedByUserId = interaction.user.id;
 			await ticket.save();
-
 			const message = interaction.message;
-
 			const defaultMessage = await t(
 				interaction,
-				'ticket.v2.open_message_default',
+				'ticket.helpers.index.v2.open_message_default',
 				{
 					user: `<@${ticket.userId}>`,
 					staffRoleId: ticketConfig.staffRoleId,
@@ -109,12 +109,10 @@ class TicketClaimButton extends BaseButton {
 			const openMessage = openMessageRaw
 				.replace('{user}', `<@${ticket.userId}>`)
 				.replace('{staffRole}', `<@&${ticketConfig.staffRoleId}>`);
-
 			const accentColor = convertColor(kythiaConfig.bot.color, {
 				from: 'hex',
 				to: 'decimal',
 			});
-
 			const mainContainer = new ContainerBuilder()
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
@@ -122,7 +120,9 @@ class TicketClaimButton extends BaseButton {
 						await interaction.client.container.t(
 							interaction,
 							'ticket.helpers.type_title_md',
-							{ typeName: ticketConfig.typeName },
+							{
+								typeName: ticketConfig.typeName,
+							},
 						),
 					),
 				)
@@ -131,7 +131,6 @@ class TicketClaimButton extends BaseButton {
 						.setSpacing(SeparatorSpacingSize.Small)
 						.setDivider(true),
 				);
-
 			if (ticketConfig.ticketOpenImage) {
 				mainContainer.addMediaGalleryComponents(
 					new MediaGalleryBuilder().addItems(
@@ -142,25 +141,26 @@ class TicketClaimButton extends BaseButton {
 					new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small),
 				);
 			}
-
 			const updatedRow = new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
 					.setCustomId('ticket-close')
-					.setLabel(await t(interaction, 'ticket.v2.close_button'))
+					.setLabel(
+						await t(interaction, 'ticket.helpers.index.v2.close_button'),
+					)
 					.setStyle(ButtonStyle.Secondary)
 					.setEmoji('🔒'),
 				new ButtonBuilder()
 					.setCustomId('ticket-claim')
-					.setLabel(await t(interaction, 'ticket.v2.claim_button'))
+					.setLabel(
+						await t(interaction, 'ticket.helpers.index.v2.claim_button'),
+					)
 					.setStyle(ButtonStyle.Secondary)
 					.setEmoji('🛄')
 					.setDisabled(true),
 			);
-
 			const footerText = await t(interaction, 'common.container.footer', {
 				username: interaction.client.user.username,
 			});
-
 			mainContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(openMessage),
 			);
@@ -176,12 +176,16 @@ class TicketClaimButton extends BaseButton {
 			mainContainer.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(footerText),
 			);
-
-			await message.edit({ components: [mainContainer] });
-
-			const desc = await t(interaction, 'ticket.claim.success', {
-				user: interaction.user.toString(),
+			await message.edit({
+				components: [mainContainer],
 			});
+			const desc = await t(
+				interaction,
+				'ticket.buttons.ticket-claim.claim.success',
+				{
+					user: interaction.user.toString(),
+				},
+			);
 			await interaction.channel.send({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Green',
@@ -192,7 +196,10 @@ class TicketClaimButton extends BaseButton {
 			logger.error(`Error claiming ticket: ${error.message || error}`, {
 				label: 'ticket',
 			});
-			const descError = await t(interaction, 'ticket.errors.generic');
+			const descError = await t(
+				interaction,
+				'ticket.helpers.index.errors.generic',
+			);
 			await interaction.followUp({
 				components: await simpleContainer(interaction, descError, {
 					color: 'Red',
@@ -202,5 +209,4 @@ class TicketClaimButton extends BaseButton {
 		}
 	}
 }
-
 exports.default = TicketClaimButton;

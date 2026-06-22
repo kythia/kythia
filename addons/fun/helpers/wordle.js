@@ -12,22 +12,17 @@ const {
 	SeparatorSpacingSize,
 	TextDisplayBuilder,
 } = require('discord.js');
-
 const kythiaConfig = require('../../../kythia.config');
 const WORD_LIST = kythiaConfig.addons.fun.wordle.words;
-
 const EMOJI_CORRECT = '🟩';
 const EMOJI_PRESENT = '🟨';
 const EMOJI_ABSENT = '⬛';
-
 function pickRandomWord() {
 	return WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
 }
-
 function isValidWord(word) {
 	return WORD_LIST.includes(word);
 }
-
 function checkGuess(guess, answer) {
 	const result = Array(5).fill('absent');
 	const answerArr = answer.split('');
@@ -51,7 +46,6 @@ function checkGuess(guess, answer) {
 	}
 	return result;
 }
-
 function renderGuessRow(guess, feedback) {
 	let row = '';
 	for (let i = 0; i < 5; i++) {
@@ -62,39 +56,39 @@ function renderGuessRow(guess, feedback) {
 	row += `  \`${guess.toUpperCase()}\``;
 	return row;
 }
-
 function renderBoard(guesses, answer) {
 	const lines = [];
 	for (const guess of guesses) {
 		const feedback = checkGuess(guess, answer);
 		lines.push(renderGuessRow(guess, feedback));
 	}
-
 	while (lines.length < 6) {
 		lines.push(`${EMOJI_ABSENT.repeat(5)}  \`     \``);
 	}
 	return lines.join('\n');
 }
-
 async function buildGameEmbed(interaction, game, actionRow = null) {
 	let description = renderBoard(game.guesses, game.answer);
 	const { t, helpers, kythiaConfig } = interaction.client.container;
 	const { convertColor } = helpers.color;
-
 	if (game.isOver) {
 		if (game.win) {
-			description += `\n\n${await t(interaction, 'fun.wordle.win', { answer: game.answer.toUpperCase() })}`;
+			description += `\n\n${await t(interaction, 'fun.helpers.wordle.win', {
+				answer: game.answer.toUpperCase(),
+			})}`;
 		} else {
-			description += `\n\n${await t(interaction, 'fun.wordle.lose', { answer: game.answer.toUpperCase() })}`;
+			description += `\n\n${await t(interaction, 'fun.helpers.wordle.lose', {
+				answer: game.answer.toUpperCase(),
+			})}`;
 		}
 	} else {
-		description += `\n\n${await t(interaction, 'fun.wordle.remaining', { remaining: 6 - game.guesses.length })}`;
+		description += `\n\n${await t(interaction, 'fun.helpers.wordle.remaining', {
+			remaining: 6 - game.guesses.length,
+		})}`;
 	}
-
 	const footer = game.isOver
-		? await t(interaction, 'fun.wordle.footer.end')
-		: await t(interaction, 'fun.wordle.footer.play');
-
+		? await t(interaction, 'fun.helpers.wordle.footer.end')
+		: await t(interaction, 'fun.helpers.wordle.footer.play');
 	const container = new ContainerBuilder()
 		.setAccentColor(
 			convertColor(
@@ -103,12 +97,15 @@ async function buildGameEmbed(interaction, game, actionRow = null) {
 						? '#2ecc71'
 						: '#e74c3c'
 					: kythiaConfig.bot.color,
-				{ from: 'hex', to: 'decimal' },
+				{
+					from: 'hex',
+					to: 'decimal',
+				},
 			),
 		)
 		.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`${await t(interaction, 'fun.wordle.title')}\n${description}`,
+				`${await t(interaction, 'fun.helpers.wordle.title')}\n${description}`,
 			),
 		)
 		.addSeparatorComponents(
@@ -119,11 +116,9 @@ async function buildGameEmbed(interaction, game, actionRow = null) {
 		.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(`-# ${footer}`),
 		);
-
 	if (actionRow) container.addActionRowComponents(actionRow);
 	return container;
 }
-
 module.exports = {
 	pickRandomWord,
 	isValidWord,

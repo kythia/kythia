@@ -31,7 +31,10 @@ class TvLimitButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.limit.no_active_channel'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-limit.limit.no_active_channel',
+						),
 						{
 							color: 'Red',
 						},
@@ -42,12 +45,16 @@ class TvLimitButton extends BaseButton {
 		const channelId = activeChannel.channelId;
 		const modal = new ModalBuilder()
 			.setCustomId(`tv_limit_modal:${channelId}`)
-			.setTitle(await t(interaction, 'tempvoice.limit.modal_title'));
+			.setTitle(
+				await t(interaction, 'tempvoice.buttons.tv-limit.limit.modal_title'),
+			);
 		const limitInput = new TextInputBuilder()
 			.setCustomId('user_limit')
-			.setLabel(await t(interaction, 'tempvoice.limit.label'))
+			.setLabel(await t(interaction, 'tempvoice.buttons.tv-limit.limit.label'))
 			.setStyle(TextInputStyle.Short)
-			.setPlaceholder(await t(interaction, 'tempvoice.limit.placeholder'))
+			.setPlaceholder(
+				await t(interaction, 'tempvoice.buttons.tv-limit.limit.placeholder'),
+			)
 			.setRequired(true);
 		const row = new ActionRowBuilder().addComponents(limitInput);
 		modal.addComponents(row);

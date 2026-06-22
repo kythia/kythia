@@ -15,10 +15,8 @@ const {
 } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
 const announcementHelper = require('../../../helpers/announcement');
-
 class ComplexCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('complex')
@@ -31,7 +29,7 @@ class ComplexCommand extends BaseCommand {
 			.setTitle(
 				await t(
 					interaction,
-					'core.utils.global-announcement.complex.modal.title',
+					'core.commands.utils.global-announcement.complex.modal.title',
 				),
 			);
 		modal.addComponents(
@@ -41,14 +39,14 @@ class ComplexCommand extends BaseCommand {
 					.setLabel(
 						await t(
 							interaction,
-							'core.utils.global-announcement.complex.modal.label',
+							'core.commands.utils.global-announcement.complex.modal.label',
 						),
 					)
 					.setStyle(TextInputStyle.Paragraph)
 					.setPlaceholder(
 						await t(
 							interaction,
-							'core.utils.global-announcement.complex.modal.placeholder',
+							'core.commands.utils.global-announcement.complex.modal.placeholder',
 						),
 					)
 					.setRequired(true),
@@ -77,7 +75,7 @@ class ComplexCommand extends BaseCommand {
 			return modalSubmit.editReply({
 				content: await t(
 					interaction,
-					'core.utils.global-announcement.complex.invalid.json',
+					'core.commands.utils.global-announcement.complex.invalid.json',
 					{
 						error: err.message,
 					},
@@ -87,5 +85,4 @@ class ComplexCommand extends BaseCommand {
 		await announcementHelper.sendToAllGuilds(container, modalSubmit, payload);
 	}
 }
-
 exports.default = ComplexCommand;

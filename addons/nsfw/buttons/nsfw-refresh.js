@@ -9,18 +9,15 @@
 const { MessageFlags } = require('discord.js');
 const { buildComponentRows } = require('../helpers/buttons.js');
 const { fetchContent } = require('../helpers/api.js');
-
 const { BaseButton } = require('kythia-core');
-
 class NsfwRefreshButton extends BaseButton {
-	button = { customId: 'nsfw_refresh' };
-
+	button = {
+		customId: 'nsfw_refresh',
+	};
 	async execute(interaction) {
 		const container = this.container;
-
 		const { t, helpers, models, logger } = container;
 		const { NsfwUser } = models;
-
 		const ownerId = interaction.message.interaction?.user?.id;
 		if (ownerId && ownerId !== interaction.user.id) {
 			return interaction.reply({
@@ -28,18 +25,17 @@ class NsfwRefreshButton extends BaseButton {
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		await interaction.deferUpdate();
-
 		const { extractInteractionData } = require('../helpers/buttons.js');
 		const { category, images } = await extractInteractionData(
 			interaction,
 			container,
 		);
 		const amount = images.length || 1;
-
 		const [user] = await NsfwUser.getOrCreateCache(
-			{ userId: interaction.user.id },
+			{
+				userId: interaction.user.id,
+			},
 			{
 				userId: interaction.user.id,
 				nsfwFav: [],
@@ -48,12 +44,14 @@ class NsfwRefreshButton extends BaseButton {
 		);
 
 		// Fetch images in parallel
-		const fetchPromises = Array.from({ length: amount }, () =>
-			fetchContent(category, logger),
+		const fetchPromises = Array.from(
+			{
+				length: amount,
+			},
+			() => fetchContent(category, logger),
 		);
 		const fetched = await Promise.all(fetchPromises);
 		const currentImages = fetched.filter((img) => img !== null);
-
 		if (currentImages.length === 0) {
 			return interaction.followUp({
 				content:
@@ -65,7 +63,6 @@ class NsfwRefreshButton extends BaseButton {
 		// Update nsfwCount
 		user.nsfwCount = (user.nsfwCount || 0) + currentImages.length;
 		await user.save();
-
 		const [containerBody] = await helpers.discord.createContainer(interaction, {
 			title: category,
 			media: currentImages,
@@ -73,15 +70,13 @@ class NsfwRefreshButton extends BaseButton {
 				currentImages,
 				user.nsfwFav || [],
 				false,
-				await t(interaction, 'nsfw.ui.refresh'),
-				await t(interaction, 'nsfw.ui.delete'),
+				await t(interaction, 'nsfw.buttons.nsfw-refresh.ui.refresh'),
+				await t(interaction, 'nsfw.shared.ui.delete'),
 			),
 		});
-
 		await interaction.editReply({
 			components: [containerBody],
 		});
-
 		if (container.redis) {
 			await container.redis.set(
 				`nsfw:msg:${interaction.message.id}:img`,
@@ -92,5 +87,4 @@ class NsfwRefreshButton extends BaseButton {
 		}
 	}
 }
-
 exports.default = NsfwRefreshButton;

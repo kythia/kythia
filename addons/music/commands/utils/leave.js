@@ -7,29 +7,27 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class LeaveCommand extends BaseCommand {
 	subcommand = true;
 	aliases = ['leave'];
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('leave')
 			.setDescription('Make Kythia Leave the voice channel');
-
 	async execute(interaction) {
 		const container = this.container;
 		const { client, member, guild } = interaction;
 		const { t, musicHandlers, helpers } = container;
 		const { simpleContainer } = helpers.discord;
-
 		if (!member?.voice?.channel) {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'music.music.voice.channel.not.found'),
+					await t(
+						interaction,
+						'music.helpers.index.music.voice.channel.not.found',
+					),
 					{
 						color: 'Red',
 					},
@@ -37,13 +35,14 @@ class LeaveCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		const player = client.poru.players.get(guild.id);
 		if (!player) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'music.music.player.not.found'),
-				{ color: 'Red' },
+				await t(interaction, 'music.helpers.index.music.player.not.found'),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.reply({
 				components: reply,
@@ -54,7 +53,7 @@ class LeaveCommand extends BaseCommand {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'music.music.required'),
+					await t(interaction, 'music.helpers.index.music.required'),
 					{
 						color: 'Red',
 					},
@@ -62,9 +61,7 @@ class LeaveCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
-
 		return musicHandlers.handleLeave(interaction, player);
 	}
 }
-
 exports.default = LeaveCommand;

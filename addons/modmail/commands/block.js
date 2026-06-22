@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class BlockCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('block')
@@ -30,22 +27,22 @@ class BlockCommand extends BaseCommand {
 					.setRequired(false)
 					.setMaxLength(300),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, t, helpers, logger } = container;
 		const { ModmailConfig } = models;
 		const { simpleContainer } = helpers.discord;
-
 		const user = interaction.options.getUser('user');
 		const reason = interaction.options.getString('reason') || null;
-
 		try {
 			const config = await ModmailConfig.getCache({
 				guildId: interaction.guild.id,
 			});
 			if (!config) {
-				const desc = await t(interaction, 'modmail.errors.not_configured');
+				const desc = await t(
+					interaction,
+					'modmail.helpers.index.errors.not_configured',
+				);
 				return interaction.reply({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -53,15 +50,17 @@ class BlockCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			const blocked = Array.isArray(config.blockedUserIds)
 				? [...config.blockedUserIds]
 				: [];
-
 			if (blocked.includes(user.id)) {
-				const desc = await t(interaction, 'modmail.block.already_blocked', {
-					userId: user.id,
-				});
+				const desc = await t(
+					interaction,
+					'modmail.commands.block.already_blocked',
+					{
+						userId: user.id,
+					},
+				);
 				return interaction.reply({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Yellow',
@@ -69,12 +68,10 @@ class BlockCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			blocked.push(user.id);
 			config.blockedUserIds = blocked;
 			await config.save();
-
-			const desc = await t(interaction, 'modmail.block.success', {
+			const desc = await t(interaction, 'modmail.commands.block.success', {
 				userId: user.id,
 				reason: reason || 'No reason provided',
 			});
@@ -88,13 +85,14 @@ class BlockCommand extends BaseCommand {
 			logger.error(`Error: ${error.message || String(error)}`, {
 				label: 'modmail:block',
 			});
-			const desc = await t(interaction, 'modmail.errors.generic');
+			const desc = await t(interaction, 'modmail.helpers.index.errors.generic');
 			return interaction.reply({
-				components: await simpleContainer(interaction, desc, { color: 'Red' }),
+				components: await simpleContainer(interaction, desc, {
+					color: 'Red',
+				}),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		}
 	}
 }
-
 exports.default = BlockCommand;

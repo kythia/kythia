@@ -20,25 +20,19 @@ const {
 	MediaGalleryItemBuilder,
 	ApplicationCommandOptionType,
 } = require('discord.js');
-
 const fs = require('node:fs');
 const path = require('node:path');
-
 const EXCLUDED_ADDONS = ['api', 'license'];
 const EXCLUDED_CORE_CATEGORIES = ['premium']; // has no public commands
 const CATEGORIES_PER_PAGE = 25;
-
 const CATEGORY_DOC_ALIAS = {
 	premium: 'pro',
 };
-
 function countTotalCommands(commands) {
 	let totalCount = 0;
 	const processedCommands = new Set();
-
 	commands.forEach((command) => {
 		if (command.ownerOnly === true) return;
-
 		const slashData = command.slashCommand || command.data;
 		let commandJSON;
 		if (slashData) {
@@ -47,18 +41,15 @@ function countTotalCommands(commands) {
 		} else {
 			return;
 		}
-
 		const uniqueKey = `slash-${commandJSON.name}`;
 		if (processedCommands.has(uniqueKey)) return;
 		processedCommands.add(uniqueKey);
-
 		if (Array.isArray(commandJSON.options) && commandJSON.options.length > 0) {
 			const subcommands = commandJSON.options.filter(
 				(opt) =>
 					opt.type === ApplicationCommandOptionType.Subcommand ||
 					opt.type === ApplicationCommandOptionType.SubcommandGroup,
 			);
-
 			if (subcommands.length > 0) {
 				subcommands.forEach((sub) => {
 					if (sub.type === ApplicationCommandOptionType.SubcommandGroup) {
@@ -70,9 +61,7 @@ function countTotalCommands(commands) {
 				return;
 			}
 		}
-
 		totalCount += 1;
-
 		if (command.contextMenuCommand) {
 			const cmJSON =
 				typeof command.contextMenuCommand.toJSON === 'function'
@@ -85,10 +74,8 @@ function countTotalCommands(commands) {
 			}
 		}
 	});
-
 	return totalCount;
 }
-
 function smartSplit(content, maxLength = 3500) {
 	const chunks = [];
 	let currentChunk = '';
@@ -116,7 +103,6 @@ function smartSplit(content, maxLength = 3500) {
 	if (currentChunk.length > 0) chunks.push(currentChunk);
 	return chunks;
 }
-
 async function parseCompactMarkdown(content, container, interaction) {
 	const { t } = container;
 	let categoryName = 'Category';
@@ -124,22 +110,25 @@ async function parseCompactMarkdown(content, container, interaction) {
 	if (catMatch) {
 		categoryName = catMatch[1].trim();
 	}
-
 	const lines = content.split('\n');
-	const commandsTitle = await t(interaction, 'core.utils.help.compact.title', {
-		category: categoryName,
-	});
+	const commandsTitle = await t(
+		interaction,
+		'core.helpers.helpUtils.utils.help.compact.title',
+		{
+			category: categoryName,
+		},
+	);
 	const compactLines = [`## ${commandsTitle}`];
 	let hasCommands = false;
-
 	let baseCommand = null;
-	const noInfoText = await t(interaction, 'core.utils.help.compact.no_info');
+	const noInfoText = await t(
+		interaction,
+		'core.helpers.helpUtils.utils.help.compact.no_info',
+	);
 	let baseDesc = noInfoText;
 	let baseHasSubcommands = false;
-
 	for (let i = 0; i < lines.length; i++) {
 		const line = lines[i].trim();
-
 		if (
 			line.startsWith('### `/') &&
 			!line.includes('Usage') &&
@@ -151,13 +140,11 @@ async function parseCompactMarkdown(content, container, interaction) {
 				compactLines.push(`> **${baseCommand}** - ${baseDesc}`);
 				hasCommands = true;
 			}
-
 			const cmdMatch = line.match(/### `(\/[^`]+)`/);
 			if (cmdMatch) {
 				baseCommand = cmdMatch[1];
 				baseDesc = noInfoText;
 				baseHasSubcommands = false;
-
 				for (let j = i + 1; j < Math.min(i + 5, lines.length); j++) {
 					if (lines[j].startsWith('**Description:**')) {
 						baseDesc = lines[j].replace('**Description:**', '').trim();
@@ -177,7 +164,6 @@ async function parseCompactMarkdown(content, container, interaction) {
 				let nameWithArgs = subMatch[1];
 				nameWithArgs = nameWithArgs.replace(/\[(<[^>]+>)\]/g, '$1');
 				nameWithArgs = nameWithArgs.replace(/\[([a-zA-Z0-9_-]+)\]/g, '<$1>');
-
 				let desc = noInfoText;
 				for (let j = i + 1; j < Math.min(i + 3, lines.length); j++) {
 					if (lines[j].trim().startsWith('> ')) {
@@ -190,18 +176,17 @@ async function parseCompactMarkdown(content, container, interaction) {
 			}
 		}
 	}
-
 	if (baseCommand && !baseHasSubcommands) {
 		compactLines.push(`> **${baseCommand}** - ${baseDesc}`);
 		hasCommands = true;
 	}
-
 	if (!hasCommands)
-		return await t(interaction, 'core.utils.help.compact.no_commands');
-
+		return await t(
+			interaction,
+			'core.helpers.helpUtils.utils.help.compact.no_commands',
+		);
 	return compactLines.join('\n');
 }
-
 async function getMarkdownContent(
 	category,
 	rootDir,
@@ -214,7 +199,6 @@ async function getMarkdownContent(
 	if (!fs.existsSync(filePath)) return [null];
 	const content = fs.readFileSync(filePath, 'utf-8');
 	if (!content || content.trim() === '') return [null];
-
 	if (mode === 'compact' && container && interaction) {
 		const compactContent = await parseCompactMarkdown(
 			content,
@@ -225,7 +209,6 @@ async function getMarkdownContent(
 	}
 	return smartSplit(content);
 }
-
 module.exports = {
 	getHelpData: async (container, interaction, mode = 'detailed') => {
 		const { kythiaConfig, t } = container;
@@ -233,9 +216,7 @@ module.exports = {
 		const addonsDir = path.join(rootDir, 'addons');
 		const allCategories = [];
 		const pages = {};
-
 		const configAddons = kythiaConfig?.addons || {};
-
 		function isAddonActive(addonName) {
 			if (configAddons.all?.active === false) return false;
 			if (configAddons[addonName]?.active === false) return false;
@@ -251,8 +232,9 @@ module.exports = {
 			}
 			return true;
 		}
-
-		const addonFolders = fs.readdirSync(addonsDir, { withFileTypes: true });
+		const addonFolders = fs.readdirSync(addonsDir, {
+			withFileTypes: true,
+		});
 		for (const addon of addonFolders) {
 			if (
 				!addon.isDirectory() ||
@@ -276,7 +258,6 @@ module.exports = {
 							continue;
 						const categoryName = categoryFolder.name;
 						if (!isCoreCategoryActive(categoryName)) continue;
-
 						const categoryPages = await getMarkdownContent(
 							categoryName,
 							rootDir,
@@ -285,15 +266,16 @@ module.exports = {
 							interaction,
 						);
 						if (categoryPages[0] === null) continue;
-
 						allCategories.push({
 							label:
 								categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
 							value: categoryName,
 							description: await t(
 								interaction,
-								'core.utils.help.category.desc',
-								{ category: categoryName },
+								'core.helpers.helpUtils.utils.help.category.desc',
+								{
+									category: categoryName,
+								},
 							),
 						});
 						pages[categoryName] = categoryPages;
@@ -310,7 +292,6 @@ module.exports = {
 						interaction,
 					);
 					if (categoryPages[0] === null) continue;
-
 					const manifest = require(manifestPath);
 					allCategories.push({
 						label: manifest.name,
@@ -322,7 +303,6 @@ module.exports = {
 			}
 		}
 		allCategories.sort((a, b) => a.label.localeCompare(b.label));
-
 		return {
 			totalCommands: countTotalCommands(interaction.client.commands),
 			allCategories,
@@ -330,27 +310,30 @@ module.exports = {
 			CATEGORIES_PER_PAGE,
 		};
 	},
-
 	buildHelpReply: async (containerContext, interaction, state, helpData) => {
 		const { kythiaConfig, t, helpers } = containerContext;
 		const { convertColor } = helpers.color;
 		const { categoryPage, selectedCategory, docPage, userId } = state;
 		const { allCategories, pages, totalCommands, CATEGORIES_PER_PAGE } =
 			helpData;
-
 		const container = new ContainerBuilder().setAccentColor(
-			convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+			convertColor(kythiaConfig.bot.color, {
+				from: 'hex',
+				to: 'decimal',
+			}),
 		);
-
 		if (!selectedCategory || selectedCategory === '-') {
-			const desc = await t(interaction, 'core.utils.help.main.embed.desc', {
-				username: interaction.client.user.username,
-				category_count: allCategories.length,
-				command_count: totalCommands,
-				supportServer: kythiaConfig.settings.supportServer,
-				botWebsite: kythiaConfig.settings.kythiaWeb,
-			});
-
+			const desc = await t(
+				interaction,
+				'core.helpers.helpUtils.utils.help.main.embed.desc',
+				{
+					username: interaction.client.user.username,
+					category_count: allCategories.length,
+					command_count: totalCommands,
+					supportServer: kythiaConfig.settings.supportServer,
+					botWebsite: kythiaConfig.settings.kythiaWeb,
+				},
+			);
 			if (kythiaConfig?.settings?.helpBannerImage) {
 				container
 					.addMediaGalleryComponents(
@@ -366,43 +349,41 @@ module.exports = {
 							.setDivider(true),
 					);
 			}
-
 			container.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(desc),
 			);
 		} else {
 			const docPages = pages[selectedCategory];
 			let docContent = docPages?.[docPage];
-
 			if (docContent === null)
-				docContent = await t(interaction, 'core.utils.help.docs.unavailable');
+				docContent = await t(
+					interaction,
+					'core.helpers.helpUtils.utils.help.docs.unavailable',
+				);
 			if (!docContent)
-				docContent = await t(interaction, 'core.utils.help.content.not.found');
+				docContent = await t(
+					interaction,
+					'core.helpers.helpUtils.utils.help.content.not.found',
+				);
 			let finalContent = docContent.trim();
-
 			if (finalContent.length === 0) {
 				finalContent = '\u200B';
 			}
-
 			if (finalContent.length > 4000) {
 				finalContent = `${finalContent.slice(0, 3997)}...`;
 			}
-
 			container.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(finalContent),
 			);
 		}
-
 		container.addSeparatorComponents(
 			new SeparatorBuilder()
 				.setSpacing(SeparatorSpacingSize.Small)
 				.setDivider(true),
 		);
-
 		const start = categoryPage * CATEGORIES_PER_PAGE;
 		const end = start + CATEGORIES_PER_PAGE;
 		const categoriesOnPage = allCategories.slice(start, end);
-
 		const selectMenu = new StringSelectMenuBuilder()
 			// Custom ID format: help-menu:userId:categoryPage:docPage:mode
 			.setCustomId(
@@ -410,16 +391,19 @@ module.exports = {
 			)
 			.setPlaceholder(
 				(
-					await t(interaction, 'core.utils.help.select.menu.placeholder', {
-						username: interaction.client.user.username,
-					})
+					await t(
+						interaction,
+						'core.helpers.helpUtils.utils.help.select.menu.placeholder',
+						{
+							username: interaction.client.user.username,
+						},
+					)
 				).replace(/^./, (c) => c.toUpperCase()),
 			)
 			.addOptions(categoriesOnPage);
 		container.addActionRowComponents(
 			new ActionRowBuilder().addComponents(selectMenu),
 		);
-
 		const rowButtons = new ActionRowBuilder();
 		const totalCategoryPages = Math.ceil(
 			allCategories.length / CATEGORIES_PER_PAGE,
@@ -429,10 +413,12 @@ module.exports = {
 		function makeBtnId(action) {
 			return `help-btn:${action}:${userId}:${categoryPage}:${selectedCategory || '-'}:${docPage}:${state.mode || 'detailed'}`;
 		}
-
 		if (selectedCategory && selectedCategory !== '-') {
 			const homeButtonLabel =
-				(await t(interaction, 'core.utils.help.button.go.home')) || '🏠 Home';
+				(await t(
+					interaction,
+					'core.helpers.helpUtils.utils.help.button.go.home',
+				)) || '🏠 Home';
 			rowButtons.addComponents(
 				new ButtonBuilder()
 					.setCustomId(makeBtnId('home'))
@@ -440,27 +426,46 @@ module.exports = {
 					.setStyle(ButtonStyle.Success)
 					.setDisabled(false),
 			);
-
 			const totalDocPages = pages[selectedCategory]?.length || 1;
 			rowButtons.addComponents(
 				new ButtonBuilder()
 					.setCustomId(makeBtnId('dp')) // doc prev
-					.setLabel(await t(interaction, 'core.utils.help.button.doc.prev'))
+					.setLabel(
+						await t(
+							interaction,
+							'core.helpers.helpUtils.utils.help.button.doc.prev',
+						),
+					)
 					.setStyle(ButtonStyle.Primary)
 					.setDisabled(docPage === 0),
 				new ButtonBuilder()
 					.setCustomId(makeBtnId('dn')) // doc next
-					.setLabel(await t(interaction, 'core.utils.help.button.doc.next'))
+					.setLabel(
+						await t(
+							interaction,
+							'core.helpers.helpUtils.utils.help.button.doc.next',
+						),
+					)
 					.setStyle(ButtonStyle.Primary)
 					.setDisabled(docPage >= totalDocPages - 1),
 				new ButtonBuilder()
 					.setCustomId(makeBtnId('cp')) // cat prev
-					.setLabel(await t(interaction, 'core.utils.help.button.cat.prev'))
+					.setLabel(
+						await t(
+							interaction,
+							'core.helpers.index.utils.help.button.cat.prev',
+						),
+					)
 					.setStyle(ButtonStyle.Secondary)
 					.setDisabled(categoryPage === 0),
 				new ButtonBuilder()
 					.setCustomId(makeBtnId('cn')) // cat next
-					.setLabel(await t(interaction, 'core.utils.help.button.cat.next'))
+					.setLabel(
+						await t(
+							interaction,
+							'core.helpers.index.utils.help.button.cat.next',
+						),
+					)
 					.setStyle(ButtonStyle.Secondary)
 					.setDisabled(categoryPage >= totalCategoryPages - 1),
 			);
@@ -468,21 +473,29 @@ module.exports = {
 			rowButtons.addComponents(
 				new ButtonBuilder()
 					.setCustomId(makeBtnId('cp'))
-					.setLabel(await t(interaction, 'core.utils.help.button.cat.prev'))
+					.setLabel(
+						await t(
+							interaction,
+							'core.helpers.index.utils.help.button.cat.prev',
+						),
+					)
 					.setStyle(ButtonStyle.Secondary)
 					.setDisabled(categoryPage === 0),
 				new ButtonBuilder()
 					.setCustomId(makeBtnId('cn'))
-					.setLabel(await t(interaction, 'core.utils.help.button.cat.next'))
+					.setLabel(
+						await t(
+							interaction,
+							'core.helpers.index.utils.help.button.cat.next',
+						),
+					)
 					.setStyle(ButtonStyle.Secondary)
 					.setDisabled(categoryPage >= totalCategoryPages - 1),
 			);
 		}
-
 		if (rowButtons.components.length > 0) {
 			container.addActionRowComponents(rowButtons);
 		}
-
 		container.addSeparatorComponents(
 			new SeparatorBuilder()
 				.setSpacing(SeparatorSpacingSize.Small)
@@ -495,7 +508,9 @@ module.exports = {
 				}),
 			),
 		);
-
-		return { components: [container], flags: MessageFlags.IsComponentsV2 };
+		return {
+			components: [container],
+			flags: MessageFlags.IsComponentsV2,
+		};
 	},
 };

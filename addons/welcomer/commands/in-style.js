@@ -52,11 +52,17 @@ class InStyleCommand extends BaseCommand {
 		await welcomeSetting.save();
 		const styleLabel =
 			style === 'components-v2'
-				? await t(interaction, 'welcomer.welcomer.style.label.components.v2')
-				: await t(interaction, 'welcomer.welcomer.style.label.plain.text');
+				? await t(
+						interaction,
+						'welcomer.shared.welcomer.style.label.components.v2',
+					)
+				: await t(
+						interaction,
+						'welcomer.shared.welcomer.style.label.plain.text',
+					);
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'welcomer.welcomer.in.style.set', {
+			await t(interaction, 'welcomer.commands.in-style.welcomer.in.style.set', {
 				styleLabel,
 			}),
 			{

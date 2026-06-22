@@ -9,9 +9,7 @@ const { MessageFlags } = require('discord.js');
 const { ASSET_IDS } = require('../../helpers/market');
 const { TOP_STOCKS } = require('../../helpers/stock');
 const { toBigIntSafe } = require('../../helpers/bigint');
-
 const { BaseCommand } = require('kythia-core');
-
 class LimitCommand extends BaseCommand {
 	subcommand = true;
 	slashCommand = (subcommand) =>
@@ -26,8 +24,14 @@ class LimitCommand extends BaseCommand {
 					.setDescription('Whether to buy or sell the asset')
 					.setRequired(true)
 					.addChoices(
-						{ name: 'Buy', value: 'buy' },
-						{ name: 'Sell', value: 'sell' },
+						{
+							name: 'Buy',
+							value: 'buy',
+						},
+						{
+							name: 'Sell',
+							value: 'sell',
+						},
 					),
 			)
 			.addStringOption((option) =>
@@ -51,50 +55,45 @@ class LimitCommand extends BaseCommand {
 					.setRequired(true)
 					.setMinValue(0.01),
 			);
-
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused().toLowerCase();
 		const combined = [
 			...ASSET_IDS.map((id) => id.toUpperCase()),
 			...TOP_STOCKS,
 		];
-
 		const filtered = combined.filter((choice) =>
 			choice.toLowerCase().includes(focusedValue),
 		);
-
 		await interaction.respond(
-			filtered
-				.slice(0, 25)
-				.map((choice) => ({ name: choice, value: choice.toLowerCase() })),
+			filtered.slice(0, 25).map((choice) => ({
+				name: choice,
+				value: choice.toLowerCase(),
+			})),
 		);
 	}
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, kythiaConfig, helpers, logger } = container;
 		const { KythiaUser, MarketPortfolio, MarketOrder } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const side = interaction.options.getString('side');
 		const assetId = interaction.options.getString('asset');
 		const quantity = interaction.options.getNumber('quantity');
 		const price = interaction.options.getNumber('price');
-
 		if (assetId === 'kyth') {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'economy.market.limit.unsupported_md'),
-				{ color: 'Red' },
+				await t(interaction, 'economy.commands.market.limit.unsupported_md'),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		const isCrypto = ASSET_IDS.includes(assetId);
 		if (!isCrypto) {
 			const { getStockData } = require('../../helpers/stock');
@@ -102,7 +101,7 @@ class LimitCommand extends BaseCommand {
 			if (!stockData) {
 				const msg = await t(
 					interaction,
-					'economy.market.buy.asset.not.found.desc',
+					'economy.shared.market.buy.asset.not.found.desc',
 				);
 				const components = await simpleContainer(interaction, msg, {
 					color: kythiaConfig.bot.color,
@@ -113,10 +112,14 @@ class LimitCommand extends BaseCommand {
 				});
 			}
 		}
-
-		const user = await KythiaUser.getCache({ userId: interaction.user.id });
+		const user = await KythiaUser.getCache({
+			userId: interaction.user.id,
+		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -125,15 +128,16 @@ class LimitCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		try {
 			if (side === 'buy') {
 				const totalCost = quantity * price;
 				if (user.kythiaCoin < totalCost) {
 					const msg = await t(
 						interaction,
-						'economy.market.buy.insufficient.funds.desc',
-						{ amount: totalCost.toLocaleString() },
+						'economy.shared.market.buy.insufficient.funds.desc',
+						{
+							amount: totalCost.toLocaleString(),
+						},
 					);
 					const components = await simpleContainer(interaction, msg, {
 						color: 'Red',
@@ -143,7 +147,6 @@ class LimitCommand extends BaseCommand {
 						flags: MessageFlags.IsComponentsV2,
 					});
 				}
-
 				const order = await MarketOrder.create({
 					userId: interaction.user.id,
 					assetId,
@@ -152,17 +155,13 @@ class LimitCommand extends BaseCommand {
 					quantity,
 					price,
 				});
-
 				user.kythiaCoin =
 					toBigIntSafe(user.kythiaCoin) - toBigIntSafe(totalCost);
-
 				user.changed('kythiaCoin', true);
-
 				await user.save();
-
 				const msg = await t(
 					interaction,
-					'economy.market.limit.buy.success.desc',
+					'economy.commands.market.limit.buy.success.desc',
 					{
 						quantity,
 						asset: assetId.toUpperCase(),
@@ -182,12 +181,13 @@ class LimitCommand extends BaseCommand {
 					userId: interaction.user.id,
 					assetId: assetId,
 				});
-
 				if (!holding || holding.quantity < quantity) {
 					const msg = await t(
 						interaction,
-						'economy.market.sell.insufficient.asset.desc',
-						{ asset: assetId.toUpperCase() },
+						'economy.shared.market.sell.insufficient.asset.desc',
+						{
+							asset: assetId.toUpperCase(),
+						},
 					);
 					const components = await simpleContainer(interaction, msg, {
 						color: 'Red',
@@ -197,7 +197,6 @@ class LimitCommand extends BaseCommand {
 						flags: MessageFlags.IsComponentsV2,
 					});
 				}
-
 				const order = await MarketOrder.create({
 					userId: interaction.user.id,
 					assetId,
@@ -206,17 +205,15 @@ class LimitCommand extends BaseCommand {
 					quantity,
 					price,
 				});
-
 				holding.quantity -= quantity;
 				if (holding.quantity > 0) {
 					await holding.save();
 				} else {
 					await holding.destroy();
 				}
-
 				const msg = await t(
 					interaction,
-					'economy.market.limit.sell.success.desc',
+					'economy.commands.market.limit.sell.success.desc',
 					{
 						quantity,
 						asset: assetId.toUpperCase(),
@@ -236,7 +233,10 @@ class LimitCommand extends BaseCommand {
 			logger.error(`Error in limit order: ${error.message || error}`, {
 				label: 'economy:market:limit',
 			});
-			const msg = await t(interaction, 'economy.market.order.error.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.market.order.error.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -247,5 +247,4 @@ class LimitCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = LimitCommand;

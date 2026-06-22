@@ -1,31 +1,41 @@
 {
 	"booster": {
-		"booster": {
-			"channel": {
-				"set": "Booster channel set to <#{channelId}>"
-			},
-			"text": {
-				"set": "Booster message text set to:\n> {text}"
-			},
+		"commands": {
 			"background": {
-				"set": "Booster background set to:\n{url}",
-				"invalid": {
-					"url": "Background URL must start with `http`."
+				"booster": {
+					"invalid": {
+						"url": "Background URL must start with `http`."
+					},
+					"set": "Booster background set to:\n{url}"
+				}
+			},
+			"channel": {
+				"booster": {
+					"set": "Booster channel set to <#{channelId}>"
 				}
 			},
 			"style": {
-				"set": "Booster message style set to **{styleLabel}**.",
-				"label": {
-					"components": {
-						"v2": "Components V2 card"
+				"booster": {
+					"label": {
+						"components": {
+							"v2": "Components V2 card"
+						},
+						"plain": {
+							"text": "Plain text only"
+						}
 					},
-					"plain": {
-						"text": "Plain text only"
-					}
+					"set": "Booster message style set to **{styleLabel}**."
 				}
 			},
 			"test": {
-				"success": "Successfully emitted the **{type}** event for testing. Check the configured channel!"
+				"booster": {
+					"success": "Successfully emitted the **{type}** event for testing. Check the configured channel!"
+				}
+			},
+			"text": {
+				"booster": {
+					"set": "Booster message text set to:\n> {text}"
+				}
 			}
 		}
 	}

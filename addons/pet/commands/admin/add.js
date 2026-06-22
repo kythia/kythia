@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class AddCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
@@ -31,10 +28,22 @@ class AddCommand extends BaseCommand {
 					.setName('rarity')
 					.setDescription('Rarity of the pet')
 					.addChoices(
-						{ name: 'Common', value: 'common' },
-						{ name: 'Rare', value: 'rare' },
-						{ name: 'Epic', value: 'epic' },
-						{ name: 'Legendary', value: 'legendary' },
+						{
+							name: 'Common',
+							value: 'common',
+						},
+						{
+							name: 'Rare',
+							value: 'rare',
+						},
+						{
+							name: 'Epic',
+							value: 'epic',
+						},
+						{
+							name: 'Legendary',
+							value: 'legendary',
+						},
 					)
 					.setRequired(true),
 			)
@@ -43,8 +52,14 @@ class AddCommand extends BaseCommand {
 					.setName('bonus_type')
 					.setDescription('Bonus type (Coin or Ruby)')
 					.addChoices(
-						{ name: 'Coin', value: 'coin' },
-						{ name: 'Ruby', value: 'ruby' },
+						{
+							name: 'Coin',
+							value: 'coin',
+						},
+						{
+							name: 'Ruby',
+							value: 'ruby',
+						},
 					)
 					.setRequired(true),
 			)
@@ -54,37 +69,39 @@ class AddCommand extends BaseCommand {
 					.setDescription('Bonus value')
 					.setRequired(true),
 			);
-
 	teamOnly = true;
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, kythiaConfig } = container;
 		const { simpleContainer } = helpers.discord;
 		const { Pet } = models;
-
 		await interaction.deferReply();
-
 		const name = interaction.options.getString('name');
 		const icon = interaction.options.getString('icon');
 		const rarity = interaction.options.getString('rarity');
 		const bonusType = interaction.options.getString('bonus_type');
 		const bonusValue = interaction.options.getInteger('bonus_value');
-
-		await Pet.create({ name, icon, rarity, bonusType, bonusValue });
-		const msg = await t(interaction, 'pet.admin.add.add.success.msg_md', {
+		await Pet.create({
 			name,
+			icon,
+			rarity,
+			bonusType,
+			bonusValue,
 		});
-
+		const msg = await t(
+			interaction,
+			'pet.commands.admin.add.add.success.msg_md',
+			{
+				name,
+			},
+		);
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,
 		});
-
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 exports.default = AddCommand;

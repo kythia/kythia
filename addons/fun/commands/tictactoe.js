@@ -63,7 +63,7 @@ class TictactoeCommand extends BaseCommand {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					`${await t(interaction, 'fun.tictactoe.error.title')}\n${await t(interaction, 'fun.tictactoe.error.self')}`,
+					`${await t(interaction, 'fun.shared.tictactoe.error.title')}\n${await t(interaction, 'fun.commands.tictactoe.error.self')}`,
 					{
 						color: 'Red',
 					},
@@ -100,7 +100,7 @@ class TictactoeCommand extends BaseCommand {
 						return i.reply({
 							components: await simpleContainer(
 								i,
-								`${await t(i, 'fun.tictactoe.error.title')}\n${await t(i, 'fun.tictactoe.error.rematch')}`,
+								`${await t(i, 'fun.shared.tictactoe.error.title')}\n${await t(i, 'fun.commands.tictactoe.error.rematch')}`,
 								{
 									color: 'Yellow',
 								},
@@ -119,7 +119,7 @@ class TictactoeCommand extends BaseCommand {
 					return i.reply({
 						components: await simpleContainer(
 							i,
-							`${await t(i, 'fun.tictactoe.error.title')}\n${await t(i, 'fun.tictactoe.error.turn')}`,
+							`${await t(i, 'fun.shared.tictactoe.error.title')}\n${await t(i, 'fun.commands.tictactoe.error.turn')}`,
 							{
 								color: 'Yellow',
 							},
@@ -133,9 +133,13 @@ class TictactoeCommand extends BaseCommand {
 				gameInstance.board[index] = playerSymbol;
 				if (tttHelpers.checkWin(gameInstance.board, playerSymbol)) {
 					gameInstance.isGameOver = true;
-					gameInstance.statusMessage = await t(i, 'fun.tictactoe.win', {
-						user: i.user.toString(),
-					});
+					gameInstance.statusMessage = await t(
+						i,
+						'fun.commands.tictactoe.win',
+						{
+							user: i.user.toString(),
+						},
+					);
 					collector.stop('win');
 					const updatedComponents = await tttHelpers.buildGameUI(gameInstance);
 					await interaction.editReply({
@@ -145,7 +149,7 @@ class TictactoeCommand extends BaseCommand {
 				}
 				if (tttHelpers.checkDraw(gameInstance.board)) {
 					gameInstance.isGameOver = true;
-					gameInstance.statusMessage = await t(i, 'fun.tictactoe.draw');
+					gameInstance.statusMessage = await t(i, 'fun.shared.tictactoe.draw');
 					collector.stop('draw');
 					const updatedComponents = await tttHelpers.buildGameUI(gameInstance);
 					await interaction.editReply({
@@ -161,7 +165,10 @@ class TictactoeCommand extends BaseCommand {
 					tttHelpers.botMove(gameInstance);
 					if (tttHelpers.checkWin(gameInstance.board, 'O')) {
 						gameInstance.isGameOver = true;
-						gameInstance.statusMessage = await t(i, 'fun.tictactoe.lose');
+						gameInstance.statusMessage = await t(
+							i,
+							'fun.commands.tictactoe.lose',
+						);
 						collector.stop('lose');
 						const updatedComponents =
 							await tttHelpers.buildGameUI(gameInstance);
@@ -172,7 +179,10 @@ class TictactoeCommand extends BaseCommand {
 					}
 					if (tttHelpers.checkDraw(gameInstance.board)) {
 						gameInstance.isGameOver = true;
-						gameInstance.statusMessage = await t(i, 'fun.tictactoe.draw');
+						gameInstance.statusMessage = await t(
+							i,
+							'fun.shared.tictactoe.draw',
+						);
 						collector.stop('draw');
 						const updatedComponents =
 							await tttHelpers.buildGameUI(gameInstance);
@@ -196,7 +206,7 @@ class TictactoeCommand extends BaseCommand {
 					if (reason === 'time') {
 						gameInstance.statusMessage = await t(
 							interaction,
-							'fun.tictactoe.timeout',
+							'fun.commands.tictactoe.timeout',
 						);
 					}
 				}
@@ -211,5 +221,4 @@ class TictactoeCommand extends BaseCommand {
 		runGame(game, interaction);
 	}
 }
-
 exports.default = TictactoeCommand;

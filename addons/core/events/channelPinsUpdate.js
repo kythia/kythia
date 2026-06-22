@@ -77,7 +77,6 @@ class ChannelPinsUpdateEvent extends BaseEvent {
 					'core.events.channelPinsUpdate.log',
 					{
 						action: isPinned ? 'Pinned' : 'Unpinned',
-
 						id: channel.id,
 						messageId: entry.extra?.messageId || 'Unknown',
 						reason: entry.reason
@@ -86,7 +85,7 @@ class ChannelPinsUpdateEvent extends BaseEvent {
 										client: this.client,
 										guildId: guildId,
 									},
-									'core.events.common.reason',
+									'core.helpers.index.events.common.reason',
 									{
 										reason: entry.reason,
 									},

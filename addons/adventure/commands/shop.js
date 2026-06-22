@@ -60,7 +60,7 @@ class ShopCommand extends BaseCommand {
 			userId,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'adventure.no.character');
+			const msg = await t(interaction, 'adventure.shared.no.character');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -118,7 +118,10 @@ class ShopCommand extends BaseCommand {
 							return i.followUp({
 								components: await simpleContainer(
 									interaction,
-									await t(interaction, 'adventure.shop.item.not.found'),
+									await t(
+										interaction,
+										'adventure.commands.shop.item.not.found',
+									),
 									{
 										color: 'Red',
 									},
@@ -130,11 +133,15 @@ class ShopCommand extends BaseCommand {
 							return i.followUp({
 								components: await simpleContainer(
 									interaction,
-									await t(interaction, 'adventure.shop.not.enough.gold', {
-										price: item.price,
-										gold: userForUpdate.gold,
-										item: await t(interaction, item.nameKey),
-									}),
+									await t(
+										interaction,
+										'adventure.commands.shop.not.enough.gold',
+										{
+											price: item.price,
+											gold: userForUpdate.gold,
+											item: await t(interaction, item.nameKey),
+										},
+									),
 								),
 								flags: MessageFlags.IsComponentsV2,
 							});
@@ -158,10 +165,14 @@ class ShopCommand extends BaseCommand {
 						await i.followUp({
 							components: await simpleContainer(
 								interaction,
-								await t(interaction, 'adventure.shop.purchase.success', {
-									item: await t(interaction, item.nameKey),
-									price: item.price,
-								}),
+								await t(
+									interaction,
+									'adventure.commands.shop.purchase.success',
+									{
+										item: await t(interaction, item.nameKey),
+										price: item.price,
+									},
+								),
 							),
 							flags: MessageFlags.IsComponentsV2,
 						});

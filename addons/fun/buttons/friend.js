@@ -36,7 +36,7 @@ class FriendButton extends BaseButton {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t(interaction, 'fun.friend.request.expired'),
+							await t(interaction, 'fun.shared.friend.request.expired'),
 						),
 					)
 					.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
@@ -53,7 +53,7 @@ class FriendButton extends BaseButton {
 			}
 			if (interaction.user.id !== friendReq.user2Id) {
 				return interaction.reply({
-					content: await t(interaction, 'fun.friend.not.found'),
+					content: await t(interaction, 'fun.shared.friend.not.found'),
 					// re-use or standard unauthorized error
 					flags: MessageFlags.Ephemeral,
 				});
@@ -72,10 +72,13 @@ class FriendButton extends BaseButton {
 				user1Display = 'Unknown';
 			}
 			user2Display = interaction.user.toString();
-			const congratsTitle = await t(interaction, 'fun.friend.congrats.title');
+			const congratsTitle = await t(
+				interaction,
+				'fun.buttons.friend.congrats.title',
+			);
 			const congratsDesc = await t(
 				interaction,
-				'fun.friend.congrats.description',
+				'fun.buttons.friend.congrats.description',
 				{
 					user1: user1Display,
 					user2: user2Display,
@@ -114,7 +117,7 @@ class FriendButton extends BaseButton {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
-							await t(interaction, 'fun.friend.request.expired'),
+							await t(interaction, 'fun.shared.friend.request.expired'),
 						),
 					)
 					.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
@@ -131,17 +134,21 @@ class FriendButton extends BaseButton {
 			}
 			if (interaction.user.id !== friendReq.user2Id) {
 				return interaction.reply({
-					content: await t(interaction, 'fun.friend.not.found'),
+					content: await t(interaction, 'fun.shared.friend.not.found'),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
 			await friendReq.update({
 				status: 'rejected',
 			});
-			const rejectedText = await t(interaction, 'fun.friend.request.rejected', {
-				user1: `<@${friendReq.user1Id}>`,
-				user2: `<@${friendReq.user2Id}>`,
-			});
+			const rejectedText = await t(
+				interaction,
+				'fun.buttons.friend.request.rejected',
+				{
+					user1: `<@${friendReq.user1Id}>`,
+					user2: `<@${friendReq.user2Id}>`,
+				},
+			);
 			const footer = await t(interaction, 'common.container.footer', {
 				username: interaction.client.user.username,
 			});

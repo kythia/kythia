@@ -42,7 +42,7 @@ class EmojiCommand extends BaseCommand {
 		await serverSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'streak.streak.setting.emoji.set', {
+			await t(interaction, 'streak.commands.setting.emoji.streak.set', {
 				emoji,
 			}),
 			{

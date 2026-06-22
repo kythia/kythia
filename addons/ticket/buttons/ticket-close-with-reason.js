@@ -12,31 +12,39 @@ const {
 	TextInputStyle,
 	MessageFlags,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TicketCloseWithReasonButton extends BaseButton {
 	button = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { t, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
-
 		try {
 			const modal = new ModalBuilder()
 				.setCustomId('tkt-close-reason-submit')
-				.setTitle(await t(interaction, 'ticket.claim_modal.title'))
+				.setTitle(
+					await t(
+						interaction,
+						'ticket.buttons.ticket-close-with-reason.claim_modal.title',
+					),
+				)
 				.addLabelComponents(
 					new LabelBuilder()
-						.setLabel(await t(interaction, 'ticket.claim_modal.label'))
+						.setLabel(
+							await t(
+								interaction,
+								'ticket.buttons.ticket-close-with-reason.claim_modal.label',
+							),
+						)
 						.setTextInputComponent(
 							new TextInputBuilder()
 								.setCustomId('reason')
 								.setStyle(TextInputStyle.Paragraph)
 								.setPlaceholder(
-									await t(interaction, 'ticket.claim_modal.placeholder'),
+									await t(
+										interaction,
+										'ticket.buttons.ticket-close-with-reason.claim_modal.placeholder',
+									),
 								)
 								.setRequired(true)
 								.setMinLength(5)
@@ -51,7 +59,10 @@ class TicketCloseWithReasonButton extends BaseButton {
 					label: 'ticket',
 				},
 			);
-			const desc = await t(interaction, 'ticket.errors.modal_show_failed');
+			const desc = await t(
+				interaction,
+				'ticket.helpers.index.errors.modal_show_failed',
+			);
 			if (!interaction.replied && !interaction.deferred) {
 				await interaction.reply({
 					components: await simpleContainer(interaction, desc, {
@@ -63,5 +74,4 @@ class TicketCloseWithReasonButton extends BaseButton {
 		}
 	}
 }
-
 exports.default = TicketCloseWithReasonButton;

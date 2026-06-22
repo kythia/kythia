@@ -43,7 +43,10 @@ class HackCommand extends BaseCommand {
 			userId: targetUser.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -58,9 +61,13 @@ class HackCommand extends BaseCommand {
 			interaction,
 		);
 		if (cooldown.remaining) {
-			const msg = await t(interaction, 'economy.hack.hack.cooldown', {
-				time: cooldown.time,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.crime.hack.hack.cooldown',
+				{
+					time: cooldown.time,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -72,7 +79,7 @@ class HackCommand extends BaseCommand {
 		if (!user || !target) {
 			const msg = await t(
 				interaction,
-				'economy.hack.hack.user.or.target.not.found',
+				'economy.commands.crime.hack.hack.user.or.target.not.found',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -83,7 +90,7 @@ class HackCommand extends BaseCommand {
 			});
 		}
 		if (targetUser.id === interaction.user.id) {
-			const msg = await t(interaction, 'economy.hack.hack.self');
+			const msg = await t(interaction, 'economy.commands.crime.hack.hack.self');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -93,7 +100,10 @@ class HackCommand extends BaseCommand {
 			});
 		}
 		if (target.kythiaBank <= 0) {
-			const msg = await t(interaction, 'economy.hack.hack.target.no.bank');
+			const msg = await t(
+				interaction,
+				'economy.commands.crime.hack.hack.target.no.bank',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -103,7 +113,10 @@ class HackCommand extends BaseCommand {
 			});
 		}
 		if (user.kythiaBank <= 20) {
-			const msg = await t(interaction, 'economy.hack.hack.user.no.bank');
+			const msg = await t(
+				interaction,
+				'economy.commands.crime.hack.hack.user.no.bank',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -138,12 +151,16 @@ class HackCommand extends BaseCommand {
 				: 'Network seems standard.';
 			const nodeNames = ['Proxy Server', 'Firewall Bypass', 'Mainframe Access'];
 			const containerDef = await createContainer(interaction, {
-				description: await t(interaction, 'economy.crime.hack.sequence', {
-					nodeNum,
-					totalNodes,
-					nodeName: nodeNames[nodeNum - 1],
-					difficultyText,
-				}),
+				description: await t(
+					interaction,
+					'economy.commands.crime.hack.sequence',
+					{
+						nodeNum,
+						totalNodes,
+						nodeName: nodeNames[nodeNum - 1],
+						difficultyText,
+					},
+				),
 				components: [row],
 			});
 			return containerDef;
@@ -196,7 +213,7 @@ class HackCommand extends BaseCommand {
 				await user.save();
 				const msg = await t(
 					interaction,
-					'economy.crime.hack.event.busted.desc',
+					'economy.commands.crime.hack.event.busted.desc',
 					{
 						node: currentNode,
 						penalty,
@@ -252,7 +269,7 @@ class HackCommand extends BaseCommand {
 					);
 					const dmComponents = await simpleContainer(
 						i,
-						await t(interaction, 'economy.crime.hack.compromised', {
+						await t(interaction, 'economy.commands.crime.hack.compromised', {
 							user: interaction.user.username,
 							hacked: totalHacked.toLocaleString(),
 						}),
@@ -265,11 +282,15 @@ class HackCommand extends BaseCommand {
 						flags: MessageFlags.IsComponentsV2,
 					});
 				} catch (_e) {}
-				const successMsg = await t(interaction, 'economy.crime.hack.breached', {
-					target: targetUser.username,
-					hacked: totalHacked.toLocaleString(),
-					bounty: Math.floor(totalHacked * 0.5).toLocaleString(),
-				});
+				const successMsg = await t(
+					interaction,
+					'economy.commands.crime.hack.breached',
+					{
+						target: targetUser.username,
+						hacked: totalHacked.toLocaleString(),
+						bounty: Math.floor(totalHacked * 0.5).toLocaleString(),
+					},
+				);
 				const components = await simpleContainer(i, successMsg, {
 					color: 'Green',
 				});
@@ -283,7 +304,7 @@ class HackCommand extends BaseCommand {
 			if (reason === 'time' && !failed) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.crime.hack.timeout'),
+					await t(interaction, 'economy.commands.crime.hack.timeout'),
 					{
 						color: 'Yellow',
 					},

@@ -50,7 +50,7 @@ class BattleCommand extends BaseCommand {
 			userId,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'adventure.no.character');
+			const msg = await t(interaction, 'adventure.shared.no.character');
 			const components = await createContainer(interaction, {
 				description: msg,
 				color: 'Red',
@@ -97,11 +97,18 @@ class BattleCommand extends BaseCommand {
 			const battleButtons = new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
 					.setCustomId('adventure_continue')
-					.setLabel(await t(interaction, 'adventure.battle.continue.button'))
+					.setLabel(
+						await t(interaction, 'adventure.shared.battle.continue.button'),
+					)
 					.setStyle(ButtonStyle.Primary),
 				new ButtonBuilder()
 					.setCustomId('adventure_use_item')
-					.setLabel(await t(interaction, 'adventure.inventory.use.item.button'))
+					.setLabel(
+						await t(
+							interaction,
+							'adventure.commands.battle.inventory.use.item.button',
+						),
+					)
 					.setStyle(ButtonStyle.Secondary)
 					.setEmoji('🔮'),
 			);
@@ -128,14 +135,14 @@ class BattleCommand extends BaseCommand {
 						const rIdx = items.findIndex((i) => i.itemName === 'revival');
 						if (rIdx > -1) items.splice(rIdx, 1);
 					}
-					const msg = await t(interaction, 'adventure.battle.revive', {
+					const msg = await t(interaction, 'adventure.commands.battle.revive', {
 						hp: user.hp,
 					});
 					const continueButton = new ActionRowBuilder().addComponents(
 						new ButtonBuilder()
 							.setCustomId('adventure_continue')
 							.setLabel(
-								await t(interaction, 'adventure.battle.continue.button'),
+								await t(interaction, 'adventure.shared.battle.continue.button'),
 							)
 							.setStyle(ButtonStyle.Primary),
 					);
@@ -155,7 +162,7 @@ class BattleCommand extends BaseCommand {
 				user.monsterGoldDrop = 0;
 				user.monsterXpDrop = 0;
 				await user.save();
-				const msg = await t(interaction, 'adventure.battle.lose', {
+				const msg = await t(interaction, 'adventure.commands.battle.lose', {
 					hp: user.hp,
 				});
 				const containerMsg = await createContainer(interaction, {
@@ -199,11 +206,15 @@ class BattleCommand extends BaseCommand {
 				}
 				await user.save();
 				if (levelUp) {
-					const msg = await t(interaction, 'adventure.battle.levelup', {
-						level: user.level,
-						hp: user.hp,
-						maxHp: user.maxHp,
-					});
+					const msg = await t(
+						interaction,
+						'adventure.commands.battle.levelup',
+						{
+							level: user.level,
+							hp: user.hp,
+							maxHp: user.maxHp,
+						},
+					);
 					const containerMsg = await createContainer(interaction, {
 						description: msg,
 						color: 'Gold',
@@ -213,7 +224,7 @@ class BattleCommand extends BaseCommand {
 						end: true,
 					};
 				}
-				const msg = await t(interaction, 'adventure.battle.win', {
+				const msg = await t(interaction, 'adventure.commands.battle.win', {
 					monster: monsterName,
 					gold: goldEarned,
 					xp: xpEarned,
@@ -235,7 +246,7 @@ class BattleCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'adventure.battle.round', {
+						await t(interaction, 'adventure.commands.battle.round', {
 							user: interaction.user.username,
 							monster: user.monsterName,
 							playerDamage,
@@ -250,12 +261,12 @@ class BattleCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						`**${await t(interaction, 'adventure.battle.hp.you')}**\n${generateHpBar(user.hp, user.maxHp)}`,
+						`**${await t(interaction, 'adventure.commands.battle.hp.you')}**\n${generateHpBar(user.hp, user.maxHp)}`,
 					),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						`**${await t(interaction, 'adventure.battle.hp.monster', {
+						`**${await t(interaction, 'adventure.commands.battle.hp.monster', {
 							monster: user.monsterName,
 						})}**\n${generateHpBar(user.monsterHp, monsterMaxHp)}`,
 					),
@@ -339,7 +350,7 @@ class BattleCommand extends BaseCommand {
 					return i.reply({
 						content: await t(
 							interaction,
-							'adventure.inventory.no.usable.items',
+							'adventure.shared.inventory.no.usable.items',
 						),
 						flags: MessageFlags.Ephemeral,
 					});
@@ -360,13 +371,19 @@ class BattleCommand extends BaseCommand {
 				const selectMenu = new StringSelectMenuBuilder()
 					.setCustomId('adventure_item_select')
 					.setPlaceholder(
-						await t(interaction, 'adventure.inventory.select.item.placeholder'),
+						await t(
+							interaction,
+							'adventure.shared.inventory.select.item.placeholder',
+						),
 					)
 					.addOptions(options);
 				const row = new ActionRowBuilder().addComponents(selectMenu);
 				const selectContainer = await createContainer(interaction, {
-					title: await t(interaction, 'adventure.inventory.use.title'),
-					description: await t(interaction, 'adventure.inventory.use.desc'),
+					title: await t(interaction, 'adventure.shared.inventory.use.title'),
+					description: await t(
+						interaction,
+						'adventure.shared.inventory.use.desc',
+					),
 					color: kythiaConfig.bot.color,
 					components: [row],
 				});
@@ -391,7 +408,10 @@ class BattleCommand extends BaseCommand {
 						if (targetItem.effect === 'heal') {
 							const healAmount = targetItem.amount || 0;
 							if (user.hp >= user.maxHp) {
-								resultMsg = await t(interaction, 'adventure.use.hp.full');
+								resultMsg = await t(
+									interaction,
+									'adventure.shared.use.hp.full',
+								);
 							} else {
 								user.hp = Math.min(user.maxHp, user.hp + healAmount);
 								used = true;
@@ -399,16 +419,20 @@ class BattleCommand extends BaseCommand {
 								const itemName = targetItem.nameKey
 									? await t(interaction, targetItem.nameKey)
 									: targetItem.id;
-								resultMsg = await t(interaction, 'adventure.use.success.heal', {
-									item: `${targetItem.emoji} ${itemName}`,
-									amount: healAmount,
-								});
+								resultMsg = await t(
+									interaction,
+									'adventure.shared.use.success.heal',
+									{
+										item: `${targetItem.emoji} ${itemName}`,
+										amount: healAmount,
+									},
+								);
 							}
 						} else if (targetItem.effect === 'revive') {
 							if (user.hp > 0) {
 								resultMsg = await t(
 									interaction,
-									'adventure.use.revive.failed.alive',
+									'adventure.shared.use.revive.failed.alive',
 								);
 							} else {
 								if (targetItem.amount) {
@@ -420,7 +444,7 @@ class BattleCommand extends BaseCommand {
 										: targetItem.id;
 									resultMsg = await t(
 										interaction,
-										'adventure.use.success.revive',
+										'adventure.shared.use.success.revive',
 										{
 											item: `${targetItem.emoji} ${itemName}`,
 										},
@@ -430,11 +454,11 @@ class BattleCommand extends BaseCommand {
 						} else {
 							resultMsg = await t(
 								interaction,
-								'adventure.inventory.cannot.use.item',
+								'adventure.shared.inventory.cannot.use.item',
 							);
 						}
 					} else {
-						resultMsg = await t(interaction, 'adventure.item.not.found');
+						resultMsg = await t(interaction, 'adventure.shared.item.not.found');
 					}
 					if (used) {
 						const itemIndex = items.findIndex(
@@ -468,8 +492,8 @@ class BattleCommand extends BaseCommand {
 					}
 					const resultContainer = await createContainer(interaction, {
 						title: success
-							? await t(interaction, 'adventure.use.success')
-							: await t(interaction, 'adventure.use.cancelled'),
+							? await t(interaction, 'adventure.shared.use.success')
+							: await t(interaction, 'adventure.shared.use.cancelled'),
 						description: resultMsg,
 						color: success ? 'Green' : 'Red',
 					});

@@ -1,28 +1,40 @@
 {
 	"autoreply": {
-		"add": {
-			"error": {
-				"no_content": "You must provide either a response text or an image.",
-				"exists": "An auto-reply with this trigger already exists."
+		"commands": {
+			"add": {
+				"error": {
+					"no_content": "You must provide either a response text or an image."
+				},
+				"success": {
+					"plain": "**Auto-reply Added!**\nTrigger: `{trigger}`\n*Using Advanced Container Style*"
+				}
 			},
-			"success": {
-				"plain": "**Auto-reply Added!**\nTrigger: `{trigger}`\n*Using Advanced Container Style*"
+			"remove": {
+				"error": {
+					"not_found": "Auto-reply not found."
+				},
+				"success": {
+					"plain": "**Auto-reply Removed!**\nTrigger: `{trigger}`"
+				}
 			}
 		},
-		"remove": {
-			"error": {
-				"not_found": "Auto-reply not found."
-			},
-			"success": {
-				"plain": "**Auto-reply Removed!**\nTrigger: `{trigger}`"
+		"shared": {
+			"add": {
+				"error": {
+					"exists": "An auto-reply with this trigger already exists."
+				}
 			}
 		},
-		"list": {
-			"title": "## Auto-Replies List ({page}/{totalPages})",
-			"empty": "No auto-replies set for this server.",
-			"entry": "• **{trigger}** {container}\n",
-			"container_tag": "*(Container)*",
-			"footer": "Page {page} of {totalPages}"
+		"helpers": {
+			"ui": {
+				"list": {
+					"empty": "No auto-replies set for this server.",
+					"container_tag": "*(Container)*",
+					"entry": "• **{trigger}** {container}\n",
+					"title": "## Auto-Replies List ({page}/{totalPages})",
+					"footer": "Page {page} of {totalPages}"
+				}
+			}
 		}
 	}
 }

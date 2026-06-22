@@ -50,7 +50,7 @@ class LeaderboardCommand extends BaseCommand {
 					} catch (_e) {
 						user = null;
 					}
-					return t(interaction, 'pet.leaderboard.entry', {
+					return t(interaction, 'pet.commands.leaderboard.entry', {
 						index: index + 1,
 						userId: pet.userId,
 						username: user?.username || 'Unknown',
@@ -63,11 +63,11 @@ class LeaderboardCommand extends BaseCommand {
 			);
 			leaderboardDesc = entries.join('\n');
 		} else {
-			leaderboardDesc = await t(interaction, 'pet.leaderboard.empty');
+			leaderboardDesc = await t(interaction, 'pet.commands.leaderboard.empty');
 		}
 		const components = await simpleContainer(
 			interaction,
-			`${await t(interaction, 'pet.leaderboard.title')}\n${leaderboardDesc}`,
+			`${await t(interaction, 'pet.commands.leaderboard.title')}\n${leaderboardDesc}`,
 			{
 				color: kythiaConfig.bot.color,
 			},

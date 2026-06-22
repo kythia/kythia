@@ -31,7 +31,7 @@ class TvFixConfigButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.fix_config.config_not_found'),
+					await t(interaction, 'tempvoice.shared.fix_config.config_not_found'),
 					{
 						color: 'Red',
 					},
@@ -40,7 +40,12 @@ class TvFixConfigButton extends BaseButton {
 			});
 		const modal = new ModalBuilder()
 			.setCustomId('tv_fix_config_modal')
-			.setTitle(await t(interaction, 'tempvoice.fix_config.modal_title'));
+			.setTitle(
+				await t(
+					interaction,
+					'tempvoice.buttons.tv-fix-config.fix_config.modal_title',
+				),
+			);
 
 		// Cek lagi apa yang hilang buat nentuin field modal
 		const guild = interaction.guild;
@@ -56,10 +61,16 @@ class TvFixConfigButton extends BaseButton {
 			modal.addLabelComponents(
 				new LabelBuilder()
 					.setLabel(
-						await t(interaction, 'tempvoice.fix_config.labels.category'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-fix-config.fix_config.labels.category',
+						),
 					)
 					.setDescription(
-						await t(interaction, 'tempvoice.fix_config.labels.category_desc'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-fix-config.fix_config.labels.category_desc',
+						),
 					)
 					.setChannelSelectMenuComponent(
 						new ChannelSelectMenuBuilder()
@@ -67,7 +78,7 @@ class TvFixConfigButton extends BaseButton {
 							.setPlaceholder(
 								await t(
 									interaction,
-									'tempvoice.fix_config.labels.category_placeholder',
+									'tempvoice.buttons.tv-fix-config.fix_config.labels.category_placeholder',
 								),
 							)
 							.addChannelTypes(ChannelType.GuildCategory)
@@ -88,9 +99,17 @@ class TvFixConfigButton extends BaseButton {
 		if (trigMissing) {
 			modal.addLabelComponents(
 				new LabelBuilder()
-					.setLabel(await t(interaction, 'tempvoice.fix_config.labels.trigger'))
+					.setLabel(
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-fix-config.fix_config.labels.trigger',
+						),
+					)
 					.setDescription(
-						await t(interaction, 'tempvoice.fix_config.labels.trigger_desc'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-fix-config.fix_config.labels.trigger_desc',
+						),
 					)
 					.setChannelSelectMenuComponent(
 						new ChannelSelectMenuBuilder()
@@ -99,7 +118,7 @@ class TvFixConfigButton extends BaseButton {
 							.setPlaceholder(
 								await t(
 									interaction,
-									'tempvoice.fix_config.labels.trigger_placeholder',
+									'tempvoice.buttons.tv-fix-config.fix_config.labels.trigger_placeholder',
 								),
 							)
 							.setRequired(true),
@@ -123,10 +142,16 @@ class TvFixConfigButton extends BaseButton {
 			modal.addLabelComponents(
 				new LabelBuilder()
 					.setLabel(
-						await t(interaction, 'tempvoice.fix_config.labels.interface'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-fix-config.fix_config.labels.interface',
+						),
 					)
 					.setDescription(
-						await t(interaction, 'tempvoice.fix_config.labels.interface_desc'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-fix-config.fix_config.labels.interface_desc',
+						),
 					)
 					.setChannelSelectMenuComponent(
 						new ChannelSelectMenuBuilder()
@@ -135,7 +160,7 @@ class TvFixConfigButton extends BaseButton {
 							.setPlaceholder(
 								await t(
 									interaction,
-									'tempvoice.fix_config.labels.interface_placeholder',
+									'tempvoice.buttons.tv-fix-config.fix_config.labels.interface_placeholder',
 								),
 							)
 							.setRequired(true),
@@ -146,7 +171,10 @@ class TvFixConfigButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.fix_config.all_good'),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-fix-config.fix_config.all_good',
+					),
 					{
 						color: 'Green',
 					},

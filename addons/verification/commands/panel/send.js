@@ -98,12 +98,15 @@ class SendCommand extends BaseCommand {
 		const { convertColor } = helpers.color;
 		const color = panelConfig.color
 			? parseInt(panelConfig.color.replace('#', ''), 16)
-			: convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' });
+			: convertColor(kythiaConfig.bot.color, {
+					from: 'hex',
+					to: 'decimal',
+				});
 		const containerPayload = new ContainerBuilder()
 			.setAccentColor(color)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'verification.panel.send.content_md', {
+					await t(interaction, 'verification.commands.panel.send.content_md', {
 						title,
 						description,
 					}),

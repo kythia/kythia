@@ -47,7 +47,7 @@ class AreaCommand extends BaseCommand {
 		if (result == null) {
 			const components = await simpleContainer(
 				interaction,
-				`${await t(interaction, 'core.utils.convert.area.failed')}`,
+				`${await t(interaction, 'core.commands.utils.convert.area.failed')}`,
 				{
 					color: 'Red',
 				},
@@ -59,9 +59,9 @@ class AreaCommand extends BaseCommand {
 		}
 		const desc =
 			'' +
-			(await t(interaction, 'core.utils.convert.area.title')) +
+			(await t(interaction, 'core.commands.utils.convert.area.title')) +
 			'\n' +
-			(await t(interaction, 'core.utils.convert.area.result', {
+			(await t(interaction, 'core.commands.utils.convert.area.result', {
 				value,
 				from,
 				result,

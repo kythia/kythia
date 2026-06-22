@@ -32,7 +32,10 @@ class TvDeleteButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.tv_delete.no_active'),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-delete.tv_delete.no_active',
+					),
 					{
 						color: 'Red',
 					},
@@ -57,7 +60,7 @@ class TvDeleteButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -68,15 +71,28 @@ class TvDeleteButton extends BaseButton {
 		const rowBtns = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('tv_delete_confirm')
-				.setLabel(await t(interaction, 'tempvoice.tv_delete.delete_btn'))
+				.setLabel(
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-delete.tv_delete.delete_btn',
+					),
+				)
 				.setStyle(ButtonStyle.Danger)
 				.setEmoji('🗑️'),
 			new ButtonBuilder()
 				.setCustomId('tv_delete_cancel')
-				.setLabel(await t(interaction, 'tempvoice.tv_delete.cancel_btn'))
+				.setLabel(
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-delete.tv_delete.cancel_btn',
+					),
+				)
 				.setStyle(ButtonStyle.Secondary),
 		);
-		const confirmText = await t(interaction, 'tempvoice.tv_delete.confirm');
+		const confirmText = await t(
+			interaction,
+			'tempvoice.buttons.tv-delete.tv_delete.confirm',
+		);
 		const confirmComponents = await simpleContainer(interaction, confirmText);
 		if (
 			Array.isArray(confirmComponents) &&
@@ -102,12 +118,21 @@ class TvDeleteButton extends BaseButton {
 			let message, color;
 			if (btnInteraction.customId === 'tv_delete_confirm') {
 				await channel.delete(
-					await t(btnInteraction, 'tempvoice.tv_delete.deleted_reason'),
+					await t(
+						btnInteraction,
+						'tempvoice.buttons.tv-delete.tv_delete.deleted_reason',
+					),
 				);
-				message = await t(btnInteraction, 'tempvoice.tv_delete.deleted');
+				message = await t(
+					btnInteraction,
+					'tempvoice.buttons.tv-delete.tv_delete.deleted',
+				);
 				color = 'Green';
 			} else {
-				message = await t(btnInteraction, 'tempvoice.tv_delete.cancelled');
+				message = await t(
+					btnInteraction,
+					'tempvoice.buttons.tv-delete.tv_delete.cancelled',
+				);
 				color = 'Red';
 			}
 			await btnInteraction.update({
@@ -119,7 +144,10 @@ class TvDeleteButton extends BaseButton {
 		});
 		collector.on('end', async (_collected, reason) => {
 			if (reason === 'time' && msg.editable) {
-				const expiredMsg = await t(interaction, 'tempvoice.tv_delete.expired');
+				const expiredMsg = await t(
+					interaction,
+					'tempvoice.buttons.tv-delete.tv_delete.expired',
+				);
 				await msg
 					.edit({
 						components: await simpleContainer(interaction, expiredMsg, {

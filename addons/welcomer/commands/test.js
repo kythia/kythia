@@ -56,7 +56,7 @@ class TestCommand extends BaseCommand {
 		}
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'welcomer.welcomer.test.success', {
+			await t(interaction, 'welcomer.commands.test.welcomer.success', {
 				type: type === 'in' ? 'guildMemberAdd' : 'guildMemberRemove',
 			}),
 			{

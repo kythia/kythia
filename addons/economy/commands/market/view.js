@@ -111,7 +111,10 @@ class ViewCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -139,7 +142,10 @@ class ViewCommand extends BaseCommand {
 			if (!pool) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.market.view.pool_not_found_md'),
+					await t(
+						interaction,
+						'economy.commands.market.view.pool_not_found_md',
+					),
 					{
 						color: 'Red',
 					},
@@ -243,7 +249,7 @@ class ViewCommand extends BaseCommand {
 				}
 			}
 			const description = [
-				await t(interaction, 'economy.market.view.title_md'),
+				await t(interaction, 'economy.commands.market.view.title_md'),
 				`*Powered by Kythia's on-chain Automated Market Maker (X×Y=K)*`,
 				``,
 				`**💰 Spot Price:** ${stats.spotPrice} Coin/KYTH`,
@@ -339,22 +345,26 @@ class ViewCommand extends BaseCommand {
 			emoji = marketuiHelper.getChangeEmoji(percent);
 			let description = `${await t(
 				interaction,
-				'economy.market.view.chart.title_md',
+				'economy.commands.market.view.chart.title_md',
 				{
-					title: await t(interaction, 'economy.market.view.chart.title', {
-						asset: assetName,
-						timeframe,
-					}),
+					title: await t(
+						interaction,
+						'economy.commands.market.view.chart.title',
+						{
+							asset: assetName,
+							timeframe,
+						},
+					),
 				},
 			)}\n\n`;
-			description += `**${await t(interaction, 'economy.market.view.price.label')}:** $${price.toLocaleString(
+			description += `**${await t(interaction, 'economy.commands.market.view.price.label')}:** $${price.toLocaleString(
 				'en-US',
 				{
 					minimumFractionDigits: 2,
 					maximumFractionDigits: 2,
 				},
 			)}\n`;
-			description += `**${await t(interaction, 'economy.market.view.24h.change.label')}:** ${emoji} ${percent.toFixed(2)}%\n`;
+			description += `**${await t(interaction, 'economy.commands.market.view.24h.change.label')}:** ${emoji} ${percent.toFixed(2)}%\n`;
 			const openOrders = await MarketOrder.getAllCache({
 				where: {
 					userId: interaction.user.id,
@@ -371,7 +381,7 @@ class ViewCommand extends BaseCommand {
 						return `- **${order.side.toUpperCase()} ${order.quantity} ${assetName}** at $${order.price} (${order.type})`;
 					})
 					.join('\n');
-				description += `\n**${await t(interaction, 'economy.market.view.open.orders.label')}:**\n${orderSummary}`;
+				description += `\n**${await t(interaction, 'economy.commands.market.view.open.orders.label')}:**\n${orderSummary}`;
 			}
 			const chartBuffer = isCrypto
 				? await getChartBuffer(kythiaConfig, assetId, timeframe)
@@ -460,7 +470,7 @@ class ViewCommand extends BaseCommand {
 			const cryptoTable = marketuiHelper.formatMarketTable(assetRows);
 			const stockTable = marketuiHelper.formatMarketTable(stockRows);
 			const msg =
-				`${await t(interaction, 'economy.market.view.all.title')}\n` +
+				`${await t(interaction, 'economy.commands.market.view.all.title')}\n` +
 				`**Top Crypto**\n${cryptoTable}\n` +
 				`**Top Stocks**\n${stockTable}`;
 			const components = await simpleContainer(interaction, msg, {

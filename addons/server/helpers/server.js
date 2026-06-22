@@ -16,13 +16,10 @@ const {
 	ChannelType,
 	PermissionFlagsBits,
 } = require('discord.js');
-
 const path = require('node:path');
 const { loadTemplates } = require('./template');
-
 const TEMPLATE_DIR = path.join(__dirname, '../template');
 const EMBEDDED = loadTemplates(TEMPLATE_DIR);
-
 const PERM = new Proxy(
 	{},
 	{
@@ -33,7 +30,6 @@ const PERM = new Proxy(
 	},
 );
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
 function roleIdByName(guild, name) {
 	if (name === '@everyone') return guild.roles.everyone.id;
 	const r = guild.roles.cache.find(
@@ -41,7 +37,6 @@ function roleIdByName(guild, name) {
 	);
 	return r?.id;
 }
-
 function overwriteFromPermSpec(guild, permSpec) {
 	const allow = (permSpec.allow || [])
 		.map((p) => PERM[p])
@@ -51,9 +46,13 @@ function overwriteFromPermSpec(guild, permSpec) {
 		.reduce((a, b) => a | b, 0n);
 	const targets =
 		permSpec.roles?.map((n) => roleIdByName(guild, n)).filter(Boolean) || [];
-	return targets.map((id) => ({ id, type: OverwriteType.Role, allow, deny }));
+	return targets.map((id) => ({
+		id,
+		type: OverwriteType.Role,
+		allow,
+		deny,
+	}));
 }
-
 async function ensureRole(guild, spec, stats) {
 	const exists = guild.roles.cache.find(
 		(r) => r.name.toLowerCase() === spec.name.toLowerCase(),
@@ -77,7 +76,6 @@ async function ensureRole(guild, spec, stats) {
 	await sleep(250);
 	return role;
 }
-
 async function ensureCategory(guild, name, stats) {
 	const existing = guild.channels.cache.find(
 		(c) =>
@@ -97,7 +95,6 @@ async function ensureCategory(guild, name, stats) {
 	await sleep(250);
 	return cat;
 }
-
 async function ensureChannel(guild, category, spec, stats) {
 	const { logger, helpers, kythiaConfig } = guild.client.container;
 	const existing = guild.channels.cache.find(
@@ -109,7 +106,6 @@ async function ensureChannel(guild, category, spec, stats) {
 		stats.channel.skipped++;
 		return existing;
 	}
-
 	const options = {
 		name: spec.name,
 		type: spec.type,
@@ -120,7 +116,9 @@ async function ensureChannel(guild, category, spec, stats) {
 		reason: 'autobuild: create channel',
 	};
 	if (spec.type === ChannelType.GuildForum) {
-		options.availableTags = (spec.forumTags || []).map((t) => ({ name: t }));
+		options.availableTags = (spec.forumTags || []).map((t) => ({
+			name: t,
+		}));
 		options.defaultAutoArchiveDuration = 10080;
 		options.defaultThreadRateLimitPerUser = 5;
 	}
@@ -132,7 +130,6 @@ async function ensureChannel(guild, category, spec, stats) {
 	const ch = await guild.channels.create(options);
 	stats.channel.created++;
 	await sleep(300);
-
 	if (
 		Array.isArray(spec.pin) &&
 		spec.pin.length &&
@@ -144,7 +141,10 @@ async function ensureChannel(guild, category, spec, stats) {
 				const { convertColor } = helpers.color;
 				const container = new ContainerBuilder().setAccentColor(
 					msg.color
-						? convertColor(msg.color, { from: 'hex', to: 'decimal' })
+						? convertColor(msg.color, {
+								from: 'hex',
+								to: 'decimal',
+							})
 						: convertColor(kythiaConfig.bot.color, {
 								from: 'hex',
 								to: 'decimal',
@@ -152,11 +152,13 @@ async function ensureChannel(guild, category, spec, stats) {
 				);
 				let content = '';
 				const { t } = kythiaConfig.container || guild.client.container;
-				const fakeInteraction = { client: guild.client };
+				const fakeInteraction = {
+					client: guild.client,
+				};
 				if (msg.title)
 					content += `${await t(
 						fakeInteraction,
-						'server.server.reset.msg_title_md',
+						'server.helpers.server.server.reset.msg_title_md',
 						{
 							title: msg.title,
 						},
@@ -181,7 +183,9 @@ async function ensureChannel(guild, category, spec, stats) {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			} else {
-				m = await ch.send({ content: msg });
+				m = await ch.send({
+					content: msg,
+				});
 			}
 			if (m) {
 				try {
@@ -197,7 +201,6 @@ async function ensureChannel(guild, category, spec, stats) {
 	}
 	return ch;
 }
-
 async function updateProgress(interaction, progress) {
 	const container = interaction.client.container;
 	const { kythiaConfig, t, helpers } = container;
@@ -211,29 +214,42 @@ async function updateProgress(interaction, progress) {
 	const bar = '█'.repeat(filledLength) + '░'.repeat(barLength - filledLength);
 	const components = await simpleContainer(
 		interaction,
-		(await t(interaction, 'server.server.progress.title_md')) +
+		(await t(interaction, 'server.helpers.server.server.progress.title_md')) +
 			'\n' +
 			`**${progress.label}**\n` +
 			`\`${bar}\` ${percent}%\n` +
 			`(${progress.current}/${progress.total})\n\n` +
 			(progress.extra || '') +
-			`\n${await t(interaction, 'server.server.progress.step', { step: progress.step, totalSteps: progress.totalSteps })}`,
-		{ color: kythiaConfig.bot.color },
+			`\n${await t(interaction, 'server.helpers.server.server.progress.step', {
+				step: progress.step,
+				totalSteps: progress.totalSteps,
+			})}`,
+		{
+			color: kythiaConfig.bot.color,
+		},
 	);
 	await interaction.editReply({
 		components,
 		flags: MessageFlags.IsComponentsV2,
 	});
 }
-
 async function runTemplate(interaction, tpl, opts) {
 	const { guild, client } = interaction;
 	const container = client.container;
 	const { t } = container;
 	const stats = {
-		role: { created: 0, skipped: 0 },
-		category: { created: 0, skipped: 0 },
-		channel: { created: 0, skipped: 0 },
+		role: {
+			created: 0,
+			skipped: 0,
+		},
+		category: {
+			created: 0,
+			skipped: 0,
+		},
+		channel: {
+			created: 0,
+			skipped: 0,
+		},
 		failed: 0,
 	};
 	if (!guild) throw new Error('guild missing');
@@ -247,12 +263,10 @@ async function runTemplate(interaction, tpl, opts) {
 		throw new Error(
 			'bot kurang permission: ManageGuild, ManageChannels, ManageRoles',
 		);
-
 	const totalRoles = (tpl.roles || []).length;
 	const totalCats = (tpl.categories || []).length;
 	let step = 1;
 	const totalSteps = (totalRoles ? 1 : 0) + (totalCats ? 1 : 0);
-
 	if (!opts.dryRun && totalRoles) {
 		let i = 0;
 		for (const r of tpl.roles || []) {
@@ -267,12 +281,14 @@ async function runTemplate(interaction, tpl, opts) {
 				totalSteps,
 				current: i,
 				total: totalRoles,
-				label: await t(interaction, 'server.server.progress.creating.roles'),
+				label: await t(
+					interaction,
+					'server.helpers.server.server.progress.creating.roles',
+				),
 			});
 		}
 		step++;
 	}
-
 	let catIdx = 0;
 	for (const cat of tpl.categories || []) {
 		if (cat.name.toLowerCase() === 'voice' && !opts.includeVoice) continue;
@@ -291,9 +307,11 @@ async function runTemplate(interaction, tpl, opts) {
 			totalSteps,
 			current: catIdx,
 			total: totalCats,
-			label: await t(interaction, 'server.server.progress.creating.categories'),
+			label: await t(
+				interaction,
+				'server.helpers.server.server.progress.creating.categories',
+			),
 		});
-
 		let chIdx = 0;
 		for (const ch of cat.channels || []) {
 			if (
@@ -304,7 +322,10 @@ async function runTemplate(interaction, tpl, opts) {
 				continue;
 			if (opts.privateStaff && cat.name.toLowerCase() === 'staff') {
 				ch.perms = ch.perms || [];
-				ch.perms.unshift({ roles: ['@everyone'], deny: ['ViewChannel'] });
+				ch.perms.unshift({
+					roles: ['@everyone'],
+					deny: ['ViewChannel'],
+				});
 			}
 			if (!opts.dryRun) {
 				try {
@@ -323,44 +344,49 @@ async function runTemplate(interaction, tpl, opts) {
 				total: cat.channels.length,
 				label: await t(
 					interaction,
-					'server.server.progress.creating.channels',
-					{ category: cat.name },
+					'server.helpers.server.server.progress.creating.channels',
+					{
+						category: cat.name,
+					},
 				),
 			});
 		}
 	}
 	return stats;
 }
-
 async function resetServer(interaction) {
 	const { guild, client } = interaction;
 	const container = client.container;
 	const { kythiaConfig, t, helpers } = container;
 	const { simpleContainer } = helpers.discord;
 	let components;
-
 	if (!guild) {
 		components = await simpleContainer(
 			interaction,
-			await t(interaction, 'server.server.reset.no.guild_md'),
-			{ color: 'Red' },
+			await t(interaction, 'server.helpers.server.server.reset.no.guild_md'),
+			{
+				color: 'Red',
+			},
 		);
 		return interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
-
 	components = await simpleContainer(
 		interaction,
-		await t(interaction, 'server.server.reset.progress.start_md'),
-		{ color: kythiaConfig.bot.color },
+		await t(
+			interaction,
+			'server.helpers.server.server.reset.progress.start_md',
+		),
+		{
+			color: kythiaConfig.bot.color,
+		},
 	);
 	await interaction.editReply({
 		components,
 		flags: MessageFlags.IsComponentsV2,
 	});
-
 	const currentChannelId = interaction.channelId;
 	const channelPromises = [];
 	let chIdx = 0;
@@ -372,16 +398,22 @@ async function resetServer(interaction) {
 		if (chIdx % 5 === 0 || chIdx === channelsArr.length) {
 			await simpleContainer(
 				interaction,
-				await t(interaction, 'server.server.reset.progress.channels_md', {
-					current: chIdx,
-					total: channelsArr.length,
-				}),
-				{ color: kythiaConfig.bot.color, editReply: true },
+				await t(
+					interaction,
+					'server.helpers.server.server.reset.progress.channels_md',
+					{
+						current: chIdx,
+						total: channelsArr.length,
+					},
+				),
+				{
+					color: kythiaConfig.bot.color,
+					editReply: true,
+				},
 			);
 		}
 	}
 	await Promise.all(channelPromises);
-
 	const rolePromises = [];
 	let roleIdx = 0;
 	const rolesArr = Array.from(guild.roles.cache.values());
@@ -392,16 +424,22 @@ async function resetServer(interaction) {
 		if (roleIdx % 5 === 0 || roleIdx === rolesArr.length) {
 			await simpleContainer(
 				interaction,
-				await t(interaction, 'server.server.reset.progress.roles_md', {
-					current: roleIdx,
-					total: rolesArr.length,
-				}),
-				{ color: kythiaConfig.bot.color, editReply: true },
+				await t(
+					interaction,
+					'server.helpers.server.server.reset.progress.roles_md',
+					{
+						current: roleIdx,
+						total: rolesArr.length,
+					},
+				),
+				{
+					color: kythiaConfig.bot.color,
+					editReply: true,
+				},
 			);
 		}
 	}
 	await Promise.all(rolePromises);
-
 	let emojiIdx = 0;
 	const emojisArr = Array.from(guild.emojis.cache.values());
 	for (const emoji of emojisArr) {
@@ -410,15 +448,21 @@ async function resetServer(interaction) {
 		if (emojiIdx % 5 === 0 || emojiIdx === emojisArr.length) {
 			await simpleContainer(
 				interaction,
-				await t(interaction, 'server.server.reset.progress.emojis_md', {
-					current: emojiIdx,
-					total: emojisArr.length,
-				}),
-				{ color: kythiaConfig.bot.color, editReply: true },
+				await t(
+					interaction,
+					'server.helpers.server.server.reset.progress.emojis_md',
+					{
+						current: emojiIdx,
+						total: emojisArr.length,
+					},
+				),
+				{
+					color: kythiaConfig.bot.color,
+					editReply: true,
+				},
 			);
 		}
 	}
-
 	if (guild.stickers?.cache) {
 		let stickerIdx = 0;
 		const stickersArr = Array.from(guild.stickers.cache.values());
@@ -428,27 +472,34 @@ async function resetServer(interaction) {
 			if (stickerIdx % 2 === 0 || stickerIdx === stickersArr.length) {
 				await simpleContainer(
 					interaction,
-					await t(interaction, 'server.server.reset.progress.stickers_md', {
-						current: stickerIdx,
-						total: stickersArr.length,
-					}),
-					{ color: kythiaConfig.bot.color, editReply: true },
+					await t(
+						interaction,
+						'server.helpers.server.server.reset.progress.stickers_md',
+						{
+							current: stickerIdx,
+							total: stickersArr.length,
+						},
+					),
+					{
+						color: kythiaConfig.bot.color,
+						editReply: true,
+					},
 				);
 			}
 		}
 	}
-
 	components = await simpleContainer(
 		interaction,
-		`${await t(interaction, 'server.server.reset.success')}`,
-		{ color: 'Green' },
+		`${await t(interaction, 'server.helpers.server.server.reset.success')}`,
+		{
+			color: 'Green',
+		},
 	);
 	return interaction.editReply({
 		components,
 		flags: MessageFlags.IsComponentsV2,
 	});
 }
-
 module.exports = {
 	EMBEDDED,
 	runTemplate,

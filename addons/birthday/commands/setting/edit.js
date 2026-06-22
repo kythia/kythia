@@ -80,7 +80,7 @@ class EditCommand extends BaseCommand {
 		if (channel) {
 			setting.channelId = channel.id;
 			changes.push(
-				await t(interaction, 'birthday.setting.edit.channel_set', {
+				await t(interaction, 'birthday.commands.setting.edit.channel_set', {
 					channel,
 				}),
 			);
@@ -88,7 +88,7 @@ class EditCommand extends BaseCommand {
 		if (role) {
 			setting.roleId = role.id;
 			changes.push(
-				await t(interaction, 'birthday.setting.edit.role_set', {
+				await t(interaction, 'birthday.commands.setting.edit.role_set', {
 					role,
 				}),
 			);
@@ -96,17 +96,17 @@ class EditCommand extends BaseCommand {
 		if (pingRole) {
 			setting.pingRoleId = pingRole.id;
 			changes.push(
-				await t(interaction, 'birthday.setting.edit.ping_role_set', {
+				await t(interaction, 'birthday.commands.setting.edit.ping_role_set', {
 					role: pingRole,
 				}),
 			);
 		}
 		if (showAge !== null) {
 			setting.showAge = showAge;
-			const yes = await t(interaction, 'birthday.setting.view.yes');
-			const no = await t(interaction, 'birthday.setting.view.no');
+			const yes = await t(interaction, 'birthday.shared.setting.view.yes');
+			const no = await t(interaction, 'birthday.shared.setting.view.no');
 			changes.push(
-				await t(interaction, 'birthday.setting.edit.show_age_set', {
+				await t(interaction, 'birthday.commands.setting.edit.show_age_set', {
 					status: showAge ? yes : no,
 				}),
 			);
@@ -114,20 +114,22 @@ class EditCommand extends BaseCommand {
 		if (message) {
 			setting.message = message;
 			changes.push(
-				await t(interaction, 'birthday.setting.edit.message_updated'),
+				await t(interaction, 'birthday.commands.setting.edit.message_updated'),
 			);
 		}
 		if (color) {
 			setting.embedColor = color;
 			changes.push(
-				await t(interaction, 'birthday.setting.edit.color_set', {
+				await t(interaction, 'birthday.commands.setting.edit.color_set', {
 					color,
 				}),
 			);
 		}
 		if (image) {
 			setting.bgUrl = image;
-			changes.push(await t(interaction, 'birthday.setting.edit.image_updated'));
+			changes.push(
+				await t(interaction, 'birthday.commands.setting.edit.image_updated'),
+			);
 		}
 		if (changes.length === 0) {
 			return interaction.editReply({
@@ -139,7 +141,7 @@ class EditCommand extends BaseCommand {
 			});
 		}
 		await setting.save();
-		const title = await t(interaction, 'birthday.setting.edit.title');
+		const title = await t(interaction, 'birthday.commands.setting.edit.title');
 		const components = await simpleContainer(
 			interaction,
 			`${title}\n${changes.join('\n')}`,

@@ -1,104 +1,116 @@
 {
 	"pro": {
-		"claim": {
-			"subdomain": {
-				"error_mustHaveAccount": "You must have a Kythia account to claim a subdomain. Use `/start` to create one.",
-				"error_proOrVoterRequired": "This feature is only available for **Premium Users** or **Active Voters**.\n\nVote on Top.gg to get access for 12 hours!",
-				"error_maxReached": "You have reached the maximum limit of **{max}** subdomains.",
-				"error_invalidName": "Invalid subdomain name. It must be 3-32 characters long and can only contain lowercase letters, numbers, and hyphens (-).",
-				"error_forbidden": "The name **{name}** is reserved and cannot be claimed.",
-				"error_taken": "Sorry, the subdomain **{name}** is already taken.",
-				"error_technical": "A technical error occurred while claiming your subdomain. Please try again later.",
-				"success_title": "Subdomain Claimed!",
-				"success_desc": "Congratulations! You have successfully claimed **{subdomain}.{domain}**.\n\n*You now have {used}/{max} subdomains.*"
-			}
-		},
 		"dns": {
 			"set": {
-				"error_need_account": "You must have a Kythia account (`/eco account create`) to manage DNS.",
-				"error_need_premium_or_vote": "This feature is only available for **Premium Users** or **Active Voters**.",
-				"error_subdomain_not_found": "You do not own the subdomain `{subdomain}`.",
 				"success_title_created": "DNS Record Created!",
 				"success_title_updated": "DNS Record Updated!",
 				"action_created_past": "created",
-				"action_updated_past": "updated",
-				"success_desc": "Successfully {action_past} the following record:\n\n`{type}` `{fqdn}` `->` `{value}`",
-				"error_fail_title": "Cloudflare API Error",
-				"error_fail_desc": "Failed to update the record. Cloudflare returned:\n`{error}`"
+				"action_updated_past": "updated"
+			}
+		},
+		"commands": {
+			"claim": {
+				"subdomain": {
+					"error_mustHaveAccount": "You must have a Kythia account to claim a subdomain. Use `/start` to create one.",
+					"error_proOrVoterRequired": "This feature is only available for **Premium Users** or **Active Voters**.\n\nVote on Top.gg to get access for 12 hours!",
+					"error_maxReached": "You have reached the maximum limit of **{max}** subdomains.",
+					"error_invalidName": "Invalid subdomain name. It must be 3-32 characters long and can only contain lowercase letters, numbers, and hyphens (-).",
+					"error_forbidden": "The name **{name}** is reserved and cannot be claimed.",
+					"success_title": "Subdomain Claimed!",
+					"success_desc": "Congratulations! You have successfully claimed **{subdomain}.{domain}**.\n\n*You now have {used}/{max} subdomains.*",
+					"error_taken": "Sorry, the subdomain **{name}** is already taken.",
+					"error_technical": "A technical error occurred while claiming your subdomain. Please try again later."
+				}
 			},
-			"delete": {
-				"error_notPremium": "This feature is only available for **Premium Users** or **Active Voters**.",
-				"error_noRecords": "You do not have any DNS records to delete.",
-				"error_notFound": "The selected DNS record was not found in our database. It might have already been deleted.",
-				"error_notOwner": "You are not the owner of this DNS record.",
-				"error_failedTitle": "Cloudflare API Error",
-				"error_failedDesc": "Failed to delete the record from Cloudflare. Error: `{error}`",
-				"success_title": "DNS Record Deleted",
-				"success_desc": "The following DNS record has been deleted:\n\n`{type}` `{name}` `->` `{value}`",
-				"orphaned_desc": "This record was orphaned (only existed in the local database) and has now been cleaned up."
-			},
-			"list": {
-				"not_allowed": "This feature is only available for **Premium Users** or **Active Voters**.",
-				"not_found": "You do not own a subdomain named `{subdomain}`.",
-				"title": "DNS Records for `{fqdn}`",
-				"no_record": "You have no DNS records set for this subdomain. Use `/pro dns set` to add one.",
-				"has_record": "Displaying **{count}** DNS record(s) for this subdomain.",
-				"record_title": "Record ID: {id}  •  Type: {type}",
-				"record_value": "`Name:` {name}\n`Value:` {value}",
-				"display_md": "## {title}\n{description}"
-			},
-			"help": {
-				"title": "## DNS Record Type Reference",
-				"description": "Here are the supported DNS record types, required fields, and examples.\n\nUse `/pro dns set` to create or update records.",
-				"labels": {},
-				"types": [
-					{
-						"name": "A (IP Address Record)",
-						"desc": "Maps a domain/subdomain to an IPv4 address.",
-						"value": "IPv4 Address (e.g. `198.51.100.42`)",
-						"name_host": "Subdomain/Host (e.g. `@` for root, `blog` for `blog.kyth.me`)",
-						"example_lines": [
-							"`Type: A`",
-							"`Name: @`",
-							"`Value: 198.51.100.42`"
-						]
-					},
-					{
-						"name": "CNAME (Canonical Name Record)",
-						"desc": "Aliases a domain/subdomain to another hostname (can only be used for subdomains).",
-						"value": "Target hostname (e.g. `myotherdomain.com.`)",
-						"name_host": "Subdomain/Host (e.g. `www` for `www.kyth.me`)",
-						"example_lines": [
-							"`Type: CNAME`",
-							"`Name: www`",
-							"`Value: pages.github.io.`"
-						]
-					},
-					{
-						"name": "TXT (Text Record)",
-						"desc": "Stores arbitrary text, commonly used for domain verification (Google, SPF, etc).",
-						"value": "Text (e.g. `google-site-verification=xxxx`)",
-						"name_host": "Subdomain/Host (often `@` for root)",
-						"example_lines": [
-							"`Type: TXT`",
-							"`Name: @`",
-							"`Value: google-site-verification=abcdefgh`"
-						]
-					},
-					{
-						"name": "MX (Mail Exchange Record)",
-						"desc": "Specifies mail servers responsible for receiving email.",
-						"value": "Mail server domain (e.g. `mail.yourdomain.com.`)",
-						"name_host": "Subdomain/Host (usually `@` for root)",
-						"priority": "Number indicating priority (lower is preferred; default: 10)",
-						"example_lines": [
-							"`Type: MX`",
-							"`Name: @`",
-							"`Value: mail.yourdomain.com.`",
-							"`Priority: 10`"
-						]
-					}
-				]
+			"dns": {
+				"delete": {
+					"error_notPremium": "This feature is only available for **Premium Users** or **Active Voters**.",
+					"error_noRecords": "You do not have any DNS records to delete.",
+					"error_notFound": "The selected DNS record was not found in our database. It might have already been deleted.",
+					"error_notOwner": "You are not the owner of this DNS record.",
+					"orphaned_desc": "This record was orphaned (only existed in the local database) and has now been cleaned up.",
+					"success_desc": "The following DNS record has been deleted:\n\n`{type}` `{name}` `->` `{value}`",
+					"error_failedTitle": "Cloudflare API Error",
+					"error_failedDesc": "Failed to delete the record from Cloudflare. Error: `{error}`"
+				},
+				"help": {
+					"title": "## DNS Record Type Reference",
+					"description": "Here are the supported DNS record types, required fields, and examples.\n\nUse `/pro dns set` to create or update records.",
+					"labels": {},
+					"types": [
+						{
+							"name": "A (IP Address Record)",
+							"desc": "Maps a domain/subdomain to an IPv4 address.",
+							"value": "IPv4 Address (e.g. `198.51.100.42`)",
+							"name_host": "Subdomain/Host (e.g. `@` for root, `blog` for `blog.kyth.me`)",
+							"example_lines": [
+								"`Type: A`",
+								"`Name: @`",
+								"`Value: 198.51.100.42`"
+							]
+						},
+						{
+							"name": "CNAME (Canonical Name Record)",
+							"desc": "Aliases a domain/subdomain to another hostname (can only be used for subdomains).",
+							"value": "Target hostname (e.g. `myotherdomain.com.`)",
+							"name_host": "Subdomain/Host (e.g. `www` for `www.kyth.me`)",
+							"example_lines": [
+								"`Type: CNAME`",
+								"`Name: www`",
+								"`Value: pages.github.io.`"
+							]
+						},
+						{
+							"name": "TXT (Text Record)",
+							"desc": "Stores arbitrary text, commonly used for domain verification (Google, SPF, etc).",
+							"value": "Text (e.g. `google-site-verification=xxxx`)",
+							"name_host": "Subdomain/Host (often `@` for root)",
+							"example_lines": [
+								"`Type: TXT`",
+								"`Name: @`",
+								"`Value: google-site-verification=abcdefgh`"
+							]
+						},
+						{
+							"name": "MX (Mail Exchange Record)",
+							"desc": "Specifies mail servers responsible for receiving email.",
+							"value": "Mail server domain (e.g. `mail.yourdomain.com.`)",
+							"name_host": "Subdomain/Host (usually `@` for root)",
+							"priority": "Number indicating priority (lower is preferred; default: 10)",
+							"example_lines": [
+								"`Type: MX`",
+								"`Name: @`",
+								"`Value: mail.yourdomain.com.`",
+								"`Priority: 10`"
+							]
+						}
+					]
+				},
+				"list": {
+					"not_allowed": "This feature is only available for **Premium Users** or **Active Voters**.",
+					"not_found": "You do not own a subdomain named `{subdomain}`.",
+					"title": "DNS Records for `{fqdn}`",
+					"no_record": "You have no DNS records set for this subdomain. Use `/pro dns set` to add one.",
+					"has_record": "Displaying **{count}** DNS record(s) for this subdomain.",
+					"display_md": "## {title}\n{description}",
+					"record_title": "Record ID: {id}  •  Type: {type}",
+					"record_value": "`Name:` {name}\n`Value:` {value}"
+				},
+				"set": {
+					"error_need_account": "You must have a Kythia account (`/eco account create`) to manage DNS.",
+					"error_need_premium_or_vote": "This feature is only available for **Premium Users** or **Active Voters**.",
+					"error_subdomain_not_found": "You do not own the subdomain `{subdomain}`.",
+					"success_desc": "Successfully {action_past} the following record:\n\n`{type}` `{fqdn}` `->` `{value}`",
+					"error_fail_title": "Cloudflare API Error",
+					"error_fail_desc": "Failed to update the record. Cloudflare returned:\n`{error}`"
+				}
+			}
+		},
+		"shared": {
+			"dns": {
+				"delete": {
+					"success_title": "DNS Record Deleted"
+				}
 			}
 		}
 	}

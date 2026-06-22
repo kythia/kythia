@@ -30,7 +30,10 @@ class BannerCommand extends BaseCommand {
 			if (!attachment.contentType?.startsWith('image/')) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.utils.presence.banner.invalid'),
+					await t(
+						interaction,
+						'core.commands.utils.kyth.presence.banner.invalid',
+					),
 					{
 						color: 'Red',
 					},
@@ -43,7 +46,10 @@ class BannerCommand extends BaseCommand {
 			await interaction.client.user.setBanner(attachment.url);
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.banner.success'),
+				await t(
+					interaction,
+					'core.commands.utils.kyth.presence.banner.success',
+				),
 				{
 					color: 'Green',
 				},
@@ -58,7 +64,7 @@ class BannerCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.error', {
+				await t(interaction, 'core.helpers.index.utils.presence.error', {
 					error: error.message,
 				}),
 				{

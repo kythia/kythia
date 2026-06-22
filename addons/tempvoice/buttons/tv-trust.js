@@ -31,7 +31,10 @@ class TvTrustButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.trust.no_active_channel'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-trust.trust.no_active_channel',
+						),
 						{
 							color: 'Red',
 						},
@@ -41,7 +44,12 @@ class TvTrustButton extends BaseButton {
 		}
 		const selectMenu = new UserSelectMenuBuilder()
 			.setCustomId(`tv_trust_menu:${activeChannel.channelId}`)
-			.setPlaceholder(await t(interaction, 'tempvoice.trust.menu.placeholder'))
+			.setPlaceholder(
+				await t(
+					interaction,
+					'tempvoice.buttons.tv-trust.trust.menu.placeholder',
+				),
+			)
 			.setMinValues(1)
 			.setMaxValues(10);
 		const row = new ActionRowBuilder().addComponents(selectMenu);
@@ -53,7 +61,7 @@ class TvTrustButton extends BaseButton {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'tempvoice.trust.menu.content'),
+					await t(interaction, 'tempvoice.buttons.tv-trust.trust.menu.content'),
 				),
 			)
 			.addActionRowComponents(row);

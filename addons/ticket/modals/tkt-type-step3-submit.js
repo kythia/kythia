@@ -14,30 +14,26 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { refreshTicketPanel } = require('../helpers');
-
 const { BaseModal } = require('kythia-core');
-
 class TktTypeStep3SubmitModal extends BaseModal {
 	modal = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { redis, kythiaConfig, t, helpers, models, logger } = container;
 		const { convertColor } = helpers.color;
 		const { simpleContainer } = helpers.discord;
 		const { TicketConfig } = models;
-
 		await interaction.deferUpdate();
 		const cacheKey = `ticket:type-create:${interaction.user.id}`;
-
 		try {
 			const messageId = interaction.customId.split(':')[1];
 			if (!messageId) throw new Error('Missing messageId in modal customId');
-
 			const step2DataString = await redis.get(cacheKey);
 			if (!step2DataString) {
-				const desc = await t(interaction, 'ticket.errors.setup_expired');
+				const desc = await t(
+					interaction,
+					'ticket.helpers.index.errors.setup_expired',
+				);
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
 						color: 'Red',
@@ -46,7 +42,6 @@ class TktTypeStep3SubmitModal extends BaseModal {
 				});
 			}
 			const step2Data = JSON.parse(step2DataString);
-
 			const askReason =
 				interaction.fields.getTextInputValue('askReason') || null;
 
@@ -62,7 +57,7 @@ class TktTypeStep3SubmitModal extends BaseModal {
 			if (ticketStyle === 'thread' && !ticketThreadChannelId) {
 				const desc = await t(
 					interaction,
-					'ticket.errors.thread_channel_required',
+					'ticket.helpers.index.errors.thread_channel_required',
 				);
 				return interaction.followUp({
 					components: await simpleContainer(interaction, desc, {
@@ -71,7 +66,6 @@ class TktTypeStep3SubmitModal extends BaseModal {
 					flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 				});
 			}
-
 			await TicketConfig.create({
 				...step2Data,
 				guildId: interaction.guild.id,
@@ -79,22 +73,26 @@ class TktTypeStep3SubmitModal extends BaseModal {
 				ticketStyle: ticketStyle,
 				ticketThreadChannelId: ticketThreadChannelId,
 			});
-
 			await refreshTicketPanel(step2Data.panelMessageId, container);
-
 			await redis.del(cacheKey);
-
 			const _accentColor = convertColor(kythiaConfig.bot.color, {
 				from: 'hex',
 				to: 'decimal',
 			});
-			const descSuccess = await t(interaction, 'ticket.type_create.success', {
-				typeName: step2Data.typeName,
-			});
+			const descSuccess = await t(
+				interaction,
+				'ticket.modals.tkt-type-step3-submit.type_create.success',
+				{
+					typeName: step2Data.typeName,
+				},
+			);
 			const successContainer = [
 				new ContainerBuilder()
 					.setAccentColor(
-						convertColor('Green', { from: 'discord', to: 'decimal' }),
+						convertColor('Green', {
+							from: 'discord',
+							to: 'decimal',
+						}),
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(`${descSuccess}`),
@@ -112,7 +110,6 @@ class TktTypeStep3SubmitModal extends BaseModal {
 						),
 					),
 			];
-
 			await interaction.channel.messages.edit(messageId, {
 				components: successContainer,
 			});
@@ -123,7 +120,10 @@ class TktTypeStep3SubmitModal extends BaseModal {
 					label: 'core:modals:tkt-type-step3-submit',
 				},
 			);
-			const errDesc = await t(interaction, 'ticket.errors.generic');
+			const errDesc = await t(
+				interaction,
+				'ticket.helpers.index.errors.generic',
+			);
 			await interaction.followUp({
 				components: await simpleContainer(interaction, errDesc, {
 					color: 'Red',
@@ -133,5 +133,4 @@ class TktTypeStep3SubmitModal extends BaseModal {
 		}
 	}
 }
-
 exports.default = TktTypeStep3SubmitModal;

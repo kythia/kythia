@@ -7,7 +7,6 @@
  */
 
 const { BaseCommand } = require('kythia-core');
-
 class RemoveCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
@@ -26,59 +25,70 @@ class RemoveCommand extends BaseCommand {
 					.setRequired(true)
 					.setMinValue(1),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { KythiaUser } = models;
-
 		const targetUser = interaction.options.getUser('user', true);
 		const amount = interaction.options.getInteger('amount', true);
-
 		await interaction.deferReply();
-
 		try {
-			const userRecord = await KythiaUser.getCache({ userId: targetUser.id });
-
+			const userRecord = await KythiaUser.getCache({
+				userId: targetUser.id,
+			});
 			if (!userRecord || (userRecord.votePoints || 0) < amount) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.utils.kyth.vote.remove.insufficient', {
-						user: targetUser.toString(),
-					}),
-					{ mode: 'warn' },
+					await t(
+						interaction,
+						'core.commands.utils.kyth.vote.remove.insufficient',
+						{
+							user: targetUser.toString(),
+						},
+					),
+					{
+						mode: 'warn',
+					},
 				);
-				return await interaction.editReply({ components });
+				return await interaction.editReply({
+					components,
+				});
 			}
-
 			userRecord.votePoints -= amount;
 			await userRecord.save();
-
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.kyth.vote.remove.success', {
+				await t(interaction, 'core.commands.utils.kyth.vote.remove.success', {
 					user: targetUser.toString(),
 					amount,
 					total: userRecord.votePoints,
 				}),
-				{ mode: 'success' },
+				{
+					mode: 'success',
+				},
 			);
-
-			await interaction.editReply({ components });
+			await interaction.editReply({
+				components,
+			});
 		} catch (error) {
 			container.logger.error(
 				`[kythia-vote] Error: ${error.message || String(error)}`,
-				{ label: 'kythia-vote' },
+				{
+					label: 'kythia-vote',
+				},
 			);
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'common.error'),
-				{ mode: 'error' },
+				{
+					mode: 'error',
+				},
 			);
-			await interaction.editReply({ components });
+			await interaction.editReply({
+				components,
+			});
 		}
 	}
 }
-
 exports.default = RemoveCommand;

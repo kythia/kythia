@@ -25,7 +25,7 @@ async function generateLeaderboardContainer(
 	// Build leaderboard text
 	let leaderboardText = '';
 	if (pageUsers.length === 0) {
-		leaderboardText = await t(interaction, 'economy.leaderboard.empty');
+		leaderboardText = await t(interaction, 'economy.helpers.leaderboard.empty');
 	} else {
 		const entries = await Promise.all(
 			pageUsers.map(async (user, index) => {
@@ -52,7 +52,7 @@ async function generateLeaderboardContainer(
 				} catch (_error) {
 					username = `Unknown User (${user.userId})`;
 				}
-				return await t(interaction, 'economy.leaderboard.entry', {
+				return await t(interaction, 'economy.helpers.leaderboard.entry', {
 					medal,
 					username,
 					wealth: toBigIntSafe(totalWealth).toLocaleString(),
@@ -66,12 +66,12 @@ async function generateLeaderboardContainer(
 	const [leaderboardContainer] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: await t(interaction, 'economy.leaderboard.title', {
+		title: await t(interaction, 'economy.helpers.leaderboard.title', {
 			page,
 			totalPages,
 		}),
 		content: leaderboardText,
-		footer: await t(interaction, 'economy.leaderboard.footer', {
+		footer: await t(interaction, 'economy.helpers.leaderboard.footer', {
 			totalUsers,
 		}),
 		customIdPrefix: 'leaderboard',

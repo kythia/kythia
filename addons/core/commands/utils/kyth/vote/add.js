@@ -7,7 +7,6 @@
  */
 
 const { BaseCommand } = require('kythia-core');
-
 class AddCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
@@ -26,55 +25,63 @@ class AddCommand extends BaseCommand {
 					.setRequired(true)
 					.setMinValue(1),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { KythiaUser } = models;
-
 		const targetUser = interaction.options.getUser('user', true);
 		const amount = interaction.options.getInteger('amount', true);
 
 		// Defer reply since database operations may take a brief moment
 		await interaction.deferReply();
-
 		try {
 			// Get or create KythiaUser
 			const [userRecord, created] = await KythiaUser.getOrCreateCache(
-				{ userId: targetUser.id },
-				{ userId: targetUser.id, votePoints: amount },
+				{
+					userId: targetUser.id,
+				},
+				{
+					userId: targetUser.id,
+					votePoints: amount,
+				},
 			);
-
 			if (!created) {
 				userRecord.votePoints = (userRecord.votePoints || 0) + amount;
 				await userRecord.save();
 			}
-
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.kyth.vote.add.success', {
+				await t(interaction, 'core.commands.utils.kyth.vote.add.success', {
 					user: targetUser.toString(),
 					amount,
 					total: userRecord.votePoints,
 				}),
-				{ mode: 'success' },
+				{
+					mode: 'success',
+				},
 			);
-
-			await interaction.editReply({ components });
+			await interaction.editReply({
+				components,
+			});
 		} catch (error) {
 			container.logger.error(
 				`[kythia-vote] Error: ${error.message || String(error)}`,
-				{ label: 'kythia-vote' },
+				{
+					label: 'kythia-vote',
+				},
 			);
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'common.error'),
-				{ mode: 'error' },
+				{
+					mode: 'error',
+				},
 			);
-			await interaction.editReply({ components });
+			await interaction.editReply({
+				components,
+			});
 		}
 	}
 }
-
 exports.default = AddCommand;

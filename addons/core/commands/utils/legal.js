@@ -90,7 +90,7 @@ class LegalCommand extends BaseCommand {
 					)
 					.addTextDisplayComponents(
 						new TextDisplayBuilder()[_x.c](
-							await t(interaction, 'core.utils.legal.embed.title'),
+							await t(interaction, 'core.commands.utils.legal.embed.title'),
 						),
 					)
 					.addSeparatorComponents(
@@ -109,17 +109,25 @@ class LegalCommand extends BaseCommand {
 							new ButtonBuilder()
 								.setStyle(ButtonStyle.Link)
 								.setLabel(
-									await t(interaction, 'core.utils.legal.button.website'),
+									await t(
+										interaction,
+										'core.commands.utils.legal.button.website',
+									),
 								)
 								.setURL(_wL),
 							new ButtonBuilder()
 								.setStyle(ButtonStyle.Link)
-								.setLabel(await t(interaction, 'core.utils.legal.button.tos'))
+								.setLabel(
+									await t(interaction, 'core.commands.utils.legal.button.tos'),
+								)
 								.setURL(_tL),
 							new ButtonBuilder()
 								.setStyle(ButtonStyle.Link)
 								.setLabel(
-									await t(interaction, 'core.utils.legal.button.privacy'),
+									await t(
+										interaction,
+										'core.commands.utils.legal.button.privacy',
+									),
 								)
 								.setURL(_pL),
 						),
@@ -140,7 +148,7 @@ class LegalCommand extends BaseCommand {
 		} catch (error) {
 			container[_x.l][_x.err](error);
 			await interaction[_x.e]({
-				content: await t(interaction, 'core.utils.legal.error.fetch'),
+				content: await t(interaction, 'core.commands.utils.legal.error.fetch'),
 				flags: MessageFlags.Ephemeral,
 			});
 		}

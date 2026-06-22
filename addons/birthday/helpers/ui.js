@@ -7,7 +7,6 @@
  */
 
 const USERS_PER_PAGE = 10;
-
 async function generateUpcomingContainer(
 	interaction,
 	page,
@@ -17,38 +16,74 @@ async function generateUpcomingContainer(
 ) {
 	const { t, helpers } = interaction.client.container;
 	const { createPaginationContainer } = helpers.discord;
-
 	const totalPages = Math.max(1, Math.ceil(totalUsers / USERS_PER_PAGE));
 	page = Math.max(1, Math.min(page, totalPages));
-
 	const startIndex = (page - 1) * USERS_PER_PAGE;
 	const pageItems = allUpcoming.slice(startIndex, startIndex + USERS_PER_PAGE);
 
 	// Helper for Zodiac
 	const getZodiac = (day, month) => {
 		const zodiacs = [
-			{ sign: '♑ Capricorn', lastDay: 19 },
-			{ sign: '♒ Aquarius', lastDay: 18 },
-			{ sign: '♓ Pisces', lastDay: 20 },
-			{ sign: '♈ Aries', lastDay: 19 },
-			{ sign: '♉ Taurus', lastDay: 20 },
-			{ sign: '♊ Gemini', lastDay: 20 },
-			{ sign: '♋ Cancer', lastDay: 22 },
-			{ sign: '♌ Leo', lastDay: 22 },
-			{ sign: '♍ Virgo', lastDay: 22 },
-			{ sign: '♎ Libra', lastDay: 22 },
-			{ sign: '♏ Scorpio', lastDay: 21 },
-			{ sign: '♐ Sagittarius', lastDay: 21 },
-			{ sign: '♑ Capricorn', lastDay: 31 },
+			{
+				sign: '♑ Capricorn',
+				lastDay: 19,
+			},
+			{
+				sign: '♒ Aquarius',
+				lastDay: 18,
+			},
+			{
+				sign: '♓ Pisces',
+				lastDay: 20,
+			},
+			{
+				sign: '♈ Aries',
+				lastDay: 19,
+			},
+			{
+				sign: '♉ Taurus',
+				lastDay: 20,
+			},
+			{
+				sign: '♊ Gemini',
+				lastDay: 20,
+			},
+			{
+				sign: '♋ Cancer',
+				lastDay: 22,
+			},
+			{
+				sign: '♌ Leo',
+				lastDay: 22,
+			},
+			{
+				sign: '♍ Virgo',
+				lastDay: 22,
+			},
+			{
+				sign: '♎ Libra',
+				lastDay: 22,
+			},
+			{
+				sign: '♏ Scorpio',
+				lastDay: 21,
+			},
+			{
+				sign: '♐ Sagittarius',
+				lastDay: 21,
+			},
+			{
+				sign: '♑ Capricorn',
+				lastDay: 31,
+			},
 		];
 		return day > zodiacs[month - 1].lastDay
 			? zodiacs[month].sign
 			: zodiacs[month - 1].sign;
 	};
-
 	let contentText = '';
 	if (pageItems.length === 0) {
-		contentText = await t(interaction, 'birthday.list.empty');
+		contentText = await t(interaction, 'birthday.shared.list.empty');
 	} else {
 		const lines = [];
 		for (const b of pageItems) {
@@ -63,7 +98,6 @@ async function generateUpcomingContainer(
 
 			// Zodiac
 			const zodiac = getZodiac(b.day, b.month);
-
 			const dayLabel =
 				Math.ceil(b.daysUntil) === 0
 					? '🎉 **Today!**'
@@ -76,11 +110,10 @@ async function generateUpcomingContainer(
 		}
 		contentText = lines.join('\n');
 	}
-
 	const [container] = await createPaginationContainer(interaction, {
 		page,
 		totalPages,
-		title: await t(interaction, 'birthday.list.title'),
+		title: await t(interaction, 'birthday.helpers.ui.list.title'),
 		content: contentText,
 		footer: await t(interaction, 'common.container.pagination.footer', {
 			page,
@@ -89,10 +122,12 @@ async function generateUpcomingContainer(
 		customIdPrefix: 'upcoming',
 		navDisabled,
 	});
-
-	return { container, page, totalPages };
+	return {
+		container,
+		page,
+		totalPages,
+	};
 }
-
 module.exports = {
 	generateUpcomingContainer,
 };

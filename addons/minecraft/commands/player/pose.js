@@ -78,7 +78,7 @@ class PoseCommand extends BaseCommand {
 			return interaction.reply({
 				content: await t(
 					interaction,
-					'minecraft.player.errors.invalid_username',
+					'minecraft.shared.player.errors.invalid_username',
 				),
 				flags: MessageFlags.Ephemeral,
 			});
@@ -97,7 +97,7 @@ class PoseCommand extends BaseCommand {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'minecraft.player.pose.title_md', {
+					await t(interaction, 'minecraft.commands.player.pose.title_md', {
 						player: playerName,
 						pose: poseLabel,
 						crop,

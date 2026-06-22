@@ -22,7 +22,10 @@ class ListCommand extends BaseCommand {
 			const teamMembers = await KythiaTeam.getAllCache();
 			if (teamMembers.length === 0) {
 				const components = await createContainer(interaction, {
-					description: await t(interaction, 'core.utils.kyth.team.list.empty'),
+					description: await t(
+						interaction,
+						'core.commands.utils.kyth.team.list.empty',
+					),
 					color: 'Blurple',
 				});
 				return interaction.editReply({
@@ -30,10 +33,13 @@ class ListCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-			const noRole = await t(interaction, 'core.utils.kyth.team.list.no.role');
+			const noRole = await t(
+				interaction,
+				'core.helpers.index.utils.kyth.team.list.no.role',
+			);
 			const unknownUser = await t(
 				interaction,
-				'core.utils.kyth.team.list.unknown',
+				'core.commands.utils.kyth.team.list.unknown',
 			);
 			const memberList = [];
 			for (const member of teamMembers) {
@@ -47,11 +53,15 @@ class ListCommand extends BaseCommand {
 						: `${unknownUser} (${member.userId})`;
 					const nameRole = member.name || noRole;
 					memberList.push(
-						await t(interaction, 'core.utils.kyth.team.list.row', {
-							name: userName,
-							id: member.userId,
-							role: nameRole,
-						}),
+						await t(
+							interaction,
+							'core.helpers.index.utils.kyth.team.list.row',
+							{
+								name: userName,
+								id: member.userId,
+								role: nameRole,
+							},
+						),
 					);
 				} catch (err) {
 					logger.warn(
@@ -61,22 +71,26 @@ class ListCommand extends BaseCommand {
 						},
 					);
 					memberList.push(
-						await t(interaction, 'core.utils.kyth.team.list.row', {
-							name: `${unknownUser}`,
-							id: member.userId,
-							role: member.name || noRole,
-						}),
+						await t(
+							interaction,
+							'core.helpers.index.utils.kyth.team.list.row',
+							{
+								name: `${unknownUser}`,
+								id: member.userId,
+								role: member.name || noRole,
+							},
+						),
 					);
 				}
 			}
 			const description =
-				(await t(interaction, 'core.utils.kyth.team.list.total', {
+				(await t(interaction, 'core.commands.utils.kyth.team.list.total', {
 					count: teamMembers.length,
 				})) +
 				'\n\n' +
 				memberList.join('\n\n');
 			const components = await createContainer(interaction, {
-				title: await t(interaction, 'core.utils.kyth.team.list.title'),
+				title: await t(interaction, 'core.commands.utils.kyth.team.list.title'),
 				description,
 				color: 'Blurple',
 			});
@@ -92,9 +106,13 @@ class ListCommand extends BaseCommand {
 				label: 'core',
 			});
 			const components = await createContainer(interaction, {
-				description: await t(interaction, 'core.utils.kyth.team.list.error', {
-					error: error.message,
-				}),
+				description: await t(
+					interaction,
+					'core.commands.utils.kyth.team.list.error',
+					{
+						error: error.message,
+					},
+				),
 				color: 'Red',
 			});
 			await interaction.editReply({

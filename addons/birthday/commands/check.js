@@ -73,11 +73,11 @@ class CheckCommand extends BaseCommand {
 		let ageContent = '';
 		if (birthday.year) {
 			const age = nextBirthday.year - birthday.year;
-			ageContent = await t(interaction, 'birthday.check.turning_age', {
+			ageContent = await t(interaction, 'birthday.commands.check.turning_age', {
 				age,
 			});
 		}
-		const msg = await t(interaction, 'birthday.check.success', {
+		const msg = await t(interaction, 'birthday.commands.check.success', {
 			user: targetUser.toString(),
 			date: dateStr,
 			days: daysLeft,

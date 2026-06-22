@@ -80,12 +80,12 @@ class JokeCommand extends BaseCommand {
 			joke = Array.isArray(response.data) ? response.data[0] : response.data;
 		} catch {
 			return interaction.editReply({
-				content: await t(interaction, 'fun.joke.error.fetch'),
+				content: await t(interaction, 'fun.shared.joke.error.fetch'),
 			});
 		}
 		if (!joke?.setup || !joke?.punchline) {
 			return interaction.editReply({
-				content: await t(interaction, 'fun.joke.error.fetch'),
+				content: await t(interaction, 'fun.shared.joke.error.fetch'),
 			});
 		}
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
@@ -99,7 +99,7 @@ class JokeCommand extends BaseCommand {
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'fun.joke.setup', {
+						await t(interaction, 'fun.commands.joke.setup', {
 							category,
 							setup: joke.setup,
 						}),
@@ -113,7 +113,7 @@ class JokeCommand extends BaseCommand {
 			if (revealed) {
 				container.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'fun.joke.punchline', {
+						await t(interaction, 'fun.commands.joke.punchline', {
 							punchline: joke.punchline,
 						}),
 					),
@@ -123,7 +123,7 @@ class JokeCommand extends BaseCommand {
 					new ActionRowBuilder().addComponents(
 						new ButtonBuilder()
 							.setCustomId('joke_reveal')
-							.setLabel(await t(interaction, 'fun.joke.button.reveal'))
+							.setLabel(await t(interaction, 'fun.commands.joke.button.reveal'))
 							.setStyle(ButtonStyle.Primary)
 							.setEmoji('🥁'),
 					),

@@ -70,7 +70,10 @@ class AutosetupCommand extends BaseCommand {
 		// Validate host
 		if (!HOST_REGEX.test(rawHost)) {
 			return interaction.editReply({
-				content: await t(interaction, 'minecraft.server.errors.invalid_host'),
+				content: await t(
+					interaction,
+					'minecraft.shared.server.errors.invalid_host',
+				),
 			});
 		}
 		const guild = interaction.guild;
@@ -98,7 +101,7 @@ class AutosetupCommand extends BaseCommand {
 			return interaction.editReply({
 				content: await t(
 					interaction,
-					'minecraft.set.autosetup.error.category',
+					'minecraft.commands.set.autosetup.error.category',
 					{
 						error: err.message,
 					},
@@ -177,12 +180,15 @@ class AutosetupCommand extends BaseCommand {
 			to: 'decimal',
 		});
 		const lines = [
-			await t(interaction, 'minecraft.set.autosetup.success.title_md'),
+			await t(interaction, 'minecraft.commands.set.autosetup.success.title_md'),
 			``,
-			`**${await t(interaction, 'minecraft.set.autosetup.success.server')}** \`${rawHost}:${port}\``,
-			`**${await t(interaction, 'minecraft.set.autosetup.success.category')}** <#${category.id}>`,
+			`**${await t(interaction, 'minecraft.commands.set.autosetup.success.server')}** \`${rawHost}:${port}\``,
+			`**${await t(interaction, 'minecraft.commands.set.autosetup.success.category')}** <#${category.id}>`,
 			``,
-			await t(interaction, 'minecraft.set.autosetup.success.channels_md'),
+			await t(
+				interaction,
+				'minecraft.commands.set.autosetup.success.channels_md',
+			),
 		];
 		const fieldLabels = {
 			minecraftIpChannelId: '🖥️ IP',
@@ -198,7 +204,7 @@ class AutosetupCommand extends BaseCommand {
 		}
 		lines.push(``);
 		lines.push(
-			`-# ${await t(interaction, 'minecraft.set.autosetup.success.note')}`,
+			`-# ${await t(interaction, 'minecraft.commands.set.autosetup.success.note')}`,
 		);
 		const responseContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)

@@ -31,10 +31,13 @@ class UnbanCommand extends BaseCommand {
 			await interaction.guild.members.unban(userId);
 			const reply = await createContainer(interaction, {
 				color: kythiaConfig.bot.color,
-				title: await t(interaction, 'automod.moderation.unban.success.title'),
+				title: await t(
+					interaction,
+					'automod.commands.moderation.unban.success.title',
+				),
 				description: await t(
 					interaction,
-					'automod.moderation.unban.success.desc',
+					'automod.commands.moderation.unban.success.desc',
 					{
 						userId,
 					},
@@ -48,7 +51,7 @@ class UnbanCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'automod.moderation.unban.failed', {
+				await t(interaction, 'automod.commands.moderation.unban.failed', {
 					error: error.message,
 				}),
 				{

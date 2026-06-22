@@ -36,7 +36,10 @@ class HashCommand extends BaseCommand {
 		const text = interaction.options.getString('text');
 		if (!text || text.length > 1024) {
 			const components = await createContainer(interaction, {
-				description: await t(interaction, 'core.tools.hash.invalid.text'),
+				description: await t(
+					interaction,
+					'core.commands.tools.hash.invalid.text',
+				),
 				color: 'Red',
 			});
 			return interaction.editReply({
@@ -47,7 +50,10 @@ class HashCommand extends BaseCommand {
 		const algoObj = SUPPORTED_ALGOS.find((a) => a.value === algorithm);
 		if (!algoObj) {
 			const components = await createContainer(interaction, {
-				description: await t(interaction, 'core.tools.hash.invalid.algorithm'),
+				description: await t(
+					interaction,
+					'core.commands.tools.hash.invalid.algorithm',
+				),
 				color: 'Red',
 			});
 			return interaction.editReply({
@@ -60,7 +66,10 @@ class HashCommand extends BaseCommand {
 			hash = crypto.createHash(algorithm).update(text, 'utf8').digest('hex');
 		} catch (_e) {
 			const components = await createContainer(interaction, {
-				description: await t(interaction, 'core.tools.hash.failed.hash'),
+				description: await t(
+					interaction,
+					'core.commands.tools.hash.failed.hash',
+				),
 				color: 'Red',
 			});
 			return interaction.editReply({
@@ -69,11 +78,11 @@ class HashCommand extends BaseCommand {
 			});
 		}
 		const description =
-			`**${await t(interaction, 'core.tools.hash.algorithm')}:** ${algoObj.name}\n\n` +
-			`**${await t(interaction, 'core.tools.hash.input')}:**\n\`\`\`${text}\`\`\`\n` +
-			`**${await t(interaction, 'core.tools.hash.hash')}:**\n\`\`\`${hash}\`\`\``;
+			`**${await t(interaction, 'core.commands.tools.hash.algorithm')}:** ${algoObj.name}\n\n` +
+			`**${await t(interaction, 'core.commands.tools.hash.input')}:**\n\`\`\`${text}\`\`\`\n` +
+			`**${await t(interaction, 'core.commands.tools.hash.hash')}:**\n\`\`\`${hash}\`\`\``;
 		const components = await createContainer(interaction, {
-			title: await t(interaction, 'core.tools.hash.result'),
+			title: await t(interaction, 'core.commands.tools.hash.result'),
 			description,
 			color: kythiaConfig.bot.color,
 		});

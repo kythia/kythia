@@ -34,7 +34,10 @@ class OutBackgroundCommand extends BaseCommand {
 		if (!url.startsWith('http')) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'welcomer.welcomer.out.background.invalid.url'),
+				await t(
+					interaction,
+					'welcomer.commands.out-background.welcomer.out.background.invalid.url',
+				),
 				{
 					color: 'Red',
 				},
@@ -51,9 +54,13 @@ class OutBackgroundCommand extends BaseCommand {
 		await welcomeSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'welcomer.welcomer.out.background.set', {
-				url,
-			}),
+			await t(
+				interaction,
+				'welcomer.commands.out-background.welcomer.out.background.set',
+				{
+					url,
+				},
+			),
 			{
 				color: 'Green',
 			},

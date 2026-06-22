@@ -36,7 +36,7 @@ class RoleCommand extends BaseCommand {
 		await welcomeSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'welcomer.welcomer.role.set', {
+			await t(interaction, 'welcomer.commands.role.welcomer.set', {
 				roleId: role.id,
 			}),
 			{

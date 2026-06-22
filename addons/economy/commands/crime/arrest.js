@@ -31,7 +31,10 @@ class ArrestCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -41,7 +44,10 @@ class ArrestCommand extends BaseCommand {
 			});
 		}
 		if (user.profession !== 'economy.jobs.police_officer.name') {
-			const msg = await t(interaction, 'economy.crime.arrest.error.not_police');
+			const msg = await t(
+				interaction,
+				'economy.commands.crime.arrest.error.not_police',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -52,7 +58,10 @@ class ArrestCommand extends BaseCommand {
 		}
 		const targetUser = interaction.options.getUser('target');
 		if (targetUser.id === interaction.user.id) {
-			const msg = await t(interaction, 'economy.crime.arrest.error.self');
+			const msg = await t(
+				interaction,
+				'economy.commands.crime.arrest.error.self',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -67,7 +76,7 @@ class ArrestCommand extends BaseCommand {
 		if (!target) {
 			const msg = await t(
 				interaction,
-				'economy.rob.rob.target.no.account.desc',
+				'economy.shared.rob.rob.target.no.account.desc',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
@@ -79,9 +88,13 @@ class ArrestCommand extends BaseCommand {
 		}
 		const bounty = target.bountyAmount ? BigInt(target.bountyAmount) : 0n;
 		if (bounty <= 0n) {
-			const msg = await t(interaction, 'economy.crime.arrest.error.no_bounty', {
-				target: targetUser.username,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.crime.arrest.error.no_bounty',
+				{
+					target: targetUser.username,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -104,18 +117,26 @@ class ArrestCommand extends BaseCommand {
 		target.changed('jailTimeUntil', true);
 		await user.save();
 		await target.save();
-		const msg = await t(interaction, 'economy.crime.arrest.success.text', {
-			target: targetUser.username,
-			bounty: bounty.toLocaleString(),
-		});
+		const msg = await t(
+			interaction,
+			'economy.commands.crime.arrest.success.text',
+			{
+				target: targetUser.username,
+				bounty: bounty.toLocaleString(),
+			},
+		);
 		const components = await simpleContainer(interaction, msg, {
 			color: 'Green',
 		});
 
 		// DM the criminal
-		const dmMsg = await t(interaction, 'economy.crime.arrest.success.dm', {
-			officer: interaction.user.username,
-		});
+		const dmMsg = await t(
+			interaction,
+			'economy.commands.crime.arrest.success.dm',
+			{
+				officer: interaction.user.username,
+			},
+		);
 		const dmComponents = await simpleContainer(interaction, dmMsg, {
 			color: 'Red',
 		});

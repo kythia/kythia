@@ -31,7 +31,10 @@ class ReloadConfigCommand extends BaseCommand {
 		try {
 			reloadConfig();
 			await interaction.followUp({
-				content: await t(interaction, 'core.utils.kyth.reload_config'),
+				content: await t(
+					interaction,
+					'core.commands.utils.kyth.reload-config.reload_config',
+				),
 			});
 		} catch (error) {
 			logger.error(`Failed to reload config: ${error.message || error}`, {

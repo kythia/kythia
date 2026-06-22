@@ -73,7 +73,7 @@ class StickerDeleteEvent extends BaseEvent {
 										client: this.client,
 										guildId: guildId,
 									},
-									'core.events.common.reason',
+									'core.helpers.index.events.common.reason',
 									{
 										reason: entry.reason,
 									},

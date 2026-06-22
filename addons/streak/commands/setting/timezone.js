@@ -68,7 +68,7 @@ class TimezoneCommand extends BaseCommand {
 		await serverSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'streak.streak.setting.timezone.set', {
+			await t(interaction, 'streak.commands.setting.timezone.streak.set', {
 				timezone,
 			}),
 			{

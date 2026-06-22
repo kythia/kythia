@@ -27,7 +27,7 @@ class TvWaitingDenyButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.common.not_owner'),
+						await t(interaction, 'tempvoice.shared.common.not_owner'),
 						{
 							color: 'Red',
 						},
@@ -45,7 +45,10 @@ class TvWaitingDenyButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.waiting.user_or_channel_gone'),
+						await t(
+							interaction,
+							'tempvoice.shared.waiting.user_or_channel_gone',
+						),
 					),
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
@@ -53,7 +56,10 @@ class TvWaitingDenyButton extends BaseButton {
 		// 3. Kick user
 		try {
 			await member.voice.disconnect(
-				await t(interaction, 'tempvoice.waiting.deny_reason'),
+				await t(
+					interaction,
+					'tempvoice.buttons.tv-waiting-deny.waiting.deny_reason',
+				),
 			);
 			await interaction.message.delete(); // Hapus pesan notif
 		} catch (_e) {
@@ -61,7 +67,10 @@ class TvWaitingDenyButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.waiting.kick_fail'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-waiting-deny.waiting.kick_fail',
+						),
 						{
 							color: 'Red',
 						},

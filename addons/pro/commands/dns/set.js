@@ -105,7 +105,10 @@ class SetCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const desc = await t(interaction, 'pro.dns.set.error_need_account');
+			const desc = await t(
+				interaction,
+				'pro.commands.dns.set.error_need_account',
+			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					color: 'Red',
@@ -118,7 +121,7 @@ class SetCommand extends BaseCommand {
 		if (!isPremiumDonatur && !isVoter) {
 			const desc = await t(
 				interaction,
-				'pro.dns.set.error_need_premium_or_vote',
+				'pro.commands.dns.set.error_need_premium_or_vote',
 			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
@@ -135,7 +138,7 @@ class SetCommand extends BaseCommand {
 		if (!targetSubdomain) {
 			const desc = await t(
 				interaction,
-				'pro.dns.set.error_subdomain_not_found',
+				'pro.commands.dns.set.error_subdomain_not_found',
 				{
 					subdomain: subdomainName,
 				},
@@ -188,7 +191,7 @@ class SetCommand extends BaseCommand {
 					? 'pro.dns.set.success_title_created'
 					: 'pro.dns.set.success_title_updated',
 			);
-			const desc = await t(interaction, 'pro.dns.set.success_desc', {
+			const desc = await t(interaction, 'pro.commands.dns.set.success_desc', {
 				action_past: await t(
 					interaction,
 					action === 'created'
@@ -207,10 +210,17 @@ class SetCommand extends BaseCommand {
 				flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 			});
 		} else {
-			const title = await t(interaction, 'pro.dns.set.error_fail_title');
-			const desc = await t(interaction, 'pro.dns.set.error_fail_desc', {
-				error: result.error,
-			});
+			const title = await t(
+				interaction,
+				'pro.commands.dns.set.error_fail_title',
+			);
+			const desc = await t(
+				interaction,
+				'pro.commands.dns.set.error_fail_desc',
+				{
+					error: result.error,
+				},
+			);
 			return interaction.editReply({
 				components: await simpleContainer(interaction, desc, {
 					title: title,

@@ -55,7 +55,7 @@ class NicknameCommand extends BaseCommand {
 		await serverSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'streak.streak.setting.nickname.set', {
+			await t(interaction, 'streak.commands.setting.nickname.streak.set', {
 				status: status === 'enable' ? 'Enabled' : 'Disabled',
 			}),
 			{

@@ -32,7 +32,10 @@ class TvPrivacyButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.privacy.no_active_channel'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-privacy.privacy.no_active_channel',
+						),
 						{
 							color: 'Red',
 						},
@@ -57,7 +60,7 @@ class TvPrivacyButton extends BaseButton {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -70,7 +73,10 @@ class TvPrivacyButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.privacy.channel_not_found'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-privacy.privacy.channel_not_found',
+						),
 						{
 							color: 'Red',
 						},
@@ -81,38 +87,56 @@ class TvPrivacyButton extends BaseButton {
 		const menu = new StringSelectMenuBuilder()
 			.setCustomId(`tv_privacy_menu:${channelId}`)
 			.setPlaceholder(
-				await t(interaction, 'tempvoice.privacy.menu.placeholder'),
+				await t(
+					interaction,
+					'tempvoice.buttons.tv-privacy.privacy.menu.placeholder',
+				),
 			)
 			.addOptions([
 				{
-					label: await t(interaction, 'tempvoice.privacy.menu.lock.label'),
-					description: await t(interaction, 'tempvoice.privacy.menu.lock.desc'),
+					label: await t(
+						interaction,
+						'tempvoice.buttons.tv-privacy.privacy.menu.lock.label',
+					),
+					description: await t(
+						interaction,
+						'tempvoice.buttons.tv-privacy.privacy.menu.lock.desc',
+					),
 					value: 'lock_channel',
 					emoji: '🔒',
 				},
 				{
-					label: await t(interaction, 'tempvoice.privacy.menu.unlock.label'),
+					label: await t(
+						interaction,
+						'tempvoice.buttons.tv-privacy.privacy.menu.unlock.label',
+					),
 					description: await t(
 						interaction,
-						'tempvoice.privacy.menu.unlock.desc',
+						'tempvoice.buttons.tv-privacy.privacy.menu.unlock.desc',
 					),
 					value: 'unlock_channel',
 					emoji: '🔓',
 				},
 				{
-					label: await t(interaction, 'tempvoice.privacy.menu.invisible.label'),
+					label: await t(
+						interaction,
+						'tempvoice.buttons.tv-privacy.privacy.menu.invisible.label',
+					),
 					description: await t(
 						interaction,
-						'tempvoice.privacy.menu.invisible.desc',
+						'tempvoice.buttons.tv-privacy.privacy.menu.invisible.desc',
 					),
 					value: 'invisible_channel',
 					emoji: '❌',
 				},
 				{
-					label: await t(interaction, 'tempvoice.privacy.menu.visible.label'),
+					label: await t(
+						interaction,
+						'tempvoice.buttons.tv-privacy.privacy.menu.visible.label',
+					),
 					description: await t(
 						interaction,
-						'tempvoice.privacy.menu.visible.desc',
+						'tempvoice.buttons.tv-privacy.privacy.menu.visible.desc',
 					),
 					value: 'visible_channel',
 					emoji: '👁️',
@@ -130,7 +154,10 @@ class TvPrivacyButton extends BaseButton {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'tempvoice.privacy.menu.content'),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-privacy.privacy.menu.content',
+					),
 				),
 			)
 			.addActionRowComponents(row);

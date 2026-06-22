@@ -7,32 +7,30 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class OptoutCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('optout')
 			.setDescription(
 				'Opt-out of all AI features and delete your stored AI memories.',
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, logger } = container;
 		const { KythiaUser, UserFact } = models;
 		const { simpleContainer } = helpers.discord;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const userId = interaction.user.id;
-
 		try {
 			if (!KythiaUser) {
-				const msg = await t(interaction, 'ai.ai.optout.database_error');
+				const msg = await t(
+					interaction,
+					'ai.commands.ai.optout.ai.database_error',
+				);
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Red',
 				});
@@ -41,17 +39,18 @@ class OptoutCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			const userRecord = await KythiaUser.getCache({
 				userId,
 			});
 			const newOptOutStatus = !(userRecord?.isAiOptOut ?? false);
-
 			await KythiaUser.updateOrCreateCache(
-				{ userId },
-				{ isAiOptOut: newOptOutStatus },
+				{
+					userId,
+				},
+				{
+					isAiOptOut: newOptOutStatus,
+				},
 			);
-
 			if (newOptOutStatus) {
 				try {
 					if (UserFact) {
@@ -66,8 +65,7 @@ class OptoutCommand extends BaseCommand {
 						label: 'ai',
 					});
 				}
-
-				const msg = await t(interaction, 'ai.ai.optout.success');
+				const msg = await t(interaction, 'ai.commands.ai.optout.ai.success');
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Green',
 				});
@@ -76,7 +74,7 @@ class OptoutCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			} else {
-				const msg = await t(interaction, 'ai.ai.optout.revert');
+				const msg = await t(interaction, 'ai.commands.ai.optout.ai.revert');
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Green',
 				});
@@ -86,8 +84,10 @@ class OptoutCommand extends BaseCommand {
 				});
 			}
 		} catch (error) {
-			logger.error(`[AI OptOut] Error: ${error.message}`, { label: 'ai' });
-			const msg = await t(interaction, 'ai.ai.optout.error');
+			logger.error(`[AI OptOut] Error: ${error.message}`, {
+				label: 'ai',
+			});
+			const msg = await t(interaction, 'ai.commands.ai.optout.ai.error');
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -98,5 +98,4 @@ class OptoutCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = OptoutCommand;

@@ -44,12 +44,12 @@ class QuoteCommand extends BaseCommand {
 			quote = await fetchQuote();
 		} catch {
 			return interaction.editReply({
-				content: await t(interaction, 'fun.quote.error.fetch'),
+				content: await t(interaction, 'fun.shared.quote.error.fetch'),
 			});
 		}
 		if (!quote?.text) {
 			return interaction.editReply({
-				content: await t(interaction, 'fun.quote.error.fetch'),
+				content: await t(interaction, 'fun.shared.quote.error.fetch'),
 			});
 		}
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
@@ -61,7 +61,7 @@ class QuoteCommand extends BaseCommand {
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'fun.quote.title', {
+						await t(interaction, 'fun.commands.quote.title', {
 							text: q.text,
 							author: q.author,
 						}),
@@ -76,7 +76,9 @@ class QuoteCommand extends BaseCommand {
 					new ActionRowBuilder().addComponents(
 						new ButtonBuilder()
 							.setCustomId('quote_another')
-							.setLabel(await t(interaction, 'fun.quote.button.another'))
+							.setLabel(
+								await t(interaction, 'fun.commands.quote.button.another'),
+							)
 							.setStyle(ButtonStyle.Secondary)
 							.setEmoji('🔄'),
 					),

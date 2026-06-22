@@ -7,7 +7,6 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 module.exports = {
 	/**
 	 * Checks if a user is currently in jail. If they are, it replies to the interaction.
@@ -18,33 +17,25 @@ module.exports = {
 	 */
 	async checkJail(interaction, user, container) {
 		if (!user.jailTimeUntil) return false;
-
 		const jailUntil = new Date(user.jailTimeUntil).getTime();
 		const now = Date.now();
-
 		if (now < jailUntil) {
 			const { t, helpers } = container;
 			const { simpleContainer } = helpers.discord;
-
 			const timeLeftMs = jailUntil - now;
 			const timeLeftMins = Math.ceil(timeLeftMs / 1000 / 60);
-
-			const msg = await t(interaction, 'economy.crime.jail.locked', {
+			const msg = await t(interaction, 'economy.helpers.jail.crime.locked', {
 				time: timeLeftMins,
 			});
-
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
-
 			await interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
-
 			return true;
 		}
-
 		return false;
 	},
 };

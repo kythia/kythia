@@ -57,7 +57,10 @@ class UserInfoCommand extends BaseCommand {
 		}
 		if (!member && !interaction.guild) {
 			return interaction.editReply({
-				content: await t(interaction, 'core.utils.userinfo.user.not.found'),
+				content: await t(
+					interaction,
+					'core.commands.utils.user-info.userinfo.user.not.found',
+				),
 			});
 		}
 
@@ -82,7 +85,7 @@ class UserInfoCommand extends BaseCommand {
 		// Joined at
 		let joinedAt = await t(
 			interaction,
-			'core.utils.userinfo.field.joined.unknown',
+			'core.commands.utils.user-info.userinfo.field.joined.unknown',
 		);
 		if (member?.joinedTimestamp) {
 			joinedAt = `<t:${Math.floor(member.joinedTimestamp / 1000)}:F>`;
@@ -90,14 +93,18 @@ class UserInfoCommand extends BaseCommand {
 
 		// Make General Content
 		const generalSection =
-			`${await t(interaction, 'core.utils.userinfo.field.username')}\n${user.username}\n` +
-			`${await t(interaction, 'core.utils.userinfo.field.userid')}\n${user.id}\n`;
+			`${await t(interaction, 'core.commands.utils.user-info.userinfo.field.username')}\n${user.username}\n` +
+			`${await t(interaction, 'core.commands.utils.user-info.userinfo.field.userid')}\n${user.id}\n`;
 		const datesSection =
-			`${await t(interaction, 'core.utils.userinfo.field.created')}\n<t:${Math.floor(user.createdTimestamp / 1000)}:F>\n` +
-			`${await t(interaction, 'core.utils.userinfo.field.joined.text')}\n${joinedAt}\n`;
+			`${await t(interaction, 'core.commands.utils.user-info.userinfo.field.created')}\n<t:${Math.floor(user.createdTimestamp / 1000)}:F>\n` +
+			`${await t(interaction, 'core.commands.utils.user-info.userinfo.field.joined.text')}\n${joinedAt}\n`;
 		const rolesSection =
-			`${await t(interaction, 'core.utils.userinfo.field.roles')}\n` +
-			(roles || (await t(interaction, 'core.utils.userinfo.value.no.roles')));
+			`${await t(interaction, 'core.commands.utils.user-info.userinfo.field.roles')}\n` +
+			(roles ||
+				(await t(
+					interaction,
+					'core.commands.utils.user-info.userinfo.value.no.roles',
+				)));
 		let marriageBlock = null;
 		let marriage = null;
 		try {
@@ -175,9 +182,9 @@ class UserInfoCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`${await t(interaction, 'core.utils.userinfo.embed.title')}\n${await t(
+					`${await t(interaction, 'core.commands.utils.user-info.userinfo.embed.title')}\n${await t(
 						interaction,
-						'core.utils.userinfo.embed.desc',
+						'core.commands.utils.user-info.userinfo.embed.desc',
 						{
 							tag: user.tag,
 						},

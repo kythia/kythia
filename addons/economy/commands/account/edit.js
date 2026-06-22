@@ -45,7 +45,10 @@ class EditCommand extends BaseCommand {
 				userId: userId,
 			});
 			if (!existingUser) {
-				const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+				const msg = await t(
+					interaction,
+					'economy.shared.withdraw.no.account.desc',
+				);
 				const components = await simpleContainer(interaction, msg, {
 					color: kythiaConfig.bot.color,
 				});
@@ -61,7 +64,7 @@ class EditCommand extends BaseCommand {
 			await existingUser.save();
 			const msg = await t(
 				interaction,
-				'economy.account.edit.account.edit.success.desc',
+				'economy.commands.account.edit.account.edit.success.desc',
 				{
 					bankType: bankDisplay,
 				},
@@ -82,7 +85,7 @@ class EditCommand extends BaseCommand {
 			);
 			const msg = await t(
 				interaction,
-				'economy.account.edit.account.edit.error.desc',
+				'economy.commands.account.edit.account.edit.error.desc',
 			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,

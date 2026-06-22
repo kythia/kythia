@@ -10,12 +10,9 @@ const { MessageFlags } = require('discord.js');
 const { v4: uuidv4 } = require('uuid');
 const path = require('node:path');
 const { uploadToR2 } = require('../services/r2');
-
 const { BaseCommand } = require('kythia-core');
-
 class AddCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('add')
@@ -26,7 +23,6 @@ class AddCommand extends BaseCommand {
 					.setDescription('The image to add')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { models, helpers, t, kythiaConfig } = container;
@@ -35,24 +31,25 @@ class AddCommand extends BaseCommand {
 
 		// R2 credentials — configure these in kythia.config.js under addons.image
 		const r2Config = kythiaConfig.addons.image;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const attachment = interaction.options.getAttachment('image');
 
 		// Validate that the attachment is an image
 		if (!attachment.contentType?.startsWith('image/')) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'image.add.invalid.type.desc'),
-				{ color: kythiaConfig.bot.color },
+				await t(interaction, 'image.commands.add.invalid.type.desc'),
+				{
+					color: kythiaConfig.bot.color,
+				},
 			);
 			return interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		try {
 			// 1. Download the image from Discord's CDN into a Buffer
 			const response = await fetch(attachment.url);
@@ -81,10 +78,13 @@ class AddCommand extends BaseCommand {
 			// 4. Persist metadata to the database
 			const savedImage = await Image.create({
 				userId: interaction.user.id,
-				filename: key, // R2 object key (used for deletion)
+				filename: key,
+				// R2 object key (used for deletion)
 				originalName: attachment.name,
-				fileId: key, // Reuse key as the stable identifier
-				storageUrl: publicUrl, // Public R2 URL
+				fileId: key,
+				// Reuse key as the stable identifier
+				storageUrl: publicUrl,
+				// Public R2 URL
 				mimetype: attachment.contentType,
 				fileSize: attachment.size,
 			});
@@ -92,12 +92,13 @@ class AddCommand extends BaseCommand {
 			// 5. Reply with the public image URL
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'image.add.success.desc', {
+				await t(interaction, 'image.commands.add.success.desc', {
 					url: savedImage.storageUrl,
 				}),
-				{ color: kythiaConfig.bot.color },
+				{
+					color: kythiaConfig.bot.color,
+				},
 			);
-
 			await interaction.editReply({
 				components,
 				flags: MessageFlags.IsComponentsV2,
@@ -105,10 +106,12 @@ class AddCommand extends BaseCommand {
 		} catch (err) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'image.add.error.upload_failed', {
+				await t(interaction, 'image.commands.add.error.upload_failed', {
 					error: err instanceof Error ? err.message : 'Unknown error',
 				}),
-				{ color: kythiaConfig.bot.color },
+				{
+					color: kythiaConfig.bot.color,
+				},
 			);
 			return interaction.editReply({
 				components,
@@ -117,5 +120,4 @@ class AddCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = AddCommand;

@@ -31,7 +31,10 @@ class TvUnblockButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.unblock.no_active_channel'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-unblock.unblock.no_active_channel',
+						),
 						{
 							color: 'Red',
 						},
@@ -42,7 +45,10 @@ class TvUnblockButton extends BaseButton {
 		const selectMenu = new UserSelectMenuBuilder()
 			.setCustomId(`tv_unblock_menu:${activeChannel.channelId}`)
 			.setPlaceholder(
-				await t(interaction, 'tempvoice.unblock.menu.placeholder'),
+				await t(
+					interaction,
+					'tempvoice.buttons.tv-unblock.unblock.menu.placeholder',
+				),
 			)
 			.setMinValues(1)
 			.setMaxValues(10);
@@ -55,7 +61,10 @@ class TvUnblockButton extends BaseButton {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'tempvoice.unblock.menu.content'),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-unblock.unblock.menu.content',
+					),
 				),
 			)
 			.addActionRowComponents(row);

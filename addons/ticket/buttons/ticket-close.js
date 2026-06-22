@@ -15,46 +15,57 @@ const {
 	SeparatorBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
-
 const { BaseButton } = require('kythia-core');
-
 class TicketCloseButton extends BaseButton {
 	button = {};
-
 	async execute(interaction) {
 		const container = this.container;
-
 		const { t, helpers, kythiaConfig } = container;
 		const { convertColor } = helpers.color;
-
 		const accentColor = convertColor(kythiaConfig.bot.color, {
 			from: 'hex',
 			to: 'decimal',
 		});
-
 		const row = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('ticket-confirm-close')
-				.setLabel(await t(interaction, 'ticket.close.confirm_button'))
+				.setLabel(
+					await t(
+						interaction,
+						'ticket.buttons.ticket-close.close.confirm_button',
+					),
+				)
 				.setStyle(ButtonStyle.Danger)
 				.setEmoji('✅'),
 			new ButtonBuilder()
 				.setCustomId('ticket-close-with-reason')
-				.setLabel(await t(interaction, 'ticket.v2.close_with_reason_button'))
+				.setLabel(
+					await t(
+						interaction,
+						'ticket.buttons.ticket-close.v2.close_with_reason_button',
+					),
+				)
 				.setStyle(ButtonStyle.Secondary)
 				.setEmoji('🔏'),
 			new ButtonBuilder()
 				.setCustomId('ticket-cancel-close')
-				.setLabel(await t(interaction, 'ticket.close.cancel_button'))
+				.setLabel(
+					await t(
+						interaction,
+						'ticket.buttons.ticket-close.close.cancel_button',
+					),
+				)
 				.setStyle(ButtonStyle.Secondary)
 				.setEmoji('❌'),
 		);
-
 		const confirmContainer = new ContainerBuilder()
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'ticket.close.confirm_title'),
+					await t(
+						interaction,
+						'ticket.buttons.ticket-close.close.confirm_title',
+					),
 				),
 			)
 			.addSeparatorComponents(
@@ -64,7 +75,10 @@ class TicketCloseButton extends BaseButton {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'ticket.close.confirm_desc'),
+					await t(
+						interaction,
+						'ticket.buttons.ticket-close.close.confirm_desc',
+					),
 				),
 			)
 			.addActionRowComponents(row)
@@ -80,12 +94,10 @@ class TicketCloseButton extends BaseButton {
 					}),
 				),
 			);
-
 		await interaction.reply({
 			components: [confirmContainer],
 			flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = TicketCloseButton;

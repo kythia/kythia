@@ -7,7 +7,6 @@
  */
 
 const { BaseCommand } = require('kythia-core');
-
 class InfoCommand extends BaseCommand {
 	slashCommand = (subcommand) =>
 		subcommand
@@ -19,21 +18,20 @@ class InfoCommand extends BaseCommand {
 					.setDescription('The user to view vote info for')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		const { KythiaVoter, KythiaUser } = models;
-
 		const targetUser = interaction.options.getUser('user', true);
-
 		await interaction.deferReply();
-
 		try {
-			const userRecord = await KythiaUser.getCache({ userId: targetUser.id });
-			const voterRecord = await KythiaVoter.getCache({ userId: targetUser.id });
-
+			const userRecord = await KythiaUser.getCache({
+				userId: targetUser.id,
+			});
+			const voterRecord = await KythiaVoter.getCache({
+				userId: targetUser.id,
+			});
 			const points = userRecord?.votePoints || 0;
 			const votedAtVal = voterRecord?.votedAt;
 			const lastVoted = votedAtVal
@@ -44,33 +42,40 @@ class InfoCommand extends BaseCommand {
 				? `<t:${Math.floor(new Date(voteExpiresAtVal).getTime() / 1000)}:R>`
 				: 'N/A';
 			const hasVotedStatus = userRecord?.isVoted ? '✅ Yes' : '❌ No';
-
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.kyth.vote.info.display', {
+				await t(interaction, 'core.commands.utils.kyth.vote.info.display', {
 					user: targetUser.toString(),
 					points,
 					lastVoted,
 					expiresAt,
 					hasVotedStatus,
 				}),
-				{ color: container.kythiaConfig.bot.color },
+				{
+					color: container.kythiaConfig.bot.color,
+				},
 			);
-
-			await interaction.editReply({ components });
+			await interaction.editReply({
+				components,
+			});
 		} catch (error) {
 			container.logger.error(
 				`[kythia-vote] Error: ${error.message || String(error)}`,
-				{ label: 'kythia-vote' },
+				{
+					label: 'kythia-vote',
+				},
 			);
 			const components = await simpleContainer(
 				interaction,
 				await t(interaction, 'common.error'),
-				{ mode: 'error' },
+				{
+					mode: 'error',
+				},
 			);
-			await interaction.editReply({ components });
+			await interaction.editReply({
+				components,
+			});
 		}
 	}
 }
-
 exports.default = InfoCommand;

@@ -22,7 +22,10 @@ class TvLimitModalModal extends BaseModal {
 		const channelId = interaction.customId.split(':')[1];
 		if (Number.isNaN(newLimit) || newLimit < 0 || newLimit > 99) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.limit.modal.invalid_input'),
+				content: await t(
+					interaction,
+					'tempvoice.modals.tv-limit-modal.limit.modal.invalid_input',
+				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -30,7 +33,7 @@ class TvLimitModalModal extends BaseModal {
 			return interaction.reply({
 				content: await t(
 					interaction,
-					'tempvoice.limit.modal.channel_id_not_found',
+					'tempvoice.modals.tv-limit-modal.limit.modal.channel_id_not_found',
 				),
 				flags: MessageFlags.Ephemeral,
 			});
@@ -41,7 +44,10 @@ class TvLimitModalModal extends BaseModal {
 		});
 		if (!activeChannel) {
 			return interaction.reply({
-				content: await t(interaction, 'tempvoice.limit.modal.not_owner'),
+				content: await t(
+					interaction,
+					'tempvoice.modals.tv-limit-modal.limit.modal.not_owner',
+				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -61,7 +67,7 @@ class TvLimitModalModal extends BaseModal {
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,
-					await t(interaction, 'tempvoice.common.channel_not_found'),
+					await t(interaction, 'tempvoice.shared.common.channel_not_found'),
 					{
 						color: 'Red',
 					},
@@ -73,19 +79,26 @@ class TvLimitModalModal extends BaseModal {
 			return interaction.reply({
 				content: await t(
 					interaction,
-					'tempvoice.limit.modal.channel_not_found',
+					'tempvoice.modals.tv-limit-modal.limit.modal.channel_not_found',
 				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
 		await channel.setUserLimit(newLimit);
 		await interaction.reply({
-			content: await t(interaction, 'tempvoice.limit.modal.success', {
-				limit:
-					newLimit === 0
-						? await t(interaction, 'tempvoice.limit.modal.unlimited')
-						: newLimit,
-			}),
+			content: await t(
+				interaction,
+				'tempvoice.modals.tv-limit-modal.limit.modal.success',
+				{
+					limit:
+						newLimit === 0
+							? await t(
+									interaction,
+									'tempvoice.modals.tv-limit-modal.limit.modal.unlimited',
+								)
+							: newLimit,
+				},
+			),
 			flags: MessageFlags.Ephemeral,
 		});
 	}

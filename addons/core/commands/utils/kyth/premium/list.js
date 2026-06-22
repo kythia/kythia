@@ -73,7 +73,10 @@ class ListCommand extends BaseCommand {
 		collector.on('collect', async (i) => {
 			if (i.user.id !== interaction.user.id) {
 				return i.reply({
-					content: await t(i, 'core.premium.premium.list.not.your.interaction'),
+					content: await t(
+						i,
+						'core.commands.utils.kyth.premium.list.premium.not.your.interaction',
+					),
 					flags: MessageFlags.Ephemeral,
 				});
 			}
@@ -116,5 +119,4 @@ class ListCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = ListCommand;

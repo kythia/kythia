@@ -40,7 +40,7 @@ class EightballCommand extends BaseCommand {
 		const answer = await t(interaction, answerKeys[randomIndex]);
 		const thinkingComponents = await simpleContainer(
 			interaction,
-			await t(interaction, 'fun.8ball.thinking.desc'),
+			await t(interaction, 'fun.commands.8ball.thinking.desc'),
 			{
 				color: kythiaConfig.bot.color,
 			},
@@ -52,7 +52,7 @@ class EightballCommand extends BaseCommand {
 		setTimeout(async () => {
 			const resultComponents = await simpleContainer(
 				interaction,
-				await t(interaction, 'fun.8ball.result.desc', {
+				await t(interaction, 'fun.commands.8ball.result.desc', {
 					question,
 					answer,
 				}),

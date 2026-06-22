@@ -30,7 +30,7 @@ class UserListCommand extends BaseCommand {
 				const components = await createContainer(interaction, {
 					description: await t(
 						interaction,
-						'core.utils.kyth.blacklist.user.list.empty',
+						'core.commands.utils.kyth.blacklist.user-list.user.list.empty',
 					),
 					color: 'Blurple',
 				});
@@ -41,11 +41,11 @@ class UserListCommand extends BaseCommand {
 			}
 			const noReason = await t(
 				interaction,
-				'core.utils.kyth.blacklist.no.reason',
+				'core.helpers.index.utils.kyth.blacklist.no.reason',
 			);
 			const unknownUser = await t(
 				interaction,
-				'core.utils.kyth.blacklist.user.list.unknown',
+				'core.commands.utils.kyth.blacklist.user-list.user.list.unknown',
 			);
 			const rows = await Promise.all(
 				entries.map(async (entry) => {
@@ -57,23 +57,31 @@ class UserListCommand extends BaseCommand {
 					const tag = fetchedUser
 						? fetchedUser.tag
 						: `${unknownUser} (${entry.targetId})`;
-					return t(interaction, 'core.utils.kyth.blacklist.user.list.row', {
-						tag,
-						id: entry.targetId,
-						reason: entry.reason || noReason,
-					});
+					return t(
+						interaction,
+						'core.commands.utils.kyth.blacklist.user-list.user.list.row',
+						{
+							tag,
+							id: entry.targetId,
+							reason: entry.reason || noReason,
+						},
+					);
 				}),
 			);
 			const description =
-				(await t(interaction, 'core.utils.kyth.blacklist.user.list.total', {
-					count: entries.length,
-				})) +
+				(await t(
+					interaction,
+					'core.commands.utils.kyth.blacklist.user-list.user.list.total',
+					{
+						count: entries.length,
+					},
+				)) +
 				'\n\n' +
 				rows.join('\n\n');
 			const components = await createContainer(interaction, {
 				title: await t(
 					interaction,
-					'core.utils.kyth.blacklist.user.list.title',
+					'core.commands.utils.kyth.blacklist.user-list.user.list.title',
 				),
 				description,
 				color: 'Blurple',
@@ -95,7 +103,7 @@ class UserListCommand extends BaseCommand {
 			const components = await createContainer(interaction, {
 				description: await t(
 					interaction,
-					'core.utils.kyth.blacklist.user.list.error',
+					'core.commands.utils.kyth.blacklist.user-list.user.list.error',
 					{
 						error: error.message,
 					},

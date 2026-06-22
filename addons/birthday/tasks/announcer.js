@@ -32,7 +32,6 @@ class AnnouncerTask extends BaseTask {
 		const { UserBirthday } = models;
 		const { t } = container || this.container;
 		const { getGuildSafe } = helpers.discord;
-
 		logger.info('🎂 Running birthday announcer...', {
 			label: 'birthday',
 		});
@@ -151,12 +150,16 @@ class AnnouncerTask extends BaseTask {
 					const zodiacInfo = zodiac ? `Zodiac: ${zodiac}` : '';
 					const pingInfo = pingRoleId ? `<@&${pingRoleId}>` : '';
 					if (!contentMsg) {
-						contentMsg = await t(guild, 'birthday.announcement', {
-							user: user.toString(),
-							ageInfo,
-							zodiacInfo,
-							pingInfo,
-						});
+						contentMsg = await t(
+							guild,
+							'birthday.tasks.announcer.announcement',
+							{
+								user: user.toString(),
+								ageInfo,
+								zodiacInfo,
+								pingInfo,
+							},
+						);
 					} else {
 						contentMsg = contentMsg
 							.replace(/{user}/g, user.toString())

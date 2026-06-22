@@ -129,11 +129,15 @@ class ListCommand extends BaseCommand {
 		const unlockedCount = unlockedSet.size;
 		// always use t for translation for command string in the command files
 		// and put the translation in the addon lang/en-US.json file
-		const header = await t(interaction, 'activity.achievement.list.header', {
-			username: targetUser.username,
-			unlockedCount,
-			totalCount,
-		});
+		const header = await t(
+			interaction,
+			'activity.commands.achievement.list.header',
+			{
+				username: targetUser.username,
+				unlockedCount,
+				totalCount,
+			},
+		);
 
 		// using containerbuilder
 		const listContainer = new ContainerBuilder()
@@ -153,7 +157,7 @@ class ListCommand extends BaseCommand {
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
 					lines.join('\n').slice(0, 3800) ||
-						(await t(interaction, 'activity.achievement.list.empty')),
+						(await t(interaction, 'activity.commands.achievement.list.empty')),
 				),
 			);
 

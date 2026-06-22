@@ -20,7 +20,10 @@ class RemoveCommand extends BaseCommand {
 		const { t, helpers } = container;
 		const { simpleContainer } = helpers.discord;
 		await interaction.deferReply();
-		const startedMsg = await t(interaction, 'core.tools.prefix.remove.started');
+		const startedMsg = await t(
+			interaction,
+			'core.commands.tools.nick-prefix.remove.prefix.started',
+		);
 		const startedComponents = await simpleContainer(interaction, startedMsg);
 		await interaction.editReply({
 			components: startedComponents,
@@ -30,7 +33,7 @@ class RemoveCommand extends BaseCommand {
 			const updated = await roleUnprefix(interaction.guild, container);
 			const successMsg = await t(
 				interaction,
-				'core.tools.prefix.remove.success',
+				'core.commands.tools.nick-prefix.remove.prefix.success',
 				{
 					count: updated,
 				},
@@ -50,7 +53,10 @@ class RemoveCommand extends BaseCommand {
 					.catch(() => {});
 			}
 		} catch (_e) {
-			const errMsg = await t(interaction, 'core.tools.prefix.remove.error');
+			const errMsg = await t(
+				interaction,
+				'core.commands.tools.nick-prefix.remove.prefix.error',
+			);
 			const errorComponents = await simpleContainer(interaction, errMsg, {
 				color: 'Red',
 			});

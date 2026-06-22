@@ -25,7 +25,10 @@ class BegCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -46,7 +49,7 @@ class BegCommand extends BaseCommand {
 			interaction,
 		);
 		if (cooldown.remaining) {
-			const msg = await t(interaction, 'economy.beg.beg.cooldown', {
+			const msg = await t(interaction, 'economy.commands.beg.beg.cooldown', {
 				time: cooldown.time,
 			});
 			const components = await simpleContainer(interaction, msg, {
@@ -68,7 +71,7 @@ class BegCommand extends BaseCommand {
 		user.changed('kythiaCoin', true);
 		user.changed('lastBeg', true);
 		await user.save();
-		const msg = await t(interaction, 'economy.beg.beg.success', {
+		const msg = await t(interaction, 'economy.commands.beg.beg.success', {
 			amount: randomCoin,
 		});
 		const components = await simpleContainer(interaction, msg, {

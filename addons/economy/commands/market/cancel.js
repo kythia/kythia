@@ -7,12 +7,9 @@
  */
 const { MessageFlags } = require('discord.js');
 const { toBigIntSafe } = require('../../helpers/bigint');
-
 const { BaseCommand } = require('kythia-core');
-
 class CancelCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('cancel')
@@ -23,27 +20,23 @@ class CancelCommand extends BaseCommand {
 					.setDescription('The ID of the order to cancel')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, models, helpers, logger } = container;
 		const { KythiaUser, MarketPortfolio, MarketOrder } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
 		const orderId = interaction.options.getString('order_id');
-
 		try {
 			const order = await MarketOrder.getCache({
 				orderId,
 				userId: interaction.user.id,
 				status: 'open',
 			});
-
 			if (!order) {
 				const msg = await t(
 					interaction,
-					'economy.market.cancel.not.found.desc',
+					'economy.commands.market.cancel.not.found.desc',
 				);
 				const components = await simpleContainer(interaction, msg, {
 					color: 'Red',
@@ -53,16 +46,14 @@ class CancelCommand extends BaseCommand {
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			if (order.side === 'buy') {
-				const user = await KythiaUser.getCache({ userId: interaction.user.id });
+				const user = await KythiaUser.getCache({
+					userId: interaction.user.id,
+				});
 				const totalCost = order.quantity * order.price;
-
 				user.kythiaCoin =
 					toBigIntSafe(user.kythiaCoin) + toBigIntSafe(totalCost);
-
 				user.changed('kythiaCoin', true);
-
 				await user.save();
 			} else {
 				const portfolio = await MarketPortfolio.getCache({
@@ -81,13 +72,15 @@ class CancelCommand extends BaseCommand {
 					});
 				}
 			}
-
 			order.status = 'cancelled';
 			await order.save();
-
-			const msg = await t(interaction, 'economy.market.cancel.success.desc', {
-				orderId: order.id,
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.market.cancel.success.desc',
+				{
+					orderId: order.id,
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Green',
 			});
@@ -99,7 +92,10 @@ class CancelCommand extends BaseCommand {
 			logger.error(`Error in cancel order: ${error.message || error}`, {
 				label: 'core:commands:economy:market:cancel',
 			});
-			const msg = await t(interaction, 'economy.market.cancel.error.desc');
+			const msg = await t(
+				interaction,
+				'economy.commands.market.cancel.error.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -110,5 +106,4 @@ class CancelCommand extends BaseCommand {
 		}
 	}
 }
-
 exports.default = CancelCommand;

@@ -1,143 +1,157 @@
 {
 	"pet": {
-		"error": {
-			"not_found": "## No Pet Found\nUser <@{user}> does not have a pet!"
-		},
-		"adopt": {
-			"already": {
-				"msg_md": "## Already Have a Pet\nYou already have a pet! use `/pet play` and `/pet use` to interact with them!"
-			},
-			"no": {
-				"pets": {
-					"msg_md": "## No Pets Available\nThere are no pets available to adopt right now."
-				}
-			},
-			"success": {
-				"msg_md": "## Pet Adopted!\nYou adopted {icon} **{name}** ({rarity})!"
-			}
-		},
-		"feed": {
-			"no": {
-				"pet": {
-					"msg_md": "## No Pet\nYou don't have a pet to feed!"
+		"commands": {
+			"admin": {
+				"add": {
+					"add": {
+						"success": {
+							"msg_md": "## Pet Added!\nPet **{name}** has been added!"
+						}
+					}
 				},
-				"food": {
-					"msg_md": "## No Pet Food\nYou don't have any food for your pet!"
-				}
-			},
-			"dead": {
-				"msg_md": "## Pet is Dead\nYour pet is dead! You can adopt a new pet with `/pet adopt`."
-			},
-			"full": {
-				"msg_md": "## Pet is Full\nYour pet is already full!"
-			},
-			"success": {
-				"msg_md": "## Pet Fed!\n{icon} **{name}** ({rarity}) has been fed. Hunger +{hunger}."
-			}
-		},
-		"play": {
-			"no": {
-				"pet": {
-					"title_md": "## No Pet Found\nYou do not own a pet to play with. Adopt one using `/pet adopt`!"
-				}
-			},
-			"dead": {
-				"title_md": "## Pet is Dead\nYour pet is currently dead and cannot play. Revive it first!"
-			},
-			"success": {
-				"desc": "{icon} **{name}** ({rarity}) played with you! Happiness +{happiness}.",
-				"title_md": "## Play Time!\n{desc}"
-			}
-		},
-		"info": {
-			"no": {
-				"pet": {
-					"msg_md": "## {title}\n{desc}"
-				}
-			},
-			"dead": {
-				"msg_md": "## {title}\n{desc}"
-			},
-			"title_md": "## {bot}'s Pet Profile",
-			"desc": "{icon} **{name}** ({rarity})\nName: {petName}\nLevel: {level}\nHappiness: {happiness}/100\nHunger: {hunger}/100\nBonus: {bonusType} +{bonusValue}"
-		},
-		"use": {
-			"no": {
-				"pet": {
-					"title_md": "## No Pet Found\nYou do not own a pet to use items on."
-				}
-			},
-			"cooldown": {
-				"title_md": "## On Cooldown\nYou can use items on your pet again in **{time}**."
-			},
-			"dead": {
-				"title_md": "## Pet is Dead\nYour pet is currently dead. Use a revive item to bring it back!",
-				"dm": "Condolences: Your pet has died due to neglect! "
-			},
-			"success": {
-				"desc": "{icon} **{name}** ({rarity}) Level {level} gained {bonusType} +{bonusValue}!",
-				"title_md": "## Item Used\n{desc}"
-			}
-		},
-		"gacha": {
-			"no": {
-				"pet": {
-					"msg_md": "## No Pet\nYou don't have a pet to gacha!"
-				}
-			},
-			"cooldown": {
-				"msg_md": "## Gacha Cooldown\n| You can gacha your pet again in **{time}**!"
-			},
-			"success": {
-				"msg_md": "## Pet Exchanged!\n{icon} **{name}** ({rarity}) with level {level}"
-			}
-		},
-		"sell": {
-			"no": {
-				"pet": {
-					"title_md": "## No Pet Found\nYou do not own a pet to sell."
-				}
-			},
-			"success": {
-				"title_md": "## Pet Sold!\nYou sold your pet for **{value}**."
-			}
-		},
-		"leaderboard": {
-			"entry": "{index}. {username} ({userId}) {icon} {rarity} {name}, level {level}",
-			"empty": "There are no pets on the leaderboard.",
-			"title": "Pet Leaderboard"
-		},
-		"editname": {
-			"success": {
-				"msg_md": "## Pet Name Changed!\n{icon} **{name}** ({rarity}) is now named {petName}"
-			}
-		},
-		"admin": {
-			"list": {
-				"list": {
-					"empty": {
-						"desc": "There are no pets in the system!",
-						"msg_md": "## {title}\nNo pets available."
-					},
-					"field": "**Rarity**: {rarity}\n**Bonus**: {bonusType} +{bonusValue}",
-					"footer": "Page {page} of {totalPages} | Total Pets: {total}",
-					"title_md": "## Registered Pets"
-				}
-			},
-			"delete": {
 				"delete": {
-					"success": {
-						"msg_md": "## Pet Deleted\nPet **{name}** has been deleted!"
-					},
-					"notfound": {
-						"msg_md": "## Pet Not Found\nPet not found!"
+					"delete": {
+						"success": {
+							"msg_md": "## Pet Deleted\nPet **{name}** has been deleted!"
+						},
+						"notfound": {
+							"msg_md": "## Pet Not Found\nPet not found!"
+						}
+					}
+				},
+				"list": {
+					"list": {
+						"empty": {
+							"msg_md": "## {title}\nNo pets available."
+						}
 					}
 				}
 			},
-			"add": {
-				"add": {
-					"success": {
-						"msg_md": "## Pet Added!\nPet **{name}** has been added!"
+			"adopt": {
+				"already": {
+					"msg_md": "## Already Have a Pet\nYou already have a pet! use `/pet play` and `/pet use` to interact with them!"
+				},
+				"no": {
+					"pets": {
+						"msg_md": "## No Pets Available\nThere are no pets available to adopt right now."
+					}
+				},
+				"success": {
+					"msg_md": "## Pet Adopted!\nYou adopted {icon} **{name}** ({rarity})!"
+				}
+			},
+			"editname": {
+				"error": {
+					"not_found": "## No Pet Found\nUser <@{user}> does not have a pet!"
+				},
+				"success": {
+					"msg_md": "## Pet Name Changed!\n{icon} **{name}** ({rarity}) is now named {petName}"
+				}
+			},
+			"feed": {
+				"no": {
+					"pet": {
+						"msg_md": "## No Pet\nYou don't have a pet to feed!"
+					},
+					"food": {
+						"msg_md": "## No Pet Food\nYou don't have any food for your pet!"
+					}
+				},
+				"dead": {
+					"msg_md": "## Pet is Dead\nYour pet is dead! You can adopt a new pet with `/pet adopt`."
+				},
+				"full": {
+					"msg_md": "## Pet is Full\nYour pet is already full!"
+				},
+				"success": {
+					"msg_md": "## Pet Fed!\n{icon} **{name}** ({rarity}) has been fed. Hunger +{hunger}."
+				}
+			},
+			"gacha": {
+				"no": {
+					"pet": {
+						"msg_md": "## No Pet\nYou don't have a pet to gacha!"
+					}
+				},
+				"cooldown": {
+					"msg_md": "## Gacha Cooldown\n| You can gacha your pet again in **{time}**!"
+				},
+				"success": {
+					"msg_md": "## Pet Exchanged!\n{icon} **{name}** ({rarity}) with level {level}"
+				}
+			},
+			"info": {
+				"no": {
+					"pet": {
+						"msg_md": "## {title}\n{desc}"
+					}
+				},
+				"dead": {
+					"msg_md": "## {title}\n{desc}"
+				},
+				"title_md": "## {bot}'s Pet Profile",
+				"desc": "{icon} **{name}** ({rarity})\nName: {petName}\nLevel: {level}\nHappiness: {happiness}/100\nHunger: {hunger}/100\nBonus: {bonusType} +{bonusValue}"
+			},
+			"leaderboard": {
+				"entry": "{index}. {username} ({userId}) {icon} {rarity} {name}, level {level}",
+				"empty": "There are no pets on the leaderboard.",
+				"title": "Pet Leaderboard"
+			},
+			"play": {
+				"no": {
+					"pet": {
+						"title_md": "## No Pet Found\nYou do not own a pet to play with. Adopt one using `/pet adopt`!"
+					}
+				},
+				"dead": {
+					"title_md": "## Pet is Dead\nYour pet is currently dead and cannot play. Revive it first!"
+				},
+				"success": {
+					"title_md": "## Play Time!\n{desc}",
+					"desc": "{icon} **{name}** ({rarity}) played with you! Happiness +{happiness}."
+				}
+			},
+			"sell": {
+				"no": {
+					"pet": {
+						"title_md": "## No Pet Found\nYou do not own a pet to sell."
+					}
+				},
+				"success": {
+					"title_md": "## Pet Sold!\nYou sold your pet for **{value}**."
+				}
+			},
+			"use": {
+				"no": {
+					"pet": {
+						"title_md": "## No Pet Found\nYou do not own a pet to use items on."
+					}
+				},
+				"dead": {
+					"dm": "Condolences: Your pet has died due to neglect! ",
+					"title_md": "## Pet is Dead\nYour pet is currently dead. Use a revive item to bring it back!"
+				},
+				"cooldown": {
+					"title_md": "## On Cooldown\nYou can use items on your pet again in **{time}**."
+				},
+				"success": {
+					"title_md": "## Item Used\n{desc}",
+					"desc": "{icon} **{name}** ({rarity}) Level {level} gained {bonusType} +{bonusValue}!"
+				}
+			}
+		},
+		"helpers": {
+			"ui": {
+				"admin": {
+					"list": {
+						"list": {
+							"empty": {
+								"desc": "There are no pets in the system!"
+							},
+							"field": "**Rarity**: {rarity}\n**Bonus**: {bonusType} +{bonusValue}",
+							"title_md": "## Registered Pets",
+							"footer": "Page {page} of {totalPages} | Total Pets: {total}"
+						}
 					}
 				}
 			}

@@ -83,7 +83,10 @@ class SellCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -99,10 +102,14 @@ class SellCommand extends BaseCommand {
 			if (userKyth < sellQuantity) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.market.sell.insufficient_kyth_md', {
-						userKyth: userKyth.toFixed(6),
-						sellQuantity: sellQuantity.toFixed(6),
-					}),
+					await t(
+						interaction,
+						'economy.commands.market.sell.insufficient_kyth_md',
+						{
+							userKyth: userKyth.toFixed(6),
+							sellQuantity: sellQuantity.toFixed(6),
+						},
+					),
 					{
 						color: 'Red',
 					},
@@ -123,7 +130,10 @@ class SellCommand extends BaseCommand {
 			if (!pool) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.market.sell.amm_unavailable_md'),
+					await t(
+						interaction,
+						'economy.commands.market.sell.amm_unavailable_md',
+					),
 					{
 						color: 'Red',
 					},
@@ -138,7 +148,10 @@ class SellCommand extends BaseCommand {
 			if (pool.tradingHalted) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.market.sell.error.trading_halted.desc'),
+					await t(
+						interaction,
+						'economy.commands.market.sell.error.trading_halted.desc',
+					),
 					{
 						color: 'Red',
 					},
@@ -162,7 +175,7 @@ class SellCommand extends BaseCommand {
 					interaction,
 					await t(
 						interaction,
-						'economy.market.sell.error.invalid_parameters.desc',
+						'economy.commands.market.sell.error.invalid_parameters.desc',
 					),
 					{
 						color: 'Red',
@@ -176,7 +189,10 @@ class SellCommand extends BaseCommand {
 			if (result.coinOut <= 0) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'economy.market.sell.insufficient_liquidity_md'),
+					await t(
+						interaction,
+						'economy.commands.market.sell.insufficient_liquidity_md',
+					),
 					{
 						color: 'Red',
 					},
@@ -200,7 +216,7 @@ class SellCommand extends BaseCommand {
 				result.newCoinReserve / result.newKythReserve
 			).toFixed(6);
 			const previewLines = [
-				await t(interaction, 'economy.market.sell.preview_title'),
+				await t(interaction, 'economy.commands.market.sell.preview_title'),
 				``,
 				`**You Sell:**  💎 ${sellQuantity.toFixed(6)} KYTH`,
 				`**Protocol Fee (${(result.feeRate * 100).toFixed(1)}%):**  💎 ${kythFeeAmt} KYTH`,
@@ -220,12 +236,12 @@ class SellCommand extends BaseCommand {
 			if (impactLevel === 'warning')
 				warningNote = await t(
 					interaction,
-					'economy.market.sell.warning.high_impact',
+					'economy.commands.market.sell.warning.high_impact',
 				);
 			else if (impactLevel === 'danger')
 				warningNote = await t(
 					interaction,
-					'economy.market.sell.warning.extreme_impact',
+					'economy.commands.market.sell.warning.extreme_impact',
 				);
 			if (warningNote) previewLines.push('', warningNote);
 			if (impactLevel === 'safe') {
@@ -287,7 +303,7 @@ class SellCommand extends BaseCommand {
 				}
 				const cancelComponents = await simpleContainer(
 					i,
-					await t(i, 'economy.market.sell.cancel.desc'),
+					await t(i, 'economy.commands.market.sell.cancel.desc'),
 					{
 						color: kythiaConfig.bot.color,
 					},
@@ -301,7 +317,7 @@ class SellCommand extends BaseCommand {
 				if (collected.size === 0) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'economy.market.sell.timeout.desc'),
+						await t(interaction, 'economy.commands.market.sell.timeout.desc'),
 						{
 							color: kythiaConfig.bot.color,
 						},
@@ -323,7 +339,7 @@ class SellCommand extends BaseCommand {
 		if (!holding || holding.quantity < sellQuantity) {
 			const msg = await t(
 				interaction,
-				'economy.market.sell.insufficient.asset.desc',
+				'economy.shared.market.sell.insufficient.asset.desc',
 				{
 					asset: assetId.toUpperCase(),
 				},
@@ -344,7 +360,7 @@ class SellCommand extends BaseCommand {
 			if (!assetData) {
 				const msg = await t(
 					interaction,
-					'economy.market.sell.asset.not.found.desc',
+					'economy.shared.market.sell.asset.not.found.desc',
 				);
 				const components = await simpleContainer(interaction, msg, {
 					color: kythiaConfig.bot.color,
@@ -360,7 +376,7 @@ class SellCommand extends BaseCommand {
 			if (!stockData) {
 				const msg = await t(
 					interaction,
-					'economy.market.sell.asset.not.found.desc',
+					'economy.shared.market.sell.asset.not.found.desc',
 				);
 				const components = await simpleContainer(interaction, msg, {
 					color: kythiaConfig.bot.color,
@@ -398,24 +414,28 @@ class SellCommand extends BaseCommand {
 			const pnl = (currentPrice - avgBuyPrice) * sellQuantity;
 			const pnlSign = pnl >= 0 ? '+' : '';
 			const pnlEmoji = pnl >= 0 ? '📈' : '📉';
-			const msg = await t(interaction, 'economy.market.sell.success.desc', {
-				quantity: sellQuantity.toFixed(6),
-				asset: assetId.toUpperCase(),
-				amount: totalReceived.toLocaleString(undefined, {
-					maximumFractionDigits: 2,
-				}),
-				avgBuyPrice: avgBuyPrice.toLocaleString(undefined, {
-					maximumFractionDigits: 2,
-				}),
-				sellPrice: currentPrice.toLocaleString(undefined, {
-					maximumFractionDigits: 2,
-				}),
-				pnlEmoji,
-				pnlSign,
-				pnl: pnl.toLocaleString(undefined, {
-					maximumFractionDigits: 2,
-				}),
-			});
+			const msg = await t(
+				interaction,
+				'economy.commands.market.sell.success.desc',
+				{
+					quantity: sellQuantity.toFixed(6),
+					asset: assetId.toUpperCase(),
+					amount: totalReceived.toLocaleString(undefined, {
+						maximumFractionDigits: 2,
+					}),
+					avgBuyPrice: avgBuyPrice.toLocaleString(undefined, {
+						maximumFractionDigits: 2,
+					}),
+					sellPrice: currentPrice.toLocaleString(undefined, {
+						maximumFractionDigits: 2,
+					}),
+					pnlEmoji,
+					pnlSign,
+					pnl: pnl.toLocaleString(undefined, {
+						maximumFractionDigits: 2,
+					}),
+				},
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Yellow',
 			});
@@ -427,7 +447,10 @@ class SellCommand extends BaseCommand {
 			logger.error(`Error during market sell: ${error.message || error}`, {
 				label: 'economy:market:sell',
 			});
-			const msg = await t(interaction, 'economy.market.sell.error.desc');
+			const msg = await t(
+				interaction,
+				'economy.commands.market.sell.error.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});

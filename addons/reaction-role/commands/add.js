@@ -60,14 +60,20 @@ class AddCommand extends BaseCommand {
 			interaction.options.getChannel('channel') || interaction.channel;
 		if (!channel?.isTextBased()) {
 			return interaction.editReply({
-				content: await t(interaction, 'reaction-role.invalid_channel'),
+				content: await t(
+					interaction,
+					'reaction-role.helpers.index.invalid_channel',
+				),
 			});
 		}
 		try {
 			const message = await helpers.discord.getMessageSafe(channel, messageId);
 			if (!message) {
 				return interaction.editReply({
-					content: await t(interaction, 'reaction-role.invalid_message'),
+					content: await t(
+						interaction,
+						'reaction-role.helpers.index.invalid_message',
+					),
 				});
 			}
 			const panel = await ReactionRolePanel.getCache({
@@ -90,7 +96,10 @@ class AddCommand extends BaseCommand {
 					label: 'reaction-role:react',
 				});
 				return interaction.editReply({
-					content: await t(interaction, 'reaction-role.invalid_emoji'),
+					content: await t(
+						interaction,
+						'reaction-role.helpers.index.invalid_emoji',
+					),
 				});
 			}
 
@@ -131,7 +140,7 @@ class AddCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'reaction-role.add.success', {
+						await t(interaction, 'reaction-role.commands.add.success', {
 							messageUrl: message.url,
 							emoji: emojiInput,
 							role: role.toString(),

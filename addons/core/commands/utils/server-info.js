@@ -38,35 +38,86 @@ class ServerInfoCommand extends BaseCommand {
 		const guild = interaction.guild;
 		const owner = await guild.fetchOwner().catch(() => null);
 		const verificationLevels = {
-			0: await t(interaction, 'core.utils.serverinfo.verification.none'),
-			1: await t(interaction, 'core.utils.serverinfo.verification.low'),
-			2: await t(interaction, 'core.utils.serverinfo.verification.medium'),
-			3: await t(interaction, 'core.utils.serverinfo.verification.high'),
-			4: await t(interaction, 'core.utils.serverinfo.verification.very.high'),
-		};
-		const explicitContentFilterLevels = {
-			0: await t(interaction, 'core.utils.serverinfo.filter.disabled'),
+			0: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.verification.none',
+			),
 			1: await t(
 				interaction,
-				'core.utils.serverinfo.filter.members.without.roles',
+				'core.commands.utils.server-info.serverinfo.verification.low',
 			),
-			2: await t(interaction, 'core.utils.serverinfo.filter.all.members'),
+			2: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.verification.medium',
+			),
+			3: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.verification.high',
+			),
+			4: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.verification.very.high',
+			),
+		};
+		const explicitContentFilterLevels = {
+			0: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.filter.disabled',
+			),
+			1: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.filter.members.without.roles',
+			),
+			2: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.filter.all.members',
+			),
 		};
 		const nsfwLevels = {
-			0: await t(interaction, 'core.utils.serverinfo.nsfw.default'),
-			1: await t(interaction, 'core.utils.serverinfo.nsfw.explicit'),
-			2: await t(interaction, 'core.utils.serverinfo.nsfw.safe'),
-			3: await t(interaction, 'core.utils.serverinfo.nsfw.age.restricted'),
+			0: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.nsfw.default',
+			),
+			1: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.nsfw.explicit',
+			),
+			2: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.nsfw.safe',
+			),
+			3: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.nsfw.age.restricted',
+			),
 		};
 		const mfaLevels = {
-			0: await t(interaction, 'core.utils.serverinfo.mfa.not.required'),
-			1: await t(interaction, 'core.utils.serverinfo.mfa.required'),
+			0: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.mfa.not.required',
+			),
+			1: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.mfa.required',
+			),
 		};
 		const premiumTiers = {
-			0: await t(interaction, 'core.utils.serverinfo.boost.none'),
-			1: await t(interaction, 'core.utils.serverinfo.boost.level1'),
-			2: await t(interaction, 'core.utils.serverinfo.boost.level2'),
-			3: await t(interaction, 'core.utils.serverinfo.boost.level3'),
+			0: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.boost.none',
+			),
+			1: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.boost.level1',
+			),
+			2: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.boost.level2',
+			),
+			3: await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.boost.level3',
+			),
 		};
 		const emojis = {
 			name: '🏷️',
@@ -175,10 +226,10 @@ class ServerInfoCommand extends BaseCommand {
 			? `<@${owner.id}> (${owner.user.tag})`
 			: guild.ownerId
 				? `<@${guild.ownerId}>`
-				: await t(interaction, 'core.utils.serverinfo.unknown');
+				: await t(interaction, 'core.helpers.index.utils.serverinfo.unknown');
 		const _vanity = guild.vanityURLCode
 			? `https://discord.gg/${guild.vanityURLCode}`
-			: await t(interaction, 'core.utils.serverinfo.none');
+			: await t(interaction, 'core.helpers.index.utils.serverinfo.none');
 		const allChannels = guild.channels.cache;
 		const channelCounts = {
 			categories: allChannels.filter(
@@ -212,7 +263,7 @@ class ServerInfoCommand extends BaseCommand {
 				.map((r) => r.toString())
 				.join(', ') +
 			(roleCount > 10
-				? `, +${roleCount - 10} ${await t(interaction, 'core.utils.serverinfo.more')}`
+				? `, +${roleCount - 10} ${await t(interaction, 'core.commands.utils.server-info.serverinfo.more')}`
 				: '');
 		const emojisAll = guild.emojis.cache;
 		const emojiCount = emojisAll.size;
@@ -223,43 +274,49 @@ class ServerInfoCommand extends BaseCommand {
 		const features =
 			guild.features.length > 0
 				? guild.features.map((f) => `\`${f}\``).join(', ')
-				: await t(interaction, 'core.utils.serverinfo.none');
+				: await t(interaction, 'core.helpers.index.utils.serverinfo.none');
 		const systemChannel = guild.systemChannel
 			? `<#${guild.systemChannel.id}>`
-			: await t(interaction, 'core.utils.serverinfo.none');
+			: await t(interaction, 'core.helpers.index.utils.serverinfo.none');
 		const rulesChannel = guild.rulesChannel
 			? `<#${guild.rulesChannel.id}>`
-			: await t(interaction, 'core.utils.serverinfo.none');
+			: await t(interaction, 'core.helpers.index.utils.serverinfo.none');
 		const publicUpdatesChannel = guild.publicUpdatesChannel
 			? `<#${guild.publicUpdatesChannel.id}>`
-			: await t(interaction, 'core.utils.serverinfo.none');
+			: await t(interaction, 'core.helpers.index.utils.serverinfo.none');
 		const afkChannel = guild.afkChannel
 			? `<#${guild.afkChannel.id}>`
-			: await t(interaction, 'core.utils.serverinfo.none');
+			: await t(interaction, 'core.helpers.index.utils.serverinfo.none');
 		const afkTimeout = guild.afkTimeout
-			? `${guild.afkTimeout / 60} ${await t(interaction, 'core.utils.serverinfo.minutes')}`
-			: await t(interaction, 'core.utils.serverinfo.none');
+			? `${guild.afkTimeout / 60} ${await t(interaction, 'core.commands.utils.server-info.serverinfo.minutes')}`
+			: await t(interaction, 'core.helpers.index.utils.serverinfo.none');
 		const widgetEnabled = guild.widgetEnabled
-			? await t(interaction, 'core.utils.serverinfo.enabled')
-			: await t(interaction, 'core.utils.serverinfo.disabled');
+			? await t(
+					interaction,
+					'core.commands.utils.server-info.serverinfo.enabled',
+				)
+			: await t(
+					interaction,
+					'core.commands.utils.server-info.serverinfo.disabled',
+				);
 		const maxPresences =
 			guild.maxPresences ||
-			(await t(interaction, 'core.utils.serverinfo.unlimited'));
+			(await t(interaction, 'core.helpers.index.utils.serverinfo.unlimited'));
 		const maxMembers =
 			guild.maxMembers ||
-			(await t(interaction, 'core.utils.serverinfo.unlimited'));
+			(await t(interaction, 'core.helpers.index.utils.serverinfo.unlimited'));
 		const maxVideoChannelUsers =
 			guild.maxVideoChannelUsers ||
-			(await t(interaction, 'core.utils.serverinfo.unlimited'));
+			(await t(interaction, 'core.helpers.index.utils.serverinfo.unlimited'));
 		const maxEmojis =
 			guild.maximumEmojis ||
-			(await t(interaction, 'core.utils.serverinfo.unknown'));
+			(await t(interaction, 'core.helpers.index.utils.serverinfo.unknown'));
 		const maxStickers =
 			guild.maximumStickers ||
-			(await t(interaction, 'core.utils.serverinfo.unknown'));
+			(await t(interaction, 'core.helpers.index.utils.serverinfo.unknown'));
 		const _preferredLocale =
 			guild.preferredLocale ||
-			(await t(interaction, 'core.utils.serverinfo.unknown'));
+			(await t(interaction, 'core.helpers.index.utils.serverinfo.unknown'));
 		let welcomeScreen = null;
 		if (guild.features.includes('WELCOME_SCREEN_ENABLED')) {
 			try {
@@ -271,7 +328,10 @@ class ServerInfoCommand extends BaseCommand {
 				? [
 						new ButtonBuilder()
 							.setLabel(
-								await t(interaction, 'core.utils.serverinfo.button.icon'),
+								await t(
+									interaction,
+									'core.commands.utils.server-info.serverinfo.button.icon',
+								),
 							)
 							.setStyle(ButtonStyle.Link)
 							.setURL(iconURL),
@@ -281,7 +341,10 @@ class ServerInfoCommand extends BaseCommand {
 				? [
 						new ButtonBuilder()
 							.setLabel(
-								await t(interaction, 'core.utils.serverinfo.button.banner'),
+								await t(
+									interaction,
+									'core.commands.utils.server-info.serverinfo.button.banner',
+								),
 							)
 							.setStyle(ButtonStyle.Link)
 							.setURL(bannerURL),
@@ -291,7 +354,10 @@ class ServerInfoCommand extends BaseCommand {
 				? [
 						new ButtonBuilder()
 							.setLabel(
-								await t(interaction, 'core.utils.serverinfo.button.splash'),
+								await t(
+									interaction,
+									'core.commands.utils.server-info.serverinfo.button.splash',
+								),
 							)
 							.setStyle(ButtonStyle.Link)
 							.setURL(splashURL),
@@ -303,7 +369,7 @@ class ServerInfoCommand extends BaseCommand {
 							.setLabel(
 								await t(
 									interaction,
-									'core.utils.serverinfo.button.discovery.splash',
+									'core.commands.utils.server-info.serverinfo.button.discovery.splash',
 								),
 							)
 							.setStyle(ButtonStyle.Link)
@@ -314,7 +380,10 @@ class ServerInfoCommand extends BaseCommand {
 				? [
 						new ButtonBuilder()
 							.setLabel(
-								await t(interaction, 'core.utils.serverinfo.button.widget'),
+								await t(
+									interaction,
+									'core.commands.utils.server-info.serverinfo.button.widget',
+								),
 							)
 							.setStyle(ButtonStyle.Link)
 							.setURL(widgetURL),
@@ -323,18 +392,18 @@ class ServerInfoCommand extends BaseCommand {
 		);
 		const descLines = [];
 		descLines.push(
-			`**\`${emojis.description}\` ${await t(interaction, 'core.utils.serverinfo.field.description')}:** ${guild.description || `*${await t(interaction, 'core.utils.serverinfo.no.description')}*`}`,
+			`**\`${emojis.description}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.description')}:** ${guild.description || `*${await t(interaction, 'core.helpers.index.utils.serverinfo.no.description')}*`}`,
 		);
 		descLines.push(
-			`**\`${emojis.owner}\` ${await t(interaction, 'core.utils.serverinfo.field.owner')}:** ${ownerMention}`,
+			`**\`${emojis.owner}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.owner')}:** ${ownerMention}`,
 		);
 		descLines.push(
-			`**\`${emojis.created}\` ${await t(interaction, 'core.utils.serverinfo.field.created')}:** ${createdAt}`,
+			`**\`${emojis.created}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.created')}:** ${createdAt}`,
 		);
 		descLines.push(
-			`**\`${emojis.roles}\` ${await t(interaction, 'core.utils.serverinfo.field.roles')}:** ${await t(
+			`**\`${emojis.roles}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.roles')}:** ${await t(
 				interaction,
-				'core.utils.serverinfo.roles.total',
+				'core.commands.utils.server-info.serverinfo.roles.total',
 				{
 					count: roleCount,
 				},
@@ -342,119 +411,139 @@ class ServerInfoCommand extends BaseCommand {
 		);
 		descLines.push(`  ${topRoles}`);
 		descLines.push(
-			`**\`${emojis.emojis}\` ${await t(interaction, 'core.utils.serverinfo.field.emojis')}:** ${await t(
+			`**\`${emojis.emojis}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.emojis')}:** ${await t(
 				interaction,
-				'core.utils.serverinfo.emojis.total',
+				'core.commands.utils.server-info.serverinfo.emojis.total',
 				{
 					count: emojiCount,
 				},
-			)} | ${await t(interaction, 'core.utils.serverinfo.emojis.static', {
-				count: staticEmojis,
-			})} | ${await t(interaction, 'core.utils.serverinfo.emojis.animated', {
-				count: animatedEmojis,
-			})} | ${await t(interaction, 'core.utils.serverinfo.emojis.max', {
-				count: maxEmojis,
-			})}`,
+			)} | ${await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.emojis.static',
+				{
+					count: staticEmojis,
+				},
+			)} | ${await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.emojis.animated',
+				{
+					count: animatedEmojis,
+				},
+			)} | ${await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.emojis.max',
+				{
+					count: maxEmojis,
+				},
+			)}`,
 		);
 		descLines.push(
-			`**\`${emojis.stickers}\` ${await t(interaction, 'core.utils.serverinfo.field.stickers')}:** ${await t(
+			`**\`${emojis.stickers}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.stickers')}:** ${await t(
 				interaction,
-				'core.utils.serverinfo.stickers.total',
+				'core.commands.utils.server-info.serverinfo.stickers.total',
 				{
 					count: stickerCount,
 				},
-			)} | ${await t(interaction, 'core.utils.serverinfo.stickers.max', {
-				count: maxStickers,
-			})}`,
-		);
-		descLines.push(
-			`**\`${emojis.categories}\` ${await t(interaction, 'core.utils.serverinfo.field.categories')}:** ${channelCounts.categories}`,
-		);
-		descLines.push(
-			`**\`${emojis.text}\` ${await t(interaction, 'core.utils.serverinfo.field.text.channels')}:** ${channelCounts.text}`,
-		);
-		descLines.push(
-			`**\`${emojis.voice}\` ${await t(interaction, 'core.utils.serverinfo.field.voice.channels')}:** ${channelCounts.voice}`,
-		);
-		descLines.push(
-			`**\`${emojis.stage}\` ${await t(interaction, 'core.utils.serverinfo.field.stage.channels')}:** ${channelCounts.stage}`,
-		);
-		descLines.push(
-			`**\`${emojis.forum}\` ${await t(interaction, 'core.utils.serverinfo.field.forum.channels')}:** ${channelCounts.forum}`,
-		);
-		descLines.push(
-			`**\`${emojis.announcement}\` ${await t(interaction, 'core.utils.serverinfo.field.announcement.channels')}:** ${channelCounts.announcement}`,
-		);
-		descLines.push(
-			`**\`${emojis.threads}\` ${await t(interaction, 'core.utils.serverinfo.field.threads')}:** ${await t(
+			)} | ${await t(
 				interaction,
-				'core.utils.serverinfo.threads.public',
+				'core.commands.utils.server-info.serverinfo.stickers.max',
+				{
+					count: maxStickers,
+				},
+			)}`,
+		);
+		descLines.push(
+			`**\`${emojis.categories}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.categories')}:** ${channelCounts.categories}`,
+		);
+		descLines.push(
+			`**\`${emojis.text}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.text.channels')}:** ${channelCounts.text}`,
+		);
+		descLines.push(
+			`**\`${emojis.voice}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.voice.channels')}:** ${channelCounts.voice}`,
+		);
+		descLines.push(
+			`**\`${emojis.stage}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.stage.channels')}:** ${channelCounts.stage}`,
+		);
+		descLines.push(
+			`**\`${emojis.forum}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.forum.channels')}:** ${channelCounts.forum}`,
+		);
+		descLines.push(
+			`**\`${emojis.announcement}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.announcement.channels')}:** ${channelCounts.announcement}`,
+		);
+		descLines.push(
+			`**\`${emojis.threads}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.threads')}:** ${await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.threads.public',
 				{
 					count: channelCounts.publicThreads,
 				},
-			)} | ${await t(interaction, 'core.utils.serverinfo.threads.private', {
-				count: channelCounts.privateThreads,
-			})}`,
+			)} | ${await t(
+				interaction,
+				'core.commands.utils.server-info.serverinfo.threads.private',
+				{
+					count: channelCounts.privateThreads,
+				},
+			)}`,
 		);
 		descLines.push(
-			`**\`${emojis.verification}\` ${await t(interaction, 'core.utils.serverinfo.field.verification.level')}:** ${verificationLevels[guild.verificationLevel] || (await t(interaction, 'core.utils.serverinfo.unknown'))}`,
+			`**\`${emojis.verification}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.verification.level')}:** ${verificationLevels[guild.verificationLevel] || (await t(interaction, 'core.helpers.index.utils.serverinfo.unknown'))}`,
 		);
 		descLines.push(
-			`**\`${emojis.filter}\` ${await t(interaction, 'core.utils.serverinfo.field.explicit.content.filter')}:** ${explicitContentFilterLevels[guild.explicitContentFilter] || (await t(interaction, 'core.utils.serverinfo.unknown'))}`,
+			`**\`${emojis.filter}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.explicit.content.filter')}:** ${explicitContentFilterLevels[guild.explicitContentFilter] || (await t(interaction, 'core.helpers.index.utils.serverinfo.unknown'))}`,
 		);
 		descLines.push(
-			`**\`${emojis.nsfw}\` ${await t(interaction, 'core.utils.serverinfo.field.nsfw.level')}:** ${nsfwLevels[guild.nsfwLevel] || (await t(interaction, 'core.utils.serverinfo.unknown'))}`,
+			`**\`${emojis.nsfw}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.nsfw.level')}:** ${nsfwLevels[guild.nsfwLevel] || (await t(interaction, 'core.helpers.index.utils.serverinfo.unknown'))}`,
 		);
 		descLines.push(
-			`**\`${emojis.mfa}\` ${await t(interaction, 'core.utils.serverinfo.field.mfa')}:** ${mfaLevels[guild.mfaLevel] || (await t(interaction, 'core.utils.serverinfo.unknown'))}`,
+			`**\`${emojis.mfa}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.mfa')}:** ${mfaLevels[guild.mfaLevel] || (await t(interaction, 'core.helpers.index.utils.serverinfo.unknown'))}`,
 		);
 		descLines.push(
-			`**\`${emojis.boost}\` ${await t(interaction, 'core.utils.serverinfo.field.boost.level')}:** ${premiumTiers[guild.premiumTier] || guild.premiumTier} (${guild.premiumTier})`,
+			`**\`${emojis.boost}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.boost.level')}:** ${premiumTiers[guild.premiumTier] || guild.premiumTier} (${guild.premiumTier})`,
 		);
 		descLines.push(
-			`**\`${emojis.boosts}\` ${await t(interaction, 'core.utils.serverinfo.field.total.boosts')}:** ${guild.premiumSubscriptionCount || 0}`,
+			`**\`${emojis.boosts}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.total.boosts')}:** ${guild.premiumSubscriptionCount || 0}`,
 		);
 		descLines.push(
-			`**\`${emojis.afk}\` ${await t(interaction, 'core.utils.serverinfo.field.afk.channel')}:** ${afkChannel}`,
+			`**\`${emojis.afk}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.afk.channel')}:** ${afkChannel}`,
 		);
 		descLines.push(
-			`**\`${emojis.afkTimeout}\` ${await t(interaction, 'core.utils.serverinfo.field.afk.timeout')}:** ${afkTimeout}`,
+			`**\`${emojis.afkTimeout}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.afk.timeout')}:** ${afkTimeout}`,
 		);
 		descLines.push(
-			`**\`${emojis.system}\` ${await t(interaction, 'core.utils.serverinfo.field.system.channel')}:** ${systemChannel}`,
+			`**\`${emojis.system}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.system.channel')}:** ${systemChannel}`,
 		);
 		descLines.push(
-			`**\`${emojis.rules}\` ${await t(interaction, 'core.utils.serverinfo.field.rules.channel')}:** ${rulesChannel}`,
+			`**\`${emojis.rules}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.rules.channel')}:** ${rulesChannel}`,
 		);
 		descLines.push(
-			`**\`${emojis.publicUpdates}\` ${await t(interaction, 'core.utils.serverinfo.field.public.updates.channel')}:** ${publicUpdatesChannel}`,
+			`**\`${emojis.publicUpdates}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.public.updates.channel')}:** ${publicUpdatesChannel}`,
 		);
 		descLines.push(
-			`**\`${emojis.features}\` ${await t(interaction, 'core.utils.serverinfo.field.features')}:** ${features}`,
+			`**\`${emojis.features}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.features')}:** ${features}`,
 		);
 		descLines.push(
-			`**\`${emojis.widget}\` ${await t(interaction, 'core.utils.serverinfo.field.widget')}:** ${widgetEnabled}`,
+			`**\`${emojis.widget}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.widget')}:** ${widgetEnabled}`,
 		);
 		descLines.push(
-			`**\`${emojis.maxPresences}\` ${await t(interaction, 'core.utils.serverinfo.field.max.presences')}:** ${maxPresences}`,
+			`**\`${emojis.maxPresences}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.max.presences')}:** ${maxPresences}`,
 		);
 		descLines.push(
-			`**\`${emojis.maxMembers}\` ${await t(interaction, 'core.utils.serverinfo.field.max.members')}:** ${maxMembers}`,
+			`**\`${emojis.maxMembers}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.max.members')}:** ${maxMembers}`,
 		);
 		descLines.push(
-			`**\`${emojis.maxVideo}\` ${await t(interaction, 'core.utils.serverinfo.field.max.video.channel.users')}:** ${maxVideoChannelUsers}`,
+			`**\`${emojis.maxVideo}\` ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.max.video.channel.users')}:** ${maxVideoChannelUsers}`,
 		);
 		if (welcomeScreen) {
 			descLines.push(
-				`**${emojis.welcome} ${await t(interaction, 'core.utils.serverinfo.field.welcome.screen')}:** ${welcomeScreen.description || `*${await t(interaction, 'core.utils.serverinfo.no.description')}*`}`,
+				`**${emojis.welcome} ${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.welcome.screen')}:** ${welcomeScreen.description || `*${await t(interaction, 'core.helpers.index.utils.serverinfo.no.description')}*`}`,
 			);
 			if (welcomeScreen.welcomeChannels?.length) {
 				descLines.push(
-					`**${await t(interaction, 'core.utils.serverinfo.field.welcome.channels')}:**`,
+					`**${await t(interaction, 'core.commands.utils.server-info.serverinfo.field.welcome.channels')}:**`,
 				);
 				for (const wc of welcomeScreen.welcomeChannels) {
 					descLines.push(
-						`${wc.channel ? `<#${wc.channel.id}>` : await t(interaction, 'core.utils.serverinfo.unknown')}: ${wc.description || `*${await t(interaction, 'core.utils.serverinfo.no.description')}*`}`,
+						`${wc.channel ? `<#${wc.channel.id}>` : await t(interaction, 'core.helpers.index.utils.serverinfo.unknown')}: ${wc.description || `*${await t(interaction, 'core.helpers.index.utils.serverinfo.no.description')}*`}`,
 					);
 				}
 			}

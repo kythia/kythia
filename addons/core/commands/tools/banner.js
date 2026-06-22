@@ -46,7 +46,7 @@ class BannerCommand extends BaseCommand {
 		if (!bannerURL) {
 			const nobannerComponents = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.tools.banner.no_banner', {
+				await t(interaction, 'core.commands.tools.banner.no_banner', {
 					user: user.tag,
 				}),
 				{
@@ -60,9 +60,13 @@ class BannerCommand extends BaseCommand {
 		}
 		const components = await createContainer(interaction, {
 			title: user.tag,
-			description: await t(interaction, 'core.tools.banner.embed.desc', {
-				url: bannerURL,
-			}),
+			description: await t(
+				interaction,
+				'core.commands.tools.banner.embed.desc',
+				{
+					url: bannerURL,
+				},
+			),
 			media: [bannerURL],
 			color: kythiaConfig.bot.color,
 		});

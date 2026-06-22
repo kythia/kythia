@@ -45,7 +45,10 @@ class UseCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -64,7 +67,7 @@ class UseCommand extends BaseCommand {
 			itemName: itemName,
 		});
 		if (!invItem || invItem.quantity <= 0) {
-			const msg = await t(interaction, 'economy.use.error.no_item', {
+			const msg = await t(interaction, 'economy.commands.use.error.no_item', {
 				item: itemName,
 			});
 			const components = await simpleContainer(interaction, msg, {
@@ -82,7 +85,7 @@ class UseCommand extends BaseCommand {
 		if (itemId === 'coffee_item') {
 			user.lastWork = null;
 			user.changed('lastWork', true);
-			resultMsg = await t(interaction, 'economy.use.success.coffee');
+			resultMsg = await t(interaction, 'economy.commands.use.success.coffee');
 		} else if (itemId === 'energydrink_item') {
 			user.lastWork = null;
 			user.lastDaily = null;
@@ -94,23 +97,32 @@ class UseCommand extends BaseCommand {
 			user.changed('lastLootbox', true);
 			user.changed('lastRob', true);
 			user.changed('lastBeg', true);
-			resultMsg = await t(interaction, 'economy.use.success.energydrink');
+			resultMsg = await t(
+				interaction,
+				'economy.commands.use.success.energydrink',
+			);
 		} else if (itemId === 'lotteryticket_item') {
 			const isWin = Math.random() < 0.01; // 1% chance
 			if (isWin) {
 				user.kythiaCoin = toBigIntSafe(user.kythiaCoin) + toBigIntSafe(10000);
 				user.changed('kythiaCoin', true);
-				resultMsg = await t(interaction, 'economy.use.success.lottery_win');
+				resultMsg = await t(
+					interaction,
+					'economy.commands.use.success.lottery_win',
+				);
 				color = 'Green';
 			} else {
-				resultMsg = await t(interaction, 'economy.use.success.lottery_lose');
+				resultMsg = await t(
+					interaction,
+					'economy.commands.use.success.lottery_lose',
+				);
 				color = 'Red';
 			}
 		}
 		await user.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'economy.use.item.used', {
+			await t(interaction, 'economy.commands.use.item.used', {
 				msg: resultMsg,
 			}),
 			{

@@ -38,7 +38,10 @@ class PortfolioCommand extends BaseCommand {
 			userId: interaction.user.id,
 		});
 		if (!user) {
-			const msg = await t(interaction, 'economy.withdraw.no.account.desc');
+			const msg = await t(
+				interaction,
+				'economy.shared.withdraw.no.account.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -57,7 +60,10 @@ class PortfolioCommand extends BaseCommand {
 			userHoldings.length === 0 &&
 			(!user.kythHolding || user.kythHolding <= 0)
 		) {
-			const msg = await t(interaction, 'economy.market.portfolio.empty.desc');
+			const msg = await t(
+				interaction,
+				'economy.commands.market.portfolio.empty.desc',
+			);
 			const components = await simpleContainer(interaction, msg, {
 				color: kythiaConfig.bot.color,
 			});
@@ -107,11 +113,11 @@ class PortfolioCommand extends BaseCommand {
 			}
 			if (!currentAssetData) {
 				portfolioSections.push(
-					await t(interaction, 'economy.market.portfolio.holding_md', {
+					await t(interaction, 'economy.commands.market.portfolio.holding_md', {
 						assetId: holding.assetId.toUpperCase(),
 						desc: await t(
 							interaction,
-							'economy.market.portfolio.holding_desc',
+							'economy.commands.market.portfolio.holding_desc',
 							{
 								...holding,
 							},
@@ -148,45 +154,49 @@ class PortfolioCommand extends BaseCommand {
 				currentAssetData.usd_24h_change,
 			);
 			const lines = [
-				await t(interaction, 'economy.market.portfolio.holding_pnl_md', {
-					assetId: holding.assetId.toUpperCase(),
-					pnlIndicator: pnl > 0 ? '  📈' : pnl < 0 ? '  📉' : '',
-				}),
-				`> **${await t(interaction, 'economy.market.portfolio.field.quantity')}** \`${holding.quantity}\``,
-				`> **${await t(interaction, 'economy.market.portfolio.field.avg.buy.price')}** \`$${holding.avgBuyPrice.toLocaleString(
+				await t(
+					interaction,
+					'economy.commands.market.portfolio.holding_pnl_md',
+					{
+						assetId: holding.assetId.toUpperCase(),
+						pnlIndicator: pnl > 0 ? '  📈' : pnl < 0 ? '  📉' : '',
+					},
+				),
+				`> **${await t(interaction, 'economy.commands.market.portfolio.field.quantity')}** \`${holding.quantity}\``,
+				`> **${await t(interaction, 'economy.commands.market.portfolio.field.avg.buy.price')}** \`$${holding.avgBuyPrice.toLocaleString(
 					undefined,
 					{
 						maximumFractionDigits: 8,
 					},
 				)}\``,
-				`> **${await t(interaction, 'economy.market.portfolio.field.current.price')}** \`$${priceNow.toLocaleString(
+				`> **${await t(interaction, 'economy.commands.market.portfolio.field.current.price')}** \`$${priceNow.toLocaleString(
 					undefined,
 					{
 						maximumFractionDigits: 8,
 					},
 				)}\``,
 				price24h !== null
-					? `> **${await t(interaction, 'economy.market.portfolio.field.price.24h.ago')}** \`$${price24h.toLocaleString(
+					? `> **${await t(interaction, 'economy.commands.market.portfolio.field.price.24h.ago')}** \`$${price24h.toLocaleString(
 							undefined,
 							{
 								maximumFractionDigits: 8,
 							},
 						)}\``
 					: null,
-				`> **${await t(interaction, 'economy.market.portfolio.field.24h.change')}** \`${change24hEmoji} ${change24hSign}${currentAssetData.usd_24h_change?.toFixed(2) ?? '--'}%\``,
-				`> **${await t(interaction, 'economy.market.portfolio.field.invested')}** \`$${invested.toLocaleString(
+				`> **${await t(interaction, 'economy.commands.market.portfolio.field.24h.change')}** \`${change24hEmoji} ${change24hSign}${currentAssetData.usd_24h_change?.toFixed(2) ?? '--'}%\``,
+				`> **${await t(interaction, 'economy.commands.market.portfolio.field.invested')}** \`$${invested.toLocaleString(
 					undefined,
 					{
 						maximumFractionDigits: 2,
 					},
 				)}\``,
-				`> **${await t(interaction, 'economy.market.portfolio.field.market.value')}** \`$${currentValue.toLocaleString(
+				`> **${await t(interaction, 'economy.commands.market.portfolio.field.market.value')}** \`$${currentValue.toLocaleString(
 					undefined,
 					{
 						maximumFractionDigits: 2,
 					},
 				)}\``,
-				`> **${await t(interaction, 'economy.market.portfolio.field.pl')}** \`${pnlEmoji} ${pnlSign}$${Math.abs(
+				`> **${await t(interaction, 'economy.commands.market.portfolio.field.pl')}** \`${pnlEmoji} ${pnlSign}$${Math.abs(
 					pnl,
 				).toLocaleString(undefined, {
 					maximumFractionDigits: 2,
@@ -203,35 +213,35 @@ class PortfolioCommand extends BaseCommand {
 				? ((totalPnl / totalInvested) * 100).toFixed(2)
 				: '0.00';
 		const summaryLines = [
-			await t(interaction, 'economy.market.portfolio.title_md', {
-				title: await t(interaction, 'economy.market.portfolio.title', {
+			await t(interaction, 'economy.commands.market.portfolio.title_md', {
+				title: await t(interaction, 'economy.commands.market.portfolio.title', {
 					username: interaction.user.username,
 				}),
 			}),
-			`**${await t(interaction, 'economy.market.portfolio.summary.total.invested')}** \`$${totalInvested.toLocaleString(
+			`**${await t(interaction, 'economy.commands.market.portfolio.summary.total.invested')}** \`$${totalInvested.toLocaleString(
 				undefined,
 				{
 					maximumFractionDigits: 2,
 				},
 			)}\``,
-			`**${await t(interaction, 'economy.market.portfolio.summary.market.value')}** \`$${totalValue.toLocaleString(
+			`**${await t(interaction, 'economy.commands.market.portfolio.summary.market.value')}** \`$${totalValue.toLocaleString(
 				undefined,
 				{
 					maximumFractionDigits: 2,
 				},
 			)}\``,
-			`**${await t(interaction, 'economy.market.portfolio.summary.total.pl')}** \`${totalPnlEmoji} ${totalPnlSign}$${Math.abs(
+			`**${await t(interaction, 'economy.commands.market.portfolio.summary.total.pl')}** \`${totalPnlEmoji} ${totalPnlSign}$${Math.abs(
 				totalPnl,
 			).toLocaleString(undefined, {
 				maximumFractionDigits: 2,
 			})}\` (${totalPnlSign}${totalReturnPct}%)`,
-			`**${await t(interaction, 'economy.market.portfolio.summary.unrealized.gains')}** \`📈 +$${totalUnrealizedGain.toLocaleString(
+			`**${await t(interaction, 'economy.commands.market.portfolio.summary.unrealized.gains')}** \`📈 +$${totalUnrealizedGain.toLocaleString(
 				undefined,
 				{
 					maximumFractionDigits: 2,
 				},
 			)}\``,
-			`**${await t(interaction, 'economy.market.portfolio.summary.unrealized.losses')}** \`📉 -$${totalUnrealizedLoss.toLocaleString(
+			`**${await t(interaction, 'economy.commands.market.portfolio.summary.unrealized.losses')}** \`📉 -$${totalUnrealizedLoss.toLocaleString(
 				undefined,
 				{
 					maximumFractionDigits: 2,

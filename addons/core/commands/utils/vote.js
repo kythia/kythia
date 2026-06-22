@@ -52,7 +52,7 @@ class VoteCommand extends BaseCommand {
 		mainContainer
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'core.utils.vote.container.title', {
+					await t(interaction, 'core.commands.utils.vote.container.title', {
 						username: interaction.client.user.username,
 					}),
 				),
@@ -64,7 +64,7 @@ class VoteCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'core.utils.vote.container.desc', {
+					await t(interaction, 'core.commands.utils.vote.container.desc', {
 						username: interaction.client.user.username,
 					}),
 				),
@@ -78,9 +78,13 @@ class VoteCommand extends BaseCommand {
 				new ActionRowBuilder().addComponents(
 					new ButtonBuilder()
 						.setLabel(
-							await t(interaction, 'core.utils.vote.button.topgg', {
-								username: interaction.client.user.username,
-							}),
+							await t(
+								interaction,
+								'core.helpers.index.utils.vote.button.topgg',
+								{
+									username: interaction.client.user.username,
+								},
+							),
 						)
 						.setStyle(ButtonStyle.Link)
 						.setURL(`https://top.gg/bot/${kythiaConfig.bot.clientId}/vote`),

@@ -62,7 +62,10 @@ class RemoveCommand extends BaseCommand {
 			});
 			if (!deleted) {
 				return interaction.editReply({
-					content: await t(interaction, 'reaction-role.not_found'),
+					content: await t(
+						interaction,
+						'reaction-role.helpers.index.not_found',
+					),
 				});
 			}
 

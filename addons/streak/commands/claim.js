@@ -44,9 +44,9 @@ class ClaimCommand extends BaseCommand {
 			serverSetting,
 		);
 		if (status === 'ALREADY_CLAIMED') {
-			const msg = `${await t(interaction, 'streak.streak.claim.already.title')}\n ${await t(
+			const msg = `${await t(interaction, 'streak.commands.claim.streak.already.title')}\n ${await t(
 				interaction,
-				'streak.streak.claim.already.desc',
+				'streak.commands.claim.streak.already.desc',
 				{
 					streak: streak.currentStreak,
 					emoji: streakEmoji,
@@ -73,11 +73,18 @@ class ClaimCommand extends BaseCommand {
 					.addTextDisplayComponents(
 						new TextDisplayBuilder().setContent(
 							[
-								await t(interaction, 'streak.streak.restore.title_md'),
-								await t(interaction, 'streak.streak.restore.desc', {
-									streak: streak.currentStreak,
-									emoji: streakEmoji,
-								}),
+								await t(
+									interaction,
+									'streak.helpers.index.streak.restore.title_md',
+								),
+								await t(
+									interaction,
+									'streak.commands.claim.streak.restore.desc',
+									{
+										streak: streak.currentStreak,
+										emoji: streakEmoji,
+									},
+								),
 							].join('\n'),
 						),
 					)
@@ -90,7 +97,12 @@ class ClaimCommand extends BaseCommand {
 						new ActionRowBuilder().addComponents(
 							new ButtonBuilder()
 								.setCustomId('streak_restore')
-								.setLabel(await t(interaction, 'streak.streak.restore.button'))
+								.setLabel(
+									await t(
+										interaction,
+										'streak.commands.claim.streak.restore.button',
+									),
+								)
 								.setStyle(ButtonStyle.Success)
 								.setDisabled(restoreDisabled),
 						),
@@ -136,11 +148,18 @@ class ClaimCommand extends BaseCommand {
 						.addTextDisplayComponents(
 							new TextDisplayBuilder().setContent(
 								[
-									await t(interaction, 'streak.streak.restore.title_md'),
-									await t(interaction, 'streak.streak.restore.vote.required', {
-										streak: streak.currentStreak,
-										emoji: streakEmoji,
-									}),
+									await t(
+										interaction,
+										'streak.helpers.index.streak.restore.title_md',
+									),
+									await t(
+										interaction,
+										'streak.commands.claim.streak.restore.vote.required',
+										{
+											streak: streak.currentStreak,
+											emoji: streakEmoji,
+										},
+									),
 								].join('\n'),
 							),
 						)
@@ -153,9 +172,13 @@ class ClaimCommand extends BaseCommand {
 							new ActionRowBuilder().addComponents(
 								new ButtonBuilder()
 									.setLabel(
-										await t(interaction, 'streak.streak.restore.vote.button', {
-											username: interaction.client.user.username,
-										}),
+										await t(
+											interaction,
+											'streak.commands.claim.streak.restore.vote.button',
+											{
+												username: interaction.client.user.username,
+											},
+										),
 									)
 									.setStyle(ButtonStyle.Link)
 									.setURL(
@@ -195,18 +218,22 @@ class ClaimCommand extends BaseCommand {
 							return role ? `<@&${role.id}>` : `Role ID: ${roleId}`;
 						}),
 					);
-					rewardMsg = `\n${await t(interaction, 'streak.streak.claim.reward', {
-						roles: roleMentions.join(', '),
-					})}`;
+					rewardMsg = `\n${await t(
+						interaction,
+						'streak.helpers.index.streak.claim.reward',
+						{
+							roles: roleMentions.join(', '),
+						},
+					)}`;
 				}
 				const successMsg = [
-					await t(interaction, 'streak.streak.restore.title_md'),
-					await t(interaction, 'streak.streak.restore.success', {
+					await t(interaction, 'streak.helpers.index.streak.restore.title_md'),
+					await t(interaction, 'streak.commands.claim.streak.restore.success', {
 						streak: restoredStreak.currentStreak,
 						emoji: streakEmoji,
 					}),
 					rewardMsg,
-					await t(interaction, 'streak.streak.claim.desc', {
+					await t(interaction, 'streak.helpers.index.streak.claim.desc', {
 						currentStreak: restoredStreak.currentStreak,
 						highestStreak: restoredStreak.highestStreak,
 						streakFreezes: restoredStreak.streakFreezes,
@@ -236,9 +263,12 @@ class ClaimCommand extends BaseCommand {
 					streak.lastClaimTimestamp = new Date();
 					await streak.save();
 					const expiredMsg = [
-						await t(interaction, 'streak.streak.claim.title_md'),
-						await t(interaction, 'streak.streak.restore.expired'),
-						await t(interaction, 'streak.streak.claim.desc', {
+						await t(interaction, 'streak.helpers.index.streak.claim.title_md'),
+						await t(
+							interaction,
+							'streak.commands.claim.streak.restore.expired',
+						),
+						await t(interaction, 'streak.helpers.index.streak.claim.desc', {
 							currentStreak: streak.currentStreak,
 							highestStreak: streak.highestStreak,
 							streakFreezes: streak.streakFreezes,
@@ -262,13 +292,17 @@ class ClaimCommand extends BaseCommand {
 		}
 		let message;
 		if (status === 'FREEZE_USED') {
-			message = await t(interaction, 'streak.streak.claim.freeze.used', {
-				streakFreezes: streak.streakFreezes,
-			});
+			message = await t(
+				interaction,
+				'streak.helpers.index.streak.claim.freeze.used',
+				{
+					streakFreezes: streak.streakFreezes,
+				},
+			);
 		} else if (status === 'CONTINUE') {
-			message = await t(interaction, 'streak.streak.claim.continue');
+			message = await t(interaction, 'streak.commands.claim.streak.continue');
 		} else {
-			message = await t(interaction, 'streak.streak.claim.new.streak');
+			message = await t(interaction, 'streak.commands.claim.streak.new.streak');
 		}
 		let rewardMsg = '';
 		if (rewardRolesGiven.length > 0) {
@@ -281,15 +315,19 @@ class ClaimCommand extends BaseCommand {
 					return role ? `<@&${role.id}>` : `Role ID: ${roleId}`;
 				}),
 			);
-			rewardMsg = `${await t(interaction, 'streak.streak.claim.reward', {
-				roles: roleMentions.join(', '),
-			})}`;
+			rewardMsg = `${await t(
+				interaction,
+				'streak.helpers.index.streak.claim.reward',
+				{
+					roles: roleMentions.join(', '),
+				},
+			)}`;
 		}
 		const finalMessage = [
-			await t(interaction, 'streak.streak.claim.title_md'),
+			await t(interaction, 'streak.helpers.index.streak.claim.title_md'),
 			message,
 			rewardMsg,
-			await t(interaction, 'streak.streak.claim.desc', {
+			await t(interaction, 'streak.helpers.index.streak.claim.desc', {
 				currentStreak: streak.currentStreak,
 				highestStreak: streak.highestStreak,
 				streakFreezes: streak.streakFreezes,

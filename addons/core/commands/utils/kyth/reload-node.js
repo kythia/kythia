@@ -31,7 +31,10 @@ class ReloadNodeCommand extends BaseCommand {
 		try {
 			await reloadLavalinkNodes(interaction.client);
 			await interaction.followUp({
-				content: await t(interaction, 'core.utils.kyth.reload_node'),
+				content: await t(
+					interaction,
+					'core.commands.utils.kyth.reload-node.reload_node',
+				),
 			});
 		} catch (error) {
 			logger.error(`Failed to reload nodes: ${error.message || error}`, {

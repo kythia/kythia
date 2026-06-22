@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class MassLeaveCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('mass-leave')
@@ -37,41 +34,35 @@ class MassLeaveCommand extends BaseCommand {
 						'Comma-separated guild IDs to additionally protect from being left (Optional).',
 					),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, kythiaConfig, helpers, logger } = container;
 		const { simpleContainer } = helpers.discord;
 		const { client } = interaction;
-
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const exceptRaw = interaction.options.getString('except') || '';
 		const extraExcept = exceptRaw
 			.split(',')
 			.map((id) => id.trim())
 			.filter(Boolean);
-
 		const SAFE_GUILDS = [
 			kythiaConfig.bot.mainGuildId,
 			kythiaConfig.bot.devGuildId,
 			interaction?.guild?.id,
 			...extraExcept,
 		].filter(Boolean);
-
 		const threshold = interaction.options.getInteger('min_member');
 		const customMsg =
 			interaction.options.getString('message') ||
-			(await t(interaction, 'core.utils.kyth.mass-leave.goodbye', {
+			(await t(interaction, 'core.commands.utils.kyth.mass-leave.goodbye', {
 				threshold,
 			}));
-
 		const customMsgContainer = await simpleContainer(interaction, customMsg);
-
 		let leftCount = 0;
 		let errorCount = 0;
 		const leftNames = [];
-
 		if (client.shard) {
 			const results = await client.shard.broadcastEval(
 				async (c, context) => {
@@ -80,14 +71,15 @@ class MassLeaveCommand extends BaseCommand {
 							g.memberCount < context.threshold &&
 							!context.SAFE_GUILDS.includes(g.id),
 					);
-
 					if (localTargets.size === 0)
-						return { leftCount: 0, errorCount: 0, leftNames: [] };
-
+						return {
+							leftCount: 0,
+							errorCount: 0,
+							leftNames: [],
+						};
 					let lCount = 0;
 					let eCount = 0;
 					const lNames = [];
-
 					for (const [, guild] of localTargets) {
 						try {
 							let channel = guild.systemChannel;
@@ -124,21 +116,33 @@ class MassLeaveCommand extends BaseCommand {
 							eCount++;
 						}
 					}
-					return { leftCount: lCount, errorCount: eCount, leftNames: lNames };
+					return {
+						leftCount: lCount,
+						errorCount: eCount,
+						leftNames: lNames,
+					};
 				},
-				{ context: { threshold, SAFE_GUILDS, customMsg } },
+				{
+					context: {
+						threshold,
+						SAFE_GUILDS,
+						customMsg,
+					},
+				},
 			);
-
 			leftCount = results.reduce((acc, r) => acc + r.leftCount, 0);
 			errorCount = results.reduce((acc, r) => acc + r.errorCount, 0);
 			leftNames.push(...results.flatMap((r) => r.leftNames));
-
 			if (leftCount === 0 && errorCount === 0) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.utils.kyth.mass-leave.empty', {
-						threshold,
-					}),
+					await t(
+						interaction,
+						'core.helpers.index.utils.kyth.mass-leave.empty',
+						{
+							threshold,
+						},
+					),
 				);
 				return interaction.editReply({
 					components,
@@ -149,20 +153,22 @@ class MassLeaveCommand extends BaseCommand {
 			const targets = client.guilds.cache.filter(
 				(g) => g.memberCount < threshold && !SAFE_GUILDS.includes(g.id),
 			);
-
 			if (targets.size === 0) {
 				const components = await simpleContainer(
 					interaction,
-					await t(interaction, 'core.utils.kyth.mass-leave.empty', {
-						threshold,
-					}),
+					await t(
+						interaction,
+						'core.helpers.index.utils.kyth.mass-leave.empty',
+						{
+							threshold,
+						},
+					),
 				);
 				return interaction.editReply({
 					components,
 					flags: MessageFlags.IsComponentsV2,
 				});
 			}
-
 			for (const [, guild] of targets) {
 				try {
 					let channel = guild.systemChannel;
@@ -206,25 +212,27 @@ class MassLeaveCommand extends BaseCommand {
 				}
 			}
 		}
-
-		let desc = await t(interaction, 'core.utils.kyth.mass-leave.success', {
-			threshold,
-			leftCount,
-			errorCount,
-		});
+		let desc = await t(
+			interaction,
+			'core.commands.utils.kyth.mass-leave.success',
+			{
+				threshold,
+				leftCount,
+				errorCount,
+			},
+		);
 		if (leftNames.length > 0) {
 			const sliced = leftNames.slice(0, 10);
 			const extra =
 				leftNames.length > 10
-					? await t(interaction, 'core.utils.kyth.mass-leave.more', {
+					? await t(interaction, 'core.commands.utils.kyth.mass-leave.more', {
 							count: leftNames.length - 10,
 						})
 					: '';
-			desc += await t(interaction, 'core.utils.kyth.mass-leave.list', {
+			desc += await t(interaction, 'core.commands.utils.kyth.mass-leave.list', {
 				names: sliced.join('\n') + (extra ? `\n${extra}` : ''),
 			});
 		}
-
 		const components = await simpleContainer(interaction, desc);
 		return interaction.editReply({
 			components,
@@ -232,5 +240,4 @@ class MassLeaveCommand extends BaseCommand {
 		});
 	}
 }
-
 exports.default = MassLeaveCommand;

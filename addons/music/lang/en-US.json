@@ -293,18 +293,6 @@
 			},
 			"musicManager": {
 				"manager": {
-					"now": {
-						"ended": "## Music Ended\n[{title}]({url})\n"
-					},
-					"channel": "**Artist/Channel:** \n{author}",
-					"requested": {
-						"by": "**Requested by**\n{user}"
-					},
-					"simple": "You must be in a voice channel to use this command!",
-					"playing": "## Now Playing... \n[{title}]({url}) \n\n",
-					"by": "By {author}",
-					"placeholder": "See recommended tracks",
-					"required": "You must be in a voice channel to use music commands!",
 					"searching": "Searching for a recommendation to play next...",
 					"recommendation": "No recommendation found. The queue will end.",
 					"played": "All tracks in the queue have been played.",
@@ -316,10 +304,49 @@
 						"listener": "There is no one listening in the voice channel. exiting now..."
 					},
 					"idleDisconnect": "No activity in the voice channel for {seconds} seconds. Disconnecting..."
-				},
+				}
+			},
+			"index": {
 				"music": {
-					"permission": {
-						"denied": "You don't have permission right now! play your own track or play."
+					"voice": {
+						"channel": {
+							"not": {
+								"found": "You must be in a voice channel to use this command!"
+							}
+						}
+					},
+					"player": {
+						"not": {
+							"found": "No music player is active in this server."
+						}
+					},
+					"required": "You must be in the same voice channel as the bot to use this command!"
+				},
+				"musicManager": {
+					"manager": {
+						"channel": "**Artist/Channel:** \n{author}",
+						"requested": {
+							"by": "**Requested by**\n{user}"
+						}
+					}
+				}
+			},
+			"MusicManager": {
+				"musicManager": {
+					"manager": {
+						"playing": "## Now Playing... \n[{title}]({url}) \n\n",
+						"by": "By {author}",
+						"placeholder": "See recommended tracks",
+						"required": "You must be in a voice channel to use music commands!",
+						"now": {
+							"ended": "## Music Ended\n[{title}]({url})\n"
+						},
+						"simple": "You must be in a voice channel to use this command!"
+					},
+					"music": {
+						"permission": {
+							"denied": "You don't have permission right now! play your own track or play."
+						}
 					}
 				}
 			}
@@ -334,19 +361,6 @@
 		},
 		"music": {
 			"error": {},
-			"player": {
-				"not": {
-					"found": "No music player is active in this server."
-				}
-			},
-			"voice": {
-				"channel": {
-					"not": {
-						"found": "You must be in a voice channel to use this command!"
-					}
-				}
-			},
-			"required": "You must be in the same voice channel as the bot to use this command!",
 			"filter": {
 				"generic": {}
 			},

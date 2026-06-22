@@ -68,7 +68,10 @@ class SetCommand extends BaseCommand {
 				) {
 					const components = await simpleContainer(
 						interaction,
-						await t(interaction, 'core.utils.presence.invalid.url'),
+						await t(
+							interaction,
+							'core.commands.utils.kyth.presence.set.invalid.url',
+						),
 						{
 							color: 'Red',
 						},
@@ -86,7 +89,7 @@ class SetCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.set.success', {
+				await t(interaction, 'core.commands.utils.kyth.presence.set.success', {
 					status,
 					activity: activityName,
 					type,
@@ -105,7 +108,7 @@ class SetCommand extends BaseCommand {
 			});
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.presence.error', {
+				await t(interaction, 'core.helpers.index.utils.presence.error', {
 					error: error.message,
 				}),
 				{

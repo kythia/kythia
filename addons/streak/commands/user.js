@@ -34,8 +34,8 @@ class UserCommand extends BaseCommand {
 		await interaction.deferReply();
 		const target = interaction.options.getUser('target') || interaction.user;
 		if (!target) {
-			const msg = `${await t(interaction, 'streak.streak.user.not.found.title')}\n
-						${await t(interaction, 'streak.streak.user.not.found.desc')}`;
+			const msg = `${await t(interaction, 'streak.commands.user.streak.not.found.title')}\n
+						${await t(interaction, 'streak.commands.user.streak.not.found.desc')}`;
 			const components = await simpleContainer(interaction, msg, {
 				color: 'Red',
 			});
@@ -52,8 +52,11 @@ class UserCommand extends BaseCommand {
 			: null;
 		const status =
 			lastClaimDateStr === today
-				? await t(interaction, 'streak.streak.me.status.claimed')
-				: await t(interaction, 'streak.streak.me.status.not.claimed');
+				? await t(interaction, 'streak.commands.user.streak.me.status.claimed')
+				: await t(
+						interaction,
+						'streak.commands.user.streak.me.status.not.claimed',
+					);
 		let member;
 		try {
 			member = await helpers.discord.getMemberSafe(interaction.guild, targetId);
@@ -62,13 +65,13 @@ class UserCommand extends BaseCommand {
 		}
 		const displayName = member ? member.displayName : target.username;
 		const msg =
-			(await t(interaction, 'streak.streak.user.title.user_md', {
+			(await t(interaction, 'streak.commands.user.streak.title.user_md', {
 				username: displayName,
 			})) +
 			'\n' +
 			status +
 			'\n\n' +
-			(await t(interaction, 'streak.streak.claim.desc', {
+			(await t(interaction, 'streak.helpers.index.streak.claim.desc', {
 				currentStreak: streak.currentStreak,
 				highestStreak: streak.highestStreak,
 				streakFreezes: streak.streakFreezes ?? 0,

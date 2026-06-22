@@ -34,7 +34,7 @@ class SayCommand extends BaseCommand {
 			await interaction.channel.send(message);
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'automod.moderation.say.success'),
+				await t(interaction, 'automod.commands.moderation.say.success'),
 				{
 					color: 'Green',
 				},
@@ -46,7 +46,7 @@ class SayCommand extends BaseCommand {
 		} catch (error) {
 			const reply = await simpleContainer(
 				interaction,
-				await t(interaction, 'automod.moderation.say.failed', {
+				await t(interaction, 'automod.commands.moderation.say.failed', {
 					error: error.message,
 				}),
 				{

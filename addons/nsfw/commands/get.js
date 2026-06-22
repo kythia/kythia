@@ -105,7 +105,7 @@ class GetCommand extends BaseCommand {
 							interaction,
 							'nsfw.ui.refresh',
 						),
-						await t(interaction, 'nsfw.ui.delete'),
+						await t(interaction, 'nsfw.shared.ui.delete'),
 					),
 				},
 			);

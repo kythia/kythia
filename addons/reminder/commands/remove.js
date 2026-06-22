@@ -8,10 +8,8 @@
 
 const { MessageFlags } = require('discord.js');
 const { BaseCommand } = require('kythia-core');
-
 class RemoveCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('remove')
@@ -22,51 +20,46 @@ class RemoveCommand extends BaseCommand {
 					.setDescription('The ID of the reminder to remove')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const { models, helpers, kythiaConfig, t } = this.container;
 		const { KythiaReminder } = models;
 		const { simpleContainer } = helpers.discord;
-
 		await interaction.deferReply();
-
 		const id = interaction.options.getInteger('id');
-
 		const reminder = await KythiaReminder.getCache({
-			where: { id, userId: interaction.user.id },
+			where: {
+				id,
+				userId: interaction.user.id,
+			},
 		});
-
 		if (!reminder) {
 			const errContainer = await simpleContainer(
 				interaction,
-				await t(interaction, 'reminder.commands.reminder.remove.not_found'),
-				{ color: 'Red' },
+				await t(interaction, 'reminder.commands.remove.reminder.not_found'),
+				{
+					color: 'Red',
+				},
 			);
 			return interaction.editReply({
 				components: errContainer,
 				flags: MessageFlags.IsComponentsV2,
 			});
 		}
-
 		await reminder.destroy();
-
 		const msg = await t(
 			interaction,
-			'reminder.commands.reminder.remove.success',
+			'reminder.commands.remove.reminder.success',
 			{
 				id: id,
 			},
 		);
-
 		const components = await simpleContainer(interaction, msg, {
 			color: kythiaConfig.bot.color,
 		});
-
 		await interaction.editReply({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
 	}
 }
-
 module.exports = RemoveCommand;

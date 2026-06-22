@@ -70,12 +70,18 @@ class EditCommand extends BaseCommand {
 		// Must provide at least one thing to edit
 		if (!newRole && !newEmoji) {
 			return interaction.editReply({
-				content: await t(interaction, 'reaction-role.edit.nothing_to_edit'),
+				content: await t(
+					interaction,
+					'reaction-role.commands.edit.nothing_to_edit',
+				),
 			});
 		}
 		if (!channel?.isTextBased()) {
 			return interaction.editReply({
-				content: await t(interaction, 'reaction-role.invalid_channel'),
+				content: await t(
+					interaction,
+					'reaction-role.helpers.index.invalid_channel',
+				),
 			});
 		}
 		try {
@@ -89,7 +95,10 @@ class EditCommand extends BaseCommand {
 			});
 			if (!rr) {
 				return interaction.editReply({
-					content: await t(interaction, 'reaction-role.not_found'),
+					content: await t(
+						interaction,
+						'reaction-role.helpers.index.not_found',
+					),
 				});
 			}
 			let panel = null;
@@ -101,7 +110,10 @@ class EditCommand extends BaseCommand {
 			const message = await helpers.discord.getMessageSafe(channel, messageId);
 			if (!message) {
 				return interaction.editReply({
-					content: await t(interaction, 'reaction-role.invalid_message'),
+					content: await t(
+						interaction,
+						'reaction-role.helpers.index.invalid_message',
+					),
 				});
 			}
 			const emojiChanged = newEmoji && newEmoji !== currentEmoji;
@@ -119,7 +131,10 @@ class EditCommand extends BaseCommand {
 						label: 'reaction-role:edit:react',
 					});
 					return interaction.editReply({
-						content: await t(interaction, 'reaction-role.invalid_emoji'),
+						content: await t(
+							interaction,
+							'reaction-role.helpers.index.invalid_emoji',
+						),
 					});
 				}
 

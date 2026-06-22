@@ -31,7 +31,10 @@ class TvTransferButton extends BaseButton {
 				components:
 					await interaction.client.container.helpers.discord.simpleContainer(
 						interaction,
-						await t(interaction, 'tempvoice.transfer.no_active_channel'),
+						await t(
+							interaction,
+							'tempvoice.buttons.tv-transfer.transfer.no_active_channel',
+						),
 						{
 							color: 'Red',
 						},
@@ -42,7 +45,10 @@ class TvTransferButton extends BaseButton {
 		const selectMenu = new UserSelectMenuBuilder()
 			.setCustomId(`tv_transfer_menu:${activeChannel.channelId}`)
 			.setPlaceholder(
-				await t(interaction, 'tempvoice.transfer.menu.placeholder'),
+				await t(
+					interaction,
+					'tempvoice.buttons.tv-transfer.transfer.menu.placeholder',
+				),
 			)
 			.setMinValues(1)
 			.setMaxValues(1);
@@ -55,7 +61,10 @@ class TvTransferButton extends BaseButton {
 			.setAccentColor(accentColor)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					await t(interaction, 'tempvoice.transfer.menu.content'),
+					await t(
+						interaction,
+						'tempvoice.buttons.tv-transfer.transfer.menu.content',
+					),
 				),
 			)
 			.addActionRowComponents(row);

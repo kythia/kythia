@@ -45,7 +45,7 @@ class TestCommand extends BaseCommand {
 		interaction.client.emit('guildMemberUpdate', oldMember, newMember);
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'booster.booster.test.success', {
+			await t(interaction, 'booster.commands.test.booster.success', {
 				type: 'guildMemberUpdate (booster)',
 			}),
 			{

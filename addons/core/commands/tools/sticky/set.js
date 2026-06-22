@@ -7,12 +7,9 @@
  */
 
 const { MessageFlags } = require('discord.js');
-
 const { BaseCommand } = require('kythia-core');
-
 class SetCommand extends BaseCommand {
 	subcommand = true;
-
 	slashCommand = (subcommand) =>
 		subcommand
 			.setName('set')
@@ -23,44 +20,44 @@ class SetCommand extends BaseCommand {
 					.setDescription('The content of the sticky message.')
 					.setRequired(true),
 			);
-
 	async execute(interaction) {
 		const container = this.container;
 		const { t, helpers, models } = container;
 		const { simpleContainer } = helpers.discord;
 		const { StickyMessage } = models;
-
 		const channelId = interaction.channel.id;
 		const messageContent = interaction.options.getString('message');
-		const existingSticky = await StickyMessage.getCache({ channelId });
-
+		const existingSticky = await StickyMessage.getCache({
+			channelId,
+		});
 		if (existingSticky) {
 			return interaction.reply({
-				content: await t(interaction, 'core.tools.sticky.set.error.exists'),
+				content: await t(
+					interaction,
+					'core.commands.tools.sticky.set.error.exists',
+				),
 				flags: MessageFlags.Ephemeral,
 			});
 		}
-
 		const components = await simpleContainer(interaction, messageContent);
 		const message = await interaction.channel.send({
 			components,
 			flags: MessageFlags.IsComponentsV2,
 		});
-
 		await StickyMessage.create(
 			{
 				channelId,
 				message: messageContent,
 				messageId: message.id,
 			},
-			{ individualHooks: true },
+			{
+				individualHooks: true,
+			},
 		);
-
 		return interaction.reply({
-			content: await t(interaction, 'core.tools.sticky.set.success'),
+			content: await t(interaction, 'core.commands.tools.sticky.set.success'),
 			flags: MessageFlags.Ephemeral,
 		});
 	}
 }
-
 exports.default = SetCommand;

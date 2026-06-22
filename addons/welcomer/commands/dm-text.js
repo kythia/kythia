@@ -38,7 +38,7 @@ class DmTextCommand extends BaseCommand {
 		await welcomeSetting.save();
 		const components = await simpleContainer(
 			interaction,
-			await t(interaction, 'welcomer.welcomer.dm.text.set', {
+			await t(interaction, 'welcomer.commands.dm-text.welcomer.dm.text.set', {
 				text,
 			}),
 			{

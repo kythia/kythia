@@ -15,9 +15,7 @@ const {
 	SeparatorSpacingSize,
 	StringSelectMenuBuilder,
 } = require('discord.js');
-
 const { BaseEvent } = require('kythia-core');
-
 const {
 	createModmailThread,
 	relayUserMessage,
@@ -31,37 +29,28 @@ const DEFAULT_COOLDOWN_MS = 5 * 60 * 1000;
 
 // ─── Note prefix ──────────────────────────────────────────────────────────────
 const NOTE_PREFIX = '>';
-
 async function handleGuildMessage(message, container, client) {
 	const { models, logger } = container;
 	const { Modmail } = models;
-
 	try {
 		if (message.channel.type !== 12 /* PrivateThread */) return;
-
 		const modmail = await Modmail.getCache({
 			threadChannelId: message.channel.id,
 			status: 'open',
 		});
-
 		if (!modmail) return;
-
 		const content = message.content?.trim() || '';
 		const hasAttachments = message.attachments.size > 0;
-
 		if (content.startsWith(NOTE_PREFIX)) {
 			try {
 				await message.react('👁️');
 			} catch (_e) {}
 			return;
 		}
-
 		if (!content && !hasAttachments) return;
-
 		try {
 			await message.delete();
 		} catch (_e) {}
-
 		await relayGuildReply(message, modmail, false, content, container, client);
 	} catch (error) {
 		logger.error(`handleGuildMessage failed: ${error.message || error}`, {
@@ -69,7 +58,6 @@ async function handleGuildMessage(message, container, client) {
 		});
 	}
 }
-
 async function handleUserDM(
 	message,
 	container,
@@ -81,16 +69,12 @@ async function handleUserDM(
 	const { Modmail, ModmailConfig } = models;
 	const { simpleContainer, isOwner } = helpers.discord;
 	const { convertColor } = helpers.color;
-
 	try {
 		const content = message.content?.trim() || '';
 		const hasAttachments = message.attachments.size > 0;
 		if (!content && !hasAttachments) return;
-
 		const userId = message.author.id;
-
 		if (pendingCreations.has(userId)) return;
-
 		const existingModmails = await Modmail.getAllCache({
 			userId,
 			status: 'open',
@@ -100,9 +84,7 @@ async function handleUserDM(
 			await relayUserMessage(message, existingModmails[0], container);
 			return;
 		}
-
 		if (pendingSelections.has(userId)) return;
-
 		const cooldownMs =
 			kythiaConfig.addons?.modmail?.reopenCooldownMs ?? DEFAULT_COOLDOWN_MS;
 		if (cooldownMs > 0 && !isOwner(userId)) {
@@ -121,9 +103,13 @@ async function handleUserDM(
 						client,
 						locale: kythiaConfig.bot.locale || 'en-US',
 					};
-					const msg = await t(fakeInteraction, 'modmail.dm.cooldown', {
-						minutes: remaining,
-					});
+					const msg = await t(
+						fakeInteraction,
+						'modmail.events.messageCreate.dm.cooldown',
+						{
+							minutes: remaining,
+						},
+					);
 					try {
 						await message.author.send({
 							components: await simpleContainer(fakeInteraction, msg, {
@@ -136,10 +122,8 @@ async function handleUserDM(
 				}
 			}
 		}
-
 		const allConfigs = await ModmailConfig.getAllCache({});
 		if (!allConfigs || allConfigs.length === 0) return;
-
 		const eligibleConfigs = [];
 		for (const cfg of allConfigs) {
 			try {
@@ -151,17 +135,17 @@ async function handleUserDM(
 					? cfg.blockedUserIds
 					: [];
 				if (blocked.includes(userId)) continue;
-				eligibleConfigs.push({ cfg, guild });
+				eligibleConfigs.push({
+					cfg,
+					guild,
+				});
 			} catch (_e) {}
 		}
-
 		if (eligibleConfigs.length === 0) return;
-
 		const fakeInteraction = {
 			client,
 			locale: kythiaConfig.bot.locale || 'en-US',
 		};
-
 		if (eligibleConfigs.length === 1) {
 			pendingCreations.add(userId);
 			client.modmailActiveDMs.add(userId);
@@ -178,27 +162,30 @@ async function handleUserDM(
 			}
 			return;
 		}
-
 		client.modmailActiveDMs.add(userId);
 		pendingSelections.set(userId, {
 			content,
 			attachments: message.attachments,
 		});
-
 		const options = eligibleConfigs.slice(0, 25).map(({ cfg, guild }) => ({
 			label: guild.name.slice(0, 100),
 			description: 'Click to open a modmail ticket',
 			value: cfg.guildId,
 		}));
-
 		const components = [
 			new ContainerBuilder()
 				.setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(fakeInteraction, 'modmail.server_select.prompt'),
+						await t(
+							fakeInteraction,
+							'modmail.events.messageCreate.server_select.prompt',
+						),
 					),
 				)
 				.addSeparatorComponents(
@@ -211,7 +198,10 @@ async function handleUserDM(
 						new StringSelectMenuBuilder()
 							.setCustomId('mm-server-select')
 							.setPlaceholder(
-								await t(fakeInteraction, 'modmail.server_select.placeholder'),
+								await t(
+									fakeInteraction,
+									'modmail.events.messageCreate.server_select.placeholder',
+								),
 							)
 							.addOptions(options),
 					),
@@ -229,16 +219,13 @@ async function handleUserDM(
 					),
 				),
 		];
-
 		await message.author
 			.send({
 				components,
 				flags: MessageFlags.IsComponentsV2,
 			})
 			.catch(() => null);
-
 		client.modmailPendingSelections = pendingSelections;
-
 		setTimeout(
 			() => {
 				if (pendingSelections.has(userId)) {
@@ -255,19 +242,18 @@ async function handleUserDM(
 		});
 	}
 }
-
 class MessageCreateEvent extends BaseEvent {
 	async execute(message) {
 		const container = this.container;
-		const _bot = { client: this.client, container: this.container };
+		const _bot = {
+			client: this.client,
+			container: this.container,
+		};
 		const client = this.client;
-
 		if (!(client.modmailActiveDMs instanceof Set)) {
 			client.modmailActiveDMs = new Set();
 		}
-
 		if (!message.author || message.author.bot) return;
-
 		if (!message.guild) {
 			await handleUserDM(
 				message,
@@ -278,11 +264,9 @@ class MessageCreateEvent extends BaseEvent {
 			);
 			return;
 		}
-
 		await handleGuildMessage(message, container, client);
 	}
 }
-
 module.exports = MessageCreateEvent;
 module.exports.pendingCreations = pendingCreations;
 module.exports.pendingSelections = pendingSelections;

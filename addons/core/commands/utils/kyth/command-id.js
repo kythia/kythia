@@ -35,9 +35,13 @@ class CommandIdCommand extends BaseCommand {
 		if (!cmd) {
 			const components = await simpleContainer(
 				interaction,
-				await t(interaction, 'core.utils.commandid.not.found', {
-					commandName,
-				}),
+				await t(
+					interaction,
+					'core.commands.utils.kyth.command-id.commandid.not.found',
+					{
+						commandName,
+					},
+				),
 			);
 			return interaction.editReply({
 				components,
@@ -46,10 +50,14 @@ class CommandIdCommand extends BaseCommand {
 		}
 		const mention = `</${parts.join(' ')}:${cmd.id}>`;
 		return interaction.editReply({
-			content: await t(interaction, 'core.utils.commandid.success', {
-				commandId: cmd.id,
-				mention,
-			}),
+			content: await t(
+				interaction,
+				'core.commands.utils.kyth.command-id.commandid.success',
+				{
+					commandId: cmd.id,
+					mention,
+				},
+			),
 		});
 	}
 }

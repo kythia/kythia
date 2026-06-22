@@ -15,7 +15,6 @@ const {
 	SeparatorSpacingSize,
 } = require('discord.js');
 const moment = require('moment');
-
 class AFKHandler {
 	/**
 	 * Handle AFK system logic
@@ -25,14 +24,12 @@ class AFKHandler {
 	async handle(message, container) {
 		const { models } = container;
 		const { UserAFK } = models;
-
 		if (message.author?.bot) return;
 
 		// Check if user is returning from AFK
 		const afkData = await UserAFK.getCache({
 			userId: message.author.id,
 		});
-
 		if (afkData) {
 			await this.handleUserReturn(message, afkData, container);
 		}
@@ -42,31 +39,30 @@ class AFKHandler {
 			await this.handleMentionedUsers(message, container);
 		}
 	}
-
 	async handleUserReturn(message, afkData, container) {
 		const { t, kythiaConfig, logger, helpers } = container;
 		const { formatDuration } = helpers.time;
 		const { convertColor } = helpers.color;
-
 		try {
 			const afkSinceVal = afkData.timestamp || afkData.created_at || new Date();
 			const duration = await formatDuration(
 				Date.now() - new Date(afkSinceVal).getTime(),
 				message,
 			);
-
 			const welcomeBackMessage = await t(
 				message,
-				'core.events.messageCreate.back',
+				'core.helpers.handlers.AFKHandler.events.messageCreate.back',
 				{
 					user: message.author.toString(),
 					duration: duration,
 				},
 			);
-
 			const replyContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(welcomeBackMessage),
@@ -83,7 +79,6 @@ class AFKHandler {
 						}),
 					),
 				);
-
 			if (message.channel && message.channel.type !== ChannelType.DM) {
 				const reply = await message
 					.reply({
@@ -105,18 +100,20 @@ class AFKHandler {
 					}, 5000);
 				}
 			}
-
-			await afkData.destroy({ individualHooks: true });
+			await afkData.destroy({
+				individualHooks: true,
+			});
 		} catch (error) {
 			logger.error(
 				`Error when user returned from UserAFK: ${error.message || error}`,
-				{ label: 'AFKHandler' },
+				{
+					label: 'AFKHandler',
+				},
 			);
-
 			try {
 				const errorMessage = await t(
 					message,
-					'core.events.messageCreate.error',
+					'core.helpers.index.events.messageCreate.error',
 				);
 				const errorContainer = new ContainerBuilder()
 					.setAccentColor(
@@ -140,7 +137,6 @@ class AFKHandler {
 							}),
 						),
 					);
-
 				await message.author.send({
 					components: [errorContainer],
 					flags: MessageFlags.IsComponentsV2,
@@ -148,45 +144,41 @@ class AFKHandler {
 			} catch (dmError) {
 				logger.error(
 					`Failed to send DM error from UserAFK to user: ${dmError.message || dmError}`,
-					{ label: 'AFKHandler' },
+					{
+						label: 'AFKHandler',
+					},
 				);
 			}
-
 			if (afkData) {
-				await afkData
-					.destroy()
-					.catch((e) =>
-						logger.error(
-							`Failed to delete UserAFK data after error: ${e.message || e}`,
-							{ label: 'AFKHandler' },
-						),
-					);
+				await afkData.destroy().catch((e) =>
+					logger.error(
+						`Failed to delete UserAFK data after error: ${e.message || e}`,
+						{
+							label: 'AFKHandler',
+						},
+					),
+				);
 			}
 		}
 	}
-
 	async handleMentionedUsers(message, container) {
 		const { models, t, kythiaConfig, logger, helpers } = container;
 		const { UserAFK } = models;
 		const { convertColor } = helpers.color;
-
 		const mentionedUsers = message.mentions.users;
 		const afkReplies = [];
-
 		for (const user of mentionedUsers.values()) {
 			if (user.id === message.author.id) continue;
-
 			try {
 				const mentionedAfkData = await UserAFK.getCache({
 					userId: user.id,
 				});
-
 				if (mentionedAfkData) {
 					const afkSince = moment(mentionedAfkData.timestamp).fromNow();
 					const reason = mentionedAfkData.reason;
 					const afkReplyLine = await t(
 						message,
-						'core.events.messageCreate.line',
+						'core.helpers.handlers.AFKHandler.events.messageCreate.line',
 						{
 							user: user.tag,
 							reason: reason,
@@ -198,16 +190,20 @@ class AFKHandler {
 			} catch (error) {
 				logger.error(
 					`Error checking mentioned user's UserAFK status: ${error.message || error}`,
-					{ label: 'AFKHandler' },
+					{
+						label: 'AFKHandler',
+					},
 				);
 			}
 		}
-
 		if (afkReplies.length > 0) {
 			const combinedReply = afkReplies.join('\n');
 			const afkContainer = new ContainerBuilder()
 				.setAccentColor(
-					convertColor(kythiaConfig.bot.color, { from: 'hex', to: 'decimal' }),
+					convertColor(kythiaConfig.bot.color, {
+						from: 'hex',
+						to: 'decimal',
+					}),
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(combinedReply),
@@ -224,7 +220,6 @@ class AFKHandler {
 						}),
 					),
 				);
-
 			const reply = await message.reply({
 				components: [afkContainer],
 				flags: MessageFlags.IsComponentsV2,
@@ -233,5 +228,4 @@ class AFKHandler {
 		}
 	}
 }
-
 module.exports = AFKHandler;

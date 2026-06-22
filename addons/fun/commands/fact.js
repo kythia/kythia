@@ -41,12 +41,12 @@ class FactCommand extends BaseCommand {
 			fact = await fetchFact();
 		} catch {
 			return interaction.editReply({
-				content: await t(interaction, 'fun.fact.error.fetch'),
+				content: await t(interaction, 'fun.shared.fact.error.fetch'),
 			});
 		}
 		if (!fact) {
 			return interaction.editReply({
-				content: await t(interaction, 'fun.fact.error.fetch'),
+				content: await t(interaction, 'fun.shared.fact.error.fetch'),
 			});
 		}
 		const accentColor = helpers.color.convertColor(kythiaConfig.bot.color, {
@@ -58,7 +58,7 @@ class FactCommand extends BaseCommand {
 				.setAccentColor(accentColor)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'fun.fact.title', {
+						await t(interaction, 'fun.commands.fact.title', {
 							fact: factText,
 						}),
 					),
@@ -72,7 +72,9 @@ class FactCommand extends BaseCommand {
 					new ActionRowBuilder().addComponents(
 						new ButtonBuilder()
 							.setCustomId('fact_another')
-							.setLabel(await t(interaction, 'fun.fact.button.another'))
+							.setLabel(
+								await t(interaction, 'fun.commands.fact.button.another'),
+							)
 							.setStyle(ButtonStyle.Secondary)
 							.setEmoji('🔄'),
 					),
