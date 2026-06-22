@@ -449,15 +449,21 @@
 
 ### `/help`
 
-**Description:** 💡 Displays a list of bot commands with complete details.
+**Description:** Displays a list of bot commands with complete details.
 
 ### Details
 
-- **Aliases:** `h`, `ℹ️`
+- **Aliases:** `h`
 ### Usage
 
-`/help`
+`/help [mode]`
 
+### Options
+
+- **`mode`**
+  - **Description:** Choose how the help menu is displayed
+  - **Type:** Text
+  - **Choices:** `Detailed` (`detailed`), `Compact` (`compact`)
 
 
 ### `/legal`
@@ -472,7 +478,7 @@
 
 ### `/ping`
 
-**Description:** 🔍 Checks the bot's, Discord API's, database and cache/redis connection speed.
+**Description:** Checks the bot's, Discord API's, database and cache/redis connection speed.
 
 ### Details
 

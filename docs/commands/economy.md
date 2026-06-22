@@ -288,7 +288,7 @@
 
 
 **`/eco job apply`**
-> ‍Apply for a specific profession to focus your work.
+> Apply for a specific profession to focus your work.
 
 
 **`/eco job work`**

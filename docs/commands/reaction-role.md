@@ -56,7 +56,7 @@
 
 
 **`/reaction-role panel create`**
-> ➕ Create a new reaction role panel (interactive setup).
+> Create a new reaction role panel (interactive setup).
 
 
 **`/reaction-role panel delete <panel_id>`**

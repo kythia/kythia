@@ -47,7 +47,7 @@
 `/music resume`
 `/music skip`
 `/music stop`
-`/music utils 247`
+`/music utils 247 [lock]`
 `/music utils download [query]`
 `/music utils grab`
 `/music utils history`
@@ -279,10 +279,13 @@
 > Stop music and clear the queue
 
 
-**`/music utils 247`**
-> 🎧 Enable or disable 24/7 mode to keep the bot in the voice channel.
+**`/music utils 247 [<lock>]`**
+> Enable or disable 24/7 mode to keep the bot in the voice channel.
 
-
+**Options for this subcommand:**
+- **`lock`**
+  - **Description:** Lock the bot to this channel so it cannot be moved.
+  - **Type:** Boolean
 **`/music utils download [<query>]`**
 > Download the current song
 
