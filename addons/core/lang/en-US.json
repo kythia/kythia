@@ -646,7 +646,7 @@
 						}
 					},
 					"prefix": "## {title}\n\n{content}",
-					"footer": "Announcement from Developer {username} • <t:{timestamp}:R>"
+					"footer": "-# Announcement from Developer {username} • <t:{timestamp}:R>"
 				},
 				"complex": {
 					"modal": {

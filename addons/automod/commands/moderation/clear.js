@@ -51,8 +51,21 @@ class ClearCommand extends BaseCommand {
 			});
 		}
 		try {
-			const deleted = await interaction.channel.bulkDelete(amount, true);
-			const totalDeleted = deleted.size;
+			const messages = await interaction.channel.messages.fetch({
+				limit: amount,
+			});
+			// Add a 5-minute buffer (300000ms) to the 14 days (1209600000ms) to avoid edge-case API errors
+			const deletableMessages = messages.filter(
+				(msg) => Date.now() - msg.createdTimestamp < 1209300000,
+			);
+			let totalDeleted = 0;
+			if (deletableMessages.size > 0) {
+				const deleted = await interaction.channel.bulkDelete(
+					deletableMessages,
+					true,
+				);
+				totalDeleted = deleted.size;
+			}
 			if (totalDeleted === 0) {
 				const reply = await simpleContainer(
 					interaction,
@@ -258,8 +271,9 @@ async function handleBulkDelete(interaction, t, container) {
 					limit: 100,
 				},
 			);
+			// Add a 5-minute buffer (300000ms) to the 14 days (1209600000ms) to avoid edge-case API errors
 			const deletableMessages = messages.filter(
-				(msg) => Date.now() - msg.createdTimestamp < 1209600000,
+				(msg) => Date.now() - msg.createdTimestamp < 1209300000,
 			);
 			if (deletableMessages.size > 0) {
 				const deleted = await interaction.channel.bulkDelete(

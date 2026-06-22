@@ -21,7 +21,7 @@
 			"turning_age": "(Turning {age})"
 		},
 		"list": {
-			"title": "## Upcoming Birthdays (Page {page}/{totalPages})",
+			"title": "## Upcoming Birthdays",
 			"empty": "No birthdays set in this server yet."
 		},
 		"setting": {
