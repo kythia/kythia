@@ -1,4 +1,9 @@
 # These are supported funding model platforms
 
-github: kenndeclouv
-github: kythia
+github: [kythia, kenndeclouv]
+patreon: kythia
+ko_fi: kythia
+
+custom: 
+  - https://saweria.co/kythia
+  - https://trakteer.id/kythia
