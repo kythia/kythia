@@ -152,7 +152,11 @@ async function handleGlobalChat(message, container) {
 					result.error?.includes('is not registered in global chat') ||
 					result.error?.includes('message already processed') ||
 					result.error?.includes('Internal Server Error') ||
-					result.error?.includes('The user aborted a request')
+					result.error?.includes('The user aborted a request') ||
+					result.error?.includes('user is banned') ||
+					result.error?.includes(
+						'internal error occurred processing the message',
+					)
 				) {
 					return;
 				}
