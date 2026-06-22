@@ -2,17 +2,8 @@
 	"automod": {
 		"setting": {
 			"feature": {
-				"anti": {},
-				"server": {},
-				"welcome": {},
-				"minecraft": {},
 				"enabled": "The **{feature}** feature has been **enabled**.",
 				"disabled": "The **{feature}** feature has been **disabled**."
-			},
-			"cooldown": {},
-			"clan": {
-				"category": {},
-				"forum": {}
 			}
 		},
 		"snipe": {

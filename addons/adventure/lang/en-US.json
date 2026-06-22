@@ -1,15 +1,6 @@
 {
 	"adventure": {
-		"inventory": {
-			"item": {
-				"not": {}
-			},
-			"selection": {}
-		},
 		"shop": {
-			"gold": {},
-			"confirm": {},
-			"cancel": {},
 			"category": {
 				"equipment": "Equipment",
 				"consumables": "Consumables",
@@ -289,10 +280,6 @@
 					"desc": "Brings you back to life with 50% health when defeated."
 				}
 			}
-		},
-		"start": {
-			"select": {},
-			"confirm": {}
 		},
 		"items": {
 			"no_desc": "No description."

@@ -1,25 +1,12 @@
 {
 	"checklist": {
-		"unknown": {
-			"subcommand": {}
-		},
 		"scope": {
 			"personal": "Personal",
 			"server": "Server"
 		},
-		"remove": {
-			"select": {}
-		},
 		"status": {
 			"done": "Completed",
 			"undone": "Not Completed"
-		},
-		"server": {
-			"remove": {
-				"item": {},
-				"status": {},
-				"removed": {}
-			}
 		},
 		"helpers": {
 			"index": {

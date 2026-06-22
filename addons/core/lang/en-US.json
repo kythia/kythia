@@ -22,21 +22,6 @@
 	},
 	"core": {
 		"utils": {
-			"help": {
-				"embed": {}
-			},
-			"serverinfo": {
-				"members": {}
-			},
-			"spam": {
-				"too": {},
-				"no": {}
-			},
-			"userinfo": {
-				"value": {
-					"status": {}
-				}
-			},
 			"kyth": {
 				"debug": {
 					"msg": "Kythia Cache Debugger (Complete)\n\n{logs}",
@@ -45,11 +30,6 @@
 					"critical_failure": "CRITICAL FAILURE\n\n{logs}\n\n**ERROR at Step {step}:**\n```js\n{error}\n```",
 					"critical_attached": "CRITICAL FAILURE\nLogs attached."
 				}
-			}
-		},
-		"tools": {
-			"tiktok": {
-				"embed": {}
 			}
 		},
 		"setting": {
@@ -80,14 +60,9 @@
 					}
 				},
 				"feature": {
-					"anti": {},
-					"server": {},
-					"welcome": {},
-					"minecraft": {},
 					"enabled": "The **{feature}** feature has been **enabled**.",
 					"disabled": "The **{feature}** feature has been **disabled**."
 				},
-				"cooldown": {},
 				"leveling": {
 					"channel": {
 						"set": "Channel {channel} has been set as the level up channel!"
@@ -127,45 +102,6 @@
 					"channel": {
 						"set": "Invite log channel set to {channel}."
 					}
-				},
-				"clan": {
-					"category": {},
-					"forum": {}
-				}
-			}
-		},
-		"embed": {
-			"embed": {
-				"role": {
-					"button": {
-						"format": {},
-						"style": {}
-					},
-					"not": {},
-					"too": {}
-				},
-				"db": {
-					"save": {},
-					"button": {
-						"save": {}
-					}
-				},
-				"send": {},
-				"sent": {},
-				"button": {
-					"link": {},
-					"format": {}
-				},
-				"field": {
-					"format": {}
-				},
-				"delete": {
-					"no": {},
-					"not": {},
-					"db": {},
-					"dm": {
-						"not": {}
-					}
 				}
 			}
 		},
@@ -176,8 +112,7 @@
 						"delete": {
 							"webhook": {
 								"desc": "## **{bot}** OUT FROM SERVER\n**{bot}** has left the server:\n• Server Name: **{guild}**\n• Server ID: `{guildId}`\n• Server Owner: <@{ownerId}> ({ownerId})\n• Member Count: {memberCount}\n• Server Created At: {createdAt}"
-							},
-							"no": {}
+							}
 						}
 					}
 				}
@@ -209,23 +144,9 @@
 				}
 			},
 			"channelDelete": {
-				"events": {
-					"channel": {
-						"delete": {
-							"id": {}
-						}
-					}
-				},
 				"log": "## Channel Deleted\n\n**Channel Name:** {name}\n**Type:** {channelTypeName}{reason}"
 			},
 			"channelCreate": {
-				"events": {
-					"channel": {
-						"create": {
-							"id": {}
-						}
-					}
-				},
 				"log": "## Channel Created\n\n**Channel:** <#{id}>\n**Type:** {channelTypeName}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
 			"applicationCommandPermissionsUpdate": {
@@ -237,7 +158,6 @@
 			"channelUpdate": {
 				"log": "## Channel Updated\n\n**Channel:** <#{id}>\n\n**Changes:**\n{changes}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
-			"clientReady": {},
 			"emojiCreate": {
 				"log": "## Emoji Created\n\n**Emoji:** <:{name}:{id}>\n**Name:** {emojiName}\n**Animated:** {animated}\n**Available:** {available}\n**Managed:** {managed}{reason}\n\n**Executor:** {executorTag} ({executorId})\n**Timestamp:** <t:{timestamp}:F>"
 			},
@@ -394,12 +314,6 @@
 				}
 			},
 			"index": {
-				"member": {
-					"not": {}
-				},
-				"failed": {
-					"nick": {}
-				},
 				"premium_server": {
 					"no_server_id": "You must specify a `server_id` if you are not running this command inside a server.",
 					"access_denied": "**Access Denied**\nYou do not have an eligible Premium Tier (`Yours` or `Ecosystem`) to bind servers."

@@ -318,36 +318,6 @@
 				}
 			}
 		},
-		"profile": {
-			"profile": {
-				"tag": {
-					"id": {}
-				},
-				"created": {},
-				"joined": {},
-				"bot": {
-					"status": {}
-				},
-				"status": {},
-				"level": {
-					"xp": {}
-				}
-			}
-		},
-		"market": {
-			"view": {
-				"24h": {
-					"vol": {}
-				},
-				"error": {},
-				"market": {
-					"cap": {}
-				},
-				"circulating": {
-					"supply": {}
-				}
-			}
-		},
 		"guild_stock": {
 			"view": {
 				"error": {

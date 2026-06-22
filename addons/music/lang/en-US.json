@@ -1,6 +1,5 @@
 {
 	"music": {
-		"manager": {},
 		"helpers": {
 			"handlers": {
 				"247": {
@@ -348,31 +347,6 @@
 							"denied": "You don't have permission right now! play your own track or play."
 						}
 					}
-				}
-			}
-		},
-		"playlist": {
-			"import": {
-				"unsupported": {},
-				"code": {},
-				"invalid": {}
-			},
-			"export": {}
-		},
-		"music": {
-			"error": {},
-			"filter": {
-				"generic": {}
-			},
-			"playlist": {
-				"save": {},
-				"list": {},
-				"append": {
-					"empty": {},
-					"not": {}
-				},
-				"track": {
-					"list": {}
 				}
 			}
 		},

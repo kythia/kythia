@@ -17,8 +17,7 @@
 						"oauth": "{user} ({username}) joined using **OAuth (bot invite)**",
 						"unknown": "{user} ({username}) joined (unknown invite source)"
 					},
-					"code": "Invite code: `{code}`",
-					"error": {}
+					"code": "Invite code: `{code}`"
 				}
 			},
 			"guildMemberRemove": {

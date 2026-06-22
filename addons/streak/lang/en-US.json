@@ -1,7 +1,6 @@
 {
 	"streak": {
 		"streak": {
-			"error": {},
 			"setting": {
 				"quota": {
 					"disabled": "Streak restores have been **disabled** for this server. Members can no longer restore their streaks.",

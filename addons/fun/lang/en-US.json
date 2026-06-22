@@ -153,11 +153,6 @@
 				}
 			}
 		},
-		"guessnumber": {
-			"feedback": {
-				"almost": {}
-			}
-		},
 		"marry": {
 			"yourself": {
 				"error": "You can't marry yourself!"
@@ -169,7 +164,6 @@
 				"married": "One or both of you are already married or have a pending proposal!"
 			},
 			"not": {
-				"enough": {},
 				"married": {
 					"default": "You're not currently married!",
 					"both": "Neither of you are married!"
@@ -185,7 +179,6 @@
 			"reject": {
 				"button": "Reject"
 			},
-			"no": {},
 			"divorced": {
 				"title": "Divorced",
 				"description": "Your marriage has been ended. Wishing you both the best in your future endeavors."
@@ -214,7 +207,6 @@
 					"label": "YOU"
 				}
 			},
-			"help": {},
 			"divorce": {
 				"partner": {
 					"confirm": "Your partner {partnerName} has requested a divorce in {serverName}. You must also confirm the divorce by using the `/marry divorce` command."
