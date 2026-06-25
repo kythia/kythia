@@ -63,6 +63,7 @@ class StickyMessageHandler {
 			sticky.changed('messageId', true);
 			await sticky.save();
 		} catch (err) {
+			if (err?.message?.includes('ECONNREFUSED')) return;
 			logger.error(`Error loading sticky: ${err.message || err}`, {
 				label: 'StickyMessageHandler',
 			});

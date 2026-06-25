@@ -4,7 +4,7 @@
 			"messageCreate": {
 				"memory": {
 					"token": {
-						"limit": "Sorry, the AI token limit has been reached for this minute. I need a short break, please try again in a minute!"
+						"limit": "Oops.. I'm tired, I need a short break, please try again in a minute! > <"
 					}
 				},
 				"error": "Oops, I'm feeling dizzy right now. Please try again later! ><",
@@ -12,7 +12,15 @@
 					"blocked": "Sorry, I can't do that."
 				},
 				"mention": "Hey, what do you want to say? >,<",
-				"cooldown": "Slow down a bit! You're sending messages too fast. Please wait **{seconds}s** before chatting with me again. ^-^"
+				"cooldown": "Slow down a bit! You're sending messages too fast. Please wait **{seconds}s** before chatting with me again. ^-^",
+				"tos": {
+					"title": "## AI Terms of Service",
+					"description": "Welcome to {username} AI! Before you can start chatting and using AI features, you must agree to our Terms of Service.\n\nBy agreeing, you consent to:\n• Having your messages processed by the AI.\n• Allowing the AI to store memory facts you explicitly ask it to remember.\n\n*If you disagree, you will be opted out and won't be able to use the AI.*",
+					"agree_btn": "Agree",
+					"disagree_btn": "Disagree",
+					"agreed": "## Welcome to {username} AI!\nThank you for agreeing to the Terms of Service. You can now chat with the AI freely! Just mention me or reply to my messages.",
+					"disagreed": "## Opted Out\nYou have chosen to disagree. You have been automatically opted out of all AI features, and any existing memories have been deleted.\n\nIf you change your mind, you can use the `/ai optout` command to opt back in."
+				}
 			}
 		},
 		"commands": {
@@ -104,6 +112,9 @@
 				"rate_limit": "## Rate Limit\nAI is currently rate limited. Please try again later.",
 				"result_transform": "## Transformed Image\nPrompt: {prompt}",
 				"result": "## Generated Image\nPrompt: {prompt}",
+				"refused": "AI refused to generate: {reason}",
+				"responded_text": "AI responded: {text}",
+				"no_image": "No image generated. The AI might have refused the prompt.",
 				"error": "## Error\nFailed to generate image: {error}"
 			},
 			"translate": {

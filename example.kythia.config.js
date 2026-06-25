@@ -220,7 +220,10 @@ function loadKythiaConfig() {
 				// ! IMPORTANT!
 				// USE AT LEAST GEMINI 3 flash preview
 				// as the google search and function calling is supported in gemini 3 flash preview above
-				model: 'gemini-3-flash-preview',
+				highModel: 'gemini-3.5-flash-preview',
+
+				// use as lite model fallback and safe memory
+				mediumModel: 'gemini-3-flash-preview',
 				// ! IMPORTANT!
 				// use for non tool-heavy messages
 				liteModel: 'gemini-2.5-flash-lite',

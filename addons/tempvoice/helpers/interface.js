@@ -33,7 +33,7 @@ async function buildInterface(interaction) {
 	});
 	const bannerUrl = kythiaConfig?.settings?.tempvoiceBannerImage;
 	const header = new TextDisplayBuilder().setContent(
-		`${await t(interaction, 'tempvoice.helpers.interface.header')}`,
+		`${await t(interaction, 'tempvoice.helpers.interface.header', { bot: interaction.client.user.username })}`,
 	);
 	const banner = new MediaGalleryBuilder().addItems([
 		new MediaGalleryItemBuilder().setURL(bannerUrl),

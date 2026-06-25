@@ -27,16 +27,15 @@ class MessageCreateEvent extends BaseEvent {
 		const guildId = message.guild.id;
 		const userId = message.author.id;
 
-		// Feature flag check
-		const serverSetting = await ServerSetting.getCache({ guildId });
-		if (!serverSetting?.activityOn) return;
-
-		const now = new Date();
-		const today = now.toISOString().slice(0, 10);
-		const dayOfWeek = now.getDay();
-		const hour = now.getHours();
-
 		try {
+			const serverSetting = await ServerSetting.getCache({ guildId });
+			if (!serverSetting?.activityOn) return;
+
+			const now = new Date();
+			const today = now.toISOString().slice(0, 10);
+			const dayOfWeek = now.getDay();
+			const hour = now.getHours();
+
 			// All-time counter
 			const [stat, statCreated] = await ActivityStat.firstOrCreateCache(
 				{ guildId, userId },
@@ -125,6 +124,7 @@ class MessageCreateEvent extends BaseEvent {
 				specialFlags,
 			}).catch(() => null);
 		} catch (err) {
+			if (err?.message?.includes('ECONNREFUSED')) return;
 			this.container.logger.error(
 				`Failed to track message activity for ${userId} in ${guildId}: ${err.message}`,
 				{ label: 'activity:messageCreate' },

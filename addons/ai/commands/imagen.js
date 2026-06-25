@@ -240,9 +240,23 @@ class ImagenCommand extends BaseCommand {
 					);
 					break;
 				} else {
-					throw new Error(
-						'No inlineData found in response parts. The AI might have refused the prompt.',
-					);
+					const candidate = response.candidates?.[0];
+					let errMsg = await t(interaction, 'ai.commands.imagen.no_image');
+					if (candidate?.finishReason && candidate.finishReason !== 'STOP') {
+						errMsg = await t(interaction, 'ai.commands.imagen.refused', {
+							reason: candidate.finishReason,
+						});
+					} else if (parts) {
+						const textPart = parts.find((p) => p.text);
+						if (textPart) {
+							errMsg = await t(
+								interaction,
+								'ai.commands.imagen.responded_text',
+								{ text: textPart.text },
+							);
+						}
+					}
+					throw new Error(errMsg);
 				}
 			} catch (error) {
 				lastError = error;

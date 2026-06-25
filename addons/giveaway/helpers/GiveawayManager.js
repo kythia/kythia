@@ -604,16 +604,7 @@ class GiveawayManager {
 				.setDivider(true),
 		);
 		container.addActionRowComponents(buttonRow);
-		container.addSeparatorComponents(
-			new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Small)
-				.setDivider(true),
-		);
-		container.addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(
-				await this.t(context, 'giveaway.ui.embed.footer'),
-			),
-		);
+
 		return [container];
 	}
 }

@@ -63,6 +63,7 @@ class SetupCommand extends BaseCommand {
 				name: await t(
 					interaction,
 					'tempvoice.commands.setup.auto_category_name',
+					{ bot: interaction.client.user.username },
 				),
 				type: ChannelType.GuildCategory,
 				reason: autoReason,

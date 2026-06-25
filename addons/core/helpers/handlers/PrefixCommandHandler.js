@@ -651,6 +651,11 @@ class PrefixCommandHandler {
 				});
 			}
 		} catch (err) {
+			if (err.message?.startsWith('Execute method not implemented for')) {
+				// Command object inherited BaseCommand's placeholder execute — likely a parent command without a handler.
+				// We silently ignore this to avoid wasting Discord API limits on invalid user inputs.
+				return;
+			}
 			logger.error(
 				`Error executing prefix command '${commandKey}': ${err.message}\nFull Error: ${JSON.stringify(err, Object.getOwnPropertyNames(err), 2)}`,
 				{

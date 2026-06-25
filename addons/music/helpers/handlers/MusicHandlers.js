@@ -481,6 +481,7 @@ class MusicHandlers {
 			interaction,
 			await this.t(interaction, 'music.helpers.handlers.music.joined', {
 				channel: member.voice.channel.toString(),
+				bot: interaction.client.user.username,
 			}),
 			{ color: this.config.bot.color },
 		);
@@ -529,7 +530,9 @@ class MusicHandlers {
 
 		const components = await this.simpleContainer(
 			interaction,
-			await this.t(interaction, 'music.helpers.handlers.music.left'),
+			await this.t(interaction, 'music.helpers.handlers.music.left', {
+				bot: interaction.client.user.username,
+			}),
 			{ color: this.config.bot.color },
 		);
 

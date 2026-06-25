@@ -25,8 +25,7 @@
 				"desc_active": "**Ends:** <t:{endTime}:R> (<t:{endTime}:F>)\n**Hosted By:** <@{hostId}>\n**Winners:** {winnersCount}",
 				"desc_ended": "**Ended:** <t:{endTime}:R>\n**Hosted By:** <@{hostId}>\n**Winners:** {winners}",
 				"requirement": "\n**Requirement:** <@&{roleId}>",
-				"participants": "**Participants:** {count}",
-				"footer": "Kythia Giveaway System"
+				"participants": "**Participants:** {count}"
 			},
 			"status": {
 				"cancelled": "CANCELLED"
@@ -86,7 +85,7 @@
 			}
 		},
 		"dm": {
-			"winner": "Congratulations! You have won **{prize}** in **{server}**!\n\n[Click here to jump to the giveaway]({link})"
+			"winner": "## Congratulations!\n You have won giveaway **{prize}** in **{server}**!\n\n[Click here to jump to the giveaway]({link})"
 		},
 		"reroll": {
 			"success": "Successfully rerolled the giveaway winners!",

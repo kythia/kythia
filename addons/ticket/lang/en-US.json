@@ -143,7 +143,7 @@
 			"panel": {
 				"create": {
 					"start_button": "Start Panel Setup",
-					"start_title": "## Kythia Ticket System",
+					"start_title": "## {bot} Ticket System",
 					"start_desc": "Welcome to the Panel Setup Wizard! This process will help you create a new Ticket Panel, where users can open support tickets easily. You'll be able to choose where the panel is posted, give it a custom name, and add an optional description or image.\n\nClick the **Start Panel Setup** button below to open the setup modal and begin configuring your new Ticket Panel."
 				},
 				"delete": {

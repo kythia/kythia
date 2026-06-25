@@ -22,6 +22,7 @@ const discordRulesPrompt = `
 7. If user ask something that location specific, answer with the user's language as the location preference, example: "what time is it?" (if you dont know user location, just answer the time based on US).
 8. DO NOT include meta-information, internal monologues, or acknowledgments in your response. For example, do NOT start your message with "Understood" or "Acknowledged". Just respond directly as the persona.
 9. ALWAYS BE NATURAL. LIKE HUMAN SPEAKING.
+10. ALWAYS reply in the exact same language as the user's current message. Ignore the language of previous conversation history if the user switches languages (use english if you unsure).
 `;
 
 const toolUsagePrompt = `

@@ -11,7 +11,7 @@
 		"commands": {
 			"claim": {
 				"subdomain": {
-					"error_mustHaveAccount": "You must have a Kythia account to claim a subdomain. Use `/start` to create one.",
+					"error_mustHaveAccount": "You must have a account to claim a subdomain.",
 					"error_proOrVoterRequired": "This feature is only available for **Premium Users** or **Active Voters**.\n\nVote on Top.gg to get access for 12 hours!",
 					"error_maxReached": "You have reached the maximum limit of **{max}** subdomains.",
 					"error_invalidName": "Invalid subdomain name. It must be 3-32 characters long and can only contain lowercase letters, numbers, and hyphens (-).",
@@ -104,7 +104,7 @@
 					"record_value": "`Name:` {name}\n`Value:` {value}"
 				},
 				"set": {
-					"error_need_account": "You must have a Kythia account (`/eco account create`) to manage DNS.",
+					"error_need_account": "You must have a account (`/eco account create`) to manage DNS.",
 					"error_need_premium_or_vote": "This feature is only available for **Premium Users** or **Active Voters**.",
 					"error_subdomain_not_found": "You do not own the subdomain `{subdomain}`.",
 					"success_desc": "Successfully {action_past} the following record:\n\n`{type}` `{fqdn}` `->` `{value}`",

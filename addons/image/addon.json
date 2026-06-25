@@ -4,6 +4,5 @@
 	"featureFlag": "imageOn",
 	"version": "1.0.0-rc1",
 	"description": "Upload, store, and manage images in your server. Users can add images, retrieve direct URLs, and organize image assets for fun, moderation, or utility purposes.",
-	"author": "kenndeclouv",
-	"kythia": "TfmUZ4CkTQ1dJgI61i1aVlFi7KcqTDZIUfYSgcHpE+XwyoTC2Rtfdjm9GZBI5Ut4rxiSCgcm2+fHmObskAs6b18+Au05qlNxmbh+pD65G//TEK7mHYFu98qyPMsJueAtvER5Eilg+Pt41FlEQu/fctWBy9ApSUzkWO014QY+oFB5doYH+mE0/B18eEKHk6pSM7tOThmQISjF8wbNFiEIkdtJMx6yA+KdgKNtrPsnGSpnykc3wYHzdrYjXin9pEZkj0/eKyqmp07rwWQLNC7yptXz8cIiFbbj4M2dta8N1JdRCCawVNJBTkiYgYMVBH3Xb1cZrDx/eKp2z07rYuQNMw=="
+	"author": "kenndeclouv"
 }

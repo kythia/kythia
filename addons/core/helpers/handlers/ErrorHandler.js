@@ -28,6 +28,20 @@ class ErrorHandler {
 	async handle(error, message, container) {
 		const { logger, kythiaConfig } = container;
 
+		if (error?.message?.includes('ECONNREFUSED')) {
+			// Throttle database connection errors so we don't spam console/webhooks when db is down
+			if (
+				!global.__kythia_last_db_error ||
+				Date.now() - global.__kythia_last_db_error > 60000
+			) {
+				global.__kythia_last_db_error = Date.now();
+				logger.error(`Database connection refused: ${error.message || error}`, {
+					label: 'ErrorHandler',
+				});
+			}
+			return; // Skip sentry, user error, and webhook for repetitive db connection failures
+		}
+
 		// Log error
 		logger.error(
 			`Error in messageCreate handler for ${message.author ? message.author.tag : '???'}: ${error.message || error}`,
@@ -179,6 +193,7 @@ class ErrorHandler {
 						new TextDisplayBuilder().setContent(footer),
 					);
 				await webhookClient.send({
+					content: '\u200B',
 					components: [errorContainer.toJSON()],
 					flags: MessageFlags.IsComponentsV2,
 				});

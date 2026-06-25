@@ -236,9 +236,9 @@
 			},
 			"setup": {
 				"auto_reason": "Automatically created by /tempvoice setup",
-				"auto_category_name": "Kythia TempVoice",
-				"auto_trigger_name": "┃Join to Create",
-				"auto_control_name": "┃interface",
+				"auto_category_name": "{bot} TempVoice",
+				"auto_trigger_name": "Join to Create",
+				"auto_control_name": "interface",
 				"panel_send_fail": "Failed to send panel message. Setup cancelled.",
 				"success_content": "## **TempVoice System successfully set up!**\n\n• **Trigger Channel:** <#{triggerChannel}>\n• **Category:** `{categoryName}`\n• **Control Panel:** <#{controlPanel}>"
 			}
@@ -254,7 +254,7 @@
 		},
 		"helpers": {
 			"interface": {
-				"header": "## Kythia TempVoice",
+				"header": "## {bot} TempVoice",
 				"ctrlInfo": "**Channel Controls:**\nUse the buttons below to manage your channel. Only the channel owner can fully manage. If you are not the owner, some buttons will be disabled.",
 				"buttons": {
 					"rename": "NAME",

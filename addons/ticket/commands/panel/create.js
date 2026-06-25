@@ -56,7 +56,9 @@ class CreateCommand extends BaseCommand {
 				)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						await t(interaction, 'ticket.commands.panel.create.start_title'),
+						await t(interaction, 'ticket.commands.panel.create.start_title', {
+							bot: interaction.client.user.username,
+						}),
 					),
 				)
 				.addSeparatorComponents(

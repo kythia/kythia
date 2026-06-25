@@ -36,7 +36,7 @@
 							"generic_md": "## {text}"
 						},
 						"file": {
-							"invalid_md": "## Invalid File\nThe file provided is not a valid Kythia backup JSON."
+							"invalid_md": "## Invalid File\nThe file provided is not a valid backup JSON."
 						},
 						"data": {
 							"invalid_md": "## Invalid Data\nThe backup data is missing or corrupted."

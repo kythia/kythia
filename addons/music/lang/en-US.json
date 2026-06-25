@@ -108,8 +108,8 @@
 							"queue": "## Added to queue\n[{title}]({url})\nDuration: `{duration}`\nAuthor: `{author}`"
 						}
 					},
-					"joined": "## Kythia Joined\nKythia ready for the party in {channel}!",
-					"left": "## Kythia Left\nThanks for using Kythia Music!\nIf you like it, please consider supporting us on Ko-fi.",
+					"joined": "## {bot} Joined\n{bot} ready for the party in {channel}!",
+					"left": "## {bot} Left\nThanks for using {bot} Music!\nIf you like it, please consider supporting us on Ko-fi.",
 					"paused": "The music is already paused.",
 					"playing": {
 						"desc": "Nothing is currently playing.",

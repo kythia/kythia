@@ -19,7 +19,7 @@ const wait = require('node:timers/promises').setTimeout;
 
 /** Minimum supported model for tool context circulation. */
 const MINIMUM_MODEL = 'gemini-3-flash-preview';
-const MINIMUM_LITE_MODEL = 'gemini-2.5-flash-lite';
+const MINIMUM_LITE_MODEL = 'gemini-2.5-flash';
 
 /** Safety settings applied to every request. */
 const SAFETY_SETTINGS = [
@@ -245,10 +245,11 @@ class AIMessageHandler {
 		if (message.author?.bot || message.system) {
 			return;
 		}
+		let userRecord = null;
 		try {
 			const KythiaUser = this.container.sequelize.models.KythiaUser;
 			if (KythiaUser) {
-				const userRecord = await KythiaUser.getCache({
+				userRecord = await KythiaUser.getCache({
 					userId: message.author.id,
 				});
 				if (userRecord?.isAiOptOut) {
@@ -310,6 +311,67 @@ class AIMessageHandler {
 		if (!(isAiChannel || isDm || isMentioned)) {
 			return;
 		}
+
+		// --- NEW TOS CHECK ---
+		if (userRecord && userRecord.hasAgreedToAiTos === false) {
+			try {
+				const {
+					ActionRowBuilder,
+					ButtonBuilder,
+					ButtonStyle,
+					MessageFlags,
+				} = require('discord.js');
+				const { createContainer } = this.container.helpers.discord;
+				const { t } = this.container;
+
+				const title = await t(message, 'ai.events.messageCreate.tos.title');
+				const description = await t(
+					message,
+					'ai.events.messageCreate.tos.description',
+					{ username: message.client.user.username },
+				);
+				const agreeBtnTxt = await t(
+					message,
+					'ai.events.messageCreate.tos.agree_btn',
+				);
+				const disagreeBtnTxt = await t(
+					message,
+					'ai.events.messageCreate.tos.disagree_btn',
+				);
+
+				const components = [
+					new ActionRowBuilder().addComponents(
+						new ButtonBuilder()
+							.setCustomId('ai-tos-agree')
+							.setLabel(agreeBtnTxt)
+							.setStyle(ButtonStyle.Success),
+						new ButtonBuilder()
+							.setCustomId('ai-tos-disagree')
+							.setLabel(disagreeBtnTxt)
+							.setStyle(ButtonStyle.Danger),
+					),
+				];
+
+				const containerMessage = await createContainer(message, {
+					title,
+					description,
+					components,
+					footer: true,
+				});
+
+				this.safeReply(message, {
+					components: containerMessage,
+					flags: MessageFlags.IsComponentsV2,
+				});
+				return;
+			} catch (err) {
+				this.logger.error(`Failed to send AI TOS: ${err.message}`, {
+					label: 'ai',
+				});
+				return;
+			}
+		}
+
 		const isOwnerUser = this.isOwner(message.author.id);
 		if (!isOwnerUser || !this.aiConfig.ownerBypassFilter) {
 			const cooldown = this.checkUserCooldown(message.author.id);
@@ -479,12 +541,19 @@ class AIMessageHandler {
 				label: 'ai intent',
 			},
 		);
-		const PREFERRED_MODEL =
-			intent.needsSearch || intent.needsMemory
-				? this.aiConfig.model || MINIMUM_MODEL
-				: this.aiConfig.liteModel || MINIMUM_LITE_MODEL;
-		const FALLBACK_MODEL = this.aiConfig.liteModel || MINIMUM_LITE_MODEL;
-		let useModelFallback = false;
+		const HIGH_MODEL =
+			this.aiConfig.highModel || this.aiConfig.model || MINIMUM_MODEL;
+		const MEDIUM_MODEL = this.aiConfig.mediumModel || 'gemini-2.5-flash';
+		const LITE_MODEL = this.aiConfig.liteModel || MINIMUM_LITE_MODEL;
+
+		let currentTier =
+			intent.needsSearch || intent.needsMemory ? 'high' : 'lite';
+		const getModelByTier = (tier) => {
+			if (tier === 'high') return HIGH_MODEL;
+			if (tier === 'medium') return MEDIUM_MODEL;
+			return LITE_MODEL;
+		};
+
 		const tools = this._buildTools(intent);
 		const historyId = message.channelId;
 
@@ -496,9 +565,10 @@ class AIMessageHandler {
 			.map((k) => k.trim())
 			.filter(Boolean).length;
 
-		// Allow up to 2× totalTokens attempts so a 503-triggered model fallback
+		// Allow up to 4× totalTokens attempts so a 503-triggered model fallback
 		// always gets at least one real retry slot, even with a single API key.
-		const maxAttempts = totalTokens * 2;
+		// We allow more attempts to handle waits when models are overloaded.
+		const maxAttempts = Math.max(totalTokens * 4, 4);
 		for (let attempt = 0; attempt < maxAttempts; attempt++) {
 			this.logger.info(`🧠 AI attempt ${attempt + 1}/${maxAttempts}...`, {
 				label: 'ai',
@@ -528,10 +598,8 @@ class AIMessageHandler {
 					},
 					safetySettings: SAFETY_SETTINGS,
 				};
+				const activeModel = getModelByTier(currentTier);
 				if (tools) {
-					const activeModel = useModelFallback
-						? FALLBACK_MODEL
-						: PREFERRED_MODEL;
 					chatConfig.tools = tools;
 					if (!activeModel.includes('lite')) {
 						chatConfig.toolConfig = {
@@ -539,7 +607,6 @@ class AIMessageHandler {
 						};
 					}
 				}
-				const activeModel = useModelFallback ? FALLBACK_MODEL : PREFERRED_MODEL;
 
 				// Create a stateful chat seeded with conversation history
 				const chat = genAI.chats.create({
@@ -548,7 +615,7 @@ class AIMessageHandler {
 					config: chatConfig,
 				});
 				this.logger.info(
-					`🔍 [DEBUG] Sending request | model: ${activeModel}${useModelFallback ? ' (fallback)' : ''} | tools: ${JSON.stringify(tools?.map((t) => Object.keys(t)[0]) || 'none')}`,
+					`🔍 [DEBUG] Sending request | model: ${activeModel} (tier: ${currentTier}) | tools: ${JSON.stringify(tools?.map((t) => Object.keys(t)[0]) || 'none')}`,
 					{
 						label: 'ai',
 					},
@@ -582,19 +649,38 @@ class AIMessageHandler {
 					err.toString().includes('UNAVAILABLE');
 				if (is429) {
 					this.logger.warn(
-						`Token ${tokenIdx} hit 429. Retrying with next token...`,
+						`Token ${tokenIdx} hit 429. Waiting 1s before retrying...`,
 						{
 							label: 'AIMessageHandler',
 						},
 					);
+					await wait(1000);
 				} else if (is503) {
-					this.logger.warn(
-						`Model overloaded (503) on token ${tokenIdx}. Retrying with fallback model...`,
-						{
-							label: 'AIMessageHandler',
-						},
-					);
-					useModelFallback = true;
+					if (currentTier === 'lite') {
+						this.logger.warn(
+							`Model overloaded (503) on token ${tokenIdx}. Falling back to medium model...`,
+							{
+								label: 'AIMessageHandler',
+							},
+						);
+						currentTier = 'medium';
+					} else if (currentTier === 'medium') {
+						this.logger.warn(
+							`Model overloaded (503) on token ${tokenIdx}. Falling back to high model...`,
+							{
+								label: 'AIMessageHandler',
+							},
+						);
+						currentTier = 'high';
+					} else {
+						this.logger.warn(
+							`Model overloaded (503) on token ${tokenIdx} (high active). Waiting 4s before retry...`,
+							{
+								label: 'AIMessageHandler',
+							},
+						);
+						await wait(4000);
+					}
 				} else {
 					this.logger.error(`AI Error (non-429): ${err.message}`, {
 						label: 'AIMessageHandler',

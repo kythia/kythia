@@ -84,6 +84,9 @@ app.post('/setup', async (c) => {
 						guildId,
 					},
 					'tempvoice.commands.setup.auto_category_name',
+					{
+						bot: client.user.username,
+					},
 				),
 				type: ChannelType.GuildCategory,
 				reason: autoReason,
