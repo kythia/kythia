@@ -543,10 +543,17 @@ class GiveawayManager {
 		});
 	}
 	async buildGiveawayUI(context, data) {
-		const accentColor = this.convertColor(data.color || 'Blue', {
-			from: 'hex',
-			to: 'decimal',
-		});
+		let accentColor = 0x5865f2;
+		try {
+			accentColor = this.convertColor(data.color || '#5865f2', {
+				from: 'hex',
+				to: 'decimal',
+			});
+		} catch (_e) {
+			this.logger.warn(`Invalid hex color passed to giveaway: ${data.color}`, {
+				label: 'giveaway',
+			});
+		}
 		const joinBtn = new ButtonBuilder()
 			.setCustomId('giveaway-join')
 			.setLabel(await this.t(context, 'giveaway.ui.button.join'))

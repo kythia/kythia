@@ -547,16 +547,16 @@
 					"transfer": {
 						"not": {
 							"enough": {
-								"text": "| You do not have enough money in your bank to transfer.",
-								"fee": "| You do not have enough money in your bank to cover the transfer fee ({fee} money)."
+								"text": " You do not have enough money in your bank to transfer.",
+								"fee": " You do not have enough money in your bank to cover the transfer fee ({fee} money)."
 							}
 						},
 						"target": {
 							"no": {
-								"account": "| The target user does not have an account. Ask them to use `/eco account create`."
+								"account": " The target user does not have an account. Ask them to use `/eco account create`."
 							}
 						},
-						"self": "| You cannot transfer money to yourself.",
+						"self": " You cannot transfer money to yourself.",
 						"btn": {
 							"confirm": "Confirm",
 							"cancel": "Cancel"
@@ -564,9 +564,9 @@
 						"confirm": "## Transfer Confirmation\nYou are about to transfer **{amount} money** to **{target}** with a fee of **{fee} money**. Do you want to continue?",
 						"success": "## Transfer Successful\nYou have successfully transferred **{amount} money** to **{target}** with a fee of **{fee} money**!",
 						"received": "## You Received a Transfer\nYou received **{amount} money** to your bank from **{from}**!",
-						"cancelled": "| Transfer has been cancelled.",
-						"timeout": "| Time's up. Transfer has been cancelled.",
-						"error": "| An error occurred while executing this command. Please try again."
+						"cancelled": " Transfer has been cancelled.",
+						"timeout": " Time's up. Transfer has been cancelled.",
+						"error": " An error occurred while executing this command. Please try again."
 					}
 				},
 				"upgrade": {
@@ -594,13 +594,13 @@
 							"enough": "You do not have enough money in your bank to withdraw!"
 						},
 						"success": "## Withdraw Result\n{user} has withdrawn **{amount} money** from the bank.",
-						"error": "| An error occurred while executing this command. Please try again."
+						"error": " An error occurred while executing this command. Please try again."
 					}
 				}
 			},
 			"beg": {
 				"beg": {
-					"cooldown": "| You can beg for money again in **{time}**!",
+					"cooldown": " You can beg for money again in **{time}**!",
 					"success": "## Begging Result\nYou begged and received **{amount} money**!"
 				}
 			},
@@ -612,7 +612,7 @@
 				}
 			},
 			"collect": {
-				"cooldown": "| You can collect your passive income again in **{time}**!",
+				"cooldown": " You can collect your passive income again in **{time}**!",
 				"no_assets": "## No Assets Found\nYou do not own any assets that generate passive income. Buy a Luxury House or a Company from the shop!",
 				"success": "## Passive Income Collected\nYou successfully collected your daily dividends:\n> {assets}\n\n**Total Collected: {amount}**"
 			},
@@ -682,23 +682,23 @@
 				},
 				"hack": {
 					"hack": {
-						"cooldown": "| You can hack another user in **{time}**!",
+						"cooldown": " You can hack another user in **{time}**!",
 						"user": {
 							"or": {
 								"target": {
 									"not": {
-										"found": "| User or target not found in the system."
+										"found": " User or target not found in the system."
 									}
 								}
 							},
 							"no": {
-								"bank": "| You do not have enough money in your bank to hack."
+								"bank": " You do not have enough money in your bank to hack."
 							}
 						},
-						"self": "| You cannot hack yourself!",
+						"self": " You cannot hack yourself!",
 						"target": {
 							"no": {
-								"bank": "| The target has no money in their bank to hack."
+								"bank": " The target has no money in their bank to hack."
 							}
 						}
 					},
@@ -719,7 +719,7 @@
 								"self": "You cannot rob yourself!"
 							}
 						},
-						"cooldown": "| You can rob again in **{time}**!",
+						"cooldown": " You can rob again in **{time}**!",
 						"target": {
 							"not": {
 								"enough": {
@@ -795,7 +795,7 @@
 			},
 			"daily": {
 				"daily": {
-					"cooldown": "| You can collect your daily kythia coin in **{time}**!",
+					"cooldown": " You can collect your daily kythia coin in **{time}**!",
 					"success": "## Daily Coin Collected\nYou have collected your daily kythia coin of **{amount} kythia coin**!"
 				}
 			},
@@ -889,7 +889,7 @@
 					"slots": {
 						"not": {
 							"enough": {
-								"cash": "| You don't have enough kythia coins! You need {bet}, but only have {cash}."
+								"cash": " You don't have enough kythia coins! You need {bet}, but only have {cash}."
 							}
 						},
 						"spinning": {
@@ -1095,9 +1095,8 @@
 					},
 					"result": {
 						"tool_broke": "**Oh no! Your {tool} broke while working!**",
-						"title": {
-							"outcome": "### Work Result"
-						}
+						"title": "## {emoji} {title}",
+						"outcome": "### Work Result"
 					}
 				}
 			},
@@ -1110,7 +1109,7 @@
 			},
 			"lootbox": {
 				"lootbox": {
-					"cooldown": "| You can open another lootbox in **{time}**!",
+					"cooldown": " You can open another lootbox in **{time}**!",
 					"title": "## Lootbox Result",
 					"success": "You opened a lootbox and received **{amount} kythia coin**!"
 				}

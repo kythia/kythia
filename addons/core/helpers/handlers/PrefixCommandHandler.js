@@ -33,7 +33,7 @@ class PrefixCommandHandler {
 	 */
 	async handle(message, container) {
 		// ── 1. Resolve active prefix set ──────────────────────────────────
-		const { kythiaConfig, models } = container;
+		const { kythiaConfig, models, logger } = container;
 		const { ServerSetting } = models;
 		if (message.author?.bot) return false;
 		const contentLower = message.content.toLowerCase();
@@ -185,19 +185,28 @@ class PrefixCommandHandler {
 							...opts,
 						};
 
-			// Strip Ephemeral and other interaction-only flags
-			if (payload.flags != null) {
-				payload.flags &= ~STRIP_FLAGS;
-				// If flags is now 0, remove the key entirely to avoid API errors
-				if (payload.flags === 0) delete payload.flags;
-			}
 			const hasText = Boolean(payload.content);
 			const hasEmbeds =
 				Array.isArray(payload.embeds) && payload.embeds.length > 0;
 			const hasFiles = Array.isArray(payload.files) && payload.files.length > 0;
 			const hasComponents =
 				Array.isArray(payload.components) && payload.components.length > 0;
-			if (!hasText && !hasEmbeds && !hasFiles && hasComponents) {
+
+			// Strip Ephemeral and other interaction-only flags
+			if (payload.flags != null) {
+				payload.flags &= ~STRIP_FLAGS;
+				// Also strip IsComponentsV2 if there are actually no components
+				if (!hasComponents) {
+					payload.flags &= ~(MessageFlags.IsComponentsV2 || 0);
+				}
+				// If flags is now 0, remove the key entirely to avoid API errors
+				if (payload.flags === 0) delete payload.flags;
+			}
+
+			if (!hasText && !hasEmbeds && !hasFiles && !hasComponents) {
+				// Completely empty payload!
+				payload.content = '\u200b';
+			} else if (!hasText && !hasEmbeds && !hasFiles && hasComponents) {
 				// When IS_COMPONENTS_V2 flag is set, Discord FORBIDS the 'content' field —
 				// components alone satisfy the non-empty requirement in that mode.
 				// For regular components (no V2 flag), inject a zero-width space.
@@ -208,6 +217,7 @@ class PrefixCommandHandler {
 					payload.content = '\u200b';
 				}
 			}
+
 			return payload;
 		};
 		fakeInteraction.reply = async (opts) => {
@@ -227,14 +237,22 @@ class PrefixCommandHandler {
 		};
 		fakeInteraction.editReply = async (opts) => {
 			const payload = _buildPayload(opts);
-			if (_replyMessage) {
-				_replyMessage = await _replyMessage.edit(payload);
-			} else {
-				// No prior reply yet — send fresh
-				_replyMessage = await message.reply(payload);
+			try {
+				if (_replyMessage) {
+					_replyMessage = await _replyMessage.edit(payload);
+				} else {
+					// No prior reply yet — send fresh
+					_replyMessage = await message.reply(payload);
+				}
+				_replied = true;
+				return _replyMessage;
+			} catch (err) {
+				logger.error(
+					'Raw editReply API error payload:',
+					JSON.stringify(err.rawError),
+				);
+				throw err;
 			}
-			_replied = true;
-			return _replyMessage;
 		};
 		fakeInteraction.followUp = (opts) => {
 			const payload = _buildPayload(opts);

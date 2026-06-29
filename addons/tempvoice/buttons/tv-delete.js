@@ -52,11 +52,16 @@ class TvDeleteButton extends BaseButton {
 			);
 		} catch (error) {
 			logger.error(
-				`CRITICAL: Failed to fetch channel ${channelId} for rename. Error: ${error.message || error}`,
+				`CRITICAL: Failed to fetch channel ${channelId} for deletion. Error: ${error.message || error}`,
 				{
 					label: 'tempvoice',
 				},
 			);
+		}
+
+		if (!channel) {
+			// Destroy the cache because the channel no longer exists on Discord
+			await activeChannel.destroy().catch(() => {});
 			return interaction.reply({
 				components: await simpleContainer(
 					interaction,

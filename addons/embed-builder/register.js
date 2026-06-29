@@ -8,7 +8,7 @@
 
 const { BaseRegister } = require('kythia-core');
 
-const editCommand = require('./commands/edit');
+const editModal = require('./helpers/editModal');
 
 class EmbedBuilderRegister extends BaseRegister {
 	register() {
@@ -18,7 +18,7 @@ class EmbedBuilderRegister extends BaseRegister {
 		// Register the modal handler for /embed-builder edit (classic embed mode)
 		// customId format: eb-edit|{embedId}  (first pipe-segment is the handler key)
 		bot.registerModalHandler('eb-edit', (interaction, container) => {
-			return editCommand.modal(interaction, container);
+			return editModal(interaction, container);
 		});
 
 		summary.push('   ╰┈➤ 🎨 Embed Builder loaded (modal handler registered)');

@@ -466,7 +466,7 @@
 					"events": {
 						"messageCreate": {
 							"subcommand": {
-								"required": "| The command `{command}` requires a subcommand. Please use `/help {command}` for more information."
+								"required": " The command `{command}` requires a subcommand. Please use `/help {command}` for more information."
 							}
 						}
 					}
@@ -1305,7 +1305,7 @@
 					"embed": {
 						"desc": "## Report\n**{reported}** has been reported by **{reporter}** for: {reason}"
 					},
-					"success": "| Successfully reported **{user}**. Thank you for your report."
+					"success": " Successfully reported **{user}**. Thank you for your report."
 				},
 				"server-info": {
 					"serverinfo": {

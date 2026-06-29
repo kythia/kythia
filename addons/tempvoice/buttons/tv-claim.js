@@ -114,6 +114,19 @@ class TvClaimButton extends BaseButton {
 					flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
 				});
 			}
+			if (!channel) {
+				await activeChannel.destroy().catch(() => {});
+				return interaction.reply({
+					components: await simpleContainer(
+						interaction,
+						await t(interaction, 'tempvoice.shared.common.channel_not_found'),
+						{
+							color: 'Red',
+						},
+					),
+					flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+				});
+			}
 			await channel.permissionOverwrites.delete(activeChannel.ownerId);
 			await channel.permissionOverwrites.edit(interaction.member, {
 				[PermissionsBitField.Flags.ManageChannels]: true,

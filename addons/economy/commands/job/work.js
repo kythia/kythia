@@ -373,7 +373,7 @@ class WorkCommand extends BaseCommand {
 			)
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
-					`${await t(interaction, 'economy.commands.job.work.result.title.outcome')}\n*${scenarioDesc}*${extraText}`,
+					`${await t(interaction, 'economy.commands.job.work.result.outcome')}\n*${scenarioDesc}*${extraText}`,
 				),
 			)
 			.addSeparatorComponents(
