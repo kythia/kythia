@@ -9,10 +9,10 @@ const {
 	MessageFlags,
 	ContainerBuilder,
 	SeparatorBuilder,
+	AttachmentBuilder,
 	MediaGalleryBuilder,
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
-	AttachmentBuilder,
 } = require('discord.js');
 
 const {

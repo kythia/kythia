@@ -7,21 +7,21 @@
  */
 
 const {
-	ChannelType,
-	PermissionsBitField,
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
-	SeparatorSpacingSize,
-	StringSelectMenuBuilder,
-	MessageFlags,
+	ChannelType,
 	FileBuilder,
+	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
+	ContainerBuilder,
+	SeparatorBuilder,
 	AttachmentBuilder,
+	TextDisplayBuilder,
 	MediaGalleryBuilder,
+	PermissionsBitField,
+	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
+	StringSelectMenuBuilder,
 } = require('discord.js');
 const TICKET_STYLE_THREAD = 'thread';
 function getSafeEmoji(emoji, fallback = '🎫') {

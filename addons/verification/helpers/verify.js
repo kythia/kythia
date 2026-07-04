@@ -7,11 +7,11 @@
  */
 
 const {
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
-	SeparatorSpacingSize,
 	MessageFlags,
+	ContainerBuilder,
+	SeparatorBuilder,
+	TextDisplayBuilder,
+	SeparatorSpacingSize,
 } = require('discord.js');
 const { generateMathCaptcha } = require('./captchaMath');
 const { generateEmojiCaptcha } = require('./captchaEmoji');

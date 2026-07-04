@@ -7,17 +7,17 @@
  */
 
 const {
+	ButtonStyle,
 	MessageFlags,
 	ButtonBuilder,
-	ButtonStyle,
 	ActionRowBuilder,
 	ContainerBuilder,
-	TextDisplayBuilder,
 	SeparatorBuilder,
-	SeparatorSpacingSize,
+	TextDisplayBuilder,
 	MediaGalleryBuilder,
-	MediaGalleryItemBuilder,
 	PermissionsBitField,
+	SeparatorSpacingSize,
+	MediaGalleryItemBuilder,
 } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 class TicketClaimButton extends BaseButton {
@@ -119,7 +119,7 @@ class TicketClaimButton extends BaseButton {
 					new TextDisplayBuilder().setContent(
 						await interaction.client.container.t(
 							interaction,
-							'ticket.helpers.type_title_md',
+							'ticket.helpers.index.type_title_md',
 							{
 								typeName: ticketConfig.typeName,
 							},

@@ -7,11 +7,11 @@
  */
 const { createTicketChannel } = require('../helpers');
 const {
+	LabelBuilder,
 	MessageFlags,
 	ModalBuilder,
-	LabelBuilder,
-	TextInputBuilder,
 	TextInputStyle,
+	TextInputBuilder,
 } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 class TicketCreateButton extends BaseButton {

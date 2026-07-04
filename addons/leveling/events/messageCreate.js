@@ -58,7 +58,7 @@ class MessageCreateEvent extends BaseEvent {
 		// Respect noXpChannels and noXpRoles
 		if (
 			Array.isArray(setting?.noXpChannels) &&
-			setting.noXpChannels.includes(message.channel.id)
+			setting.noXpChannels.includes(message.channelId)
 		)
 			return;
 		if (Array.isArray(setting?.noXpRoles)) {

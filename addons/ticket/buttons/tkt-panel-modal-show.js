@@ -7,11 +7,11 @@
  */
 
 const {
-	ModalBuilder,
 	LabelBuilder,
-	TextInputBuilder,
-	TextInputStyle,
 	MessageFlags,
+	ModalBuilder,
+	TextInputStyle,
+	TextInputBuilder,
 } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 class TktPanelModalShowButton extends BaseButton {

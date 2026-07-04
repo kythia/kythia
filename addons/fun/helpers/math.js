@@ -7,13 +7,13 @@
  */
 
 const {
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
+	ButtonBuilder,
+	ActionRowBuilder,
 	ContainerBuilder,
 	SeparatorBuilder,
-	SeparatorSpacingSize,
 	TextDisplayBuilder,
+	SeparatorSpacingSize,
 } = require('discord.js');
 function rand(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;

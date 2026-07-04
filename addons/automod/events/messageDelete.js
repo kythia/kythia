@@ -8,8 +8,8 @@
 
 const {
 	MessageFlags,
-	SeparatorBuilder,
 	ContainerBuilder,
+	SeparatorBuilder,
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');

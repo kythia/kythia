@@ -7,11 +7,11 @@
  */
 
 const {
+	MessageFlags,
 	ContainerBuilder,
 	SeparatorBuilder,
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
-	MessageFlags,
 } = require('discord.js');
 
 /**

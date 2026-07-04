@@ -5,7 +5,7 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const { AuditLogEvent, MessageFlags } = require('discord.js');
+const { MessageFlags, AuditLogEvent } = require('discord.js');
 function formatChanges(changes) {
 	if (!changes || changes.length === 0) return 'No changes detected.';
 	return changes

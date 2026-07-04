@@ -6,14 +6,14 @@
  * @version 26.0.0-rc.1
  */
 const {
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
-	MessageFlags,
-	SeparatorSpacingSize,
-	MediaGalleryBuilder,
-	MediaGalleryItemBuilder,
 	ChannelType,
+	MessageFlags,
+	ContainerBuilder,
+	SeparatorBuilder,
+	TextDisplayBuilder,
+	MediaGalleryBuilder,
+	SeparatorSpacingSize,
+	MediaGalleryItemBuilder,
 } = require('discord.js');
 const { BaseModal } = require('kythia-core');
 class TktPanelCreateModal extends BaseModal {

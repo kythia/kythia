@@ -51,16 +51,7 @@ class HelpCommand extends BaseCommand {
 					.setSpacing(SeparatorSpacingSize.Small)
 					.setDivider(true),
 			)
-			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(
-					await t(interaction, 'ai.commands.ai.help.ai'),
-				),
-			)
-			.addSeparatorComponents(
-				new SeparatorBuilder()
-					.setSpacing(SeparatorSpacingSize.Small)
-					.setDivider(true),
-			)
+
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(
 					await t(interaction, 'ai.commands.ai.help.ai.memory'),

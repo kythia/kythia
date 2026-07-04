@@ -12,15 +12,15 @@ const {
 	ButtonBuilder,
 	ComponentType,
 	SectionBuilder,
+	ActionRowBuilder,
 	ContainerBuilder,
 	SeparatorBuilder,
 	ThumbnailBuilder,
-	ActionRowBuilder,
 	TextDisplayBuilder,
 	MediaGalleryBuilder,
 	SeparatorSpacingSize,
-	StringSelectMenuBuilder,
 	MediaGalleryItemBuilder,
+	StringSelectMenuBuilder,
 } = require('discord.js');
 const { createProgressBar, hasControlPermission } = require('.');
 const { Spotify } = require('poru-spotify');

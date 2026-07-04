@@ -9,8 +9,8 @@
 const {
 	ContainerBuilder,
 	SeparatorBuilder,
-	SeparatorSpacingSize,
 	TextDisplayBuilder,
+	SeparatorSpacingSize,
 } = require('discord.js');
 const kythiaConfig = require('../../../kythia.config');
 const WORD_LIST = kythiaConfig.addons.fun.wordle.words;

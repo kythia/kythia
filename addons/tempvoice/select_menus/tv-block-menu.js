@@ -5,7 +5,7 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const { PermissionsBitField, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionsBitField } = require('discord.js');
 const { BaseSelectMenu } = require('kythia-core');
 class TvBlockMenuSelectMenu extends BaseSelectMenu {
 	selectMenu = {

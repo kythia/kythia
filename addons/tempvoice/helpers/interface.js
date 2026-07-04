@@ -6,16 +6,16 @@
  * @version 26.0.0-rc.1
  */
 const {
-	ContainerBuilder,
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
+	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
+	ContainerBuilder,
 	SeparatorBuilder,
-	SeparatorSpacingSize,
 	TextDisplayBuilder,
 	MediaGalleryBuilder,
+	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
-	MessageFlags,
 } = require('discord.js');
 
 /**

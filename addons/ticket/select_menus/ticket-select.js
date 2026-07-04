@@ -7,11 +7,11 @@
  */
 const { createTicketChannel } = require('../helpers');
 const {
+	LabelBuilder,
 	MessageFlags,
 	ModalBuilder,
-	LabelBuilder,
-	TextInputBuilder,
 	TextInputStyle,
+	TextInputBuilder,
 } = require('discord.js');
 const { BaseSelectMenu } = require('kythia-core');
 class TicketSelectSelectMenu extends BaseSelectMenu {

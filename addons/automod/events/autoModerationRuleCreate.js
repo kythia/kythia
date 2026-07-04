@@ -7,8 +7,8 @@
  */
 const { Sentry } = require('@sentry/node');
 const {
-	AuditLogEvent,
 	MessageFlags,
+	AuditLogEvent,
 	ContainerBuilder,
 	SeparatorBuilder,
 	TextDisplayBuilder,

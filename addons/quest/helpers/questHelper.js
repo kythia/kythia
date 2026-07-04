@@ -6,18 +6,18 @@
  * @version 26.0.0-rc.1
  */
 const {
+	ButtonStyle,
+	MessageFlags,
+	ButtonBuilder,
+	SectionBuilder,
+	ActionRowBuilder,
 	ContainerBuilder,
+	SeparatorBuilder,
+	ThumbnailBuilder,
 	TextDisplayBuilder,
 	MediaGalleryBuilder,
-	MediaGalleryItemBuilder,
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	SeparatorBuilder,
 	SeparatorSpacingSize,
-	MessageFlags,
-	SectionBuilder,
-	ThumbnailBuilder,
+	MediaGalleryItemBuilder,
 } = require('discord.js');
 const DISCORD_ASSET_URL = 'https://cdn.discordapp.com/';
 const ORB_URL =

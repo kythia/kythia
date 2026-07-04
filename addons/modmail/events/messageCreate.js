@@ -8,9 +8,9 @@
 
 const {
 	MessageFlags,
-	SeparatorBuilder,
-	ContainerBuilder,
 	ActionRowBuilder,
+	ContainerBuilder,
+	SeparatorBuilder,
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 	StringSelectMenuBuilder,
@@ -33,9 +33,9 @@ async function handleGuildMessage(message, container, client) {
 	const { models, logger } = container;
 	const { Modmail } = models;
 	try {
-		if (message.channel.type !== 12 /* PrivateThread */) return;
+		if (message.channel?.type !== 12 /* PrivateThread */) return;
 		const modmail = await Modmail.getCache({
-			threadChannelId: message.channel.id,
+			threadChannelId: message.channelId,
 			status: 'open',
 		});
 		if (!modmail) return;

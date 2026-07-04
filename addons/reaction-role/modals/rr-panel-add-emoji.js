@@ -6,9 +6,9 @@
  * @version 26.0.0-rc.1
  */
 const {
+	MessageFlags,
 	ContainerBuilder,
 	TextDisplayBuilder,
-	MessageFlags,
 } = require('discord.js');
 const { refreshPanelMessage } = require('../helpers/index.js');
 const { BaseModal } = require('kythia-core');

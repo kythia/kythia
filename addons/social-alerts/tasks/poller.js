@@ -7,19 +7,19 @@
  */
 
 const {
-	MessageFlags,
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
-	SeparatorSpacingSize,
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
+	MessageFlags,
+	ButtonBuilder,
 	SectionBuilder,
-	ThumbnailBuilder,
-	MediaGalleryBuilder,
-	MediaGalleryItemBuilder,
 	ShardClientUtil,
+	ActionRowBuilder,
+	ContainerBuilder,
+	SeparatorBuilder,
+	ThumbnailBuilder,
+	TextDisplayBuilder,
+	MediaGalleryBuilder,
+	SeparatorSpacingSize,
+	MediaGalleryItemBuilder,
 } = require('discord.js');
 const { fetchLatestVideo } = require('../helpers/youtube');
 const { fetchLatestTikTok } = require('../helpers/tiktok');

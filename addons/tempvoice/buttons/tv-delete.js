@@ -7,11 +7,11 @@
  */
 
 const {
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
-	ComponentType,
 	MessageFlags,
+	ButtonBuilder,
+	ComponentType,
+	ActionRowBuilder,
 } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 class TvDeleteButton extends BaseButton {

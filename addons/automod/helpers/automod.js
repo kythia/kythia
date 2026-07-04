@@ -47,7 +47,7 @@ async function automodSystem(message) {
 		guildId: guild.id,
 	});
 	if (!setting) return;
-	if (setting.ignoredChannels?.includes(message.channel.id)) return;
+	if (setting.ignoredChannels?.includes(message.channelId)) return;
 	let member = message.member;
 	if (!member && guild) {
 		member = await guild.client.container.helpers.discord.getMemberSafe(

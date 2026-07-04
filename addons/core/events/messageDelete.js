@@ -6,9 +6,9 @@
  * @version 26.0.0-rc.1
  */
 const {
+	MessageFlags,
 	AuditLogEvent,
 	AttachmentBuilder,
-	MessageFlags,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
 

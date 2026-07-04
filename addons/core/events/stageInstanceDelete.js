@@ -5,7 +5,7 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const { AuditLogEvent, MessageFlags } = require('discord.js');
+const { MessageFlags, AuditLogEvent } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class StageInstanceDeleteEvent extends BaseEvent {

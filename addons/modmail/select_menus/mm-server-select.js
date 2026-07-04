@@ -9,8 +9,8 @@
 const {
 	MessageFlags,
 	ContainerBuilder,
-	TextDisplayBuilder,
 	SeparatorBuilder,
+	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { createModmailThread } = require('../helpers');

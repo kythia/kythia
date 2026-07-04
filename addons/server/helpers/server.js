@@ -7,14 +7,14 @@
  */
 
 const {
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
-	SeparatorSpacingSize,
-	OverwriteType,
-	MessageFlags,
 	ChannelType,
+	MessageFlags,
+	OverwriteType,
+	ContainerBuilder,
+	SeparatorBuilder,
+	TextDisplayBuilder,
 	PermissionFlagsBits,
+	SeparatorSpacingSize,
 } = require('discord.js');
 const path = require('node:path');
 const { loadTemplates } = require('./template');

@@ -7,19 +7,19 @@
  */
 
 const {
-	ChannelType,
-	MessageFlags,
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
-	SeparatorSpacingSize,
-	MediaGalleryBuilder,
-	MediaGalleryItemBuilder,
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
-	AttachmentBuilder,
+	ChannelType,
 	FileBuilder,
+	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
+	ContainerBuilder,
+	SeparatorBuilder,
+	AttachmentBuilder,
+	TextDisplayBuilder,
+	MediaGalleryBuilder,
+	SeparatorSpacingSize,
+	MediaGalleryItemBuilder,
 } = require('discord.js');
 
 // ─────────────────────────────────────────────────────────────────────────────

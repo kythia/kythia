@@ -7,14 +7,14 @@
  */
 
 const {
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
-	MessageFlags,
-	SeparatorSpacingSize,
-	ButtonBuilder,
 	ButtonStyle,
+	MessageFlags,
+	ButtonBuilder,
 	ActionRowBuilder,
+	ContainerBuilder,
+	SeparatorBuilder,
+	TextDisplayBuilder,
+	SeparatorSpacingSize,
 } = require('discord.js');
 const { BaseModal } = require('kythia-core');
 class TktTypeStep1SubmitModal extends BaseModal {

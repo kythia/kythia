@@ -7,10 +7,10 @@
  */
 
 const {
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
 	MessageFlags,
+	ContainerBuilder,
+	SeparatorBuilder,
+	TextDisplayBuilder,
 } = require('discord.js');
 const Marriage = require('../database/models/Marriage');
 const { convertColor } = require('kythia-core').utils;

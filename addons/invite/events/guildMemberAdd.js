@@ -10,7 +10,7 @@ const {
 	refreshGuildInvites,
 	applyTemplate,
 } = require('../helpers');
-const { PermissionsBitField, MessageFlags } = require('discord.js');
+const { MessageFlags, PermissionsBitField } = require('discord.js');
 const { BaseEvent } = require('kythia-core');
 class GuildMemberAddEvent extends BaseEvent {
 	async execute(member) {

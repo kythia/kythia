@@ -19,7 +19,7 @@ class MessageCreateEvent extends BaseEvent {
 		const { GlobalChat } = models;
 
 		const registeredChannel = await GlobalChat.getCache({
-			globalChannelId: message.channel.id,
+			globalChannelId: message.channelId,
 		});
 
 		if (!registeredChannel || registeredChannel.guildId !== message.guild.id) {

@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { ButtonStyle, ButtonBuilder, ActionRowBuilder } = require('discord.js');
 
 const OPERATIONS = [
 	{ sym: '+', fn: (a, b) => a + b },

@@ -5,7 +5,7 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const { AuditLogEvent, ChannelType, MessageFlags } = require('discord.js');
+const { ChannelType, MessageFlags, AuditLogEvent } = require('discord.js');
 const Sentry = require('@sentry/node');
 const { BaseEvent } = require('kythia-core');
 class ChannelDeleteEvent extends BaseEvent {

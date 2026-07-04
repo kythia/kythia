@@ -6,9 +6,9 @@
  * @version 26.0.0-rc.1
  */
 const {
-	PermissionsBitField,
 	ChannelType,
 	MessageFlags,
+	PermissionsBitField,
 } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 class TvWaitingButton extends BaseButton {

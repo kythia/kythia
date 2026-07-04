@@ -7,13 +7,13 @@
  */
 
 const {
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
+	ButtonBuilder,
+	ActionRowBuilder,
 	ContainerBuilder,
 	SeparatorBuilder,
-	SeparatorSpacingSize,
 	TextDisplayBuilder,
+	SeparatorSpacingSize,
 } = require('discord.js');
 
 const CHOICES = ['rock', 'paper', 'scissors'];

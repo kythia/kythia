@@ -8,9 +8,9 @@
 
 const {
 	SectionBuilder,
+	ContainerBuilder,
 	SeparatorBuilder,
 	ThumbnailBuilder,
-	ContainerBuilder,
 	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');

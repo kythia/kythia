@@ -7,11 +7,11 @@
  */
 
 const {
-	MessageFlags,
 	ChannelType,
+	MessageFlags,
 	ContainerBuilder,
-	TextDisplayBuilder,
 	SeparatorBuilder,
+	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
 const moment = require('moment');

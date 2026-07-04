@@ -6,7 +6,7 @@
  * @version 26.0.0-rc.1
  */
 
-const { Collection, Events } = require('discord.js');
+const { Events, Collection } = require('discord.js');
 
 /**
  * Map of events to their available test scenarios/types

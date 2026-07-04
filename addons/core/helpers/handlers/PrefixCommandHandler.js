@@ -8,15 +8,15 @@
 
 const { utils } = require('kythia-core');
 const {
-	MessageFlags,
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
-	SeparatorSpacingSize,
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
 	Collection,
+	ButtonStyle,
+	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
+	ContainerBuilder,
+	SeparatorBuilder,
+	TextDisplayBuilder,
+	SeparatorSpacingSize,
 } = require('discord.js');
 
 // Flags that must be stripped when forwarding to a real Message reply.

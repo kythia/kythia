@@ -6,17 +6,17 @@
  * @version 26.0.0-rc.1
  */
 const {
-	PermissionsBitField,
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
-	SeparatorSpacingSize,
-	MediaGalleryBuilder,
-	MediaGalleryItemBuilder,
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
 	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
+	ContainerBuilder,
+	SeparatorBuilder,
+	TextDisplayBuilder,
+	MediaGalleryBuilder,
+	PermissionsBitField,
+	SeparatorSpacingSize,
+	MediaGalleryItemBuilder,
 } = require('discord.js');
 const Sentry = require('@sentry/node');
 

@@ -7,10 +7,10 @@
  */
 
 const {
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
 	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
 } = require('discord.js');
 
 const buildComponentRows = (

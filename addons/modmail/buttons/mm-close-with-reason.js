@@ -8,9 +8,9 @@
 
 const {
 	ModalBuilder,
-	TextInputBuilder,
 	TextInputStyle,
 	ActionRowBuilder,
+	TextInputBuilder,
 } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 class MmCloseWithReasonButton extends BaseButton {

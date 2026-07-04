@@ -6,11 +6,11 @@
  * @version 26.0.0-rc.1
  */
 const {
+	MessageFlags,
 	ActionRowBuilder,
-	StringSelectMenuBuilder,
 	ContainerBuilder,
 	TextDisplayBuilder,
-	MessageFlags,
+	StringSelectMenuBuilder,
 } = require('discord.js');
 const REGIONS = [
 	{

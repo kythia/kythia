@@ -7,10 +7,10 @@
  */
 
 const {
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
 	MessageFlags,
+	ContainerBuilder,
+	SeparatorBuilder,
+	TextDisplayBuilder,
 } = require('discord.js');
 const Friend = require('../database/models/Friend');
 const { convertColor } = require('kythia-core').utils;

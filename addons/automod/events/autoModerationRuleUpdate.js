@@ -6,8 +6,8 @@
  * @version 26.0.0-rc.1
  */
 const {
-	AuditLogEvent,
 	MessageFlags,
+	AuditLogEvent,
 	ContainerBuilder,
 	SeparatorBuilder,
 	TextDisplayBuilder,

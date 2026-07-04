@@ -6,11 +6,11 @@
  * @version 26.0.0-rc.1
  */
 const {
-	ModalBuilder,
 	LabelBuilder,
-	TextInputBuilder,
-	TextInputStyle,
 	MessageFlags,
+	ModalBuilder,
+	TextInputStyle,
+	TextInputBuilder,
 } = require('discord.js');
 
 const { BaseButton } = require('kythia-core');

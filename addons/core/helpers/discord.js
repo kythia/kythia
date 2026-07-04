@@ -7,16 +7,16 @@
  */
 
 const {
+	ButtonStyle,
+	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
 	ContainerBuilder,
 	SeparatorBuilder,
 	TextDisplayBuilder,
 	MediaGalleryBuilder,
 	SeparatorSpacingSize,
 	MediaGalleryItemBuilder,
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	MessageFlags,
 } = require('discord.js');
 const TIER_LEVELS = {
 	none: 0,

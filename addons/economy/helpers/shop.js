@@ -7,9 +7,9 @@
  */
 
 const {
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
+	ButtonBuilder,
+	ActionRowBuilder,
 	ContainerBuilder,
 	SeparatorBuilder,
 	TextDisplayBuilder,

@@ -6,11 +6,11 @@
  * @version 26.0.0-rc.1
  */
 const {
+	MessageFlags,
 	ActionRowBuilder,
-	UserSelectMenuBuilder,
 	ContainerBuilder,
 	TextDisplayBuilder,
-	MessageFlags,
+	UserSelectMenuBuilder,
 } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 class TvTrustButton extends BaseButton {

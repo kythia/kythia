@@ -7,14 +7,14 @@
  */
 
 const {
-	ModalBuilder,
-	LabelBuilder,
-	ChannelSelectMenuBuilder,
 	ChannelType,
+	LabelBuilder,
 	MessageFlags,
-	TextInputBuilder,
+	ModalBuilder,
 	TextInputStyle,
+	TextInputBuilder,
 	StringSelectMenuBuilder,
+	ChannelSelectMenuBuilder,
 } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 class TktTypeStep3ShowButton extends BaseButton {

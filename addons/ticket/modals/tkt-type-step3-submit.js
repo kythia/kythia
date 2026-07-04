@@ -7,10 +7,10 @@
  */
 
 const {
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
 	MessageFlags,
+	ContainerBuilder,
+	SeparatorBuilder,
+	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
 const { refreshTicketPanel } = require('../helpers');

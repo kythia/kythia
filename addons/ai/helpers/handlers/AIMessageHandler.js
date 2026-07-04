@@ -316,10 +316,10 @@ class AIMessageHandler {
 		if (userRecord && userRecord.hasAgreedToAiTos === false) {
 			try {
 				const {
-					ActionRowBuilder,
-					ButtonBuilder,
 					ButtonStyle,
 					MessageFlags,
+					ButtonBuilder,
+					ActionRowBuilder,
 				} = require('discord.js');
 				const { createContainer } = this.container.helpers.discord;
 				const { t } = this.container;

@@ -7,13 +7,13 @@
  */
 
 const {
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
+	ButtonBuilder,
+	ActionRowBuilder,
 	ContainerBuilder,
 	SeparatorBuilder,
-	SeparatorSpacingSize,
 	TextDisplayBuilder,
+	SeparatorSpacingSize,
 } = require('discord.js');
 function createGame(interaction, opponent, mode) {
 	const playerX = interaction.user;

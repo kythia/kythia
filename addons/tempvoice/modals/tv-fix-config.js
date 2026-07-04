@@ -5,7 +5,7 @@
  * @assistant graa & chaa
  * @version 26.0.0-rc.1
  */
-const { ComponentType, MessageFlags } = require('discord.js');
+const { MessageFlags, ComponentType } = require('discord.js');
 const { BaseModal } = require('kythia-core');
 class TvFixConfigModal extends BaseModal {
 	modal = {

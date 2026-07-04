@@ -7,12 +7,12 @@
  */
 
 const {
-	ModalBuilder,
-	LabelBuilder,
-	TextInputBuilder,
-	TextInputStyle,
-	MessageFlags,
 	ChannelType,
+	LabelBuilder,
+	MessageFlags,
+	ModalBuilder,
+	TextInputStyle,
+	TextInputBuilder,
 	ChannelSelectMenuBuilder,
 } = require('discord.js');
 const { BaseButton } = require('kythia-core');

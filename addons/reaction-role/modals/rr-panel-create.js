@@ -6,14 +6,14 @@
  * @version 26.0.0-rc.1
  */
 const {
-	ActionRowBuilder,
-	ButtonBuilder,
 	ButtonStyle,
+	MessageFlags,
+	ButtonBuilder,
+	ActionRowBuilder,
 	ContainerBuilder,
 	SeparatorBuilder,
-	SeparatorSpacingSize,
 	TextDisplayBuilder,
-	MessageFlags,
+	SeparatorSpacingSize,
 } = require('discord.js');
 const { buildPanelEmbed } = require('../helpers/index.js');
 const { BaseModal } = require('kythia-core');

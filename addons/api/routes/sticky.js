@@ -10,8 +10,8 @@ const { Hono } = require('hono');
 const {
 	MessageFlags,
 	ContainerBuilder,
-	TextDisplayBuilder,
 	SeparatorBuilder,
+	TextDisplayBuilder,
 	SeparatorSpacingSize,
 } = require('discord.js');
 const app = new Hono();

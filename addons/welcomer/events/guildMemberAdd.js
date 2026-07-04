@@ -12,13 +12,13 @@ const {
 
 // kythia-arts is now imported in the sandboxed queue processor
 const {
+	MessageFlags,
 	ContainerBuilder,
 	SeparatorBuilder,
-	SeparatorSpacingSize,
-	MediaGalleryBuilder,
-	MediaGalleryItemBuilder,
-	MessageFlags,
 	AttachmentBuilder,
+	MediaGalleryBuilder,
+	SeparatorSpacingSize,
+	MediaGalleryItemBuilder,
 } = require('discord.js');
 
 const { BaseEvent } = require('kythia-core');

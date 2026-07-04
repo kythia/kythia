@@ -55,7 +55,7 @@ class MessageReactionAddEvent extends BaseEvent {
 		if (!setting?.reactionXpEnabled) return;
 		if (
 			Array.isArray(setting?.noXpChannels) &&
-			setting.noXpChannels.includes(message.channel.id)
+			setting.noXpChannels.includes(message.channelId)
 		)
 			return;
 		const awardType = setting?.reactionXpAward || 'both';

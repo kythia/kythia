@@ -6,11 +6,11 @@
  * @version 26.0.0-rc.1
  */
 const {
-	ModalBuilder,
-	ChannelSelectMenuBuilder,
 	ChannelType,
 	LabelBuilder,
 	MessageFlags,
+	ModalBuilder,
+	ChannelSelectMenuBuilder,
 } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 class TvFixConfigButton extends BaseButton {

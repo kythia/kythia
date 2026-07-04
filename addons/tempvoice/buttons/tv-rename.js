@@ -6,11 +6,11 @@
  * @version 26.0.0-rc.1
  */
 const {
+	MessageFlags,
 	ModalBuilder,
-	TextInputBuilder,
 	TextInputStyle,
 	ActionRowBuilder,
-	MessageFlags,
+	TextInputBuilder,
 } = require('discord.js');
 const { BaseButton } = require('kythia-core');
 class TvRenameButton extends BaseButton {

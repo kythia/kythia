@@ -26,7 +26,7 @@ class MessageCreateEvent extends BaseEvent {
 
 		const content = message.content.toLowerCase();
 		const reactions = allReactions.filter(({ type, trigger }) => {
-			if (type === 'channel') return trigger === message.channel.id;
+			if (type === 'channel') return trigger === message.channelId;
 			if (type === 'text') {
 				const escaped = trigger.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 				return new RegExp(`\\b${escaped}\\b`, 'i').test(content);
